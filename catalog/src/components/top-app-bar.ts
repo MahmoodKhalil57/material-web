@@ -67,6 +67,7 @@ export class TopAppBar extends SignalElement(LitElement) {
           </a>
 
           <section class="end">
+            <slot name="end"></slot>
             <lit-island
               on:interaction="pointerenter,focusin,pointerdown"
               import="/js/hydration-entrypoints/menu.js"
@@ -210,6 +211,7 @@ export class TopAppBar extends SignalElement(LitElement) {
     .end {
       flex-grow: 1;
       display: flex;
+      align-items: center;
       justify-content: flex-end;
     }
 
