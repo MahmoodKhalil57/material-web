@@ -31,3 +31,6 @@ catalog/stories/*/
 
 # Local m3.material.io spec mirror (scripts/download-m3-specs.mjs)
 .m3-specs/
+
+# Local labs/gb dev site (scripts/gb-dev.mjs)
+.gb-dev/
