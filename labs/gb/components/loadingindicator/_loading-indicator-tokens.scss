@@ -1,0 +1,22 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+@mixin root {
+  // LINT.IfChange
+  --active-indicator-color: var(--md-sys-color-primary);
+  --active-indicator-size: 38px;
+  // Uncontained indicators have no container (Compose: Color.Transparent).
+  --container-color: transparent;
+  --container-height: 48px;
+  --container-shape: calc(var(--container-height) / 2);
+  --container-width: 48px;
+  --progress: 0;
+  // LINT.ThenChange(loading-indicator-element.ts) keep in sync with `@cssprop` jsdoc tags
+}
+
+@mixin contained {
+  --active-indicator-color: var(--md-sys-color-on-primary-container);
+  --container-color: var(--md-sys-color-primary-container);
+}

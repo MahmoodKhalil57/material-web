@@ -1,0 +1,89 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'loading-indicator-motion' as motion;
+@use 'loading-indicator-tokens';
+// go/keep-sorted end
+
+@layer md.sys;
+@layer md.comp.loading-indicator {
+  // Generated from Jetpack Compose LoadingIndicator.kt + MaterialShapes
+  // (scripts/m3/gen-loading-indicator.mjs).
+  @include motion.keyframes;
+
+  .loading-indicator {
+    & {
+      @include loading-indicator-tokens.root;
+    }
+    &.loading-indicator-contained {
+      @include loading-indicator-tokens.contained;
+    }
+
+    & {
+      align-items: center;
+      background-color: var(--container-color);
+      block-size: var(--container-height);
+      border-radius: var(--container-shape);
+      box-sizing: border-box;
+      color: var(--active-indicator-color);
+      display: inline-flex;
+      flex: none;
+      inline-size: var(--container-width);
+      justify-content: center;
+      overflow: hidden;
+      vertical-align: middle;
+    }
+
+    // A linear turn every few seconds, independent of the morphs.
+    .loading-indicator-spin {
+      animation: md-loading-indicator-spin motion.$spin-duration linear infinite;
+      block-size: var(--active-indicator-size);
+      display: flex;
+      flex: none;
+      inline-size: var(--active-indicator-size);
+    }
+
+    // +90deg per morph, on the morph spring.
+    .loading-indicator-shape {
+      animation: md-loading-indicator-rotate motion.$rotation-duration linear
+        infinite;
+      block-size: 100%;
+      inline-size: 100%;
+      overflow: visible;
+    }
+
+    .loading-indicator-shape > path {
+      animation: md-loading-indicator-morph motion.$morph-duration linear
+        infinite;
+      fill: currentColor;
+    }
+
+    // Determinate: one morph and a -180deg turn scrubbed by --progress (0..1).
+    &.loading-indicator-determinate {
+      .loading-indicator-spin {
+        animation: none;
+      }
+      .loading-indicator-shape {
+        animation: none;
+        rotate: calc(var(--progress) * -180deg);
+      }
+      .loading-indicator-shape > path {
+        animation: md-loading-indicator-determinate 1s linear paused both;
+        animation-delay: calc(var(--progress) * -1s);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    // Keep a slow turn to show activity, without the bouncy morphs.
+    .loading-indicator:not(.loading-indicator-determinate) {
+      .loading-indicator-shape,
+      .loading-indicator-shape > path {
+        animation: none;
+      }
+    }
+  }
+}
