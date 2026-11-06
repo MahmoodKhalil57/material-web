@@ -41,9 +41,20 @@
     &.chip-with-avatar {
       @include chip-tokens.with-avatar;
     }
+    &:is(:active, .active):where(
+        :not(:disabled, .disabled, [aria-disabled='true'])
+      ) {
+      @include chip-tokens.pressed;
+    }
+    &:is(.dragged, [aria-grabbed='true']) {
+      @include chip-tokens.dragged;
+    }
     &:is(:disabled, .disabled, [aria-disabled='true']) {
       @include chip-tokens.disabled;
       --disabled: true;
+      &:where(.chip-selected, [aria-pressed='true']) {
+        @include chip-tokens.disabled-selected;
+      }
     }
 
     & {
@@ -66,6 +77,13 @@
       box-sizing: border-box;
       user-select: none;
       white-space: nowrap;
+      // The pressed shape morph and drag elevation use the M3 fast spatial
+      // spring (scripts/m3/gen-motion.mjs).
+      transition:
+        border-radius var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial),
+        box-shadow var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial);
       --md-icon-color: var(--leading-icon-color);
       --md-icon-size: var(--leading-icon-size);
     }

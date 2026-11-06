@@ -17,6 +17,14 @@
       @include menu-tokens.vibrant;
       --menu-vibrant: true;
     }
+    // Submenu focus shape morph: the menu holding focus is active, a menu
+    // whose submenu holds focus is inactive.
+    &.menu-active {
+      @include menu-tokens.active;
+    }
+    &.menu-inactive {
+      @include menu-tokens.inactive;
+    }
 
     & {
       flex-direction: column;
@@ -24,6 +32,8 @@
       border-radius: var(--container-shape);
       background-color: var(--container-color);
       padding-block: var(--group-padding);
+      transition: border-radius var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial);
     }
 
     &:popover-open,

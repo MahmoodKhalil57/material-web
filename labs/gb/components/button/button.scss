@@ -121,8 +121,11 @@
       letter-spacing: var(--label-text-tracking);
       font-variation-settings: var(--label-text-axes);
       -webkit-font-smoothing: antialiased;
+      // md.comp.button.pressed.container.corner-size.motion.spring is the
+      // fast spatial spring (scripts/m3/gen-motion.mjs).
       transition:
-        border-radius 350ms cubic-bezier(0.42, 1.67, 0.21, 0.9),
+        border-radius var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial),
         var(--ripple-transition);
       --md-icon-color: var(--icon-color);
       --md-icon-size: var(--icon-size);

@@ -107,6 +107,14 @@ const CASES: SpecCase[] = [
     "markup": "<span></span><div class=\"chip\" data-spec-target></div><span></span>"
   },
   {
+    "mixin": "dragged",
+    "prop": "container-elevation",
+    "token": "md.comp.suggestion-chip.dragged.container.elevation",
+    "spec": "var(--md-sys-elevation-shadow-4)",
+    "property": "box-shadow",
+    "markup": "<span></span><div class=\"chip dragged\" data-spec-target></div><span></span>"
+  },
+  {
     "mixin": "selected",
     "prop": "container-color",
     "token": "md.comp.input-chip.selected.container.color",
@@ -177,6 +185,14 @@ const CASES: SpecCase[] = [
     "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 38%)",
     "property": "color",
     "markup": "<span></span><div class=\"chip disabled\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "disabled-selected",
+    "prop": "container-color",
+    "token": "md.comp.input-chip.disabled.selected.container.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 12%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"chip disabled chip-selected\" data-spec-target></div><span></span>"
   },
   {
     "mixin": "elevated",

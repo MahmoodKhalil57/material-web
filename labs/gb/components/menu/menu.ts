@@ -39,12 +39,23 @@ export const MENU_COLORS = {
 export const MENU_CLASSES = {
   menu: 'menu',
   menuVibrant: 'menu-vibrant',
+  menuActive: 'menu-active',
+  menuInactive: 'menu-inactive',
 } as const;
+
+/** Submenu focus states of a menu. */
+export type MenuSubmenuState = 'active' | 'inactive';
 
 /** The state provided to the `menuClasses()` function. */
 export interface MenuClassesState {
   /** The color of the menu. */
   color?: MenuColor;
+  /**
+   * In a menu with submenus, whether this menu holds focus (`active`) or has
+   * revealed a submenu that holds focus (`inactive`). The menu's corners
+   * morph between the two.
+   */
+  submenu?: MenuSubmenuState;
 }
 
 /**
@@ -53,10 +64,12 @@ export interface MenuClassesState {
  * @param state The state of the menu.
  * @return An object of class names and truthy values if they apply.
  */
-export function menuClasses({color}: MenuClassesState = {}): ClassInfo {
+export function menuClasses({color, submenu}: MenuClassesState = {}): ClassInfo {
   return {
     [MENU_CLASSES.menu]: true,
     [MENU_CLASSES.menuVibrant]: color === MENU_COLORS.vibrant,
+    [MENU_CLASSES.menuActive]: submenu === 'active',
+    [MENU_CLASSES.menuInactive]: submenu === 'inactive',
   };
 }
 

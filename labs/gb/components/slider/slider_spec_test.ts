@@ -129,6 +129,30 @@ const CASES: SpecCase[] = [
     "spec": "var(--md-sys-color-inverse-on-surface)",
     "property": "color",
     "markup": "<span></span><div class=\"slider\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "disabled",
+    "prop": "handle-color",
+    "token": "md.comp.slider.disabled.handle.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 38%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"slider disabled\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "disabled",
+    "prop": "active-track-color",
+    "token": "md.comp.slider.disabled.active.track.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 38%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"slider disabled\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "disabled",
+    "prop": "inactive-track-color",
+    "token": "md.comp.slider.disabled.inactive.track.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 12%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"slider disabled\" data-spec-target></div><span></span>"
   }
 ];
 

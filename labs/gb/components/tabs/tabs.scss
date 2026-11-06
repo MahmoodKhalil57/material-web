@@ -169,16 +169,28 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
   }
 
   // Spec gives inactive tabs on-surface colours on hover/focus/pressed. The
-  // secondary-* state mixins resolve to exactly the same two declarations as the
-  // primary ones, so one rule each covers both variants.
+  // secondary-* mixins currently match the primary ones, but are applied
+  // separately so spec changes to either variant reach the component.
   .tab:is(:hover, .hover):not(#{$selected}) {
     @include tabs-tokens.hover;
+
+    @container style(--tabs-secondary: true) {
+      @include tabs-tokens.secondary-hover;
+    }
   }
   .tab:is(:focus-visible, .focus):not(#{$selected}) {
     @include tabs-tokens.focus;
+
+    @container style(--tabs-secondary: true) {
+      @include tabs-tokens.secondary-focus;
+    }
   }
   .tab:is(:active, .active):not(#{$selected}) {
     @include tabs-tokens.pressed;
+
+    @container style(--tabs-secondary: true) {
+      @include tabs-tokens.secondary-pressed;
+    }
   }
 
   // FOCUS RING. Painted on a pseudo-element rather than on `.tab` itself for

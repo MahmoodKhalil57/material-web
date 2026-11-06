@@ -129,35 +129,35 @@
     > [size='xs'][square]:not([selected]):not([aria-pressed='true'])::part(btn),
   .btn-group-connected
     > .btn-xs.btn-square:not(.btn-selected):not([aria-pressed='true']) {
-    --outer-corner-size: var(--md-sys-shape-corner-xs);
+    @include button-group-tokens.outer-corner-square-xs;
   }
 
   .btn-group-connected
     > [size='sm'][square]:not([selected]):not([aria-pressed='true'])::part(btn),
   .btn-group-connected
     > .btn-sm.btn-square:not(.btn-selected):not([aria-pressed='true']) {
-    --outer-corner-size: var(--md-sys-shape-corner-sm);
+    @include button-group-tokens.outer-corner-square-sm;
   }
 
   .btn-group-connected
     > [size='md'][square]:not([selected]):not([aria-pressed='true'])::part(btn),
   .btn-group-connected
     > .btn-md.btn-square:not(.btn-selected):not([aria-pressed='true']) {
-    --outer-corner-size: var(--md-sys-shape-corner-sm);
+    @include button-group-tokens.outer-corner-square-md;
   }
 
   .btn-group-connected
     > [size='lg'][square]:not([selected]):not([aria-pressed='true'])::part(btn),
   .btn-group-connected
     > .btn-lg.btn-square:not(.btn-selected):not([aria-pressed='true']) {
-    --outer-corner-size: var(--md-sys-shape-corner-lg);
+    @include button-group-tokens.outer-corner-square-lg;
   }
 
   .btn-group-connected
     > [size='xl'][square]:not([selected]):not([aria-pressed='true'])::part(btn),
   .btn-group-connected
     > .btn-xl.btn-square:not(.btn-selected):not([aria-pressed='true']) {
-    --outer-corner-size: var(--md-sys-shape-corner-lg-increased);
+    @include button-group-tokens.outer-corner-square-xl;
   }
 
   // Selected button in connected group blooms all corners to full pill in any position

@@ -67,6 +67,22 @@ const CASES: SpecCase[] = [
     "markup": "<span></span><div class=\"menu\" data-spec-target></div><span></span>"
   },
   {
+    "mixin": "inactive",
+    "prop": "container-shape",
+    "token": "md.comp.menus.inactive.container.shape",
+    "spec": "var(--md-sys-shape-corner-sm)",
+    "property": "border-top-left-radius",
+    "markup": "<span></span><div class=\"menu menu-inactive\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "active",
+    "prop": "container-shape",
+    "token": "md.comp.menus.active.container.shape",
+    "spec": "var(--md-sys-shape-corner-lg)",
+    "property": "border-top-left-radius",
+    "markup": "<span></span><div class=\"menu menu-active\" data-spec-target></div><span></span>"
+  },
+  {
     "mixin": "vibrant",
     "prop": "container-color",
     "token": "md.comp.menus.vibrant.container.color",

@@ -55,7 +55,12 @@ for (const dir of (await readdir(GB)).sort()) {
   for (const {file, source} of styles) {
     for (const {mixin, selector, styles: queries} of includedSelectors(source)) {
       if (includes.has(mixin)) continue;
-      const markup = selector && markupFor(selector, queries);
+      // First alternative of the selector list that markup can match.
+      let markup;
+      for (const alternative of selector ?? []) {
+        markup = markupFor(alternative, queries);
+        if (markup) break;
+      }
       if (markup) includes.set(mixin, {markup, file});
       else unbuildable.add(mixin);
     }
@@ -100,9 +105,10 @@ async function componentStyles(dir) {
 }
 
 /**
- * Walks SCSS blocks and returns `{mixin, selector}` for each
- * `@include <x>-tokens.<mixin>`, with `selector` the resolved full selector
- * (first alternative of each comma list), or null when it uses interpolation.
+ * Walks SCSS blocks and returns `{mixin, selector, styles}` for each
+ * `@include <x>-tokens.<mixin>`, with `selector` the resolved alternatives of
+ * the full selector (null when it uses interpolation) and `styles` the
+ * enclosing `@container style()` conditions.
  */
 export function includedSelectors(source) {
   const text = source.replace(/\r\n/g, '\n').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
@@ -131,7 +137,7 @@ export function includedSelectors(source) {
       if (style) stack.push({style: `${style[1]}: ${style[2]}`});
       else if (head.startsWith('@')) stack.push({});
       else if (head.includes('#{') || parent === null) stack.push({selector: null});
-      else stack.push({selector: combine(parent, firstAlternative(head))});
+      else stack.push({selector: combine(parent, head)});
     } else if (c === '}') {
       stack.pop();
       buf = '';
@@ -152,9 +158,20 @@ export function includedSelectors(source) {
   return found;
 }
 
-function combine(parent, child) {
-  if (!parent) return child.replace(/&/g, '');
-  return child.includes('&') ? child.replace(/&/g, parent) : `${parent} ${child}`;
+/**
+ * Resolves a nested selector list against its parent's alternatives,
+ * returning every combination (capped) so a renderable one can be chosen.
+ */
+function combine(parents, childList) {
+  const children = splitTop(childList, /,/);
+  const out = [];
+  for (const parent of parents ?? ['']) {
+    for (const child of children) {
+      if (!parent) out.push(child.replace(/&/g, ''));
+      else out.push(child.includes('&') ? child.replace(/&/g, parent) : `${parent} ${child}`);
+    }
+  }
+  return out.slice(0, 32);
 }
 
 /** Splits on `sep` outside parentheses/brackets. */
@@ -172,10 +189,6 @@ function splitTop(s, sep) {
   }
   parts.push(cur);
   return parts.map((p) => p.trim()).filter(Boolean);
-}
-
-function firstAlternative(selectorList) {
-  return splitTop(selectorList, /,/)[0];
 }
 
 /**
