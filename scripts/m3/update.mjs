@@ -19,7 +19,7 @@
  *   3. Regenerate tokens/versions/latest/sass (+ -meta files), spring easings,
  *      and Material shapes.
  *   4. Diff generated tokens against the previous run; audit labs/gb.
- *   5. Regenerate browser spec tests (labs/gb/components/*/<dir>_spec_test.ts).
+ *   5. Regenerate browser spec tests (<component>_spec_test.ts in each component).
  *   6. Report upstream Compose files that changed since they were last
  *      reviewed (scripts/m3/upstream-review.json).
  *
@@ -50,6 +50,11 @@ const PORTED = {
   'material3/commonMain/androidx/compose/material3/MaterialShapes.kt': 'scripts/m3/shapes/material-shapes.mjs',
   'material3/commonMain/androidx/compose/material3/MotionScheme.kt': 'scripts/m3/gen-motion.mjs',
   'material3/commonMain/androidx/compose/material3/LoadingIndicator.kt': 'scripts/m3/gen-loading-indicator.mjs',
+  'material3/commonMain/androidx/compose/material3/WavyProgressIndicator.kt': 'scripts/m3/gen-progress.mjs',
+  'material3/commonMain/androidx/compose/material3/ProgressIndicator.kt': 'scripts/m3/gen-progress.mjs',
+  'material3/commonMain/androidx/compose/material3/internal/LinearWavyProgressModifiers.kt': 'scripts/m3/gen-progress.mjs',
+  'material3/commonMain/androidx/compose/material3/internal/CircularWavyProgressModifiers.kt': 'scripts/m3/gen-progress.mjs',
+  'material3/commonMain/androidx/compose/material3/FloatingActionButtonMenu.kt': 'scripts/m3/gen-fab-menu.mjs',
   'graphics-shapes/commonMain/androidx/graphics/shapes/': 'scripts/m3/shapes/graphics-shapes.mjs',
 };
 
@@ -95,7 +100,10 @@ node('scripts/m3/gen-sass-tokens.mjs', ['--out', TOKENS]);
 await generateTokenMeta();
 node('scripts/m3/gen-motion.mjs');
 if (await exists('scripts/m3/gen-shapes.mjs')) node('scripts/m3/gen-shapes.mjs');
-node('scripts/m3/gen-loading-indicator.mjs');
+// Components whose behavior is generated from the Compose reference.
+for (const generator of ['gen-loading-indicator', 'gen-progress', 'gen-fab-menu']) {
+  node(`scripts/m3/${generator}.mjs`);
+}
 
 // 4. What changed in the spec, and where gb disagrees with it.
 section('Token changes since the previous run');

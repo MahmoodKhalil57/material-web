@@ -35,6 +35,8 @@
   "material3/commonMain/androidx/compose/material3/FloatingToolbar.kt": "7c014d29baef68f5",
   "material3/commonMain/androidx/compose/material3/Icon.kt": "6cd5f934957681e8",
   "material3/commonMain/androidx/compose/material3/IconButtonDefaults.kt": "20c97c9a25ddb071",
+  "material3/commonMain/androidx/compose/material3/internal/CircularWavyProgressModifiers.kt": "2c92c9765d35b2b8",
+  "material3/commonMain/androidx/compose/material3/internal/LinearWavyProgressModifiers.kt": "219d396a3e923ab3",
   "material3/commonMain/androidx/compose/material3/internal/TextFieldImpl.kt": "6490160723b2e077",
   "material3/commonMain/androidx/compose/material3/ListItem.kt": "a3efd1f692ba8dd9",
   "material3/commonMain/androidx/compose/material3/ListItemDefaults.kt": "7148da3f6d803a9b",
