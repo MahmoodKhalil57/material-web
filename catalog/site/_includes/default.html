@@ -99,6 +99,21 @@
           <!-- Components section -->
           <md-item><div slot="headline">Components</div></md-item>
           {% for file in collections.component|filtersort('data.name') %}
+            {% if not file.data.expressive %}
+            <md-list-item
+              href="{{ file.url }}"
+              role="menuitem"
+              {% if file.url == page.url %}selected{% endif %}
+              type="link"
+              tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
+            >{{ file.data.name }}</md-list-item>
+            {% endif %}
+          {% endfor %}
+          <!-- M3 Expressive (labs/gb) section, added by `npm run catalog:dev` -->
+          {% if collections.expressive and collections.expressive.length %}
+          <md-divider role="separator"></md-divider>
+          <md-item><div slot="headline">M3 Expressive</div></md-item>
+          {% for file in collections.expressive|filtersort('data.name') %}
             <md-list-item
               href="{{ file.url }}"
               role="menuitem"
@@ -107,6 +122,7 @@
               tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
             >{{ file.data.name }}</md-list-item>
           {% endfor %}
+          {% endif %}
         </md-list>
       </nav-drawer>
     </lit-island>

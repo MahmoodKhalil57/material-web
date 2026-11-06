@@ -5,7 +5,7 @@
  */
 
 import {cp, readFile, writeFile} from 'fs/promises';
-import {dirname, join, relative} from 'path';
+import {dirname, join, posix, relative} from 'path';
 import tinyGlob from 'tiny-glob';
 
 /**
@@ -39,7 +39,10 @@ async function copyImages(path = '', includePath = '') {
  * @return A promise of all the markdwon filepaths in /docs/components/
  */
 async function getReadmeFiles(path = '', deep = false) {
-  const readmeFilesGlob = [join('../docs', path, deep ? '/**/' : '', '*.md')];
+  // Globs need forward slashes, also on Windows.
+  const readmeFilesGlob = [
+    posix.join('../docs', path, deep ? '/**/' : '', '*.md'),
+  ];
   const readmeFiles = readmeFilesGlob.map(async (entry) => tinyGlob(entry));
   return (await Promise.all(readmeFiles)).flat();
 }
