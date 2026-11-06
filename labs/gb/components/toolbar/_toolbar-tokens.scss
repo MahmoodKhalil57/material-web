@@ -45,8 +45,8 @@
 @mixin vibrant {
   --button-container-color: var(--md-sys-color-primary-container);
   --container-color: var(--md-sys-color-primary-container);
-  --icon-color: var(--md-sys-color-primary);
-  --label-text-color: var(--md-sys-color-primary);
+  --icon-color: var(--md-sys-color-on-primary-container);
+  --label-text-color: var(--md-sys-color-on-primary-container);
   --selected-button-container-color: var(--md-sys-color-surface-container);
   --selected-icon-color: var(--md-sys-color-on-surface);
   --selected-label-text-color: var(--md-sys-color-on-surface);

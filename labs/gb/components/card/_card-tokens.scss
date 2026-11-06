@@ -23,9 +23,7 @@
 }
 
 @mixin filled-disabled {
-  --container-color: hsl(
-    from var(--md-sys-color-surface-container-highest) h s l / 38%
-  );
+  --container-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
 }
 
 @mixin outlined {
