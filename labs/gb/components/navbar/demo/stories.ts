@@ -13,8 +13,7 @@ import {type NavBarItemLayout} from '@material/web/labs/gb/components/navbar/nav
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
 import {css, html} from 'lit';
 
-import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.css' with {type: 'css'}; // github-only
-// import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js'; // google3-only
+import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 
 /** Knob types for navigation bar stories. */
 export interface StoryKnobs {
