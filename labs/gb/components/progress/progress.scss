@@ -1,0 +1,439 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sass:math';
+@use 'progress-motion' as motion;
+@use 'progress-tokens';
+// go/keep-sorted end
+
+// Animated values (line heads and tails, sweep, wave phase, amplitude) are
+// registered so they interpolate; the drawing is derived from them below.
+@include motion.properties;
+
+@layer md.sys;
+@layer md.comp.progress {
+  // Generated from Jetpack Compose ProgressIndicator.kt and the wavy
+  // progress modifiers (scripts/m3/gen-progress.mjs).
+  @include motion.keyframes;
+
+  .progress {
+    & {
+      @include progress-tokens.root;
+      @include progress-tokens.linear;
+    }
+    &.progress-wavy {
+      @include progress-tokens.linear-with-wave;
+    }
+    &.progress-circular {
+      @include progress-tokens.circular;
+    }
+    &.progress-circular.progress-wavy {
+      @include progress-tokens.circular-with-wave;
+    }
+
+    & {
+      block-size: var(--height);
+      box-sizing: border-box;
+      // Dash lengths need the track width in px: 100cqw.
+      container-type: inline-size;
+      display: block;
+      min-inline-size: 40px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-container {
+      // Shared geometry, as in Compose's draw caches. Unregistered custom
+      // properties substitute the animated values here; `cqw` resolves in
+      // the parts that use them.
+      --_cap: calc(
+        max(var(--active-indicator-thickness), var(--track-thickness)) / 2
+      );
+      --_gap: var(--track-active-indicator-space);
+      --_p: clamp(0, var(--progress), 1);
+      --_w: 100cqw;
+      inset: 0;
+      position: absolute;
+    }
+
+    .progress-track,
+    .progress-stop {
+      background-color: var(--track-color);
+      border-radius: var(--track-shape);
+      position: absolute;
+      top: 50%;
+      translate: 0 -50%;
+    }
+
+    .progress-wave,
+    .progress-ring {
+      overflow: visible;
+    }
+
+    .progress-active {
+      fill: none;
+      stroke: var(--active-indicator-color);
+      stroke-linecap: round;
+    }
+
+    // --- Linear -----------------------------------------------------------
+    &:not(.progress-circular) {
+      .progress-container {
+        // Line fractions: [tail, head] pairs. Determinate is one line from 0.
+        --_h1: var(--_p);
+        --_t1: 0;
+        --_h2: 0;
+        --_t2: 0;
+        --_wavelength: #{motion.$linear-wavelength};
+        // Ends are kept a cap's width inside the track.
+        --_head-1: clamp(
+          var(--_cap),
+          var(--_h1) * var(--_w),
+          var(--_w) - var(--_cap)
+        );
+        --_tail-1: clamp(
+          var(--_cap),
+          var(--_t1) * var(--_w),
+          var(--_w) - var(--_cap)
+        );
+        --_head-2: clamp(
+          var(--_cap),
+          var(--_h2) * var(--_w),
+          var(--_w) - var(--_cap)
+        );
+        --_tail-2: clamp(
+          var(--_cap),
+          var(--_t2) * var(--_w),
+          var(--_w) - var(--_cap)
+        );
+        // Space between the active indicator and the track: the gap shrinks
+        // as the first head enters, plus both caps once it is visible.
+        --_spacing: calc(
+          clamp(0px, var(--_h1) * var(--_w) - var(--_cap), var(--_gap)) +
+            clamp(
+              0px,
+              (var(--_h1) * var(--_w) - var(--_cap)) * 1000,
+              2 * var(--_cap)
+            )
+        );
+        // Where the track resumes before each line (only if it has length).
+        --_k1: clamp(0, (var(--_h1) - var(--_t1)) * 1e6, 1);
+        --_k2: clamp(0, (var(--_h2) - var(--_t2)) * 1e6, 1);
+        --_end-1: calc(
+          var(--_k1) * max(var(--_cap), var(--_tail-1) - var(--_spacing)) +
+            (1 - var(--_k1)) * (var(--_w) - var(--_cap))
+        );
+        --_end-2: calc(
+          var(--_k2) * max(var(--_cap), var(--_tail-2) - var(--_spacing)) +
+            (1 - var(--_k2)) * var(--_end-1)
+        );
+        animation: md-progress-wave motion.$wave-duration linear infinite;
+      }
+
+      // Linear indicators are mirrored for right-to-left.
+      .progress-container:dir(rtl) {
+        rotate: 180deg;
+      }
+
+      // Track segments, drawn right to left around the lines.
+      .progress-track {
+        --_len: calc(var(--_end) - var(--_start));
+        block-size: var(--track-thickness);
+        inline-size: calc(
+          max(0px, var(--_len)) +
+            clamp(0px, var(--_len) * 1000, var(--track-thickness))
+        );
+        left: calc(var(--_start) - var(--track-thickness) / 2);
+      }
+      .progress-track-1 {
+        --_start: calc(var(--_head-1) + var(--_spacing));
+        --_end: calc(var(--_w) - var(--_cap));
+      }
+      .progress-track-2 {
+        --_start: calc(var(--_head-2) + var(--_spacing));
+        --_end: var(--_end-1);
+      }
+      .progress-track-3 {
+        --_start: var(--_cap);
+        --_end: var(--_end-2);
+      }
+
+      .progress-stop {
+        // Shrinks as the head reaches it.
+        --_size: clamp(
+          0px,
+          var(--_w) - var(--stop-indicator-trailing-space) -
+            (var(--_h1) * var(--_w) + var(--_cap)),
+          min(var(--track-thickness), var(--stop-indicator-size))
+        );
+        background-color: var(--stop-indicator-color);
+        block-size: var(--_size);
+        border-radius: var(--stop-indicator-shape);
+        inline-size: var(--_size);
+        right: var(--stop-indicator-trailing-space);
+      }
+
+      .progress-wave {
+        block-size: 100%;
+        inline-size: 100%;
+        inset: 0;
+        position: absolute;
+      }
+
+      // A segment of the wave between tail and head; the wave slides under
+      // it (Compose shifts the segment by the phase and translates it back).
+      .progress-active {
+        d: motion.$linear-flat-path;
+        stroke-dasharray: calc(var(--_head) - var(--_tail)) 100000px;
+        stroke-dashoffset: calc(
+          -1 * (var(--_tail) + var(--_md-progress-wave) * var(--_wavelength))
+        );
+        stroke-width: clamp(
+          0px,
+          (var(--_hf) - var(--_tf)) * 1000000px,
+          var(--active-indicator-thickness)
+        );
+        translate: calc(-1 * var(--_md-progress-wave) * var(--_wavelength))
+          calc(var(--height) / 2);
+      }
+      .progress-active-1 {
+        --_head: var(--_head-1);
+        --_hf: var(--_h1);
+        --_tail: var(--_tail-1);
+        --_tf: var(--_t1);
+      }
+      .progress-active-2 {
+        --_head: var(--_head-2);
+        --_hf: var(--_h2);
+        --_tail: var(--_tail-2);
+        --_tf: var(--_t2);
+      }
+
+      .progress-ring {
+        display: none;
+      }
+    }
+
+    &:not(.progress-circular).progress-determinate {
+      .progress-active-2,
+      .progress-track-2,
+      .progress-track-3 {
+        display: none;
+      }
+    }
+
+    &:not(.progress-circular):not(.progress-determinate) {
+      .progress-container {
+        --_h1: var(--_md-progress-head-1);
+        --_t1: var(--_md-progress-tail-1);
+        --_h2: var(--_md-progress-head-2);
+        --_t2: var(--_md-progress-tail-2);
+        --_wavelength: #{motion.$linear-indeterminate-wavelength};
+        animation:
+          md-progress-linear-head-1 motion.$linear-duration linear infinite,
+          md-progress-linear-tail-1 motion.$linear-duration linear infinite,
+          md-progress-linear-head-2 motion.$linear-duration linear infinite,
+          md-progress-linear-tail-2 motion.$linear-duration linear infinite,
+          md-progress-wave motion.$wave-duration linear infinite;
+      }
+      .progress-stop {
+        display: none;
+      }
+    }
+
+    &.progress-wavy:not(.progress-circular):not(.progress-determinate)
+      .progress-active {
+      d: motion.$linear-indeterminate-wavy-path;
+    }
+
+    // --- Circular ---------------------------------------------------------
+    &.progress-circular {
+      & {
+        align-items: center;
+        block-size: var(--size);
+        container-type: normal;
+        display: inline-flex;
+        flex: none;
+        inline-size: var(--size);
+        justify-content: center;
+        min-inline-size: 0;
+        overflow: visible;
+        vertical-align: middle;
+      }
+
+      .progress-container {
+        // The track circle, in view box units (px at the spec size).
+        --_box: #{math.div(motion.$circular-wave-size, 2)};
+        --_c: calc(
+          2 * pi * (var(--_box) - var(--active-indicator-thickness) / 2)
+        );
+        align-items: center;
+        animation: md-progress-wave motion.$circular-wave-duration linear
+          infinite;
+        display: flex;
+        justify-content: center;
+      }
+
+      .progress-track,
+      .progress-stop,
+      .progress-wave {
+        display: none;
+      }
+
+      .progress-ring {
+        block-size: var(--size);
+        flex: none;
+        inline-size: var(--size);
+      }
+
+      .progress-ring-track,
+      .progress-active {
+        transform-box: view-box;
+        transform-origin: 0 0;
+      }
+
+      .progress-ring-track {
+        // Compose cuts the track from the end of the progress plus the
+        // spacing, back to the spacing before the start.
+        --_stop: calc(var(--_p) * var(--_c));
+        --_spacing: calc(
+          2 * min(var(--_stop), var(--_cap)) + min(var(--_stop), var(--_gap))
+        );
+        --_len: calc(var(--_c) - 2 * var(--_spacing) - var(--_stop));
+        fill: none;
+        r: calc(var(--_box) - var(--active-indicator-thickness) / 2);
+        // Start at 12 o'clock, like the active indicator.
+        rotate: -90deg;
+        stroke: var(--track-color);
+        stroke-dasharray: max(0px, var(--_len)) calc(2 * var(--_c));
+        stroke-dashoffset: calc(-1 * (var(--_stop) + var(--_spacing)));
+        stroke-linecap: round;
+        stroke-width: clamp(
+          0px,
+          var(--_len) * 1000,
+          var(--track-thickness)
+        );
+      }
+
+      // pathLength is 100. The wave turns under a fixed segment.
+      .progress-active {
+        d: motion.$circular-wavy-path;
+        rotate: calc(var(--_md-progress-wave) * -360deg);
+        stroke-dasharray: calc(var(--_p) * 100) calc(100 - var(--_p) * 100);
+        stroke-dashoffset: calc(var(--_md-progress-wave) * -100);
+        stroke-width: clamp(
+          0px,
+          var(--_p) * 1000000px,
+          var(--active-indicator-thickness)
+        );
+      }
+    }
+
+    &.progress-circular:not(.progress-wavy) {
+      .progress-container {
+        --_box: #{math.div(motion.$circular-size, 2)};
+      }
+      // The view box is sized for the wavy indicator.
+      .progress-ring {
+        block-size: calc(
+          var(--size) * #{math.div(motion.$circular-wave-size, motion.$circular-size)}
+        );
+        inline-size: calc(
+          var(--size) * #{math.div(motion.$circular-wave-size, motion.$circular-size)}
+        );
+      }
+      .progress-active {
+        d: motion.$circular-flat-path;
+      }
+    }
+
+    &.progress-circular:not(.progress-determinate) {
+      .progress-container {
+        --_p: var(--_md-progress-sweep);
+        animation:
+          md-progress-circular-rotate motion.$global-rotation-duration linear
+            infinite,
+          md-progress-circular-sweep motion.$circular-duration linear infinite,
+          md-progress-wave motion.$circular-wave-duration linear infinite;
+      }
+      .progress-ring {
+        animation: md-progress-circular-rotate-steps motion.$circular-duration
+          linear infinite;
+      }
+    }
+
+    // --- Wave amplitude ---------------------------------------------------
+    // Compose flattens determinate waves at or below 10% and at or above 95%
+    // progress, animating the amplitude in and out with different easings
+    // (and not on first draw): a `d` transition between a flat and a wavy
+    // path, picked by a style query on the 0/1 amplitude.
+    &.progress-determinate.progress-wavy {
+      .progress-container {
+        --_md-progress-wavy: calc(
+          clamp(0, (var(--_p) - #{motion.$amplitude-min-progress}) * 1e9, 1) *
+            clamp(0, (#{motion.$amplitude-max-progress} - var(--_p)) * 1e9, 1)
+        );
+      }
+      .progress-active {
+        transition: d motion.$amplitude-duration
+          motion.$amplitude-decreasing-easing;
+      }
+    }
+    &.progress-circular.progress-determinate.progress-wavy
+      .progress-active {
+      d: motion.$circular-wavy-flat-path;
+    }
+  }
+
+  @container style(--_md-progress-wavy: 1) {
+    .progress.progress-determinate.progress-wavy .progress-active {
+      d: motion.$linear-wavy-path;
+      transition: d motion.$amplitude-duration
+        motion.$amplitude-increasing-easing;
+    }
+    .progress.progress-circular.progress-determinate.progress-wavy
+      .progress-active {
+      d: motion.$circular-wavy-path;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    // Keep showing activity, without the travelling wave or amplitude motion.
+    .progress {
+      &.progress-determinate.progress-wavy .progress-active {
+        transition: none;
+      }
+      &:not(.progress-circular) .progress-container {
+        animation: none;
+      }
+      &:not(.progress-circular):not(.progress-determinate) .progress-container {
+        animation:
+          md-progress-linear-head-1 motion.$linear-duration linear infinite,
+          md-progress-linear-tail-1 motion.$linear-duration linear infinite,
+          md-progress-linear-head-2 motion.$linear-duration linear infinite,
+          md-progress-linear-tail-2 motion.$linear-duration linear infinite;
+      }
+      &.progress-circular .progress-container {
+        animation: none;
+      }
+      &.progress-circular:not(.progress-determinate) .progress-container {
+        animation:
+          md-progress-circular-rotate motion.$global-rotation-duration linear
+            infinite,
+          md-progress-circular-sweep motion.$circular-duration linear infinite;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .progress {
+      --active-indicator-color: CanvasText;
+      --stop-indicator-color: CanvasText;
+      --track-color: GrayText;
+      forced-color-adjust: none;
+    }
+  }
+}

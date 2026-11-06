@@ -1,0 +1,43 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+@mixin root {
+  // LINT.IfChange
+  --active-indicator-color: var(--md-sys-color-primary);
+  --progress: 0;
+  --stop-indicator-color: var(--md-sys-color-primary);
+  --stop-indicator-shape: var(--md-sys-shape-corner-full);
+  --track-color: var(--md-sys-color-secondary-container);
+  --track-shape: var(--md-sys-shape-corner-full);
+  // LINT.ThenChange(progress-element.ts) keep in sync with `@cssprop` jsdoc tags
+}
+
+// Flat linear indicator.
+@mixin linear {
+  --active-indicator-thickness: 4px;
+  --height: 4px;
+  --stop-indicator-size: 4px;
+  --stop-indicator-trailing-space: var(--md-sys-space-0);
+  --track-active-indicator-space: var(--md-sys-space-50);
+  --track-thickness: 4px;
+}
+
+// Wavy linear indicators are taller to fit the wave.
+@mixin linear-with-wave {
+  --height: 10px;
+}
+
+// Flat circular indicator.
+@mixin circular {
+  --active-indicator-thickness: 4px;
+  --size: 40px;
+  --track-active-indicator-space: var(--md-sys-space-50);
+  --track-thickness: 4px;
+}
+
+// Wavy circular indicators are larger to fit the wave.
+@mixin circular-with-wave {
+  --size: 48px;
+}
