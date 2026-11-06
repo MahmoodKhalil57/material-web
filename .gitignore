@@ -28,3 +28,6 @@ catalog/site/about/images
 catalog/stories/*/
 !catalog/stories/components/
 !catalog/src/types/**/*.d.ts
+
+# Local m3.material.io spec mirror (scripts/download-m3-specs.mjs)
+.m3-specs/

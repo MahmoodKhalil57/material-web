@@ -34,7 +34,8 @@
     "update-docs": "wireit",
     "update-docs:components": "wireit",
     "update-docs:sass-ext": "wireit",
-    "update-size": "wireit"
+    "update-size": "wireit",
+    "m3:update": "node scripts/m3/update.mjs"
   },
   "type": "module",
   "customElements": "custom-elements.json",
