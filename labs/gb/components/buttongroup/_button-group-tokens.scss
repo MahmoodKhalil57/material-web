@@ -7,30 +7,11 @@
   // LINT.IfChange
   --between-space: 8px;
   --pressed-item-width-multiplier: 1.15;
-  --motion-spring-fast-spatial: linear(
-    0,
-    0.099,
-    0.317,
-    0.561,
-    0.775,
-    0.934,
-    1.034,
-    1.083,
-    1.095,
-    1.084,
-    1.063,
-    1.04,
-    1.02,
-    1.005,
-    0.996,
-    0.992,
-    0.991,
-    0.992,
-    0.994,
-    0.996,
-    1
+  // Generated from md.sys.motion.spring.fast.spatial (scripts/m3/gen-motion.mjs).
+  --motion-spring-fast-spatial: var(--md-sys-motion-spring-fast-spatial);
+  --motion-spring-fast-spatial-duration: var(
+    --md-sys-motion-spring-fast-spatial-duration
   );
-  --motion-spring-fast-spatial-duration: 350ms;
   --inner-corner-size: var(--md-sys-shape-corner-sm);
   --pressed-inner-corner-size: var(--md-sys-shape-corner-xs);
   --outer-corner-size: calc(var(--container-height) / 2);
