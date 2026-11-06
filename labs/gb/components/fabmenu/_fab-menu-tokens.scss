@@ -1,0 +1,89 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// Set on the FAB menu and inherited by the toggle FAB and the items.
+@mixin root {
+  // LINT.IfChange
+  --close-button-between-space: 8px;
+  --close-button-container-elevation: var(--md-sys-elevation-shadow-3);
+  --close-button-container-height: 56px;
+  --close-button-container-shape: var(--md-sys-shape-corner-full);
+  --close-button-container-width: 56px;
+  --close-button-icon-size: 20px;
+  --item-between-space: 4px;
+  --item-container-elevation: var(--md-sys-elevation-shadow-0);
+  --item-container-height: 56px;
+  --item-container-shape: var(--md-sys-shape-corner-full);
+  --item-icon-label-space: 8px;
+  --item-icon-size: 24px;
+  --item-label-text: var(--md-sys-typescale-title-md);
+  --item-label-text-axes: var(--md-sys-typescale-title-md-axes);
+  --item-label-text-tracking: var(--md-sys-typescale-title-md-tracking);
+  --item-leading-space: 24px;
+  --item-trailing-space: 24px;
+  // LINT.ThenChange(fab-menu-element.ts) keep in sync with `@cssprop` jsdoc tags
+}
+
+// Menu item colors (md.comp.fab-menu.<color>-container.list-item).
+@mixin primary-container {
+  --item-container-color: var(--md-sys-color-primary-container);
+  --item-icon-color: var(--md-sys-color-on-primary-container);
+  --item-label-text-color: var(--md-sys-color-on-primary-container);
+}
+
+@mixin secondary-container {
+  --item-container-color: var(--md-sys-color-secondary-container);
+  --item-icon-color: var(--md-sys-color-on-secondary-container);
+  --item-label-text-color: var(--md-sys-color-on-secondary-container);
+}
+
+@mixin tertiary-container {
+  --item-container-color: var(--md-sys-color-tertiary-container);
+  --item-icon-color: var(--md-sys-color-on-tertiary-container);
+  --item-label-text-color: var(--md-sys-color-on-tertiary-container);
+}
+
+// Menu item states, on the item.
+@mixin list-item-hovered {
+  --container-elevation: var(--md-sys-elevation-shadow-4);
+}
+
+@mixin list-item-focused {
+  --container-elevation: var(--md-sys-elevation-shadow-3);
+}
+
+@mixin list-item-pressed {
+  --container-elevation: var(--md-sys-elevation-shadow-3);
+}
+
+// Close button colors (md.comp.fab-menu.<color>.close-button), on the toggle
+// FAB while the menu is open. These are FAB properties (see fab-element.ts).
+@mixin primary-close-button {
+  --container-color: var(--md-sys-color-primary);
+  --icon-color: var(--md-sys-color-on-primary);
+}
+
+@mixin secondary-close-button {
+  --container-color: var(--md-sys-color-secondary);
+  --icon-color: var(--md-sys-color-on-secondary);
+}
+
+@mixin tertiary-close-button {
+  --container-color: var(--md-sys-color-tertiary);
+  --icon-color: var(--md-sys-color-on-tertiary);
+}
+
+// Close button states, on the toggle FAB while the menu is open.
+@mixin close-button-hovered {
+  --container-elevation: var(--md-sys-elevation-shadow-4);
+}
+
+@mixin close-button-focused {
+  --container-elevation: var(--md-sys-elevation-shadow-3);
+}
+
+@mixin close-button-pressed {
+  --container-elevation: var(--md-sys-elevation-shadow-3);
+}

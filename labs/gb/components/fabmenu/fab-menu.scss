@@ -1,0 +1,352 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sass:list';
+@use 'fab-menu-motion' as motion;
+@use 'fab-menu-tokens';
+// go/keep-sorted end
+
+@function spring($name) {
+  @return var(--md-sys-motion-spring-#{$name});
+}
+@function duration($name) {
+  @return var(--md-sys-motion-spring-#{$name}-duration);
+}
+
+// Toggle FAB `checkedProgress` (Compose ToggleFloatingActionButton).
+$toggle: duration(motion.$toggle-spring) spring(motion.$toggle-spring);
+// Per-item delay, set by the stagger rules below.
+$delay: var(--fab-menu-item-delay, 0s);
+$item-width: duration(motion.$item-width-spring)
+  spring(motion.$item-width-spring) $delay;
+$item-opacity: duration(motion.$item-opacity-spring)
+  spring(motion.$item-opacity-spring) $delay;
+// An item is hidden once its alpha spring settles at 0.
+$item-hide-delay: calc(#{$delay} + #{duration(motion.$item-opacity-spring)});
+$ripple: var(--ripple-transition, all 0s);
+$elevation: 150ms linear;
+// clip-path animates the reveal where calc-size() is unsupported.
+$item-transition: (
+  $ripple,
+  inline-size $item-width,
+  clip-path $item-width,
+  opacity $item-opacity,
+  box-shadow $elevation
+);
+
+// The element that is a child of the list (the item itself, or an item
+// element's host) is hidden from everyone once its exit animation ends. It is
+// visible as soon as the menu opens (still 0 wide and transparent until its
+// stagger delay) so that it can be focused right away.
+@mixin item-visibility($transition: null) {
+  visibility: hidden;
+  @if $transition {
+    transition: $transition, visibility 0s $item-hide-delay;
+  } @else {
+    transition: visibility 0s $item-hide-delay;
+  }
+
+  .fab-menu-open & {
+    visibility: visible;
+    @if $transition {
+      transition: $transition;
+    } @else {
+      transition: none;
+    }
+  }
+}
+
+// The FAB layer must come first so the menu can restyle the toggle FAB.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.fab;
+@layer md.comp.fab-menu {
+  .fab-menu {
+    & {
+      @include fab-menu-tokens.root;
+    }
+    &.fab-menu-primary {
+      @include fab-menu-tokens.primary-container;
+    }
+    &.fab-menu-secondary {
+      @include fab-menu-tokens.secondary-container;
+    }
+    &.fab-menu-tertiary {
+      @include fab-menu-tokens.tertiary-container;
+    }
+
+    // Items read the open state through this inherited property, so it also
+    // reaches items rendered in their own shadow root.
+    & {
+      --fab-menu-expanded: 0;
+      --fab-menu-align: flex-end;
+      // Which side an item is revealed from without calc-size() (1 = left).
+      --fab-menu-reveal-left: 1;
+      align-items: flex-end;
+      display: inline-flex;
+      flex-direction: column;
+      position: relative;
+      vertical-align: bottom;
+    }
+    &.fab-menu-open {
+      --fab-menu-expanded: 1;
+    }
+    &.fab-menu-start {
+      --fab-menu-align: flex-start;
+      --fab-menu-reveal-left: 0;
+      align-items: flex-start;
+    }
+    &:dir(rtl) {
+      --fab-menu-reveal-left: 0;
+    }
+    &.fab-menu-start:dir(rtl) {
+      --fab-menu-reveal-left: 1;
+    }
+  }
+
+  // Items stack above the FAB, `close-button.between-space` above the top of
+  // the FAB's box (where the close button is anchored), and do not take part
+  // in layout so the closed menu is the size of its FAB.
+  .fab-menu-list {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    gap: var(--item-between-space);
+    inline-size: max-content;
+    inset-block-end: calc(100% + var(--close-button-between-space));
+    inset-inline: auto 0;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    position: absolute;
+
+    .fab-menu-start & {
+      align-items: flex-start;
+      inset-inline: 0 auto;
+    }
+  }
+
+  // The toggle FAB: a `.fab` that morphs into the close button.
+  .fab-menu-button {
+    & {
+      // Compose anchors the close button to the FAB box's top-end corner: the
+      // margins keep the box (and the items above it) in place while the
+      // button resizes.
+      display: inline-grid;
+      flex: none;
+      height: var(--container-height);
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      place-items: center;
+      width: var(--container-height);
+      transition:
+        $ripple,
+        width $toggle,
+        height $toggle,
+        margin $toggle,
+        border-radius $toggle,
+        background-color $toggle,
+        color $toggle,
+        box-shadow $toggle,
+        --md-icon-size $toggle,
+        --md-icon-color $toggle;
+    }
+
+    .fab-menu-open & {
+      --container-elevation: var(--close-button-container-elevation);
+      --icon-size: var(--close-button-icon-size);
+      --label-text-color: var(--icon-color);
+      border-radius: min(
+        var(--close-button-container-shape),
+        calc(var(--close-button-container-height) / 2)
+      );
+      height: var(--close-button-container-height);
+      margin-block-end: calc(
+        var(--container-height) - var(--close-button-container-height)
+      );
+      margin-inline-start: calc(
+        var(--container-height) - var(--close-button-container-width)
+      );
+      width: var(--close-button-container-width);
+    }
+    .fab-menu-primary.fab-menu-open & {
+      @include fab-menu-tokens.primary-close-button;
+    }
+    .fab-menu-secondary.fab-menu-open & {
+      @include fab-menu-tokens.secondary-close-button;
+    }
+    .fab-menu-tertiary.fab-menu-open & {
+      @include fab-menu-tokens.tertiary-close-button;
+    }
+    .fab-menu-open &:is(:hover, .hover) {
+      @include fab-menu-tokens.close-button-hovered;
+    }
+    .fab-menu-open &:is(:focus-visible, .focus-visible) {
+      @include fab-menu-tokens.close-button-focused;
+    }
+    .fab-menu-open &:is(:active, .active) {
+      @include fab-menu-tokens.close-button-pressed;
+    }
+  }
+
+  // Compose switches the icon at 50% checked progress.
+  .fab-menu-button-icon,
+  .fab-menu-button-close-icon {
+    color: var(--md-icon-color, currentColor);
+    display: inline-flex;
+    grid-area: 1 / 1;
+    transition: opacity 0s linear motion.$icon-swap-delay;
+  }
+  .fab-menu-button-close-icon,
+  .fab-menu-open .fab-menu-button-icon {
+    opacity: 0;
+  }
+  .fab-menu-open .fab-menu-button-close-icon {
+    opacity: 1;
+  }
+
+  // Fallback icon font, for icons given as ligature text.
+  .fab-menu-icon-font {
+    font-family: var(--md-icon-font);
+    font-feature-settings: 'liga';
+    font-size: var(--md-icon-size);
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  // A menu item. Compose grows the item's width from 0 with a spring (it may
+  // overshoot), keeping its content against the aligned edge, and fades it
+  // in. Padding is drawn with pseudo-elements so the width can reach 0.
+  .fab-menu-item {
+    &:is(:hover, .hover) {
+      @include fab-menu-tokens.list-item-hovered;
+    }
+    &:is(:focus-visible, .focus-visible),
+    :host(:focus-visible) &.focus-ring-host {
+      @include fab-menu-tokens.list-item-focused;
+    }
+    &:is(:active, .active) {
+      @include fab-menu-tokens.list-item-pressed;
+    }
+
+    & {
+      --container-elevation: var(--item-container-elevation);
+      --md-icon-color: var(--item-icon-color);
+      --md-icon-size: var(--item-icon-size);
+      align-items: center;
+      appearance: none;
+      background-color: var(--item-container-color);
+      block-size: var(--item-container-height);
+      border: none;
+      border-radius: var(--item-container-shape);
+      box-shadow: var(--container-elevation);
+      box-sizing: border-box;
+      color: var(--item-label-text-color);
+      cursor: pointer;
+      display: flex;
+      flex: none;
+      font: var(--item-label-text);
+      font-variation-settings: var(--item-label-text-axes);
+      gap: var(--item-icon-label-space);
+      inline-size: calc-size(
+        max-content,
+        max(size, var(--item-container-height)) * var(--fab-menu-expanded)
+      );
+      justify-content: var(--fab-menu-align, flex-end);
+      letter-spacing: var(--item-label-text-tracking);
+      margin: 0;
+      opacity: var(--fab-menu-expanded);
+      overflow: hidden;
+      padding: 0;
+      text-decoration: none;
+      white-space: nowrap;
+      -webkit-font-smoothing: antialiased;
+      animation: var(--ripple-animation, none), var(--focus-ring-animation, none);
+      transition: $item-transition;
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      flex: none;
+    }
+    &::before {
+      inline-size: calc(var(--item-leading-space) - var(--item-icon-label-space));
+    }
+    &::after {
+      inline-size: calc(var(--item-trailing-space) - var(--item-icon-label-space));
+    }
+
+    // Icons and labels keep their size while the item is narrower.
+    & > * {
+      flex: none;
+    }
+  }
+
+  .fab-menu-list > .fab-menu-item {
+    @include item-visibility($item-transition);
+  }
+  .fab-menu-list ::slotted(*) {
+    @include item-visibility;
+  }
+
+  // Stagger (Compose: an Int spring counts visible items). Delays are per
+  // item count, the top item first: bottom-up when opening and top-down when
+  // closing. Items are counted among `.fab-menu-item` siblings, or among the
+  // default-slotted children of an element.
+  @each $open, $delays in (true: motion.$enter-delays, false: motion.$exit-delays) {
+    $menu: '.fab-menu:not(.fab-menu-open)';
+    @if $open {
+      $menu: '.fab-menu-open';
+    }
+    @each $count, $list in $delays {
+      @for $i from 1 through $count {
+        $j: $count - $i + 1;
+        #{$menu} .fab-menu-list > .fab-menu-item:nth-child(#{$i} of .fab-menu-item):nth-last-child(#{$j} of .fab-menu-item),
+        #{$menu} .fab-menu-list ::slotted(:nth-child(#{$i} of :not([slot])):nth-last-child(#{$j} of :not([slot]))) {
+          --fab-menu-item-delay: #{list.nth($list, $i)};
+        }
+      }
+    }
+  }
+
+  // Without calc-size(), reveal the item with a clip instead (no overshoot).
+  @supports not (inline-size: calc-size(max-content, size)) {
+    .fab-menu-item {
+      --_hidden: calc((1 - var(--fab-menu-expanded)) * 100%);
+      clip-path: inset(
+        0 calc(var(--_hidden) * (1 - var(--fab-menu-reveal-left))) 0
+          calc(var(--_hidden) * var(--fab-menu-reveal-left)) round
+          var(--item-container-shape)
+      );
+      inline-size: auto;
+      min-inline-size: var(--item-container-height);
+    }
+  }
+
+  // Reduced motion: every duration and delay derives from the spring
+  // durations, so zeroing them makes every change immediate.
+  @media (prefers-reduced-motion: reduce) {
+    .fab-menu {
+      $springs: ();
+      @each $spring
+        in (
+          motion.$toggle-spring,
+          motion.$item-width-spring,
+          motion.$item-opacity-spring,
+          motion.$stagger-spring
+        )
+      {
+        @if not list.index($springs, $spring) {
+          $springs: list.append($springs, $spring);
+          --md-sys-motion-spring-#{$spring}-duration: 0s;
+        }
+      }
+    }
+  }
+}
+
