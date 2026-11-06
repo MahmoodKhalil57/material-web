@@ -106,7 +106,9 @@ async function fileIncludeTransform(filepath, fileContents) {
     const includePath = match[1];
 
     console.log(`Injecting ${includePath} file contents into ${filepath}...`);
-    const includeContents = await readFile(join(fileDir, includePath), 'utf8');
+    const includeContents = (
+      await readFile(join(fileDir, includePath), 'utf8')
+    ).replace(/\r\n/g, '\n');
 
     fileContents = fileContents.slice(0, match.index) + includeContents +
         fileContents.slice(match.index + matchedString.length);
@@ -125,7 +127,8 @@ async function fileIncludeTransform(filepath, fileContents) {
  */
 async function transformReadmes(filepaths, outdir = '', replacements = []) {
   const readmePromises = filepaths.map(async (entry) => {
-    let readme = await readFile(entry, 'utf8');
+    // The transforms match \n line endings; Windows checkouts use \r\n.
+    let readme = (await readFile(entry, 'utf8')).replace(/\r\n/g, '\n');
     console.log(`Transforming ${entry}`);
 
     transforms.forEach((transform) => {
