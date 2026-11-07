@@ -9,7 +9,7 @@
 
 // Compose Scaffold: the FAB sits 16dp from the end edge and above the bottom
 // bar (FabSpacing); the snackbar sits above the FAB.
-$_fab-spacing: 16px;
+$_fab-spacing: var(--md-sys-space-200);
 
 @layer md.sys;
 @layer md.comp.app-scaffold {

@@ -24,6 +24,11 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
+import {
+  SCROLL_THRESHOLD,
+  type ScrollStep,
+  stepScroll,
+} from '../../../components/shared/scroll-behavior.js';
 
 /** Changes the DOM from the old state to the new one. */
 export type TransitionUpdate = () => void | Promise<void>;
@@ -185,6 +190,8 @@ const FALLBACK = {
   'fade-through': {duration: 450, easing: 'cubic-bezier(0.2, 0, 0, 1)'},
   lateral: {duration: 500, easing: 'cubic-bezier(0.2, 0, 0, 1)'},
   reduced: {duration: 200, easing: 'cubic-bezier(0.2, 0, 0, 1)'},
+  enter: {duration: 400, easing: 'cubic-bezier(0.05, 0.7, 0.1, 1)'},
+  exit: {duration: 200, easing: 'cubic-bezier(0.3, 0, 0.8, 0.15)'},
 } as const;
 
 type TimingName = keyof typeof FALLBACK;
@@ -955,4 +962,216 @@ export function exit(
 /** Removes the enter and exit classes. */
 export function clearEnterExit(element: Element) {
   element.classList.remove(...Object.values(TRANSITION_CLASSES));
+}
+
+/** Options of {@link scrollEnterExit}. */
+export interface ScrollEnterExitOptions {
+  /**
+   * The scrolling element, or its id. Defaults to the window. An id that is
+   * not found falls back to the window.
+   */
+  target?: Element | Window | string | null;
+  /**
+   * The screen edge the element slides toward when it hides. Defaults to
+   * `top` (a top app bar). Use `bottom` for a navigation bar, `start` for a
+   * rail.
+   */
+  origin?: Exclude<TransitionOrigin, 'center'>;
+  /** Scroll distance (px) in one direction before it hides or reveals. */
+  threshold?: number;
+  /** An extra reason to keep the element visible. */
+  keepVisible?: () => boolean;
+  /** Called when the element starts to hide or reveal. */
+  onChange?: (hidden: boolean) => void;
+  /** Defaults to the `prefers-reduced-motion: reduce` media query. */
+  reducedMotion?: boolean;
+}
+
+/** Controls a {@link scrollEnterExit} element. */
+export interface ScrollEnterExitHandle {
+  /** Whether the element is hidden by scrolling. */
+  readonly hidden: boolean;
+  /** Reveals the element with the enter motion. */
+  show(): Promise<void>;
+  /** Hides the element with the exit motion. */
+  hide(): Promise<void>;
+  /** Stops listening and reveals the element without motion. */
+  destroy(): void;
+}
+
+/**
+ * Enter and exit beyond the screen bounds, driven by a scroll gesture
+ * (spec: "Components can enter and exit from beyond the screen bounds based on
+ * a scroll gesture"). Scrolling down slides the element off its edge with the
+ * exit motion; scrolling up, or reaching the top, slides it back with the
+ * enter motion. The element should be sticky or fixed at that edge.
+ *
+ * The scroll rules are those of the app bar and navigation bar
+ * (`stepScroll()`), so every scroll-hiding bar behaves alike. The element
+ * never hides while focus is inside it, and reveals when focus moves into it,
+ * so focus is not obscured. A hidden element is `inert` (nothing off screen
+ * takes focus). With reduced motion, sliding becomes a quick fade.
+ */
+export function scrollEnterExit(
+  element: HTMLElement,
+  options: ScrollEnterExitOptions = {},
+): ScrollEnterExitHandle {
+  const {origin = 'top', threshold = SCROLL_THRESHOLD} = options;
+  const motion: EnterExitOptions = {
+    style: 'slide',
+    origin,
+    temporary: true,
+    reducedMotion: options.reducedMotion,
+  };
+  let step: ScrollStep = {y: 0, hidden: false, travel: 0};
+  let focusInside = false;
+  let destroyed = false;
+
+  const target = options.target;
+  const source: Element | Window =
+    typeof target === 'string'
+      ? ((
+          element.getRootNode() as Document | ShadowRoot
+        ).getElementById?.(target) ??
+        document.getElementById(target) ??
+        window)
+      : (target ?? window);
+  const position = () =>
+    source instanceof Element
+      ? source.scrollTop
+      : window.scrollY || document.documentElement.scrollTop || 0;
+
+  const apply = (hidden: boolean): Promise<void> => {
+    step = {...step, hidden, travel: 0};
+    options.onChange?.(hidden);
+    element.inert = hidden;
+    return hidden ? exit(element, motion) : enter(element, motion);
+  };
+
+  const onScroll = () => {
+    const canHide = !(focusInside || options.keepVisible?.());
+    const next = stepScroll(step, position(), canHide, threshold);
+    const changed = next.hidden !== step.hidden;
+    step = next;
+    if (changed) {
+      void apply(next.hidden);
+    }
+  };
+  const onFocusIn = () => {
+    focusInside = true;
+    if (step.hidden) void apply(false);
+  };
+  const onFocusOut = (event: FocusEvent) => {
+    const next = event.relatedTarget as Node | null;
+    focusInside = Boolean(next && element.contains(next));
+  };
+
+  step = {...step, y: position()};
+  source.addEventListener('scroll', onScroll, {passive: true});
+  element.addEventListener('focusin', onFocusIn);
+  element.addEventListener('focusout', onFocusOut);
+
+  return {
+    get hidden() {
+      return step.hidden;
+    },
+    show: () => (step.hidden ? apply(false) : Promise.resolve()),
+    hide: () => (step.hidden ? Promise.resolve() : apply(true)),
+    destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      source.removeEventListener('scroll', onScroll);
+      element.removeEventListener('focusin', onFocusIn);
+      element.removeEventListener('focusout', onFocusOut);
+      element.inert = false;
+      clearEnterExit(element);
+      step = {...step, hidden: false};
+    },
+  };
+}
+
+/** Options of {@link coplanar}. */
+export interface CoplanarOptions {
+  /**
+   * The axis the element grows along: `inline` (a side sheet) or `block` (a
+   * panel above or below the content). Defaults to `inline`.
+   */
+  axis?: 'inline' | 'block';
+  /** Overrides the enter or exit duration (ms). */
+  duration?: number;
+  /** Overrides the enter or exit easing. */
+  easing?: string;
+  /** Defaults to the `prefers-reduced-motion: reduce` media query. */
+  reducedMotion?: boolean;
+}
+
+const coplanarRuns = new WeakMap<Element, Animation>();
+const coplanarOverflow = new WeakMap<Element, string>();
+
+/**
+ * Enter and exit of a coplanar component: one that sits at the same elevation
+ * as the main content, so the content shrinks while it opens and grows back
+ * while it closes (spec: "Coplanar sheets shrink the available area for
+ * content"). The element grows from zero to its natural size along `axis`
+ * with the enter motion and shrinks back with the exit motion, so a flex or
+ * grid sibling resizes with it frame by frame. The element is clipped while
+ * it moves.
+ *
+ * Opening shows the element (`hidden = false`); closing sets `hidden = true`
+ * when the motion ends, so it takes no space. With reduced motion the size
+ * changes at once and only an opacity fade plays. A call while another is
+ * running replaces it; the replaced call resolves at once.
+ *
+ * `md-gb-side-sheet` does this itself (its host width follows `open`); use
+ * this for other panels.
+ */
+export async function coplanar(
+  element: HTMLElement,
+  open: boolean,
+  options: CoplanarOptions = {},
+): Promise<void> {
+  if (coplanarRuns.has(element)) {
+    coplanarRuns.get(element)!.cancel();
+  } else {
+    coplanarOverflow.set(element, element.style.overflow);
+  }
+  const block = options.axis === 'block';
+  const reduced = isReduced(options);
+  const timing = transitionTiming(
+    reduced ? 'reduced' : open ? 'enter' : 'exit',
+    element,
+    options,
+  );
+  if (open) {
+    element.hidden = false;
+  }
+  // Measure the natural size (a cancelled run no longer holds it at zero).
+  const rect = element.getBoundingClientRect();
+  const size = `${block ? rect.height : rect.width}px`;
+  const property = block ? 'blockSize' : 'inlineSize';
+  const frames: Keyframe[] = reduced
+    ? open
+      ? [{opacity: 0}, {opacity: 1}]
+      : [{opacity: 1}, {opacity: 0}]
+    : open
+      ? [{[property]: '0px'}, {[property]: size}]
+      : [{[property]: size}, {[property]: '0px'}];
+  element.style.overflow = 'clip';
+  const animation = element.animate(frames, {
+    ...timing,
+    // Closing holds the end state until `hidden` takes over.
+    fill: open ? 'none' : 'forwards',
+  });
+  coplanarRuns.set(element, animation);
+  try {
+    await animation.finished;
+  } catch {
+    return; // Replaced by a newer call.
+  }
+  coplanarRuns.delete(element);
+  element.style.overflow = coplanarOverflow.get(element) ?? '';
+  if (!open) {
+    element.hidden = true;
+    animation.cancel();
+  }
 }

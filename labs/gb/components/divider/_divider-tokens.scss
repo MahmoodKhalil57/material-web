@@ -8,8 +8,8 @@
   --color: var(--md-sys-color-outline-variant);
   --thickness: 1px;
   // EDIT: Spec Measurements, divider inset left margin (16dp).
-  --inset-leading-space: 16px;
+  --inset-leading-space: var(--md-sys-space-200);
   // EDIT: Spec Measurements, divider middle-inset right margin (16dp).
-  --inset-trailing-space: 16px;
+  --inset-trailing-space: var(--md-sys-space-200);
   // LINT.ThenChange(md-divider.ts) keep in sync with `@cssprop` jsdoc tags
 }

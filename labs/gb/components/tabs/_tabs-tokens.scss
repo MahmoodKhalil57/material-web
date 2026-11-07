@@ -27,13 +27,13 @@
   // EDIT: No upstream Spec token. Horizontal inset per side from design spec.
   --active-indicator-inset: 2px;
   // EDIT: No upstream Spec token. Secondary inline icon-to-label gap from Figma.
-  --icon-label-space: 8px;
+  --icon-label-space: var(--md-sys-space-100);
   // EDIT: No upstream Spec token. Stacked icon-to-label gap from Figma.
-  --stacked-icon-label-space: 2px;
+  --stacked-icon-label-space: var(--md-sys-space-25);
   // EDIT: No upstream Spec token. Inline space before badge from design spec.
-  --badge-space: 4px;
+  --badge-space: var(--md-sys-space-50);
   // EDIT: No upstream Spec token. Inset for badge anchored to icon from design spec.
-  --icon-badge-inset: 6px;
+  --icon-badge-inset: var(--md-sys-space-75);
   // md.comp.primary-navigation-tab.container.color
   --container-color: var(--md-sys-color-surface);
   // md.comp.primary-navigation-tab.container.height
@@ -55,11 +55,11 @@
   // EDIT: No upstream Spec token. Optical clearance between ring and indicator from Figma.
   --focus-indicator-clearance: 5px;
   // EDIT: No upstream Spec token. Tab inline padding from Figma.
-  --leading-space: 16px;
+  --leading-space: var(--md-sys-space-200);
   // EDIT: No upstream Spec token. Scroll margin for focus-driven scroll-into-view. Defaults to leading space.
   --tab-scroll-margin: var(--leading-space);
   // EDIT: No upstream Spec token. Tab inline padding from Figma.
-  --trailing-space: 16px;
+  --trailing-space: var(--md-sys-space-200);
   // md.comp.primary-navigation-tab.with-icon.inactive.icon.color
   --icon-color: var(--md-sys-color-on-surface-variant);
   // md.comp.primary-navigation-tab.with-icon.icon.size

@@ -330,7 +330,9 @@ function watchSources() {
       await writeState({status: 'building'});
       const t = Date.now();
       await buildSite();
-      await writeState({status: 'ready'});
+      // A change during the build queues another one: stay "building" so
+      // scripts/catalog-wait.mjs doesn't report the stale pages as ready.
+      await writeState({status: again ? 'building' : 'ready'});
       log(`Rebuilt in ${((Date.now() - t) / 1000).toFixed(1)}s`);
     } catch (e) {
       console.error(e);
@@ -348,6 +350,8 @@ function watchSources() {
     watch(root, {recursive: true}, (_, name) => {
       if (!relevant(root, name)) return;
       clearTimeout(timer);
+      // Tell scripts/catalog-wait.mjs a rebuild is coming (before the debounce).
+      if (!building) writeState({status: 'pending'});
       if (process.env.CATALOG_DEV_DEBUG) console.log(`[catalog:dev] change: ${join(root, name ?? "")}`);
       timer = setTimeout(rebuild, 300);
     });

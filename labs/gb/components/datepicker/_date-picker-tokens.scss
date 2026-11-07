@@ -55,25 +55,25 @@
   // EDIT: Compose RecommendedSizeForAccessibility (48.dp): each grid cell is a 48dp touch target.
   --date-cell-size: 48px;
   // EDIT: Compose DatePickerHorizontalPadding (12.dp).
-  --padding-inline: 12px;
+  --padding-inline: var(--md-sys-space-150);
   // EDIT: Spec color roles: the divider is outline variant.
   --divider-color: var(--md-sys-color-outline-variant);
   // EDIT: Material icon size in the header icon buttons and mode toggle.
   --icon-size: 24px;
   // EDIT: Compose AlertDialog button row: 8dp between text buttons.
-  --actions-gap: 8px;
+  --actions-gap: var(--md-sys-space-100);
   // EDIT: Spec docked measurements: text buttons sit 8dp below the calendar.
-  --actions-padding-block-start: 8px;
+  --actions-padding-block-start: var(--md-sys-space-100);
   // EDIT: Spec docked measurements: 12dp below the text buttons.
-  --actions-padding-block-end: 12px;
+  --actions-padding-block-end: var(--md-sys-space-150);
   // EDIT: Spec docked measurements: 12dp beside the text buttons.
-  --actions-padding-inline: 12px;
+  --actions-padding-inline: var(--md-sys-space-150);
   // EDIT: Spec: docked date pickers appear just below the input field (no measurement given).
   --anchor-spacing: 4px;
   // EDIT: Spec docked month menu: 16dp before the leading check icon.
-  --menu-list-item-padding-inline: 16px;
+  --menu-list-item-padding-inline: var(--md-sys-space-200);
   // EDIT: Spec docked month menu: 16dp between the leading check icon and the label.
-  --menu-list-item-icon-label-space: 16px;
+  --menu-list-item-icon-label-space: var(--md-sys-space-200);
   // EDIT: Spec docked measurements: the menus replace the calendar (weekdays + six 48dp rows).
   --menu-list-height: 336px;
   // EDIT: Docked range selection reuses the modal range tokens (md.comp.date-picker.modal.range-selection.active-indicator.container.color).
@@ -147,17 +147,17 @@
   // EDIT: Compose dialog scrim alpha (window dim amount).
   --scrim-opacity: 0.32;
   // EDIT: Compose DatePickerTitlePadding / DatePickerHeadlinePadding (start 24.dp).
-  --header-padding-inline-start: 24px;
+  --header-padding-inline-start: var(--md-sys-space-300);
   // EDIT: Compose DatePickerTitlePadding / DatePickerHeadlinePadding (end 12.dp).
-  --header-padding-inline-end: 12px;
+  --header-padding-inline-end: var(--md-sys-space-150);
   // EDIT: Compose DatePickerTitlePadding (top 16.dp).
-  --header-padding-block-start: 16px;
+  --header-padding-block-start: var(--md-sys-space-200);
   // EDIT: Compose DatePickerHeadlinePadding (bottom 12.dp).
-  --header-padding-block-end: 12px;
+  --header-padding-block-end: var(--md-sys-space-150);
   // EDIT: Compose MonthYearHeight (56.dp).
   --nav-height: 56px;
   // EDIT: Compose YearsVerticalPadding (16.dp).
-  --year-selection-row-gap: 16px;
+  --year-selection-row-gap: var(--md-sys-space-200);
   // EDIT: md.comp.date-picker.modal.year-selection.year.state-layer.shape (corner full), Compose SelectionYearStateLayerShape.
   --year-selection-year-state-layer-shape: var(--md-sys-shape-corner-full);
   // EDIT: Compose DateRangePicker HeaderHeightOffset (60.dp): the full-screen row with the close icon button and Save, part of range-selection.header.container.height.
@@ -165,15 +165,15 @@
   // EDIT: md.comp.date-picker.modal.date.state-layer.height (40dp), the range background band height (Compose drawRangeBackground).
   --date-state-layer-height: 40px;
   // EDIT: Compose DateRangePickerTitlePadding / DateRangePickerHeadlinePadding (start 64.dp).
-  --range-selection-header-padding-inline-start: 64px;
+  --range-selection-header-padding-inline-start: var(--md-sys-space-800);
   // EDIT: Compose CalendarMonthSubheadPadding (start 24.dp).
-  --range-selection-month-subhead-padding-inline-start: 24px;
+  --range-selection-month-subhead-padding-inline-start: var(--md-sys-space-300);
   // EDIT: Compose CalendarMonthSubheadPadding (top 20.dp).
-  --range-selection-month-subhead-padding-block-start: 20px;
+  --range-selection-month-subhead-padding-block-start: var(--md-sys-space-250);
   // EDIT: Compose CalendarMonthSubheadPadding (bottom 8.dp).
-  --range-selection-month-subhead-padding-block-end: 8px;
+  --range-selection-month-subhead-padding-block-end: var(--md-sys-space-100);
   // EDIT: Compose TopAppBarHorizontalPadding (4.dp): the full-screen row's close icon button and Save inset.
-  --range-selection-header-bar-padding-inline: 4px;
+  --range-selection-header-bar-padding-inline: var(--md-sys-space-50);
 }
 
 @mixin input {
@@ -193,13 +193,13 @@
   --header-supporting-text-color: var(--md-sys-color-on-surface-variant);
   --header-supporting-text-tracking: var(--md-sys-typescale-label-lg-tracking);
   // EDIT: Compose InputTextFieldPadding (top 10.dp).
-  --input-padding-block-start: 10px;
+  --input-padding-block-start: var(--md-sys-space-125);
   // EDIT: Compose InputTextNonErroneousBottomPadding (16.dp).
-  --input-padding-block-end: 16px;
+  --input-padding-block-end: var(--md-sys-space-200);
   // EDIT: Compose InputTextFieldPadding (start / end 24.dp).
-  --input-padding-inline: 24px;
+  --input-padding-inline: var(--md-sys-space-300);
   // EDIT: Compose DateRangeInput TextFieldSpacing (8.dp).
-  --input-gap: 8px;
+  --input-gap: var(--md-sys-space-100);
 }
 
 // Inherits every `root` token from the parent, so values set on the
@@ -225,6 +225,7 @@
   --date-label-text-tracking: inherit;
   --date-selected-container-color: inherit;
   --date-selected-label-text-color: inherit;
+  --date-state-layer-height: inherit;
   --date-today-container-outline-color: inherit;
   --date-today-container-outline-width: inherit;
   --date-today-label-text-color: inherit;
@@ -256,7 +257,6 @@
   --menu-list-item-selected-leading-icon-size: inherit;
   --padding-inline: inherit;
   --range-selection-active-indicator-container-color: inherit;
-  --date-state-layer-height: inherit;
   --range-selection-active-indicator-container-height: inherit;
   --range-selection-date-in-range-label-text-color: inherit;
   --weekdays-label-text: inherit;

@@ -15,6 +15,7 @@ import {
   ListElement,
   ListReorderEvent,
 } from "./list-element.js";
+import { freezeSpringClock, untilTicking } from "../shared/test-dom.js";
 import { ListItemElement } from "./list-item-element.js";
 import { clampListDensity, listItemClasses, listClasses } from "./list.js";
 import "./md-gb-list-item.js";
@@ -574,12 +575,37 @@ describe("<md-gb-list-item> reveal", () => {
     await env.waitForStability();
     expect(archived).toHaveBeenCalledTimes(1);
     expect(flagged).not.toHaveBeenCalled();
-    expect(itemOf(item).style.translate).toMatch(/^-3\d\dpx/);
+    expect(itemOf(item).style.translate).toMatch(/^-[3-9]\d\d(\.\d+)?px/);
 
-    jasmine.clock().tick(500);
-    await env.waitForStability();
-    expect(item.revealed).toBe("");
-    expect(itemOf(item).style.translate).toBe("");
+    // The spring carries it off screen, then it settles back.
+    expect(await untilTicking(() => item.revealed === "" && itemOf(item).style.translate === "")).toBeTrue();
+  });
+
+  it("keeps the release velocity: the settle starts moving the way the finger was going", async () => {
+    const { item } = await setupTest();
+    const clock = freezeSpringClock();
+    const el = itemOf(item);
+    const { x, y } = center(el);
+    const at = (type: string, dx: number, time: number) => {
+      const event = new PointerEvent(type, {
+        bubbles: true, composed: true, cancelable: true, pointerId: 1,
+        isPrimary: true, button: 0, clientX: x + dx, clientY: y,
+      });
+      Object.defineProperty(event, "timeStamp", { value: time });
+      el.dispatchEvent(event);
+    };
+    // Dragged well past half to the trailing actions, then slowly back toward
+    // closed: it still reveals them, but the spring first drifts back.
+    at("pointerdown", 0, 0);
+    at("pointermove", -10, 10);
+    at("pointermove", -108, 900);
+    at("pointermove", -106, 920);
+    at("pointermove", -104, 940);
+    at("pointerup", -104, 945);
+    expect(item.revealed).toBe("trailing");
+    const released = parseFloat(el.style.translate);
+    clock.advance(1);
+    expect(parseFloat(el.style.translate)).toBeGreaterThan(released);
   });
 
   it("opens and closes programmatically", async () => {

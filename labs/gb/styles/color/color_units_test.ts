@@ -8,7 +8,7 @@
 
 import {argbFromHex, Contrast, Hct} from '@material/material-color-utilities';
 
-import {COLOR_ROLES, themeFromSource} from './dynamic-color.js';
+import {COLOR_ROLES, hctFromColor, SCHEME_VARIANTS, sourceColorFromPixels, themeFromImage, themeFromSource} from './dynamic-color.js';
 import {styles as colorStyles} from './md-color-tokens.cssresult.js';
 
 function tone(hex: string) {
@@ -122,5 +122,116 @@ describe('dynamic color roles', () => {
       expect(ratio(theme.light['on-surface'], theme.light.surface)).toBeGreaterThanOrEqual(4.5);
       expect(ratio(theme.dark['on-surface'], theme.dark.surface)).toBeGreaterThanOrEqual(4.5);
     }
+  });
+});
+
+describe("role groups and scheme generation", () => {
+  const BASE = themeFromSource({source: "#6750a4"});
+
+  // spec: color-roles-3a6d18, color-roles-2ad754, color-roles-c783f0, color-roles-7bf45f, color-system-caf233, color-system-ded507
+  it("resolves the four primary roles for light and dark, readable on their pairs", () => {
+    for (const mode of ["light", "dark"] as const) {
+      const t = BASE[mode];
+      for (const role of ["primary", "on-primary", "primary-container", "on-primary-container"]) {
+        expect(t[role]).withContext(mode + " " + role).toMatch(/^#[0-9a-f]{6}$/i);
+      }
+      expect(t["on-primary-container"]).not.toBe(t["primary-container"]);
+      expect(ratio(t["on-primary-container"], t["primary-container"])).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(Math.abs(hctFromColor(BASE.light.primary).hue - hctFromColor("#6750a4").hue)).toBeLessThan(10);
+    expect(BASE.dark.primary).not.toBe(BASE.light.primary);
+  });
+
+  // spec: color-roles-a8fe6f, color-roles-fc7557, color-roles-bea3ff, color-roles-c54932, color-roles-39e9bc
+  it("resolves the secondary, tertiary and error accent roles in both modes", () => {
+    const tokens = declared();
+    for (const name of ["secondary", "tertiary", "error"]) {
+      for (const role of [name, "on-" + name, name + "-container", "on-" + name + "-container"]) {
+        expect(tokens.has(role)).withContext(role).toBeTrue();
+        expect(BASE.light[role]).withContext("light " + role).toMatch(/^#[0-9a-f]{6}$/i);
+        expect(BASE.dark[role]).withContext("dark " + role).toMatch(/^#[0-9a-f]{6}$/i);
+      }
+    }
+  });
+
+  // spec: color-roles-338773, color-roles-815de4, color-roles-24d9e2
+  it("has inverse, outline and variant roles that differ from their non-variant pairs", () => {
+    for (const mode of ["light", "dark"] as const) {
+      const t = BASE[mode];
+      for (const role of ["inverse-surface", "inverse-on-surface", "inverse-primary", "outline", "outline-variant", "on-surface-variant"]) {
+        expect(t[role]).withContext(mode + " " + role).toMatch(/^#[0-9a-f]{6}$/i);
+      }
+      expect(t["outline-variant"]).not.toBe(t["outline"]);
+      expect(t["on-surface-variant"]).not.toBe(t["on-surface"]);
+      expect(ratio(t["inverse-on-surface"], t["inverse-surface"])).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  // spec: color-roles-e94210, color-roles-444dd2, color-roles-6cbc21, color-roles-412b99, color-roles-0f6c26, color-roles-a4842f
+  it("orders surface dim, surface and surface bright by tone in light and dark", () => {
+    for (const mode of ["light", "dark"] as const) {
+      const t = BASE[mode];
+      expect(tone(t["surface-dim"])).withContext(mode).toBeLessThanOrEqual(tone(t["surface"]));
+      expect(tone(t["surface"])).withContext(mode).toBeLessThanOrEqual(tone(t["surface-bright"]));
+      expect(tone(t["surface-dim"])).withContext(mode).toBeLessThan(tone(t["surface-bright"]));
+    }
+    // Dim is dimmer than bright in light and dark, so the two swap relative to surface.
+    expect(tone(BASE.light["surface-dim"])).toBeGreaterThan(tone(BASE.dark["surface-bright"]));
+  });
+
+  // spec: customization-e4e5cd, customization-eb8523, customization-84b0bf, customization-91d94b, customization-9edb65
+  it("assigns the primary, secondary, tertiary, error and surface role groups", () => {
+    for (const group of ["primary", "secondary", "tertiary"]) {
+      for (const role of [group, "on-" + group, group + "-container", "on-" + group + "-container", group + "-fixed"]) {
+        expect((COLOR_ROLES as readonly string[]).includes(role)).withContext(role).toBeTrue();
+      }
+    }
+    for (const role of ["error", "on-error", "error-container", "on-error-container", "surface", "on-surface"]) {
+      expect((COLOR_ROLES as readonly string[]).includes(role)).withContext(role).toBeTrue();
+    }
+  });
+
+  // spec: customization-33dd62, customization-aa2a91, customization-ee7c17
+  it("generates complementary tonal palettes and every role from one source color", () => {
+    const brand = themeFromSource({source: "#b33b15"});
+    expect(brand.light.primary.toLowerCase()).not.toBe(BASE.light.primary.toLowerCase());
+    const primary = hctFromColor(brand.light["primary-container"]);
+    const tertiary = hctFromColor(brand.light["tertiary-container"]);
+    expect(Math.abs(primary.hue - tertiary.hue)).toBeGreaterThan(5);
+    for (const mode of ["light", "dark"] as const) {
+      for (const role of COLOR_ROLES) {
+        expect(brand[mode][role]).withContext(mode + " " + role).toBeDefined();
+      }
+    }
+  });
+
+  // spec: color-advanced-590195, color-advanced-d2c6c8
+  it("changes the vibrancy of the default roles with the scheme variant", () => {
+    const chroma = (variant: (typeof SCHEME_VARIANTS)[number]) =>
+      hctFromColor(themeFromSource({source: "#b33b15", variant}).light["primary-container"]).chroma;
+    expect(chroma("vibrant")).toBeGreaterThan(chroma("neutral"));
+    expect(chroma("monochrome")).toBeLessThan(chroma("tonal-spot"));
+  });
+
+  // spec: color-advanced-db493c
+  it("offers fidelity and content variants that keep the input color tones", () => {
+    expect(SCHEME_VARIANTS).toContain("fidelity");
+    expect(SCHEME_VARIANTS).toContain("content");
+    const source = "#b33b15";
+    const input = hctFromColor(source);
+    for (const variant of ["fidelity", "content"] as const) {
+      const hct = hctFromColor(themeFromSource({source, variant}).light["primary-container"]);
+      expect(Math.abs(hct.hue - input.hue)).withContext(variant).toBeLessThan(10);
+    }
+  });
+
+  // spec: color-system-628a16
+  it("generates a theme dynamically from a wallpaper or image", async () => {
+    const pixels = new Uint8ClampedArray(64 * 4);
+    for (let i = 0; i < 64; i++) pixels.set([0, 105, 107, 255], i * 4);
+    const source = sourceColorFromPixels(pixels);
+    expect(source).toBe("#00696b");
+    expect(themeFromSource({source}).light.primary).toBeDefined();
+    expect(typeof themeFromImage).toBe("function");
   });
 });

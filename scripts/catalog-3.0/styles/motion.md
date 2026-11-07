@@ -82,6 +82,35 @@ changes, but not sliding, scaling, parallax or shape morphing.
 Do not build your own motion gate. Read the durations from the tokens so the
 scheme and reduced motion apply without extra code.
 
+### Gestures
+
+A gesture has to keep its momentum: a fling that lets go at 2000px/s must not
+restart from rest, and a settle that is aimed at a new target half way must
+not jump. A CSS transition cannot do either, so `labs/gb` also has the same
+springs as physics, in `labs/gb/components/shared/spring.ts`. `readSpring()`
+returns the damping ratio and stiffness of a spring token (Expressive or
+Standard, whichever applies to the element), and `Spring` solves it in closed
+form and samples it every animation frame:
+
+```ts
+import {readSpring, Spring} from './spring.js';
+
+const spring = new Spring({
+  spec: readSpring(panel, 'default-spatial'),
+  onFrame: (x, velocity) => (panel.style.translate = `${x}px`),
+  onRest: () => panel.removeAttribute('data-settling'),
+});
+spring.start(releaseX, anchorX, releaseVelocity); // px and px/s
+spring.retarget(otherAnchorX); // keeps position and velocity
+```
+
+Under reduced motion the spring jumps to its target and rests at once.
+`DragSettleController` (the drag-and-settle behavior behind swipe to reveal,
+drawers, sheets and pane handles) does this for you when you pass `onFrame`: the settle starts at the release
+position with the release velocity, and the surface follows the frames with no
+CSS transition on the moved property. Without `onFrame` it keeps the CSS
+transition of the spring token.
+
 ### Shape morphing
 
 Buttons and icon buttons (`md-gb-button`, `md-gb-icon-button`) morph their
@@ -105,9 +134,9 @@ Components that script their motion use the helpers in
 
 - The spec's Compose APIs (`MotionScheme` objects, a `CompositionLocal` per
   element) have no web equivalent. The CSS steps above replace them.
-- There is no JavaScript spring solver. Springs are pre-sampled into
-  `linear()` easings, so a gesture that needs live velocity handoff has to
-  bring its own solver.
+- Springs are pre-sampled into `linear()` easings for transitions. A
+  transition cannot take a starting velocity, so gestures use the solver
+  described in [Gestures](#gestures) instead.
 
 ## Easing and duration
 
@@ -271,6 +300,51 @@ In templates, `enterExitClasses(state, options)` returns a `classMap()` object
 (`md-transition-enter`, `md-transition-from-top` and so on), and
 `clearEnterExit(element)` removes the classes.
 
+#### Hide and reveal while scrolling
+
+A component can also leave and return based on a scroll gesture, to give more
+room for browsing: a top app bar or a navigation bar that slides off the screen
+edge while the user scrolls down and back on when they scroll up.
+`scrollEnterExit(element, options)` does this with the slide enter and exit
+motion and returns a handle with `hidden`, `show()`, `hide()` and `destroy()`.
+
+```ts
+import {scrollEnterExit} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
+
+// The element is sticky or fixed at the top edge.
+const handle = scrollEnterExit(topBar, {target: 'content', origin: 'top'});
+const navHandle = scrollEnterExit(navBar, {origin: 'bottom'});
+```
+
+`target` is the scrolling element or its id (the window by default), `origin`
+the edge it slides toward. It uses the same scroll rules as the app bar and
+navigation bar, so they all behave alike: it reveals at the top and when
+scrolled up, hides after a short scroll down, never hides while focus is inside
+it, and reveals when focus moves into it. A hidden element is `inert`. With
+reduced motion it fades instead of sliding. Call `destroy()` when the element
+goes away. Components that already have `scroll-behavior="hide"` do not need
+this.
+
+#### Coplanar components
+
+A coplanar component sits at the same elevation as the main content (a
+standard side sheet), so the content shrinks to make room as it enters and
+grows back as it exits. `coplanar(element, open, options)` animates the
+element's size from zero to its natural size with the enter motion (and back
+with the exit motion), so a flex or grid neighbor resizes with it. It shows the
+element when opening and sets `hidden` when closing ends.
+
+```ts
+await coplanar(panel, true); // The main content narrows as the panel opens.
+await coplanar(panel, false);
+```
+
+`axis: 'block'` grows the element along the block axis instead of the inline
+axis. With reduced motion the size changes at once and only a fade plays.
+`md-gb-side-sheet` already does this itself: a standard (not modal) sheet takes
+its width as `open` is set, so the content beside it shrinks with its spring
+motion. Use `coplanar()` for your own panels.
+
 ### Skeleton loaders
 
 For the step from a loading state to loaded content. The skeleton hints at
@@ -311,14 +385,6 @@ cleanly and stay simple.
   mirrored.
 - Dialogs and similar components that appear in place use the short fade
   (`--md-transition-enter-fade-duration`).
-
-### Not covered
-
-- Enter and exit driven by a scroll gesture (a top app bar or navigation bar
-  that hides while scrolling) is not provided. Toggle `enter()` and `exit()`
-  from your own scroll handler.
-- Coplanar side sheets that shrink the main content have no helper. Animate
-  the layout with your own transition.
 
 ## Watch out for
 

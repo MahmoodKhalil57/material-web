@@ -28,9 +28,9 @@
   // EDIT: Compose Menu.kt DropdownMenuGroupDefaultMinHeight (the label min height).
   --section-label-height: 32px;
   // EDIT: Compose MenuDefaults.DropdownMenuGroupLabelHorizontalPadding start.
-  --section-label-leading-space: 12px;
+  --section-label-leading-space: var(--md-sys-space-150);
   // EDIT: Compose MenuDefaults.DropdownMenuGroupLabelHorizontalPadding end.
-  --section-label-trailing-space: 4px;
+  --section-label-trailing-space: var(--md-sys-space-50);
 }
 
 @mixin active {

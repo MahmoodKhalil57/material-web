@@ -3396,19 +3396,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "badges-13edb2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/badge/_badge-tokens.scss:25"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "f432828fde5c"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "badges-200124": {
    "rule": "llm-review",
    "evidence": [
@@ -5330,19 +5317,6 @@
    ],
    "final": "agreement"
   },
-  "chips-2a00df": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:24"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "de0c441945b9"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "chips-2a2abe": {
    "rule": "llm-review",
    "evidence": [
@@ -5374,19 +5348,6 @@
     "2741d14a6aeb"
    ],
    "final": "agreement"
-  },
-  "chips-2d81ab": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:46"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "5b79900c1641"
-   ],
-   "final": "claude-opus-5-5"
   },
   "chips-2f21b1": {
    "rule": "llm-review",
@@ -5441,35 +5402,6 @@
    "quoteHashes": [
     "3b1b427a6273",
     "bdf809f86bc0"
-   ],
-   "final": "agreement"
-  },
-  "chips-3e3d91": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:315"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "6b985e168c6f"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "chips-43fcc9": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/chip.scss:290",
-    "labs/gb/components/chip/_chip-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "e582227d6705",
-    "de0c441945b9"
    ],
    "final": "agreement"
   },
@@ -5840,22 +5772,6 @@
    ],
    "final": "agreement"
   },
-  "chips-8233b3": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:109",
-    "labs/gb/components/chip/_chip-tokens.scss:109"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "45a12fa3d8cb",
-    "45a12fa3d8cb"
-   ],
-   "final": "agreement"
-  },
   "chips-82bb1e": {
    "rule": "llm-review",
    "evidence": [
@@ -6046,19 +5962,6 @@
    ],
    "final": "agreement"
   },
-  "chips-9ad9e2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:96"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "3ef4ea0616c0"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "chips-9f7350": {
    "rule": "llm-review",
    "evidence": [
@@ -6133,19 +6036,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "chips-af3678": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:303"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "b685469c93c6"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "chips-b3413c": {
    "rule": "llm-review",
    "evidence": [
@@ -6190,22 +6080,6 @@
     "25bacc466085"
    ],
    "final": "claude-opus-5-5"
-  },
-  "chips-b9c1a1": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/chip.scss:292",
-    "labs/gb/components/chip/_chip-tokens.scss:109"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "359bd04fb4a8",
-    "45a12fa3d8cb"
-   ],
-   "final": "agreement"
   },
   "chips-bb2af3": {
    "rule": "llm-review",
@@ -6265,22 +6139,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "chips-bee6ad": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:109",
-    "labs/gb/components/chip/_chip-tokens.scss:109"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "45a12fa3d8cb",
-    "45a12fa3d8cb"
-   ],
-   "final": "agreement"
-  },
   "chips-c11014": {
    "rule": "cluster",
    "via": "chips-79fcda"
@@ -6316,19 +6174,6 @@
     "bfde3758cf0f"
    ],
    "final": "agreement"
-  },
-  "chips-c734e3": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/chip/_chip-tokens.scss:350"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "5808cc2a028a"
-   ],
-   "final": "claude-opus-5-5"
   },
   "chips-cb92b1": {
    "rule": "llm-review",
@@ -6497,22 +6342,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "color-advanced-590195": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:419",
-    "labs/gb/styles/color/dynamic-color.ts:426"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "f95118df48ee",
-    "734b9c42ecb8"
-   ],
-   "final": "agreement"
-  },
   "color-advanced-888935": {
    "rule": "llm-review",
    "evidence": [
@@ -6565,35 +6394,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "color-advanced-d2c6c8": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:851"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "ca67bf7059d3"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "color-advanced-db493c": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:372",
-    "labs/gb/styles/color/dynamic-color.ts:372"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "08f93c342598",
-    "08f93c342598"
-   ],
-   "final": "agreement"
-  },
   "color-advanced-df8414": {
    "rule": "cluster",
    "via": "color-advanced-a34a82"
@@ -6611,38 +6411,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "color-roles-0f6c26": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:164",
-    "labs/gb/styles/color/internal/_color-tokens.scss:53"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "17636266c282",
-    "353520000291"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-24d9e2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:173",
-    "labs/gb/styles/color/dynamic-color.ts:173"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "5795ff295287",
-    "5795ff295287"
-   ],
-   "final": "agreement"
-  },
   "color-roles-2a3627": {
    "rule": "llm-review",
    "evidence": [
@@ -6658,90 +6426,6 @@
     "353520000291"
    ],
    "final": "agreement"
-  },
-  "color-roles-2ad754": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:135",
-    "labs/gb/styles/color/dynamic-color.ts:134"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "973d74675cee",
-    "f0a2a90026e7"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-338773": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:174",
-    "labs/gb/styles/color/internal/_color-tokens.scss:56"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "275056282cc7",
-    "fecbfb394065"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-39e9bc": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:158",
-    "labs/gb/styles/tailwind.scss:48"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "210fcaedb141",
-    "0118b7093bda"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-3a6d18": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:76",
-    "labs/gb/styles/color/dynamic-color.ts:134"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "586b5b6b662f",
-    "f0a2a90026e7"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-412b99": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:104",
-    "labs/gb/styles/color/internal/_color-tokens.scss:53"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "353520000291",
-    "353520000291"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-444dd2": {
-   "rule": "cluster",
-   "via": "color-roles-e94210"
   },
   "color-roles-55b981": {
    "rule": "llm-review",
@@ -6791,86 +6475,6 @@
    ],
    "final": "agreement"
   },
-  "color-roles-6cbc21": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:162",
-    "labs/gb/styles/color/internal/_color-tokens.scss:53"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "22238dde10d9",
-    "353520000291"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-7bf45f": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:136",
-    "labs/gb/styles/color/dynamic-color.ts:134"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "b9ff61dabd50",
-    "f0a2a90026e7"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-815de4": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/tailwind.scss:66",
-    "labs/gb/styles/color/dynamic-color.ts:172"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "03c2a6ee08a6",
-    "22da19bb1668"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-a4842f": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:164",
-    "labs/gb/styles/color/internal/_color-tokens.scss:53"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "17636266c282",
-    "353520000291"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-a8fe6f": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:142",
-    "labs/gb/styles/color/internal/_color-tokens.scss:33"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "7765d9a27c39",
-    "b5a3f791dd2e"
-   ],
-   "final": "agreement"
-  },
   "color-roles-aa547d": {
    "rule": "llm-review",
    "evidence": [
@@ -6884,70 +6488,6 @@
    "quoteHashes": [
     "c8a7a56ce66c",
     "fecbfb394065"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-bea3ff": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:153",
-    "labs/gb/styles/color/internal/_color-tokens.scss:41"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "ab2255df00e7",
-    "d0fee9a7f0cc"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-c54932": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:160",
-    "labs/gb/styles/tailwind.scss:48"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "47f3174cde2a",
-    "0118b7093bda"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-c783f0": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:137",
-    "labs/gb/styles/color/dynamic-color.ts:134"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "2b818bb32d78",
-    "f0a2a90026e7"
-   ],
-   "final": "agreement"
-  },
-  "color-roles-e94210": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:163",
-    "labs/gb/styles/color/internal/_color-tokens.scss:53"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "4431f3e64459",
-    "353520000291"
    ],
    "final": "agreement"
   },
@@ -6967,22 +6507,6 @@
    ],
    "final": "agreement"
   },
-  "color-roles-fc7557": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:144",
-    "labs/gb/styles/color/internal/_color-tokens.scss:33"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "374f4c79920e",
-    "b5a3f791dd2e"
-   ],
-   "final": "agreement"
-  },
   "color-system-40cefd": {
    "rule": "llm-review",
    "evidence": [
@@ -6996,22 +6520,6 @@
    "quoteHashes": [
     "98d0aba8abd9",
     "98d0aba8abd9"
-   ],
-   "final": "agreement"
-  },
-  "color-system-628a16": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:851",
-    "labs/gb/styles/color/dynamic-color.ts:847"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "dc294cba0849",
-    "905c490b7404"
    ],
    "final": "agreement"
   },
@@ -7031,22 +6539,6 @@
    ],
    "final": "agreement"
   },
-  "color-system-caf233": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:76",
-    "labs/gb/styles/color/dynamic-color.ts:134"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "c443a65fdc16",
-    "f0a2a90026e7"
-   ],
-   "final": "agreement"
-  },
   "color-system-d43e21": {
    "rule": "llm-review",
    "evidence": [
@@ -7063,38 +6555,6 @@
    ],
    "final": "agreement"
   },
-  "color-system-ded507": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:137",
-    "labs/gb/styles/color/dynamic-color.ts:137"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "2b818bb32d78",
-    "2b818bb32d78"
-   ],
-   "final": "agreement"
-  },
-  "customization-33dd62": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:487",
-    "labs/gb/styles/color/dynamic-color.ts:133"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "e246432eab3a",
-    "ba760dac03e7"
-   ],
-   "final": "agreement"
-  },
   "customization-3c39a3": {
    "rule": "llm-review",
    "evidence": [
@@ -7107,54 +6567,6 @@
     "ddb159d1208b"
    ],
    "final": "claude-opus-5-5"
-  },
-  "customization-84b0bf": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:84",
-    "labs/gb/styles/color/dynamic-color.ts:75"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "1a1147841748",
-    "c669372739cc"
-   ],
-   "final": "agreement"
-  },
-  "customization-91d94b": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:76",
-    "labs/gb/styles/color/dynamic-color.ts:75"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "586b5b6b662f",
-    "c669372739cc"
-   ],
-   "final": "agreement"
-  },
-  "customization-9edb65": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:92",
-    "labs/gb/styles/color/dynamic-color.ts:75"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "0662769ddbee",
-    "c669372739cc"
-   ],
-   "final": "agreement"
   },
   "customization-a9c9ba": {
    "rule": "llm-review",
@@ -7171,61 +6583,6 @@
     "28f185411b1b"
    ],
    "final": "agreement"
-  },
-  "customization-aa2a91": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:515",
-    "labs/gb/styles/color/dynamic-color.ts:514"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "1542b5418920",
-    "98268d098564"
-   ],
-   "final": "agreement"
-  },
-  "customization-e4e5cd": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:133"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "4d06e56d12f6"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "customization-eb8523": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:133"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "4d06e56d12f6"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "customization-ee7c17": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/styles/color/dynamic-color.ts:514"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "c8bf201129f7"
-   ],
-   "final": "claude-opus-5-5"
   },
   "date-pickers-004827": {
    "rule": "llm-review",
@@ -7282,19 +6639,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "date-pickers-072f86": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:15"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "b6fdebd82e66"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "date-pickers-078184": {
    "rule": "llm-review",
    "evidence": [
@@ -7336,22 +6680,6 @@
     "419dd6b16f83"
    ],
    "final": "claude-opus-5-5"
-  },
-  "date-pickers-0e3e1a": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:74",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:42"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "c462fba07c6e",
-    "61f54c089330"
-   ],
-   "final": "agreement"
   },
   "date-pickers-15075c": {
    "rule": "llm-review",
@@ -7558,19 +6886,6 @@
     "7627d30f0ec3"
    ],
    "final": "agreement"
-  },
-  "date-pickers-3e2a84": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:40"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "aeb6d89b362b"
-   ],
-   "final": "claude-opus-5-5"
   },
   "date-pickers-4a2080": {
    "rule": "llm-review",
@@ -14868,35 +14183,6 @@
    ],
    "final": "agreement"
   },
-  "tabs-2b74a6": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:170",
-    "labs/gb/components/tabs/_tabs-tokens.scss:33"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "483fdb9ee188",
-    "8db9d5f4de56"
-   ],
-   "final": "agreement"
-  },
-  "tabs-2bcae6": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:297"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "3db896f16f1f"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "tabs-3e0523": {
    "rule": "llm-review",
    "evidence": [
@@ -15048,22 +14334,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "tabs-ac2110": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:161",
-    "labs/gb/components/tabs/_tabs-tokens.scss:25"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "420e02f76557",
-    "51faf500b025"
-   ],
-   "final": "agreement"
-  },
   "tabs-b58aeb": {
    "rule": "llm-review",
    "evidence": [
@@ -15122,38 +14392,6 @@
    "quoteHashes": [
     "806a12242631",
     "782773e4b709"
-   ],
-   "final": "agreement"
-  },
-  "tabs-cd5b4a": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/_tabs-tokens.scss:34",
-    "labs/gb/components/tabs/_tabs-tokens.scss:35"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "956628c40509",
-    "2ed7afc96b62"
-   ],
-   "final": "agreement"
-  },
-  "tabs-d717fb": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:90",
-    "labs/gb/components/tabs/_tabs-tokens.scss:29"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "2a1179e6d270",
-    "90501388cf61"
    ],
    "final": "agreement"
   },
@@ -17782,22 +17020,6 @@
    ],
    "final": "agreement"
   },
-  "tooltips-8d2bf8": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tooltip/_tooltip-tokens.scss:66",
-    "labs/gb/components/tooltip/_tooltip-tokens.scss:66"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "7fa1f4b15342",
-    "7fa1f4b15342"
-   ],
-   "final": "agreement"
-  },
   "tooltips-a24108": {
    "rule": "llm-review",
    "evidence": [
@@ -17856,19 +17078,6 @@
    ],
    "quoteHashes": [
     "defcf3a4fafc"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "tooltips-cc0622": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tooltip/_tooltip-tokens.scss:20"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "50a6a2949a57"
    ],
    "final": "claude-opus-5-5"
   },

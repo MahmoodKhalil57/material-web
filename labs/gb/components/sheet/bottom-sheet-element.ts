@@ -355,8 +355,14 @@ export class BottomSheetElement extends SheetBase {
       this.dragOffset = offset;
       this.requestUpdate();
     },
+    // The release velocity carries into a spring that moves the sheet, which
+    // keeps its drag state (no CSS transition) until it rests.
+    onFrame: (position) => {
+      this.dragOffset = position;
+      this.requestUpdate();
+    },
+    onSettled: () => this.endDrag(),
     onSettle: (offset) => {
-      this.endDrag();
       const target = this.anchors().find(([y]) => y === offset)?.[1];
       if (target === 'hidden') {
         this.close(CLOSE_REASONS.SWIPE);
@@ -366,6 +372,10 @@ export class BottomSheetElement extends SheetBase {
     },
     onCancel: () => this.endDrag(),
   });
+
+  protected override gestureSettled(): Promise<void> {
+    return this.heightDrag.whenSettled();
+  }
 
   private get dragArea(): HTMLElement | null {
     return (

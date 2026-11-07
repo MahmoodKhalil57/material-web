@@ -70,3 +70,31 @@ export async function until(check: () => unknown, {timeout = 1000} = {}): Promis
   }
   return true;
 }
+
+/**
+ * Like {@link until}, for suites on the test `Environment`: its mocked clock
+ * runs `requestAnimationFrame` callbacks (a spring's frames) only when ticked,
+ * so this ticks it once per check.
+ */
+export function untilTicking(check: () => unknown, options?: {timeout?: number}): Promise<boolean> {
+  return until(() => {
+    jasmine.clock().tick(1);
+    return check();
+  }, options);
+}
+
+/**
+ * Freezes `performance.now()` (the clock a spring runs on) for the rest of
+ * the spec, so a test can step a spring a known time: `advance(ms)` moves the
+ * clock and runs the pending frame of the `Environment`'s mocked clock.
+ */
+export function freezeSpringClock(): {advance(ms: number): void} {
+  let now = performance.now();
+  spyOn(performance, 'now').and.callFake(() => now);
+  return {
+    advance(ms: number) {
+      now += ms;
+      jasmine.clock().tick(1);
+    },
+  };
+}

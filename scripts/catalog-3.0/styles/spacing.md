@@ -89,16 +89,34 @@ viewport. The spacing unit does not change with the window.
 }
 ```
 
-> The adaptive tokens are defined, but no labs/gb component reads them yet.
-> Use them in your own layouts.
+> The adaptive tokens are defined, but no labs/gb component reads them yet:
+> component spacing is the same at every window size today. Use them in your
+> own layouts, or remap a component's own spacing property to one (see below).
 
 ## How components use spacing
 
 Components map their padding, margins and gaps to scale tokens in their own
-custom properties, so a product can change one mapping and every use follows.
-The search bar is an example. Its leading space is `space200` (16px), the gap
-between its icon and its input is `space50` (4px), and its glyph margin is
-24px, or 12px when focused. Its styles are in `labs/gb/components/search/`.
+custom properties (`--leading-space`, `--icon-label-space` and so on), so a
+product can change one mapping and every use follows. For example,
+`md-gb-button { --leading-space: var(--md-sys-space-adaptive-inline); }` makes a
+button's leading padding follow the window class.
+
+| Component | Scale tokens it reads |
+| --- | --- |
+| Button, icon button, FAB, split button, segmented button | `space50` to `space200` for leading and trailing space and the icon-label gap |
+| Search bar | `space0` to `space300`: leading space `space200`, icon and input gap `space50`, glyph margin `space300` (24px), or `space150` (12px) when focused. Styles are in `labs/gb/components/search/` |
+| App bar | `space0` to `space300` for icon, leading and trailing space, the title inset and bottom space, and the actions' inline margin |
+| Toolbar, navigation drawer | `space50` to `space200` for container padding and item spacing |
+| Chip, text field, tooltip, menu, divider, badge, tabs | `space25` to `space200` for padding, label gaps and insets |
+| Date picker, time picker, carousel | `space50` to `space900` for header, actions and content padding |
+| App scaffold | `space200` for the FAB's distance from the edge and the gap above the bottom bar |
+| Pane scaffold | `--md-sys-layout-margin` and `--md-sys-layout-spacer` (the layout tokens), not the scale |
+
+Every value is the same as before, so nothing changes visually. A few values
+are still plain pixels: some generated button, list, FAB, button group and
+navigation rail values, the dialog and sheet paddings, and the few values a
+component reads in code (a carousel's leading padding, a tooltip's viewport
+margin, a tab indicator's inset).
 
 Density changes components, not the spacing scale. Each density step removes
 height from the component, and the component's touch target stays 48dp. See

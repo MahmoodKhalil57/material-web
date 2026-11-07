@@ -437,3 +437,72 @@ data-variant="expressive" block on the home page (catalog/site/index.html).
       `md-gb-perf` DevTools track (labs/gb/components/shared/perf.ts).
 - [x] What's new, on the /3.0/ home page only: the M3 Expressive components
       new in 3.0 (the gb-only pages), with links to migration and compliance.
+
+# Styles gaps (2026-11-07)
+
+Features the M3 color, motion and spacing pages describe that labs/gb did not
+build (found when the /3.0/ Styles pages were written). Library rules: the
+scratchpad `wave4-brief.md`; page rules: `site-brief.md`. Each agent also
+updates its page: the "not built in labs/gb yet" line becomes how to use it.
+
+## G-1 (Sonnet): color
+Owns: labs/gb/styles/color/ (dynamic-color.ts and tests),
+scripts/catalog-3.0/theming/color.md.
+- [x] Custom color roles defined by palette and tone (advanced.md "custom
+      color roles"): an option that takes {name, palette or source, tone per
+      light/dark/contrast} and emits `--md-sys-color-<name>` roles, beside the
+      existing `customColors` (4 roles from a hex).
+- [x] HCT as a public API: export `Hct` helpers (from hex/argb, hue, chroma,
+      tone, to hex) from dynamic-color.ts (re-export MCU's Hct with a small
+      typed wrapper).
+- [x] Import a Material Theme Builder export: `themeFromThemeBuilder(json)`
+      that reads the Theme Builder JSON (source/seed color, scheme variant,
+      core and custom colors, contrast; find its format in the MCU package or
+      the Theme Builder docs linked from resources.md) and returns a theme
+      `applyTheme`/`themeToCss` accept.
+- [x] Scheme variants on the 2021 rules: check system.md / dynamic.md for
+      whether the spec defines 2025 rules for content, monochrome, rainbow,
+      fruit salad and fidelity. If it does not, fix the page wording (they
+      follow the spec, which only updated four variants); if it does,
+      report it (MCU 0.4 doesn't implement them; don't hand-roll).
+
+## G-2 (Sonnet): spring physics for gestures
+Owns: a new labs/gb/components/shared/spring.ts (+ test), the settle
+animation in labs/gb/components/shared/drag-settle.ts, and the Overview
+"gestures" paragraph of scripts/catalog-3.0/styles/motion.md (only that
+section; another agent edits Transitions).
+- [x] A small spring solver driven by requestAnimationFrame: damping ratio
+      and stiffness from the md.sys.motion.spring tokens, initial velocity,
+      retargeting mid-flight while keeping velocity, reduced motion jumps.
+- [x] DragSettle hands the release velocity to the spring (fling to settle
+      with continuous velocity) instead of a CSS transition; keep every
+      drag-settle and component test (sheets, nav drawer, list swipe, tab
+      panels, scaffold resize) passing. Done for sheets, nav drawer, list
+      swipe and tab panels; nav rail (the swipe ends in a layout change, not
+      a position) and pane scaffold (anchors change layout state at release)
+      keep the CSS settle.
+- [x] Tests: velocity continuity at release, retarget mid-flight, reduced motion.
+
+## G-3 (Sonnet): transition helpers
+Owns: labs/gb/styles/motion/transitions/ (transitions.ts and tests), the
+Transitions section of scripts/catalog-3.0/styles/motion.md.
+- [x] Scroll-driven enter and exit (transitions.md "beyond screen bounds"):
+      a helper that hides/reveals an element by scroll direction with the
+      enter/exit motion (reuse labs/gb/components/shared/scroll-behavior.ts
+      if it fits instead of duplicating it).
+- [x] Coplanar side sheet: a helper (or md-gb-side-sheet option, if the
+      sheet already has the hook) where the sheet slides in beside the content
+      and the content resizes with it, using the enter/exit motion.
+
+## G-4 (Sonnet): adaptive spacing in components
+Owns: the spacing declarations in labs/gb components that the spec ties to
+spacing (search bar margins 24/12dp, scaffold and pane margins, app bar and
+toolbar padding where the spec says), and scripts/catalog-3.0/styles/spacing.md.
+- [x] Components read `--md-sys-space-*` tokens (and the adaptive
+      `--md-sys-space-adaptive-*` where the spec says spacing adapts per
+      window class) instead of literal px, with the same values today
+      (every measurement and spec test stays green). No component reads the
+      adaptive tokens yet: doing so changes values at some window sizes. A few
+      values stay px because code reads them with parseFloat (carousel
+      padding, tooltip viewport margin, tab indicator inset).
+- [x] The spacing page lists which components use which tokens.

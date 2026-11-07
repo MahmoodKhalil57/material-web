@@ -9,7 +9,7 @@
 import {html, render} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
-import {until} from '../shared/test-dom.js';
+import {freezeSpringClock, until, untilTicking} from '../shared/test-dom.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 
 import {
@@ -455,6 +455,29 @@ describe('<md-gb-bottom-sheet>', () => {
       expect(reason).toBe(CLOSE_REASONS.SWIPE);
     });
 
+    it('keeps the release velocity: the settle starts moving the way the finger was going', async () => {
+      const {sheet} = await setupTest(tallModal);
+      await sheet.show();
+      const clock = freezeSpringClock();
+      const area = dragArea(sheet);
+      const panel = panelOf(sheet);
+      const y = (panel.offsetHeight / 2) + 10;
+      const translateY = () =>
+        Number(panel.style.transform.match(/translateY\((-?[\d.]+)px\)/)?.[1] ?? NaN);
+      // Past half and slowly back up (under the fling speed): the spring starts at the release position
+      // moving upward, not from rest.
+      pointer('pointerdown', area, 0, {timeStamp: 0});
+      pointer('pointermove', area, y + 4, {timeStamp: 960});
+      pointer('pointermove', area, y + 2, {timeStamp: 980});
+      pointer('pointermove', area, y, {timeStamp: 1000});
+      pointer('pointerup', area, y, {timeStamp: 1001});
+      await env.waitForStability();
+      const released = translateY();
+      clock.advance(1);
+      await env.waitForStability();
+      expect(translateY()).toBeLessThan(released);
+    });
+
     it('returns to its height after a short drag', async () => {
       const {sheet} = await setupTest(tallModal);
       await sheet.show();
@@ -801,14 +824,28 @@ describe('<md-gb-side-sheet>', () => {
       await drag(panel, [[500, 0], [550, 500], [end, 1000], [end, 2000]]);
       expect(sheet.open).toBeFalse();
       expect(reasons).toEqual([CLOSE_REASONS.SWIPE]);
-      expect(translateX(panel)).toBeNull();
+      expect(await untilTicking(() => translateX(panel) === null)).toBeTrue();
     });
 
     it('springs back open when released before half its width', async () => {
       const {sheet, panel} = await setupModal();
       await drag(panel, [[500, 0], [530, 500], [540, 1000], [540, 2000]]);
       expect(sheet.open).toBeTrue();
-      expect(translateX(panel)).toBeNull();
+      expect(await untilTicking(() => translateX(panel) === null)).toBeTrue();
+    });
+
+    it('keeps the release velocity: a slow release still drifts the way the finger was going', async () => {
+      const {sheet, panel, width} = await setupModal();
+      const clock = freezeSpringClock();
+      const end = 500 + width / 2 + 10;
+      // Past half but moving back toward open at less than the fling speed:
+      // it closes, but the spring first carries on backward.
+      await drag(panel, [[500, 0], [end + 6, 990], [end + 3, 1000], [end, 1015]]);
+      expect(sheet.open).toBeFalse();
+      const released = translateX(panel)!;
+      clock.advance(1);
+      await env.waitForStability();
+      expect(translateX(panel)!).toBeLessThan(released);
     });
 
     it('closes on a fast fling', async () => {

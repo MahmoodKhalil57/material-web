@@ -20,7 +20,7 @@
   // EDIT: Spec "Measurements": leading/trailing padding 16dp (uncontained: leading only, as content padding).
   --padding-inline: 16px;
   // EDIT: Spec "Measurements": top/bottom padding 8dp.
-  --padding-block: 8px;
+  --padding-block: var(--md-sys-space-100);
   // EDIT: Spec "Large item width: dynamic, or user-set" (Compose preferredItemWidth / itemWidth); auto picks a layout default.
   --item-width: auto;
   // EDIT: Spec small item width 40-56dp; Compose CarouselDefaults.MinSmallItemSize (40.dp).
@@ -38,7 +38,7 @@
   // EDIT: No upstream Spec token; scrim behind the label text for contrast over media.
   --label-scrim-color: hsl(from var(--md-sys-color-scrim) h s l / 50%);
   // EDIT: No upstream Spec token.
-  --label-padding: 16px;
+  --label-padding: var(--md-sys-space-200);
   // EDIT: No upstream Spec token; Compose carousel samples use height(221.dp).
   --height: 221px;
 }

@@ -62,7 +62,7 @@
   --time-selector-unselected-container-color: var(--md-sys-color-surface-container-highest);
   --time-selector-unselected-label-text-color: var(--md-sys-color-on-surface);
   // EDIT: Spec page measurements (container top/bottom and left/right padding).
-  --container-padding: 24px;
+  --container-padding: var(--md-sys-space-300);
   // EDIT: Spec page container guidance (scrim behind the modal); no time picker token.
   --scrim-color: var(--md-sys-color-scrim);
   // EDIT: Compose scrim alpha (Dialog window dim amount).

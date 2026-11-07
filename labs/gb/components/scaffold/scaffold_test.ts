@@ -27,6 +27,11 @@ import {
   planPanes,
 } from './pane-scaffold.js';
 
+import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../styles/space/md-space-tokens.cssresult.js';
+
+adoptStyles(document, [m3Styles]);
+
 /** Waits for the element's next window size class change. */
 function classChange(el: HTMLElement): Promise<void> {
   return new Promise((resolve) => {

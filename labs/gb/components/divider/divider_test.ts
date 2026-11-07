@@ -11,6 +11,11 @@ import {Environment} from '../../../../testing/environment.js';
 import {DIVIDER_CLASSES, dividerClasses} from './divider.js';
 import './md-gb-divider.js';
 
+import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../styles/m3.cssresult.js';
+
+adoptStyles(document, [m3Styles]);
+
 describe('<md-gb-divider>', () => {
   const env = new Environment();
 

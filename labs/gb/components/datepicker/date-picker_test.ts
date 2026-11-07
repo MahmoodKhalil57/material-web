@@ -30,6 +30,11 @@ import {
 import {DatePickerElement} from './date-picker-element.js';
 import './md-gb-date-picker.js';
 
+import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../styles/m3.cssresult.js';
+
+adoptStyles(document, [m3Styles]);
+
 function q<T extends Element = HTMLElement>(
   el: DatePickerElement,
   selector: string,

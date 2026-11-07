@@ -3,152 +3,152 @@
   "headroom": 0.1,
   "components": {
     "appbar": {
-      "js": 4381,
-      "css": 1565
+      "js": 4639,
+      "css": 1586
     },
     "badge": {
       "js": 959,
-      "css": 468
+      "css": 474
     },
     "button": {
-      "js": 4641,
-      "css": 1492
+      "js": 4952,
+      "css": 1508
     },
     "buttongroup": {
-      "js": 18737,
-      "css": 1442
+      "js": 19496,
+      "css": 1397
     },
     "card": {
-      "js": 3118,
-      "css": 964
+      "js": 3425,
+      "css": 956
     },
     "carousel": {
-      "js": 11945,
-      "css": 1715
+      "js": 12223,
+      "css": 1747
     },
     "checkbox": {
-      "js": 4648,
+      "js": 4963,
       "css": 987
     },
     "chip": {
-      "js": 9336,
-      "css": 2385
+      "js": 9624,
+      "css": 2417
     },
     "datepicker": {
-      "js": 28946,
-      "css": 3851
+      "js": 29548,
+      "css": 3889
     },
     "dialog": {
-      "js": 8951,
+      "js": 9249,
       "css": 2020
     },
     "divider": {
       "js": 706,
-      "css": 341
+      "css": 348
     },
     "fab": {
-      "js": 9343,
+      "js": 9723,
       "css": 1097
     },
     "fabmenu": {
-      "js": 4974,
+      "js": 5284,
       "css": 2161
     },
     "iconbutton": {
-      "js": 9975,
-      "css": 1301
+      "js": 10336,
+      "css": 1335
     },
     "list": {
-      "js": 13011,
-      "css": 3425
+      "js": 13579,
+      "css": 3507
     },
     "loadingindicator": {
       "js": 3116,
       "css": 7681
     },
     "menu": {
-      "js": 9662,
-      "css": 2185
+      "js": 10170,
+      "css": 2391
     },
     "navbar": {
-      "js": 7124,
-      "css": 1763
+      "js": 7662,
+      "css": 1795
     },
     "navdrawer": {
-      "js": 10358,
-      "css": 2254
+      "js": 9919,
+      "css": 2299
     },
     "navrail": {
-      "js": 12109,
-      "css": 2469
+      "js": 13559,
+      "css": 2501
     },
     "progress": {
-      "js": 2514,
-      "css": 3309
+      "js": 3237,
+      "css": 3364
     },
     "pulltorefresh": {
       "js": 6695,
-      "css": 1058
+      "css": 1086
     },
     "radio": {
-      "js": 4909,
+      "js": 5224,
       "css": 763
     },
     "scaffold": {
-      "js": 11599,
-      "css": 2368
+      "js": 12783,
+      "css": 2401
     },
     "search": {
-      "js": 11861,
-      "css": 2431
+      "js": 12816,
+      "css": 2435
     },
     "segmentedbutton": {
-      "js": 7581,
-      "css": 1548
+      "js": 7856,
+      "css": 1557
     },
     "select": {
-      "js": 12596,
-      "css": 1729
+      "js": 12916,
+      "css": 1818
     },
     "sheet": {
-      "js": 11375,
-      "css": 2118
+      "js": 12922,
+      "css": 2147
     },
     "slider": {
-      "js": 8181,
+      "js": 8179,
       "css": 3101
     },
     "snackbar": {
-      "js": 7307,
+      "js": 7853,
       "css": 1817
     },
     "splitbutton": {
-      "js": 2712,
-      "css": 945
+      "js": 3015,
+      "css": 986
     },
     "switch": {
-      "js": 5471,
-      "css": 1348
+      "js": 5767,
+      "css": 1383
     },
     "tabs": {
-      "js": 13122,
-      "css": 1950
+      "js": 14838,
+      "css": 2281
     },
     "textfield": {
-      "js": 7527,
-      "css": 2715
+      "js": 7593,
+      "css": 2727
     },
     "timepicker": {
-      "js": 12985,
-      "css": 3070
+      "js": 13539,
+      "css": 3098
     },
     "toolbar": {
-      "js": 19302,
-      "css": 1754
+      "js": 20051,
+      "css": 1779
     },
     "tooltip": {
-      "js": 6140,
-      "css": 1442
+      "js": 6227,
+      "css": 1456
     }
   }
 }

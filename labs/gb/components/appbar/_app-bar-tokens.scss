@@ -44,7 +44,7 @@
   // EDIT: Compose TopAppBarDefaults.MediumAppBarCollapsedHeight (= md.comp.app-bar.small.container.height), the top row of medium/large flexible
   --collapsed-height: 64px;
   // EDIT: Compose TopAppBarTitleInset (16dp - TopAppBarHorizontalPadding 4dp), title start space without a leading icon
-  --title-inset: 12px;
+  --title-inset: var(--md-sys-space-150);
 }
 
 @mixin md-flexible {
@@ -56,7 +56,7 @@
   --title-font-axes: var(--md-sys-typescale-headline-md-axes);
   --title-font-tracking: var(--md-sys-typescale-headline-md-tracking);
   // EDIT: Compose MediumTitleBottomPadding
-  --title-bottom-space: 24px;
+  --title-bottom-space: var(--md-sys-space-300);
 }
 
 @mixin lg-flexible {
@@ -68,7 +68,7 @@
   --title-font-axes: var(--md-sys-typescale-display-sm-axes);
   --title-font-tracking: var(--md-sys-typescale-display-sm-tracking);
   // EDIT: Compose LargeTitleBottomPadding
-  --title-bottom-space: 28px;
+  --title-bottom-space: calc(var(--md-sys-space-unit) * 3.5);
 }
 
 @mixin md-flexible-with-subtitle {

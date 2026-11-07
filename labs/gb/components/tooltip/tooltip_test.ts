@@ -22,6 +22,10 @@ import {
 import {type TooltipElement} from './tooltip-element.js';
 import tooltipStyles from './tooltip.cssresult.js';
 
+import {styles as m3Styles} from '../../styles/m3.cssresult.js';
+
+adoptStyles(document, [m3Styles]);
+
 // The Environment installs the Jasmine clock for the whole suite.
 adoptStyles(document, tooltipStyles);
 

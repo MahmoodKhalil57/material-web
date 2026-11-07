@@ -178,8 +178,15 @@ export abstract class SheetBase extends LitElement {
     return !this.quick && !isReducedMotion(this);
   }
 
+  /** Resolves when a gesture's settle spring has ended. */
+  protected gestureSettled(): Promise<void> {
+    return Promise.resolve();
+  }
+
   /** Waits for the panel's and host's CSS transitions to finish. */
   private async waitForMotion(): Promise<void> {
+    // A swipe's spring (not a CSS animation) moves the panel off screen.
+    await this.gestureSettled();
     if (!this.shouldAnimate()) {
       return;
     }

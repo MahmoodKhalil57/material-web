@@ -29,22 +29,22 @@ are buildable, with no status and no test; the target is 0.
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | `all-buttons` | 76 | 30 | 10 | 1 | 0 | 0 |
 | `app-bars` | 404 | 319 | 104 | 22 | 0 | 0 |
-| `badges` | 162 | 135 | 62 | 2 | 0 | 0 |
+| `badges` | 162 | 135 | 63 | 2 | 0 | 0 |
 | `bottom-sheets` | 162 | 134 | 66 | 1 | 0 | 0 |
 | `button-groups` | 249 | 210 | 133 | 2 | 0 | 0 |
 | `buttons` | 435 | 348 | 173 | 8 | 0 | 0 |
 | `cards` | 315 | 243 | 79 | 37 | 0 | 0 |
 | `carousel` | 347 | 299 | 97 | 16 | 0 | 0 |
 | `checkbox` | 115 | 82 | 45 | 4 | 0 | 0 |
-| `chips` | 516 | 397 | 104 | 21 | 0 | 0 |
-| `date-pickers` | 424 | 379 | 79 | 8 | 0 | 0 |
+| `chips` | 516 | 397 | 114 | 21 | 0 | 0 |
+| `date-pickers` | 424 | 379 | 79 | 11 | 0 | 0 |
 | `dialogs` | 328 | 244 | 124 | 19 | 0 | 0 |
 | `divider` | 84 | 48 | 20 | 4 | 0 | 0 |
 | `extended-fab` | 262 | 194 | 79 | 16 | 0 | 0 |
 | `fab-menu` | 227 | 196 | 81 | 24 | 0 | 0 |
 | `floating-action-button` | 247 | 183 | 55 | 24 | 0 | 0 |
 | `foundations/building-for-all` | 36 | 0 | 0 | 0 | 0 | 0 |
-| `foundations/customization` | 48 | 35 | 2 | 2 | 0 | 0 |
+| `foundations/customization` | 48 | 35 | 10 | 2 | 0 | 0 |
 | `foundations/design-tokens` | 129 | 36 | 0 | 2 | 0 | 0 |
 | `foundations/designing` | 198 | 83 | 0 | 39 | 0 | 0 |
 | `foundations/interaction/gestures` | 51 | 27 | 12 | 3 | 0 | 0 |
@@ -74,28 +74,28 @@ are buildable, with no status and no test; the target is 0.
 | `sliders` | 292 | 261 | 124 | 0 | 0 | 0 |
 | `snackbar` | 199 | 169 | 71 | 1 | 0 | 0 |
 | `split-button` | 186 | 155 | 98 | 3 | 0 | 0 |
-| `styles/color/advanced` | 143 | 64 | 26 | 0 | 0 | 0 |
+| `styles/color/advanced` | 143 | 64 | 29 | 0 | 0 | 0 |
 | `styles/color/choosing-a-scheme` | 32 | 10 | 3 | 0 | 0 | 0 |
 | `styles/color/dynamic` | 90 | 14 | 6 | 5 | 0 | 0 |
 | `styles/color/resources` | 9 | 2 | 0 | 1 | 0 | 0 |
-| `styles/color/roles` | 219 | 162 | 59 | 64 | 0 | 0 |
+| `styles/color/roles` | 219 | 162 | 77 | 64 | 0 | 0 |
 | `styles/color/static` | 77 | 10 | 4 | 3 | 0 | 0 |
-| `styles/color/system` | 259 | 93 | 36 | 8 | 0 | 0 |
+| `styles/color/system` | 259 | 93 | 39 | 8 | 0 | 0 |
 | `styles/elevation` | 136 | 80 | 29 | 13 | 0 | 0 |
 | `styles/icons` | 286 | 141 | 30 | 64 | 0 | 0 |
 | `styles/motion/easing-and-duration` | 136 | 110 | 61 | 44 | 0 | 0 |
 | `styles/motion/overview` | 126 | 75 | 30 | 31 | 0 | 0 |
-| `styles/motion/transitions` | 246 | 140 | 46 | 72 | 0 | 0 |
+| `styles/motion/transitions` | 246 | 140 | 47 | 72 | 0 | 0 |
 | `styles/shape` | 159 | 77 | 45 | 6 | 0 | 0 |
 | `styles/spacing` | 128 | 77 | 22 | 9 | 0 | 0 |
 | `styles/typography` | 392 | 126 | 43 | 29 | 0 | 0 |
 | `switch` | 200 | 150 | 86 | 5 | 0 | 0 |
-| `tabs` | 245 | 206 | 82 | 12 | 0 | 0 |
+| `tabs` | 245 | 206 | 87 | 12 | 0 | 0 |
 | `text-fields` | 405 | 358 | 69 | 14 | 0 | 0 |
 | `time-pickers` | 365 | 342 | 208 | 2 | 0 | 0 |
 | `toolbars` | 339 | 253 | 71 | 23 | 0 | 0 |
-| `tooltips` | 162 | 130 | 56 | 0 | 0 | 0 |
-| **Total** | **15,129** | **10,799** | **4,319** | **900** | **0** | **0** |
+| `tooltips` | 162 | 130 | 58 | 0 | 0 | 0 |
+| **Total** | **15,129** | **10,799** | **4,370** | **903** | **0** | **0** |
 
 15,129 units on 68 pages (components: 10,282, foundations: 2,409, styles: 2,438).
 Buildable units that are neither tested nor excluded are covered another way:
@@ -122,7 +122,7 @@ default it, it is tracked as a gap instead.
 | Usage advice for designers and content guidance for the app author (what to write, when to choose... | 33 |
 | Cards | 32 |
 | Layout and spacing design guidance (rulers, grid concepts, component adaptation principles, input... | 29 |
-| 71 further reasons | 415 |
+| 73 further reasons | 418 |
 
 ## Token audit
 
@@ -218,8 +218,8 @@ to its web-features Baseline status. A feature that is not widely available
 must sit inside a matching `@supports` guard or be listed with a reason in
 `scripts/gb-baseline-allow.json`; anything else fails the run.
 
-- CSS: 19,035 feature uses in 62 files; 50 features are not widely available, used 690 times (478 guarded, 212 allowed with a reason, **0 unguarded**). Result: passes.
-- JavaScript (report only): 31 tracked Web API members in 203 source files; 6 are not widely available, 3 of them with at least one use that is not feature-detected.
+- CSS: 19,123 feature uses in 62 files; 50 features are not widely available, used 690 times (478 guarded, 212 allowed with a reason, **0 unguarded**). Result: passes.
+- JavaScript (report only): 31 tracked Web API members in 204 source files; 6 are not widely available, 3 of them with at least one use that is not feature-detected.
 
 ## Size budgets
 

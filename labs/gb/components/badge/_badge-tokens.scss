@@ -24,7 +24,7 @@
   --shape: var(--md-sys-shape-corner-full);
   --size: 16px;
   // EDIT: Spec large badge padding between badge and text container 4dp; Compose BadgeWithContentHorizontalPadding.
-  --padding-inline: 4px;
+  --padding-inline: var(--md-sys-space-50);
 }
 
 // Inherits every `root` token from the parent, so values set on the

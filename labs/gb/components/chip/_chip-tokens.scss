@@ -21,17 +21,17 @@
   // EDIT: Elevated chips have no outline (md.comp.*-chip.flat.outline.width is flat only).
   --outline-width: 0px;
   // EDIT: Spec measurements: left/right padding 16dp.
-  --leading-space: 16px;
+  --leading-space: var(--md-sys-space-200);
   // EDIT: Spec measurements: left/right padding 16dp.
-  --trailing-space: 16px;
+  --trailing-space: var(--md-sys-space-200);
   // EDIT: Spec measurements: left/right padding with icon 8dp.
-  --with-leading-icon-leading-space: 8px;
+  --with-leading-icon-leading-space: var(--md-sys-space-100);
   // EDIT: Spec measurements: left/right padding with icon 8dp.
-  --with-trailing-icon-trailing-space: 8px;
+  --with-trailing-icon-trailing-space: var(--md-sys-space-100);
   // EDIT: Spec input chip measurements: left padding for avatar 4dp.
-  --with-avatar-leading-space: 4px;
+  --with-avatar-leading-space: var(--md-sys-space-50);
   // EDIT: Spec measurements: padding between elements 8dp (Compose HorizontalElementsPadding).
-  --icon-label-space: 8px;
+  --icon-label-space: var(--md-sys-space-100);
   // EDIT: Spec accessibility: 48dp minimum touch target (Compose minimumInteractiveComponentSize); chips.md: "regardless of placement or density".
   --target-size: 48px;
   // EDIT: foundations/layout/grids-spacing.md, Component scaling: each density step removes 4dp from the container height (chips.md: avoid applying density by default).
@@ -300,9 +300,9 @@
   --label-text-axes: var(--md-sys-typescale-label-lg-axes);
   --label-text-tracking: var(--md-sys-typescale-label-lg-tracking);
   // EDIT: Compose InputChipDefaults.contentPadding: 4dp + 8dp element spacing without a leading icon.
-  --leading-space: 12px;
+  --leading-space: var(--md-sys-space-150);
   // EDIT: Compose InputChipDefaults.contentPadding: 4dp + 8dp element spacing without a trailing icon.
-  --trailing-space: 12px;
+  --trailing-space: var(--md-sys-space-150);
 }
 
 @mixin input-unselected {

@@ -314,6 +314,8 @@ describe('<md-gb-nav-drawer> drag and settle contract (DragSettleController: fol
     drag(sheet, -40);
     await settle();
     expect(el.open).toBeTrue();
+    // It springs back from the release position.
+    await until(() => Math.abs(sheet.getBoundingClientRect().left - left) < 0.5);
     expect(sheet.getBoundingClientRect().left).toBeCloseTo(left, 0);
     drag(sheet, -120, {release: false});
     const {x, y} = centerOf(sheet);
@@ -384,6 +386,7 @@ describe('<md-gb-nav-drawer> drag and settle contract (DragSettleController: fol
 });
 
 import {resetEscapeTracking} from '../shared/predictive-back.js';
+import {until} from '../shared/test-dom.js';
 
 /** What the lifecycle surfaces share: `show()`, `close()`, `open` and events. */
 interface ModalLifecycleElement extends HTMLElement {

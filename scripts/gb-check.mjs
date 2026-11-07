@@ -15,6 +15,9 @@
  *   npm run gb:check -- --all             # everything (end of a change set)
  *   npm run gb:check -- --no-test slider  # build only
  *   npm run gb:check -- --fast slider     # skip the type check while iterating
+ *   npm run gb:check -- --lean slider     # quick check for agents (aim: 1-2 min): implies --fast
+ *                                         # and runs only the test files that git reports changed,
+ *                                         # or that import a changed file in the named directories
  *   npm run gb:check -- --emit slider     # also write tsc's .js output
  *   npm run gb:check -- --watch slider    # keep running; rerun affected tests on save
  *   npm run gb:check -- --size slider     # also check labs/gb Brotli size budgets (implies --emit)
@@ -43,7 +46,9 @@ const test = !argv.includes('--no-test');
 // Type checking takes a few seconds; skip it while iterating (`--fast`).
 const watch = argv.includes('--watch');
 // `--watch` skips it too: the editor type checks as you go.
-const typecheck = !argv.includes('--fast') && !watch;
+// `--lean`: only the tests touched by changed files, no type check.
+const lean = argv.includes('--lean');
+const typecheck = !argv.includes('--fast') && !watch && !lean;
 // Compiled .js is only needed by the catalog and by `npm test`'s file glob.
 const baseline = argv.includes('--baseline');
 const size = argv.includes('--size');
@@ -161,9 +166,18 @@ if (test) {
     // `*_gap.ts`: red tests for spec features not built yet (`--gaps` runs
     // them instead). They count as tested only once moved into a `*_test.ts`.
     const pattern = argv.includes('--gaps') ? '*_gap.ts' : '*_test.ts';
-    const globs = targets.map((d) =>
-      isFile(d) ? relative('.', d).replace(/\\/g, '/') : `${relative('.', d).replace(/\\/g, '/')}/**/${pattern}`,
-    );
+    const globs = lean
+      ? leanTests(pattern)
+      : targets.map((d) =>
+          isFile(d) ? relative('.', d).replace(/\\/g, '/') : `${relative('.', d).replace(/\\/g, '/')}/**/${pattern}`,
+        );
+    if (lean) {
+      if (!globs.length) {
+        console.log('[gb:check] --lean: no changed files with tests in the named directories');
+        return;
+      }
+      console.log(`[gb:check] --lean: ${globs.length} test file(s): ${globs.join(' ')}`);
+    }
     if (watch) {
       watchStyles();
       // The runner and its browser stay up; on save it reruns only the test
@@ -200,6 +214,39 @@ function watchStyles() {
   }
 }
 console.log(`[gb:check] done in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+
+/**
+ * `--lean`: test files under the targets that git reports as changed, every
+ * test in the folder of a changed .scss, and tests that mention a changed
+ * .ts file's name in its folder.
+ */
+function leanTests(pattern) {
+  const changed = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], {encoding: 'utf8'})
+    .split('\n')
+    .map((line) => line.slice(3).trim().replace(/^"|"$/g, '').replace(/^.* -> /, ''))
+    .filter(Boolean);
+  const roots = targets.map((d) => relative('.', d).replace(/\\/g, '/'));
+  const inTargets = (p) => roots.some((r) => p === r || p.startsWith(`${r}/`));
+  const suffix = pattern.slice(1); // `_test.ts` / `_gap.ts`
+  const out = new Set();
+  for (const path of changed.filter(inTargets)) {
+    if (path.endsWith(suffix)) {
+      if (existsSync(path)) out.add(path);
+      continue;
+    }
+    if (!/\.(ts|scss)$/.test(path)) continue;
+    const folder = dirname(path);
+    const base = path.slice(folder.length + 1).replace(/\.(ts|scss)$/, '').replace(/^_/, '');
+    if (!existsSync(folder)) continue;
+    for (const name of readdirSync(folder)) {
+      if (!name.endsWith(suffix)) continue;
+      const file = `${folder}/${name}`;
+      // Styles reach every test in their folder; scripts only their importers.
+      if (path.endsWith('.scss') || readFileSync(file, 'utf8').includes(base)) out.add(file);
+    }
+  }
+  return [...out];
+}
 
 /** Non-partial .scss files (what the Sass CLI compiles for `dir:dir`). */
 function sassFiles(dir) {

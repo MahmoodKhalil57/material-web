@@ -185,8 +185,8 @@ export class SideSheetElement extends SheetBase {
    * Swipe to dismiss: a drag on the modal `<dialog>` moves the sheet between
    * the open and closed anchors and settles on release (Compose
    * `AnchoredDraggableState` thresholds). Shared DragSettleController, with
-   * the closing direction positive. Clearing the drag offset in the same
-   * render as the close lets the panel spring from where it was released.
+   * the closing direction positive. The settle is a spring that starts at
+   * the release position with the release velocity.
    */
   // spec: side-sheets-2a70b6
   protected readonly swipe = new DragSettleController(this, {
@@ -209,8 +209,15 @@ export class SideSheetElement extends SheetBase {
     onDrag: (offset) => {
       this.dragOffset = offset;
     },
-    onSettle: (anchor) => {
+    // The release velocity carries into a spring that moves the panel, which
+    // keeps its drag state (no CSS transition) until it rests.
+    onFrame: (position) => {
+      this.dragOffset = position;
+    },
+    onSettled: () => {
       this.dragOffset = null;
+    },
+    onSettle: (anchor) => {
       if (this.dragWidth > 0 && anchor === this.dragWidth) {
         this.close(CLOSE_REASONS.SWIPE);
       }
@@ -219,6 +226,10 @@ export class SideSheetElement extends SheetBase {
       this.dragOffset = null;
     },
   });
+
+  protected override gestureSettled(): Promise<void> {
+    return this.swipe.whenSettled();
+  }
 
   private panelIsRtl() {
     const panel = this.panel;

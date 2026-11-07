@@ -15,6 +15,7 @@
 // import 'jasmine'; (google3-only)
 import {sendKeys} from '@web/test-runner-commands';
 import {html, render, type ReactiveElement, type TemplateResult} from 'lit';
+import {until} from '../shared/test-dom.js';
 import './md-gb-bottom-sheet.js';
 import './md-gb-side-sheet.js';
 
@@ -198,6 +199,7 @@ describe('<md-gb-bottom-sheet> drag and settle contract (DragSettleController: f
     await settle();
     expect(el.state).toBe('partially-expanded');
     expect(changed).not.toHaveBeenCalled();
+    await until(() => panel.style.transform === '');
     expect(panel.style.transform).toBe('');
   });
 

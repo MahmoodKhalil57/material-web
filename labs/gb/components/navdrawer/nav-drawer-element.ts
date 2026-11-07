@@ -368,10 +368,15 @@ export class NavDrawerElement extends baseClass {
     onDrag: (offset) => {
       this.dragOffset = offset;
     },
-    // Clearing the offset in the same update as the open/closed change lets
-    // the sheet transition from where it was released.
-    onSettle: (anchor) => {
+    // The release velocity carries into a spring that moves the sheet, which
+    // keeps its drag state (no CSS transition) until it rests.
+    onFrame: (position) => {
+      this.dragOffset = position;
+    },
+    onSettled: () => {
       this.dragOffset = null;
+    },
+    onSettle: (anchor) => {
       if (this.dragWidth > 0 && anchor === this.dragWidth) {
         this.swipeSettling = true;
         this.close(NAV_DRAWER_CLOSE_REASONS.swipe).finally(() => {
@@ -390,6 +395,8 @@ export class NavDrawerElement extends baseClass {
   }
 
   private async waitForTransitions() {
+    // A swipe's spring (not a CSS transition) moves the sheet off screen.
+    await this.swipe.whenSettled();
     // A freshly opened drawer renders a closed frame first and enters on the
     // next update: wait for that render, or the open transition isn't there
     // to wait for yet and `show()` resolves before the drawer is on screen.

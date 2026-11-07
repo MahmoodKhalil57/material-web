@@ -299,4 +299,75 @@ describe('<md-gb-chip>', () => {
       color('hsl(from var(--md-sys-color-on-surface) h s l / 38%)'),
     );
   });
+
+  // spec: chips-2d81ab, chips-9ad9e2
+  it("colors an assist chip with the on-surface label, outline-variant outline and primary icon", async () => {
+    const {chipEl} = await setup(
+      html`<md-gb-chip><span slot="icon">x</span>Assist</md-gb-chip>`,
+    );
+    const style = getComputedStyle(chipEl);
+    expect(style.color).toBe(color("var(--md-sys-color-on-surface)"));
+    expect(style.borderTopColor).toBe(
+      color("var(--md-sys-color-outline-variant)"),
+    );
+    expect(cssVar(chipEl, "--md-icon-color")).toBe(
+      color("var(--md-sys-color-primary)"),
+    );
+  });
+
+  // spec: chips-2a00df, chips-43fcc9
+  it("measures assist and suggestion chips at 32px with 16px side padding", async () => {
+    for (const type of ["assist", "suggestion"]) {
+      const {chipEl} = await setup(
+        html`<md-gb-chip type=${type}>Label</md-gb-chip>`,
+      );
+      const style = getComputedStyle(chipEl);
+      expect(chipEl.getBoundingClientRect().height).withContext(type).toBe(32);
+      expect(style.paddingInlineStart).withContext(type).toBe("16px");
+      expect(style.paddingInlineEnd).withContext(type).toBe("16px");
+    }
+  });
+
+  // spec: chips-8233b3, chips-b9c1a1, chips-bee6ad
+  it("colors a suggestion chip with the on-surface-variant label and outline-variant outline", async () => {
+    const {chipEl} = await setup(
+      html`<md-gb-chip type="suggestion">Suggest</md-gb-chip>`,
+    );
+    const style = getComputedStyle(chipEl);
+    expect(style.color).toBe(color("var(--md-sys-color-on-surface-variant)"));
+    expect(style.borderTopColor).toBe(
+      color("var(--md-sys-color-outline-variant)"),
+    );
+  });
+
+  // spec: chips-3e3d91, chips-c734e3
+  it("colors an input chip by selection, with a primary icon when selected", async () => {
+    const unselected = await setup(
+      html`<md-gb-chip type="input">Input</md-gb-chip>`,
+    );
+    expect(getComputedStyle(unselected.chipEl).color).toBe(
+      color("var(--md-sys-color-on-surface-variant)"),
+    );
+    const selected = await setup(
+      html`<md-gb-chip type="input" selected><span slot="icon">x</span>Input</md-gb-chip>`,
+    );
+    const style = getComputedStyle(selected.chipEl);
+    expect(style.backgroundColor).toBe(
+      color("var(--md-sys-color-secondary-container)"),
+    );
+    expect(style.color).toBe(color("var(--md-sys-color-on-secondary-container)"));
+    expect(cssVar(selected.chipEl, "--md-icon-color")).toBe(
+      color("var(--md-sys-color-primary)"),
+    );
+  });
+
+  // spec: chips-af3678
+  it("pads an input chip 12px at the sides without icons", async () => {
+    const {chipEl} = await setup(
+      html`<md-gb-chip type="input">Input</md-gb-chip>`,
+    );
+    expect(chipEl.getBoundingClientRect().height).toBe(32);
+    expect(getComputedStyle(chipEl).paddingInlineStart).toBe("12px");
+    expect(getComputedStyle(chipEl).paddingInlineEnd).toBe("12px");
+  });
 });

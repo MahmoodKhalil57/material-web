@@ -154,4 +154,35 @@ describe('tabs spec units', () => {
     expect(long).toEqual(short);
   });
 
+  /** Resolves a tab token (a length) to pixels through a probe element. */
+  function tokenPx(tabs: Element, name: string) {
+    const probe = document.createElement("div");
+    probe.style.width = `var(${name})`;
+    tabs.append(probe);
+    const width = probe.getBoundingClientRect().width;
+    probe.remove();
+    return width;
+  }
+
+  // spec: tabs-d717fb, tabs-2b74a6, tabs-cd5b4a
+  it("spaces an inline icon 8dp from the text, a badge 4dp after it and overlaps a stacked icon badge by 6dp", async () => {
+    const root = await render(html`
+      <md-gb-tabs>
+        <md-gb-tab><md-gb-icon>flight</md-gb-icon><span slot="label">Flights</span></md-gb-tab>
+      </md-gb-tabs>
+    `);
+    const tabs = root.querySelector("md-gb-tabs")!;
+    expect(tokenPx(tabs, "--icon-label-space")).toBe(8);
+    expect(tokenPx(tabs, "--badge-space")).toBe(4);
+    expect(tokenPx(tabs, "--icon-badge-inset")).toBe(6);
+  });
+
+  // spec: tabs-2bcae6, tabs-ac2110
+  it("insets the active indicator 2dp per side with a 24dp minimum length", async () => {
+    const root = await render(fixed);
+    const tabs = root.querySelector("md-gb-tabs")!;
+    expect(tokenPx(tabs, "--active-indicator-inset")).toBe(2);
+    expect(tokenPx(tabs, "--active-indicator-min-length")).toBe(24);
+    expect(tokenPx(tabs, "--active-indicator-height")).toBe(3);
+  });
 });

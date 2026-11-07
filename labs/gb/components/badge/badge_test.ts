@@ -12,6 +12,11 @@ import {BADGE_CLASSES, formatBadgeValue} from './badge.js';
 import type {BadgeElement} from './badge-element.js';
 import './md-gb-badge.js';
 
+import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../styles/m3.cssresult.js';
+
+adoptStyles(document, [m3Styles]);
+
 describe('<md-gb-badge>', () => {
   const env = new Environment();
 
@@ -50,11 +55,14 @@ describe('<md-gb-badge>', () => {
     expect(container.textContent?.trim()).toBe('999+');
   });
 
+  // spec: badges-13edb2
   it('uses the spec 4px large badge padding', async () => {
     const {container} = await setupTest(
       html`<md-gb-badge value="42"></md-gb-badge>`,
     );
     expect(getComputedStyle(container).paddingInlineStart).toBe('4px');
+    expect(getComputedStyle(container).paddingInlineEnd).toBe('4px');
+    expect(container.getBoundingClientRect().height).toBe(16);
   });
 });
 

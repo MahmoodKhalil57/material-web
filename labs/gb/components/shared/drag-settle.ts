@@ -7,6 +7,7 @@
 import {type ReactiveController, type ReactiveControllerHost} from 'lit';
 
 import {readMotion} from './disclosure.js';
+import {readSpring, Spring} from './spring.js';
 import {
   DRAG_SLOP_PX,
   DragGesture,
@@ -160,6 +161,17 @@ export interface DragSettleOptions {
   onDragStart?: (from: number) => void;
   /** Called on every move of a drag with the clamped position. */
   onDrag?: (offset: number) => void;
+  /**
+   * Called on every frame of the settle with the surface's position and
+   * velocity (px and px/s, logical direction). When set, the settle is a
+   * spring solved by the controller: it starts at the release position with
+   * the release velocity and is retargeted, keeping its velocity, when
+   * another settle starts mid-flight. The surface should follow these frames
+   * (with no CSS transition on the moved property) and `onSettled` fires
+   * when the spring rests. Without it the settle is the spring's CSS
+   * transition and `onSettled` fires after the token's duration.
+   */
+  onFrame?: (position: number, velocity: number) => void;
   /** Called when the surface settles at an anchor: apply the position now. */
   onSettle: (anchor: number, info: DragSettleInfo) => void;
   /** Called when a drag is cancelled, with the position it returns to. */
@@ -182,6 +194,9 @@ export class DragSettleController implements ReactiveController {
   private timer: ReturnType<typeof setTimeout> | undefined;
   private _dragging = false;
   private _settling = false;
+  private spring: Spring | null = null;
+  private springAnchor = 0;
+  private restWaiters: Array<() => void> = [];
 
   constructor(
     private readonly host: ReactiveControllerHost & HTMLElement,
@@ -198,6 +213,17 @@ export class DragSettleController implements ReactiveController {
   /** Whether the surface is settling (the settle motion hasn't ended). */
   get settling(): boolean {
     return this._settling;
+  }
+
+  /**
+   * Resolves when the settle motion has ended (at once when it isn't
+   * settling, and when a new drag grabs it or the host disconnects). A surface
+   * that closes on release waits for this before it is taken off screen, so
+   * the spring is not cut short.
+   */
+  whenSettled(): Promise<void> {
+    if (!this._settling) return Promise.resolve();
+    return new Promise((resolve) => this.restWaiters.push(resolve));
   }
 
   /** The surface's position during a drag, else its last settled one. */
@@ -217,7 +243,9 @@ export class DragSettleController implements ReactiveController {
   hostDisconnected() {
     this.unbind();
     clearTimeout(this.timer);
+    this.spring?.stop();
     this._settling = false;
+    this.flushWaiters();
   }
 
   hostUpdated() {
@@ -291,9 +319,13 @@ export class DragSettleController implements ReactiveController {
   private start() {
     const o = this.options;
     clearTimeout(this.timer);
+    // A drag grabs a spring in flight where it is.
+    const flying = this.spring?.running ?? false;
+    this.spring?.stop();
     this._settling = false;
+    this.flushWaiters();
     this._dragging = true;
-    this.origin = o.value();
+    this.origin = flying ? this.position : o.value();
     this.position = this.origin;
     this.consumed = null;
     const reverse = o.reverse ? o.reverse() : o.axis === 'x' && getComputedStyle(this.host).direction === 'rtl';
@@ -339,10 +371,16 @@ export class DragSettleController implements ReactiveController {
   private settle(anchor: number, info: DragSettleInfo) {
     clearTimeout(this.timer);
     this._dragging = false;
+    const flying = this.spring?.running ?? false;
+    // A settle in flight carries on from its own position and velocity.
+    const from = flying ? this.spring!.position : info.offset;
+    const velocity = flying ? this.spring!.velocity : info.velocity;
     this.position = anchor;
     this.options.onSettle(anchor, info);
     const {duration} = this.motion();
-    if (duration > 0) {
+    if (this.options.onFrame) {
+      this.springTo(anchor, from, velocity, flying, duration === 0);
+    } else if (duration > 0) {
       this._settling = true;
       this.timer = setTimeout(() => this.settled(anchor), duration);
     } else {
@@ -352,8 +390,36 @@ export class DragSettleController implements ReactiveController {
     this.host.requestUpdate();
   }
 
+  /** Runs the settle as a spring from the release position and velocity. */
+  private springTo(anchor: number, from: number, velocity: number, flying: boolean, reduced: boolean) {
+    const o = this.options;
+    const spring = (this.spring ??= new Spring({
+      reduced: () => this.motion().reduced,
+      onFrame: (position, speed) => {
+        this.position = position;
+        o.onFrame?.(position, speed);
+        this.host.requestUpdate();
+      },
+      onRest: () => this.settled(this.springAnchor),
+    }));
+    spring.spec = readSpring(this.options.target() ?? this.host, o.spring);
+    this.springAnchor = anchor;
+    this._settling = !reduced;
+    // Under reduced motion the spring jumps to the anchor and rests.
+    if (flying) spring.retarget(anchor);
+    else spring.start(from, anchor, velocity);
+    this.host.requestUpdate();
+  }
+
+  private flushWaiters() {
+    const waiters = this.restWaiters;
+    this.restWaiters = [];
+    for (const resolve of waiters) resolve();
+  }
+
   private settled(anchor: number) {
     this._settling = false;
+    this.flushWaiters();
     this.options.onSettled?.(anchor);
     this.host.requestUpdate();
   }

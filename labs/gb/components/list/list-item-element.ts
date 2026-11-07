@@ -409,12 +409,18 @@ export class ListItemElement extends baseClass {
       this.swiping = true;
     },
     onDrag: (offset) => this.setOffset(offset),
+    // The release velocity carries into a spring that moves the item, which
+    // keeps its swiping state (no CSS transition on translate) until it rests.
+    onFrame: (position) => this.setOffset(position),
     onSettle: (anchor) => this.settleAt(anchor),
     onCancel: (to) => {
       this.swiping = false;
       this.setOffset(to);
     },
-    onSettled: () => this.finishFullSwipe(),
+    onSettled: () => {
+      this.swiping = false;
+      this.finishFullSwipe();
+    },
   });
 
   /** Focuses the item's drag handle, if it has one. */
@@ -911,13 +917,11 @@ export class ListItemElement extends baseClass {
 
   /** Applies the anchor a swipe (or the "more" button) settled at. */
   private settleAt(target: number) {
-    this.swiping = false;
     const full = this.fullSwipeAnchor();
     if (full !== undefined && target === full && full !== 0) {
       // A full swipe clears the item off-screen and triggers the primary
       // action (spec: Swipe); the item then settles back unless the action
       // removed it (finishFullSwipe, after the settle motion).
-      this.setOffset(full);
       this.swipedAway = true;
       const actions = this.actionsFor("trailing");
       (actions[actions.length - 1] as HTMLElement | undefined)?.click();
@@ -925,7 +929,6 @@ export class ListItemElement extends baseClass {
     }
     const side: ListItemRevealed =
       target > 0 ? "leading" : target < 0 ? "trailing" : "";
-    this.setOffset(target);
     if (side !== this.revealed) {
       this.revealed = side;
       this.dispatchEvent(new Event("reveal-change", { bubbles: true }));

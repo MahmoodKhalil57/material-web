@@ -39,7 +39,7 @@
   // EDIT: Compose Menu.kt DropdownMenuItemDefaultMinWidth.
   --menu-min-width: 112px;
   // EDIT: Compose Menu.kt MenuVerticalMargin: the menu keeps 48dp from the window edges.
-  --menu-window-margin: 48px;
+  --menu-window-margin: var(--md-sys-space-600);
   // EDIT: Compose Menu.kt ClosedScaleTarget: the menu scales in from 80%.
   --menu-closed-scale: 0.8;
 }

@@ -436,6 +436,7 @@ export class TabPanelsElement extends LitElement {
       this.slideTimer = null;
     }
     this.sliding = false;
+    this.dragPosition = null;
     for (const panel of this.visiblePanels) {
       panel.style.removeProperty(TAB_PANEL_OFFSET_PROPERTY);
     }
@@ -503,6 +504,19 @@ export class TabPanelsElement extends LitElement {
       this.dragPosition = offset / (this.dragWidth || 1);
       this.positionDrag();
     },
+    // The release velocity carries into a spring that moves the panels, which
+    // stay in their drag state (no CSS transition) until it rests. A slide
+    // that starts meanwhile (a tab click) clears `dragPosition` and takes over.
+    onFrame: (position) => {
+      if (this.dragPosition === null) return;
+      this.dragPosition = position / (this.dragWidth || 1);
+      this.positionDrag();
+    },
+    onSettled: () => {
+      if (this.dragPosition === null) return;
+      this.dragPosition = null;
+      this.finishSlide();
+    },
     onSettle: (anchor) => this.endDrag(Math.round(anchor / (this.dragWidth || 1))),
     onCancel: () => this.cancelDrag(),
   });
@@ -518,10 +532,11 @@ export class TabPanelsElement extends LitElement {
     }
   }
 
-  /** Settles the released drag at the panel `target`. */
+  /**
+   * Applies the panel a released drag settles at; the spring then moves the
+   * panels there (`onFrame`) and `onSettled` ends the slide.
+   */
   private endDrag(target: number) {
-    this.dragPosition = null;
-    updateClassList(this, {[TAB_PANELS_CLASSES.dragging]: false});
     const changed = target !== this.index;
     // The panel the drag started at stays on screen while it settles away.
     const previous = this.activePanel;
@@ -529,7 +544,7 @@ export class TabPanelsElement extends LitElement {
       this.visiblePanels.add(previous);
     }
     this.index = target;
-    this.settle();
+    this.applyVisibility();
     if (changed) {
       this.selectFromSwipe(target);
     }

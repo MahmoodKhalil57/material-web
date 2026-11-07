@@ -38,8 +38,8 @@ In labs/gb:
 
 The new tone-based surface roles (container levels, dim, and bright) and the
 fixed accent roles from the latest spec are all part of the tokens, so nothing
-extra is needed to use them. HCT itself is not exposed as an API in labs/gb;
-the generator uses it internally.
+extra is needed to use them. HCT is also available as a small API (see
+Advanced customization).
 
 ## Color roles
 
@@ -140,8 +140,27 @@ scheme, give them to `palettes` (see Advanced customization).
 ```
 
 Generating a brand scheme from a source color and exporting a stylesheet is
-one call: `themeToCss(themeFromSource({source: '#006a6a'}))`. A Theme Builder
-file importer is not built in labs/gb yet.
+one call: `themeToCss(themeFromSource({source: '#006a6a'}))`. To start from a
+Material Theme Builder export, pass its JSON to `themeFromThemeBuilder()`:
+
+```ts
+import {
+  applyTheme,
+  themeFromThemeBuilder,
+  themeOptionsFromThemeBuilder,
+  themeToCss,
+} from '@material/web/labs/gb/styles/color/dynamic-color.js';
+
+const json = await (await fetch('material-theme.json')).json();
+const css = themeToCss(themeFromThemeBuilder(json)); // keep the CSS
+applyTheme(document, themeOptionsFromThemeBuilder(json)); // or apply it live
+```
+
+The seed (or the core primary) is the source, other core colors become
+`palettes`, extended colors become harmonized or exact `customColors`, and a
+`variant` or `contrast` field in the file is used if present. The export's
+generated schemes and palettes are ignored: the roles are regenerated, so they
+match the rest of labs/gb. A second argument overrides any option.
 
 ## Dynamic color
 
@@ -176,9 +195,11 @@ const albumTheme = await themeFromImage(img);
 ```
 
 *   Variants: `tonal-spot`, `neutral`, `vibrant`, `expressive`, `fidelity`,
-    `content`, `monochrome`, `rainbow`, and `fruit-salad`. The newest color
-    rules (2025) exist for tonal spot, neutral, vibrant and expressive; the
-    others use the original rules. `theme.specVersion` reports what was used.
+    `content`, `monochrome`, `rainbow`, and `fruit-salad`. The spec page does
+    not define these variants or any version of their rules; they come from
+    Material Color Utilities, which has 2025 rules only for tonal spot,
+    neutral, vibrant and expressive. The others use the original rules, so
+    labs/gb does too. `theme.specVersion` reports what was used.
 *   Contrast: `standard`, `medium`, `high`, or a number from -1 to 1.
     `applyTheme()` accepts `contrast: 'auto'`, which uses high contrast when
     the user prefers more contrast.
@@ -204,7 +225,7 @@ Spec topic | In labs/gb
 Combine multiple color schemes | Yes: call `applyTheme(element, ...)` on different elements, each with its own source, variant and contrast.
 Map or remap colors on UI elements | Yes: components read roles, so reassign a role in CSS (`--md-sys-color-surface: var(--md-sys-color-surface-container);`) on a subtree.
 Define static colors | Yes: `customColors` adds a color with four roles.
-Define custom color roles | Not built in labs/gb yet: there is no palette-and-tone role definition.
+Define custom color roles | Yes: `customRoles` takes a name, a palette and a tone for light and dark (optionally per contrast level).
 Define your own baseline scheme | Yes: override the static tokens, or pass `palettes`.
 Define your own dynamic scheme | Yes: `palettes` takes your own primary, secondary, tertiary, neutral, neutral variant and error key colors.
 Use color fidelity | Yes: `fidelity` per role.
@@ -228,6 +249,51 @@ const theme = themeFromSource({
 
 Harmonize colors that carry meaning but should still sit in the theme, such
 as success and warning. Do not harmonize brand colors that must stay exact.
+### Custom color roles
+
+A custom role is one color picked from a palette at a reference tone, for light
+and dark, so it follows the source color and the contrast level like the
+built-in roles. It makes `--md-sys-color-<name>` only; pick a tone that
+meets contrast against the role it sits on (3:1 for graphics) and check the
+pair yourself.
+
+```ts
+const theme = themeFromSource({
+  source: '#6750a4',
+  customRoles: [
+    // Primary palette, tone 50 in light, 70 in dark; darker with more contrast.
+    {
+      name: 'primary-graphic',
+      palette: 'primary',
+      tone: {
+        light: {standard: 50, medium: 40, high: 30},
+        dark: {standard: 70, medium: 80, high: 90},
+      },
+    },
+    // Your own palette (hex, or {hue, chroma}) instead of a scheme palette.
+    {name: 'warning', source: '#ff9800', tone: {light: 40, dark: 80}},
+  ],
+});
+```
+
+`palette` is one of `primary`, `secondary`, `tertiary`, `neutral`,
+`neutralVariant`, `error`. Tones are 0 to 100; a number applies to both themes.
+
+### HCT
+
+Colors in the system are built in HCT (hue, chroma, tone). To work in it
+yourself:
+
+```ts
+import {hctFromColor, hctToHex, hctWith} from '@material/web/labs/gb/styles/color/dynamic-color.js';
+
+const {hue, chroma, tone} = hctFromColor('#6750a4');
+hctToHex({hue, chroma, tone: 90}); // the same color, lighter
+hctWith('#6750a4', {tone: 20});     // change one channel
+```
+
+Colors outside the sRGB range are brought in by lowering chroma.
+
 Prefer an existing role before adding custom colors, and keep contrast pairs
 accessible; `customColors` roles follow the same on-color convention as the
 accents.

@@ -6,12 +6,18 @@
  */
 
 /**
- * Waits for `npm run catalog:dev` to finish its next build, checking every
- * 250ms (it rebuilds the pages in place when watched files change).
+ * Waits until `npm run catalog:dev` serves up-to-date pages, checking every
+ * 250ms (it rebuilds the pages in place when watched files change, and marks
+ * the state "pending" as soon as it sees a change).
  *
- *   node scripts/catalog-wait.mjs              # a build that ends after now
- *   node scripts/catalog-wait.mjs --ready      # any finished build
- *   node scripts/catalog-wait.mjs --timeout 300
+ *   node scripts/catalog-wait.mjs              # after an edit: pages rebuilt
+ *   node scripts/catalog-wait.mjs --ready      # any finished build (just started)
+ *   node scripts/catalog-wait.mjs --timeout 90 # seconds (default 90)
+ *
+ * Without --ready it waits a short grace period (the watcher reports an edit
+ * within milliseconds), then returns as soon as no build is pending or
+ * running. An edit whose rebuild already finished returns at once instead of
+ * waiting for a build that never comes.
  *
  * Exits 0 when ready (prints the URL), 1 on a build error or timeout, 2 when
  * no catalog:dev run is recorded.
@@ -27,9 +33,10 @@ const opt = (name, fallback) => {
   return i >= 0 ? argv[i + 1] : fallback;
 };
 const STATE = join(fileURLToPath(new URL('..', import.meta.url)), 'catalog', '.catalog-dev.json');
-const since = argv.includes('--ready') ? 0 : Date.now();
+const ready = argv.includes('--ready');
 const started = Date.now();
-const deadline = Date.now() + Number(opt('timeout', 300)) * 1000;
+const GRACE = 1500;
+const deadline = Date.now() + Number(opt('timeout', 90)) * 1000;
 
 /** Whether the process that wrote the state is still running. */
 function alive(pid) {
@@ -53,15 +60,18 @@ while (Date.now() < deadline) {
     console.error('no catalog:dev run recorded (catalog/.catalog-dev.json); start it with npm run catalog:dev');
     process.exit(2);
   }
-  if (state && !alive(state.pid)) {
+  // A dead pid may be a run that was just replaced: the new one rewrites the
+  // state within a few seconds.
+  if (state && !alive(state.pid) && Date.now() - started > 5000) {
     console.error(`catalog:dev (pid ${state.pid}) is not running; start it with npm run catalog:dev`);
     process.exit(2);
   }
-  if (state?.status === 'error' && state.at >= since) {
+  const settled = (ready || Date.now() - started > GRACE) && state && alive(state.pid);
+  if (state?.status === 'error' && settled) {
     console.error(`catalog:dev build failed: ${state.error}`);
     process.exit(1);
   }
-  if (state?.status === 'ready' && state.at >= since) {
+  if (state?.status === 'ready' && settled) {
     console.log(`ready: http://localhost:${state.port}/ (build ${state.builds})`);
     process.exit(0);
   }

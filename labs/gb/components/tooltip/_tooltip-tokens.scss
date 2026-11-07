@@ -17,9 +17,9 @@
   // EDIT: Compose TooltipDefaults.plainTooltipMaxWidth (200.dp).
   --max-width: 200px;
   // EDIT: Compose PlainTooltipVerticalPadding (4.dp).
-  --padding-block: 4px;
+  --padding-block: var(--md-sys-space-50);
   // EDIT: Spec plain tooltip padding 8dp; Compose PlainTooltipHorizontalPadding.
-  --padding-inline: 8px;
+  --padding-inline: var(--md-sys-space-100);
   // EDIT: Spec placement: 4dp from a target with a visual boundary; Compose SpacingBetweenTooltipAndAnchor.
   --anchor-spacing: 4px;
   // EDIT: Compose TooltipDefaults.caretSize width (16.dp).
@@ -63,17 +63,17 @@
   // EDIT: Compose TooltipDefaults.richTooltipMaxWidth (320.dp).
   --max-width: 320px;
   // EDIT: Spec rich tooltip top padding 12dp.
-  --padding-block: 12px;
+  --padding-block: var(--md-sys-space-150);
   // EDIT: Spec rich tooltip left and right padding 16dp; Compose RichTooltipHorizontalPadding.
-  --padding-inline: 16px;
+  --padding-inline: var(--md-sys-space-200);
   // EDIT: Spec rich tooltip bottom padding 8dp (below the text buttons); Compose ActionLabelBottomPadding.
-  --actions-padding-block-end: 8px;
+  --actions-padding-block-end: var(--md-sys-space-100);
   // EDIT: Space between subhead and supporting text (Compose HeightFromSubheadToTextFirstLine 24.dp baseline).
   --subhead-spacing: 4px;
   // EDIT: Space between supporting text and text buttons (Compose TextBottomPadding 16.dp less the 40dp button's inset).
   --actions-spacing: 4px;
   // EDIT: Spec: up to two text buttons side by side.
-  --actions-gap: 8px;
+  --actions-gap: var(--md-sys-space-100);
 }
 
 // Inherits every `root` token from the parent, so values set on the

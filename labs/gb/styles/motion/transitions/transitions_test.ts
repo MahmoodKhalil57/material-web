@@ -15,6 +15,7 @@ import transitionStyles from './md-motion-transitions.cssresult.js';
 import {
   containerTransform,
   containerTransformFadeKeyframes,
+  coplanar,
   enter,
   enterExitClasses,
   exit,
@@ -25,6 +26,7 @@ import {
   lateralKeyframes,
   parseTime,
   reducedKeyframes,
+  scrollEnterExit,
   sharedAxis,
   sharedAxisKeyframes,
   supportsViewTransitions,
@@ -479,6 +481,163 @@ describe('motion transitions', () => {
           [TRANSITION_CLASSES.temporary]: true,
         }),
       );
+    });
+  });
+
+  describe('scroll enter and exit', () => {
+    function setupScroller() {
+      const root = setup(html`<div
+        class="scroller"
+        style="block-size: 100px; overflow: auto"
+      >
+        <div class="bar" style="position: sticky; top: 0">
+          <button>Action</button>
+        </div>
+        <div style="block-size: 1000px"></div>
+      </div>`);
+      return {
+        scroller: root.querySelector<HTMLElement>('.scroller')!,
+        bar: root.querySelector<HTMLElement>('.bar')!,
+      };
+    }
+    function scrollTo(scroller: HTMLElement, top: number) {
+      scroller.scrollTop = top;
+      scroller.dispatchEvent(new Event('scroll'));
+    }
+
+    // spec: motion-transitions-31df78
+    it('slides the element off the screen edge scrolling down and back scrolling up', async () => {
+      const {scroller, bar} = setupScroller();
+      const handle = scrollEnterExit(bar, {
+        target: scroller,
+        reducedMotion: false,
+      });
+      scrollTo(scroller, 50);
+      expect(handle.hidden).toBeTrue();
+      expect(bar.inert).toBeTrue();
+      expect(bar.classList).toContain(TRANSITION_CLASSES.exit);
+      expect(bar.classList).toContain(TRANSITION_CLASSES.slide);
+      expect(bar.classList).toContain(TRANSITION_CLASSES.fromTop);
+      scrollTo(scroller, 20);
+      expect(handle.hidden).toBeFalse();
+      expect(bar.inert).toBeFalse();
+      expect(bar.classList).toContain(TRANSITION_CLASSES.enter);
+      handle.destroy();
+      expect(bar.classList).not.toContain(TRANSITION_CLASSES.enter);
+    });
+
+    // spec: motion-transitions-31df78
+    it('reveals at the top and ignores scrolls below the threshold', () => {
+      const {scroller, bar} = setupScroller();
+      const handle = scrollEnterExit(bar, {target: scroller, threshold: 20});
+      scrollTo(scroller, 10);
+      expect(handle.hidden).toBeFalse();
+      scrollTo(scroller, 60);
+      expect(handle.hidden).toBeTrue();
+      scrollTo(scroller, 0);
+      expect(handle.hidden).toBeFalse();
+      handle.destroy();
+    });
+
+    // spec: motion-transitions-31df78
+    it('stays visible while focus is inside and reveals on focus', () => {
+      const {scroller, bar} = setupScroller();
+      const handle = scrollEnterExit(bar, {target: scroller});
+      bar.dispatchEvent(new FocusEvent('focusin'));
+      scrollTo(scroller, 80);
+      expect(handle.hidden).toBeFalse();
+      bar.dispatchEvent(new FocusEvent('focusout', {relatedTarget: null}));
+      scrollTo(scroller, 200);
+      expect(handle.hidden).toBeTrue();
+      bar.dispatchEvent(new FocusEvent('focusin'));
+      expect(handle.hidden).toBeFalse();
+      handle.destroy();
+    });
+
+    // spec: motion-transitions-31df78
+    it('fades instead of sliding with reduced motion', () => {
+      const {scroller, bar} = setupScroller();
+      const handle = scrollEnterExit(bar, {
+        target: scroller,
+        reducedMotion: true,
+      });
+      scrollTo(scroller, 50);
+      expect(bar.classList).toContain(TRANSITION_CLASSES.reduced);
+      const [animation] = bar.getAnimations() as CSSAnimation[];
+      expect(animation.animationName).toBe('md-transition-fade-out');
+      handle.destroy();
+    });
+
+    it('stops listening after destroy()', () => {
+      const {scroller, bar} = setupScroller();
+      const handle = scrollEnterExit(bar, {target: scroller});
+      handle.destroy();
+      scrollTo(scroller, 80);
+      expect(handle.hidden).toBeFalse();
+    });
+  });
+
+  describe('coplanar enter and exit', () => {
+    function setupRow() {
+      const root = setup(html`<div
+        class="row"
+        style="display: flex; inline-size: 400px"
+      >
+        <div class="main" style="flex: 1">Main</div>
+        <div class="panel" hidden style="inline-size: 120px; flex: none">
+          Panel
+        </div>
+      </div>`);
+      return {
+        main: root.querySelector<HTMLElement>('.main')!,
+        panel: root.querySelector<HTMLElement>('.panel')!,
+      };
+    }
+
+    // spec: motion-transitions-2754f3
+    it('shrinks the content beside it while opening and grows it back closing', async () => {
+      const {main, panel} = setupRow();
+      expect(main.getBoundingClientRect().width).toBe(400);
+      const opened = coplanar(panel, true, {reducedMotion: false});
+      expect(panel.hidden).toBeFalse();
+      const [animation] = panel.getAnimations();
+      animation.pause();
+      animation.currentTime =
+        (animation.effect!.getComputedTiming().endTime as number) / 2;
+      const mid = main.getBoundingClientRect().width;
+      expect(mid).toBeLessThan(400);
+      expect(mid).toBeGreaterThan(280);
+      animation.play();
+      await finishAll(opened);
+      expect(main.getBoundingClientRect().width).toBe(280);
+
+      await finishAll(coplanar(panel, false, {reducedMotion: false}));
+      expect(panel.hidden).toBeTrue();
+      expect(main.getBoundingClientRect().width).toBe(400);
+      expect(panel.style.overflow).toBe('');
+    });
+
+    // spec: motion-transitions-2754f3
+    it('uses the enter and exit timings', () => {
+      const {panel} = setupRow();
+      void coplanar(panel, true, {reducedMotion: false});
+      const enterTiming = panel.getAnimations()[0].effect!.getComputedTiming();
+      expect(enterTiming.duration).toBe(400);
+      void coplanar(panel, false, {reducedMotion: false});
+      const exitTiming = panel.getAnimations()[0].effect!.getComputedTiming();
+      expect(exitTiming.duration).toBe(200);
+    });
+
+    // spec: motion-transitions-2754f3
+    it('only fades with reduced motion, changing the size at once', async () => {
+      const {main, panel} = setupRow();
+      const done = coplanar(panel, true, {reducedMotion: true});
+      expect(main.getBoundingClientRect().width).toBe(280);
+      const [animation] = panel.getAnimations();
+      expect(
+        (animation.effect as KeyframeEffect).getKeyframes()[0]['opacity'],
+      ).toBe('0');
+      await finishAll(done);
     });
   });
 });

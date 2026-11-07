@@ -161,7 +161,7 @@ $search-bar-max-width: 720px;
   // at least TopAppBarTitleInset from the leading padding, so it lines up
   // 16dp from the edge when there is no navigation icon.
   .app-bar-sm .app-bar-title-wrapper {
-    margin-inline: 4px;
+    margin-inline: var(--md-sys-space-50);
   }
   .app-bar-sm:not(.app-bar-has-leading) .app-bar-title-wrapper {
     margin-inline-start: var(--title-inset);
@@ -242,7 +242,7 @@ $search-bar-max-width: 720px;
     .app-bar-title-wrapper,
     &:not(.app-bar-has-leading) .app-bar-title-wrapper {
       grid-column: 2;
-      margin-inline: 4px;
+      margin-inline: var(--md-sys-space-50);
     }
   }
 

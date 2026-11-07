@@ -10,6 +10,7 @@ import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {freezeSpringClock, untilTicking} from '../shared/test-dom.js';
 
 import './md-gb-nav-drawer.js';
 import './md-gb-nav-drawer-item.js';
@@ -698,6 +699,7 @@ describe('<md-gb-nav-drawer>', () => {
           [end, 2000],
         ]);
         expect(drawer.open).toBeFalse();
+        expect(await untilTicking(() => reason !== '')).toBeTrue();
         expect(reason).toBe(NAV_DRAWER_CLOSE_REASONS.swipe);
         expect(translateX(drawer)).toBeNull();
       });
@@ -715,8 +717,22 @@ describe('<md-gb-nav-drawer>', () => {
         ]);
         expect(drawer.open).toBeTrue();
         expect(closeSpy).not.toHaveBeenCalled();
+        expect(await untilTicking(() => translateX(drawer) === null)).toBeTrue();
         expect(sheet(drawer).classList.contains('nav-drawer-dragging')).toBeFalse();
-        expect(translateX(drawer)).toBeNull();
+      });
+
+      it('keeps the release velocity: a slow release still drifts the way the finger was going', async () => {
+        const {drawer, width} = await setupOpen();
+        const clock = freezeSpringClock();
+        const end = 350 - width / 2 - 10;
+        // Past half and moving back toward open under the fling speed: it
+        // closes, but the spring first carries on backward.
+        await drag(sheet(drawer), [[350, 0], [end - 4, 980], [end - 2, 995], [end, 1010]]);
+        expect(drawer.open).toBeFalse();
+        const released = translateX(drawer)!;
+        clock.advance(1);
+        await env.waitForStability();
+        expect(translateX(drawer)!).toBeGreaterThan(released);
       });
 
       it('closes on a fling toward its edge faster than 400px/s', async () => {

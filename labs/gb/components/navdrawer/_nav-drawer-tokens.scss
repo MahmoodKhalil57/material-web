@@ -53,23 +53,23 @@
   // EDIT: Emphasized label-large font variation settings (see --active-label-text).
   --active-label-text-axes: var(--md-sys-typescale-emphasized-label-lg-axes);
   // EDIT: Spec page measurements: active indicator padding 12dp (Compose NavigationDrawerItemDefaults.ItemPadding).
-  --container-padding-inline: 12px;
+  --container-padding-inline: var(--md-sys-space-150);
   // EDIT: Compose drawer samples: 12dp spacer above and below the drawer content.
-  --container-padding-block: 12px;
+  --container-padding-block: var(--md-sys-space-150);
   // EDIT: Compose DrawerSheet minimum width (MinimumDrawerWidth).
   --container-width-minimum: 240px;
   // EDIT: Compose NavigationDrawerItem Row padding start.
-  --item-leading-space: 16px;
+  --item-leading-space: var(--md-sys-space-200);
   // EDIT: Spec page measurements: right padding 28dp from the container edge (12dp active indicator padding plus 16dp; Compose uses 24dp).
-  --item-trailing-space: 16px;
+  --item-trailing-space: var(--md-sys-space-200);
   // EDIT: Compose NavigationDrawerItem spacer between icon, label and badge.
-  --item-icon-label-space: 12px;
+  --item-icon-label-space: var(--md-sys-space-150);
   // EDIT: Spec page: section labels and headline align with the label text (28dp from the container edge).
-  --section-label-leading-space: 16px;
+  --section-label-leading-space: var(--md-sys-space-200);
   // EDIT: M3 navigation drawer headline / section label row height.
   --section-label-height: 56px;
   // EDIT: Spec page: full-width dividers, inset like the section labels.
-  --divider-inset: 16px;
+  --divider-inset: var(--md-sys-space-200);
   // EDIT: Compose DrawerDefaults.scrimColor (ScrimTokens: scrim at 32%).
   --scrim-color: hsl(from var(--md-sys-color-scrim) h s l / 32%);
   // EDIT: Compose ModalNavigationDrawer open motion (MotionSchemeKeyTokens.DefaultSpatial).

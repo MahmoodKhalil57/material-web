@@ -14,6 +14,7 @@
 
 // import 'jasmine'; (google3-only)
 import {html, render, type ReactiveElement, type TemplateResult} from 'lit';
+import {until} from '../shared/test-dom.js';
 import './md-gb-list-item.js';
 
 let container: HTMLElement | undefined;
@@ -320,6 +321,8 @@ describe('<md-gb-list-item> drag and settle contract (DragSettleController: foll
     await settle();
     expect(el.revealed).toBe('trailing');
     expect(revealed).toHaveBeenCalledTimes(1);
+    // The spring settles at the actions' width.
+    await until(() => Math.abs(parseFloat(item.style.translate) + width) < 0.5);
     expect(parseFloat(item.style.translate)).toBeCloseTo(-width, 0);
   });
 
@@ -346,6 +349,7 @@ describe('<md-gb-list-item> drag and settle contract (DragSettleController: foll
     await settle();
     expect(el.revealed).toBe('');
     expect(revealed).not.toHaveBeenCalled();
+    await until(() => item.style.translate === '');
     expect(item.style.translate).toBe('');
   });
 
@@ -381,11 +385,19 @@ describe('<md-gb-list-item> drag and settle contract (DragSettleController: foll
     el.querySelector('[aria-label="Flag"]')!.addEventListener('click', flag);
     el.querySelector('[aria-label="Archive"]')!.addEventListener('click', archive);
     const item = part('#item');
+    // The spring carries the item off screen, then it settles back.
+    let furthest = 0;
+    const observer = new MutationObserver(() => {
+      furthest = Math.min(furthest, parseFloat(item.style.translate) || 0);
+    });
+    observer.observe(item, {attributes: true, attributeFilter: ['style']});
     drag(item, -(item.offsetWidth * 0.9));
     await settle();
     expect(archive).toHaveBeenCalledTimes(1);
     expect(flag).not.toHaveBeenCalled();
-    expect(parseFloat(item.style.translate)).toBeLessThanOrEqual(-item.offsetWidth);
+    await until(() => item.style.translate === '');
+    observer.disconnect();
+    expect(furthest).toBeLessThanOrEqual(-item.offsetWidth);
   });
 
   it("mirrors the swipe in right-to-left layouts: toward the start reveals the trailing actions", async () => {

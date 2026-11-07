@@ -30,6 +30,11 @@ import {
   Strategy,
 } from './strategy.js';
 
+import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../styles/m3.cssresult.js';
+
+adoptStyles(document, [m3Styles]);
+
 const sizes = (list: {keylines: readonly {size: number}[]}) =>
   list.keylines.map((k) => Math.round(k.size * 10) / 10);
 

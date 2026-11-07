@@ -13,6 +13,7 @@ import './md-gb-tabs.js';
 
 import {html, type TemplateResult} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
+import {freezeSpringClock, untilTicking} from '../shared/test-dom.js';
 import {internals} from '../../../behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
@@ -385,7 +386,7 @@ describe('md-gb-tab-panels', () => {
 
     // spec: tabs-2a02c1, tabs-79df51, tabs-fd3bbd
     it('moves to the next tab when released past half the width', async () => {
-      const {tabs, panels} = await setup();
+      const {tabs, panels, panelsElement} = await setup();
       const onChange = jasmine.createSpy('change');
       tabs!.addEventListener('change', onChange);
       await drag(panels[0], [
@@ -399,14 +400,34 @@ describe('md-gb-tab-panels', () => {
       expect(onChange).toHaveBeenCalledTimes(1);
       // Settling: the old panel stays on screen until the slide ends.
       expect(visible(panels)).toEqual([true, true, false]);
-      expect(offsetOf(panels[0])).toBe(-1);
-      expect(offsetOf(panels[1])).toBe(0);
-      await finishSlide();
+      // The spring carries the panels on from where they were released.
+      expect(offsetOf(panels[0])).toBeLessThan(0);
+      expect(offsetOf(panels[0])).toBeGreaterThan(-1);
+      expect(offsetOf(panels[1])).toBeGreaterThan(0);
+      expect(await untilTicking(() => !panelsElement.classList.contains(TAB_PANELS_CLASSES.dragging))).toBeTrue();
       expect(visible(panels)).toEqual([false, true, false]);
     });
 
-    it('returns to the same tab when released before half the width', async () => {
+    it('keeps the release velocity: the settle starts moving the way the finger was going', async () => {
       const {tabs, panels} = await setup();
+      const clock = freezeSpringClock();
+      // Past half toward the next panel, then slowly back: it still moves on,
+      // but the spring first drifts back with the finger.
+      await drag(panels[0], [
+        [380, 0],
+        [300, 500],
+        [145, 980],
+        [147, 1000],
+        [149, 1020],
+      ]);
+      expect(tabs!.selectedTabIndex).toBe(1);
+      const released = offsetOf(panels[1])!;
+      clock.advance(1);
+      expect(offsetOf(panels[1])!).toBeGreaterThan(released);
+    });
+
+    it('returns to the same tab when released before half the width', async () => {
+      const {tabs, panels, panelsElement} = await setup();
       const onChange = jasmine.createSpy('change');
       tabs!.addEventListener('change', onChange);
       await drag(panels[0], [
@@ -418,9 +439,9 @@ describe('md-gb-tab-panels', () => {
 
       expect(tabs!.selectedTabIndex).toBe(0);
       expect(onChange).not.toHaveBeenCalled();
-      expect(offsetOf(panels[0])).toBe(0);
-      expect(offsetOf(panels[1])).toBe(1);
-      await finishSlide();
+      expect(offsetOf(panels[0])).toBeLessThan(0.5);
+      expect(offsetOf(panels[1])).toBeGreaterThan(0.5);
+      expect(await untilTicking(() => !panelsElement.classList.contains(TAB_PANELS_CLASSES.dragging))).toBeTrue();
       expect(visible(panels)).toEqual([true, false, false]);
     });
 

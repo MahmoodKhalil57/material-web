@@ -14,6 +14,7 @@
 
 // import 'jasmine'; (google3-only)
 import {sendKeys} from '@web/test-runner-commands';
+import {until} from '../shared/test-dom.js';
 import {html, render, type ReactiveElement, type TemplateResult} from 'lit';
 import './md-gb-tabs.js';
 import './md-gb-tab.js';
@@ -163,14 +164,18 @@ describe('<md-gb-tab-panels> drag and settle contract (DragSettleController: fol
     const tabs = root.querySelector<any>('md-gb-tabs')!;
     const changed = jasmine.createSpy('change');
     tabs.addEventListener('change', changed);
+    // A drag grabs a settle still in flight, so wait for it to rest.
+    const rested = () => until(() => !el.classList.contains('tab-panels-dragging'));
     drag(el, -240);
     await settle();
     expect(el.selectedIndex).toBe(1);
     expect(tabs.selectedTabIndex).toBe(1);
     expect(changed).toHaveBeenCalledTimes(1);
+    await rested();
     drag(el, -240);
     await settle();
     expect(el.selectedIndex).toBe(2);
+    await rested();
     // There is no panel past the last one.
     drag(el, -240);
     await settle();

@@ -19,25 +19,25 @@
   // EDIT: Spec measurements: default container height 56dp (TextFieldDefaults.MinHeight).
   --container-height: 56px;
   // EDIT: Spec measurements: top/bottom padding 8dp (TextFieldWithLabelVerticalPadding).
-  --top-space: 8px;
+  --top-space: var(--md-sys-space-100);
   // EDIT: Spec measurements: top/bottom padding 8dp (TextFieldWithLabelVerticalPadding).
-  --bottom-space: 8px;
+  --bottom-space: var(--md-sys-space-100);
   // EDIT: Spec measurements: left/right padding without icons 16dp.
-  --leading-space: 16px;
+  --leading-space: var(--md-sys-space-200);
   // EDIT: Spec measurements: left/right padding without icons 16dp.
-  --trailing-space: 16px;
+  --trailing-space: var(--md-sys-space-200);
   // EDIT: Spec measurements: left/right padding with icons 12dp.
-  --icon-leading-space: 12px;
+  --icon-leading-space: var(--md-sys-space-150);
   // EDIT: Spec measurements: left/right padding with icons 12dp.
-  --icon-trailing-space: 12px;
+  --icon-trailing-space: var(--md-sys-space-150);
   // EDIT: Spec measurements: padding between icons and text 16dp.
-  --icon-input-space: 16px;
+  --icon-input-space: var(--md-sys-space-200);
   // EDIT: Spec measurements: supporting text and character counter top padding 4dp.
-  --supporting-text-top-space: 4px;
+  --supporting-text-top-space: var(--md-sys-space-50);
   // EDIT: Spec measurements: padding between supporting text and character counter 16dp.
-  --counter-space: 16px;
+  --counter-space: var(--md-sys-space-200);
   // EDIT: Compose TextFieldImpl PrefixSuffixTextPadding.
-  --affix-space: 2px;
+  --affix-space: var(--md-sys-space-25);
   // EDIT: text-fields.md "Density" ("Avoid applying density by default": opt in); foundations/layout/grids-spacing.md, Component scaling: each step (0 to -3) removes 4dp of height, from the top and bottom padding.
   --density-step: 4px;
 }
@@ -159,11 +159,11 @@
   // EDIT: Outlined text fields have no container fill.
   --container-color: transparent;
   // EDIT: Compose OutlinedTextField: 16dp content padding without an inside label.
-  --top-space: 16px;
+  --top-space: var(--md-sys-space-200);
   // EDIT: Compose OutlinedTextField: 16dp content padding without an inside label.
-  --bottom-space: 16px;
+  --bottom-space: var(--md-sys-space-200);
   // EDIT: Spec measurements: left/right padding populated label text 4dp (OutlinedTextFieldInnerPadding).
-  --outline-label-padding: 4px;
+  --outline-label-padding: var(--md-sys-space-50);
 }
 
 @mixin outlined-hover {

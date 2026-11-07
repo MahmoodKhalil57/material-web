@@ -10,6 +10,7 @@ import {sendKeys} from '@web/test-runner-commands';
 import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 
 import './md-gb-tooltip.js';
 import {TOOLTIP_CLASSES, TOOLTIP_HIDE_DELAY_MS} from './tooltip.js';
@@ -17,7 +18,7 @@ import {type TooltipElement} from './tooltip-element.js';
 import tooltipStyles from './tooltip.cssresult.js';
 
 // The Environment installs the Jasmine clock for the whole suite.
-adoptStyles(document, tooltipStyles);
+adoptStyles(document, [m3Styles, tooltipStyles]);
 
 function pointer(type: string, pointerType = 'mouse') {
   return new PointerEvent(type, {
@@ -159,5 +160,42 @@ describe('<md-gb-tooltip> spec units', () => {
     expect(isOpen(rich)).withContext('rich before Enter').toBeFalse();
     await sendKeys({press: 'Enter'});
     expect(isOpen(rich)).withContext('rich after Enter').toBeTrue();
+  });
+
+  // spec: tooltips-cc0622
+  it("pads a plain tooltip 4dp by 8dp within 24dp minimum height and 40dp to 200dp width", async () => {
+    const {tooltip} = await setup(html`
+      <button id="anchor">Anchor</button>
+      <md-gb-tooltip for="anchor" open quick>Tip</md-gb-tooltip>
+    `);
+    const surface = tooltip.shadowRoot!.querySelector<HTMLElement>(
+      "[part=tooltip]",
+    )!;
+    const style = getComputedStyle(surface);
+    expect(style.paddingTop).toBe("4px");
+    expect(style.paddingBottom).toBe("4px");
+    expect(style.paddingLeft).toBe("8px");
+    expect(style.paddingRight).toBe("8px");
+    expect(style.minHeight).toBe("24px");
+    expect(style.minWidth).toBe("40px");
+    expect(style.maxWidth).toBe("200px");
+  });
+
+  // spec: tooltips-8d2bf8
+  it("pads a rich tooltip 12dp at the top and 16dp at the sides", async () => {
+    const {tooltip} = await setup(html`
+      <button id="anchor">Anchor</button>
+      <md-gb-tooltip for="anchor" variant="rich" open quick>
+        <span slot="subhead">Subhead</span>
+        Supporting text
+      </md-gb-tooltip>
+    `);
+    const surface = tooltip.shadowRoot!.querySelector<HTMLElement>(
+      "[part=tooltip]",
+    )!;
+    const style = getComputedStyle(surface);
+    expect(style.paddingTop).toBe("12px");
+    expect(style.paddingLeft).toBe("16px");
+    expect(style.paddingRight).toBe("16px");
   });
 });

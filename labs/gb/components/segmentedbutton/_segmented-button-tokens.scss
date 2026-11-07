@@ -19,11 +19,11 @@
   --outline-color: var(--md-sys-color-outline);
   --outline-width: 1px;
   // EDIT: Spec "Left/right padding: min 12dp"; Compose SegmentedButtonDefaults.ContentPadding.
-  --leading-space: 12px;
+  --leading-space: var(--md-sys-space-150);
   // EDIT: Spec "Left/right padding: min 12dp"; Compose SegmentedButtonDefaults.ContentPadding.
-  --trailing-space: 12px;
+  --trailing-space: var(--md-sys-space-150);
   // EDIT: Spec "Padding between elements: 8dp"; Compose IconSpacing.
-  --icon-label-space: 8px;
+  --icon-label-space: var(--md-sys-space-100);
   // EDIT: Spec "Target size: 48dp".
   --target-size: 48px;
   // EDIT: Spec "Target size: 48dp"; the minimum segment width.

@@ -16,6 +16,7 @@ import {
   nearestAnchor,
   resolveSettle,
 } from './drag-settle.js';
+import {until} from './test-dom.js';
 
 function last<T>(items: T[]): T {
   return items[items.length - 1];
@@ -504,6 +505,107 @@ describe('DragSettleController', () => {
       } finally {
         jasmine.clock().uninstall();
       }
+    });
+  });
+
+  describe('spring settle (onFrame)', () => {
+    function framed() {
+      const frames: Array<[number, number]> = [];
+      return {frames, onFrame: (p: number, v: number) => frames.push([p, v])};
+    }
+
+    // spec: interaction-gestures-94b35c
+    it('hands the release velocity to the spring and settles at the anchor', async () => {
+      const {frames, onFrame} = framed();
+      const {host, surface} = await setup({onFrame});
+      drag(surface, 20, {ms: 5, steps: 2});
+      const [anchor, info] = last(host.settles)!;
+      expect(anchor).toBe(100);
+      expect(info.velocity).toBeGreaterThan(400);
+      expect(host.controller.settling).toBeTrue();
+      await until(() => frames.length);
+      // The first frame carries on from the release: forward, at the release
+      // speed (less the spring's pull and damping over a frame or two).
+      const [position, velocity] = frames[0];
+      expect(position).toBeGreaterThanOrEqual(20);
+      expect(velocity).toBeGreaterThan(info.velocity * 0.4);
+      await until(() => host.settled.length, {timeout: 3000});
+      expect(host.settled).toEqual([100]);
+      expect(last(frames)).toEqual([100, 0]);
+      expect(host.controller.settling).toBeFalse();
+      expect(host.controller.offset).toBe(100);
+    });
+
+    it('settles with the mirrored velocity in right-to-left', async () => {
+      const {frames, onFrame} = framed();
+      const {host, surface} = await setup({onFrame}, {value: 100}, 'rtl');
+      drag(surface, 20, {ms: 5, steps: 2});
+      expect(last(host.settles)![0]).toBe(0);
+      await until(() => frames.length);
+      expect(frames[0][1]).toBeLessThan(0);
+      await until(() => host.settled.length, {timeout: 3000});
+      expect(last(frames)).toEqual([0, 0]);
+    });
+
+    it('retargets mid-flight, keeping position and velocity', async () => {
+      const {frames, onFrame} = framed();
+      const {host} = await setup({onFrame});
+      host.controller.step(1);
+      await until(() => frames[frames.length - 1]?.[0] > 10);
+      const [before, speed] = last(frames);
+      expect(host.controller.settling).toBeTrue();
+      host.controller.step(1);
+      expect(host.value).toBe(200);
+      const count = frames.length;
+      await until(() => frames.length > count);
+      const [after, speedAfter] = frames[count];
+      // Still moving toward 200 from about where it was: no jump back to the
+      // start, and the speed carries over (it doesn't restart from rest).
+      expect(after).toBeGreaterThan(before);
+      expect(after - before).toBeLessThan(80);
+      expect(speedAfter).toBeGreaterThan(speed * 0.5);
+      await until(() => host.settled.length, {timeout: 3000});
+      expect(host.settled).toEqual([200]);
+    });
+
+    it('is grabbed by a new drag where it is', async () => {
+      const {frames, onFrame} = framed();
+      const {host, surface} = await setup({onFrame});
+      host.controller.step(1);
+      await until(() => frames[frames.length - 1]?.[0] > 10);
+      drag(surface, 10, {release: false});
+      expect(host.controller.settling).toBeFalse();
+      expect(host.controller.dragging).toBeTrue();
+      // The drag starts where the spring was, not at the anchor it aimed for.
+      expect(last(host.starts)).toBeGreaterThan(10);
+      expect(last(host.starts)).toBeLessThan(110);
+      const count = frames.length;
+      await until(() => false, {timeout: 60});
+      expect(frames.length).toBe(count);
+      expect(host.settled).toEqual([]);
+    });
+
+    it('jumps to the anchor under reduced motion', async () => {
+      await emulateMedia({reducedMotion: 'reduce'});
+      const {frames, onFrame} = framed();
+      const {host, surface} = await setup({onFrame});
+      drag(surface, 60, {ms: 100});
+      expect(host.value).toBe(100);
+      expect(frames).toEqual([[100, 0]]);
+      expect(host.controller.settling).toBeFalse();
+      expect(host.settled).toEqual([100]);
+    });
+
+    it('stops when the host is removed', async () => {
+      const {frames, onFrame} = framed();
+      const {host} = await setup({onFrame});
+      host.controller.step(1);
+      await until(() => frames.length);
+      host.remove();
+      const count = frames.length;
+      await until(() => false, {timeout: 60});
+      expect(frames.length).toBe(count);
+      expect(host.settled).toEqual([]);
     });
   });
 
