@@ -1,7 +1,9 @@
 ---
 title: Card
 section: components
-order: 5
+category: other
+order: 19
+summary: Gather content and actions about a single subject
 description: A card contains content and actions about a single subject.
 ---
 {% demo "An outlined card with a headline, supporting text and two actions" %}

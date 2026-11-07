@@ -1,7 +1,8 @@
 ---
 title: Scaffold
-section: components
-order: 24
+section: foundations
+order: 7
+icon: dashboard
 description: A scaffold arranges the bars, rails and panes around an app's content, and adapts them to the window size.
 ---
 {% demo "An app scaffold with an app bar, a navigation bar, a navigation rail and content" %}

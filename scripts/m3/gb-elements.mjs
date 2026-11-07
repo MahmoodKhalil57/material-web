@@ -74,6 +74,9 @@ export function readGbElements() {
       tag,
       file: posix(relative(ROOT, file)),
       className: symbol?.getName() ?? '',
+      // The next class of the chain, when the element extends a labs/gb class.
+      superclass: classes[1]?.name?.text ?? '',
+      superclassFile: classes[1] ? posix(relative(ROOT, classes[1].getSourceFile().fileName)) : '',
       summary,
       ...collectApi(type, classes),
     };

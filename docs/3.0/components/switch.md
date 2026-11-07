@@ -1,7 +1,9 @@
 ---
 title: Switch
 section: components
+category: other
 order: 32
+summary: Turn a single setting on or off
 description: Switches toggle the state of an item on or off.
 ---
 {% demo "A switch with a text label" %}

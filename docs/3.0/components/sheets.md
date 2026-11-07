@@ -1,7 +1,9 @@
 ---
 title: Sheets
 section: components
-order: 28
+category: sheets
+order: 16
+summary: Show supporting content in a surface that slides in
 description: Sheets show supplementary content and actions anchored to the bottom or the side of the window.
 ---
 {% demo "A modal bottom sheet with file actions" height=360 %}

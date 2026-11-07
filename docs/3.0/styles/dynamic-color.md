@@ -2,6 +2,7 @@
 title: Dynamic color
 section: styles
 order: 2
+icon: colorize
 description: "Dynamic color builds a full color scheme, light and dark, from a seed color."
 ---
 Dynamic color turns one source color into every color role, in light and dark.

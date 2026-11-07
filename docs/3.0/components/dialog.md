@@ -1,7 +1,9 @@
 ---
 title: Dialogs
 section: components
-order: 10
+category: other
+order: 23
+summary: Interrupt the flow with an important prompt
 description: Dialogs provide important prompts in a user flow.
 ---
 {% demo "A button that opens a dialog asking to delete messages" height=360 %}

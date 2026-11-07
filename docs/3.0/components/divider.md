@@ -1,7 +1,9 @@
 ---
 title: Divider
 section: components
-order: 11
+category: other
+order: 24
+summary: Draw a thin line between groups of content
 description: A divider is a thin line that groups content in lists and containers.
 ---
 {% demo "A divider between two paragraphs" %}

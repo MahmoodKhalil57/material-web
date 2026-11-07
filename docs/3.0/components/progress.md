@@ -1,7 +1,9 @@
 ---
 title: Progress indicators
 section: components
-order: 21
+category: progress
+order: 11
+summary: Report how far a longer task has come
 description: Progress indicators inform people about the status of ongoing processes, such as loading an app or submitting a form.
 ---
 {% demo "A linear progress indicator at 50 percent and an indeterminate circular one" %}

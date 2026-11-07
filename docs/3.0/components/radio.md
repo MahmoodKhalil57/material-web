@@ -1,7 +1,9 @@
 ---
 title: Radio
 section: components
-order: 23
+category: other
+order: 27
+summary: Choose exactly one option from a set
 description: Radio buttons let people select one option from a set of options.
 ---
 {% demo "A radio group for choosing a delivery address" %}

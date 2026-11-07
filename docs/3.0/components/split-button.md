@@ -1,7 +1,9 @@
 ---
 title: Split button
 section: components
-order: 31
+category: buttons
+order: 7
+summary: Offer a main action with a menu of alternatives
 description: A split button pairs a main action with a trailing button that opens a menu of related actions.
 ---
 {% demo "A split button with a Save action and a menu of save options" %}

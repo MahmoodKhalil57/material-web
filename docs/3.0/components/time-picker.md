@@ -1,7 +1,9 @@
 ---
 title: Time picker
 section: components
-order: 35
+category: pickers
+order: 9
+summary: Choose a time of day with a dial or inputs
 description: Time pickers let people choose an hour and minute on a clock dial, or type them into fields.
 ---
 {% demo "An inline time picker set to 7:00" %}

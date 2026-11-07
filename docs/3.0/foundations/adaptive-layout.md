@@ -2,6 +2,7 @@
 title: Adaptive layout
 section: foundations
 order: 4
+icon: devices
 description: Pages and components change with the window.
 ---
 

@@ -2,6 +2,7 @@
 title: AI agents
 section: about
 order: 9
+icon: smart_toy
 description: labs/gb/skill/ is a Claude Code skill named md-gb.
 ---
 
@@ -24,6 +25,18 @@ cp -r labs/gb/skill/. ~/.claude/skills/md-gb/
 To share it with one repository, copy it to `.claude/skills/md-gb/` in that
 repository instead. Claude Code loads it when you write HTML, Lit templates, or
 CSS that use `md-gb-*` elements.
+
+### Install it from this site
+
+Without a checkout, the skill files are published at `/3.0/skill/`. The Download
+menu in the app bar has Copy agent prompt: paste it into your agent and it
+creates the skills folder, downloads `SKILL.md` and every `reference/*.md` file
+listed in `/3.0/skill/index.json`, installs `@material/web`, and checks the
+result.
+
+The same menu downloads the whole API as one `custom-elements.json` (a
+[Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
+of every element), and `/3.0/llms.txt` indexes the docs as Markdown.
 
 ## Keep it current
 

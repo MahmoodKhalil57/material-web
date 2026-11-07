@@ -2,6 +2,7 @@
 title: Interaction States
 section: foundations
 order: 2
+icon: touch_app
 description: "Interactive components show their state with a state layer: a translucent overlay of the component's content color, drawn between the container and the content."
 ---
 

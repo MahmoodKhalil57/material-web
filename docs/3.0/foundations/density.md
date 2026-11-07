@@ -2,6 +2,7 @@
 title: Density
 section: foundations
 order: 5
+icon: density_medium
 description: Density lets people see more information in data-heavy views by making components more compact.
 ---
 

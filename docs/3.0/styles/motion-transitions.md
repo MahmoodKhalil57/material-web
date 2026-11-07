@@ -2,6 +2,7 @@
 title: Transitions
 section: styles
 order: 9
+icon: transition_slide
 description: "Transition patterns connect elements and views, and skeleton loaders hold space while content loads."
 ---
 The six transition patterns (container transform, forward and backward,

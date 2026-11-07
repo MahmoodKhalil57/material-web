@@ -1,7 +1,9 @@
 ---
 title: Lists
 section: components
-order: 15
+category: other
+order: 25
+summary: Present text and images in a continuous vertical index
 description: Lists are continuous, vertical indexes of text and images, with optional selection, reordering, expanding and swipe actions.
 ---
 {% demo "A segmented list of three items with supporting and trailing text" %}

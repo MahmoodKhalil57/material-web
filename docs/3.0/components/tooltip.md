@@ -1,7 +1,9 @@
 ---
 title: Tooltip
 section: components
-order: 37
+category: other
+order: 36
+summary: Explain an element in a short, temporary label
 description: Tooltips add context to a button or other element, as a short plain label or a richer panel with a subhead and actions.
 ---
 {% demo "A plain tooltip on an icon button" %}

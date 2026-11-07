@@ -1,7 +1,9 @@
 ---
 title: Badge
 section: components
-order: 2
+category: other
+order: 18
+summary: Flag a count or status on an icon or destination
 description: A badge shows a small dot or a count to signal new or changed information.
 ---
 {% demo "A dot badge, a badge with a count and a badge with a capped count" %}

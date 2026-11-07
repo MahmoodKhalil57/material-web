@@ -2,6 +2,7 @@
 title: Debugging
 section: about
 order: 10
+icon: bug_report
 description: The shared plumbing of the components (motion waits, overflow measure passes, and scroll steps) can record performance marks.
 ---
 

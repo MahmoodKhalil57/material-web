@@ -1,7 +1,9 @@
 ---
 title: Icon Buttons
 section: components
-order: 14
+category: buttons
+order: 5
+summary: Take a quick action with a single, compact icon
 description: Icon buttons help people take supplementary actions with a single tap.
 ---
 {% demo "A row of icon buttons, one for each color" %}

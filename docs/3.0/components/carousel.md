@@ -1,7 +1,9 @@
 ---
 title: Carousel
 section: components
-order: 6
+category: other
+order: 20
+summary: Scroll through a collection of items, large to small
 description: A carousel is a scrollable list of visual items that change size as they move through the layout.
 ---
 {% demo "A multi-browse carousel of three destinations" %}

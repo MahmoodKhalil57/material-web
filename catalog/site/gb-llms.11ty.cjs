@@ -17,7 +17,8 @@ class GbLlms {
   }
 
   render(data) {
-    const pages = sorted(data.collections?.gb3 ?? []);
+    // The section index pages (order 0) head their sections.
+    const pages = sorted([...(data.collections?.gb3 ?? []), ...(data.collections?.gbsection ?? [])]);
     const lines = [
       `# ${SITE.name}`,
       '',
@@ -25,6 +26,9 @@ class GbLlms {
       '',
       'Every page is also available as Markdown at its URL plus `.md`. ' +
         `All pages in one file: [llms-full.txt](${absolute('/3.0/llms-full.txt')}).`,
+      '',
+      `The API of every element (attributes, members, events, slots, CSS parts and properties) as a Custom Elements Manifest: [custom-elements.json](${absolute('/3.0/custom-elements.json')}). ` +
+        `An agent skill about the md-gb elements: [skill/index.json](${absolute('/3.0/skill/index.json')}) lists its files with their URLs.`,
     ];
     for (const section of SECTIONS) {
       const inSection = pages.filter((p) => p.data.section === section.id);

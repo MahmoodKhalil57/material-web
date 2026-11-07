@@ -1,7 +1,9 @@
 ---
 title: Navigation Drawer
 section: components
-order: 19
+category: navigation
+order: 14
+summary: Switch between destinations on large screens
 description: A Material Design navigation drawer.
 hero: navdrawer/standard-drawer
 ---

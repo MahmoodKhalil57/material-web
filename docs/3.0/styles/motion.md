@@ -2,6 +2,7 @@
 title: Motion
 section: styles
 order: 8
+icon: animation
 description: "Motion makes a UI expressive and easy to follow: springs for physics, easing and duration tokens, and transition patterns."
 ---
 

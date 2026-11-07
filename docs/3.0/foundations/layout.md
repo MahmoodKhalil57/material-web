@@ -2,6 +2,7 @@
 title: Layout
 section: foundations
 order: 6
+icon: grid_view
 description: "Layout adapts an app to the window with window size classes, a column grid, margins and panes."
 ---
 Layout adapts an app to the window. The window size class (see

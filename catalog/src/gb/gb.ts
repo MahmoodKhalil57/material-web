@@ -25,6 +25,7 @@ import '@material/web/labs/gb/components/tabs/md-gb-tab.js';
 import '@material/web/labs/gb/components/tabs/md-gb-tabs.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
+import './download.js';
 import './navigation.js';
 import './search.js';
 import './webmcp.js';

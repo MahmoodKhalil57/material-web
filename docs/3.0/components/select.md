@@ -1,7 +1,9 @@
 ---
 title: Select
 section: components
-order: 27
+category: other
+order: 29
+summary: Choose one option from a list that opens on demand
 description: Select menus let people choose one option from a list that opens on a temporary surface.
 ---
 {% demo "A filled select with a label" %}

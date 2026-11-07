@@ -2,6 +2,7 @@
 title: Quick Start
 section: about
 order: 3
+icon: rocket_launch
 description: "For fast prototyping, use a CDN such as esm.run to load @material/web without installing it."
 ---
 
@@ -11,8 +12,37 @@ For fast prototyping, use a CDN such as [esm.run](https://esm.run/) to load
 `@material/web` without installing it. The M3 Expressive elements are under
 `@material/web/labs/gb/`.
 
-The import map resolves the bare specifiers (it is the only part of this setup
-that has no visible effect, so it is a plain block):
+### One line
+
+The quickest start is one script. `labs/gb/all.js` defines every `md-gb-*`
+element and adopts the M3 styles into the page. It loads every component, so use
+it for prototypes only. The import map is optional here; it lets you also import
+single files by path later. The script tags have no visible effect, so they are
+a plain block (the Download menu in the app bar copies them):
+
+```html
+<script type="importmap">
+  {"imports": {"@material/web/": "https://esm.run/@material/web/"}}
+</script>
+<script type="module" src="https://esm.run/@material/web/labs/gb/all.js"></script>
+```
+
+The same module, imported from a script, with a button that needs no other setup:
+
+{% demo "Every element from one import" height=120 %}
+```html
+<md-gb-button color="filled">Next</md-gb-button>
+```
+```js
+import '@material/web/labs/gb/all.js';
+```
+{% enddemo %}
+
+### Only what you use
+
+To load only the elements a page uses, import each one. The import map resolves
+the bare specifiers (it is the only part of this setup that has no visible
+effect, so it is a plain block):
 
 ```html
 <script type="importmap">

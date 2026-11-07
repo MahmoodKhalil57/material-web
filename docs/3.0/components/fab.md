@@ -1,7 +1,9 @@
 ---
 title: Floating action button (FAB)
 section: components
-order: 13
+category: buttons
+order: 4
+summary: Put the primary action of a screen within reach
 description: A FAB represents the most important action on a screen, and an extended FAB adds a text label.
 ---
 {% demo "A FAB with an edit icon" %}

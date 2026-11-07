@@ -2,6 +2,7 @@
 title: Support
 section: about
 order: 6
+icon: support_agent
 description: "Version 3.0 targets Baseline widely available: the web platform features it uses have worked in all major browsers for at least 30 months."
 ---
 

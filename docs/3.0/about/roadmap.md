@@ -2,6 +2,7 @@
 title: Roadmap
 section: about
 order: 5
+icon: map
 description: This roadmap describes current, future, and past goals for Material Web Components.
 ---
 ## Current

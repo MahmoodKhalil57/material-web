@@ -2,6 +2,7 @@
 title: Accessibility
 section: foundations
 order: 3
+icon: accessibility_new
 description: Every labs/gb component works with a keyboard, a screen reader and reduced motion.
 ---
 

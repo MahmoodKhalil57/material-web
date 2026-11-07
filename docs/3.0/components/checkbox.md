@@ -1,7 +1,9 @@
 ---
 title: Checkbox
 section: components
-order: 7
+category: other
+order: 21
+summary: Select one or more items, or turn an option on or off
 description: Checkboxes let people select one or more items from a set, or turn an option on or off.
 ---
 {% demo "A checkbox with the label Remember me" %}

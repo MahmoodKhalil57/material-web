@@ -2,6 +2,7 @@
 title: Introduction
 section: about
 order: 1
+icon: waving_hand
 description: Material web, also known as Material Web Components or MWC, is a library of web components that follows Google's Material Design guidelines.
 ---
 ## What is Material?

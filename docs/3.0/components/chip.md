@@ -1,7 +1,9 @@
 ---
 title: Chips
 section: components
-order: 8
+category: other
+order: 22
+summary: Enter information, filter content or trigger actions
 description: Chips help people enter information, make selections, filter content, or trigger actions.
 ---
 {% demo "Filter chips in a labeled chip set" %}

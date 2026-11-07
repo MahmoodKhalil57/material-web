@@ -1,7 +1,9 @@
 ---
 title: Navigation Rail
 section: components
-order: 20
+category: navigation
+order: 15
+summary: Switch between destinations on mid-sized screens
 description: A navigation rail lets people switch between top-level destinations on larger windows, and expands to show full labels.
 ---
 {% demo "A navigation rail with a menu button and four destinations" %}

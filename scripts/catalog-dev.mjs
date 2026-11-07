@@ -32,7 +32,7 @@ import {cp, mkdir, readdir, readFile, rm, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {buildLibrary, nodeScript, npx, ROOT} from './build-local.mjs';
-import {buildSiteAssets} from './gb-site-assets.mjs';
+import {buildSiteAssets, buildSnapshot, restoreSnapshot} from './gb-site-assets.mjs';
 
 const CATALOG = join(ROOT, 'catalog');
 const GB = join(ROOT, 'labs', 'gb', 'components');
@@ -151,6 +151,9 @@ const arg = (name, fallback) => {
   return i >= 0 ? argv[i + 1] : fallback;
 };
 const PORT = Number(arg('port', 8000));
+// State of refreshSnapshot() (declared up here: main() runs before the rest of the module).
+let snapshotRunning = false;
+let snapshotAgain = false;
 const LIB_PORT = Number(arg('lib-port', 8001));
 const LIB = `http://localhost:${LIB_PORT}/`;
 // Each step prints the time since the previous one, to see where a run spends it.
@@ -181,6 +184,7 @@ async function main() {
   const {pages, demos} = await buildSite({first: true});
   await startCatalogServer();
   await writeState({status: 'ready'});
+  refreshSnapshot();
   const watching = !argv.includes('--no-watch');
   if (watching) watchSources();
   log(
@@ -246,9 +250,36 @@ async function buildSite({first = false} = {}) {
   if (first) await rm(OUT, {recursive: true, force: true});
   npx(['eleventy'], {cwd: CATALOG, env: DEV_ENV});
 
+  // The single-file download of the docs, when its inputs are unchanged (a
+  // copy; the Chromium run for a changed one starts after the build is ready).
+  await restoreSnapshot({siteDir: OUT});
+
   log('Pointing playgrounds at the local build');
   await useLocalLibrary();
   return {pages, demos: examples.size};
+}
+
+/**
+ * Makes /3.0/material-web-3.0.mhtml (Chromium opens /3.0/all/ of the served
+ * site: seconds) after a build is ready, so it is never on the critical path.
+ * A build that changes the page while it runs queues one more run; the file
+ * of the previous build stays served meanwhile.
+ */
+function refreshSnapshot() {
+  if (snapshotRunning) {
+    snapshotAgain = true;
+    return;
+  }
+  snapshotRunning = true;
+  buildSnapshot({baseUrl: `http://localhost:${PORT}`, siteDir: OUT, log})
+    .catch((e) => console.warn(`[catalog:dev] single-file download not built: ${e?.message ?? e}`))
+    .finally(() => {
+      snapshotRunning = false;
+      if (snapshotAgain) {
+        snapshotAgain = false;
+        refreshSnapshot();
+      }
+    });
 }
 
 /** Story name -> the id used by {% gbexample "<dir>/<story>" %}. */
@@ -397,6 +428,7 @@ function watchSources() {
       // A change during the build queues another one: stay "building" so
       // scripts/catalog-wait.mjs doesn't report the stale pages as ready.
       await writeState({status: again ? 'building' : 'ready'});
+      if (!again) refreshSnapshot();
       log(`Rebuilt in ${((Date.now() - t) / 1000).toFixed(1)}s`);
     } catch (e) {
       console.error(e);

@@ -2,6 +2,7 @@
 title: Spacing
 section: styles
 order: 10
+icon: space_bar
 description: Spacing is the distance around and between elements.
 ---
 

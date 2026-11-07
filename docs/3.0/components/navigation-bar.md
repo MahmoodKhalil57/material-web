@@ -1,7 +1,9 @@
 ---
 title: Navigation Bar
 section: components
-order: 18
+category: navigation
+order: 13
+summary: Switch between top-level views on small screens
 description: A navigation bar lets people switch between a small number of top-level destinations, and can hide as the page scrolls.
 ---
 {% demo "A navigation bar with four destinations and Home active" %}

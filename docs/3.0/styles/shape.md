@@ -2,6 +2,7 @@
 title: Shape
 section: styles
 order: 4
+icon: category
 description: Shape can direct attention, communicate state, and express brand.
 ---
 ## Shape

@@ -1,7 +1,9 @@
 ---
 title: Buttons
 section: components
-order: 4
+category: buttons
+order: 2
+summary: Start most actions in a UI with a tap
 description: Buttons help people initiate actions, from sending an email, to sharing a document, to liking a post.
 ---
 {% demo "A filled button and an outlined button" %}

@@ -124,8 +124,7 @@ class SearchIndex {
   }
 
   async render(data) {
-    const items = (data.collections?.gb3 ?? [])
-      .slice()
+    const items = [...(data.collections?.gb3 ?? []), ...(data.collections?.gbsection ?? [])]
       .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
     const pages = [];
     for (const item of items) {

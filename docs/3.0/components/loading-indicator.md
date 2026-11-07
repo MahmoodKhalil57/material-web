@@ -1,7 +1,9 @@
 ---
 title: Loading indicator
 section: components
-order: 16
+category: progress
+order: 10
+summary: Show that a short wait is in progress
 description: A loading indicator shows that a short process is running, with a shape that morphs through Material shapes while it turns.
 ---
 {% demo "An indeterminate loading indicator" %}

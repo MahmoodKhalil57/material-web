@@ -1,7 +1,9 @@
 ---
 title: Button Group
 section: components
-order: 3
+category: buttons
+order: 1
+summary: Group related buttons and let them react to one another
 description: A button group arranges related buttons and can manage their selection, density and overflow.
 ---
 {% demo "A standard button group of three buttons" %}

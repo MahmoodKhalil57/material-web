@@ -1,7 +1,9 @@
 ---
 title: FAB menu
 section: components
-order: 12
+category: buttons
+order: 3
+summary: Reveal several related actions from a floating button
 description: A FAB menu opens from a FAB to show several related actions, and the FAB becomes its close button.
 ---
 {% demo "A FAB menu with three actions" %}

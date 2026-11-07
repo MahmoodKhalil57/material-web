@@ -1,7 +1,9 @@
 ---
 title: Snackbar
 section: components
-order: 30
+category: other
+order: 31
+summary: Confirm an action with a brief message
 description: Snackbars tell people about a process an app has performed or will perform, without interrupting them.
 ---
 {% demo "A button that shows a snackbar with an Undo action" height=240 %}

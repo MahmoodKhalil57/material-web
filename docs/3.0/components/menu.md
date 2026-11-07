@@ -1,7 +1,9 @@
 ---
 title: Menus
 section: components
-order: 17
+category: other
+order: 26
+summary: Offer a list of choices on a temporary surface
 description: Menus show a temporary set of actions or choices, opened from a button, a text field or a context.
 ---
 {% demo "A button that opens a menu of file actions" %}

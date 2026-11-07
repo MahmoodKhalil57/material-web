@@ -9,6 +9,7 @@
 @import '../../../labs/gb/styles/m3.css';
 @import './navigation.css';
 @import './search.css';
+@import './sections.css';
 
 :root {
   --gb-header-height: 64px;
@@ -460,7 +461,63 @@ md-gb-nav-drawer:not(:defined) {
   }
 }
 
+/* /3.0/all/ (site/gb-all.11ty.cjs): every page on one page, no shell. */
+.gb-all-title {
+  margin: 0 0 var(--md-sys-space-100);
+  font: var(--md-sys-typescale-display-md);
+  font-variation-settings: var(--md-sys-typescale-display-md-axes);
+}
+.gb-all-contents ul {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+.gb-all-contents > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--md-sys-space-200);
+  padding: 0;
+  list-style: none;
+}
+.gb-all-contents > ul > li > span {
+  font: var(--md-sys-typescale-title-md);
+  font-variation-settings: var(--md-sys-typescale-title-md-axes);
+}
+.gb-all-contents a {
+  color: var(--md-sys-color-primary);
+}
+.gb-all-page {
+  margin-block-start: var(--md-sys-space-800);
+  padding-block-start: var(--md-sys-space-300);
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+}
+.gb-all-page > h1 {
+  font: var(--md-sys-typescale-display-sm);
+  font-variation-settings: var(--md-sys-typescale-display-sm-axes);
+  margin: 0 0 var(--md-sys-space-100);
+}
+.gb-all-source {
+  margin: 0 0 var(--md-sys-space-300);
+  font: var(--md-sys-typescale-body-sm);
+  color: var(--md-sys-color-on-surface-variant);
+  overflow-wrap: anywhere;
+}
+.gb-all-source a {
+  color: inherit;
+}
+
 @media print {
+  .gb-all-page {
+    break-before: page;
+    border: 0;
+    margin-block-start: 0;
+  }
+  .gb-all-page > h1 {
+    break-after: avoid;
+  }
+  .gb-content pre,
+  .gb-demo {
+    break-inside: avoid;
+  }
   .gb-header,
   .gb-drawer,
   .gb-toc,

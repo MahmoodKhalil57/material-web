@@ -43,6 +43,8 @@ const NETWORK_TIMEOUT = 3000;
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 const ASSET_PATH = /^\/(js|css|fonts|images)\//;
+const DOWNLOADS =
+  /^\/3\.0\/(skill\/|material-web-3\.0\.mhtml$|custom-elements\.json$|llms-full\.txt$)/;
 
 sw.addEventListener('install', (e: ExtendableEvent) => {
   e.waitUntil(sw.skipWaiting());
@@ -120,6 +122,12 @@ sw.addEventListener('fetch', (e: FetchEvent) => {
   const {request} = e;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
+
+  // Files that are downloaded, not read offline: the single-file site
+  // (.mhtml, many MB), custom-elements.json, the agent skill files,
+  // llms-full.txt. Large and rebuilt with the docs, so they always come from
+  // the network (the page lists them; the app bar's Download menu).
+  if (url.origin === location.origin && DOWNLOADS.test(url.pathname)) return;
 
   if (request.mode === 'navigate') {
     if (url.origin !== location.origin || !url.pathname.startsWith(START)) {

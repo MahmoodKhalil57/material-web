@@ -1,7 +1,9 @@
 ---
 title: Search
 section: components
-order: 25
+category: other
+order: 28
+summary: Find content by entering a keyword or phrase
 description: A search bar lets people enter a query and find matching results, with a search view that shows suggestions and results.
 ---
 {% demo "A search bar with recipe suggestions" %}

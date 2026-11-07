@@ -11,6 +11,23 @@
       "stories/**",
       "build/**"
     ],
+    "redirects": [
+      {
+        "source": "/3.0/components/scaffold",
+        "destination": "/3.0/foundations/scaffold/",
+        "type": 301
+      },
+      {
+        "source": "/3.0/components/scaffold/",
+        "destination": "/3.0/foundations/scaffold/",
+        "type": 301
+      },
+      {
+        "source": "/3.0/components/scaffold.md",
+        "destination": "/3.0/foundations/scaffold.md",
+        "type": 301
+      }
+    ],
     "headers": [
       {
         "source": "**/*.*",

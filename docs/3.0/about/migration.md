@@ -2,6 +2,7 @@
 title: Migration
 section: about
 order: 4
+icon: swap_horiz
 description: Version 3.0 renames most elements from md- to md-gb- and moves them to Material 3 Expressive.
 ---
 

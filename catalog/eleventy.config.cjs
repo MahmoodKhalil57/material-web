@@ -49,7 +49,10 @@ module.exports = function (eleventyConfig) {
   // scripts/gb-site-assets.mjs (scripts/catalog-dev.mjs buildSite).
   eleventyConfig
     .addPassthroughCopy({ '_dev-gb/og': '3.0/og' })
-    .addPassthroughCopy({ '_dev-gb/icons': '3.0/icons' });
+    .addPassthroughCopy({ '_dev-gb/icons': '3.0/icons' })
+    // The API manifest (Custom Elements Manifest) and the agent skill files.
+    .addPassthroughCopy({ '_dev-gb/custom-elements.json': '3.0/custom-elements.json' })
+    .addPassthroughCopy({ '_dev-gb/skill': '3.0/skill' });
 
   // add the lit-ssr plugin
   eleventyConfig.addPlugin(litPlugin, {

@@ -1,7 +1,9 @@
 ---
 title: App Bar
 section: components
-order: 1
+category: other
+order: 17
+summary: Anchor a screen with its title, navigation and actions
 description: An app bar sits at the top of a screen and shows its title, navigation and actions, and can hide or compress as the page scrolls.
 ---
 {% demo "An app bar with a menu button, a title, a subtitle and a search action" %}

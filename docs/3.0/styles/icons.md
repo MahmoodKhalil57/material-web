@@ -2,6 +2,7 @@
 title: Icons
 section: styles
 order: 6
+icon: star
 description: md-gb-icon shows a Material Symbols icon.
 ---
 

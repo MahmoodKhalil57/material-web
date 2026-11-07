@@ -1,7 +1,9 @@
 ---
 title: Tabs
 section: components
+category: other
 order: 33
+summary: Organize related content at the same level
 description: Tabs organize groups of related content that are at the same level of hierarchy.
 ---
 {% demo "Primary tabs with Flights selected" %}

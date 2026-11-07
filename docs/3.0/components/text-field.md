@@ -1,7 +1,9 @@
 ---
 title: Text field
 section: components
+category: other
 order: 34
+summary: Let people type and edit text
 description: Text fields let people enter and edit text.
 ---
 {% demo "A filled text field with a label" %}

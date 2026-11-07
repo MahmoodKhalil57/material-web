@@ -2,6 +2,7 @@
 title: Theming
 section: foundations
 order: 1
+icon: token
 description: Material Design theming creates unique branded products with familiar patterns and accessible interactions.
 ---
 ![collage of views of a mobile UI that show a user's setting and preference for

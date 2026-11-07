@@ -2,6 +2,7 @@
 title: Bundle Sizes
 section: about
 order: 7
+icon: data_usage
 description: "Every md-gb- component is checked against a Brotli-compressed size budget for its JavaScript and CSS (the measured size plus 10% headroom), defined in scripts/size/gb-budgets.json."
 ---
 

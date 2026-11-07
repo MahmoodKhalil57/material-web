@@ -168,6 +168,7 @@ const md = `---
 title: Spec compliance
 section: about
 order: 2
+icon: verified
 description: What the spec checks, ARIA and axe results, Baseline use and size budgets say about md-gb-* components.
 ---
 

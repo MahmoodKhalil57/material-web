@@ -2,6 +2,7 @@
 title: Browser support
 section: about
 order: 8
+icon: public
 description: Version 3.0 only uses web platform features that are Baseline widely available.
 ---
 

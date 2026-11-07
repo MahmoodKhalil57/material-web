@@ -1,7 +1,9 @@
 ---
 title: Pull to refresh
 section: components
-order: 22
+category: progress
+order: 12
+summary: Refresh content by pulling it down
 description: A pull to refresh container lets people pull its content down to reload it, with a loading indicator that shows progress.
 ---
 {% demo "A list of news stories that refreshes when pulled down" height=240 %}
@@ -26,6 +28,8 @@ news.addEventListener('refresh', async () => {
 });
 ```
 {% enddemo %}
+
+Pull to refresh is the pull-to-refresh behavior of the [loading indicator](/3.0/components/loading-indicator/), which it shows while the content reloads.
 
 ## Usage guidelines
 

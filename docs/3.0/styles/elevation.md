@@ -2,6 +2,7 @@
 title: Elevation
 section: styles
 order: 5
+icon: layers
 description: Elevation is the distance between two surfaces on the z-axis.
 ---
 

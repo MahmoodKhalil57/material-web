@@ -2,6 +2,7 @@
 title: Typography
 section: styles
 order: 3
+icon: text_fields
 description: Typography helps make writing legible and beautiful.
 ---
 > Tip: "typeface" and "typescale" can be confusing. "face" refers to

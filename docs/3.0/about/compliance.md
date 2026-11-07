@@ -2,6 +2,7 @@
 title: Spec compliance
 section: about
 order: 2
+icon: verified
 description: What the spec checks, ARIA and axe results, Baseline use and size budgets say about md-gb-* components.
 ---
 
@@ -219,19 +220,19 @@ must sit inside a matching `@supports` guard or be listed with a reason in
 `scripts/gb-baseline-allow.json`; anything else fails the run.
 
 - CSS: 19,123 feature uses in 62 files; 50 features are not widely available, used 690 times (478 guarded, 212 allowed with a reason, **0 unguarded**). Result: passes.
-- JavaScript (report only): 31 tracked Web API members in 204 source files; 6 are not widely available, 3 of them with at least one use that is not feature-detected.
+- JavaScript (report only): 31 tracked Web API members in 207 source files; 6 are not widely available, 3 of them with at least one use that is not feature-detected.
 
 ## Size budgets
 
 Each component has a Brotli size budget for JavaScript and CSS in
 `scripts/size/gb-budgets.json`: the measured size plus 10% headroom, enforced by
-the size check. Totals across 37 components: 344,643 bytes of JavaScript and 76,295 bytes of CSS.
+the size check. Totals across 37 components: 345,176 bytes of JavaScript and 76,295 bytes of CSS.
 
 | Component | JS budget (bytes) | CSS budget (bytes) |
 | --- | ---: | ---: |
 | `appbar` | 4,639 | 1,586 |
 | `badge` | 959 | 474 |
-| `button` | 4,952 | 1,508 |
+| `button` | 5,485 | 1,508 |
 | `buttongroup` | 19,496 | 1,397 |
 | `card` | 3,425 | 956 |
 | `carousel` | 12,223 | 1,747 |

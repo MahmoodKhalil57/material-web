@@ -1,7 +1,9 @@
 ---
 title: Sliders
 section: components
-order: 29
+category: other
+order: 30
+summary: Pick a value from a range by dragging
 description: Sliders let people view and select a value, or a range of values, along a track.
 ---
 {% demo "A volume slider with a value label" %}

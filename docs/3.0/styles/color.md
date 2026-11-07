@@ -2,6 +2,7 @@
 title: Color
 section: styles
 order: 1
+icon: palette
 description: Color creates meaning and communicates hierarchy, state, and brand.
 ---
 ## Color scheme

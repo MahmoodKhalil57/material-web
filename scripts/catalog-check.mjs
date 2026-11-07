@@ -21,7 +21,8 @@ const walk = (d) => {
   for (const n of readdirSync(d)) {
     const p = join(d, n);
     if (statSync(p).isDirectory()) walk(p);
-    else if (n === 'index.html') pages.push(p);
+    // /3.0/all/ (8000 requests in dev) is checked on its own.
+    else if (n === 'index.html' && !/3\.0[\\/]all$/.test(d)) pages.push(p);
   }
 };
 walk('catalog/_dev/3.0');

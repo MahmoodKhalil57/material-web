@@ -15,7 +15,7 @@ class GbLlmsFull {
 
   async render(data) {
     const parts = [`# ${SITE.name} (full documentation)\n\n> ${SITE.description}\n`];
-    for (const page of sorted(data.collections?.gb3 ?? [])) {
+    for (const page of sorted([...(data.collections?.gb3 ?? []), ...(data.collections?.gbsection ?? [])])) {
       parts.push(`---\n\nSource: ${absolute(page.url)}\n\n${await pageMarkdown(page)}`);
     }
     return parts.join('\n');

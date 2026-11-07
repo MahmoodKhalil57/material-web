@@ -1,7 +1,9 @@
 ---
 title: Date picker
 section: components
-order: 9
+category: pickers
+order: 8
+summary: Pick a date from a calendar or by typing it
 description: A date picker lets people select a date or a range of dates.
 ---
 {% demo "A docked date picker with a text field" %}

@@ -2,6 +2,7 @@
 title: Material Symbols
 section: styles
 order: 7
+icon: emoji_symbols
 description: "md-gb-icon axes: optical size, weight, fill and grade."
 ---
 Each variable font axis of `md-gb-icon` is a custom property. See

@@ -1,7 +1,9 @@
 ---
 title: Segmented button
 section: components
-order: 26
+category: buttons
+order: 6
+summary: Switch between options in a connected row
 description: A segmented button set lets people pick one or several options from two to five segments, such as a time range or a view.
 ---
 {% demo "A single-select set of three segments with Day selected" %}

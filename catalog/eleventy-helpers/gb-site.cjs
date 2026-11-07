@@ -17,7 +17,7 @@
  */
 
 const {execFileSync} = require('node:child_process');
-const {existsSync, readFileSync, statSync} = require('node:fs');
+const {existsSync, readdirSync, readFileSync, statSync} = require('node:fs');
 const {join, resolve} = require('node:path');
 const {pathToFileURL} = require('node:url');
 const matter = require('gray-matter');
@@ -25,13 +25,85 @@ const matter = require('gray-matter');
 const ROOT = join(__dirname, '..', '..');
 const SITE = require('../site/_data/gbSite.cjs');
 
+// `description` is the meta description of the section's index page (/3.0/<id>/),
+// `intro` its paragraph under the headline.
 const SECTIONS = [
-  {id: 'about', label: 'About'},
-  {id: 'foundations', label: 'Foundations'},
-  {id: 'styles', label: 'Styles'},
-  {id: 'components', label: 'Components'},
+  {
+    id: 'about',
+    label: 'About',
+    description: 'Get started with Material Web 3.0 and find the project information: quick start, migration, support, roadmap and browser support.',
+    intro: 'Getting started and project information: how to install and use Material Web 3.0, how it follows the Material 3 spec, what is coming next, and where to get help.',
+  },
+  {
+    id: 'foundations',
+    label: 'Foundations',
+    description: 'The principles Material Web 3.0 applies across its components: theming, interaction states, accessibility, adaptive layout and density.',
+    intro: 'The principles applied across every component: how theming works, how elements respond to input, and how they stay accessible and adapt to the space they get.',
+  },
+  {
+    id: 'styles',
+    label: 'Styles',
+    description: 'The visual language of Material Web 3.0: color, typography, shape, elevation, icons, motion and spacing, as tokens you can use.',
+    intro: 'The visual language of Material 3 Expressive as tokens you can use: color, type, shape, elevation, icons, motion and spacing.',
+  },
+  {
+    id: 'components',
+    label: 'Components',
+    description: 'Every md-gb element of Material Web 3.0: buttons, pickers, progress indicators, navigation, sheets and more, each with live examples and API.',
+    intro: 'The md-gb elements: interactive building blocks for your interface, each with live examples, guidelines and its API.',
+  },
 ];
 const sectionLabel = (id) => SECTIONS.find((s) => s.id === id)?.label ?? id;
+
+/** The groups of the Components page, as on https://m3.material.io/components. */
+const COMPONENT_GROUPS = [
+  {id: 'buttons', label: 'Buttons'},
+  {id: 'pickers', label: 'Date & time pickers'},
+  {id: 'progress', label: 'Loading & progress'},
+  {id: 'navigation', label: 'Navigation'},
+  {id: 'sheets', label: 'Sheets'},
+  {id: 'other', label: 'All other components'},
+];
+
+/**
+ * The pages of a section from docs/3.0, in order: [{url, title, description,
+ * summary, category, order}]. Independent of Eleventy's collections.
+ */
+function sectionPages(section) {
+  const dir = join(ROOT, 'docs', '3.0', section);
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.md') && f !== 'README.md')
+    .map((f) => {
+      const {data} = matter(readFileSync(join(dir, f), 'utf8'));
+      return {
+        slug: f.slice(0, -3),
+        url: `/3.0/${section}/${f.slice(0, -3)}/`,
+        title: String(data.title ?? f.slice(0, -3)),
+        description: String(data.description ?? '').replace(/\s+/g, ' ').trim(),
+        summary: data.summary ? String(data.summary) : '',
+        category: data.category,
+        order: data.order ?? 0,
+      };
+    })
+    .sort((a, b) => a.order - b.order);
+}
+
+/** Markdown of a section's index page: its intro and a list of its pages. */
+function sectionIndexMarkdown(section) {
+  const s = SECTIONS.find((x) => x.id === section);
+  const line = (p) => `- [${p.title}](${p.url})${p.description ? ': ' + p.description : ''}`;
+  const pages = sectionPages(section);
+  const out = [`# ${s.label}`, '', s.description, '', s.intro];
+  if (section === 'components') {
+    for (const g of COMPONENT_GROUPS) {
+      const list = pages.filter((p) => p.category === g.id);
+      if (list.length) out.push('', `## ${g.label}`, '', ...list.map(line));
+    }
+  } else {
+    out.push('', ...pages.map(line));
+  }
+  return out.join('\n') + '\n';
+}
 
 /** Absolute URL of a site path. */
 const absolute = (path) => SITE.url + path;
@@ -42,6 +114,7 @@ const mdUrl = (url) => (url === '/3.0/' ? '/3.0/index.md' : url.replace(/\/$/, '
 /** Name of a page's Open Graph image (/3.0/og/<name>.png). */
 function ogName(url, section) {
   if (url === '/3.0/') return 'about-intro';
+  if (url === `/3.0/${section}/`) return `${section}-index`;
   return `${section}-${url.replace(/\/$/, '').split('/').pop()}`;
 }
 const ogUrl = (url, section) => `/3.0/og/${ogName(url, section)}.png`;
@@ -83,6 +156,8 @@ function baselineColors() {
 
 /** The docs/3.0 source of a copied page (site/3.0/...), for git dates. */
 function sourceOf(item) {
+  // A section index page is generated by its template.
+  if (item.data?.gbIndex) return resolve(String(item.inputPath));
   const inputPath = resolve(String(item.inputPath));
   const rel = inputPath.replace(/\\/g, '/').replace(/^.*\/site\/3\.0\//, '');
   return join(ROOT, 'docs', '3.0', rel === 'index.md' ? 'about/intro.md' : rel);
@@ -196,6 +271,7 @@ const quoted = `(?:"([^"]*)"|'([^']*)')`;
  * @param item An Eleventy collection item (inputPath, url, data).
  */
 async function pageMarkdown(item) {
+  if (item.data?.gbIndex) return sectionIndexMarkdown(item.data.section);
   const where = String(item.inputPath);
   const {content, data} = matter(readFileSync(resolve(where), 'utf8'));
   const title = item.data.title ?? data.title;
@@ -265,7 +341,7 @@ function headMarkup({title, description, section, url, item}) {
       },
     },
     {
-      '@type': 'TechArticle',
+      '@type': url === `/3.0/${section}/` ? 'CollectionPage' : 'TechArticle',
       '@id': pageUrl + '#article',
       headline: title,
       description: description || undefined,
@@ -282,8 +358,9 @@ function headMarkup({title, description, section, url, item}) {
       '@type': 'BreadcrumbList',
       itemListElement: [
         {'@type': 'ListItem', position: 1, name: SITE.name, item: absolute('/3.0/')},
-        {'@type': 'ListItem', position: 2, name: sectionLabel(section)},
-        {'@type': 'ListItem', position: 3, name: title, item: pageUrl},
+        {'@type': 'ListItem', position: 2, name: sectionLabel(section), item: absolute(`/3.0/${section}/`)},
+        // A section's index page is the section: no third item.
+        ...(url === `/3.0/${section}/` ? [] : [{'@type': 'ListItem', position: 3, name: title, item: pageUrl}]),
       ],
     },
   ];
@@ -320,7 +397,8 @@ function gbSite(eleventyConfig) {
   eleventyConfig.addCollection('gbAll', (api) => {
     // The start page (/3.0/) is the intro page's copy, excluded from
     // collections: add it as a second item of the intro page.
-    const pages = api.getFilteredByTag('gb3');
+    // The section index pages (order 0) come before the pages of their section.
+    const pages = [...api.getFilteredByTag('gb3'), ...api.getFilteredByTag('gbsection')];
     const intro = pages.find((p) => p.url === '/3.0/about/intro/');
     return [...sorted(pages), ...(intro ? [{url: '/3.0/', inputPath: intro.inputPath, data: intro.data}] : [])];
   });
@@ -331,7 +409,10 @@ function gbSite(eleventyConfig) {
 }
 
 module.exports = {
+  COMPONENT_GROUPS,
   SECTIONS,
+  sectionPages,
+  sectionIndexMarkdown,
   SITE,
   absolute,
   baselineColors,

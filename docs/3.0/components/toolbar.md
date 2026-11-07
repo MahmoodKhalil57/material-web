@@ -1,7 +1,9 @@
 ---
 title: Toolbar
 section: components
-order: 36
+category: other
+order: 35
+summary: Collect actions that belong to the current page
 description: A toolbar holds actions that relate to the content on the screen, docked to an edge or floating above it.
 ---
 {% demo "A floating toolbar with formatting actions" %}
