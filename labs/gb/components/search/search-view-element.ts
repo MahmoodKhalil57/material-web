@@ -9,12 +9,12 @@ import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {live} from 'lit/directives/live.js';
 import {iconButton} from '../iconbutton/icon-button.js';
+import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {
   BACK_REASON,
-  closeRequestSource,
   playPredictiveBack,
   type PredictiveBackAnimation,
-} from '../sheet/predictive-back.js';
+} from '../shared/predictive-back.js';
 import {
   getResultOptions,
   moveResultFocus,
@@ -140,17 +140,15 @@ export class SearchViewElement extends LitElement {
     `,
   ];
 
-  private isOpenInternal = false;
-
   /**
    * Whether the view is open.
    */
   @property({type: Boolean, reflect: true})
   get open(): boolean {
-    return this.isOpenInternal;
+    return this.modalSurface.open;
   }
   set open(value: boolean) {
-    if (value === this.isOpenInternal) {
+    if (value === this.modalSurface.open) {
       return;
     }
     if (value) {
@@ -205,8 +203,6 @@ export class SearchViewElement extends LitElement {
    */
   @property({attribute: false}) bar: HTMLElement | null = null;
 
-  @state() private isOpening = false;
-  @state() private isClosing = false;
   @state() private announcement = '';
 
   @query('dialog') private readonly dialog!: HTMLDialogElement | null;
@@ -216,24 +212,63 @@ export class SearchViewElement extends LitElement {
   @query('.search-view-input') private readonly input!: HTMLInputElement | null;
   @query('.search-view-results') private readonly results!: HTMLElement | null;
 
-  private transitionCounter = 0;
   private animations: Animation[] = [];
   private optionCount = 0;
   private trackingAbort: AbortController | null = null;
   private backMotion: PredictiveBackAnimation | null = null;
 
+  /**
+   * The view is a modal `<dialog>`: Escape, back and scrim close requests,
+   * a focus trap, initial focus on the input, focus restore and page scroll
+   * lock.
+   */
+  private readonly modalSurface = new ModalSurfaceController(this, {
+    dialog: () => this.dialog,
+    bubbles: true,
+    closeOnDisconnect: true,
+    defaultReason: SEARCH_CLOSE_REASONS.DISMISS,
+    forcedCloseReason: SEARCH_CLOSE_REASONS.DISMISS,
+    waitForMotion: (opening) => this.animateView(opening),
+    onBeforeShow: () => {
+      this.updatePosition();
+    },
+    onShown: () => {
+      this.startTracking();
+      this.updateAnnouncement();
+    },
+    initialFocus: () => {
+      const input = this.input;
+      input?.setSelectionRange(input.value.length, input.value.length);
+      return input;
+    },
+    onCloseRequest: (reason) => {
+      if (reason === BACK_REASON) {
+        this.handleBack();
+      } else {
+        this.close(reason);
+      }
+    },
+    onWillClose: () => {
+      this.announcement = '';
+    },
+    onHidden: () => {
+      this.stopTracking();
+      this.cancelAnimations();
+    },
+  });
+
+  private get isOpening(): boolean {
+    return this.modalSurface.opening;
+  }
+
+  private get isClosing(): boolean {
+    return this.modalSurface.closing;
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.stopTracking();
     this.cancelAnimations();
-    if (this.isOpenInternal || this.isClosing) {
-      this.transitionCounter++;
-      this.dialog?.close();
-      this.isOpenInternal = false;
-      this.isOpening = false;
-      this.isClosing = false;
-      this.requestUpdate('open', true);
-    }
   }
 
   /** Focuses the search input. */
@@ -259,45 +294,8 @@ export class SearchViewElement extends LitElement {
   /**
    * Opens the view.
    */
-  async show(): Promise<void> {
-    if (this.isOpenInternal && !this.isClosing) {
-      return;
-    }
-
-    const preventOpen = !this.dispatchEvent(
-      new Event('open', {bubbles: true, cancelable: true}),
-    );
-    if (preventOpen) {
-      return;
-    }
-
-    const token = ++this.transitionCounter;
-    const prev = this.isOpenInternal;
-    this.isOpenInternal = true;
-    this.requestUpdate('open', prev);
-    this.isClosing = false;
-    this.isOpening = true;
-    await this.updateComplete;
-    const dialog = this.dialog;
-    if (token !== this.transitionCounter || !dialog || !this.isConnected) {
-      return;
-    }
-
-    this.updatePosition();
-    if (!dialog.open) {
-      dialog.showModal();
-    }
-    this.focusInputEnd();
-    this.startTracking();
-    this.updateAnnouncement();
-
-    await this.animateView(true);
-    if (token !== this.transitionCounter) {
-      return;
-    }
-
-    this.isOpening = false;
-    this.dispatchEvent(new Event('opened', {bubbles: true}));
+  show(): Promise<void> {
+    return this.modalSurface.show();
   }
 
   /**
@@ -307,7 +305,7 @@ export class SearchViewElement extends LitElement {
    * for an in-app back control that should behave like the system back.
    */
   async handleBack(): Promise<void> {
-    if (!this.isOpenInternal || this.isClosing) {
+    if (!this.open || this.isClosing) {
       return;
     }
     // Compose's DockedSearchBar has no predictive back motion.
@@ -317,7 +315,7 @@ export class SearchViewElement extends LitElement {
         ? playPredictiveBack(container, {kind: 'search'})
         : null;
     await motion?.finished;
-    if (!this.isOpenInternal) {
+    if (!this.open) {
       motion?.cancel();
       return;
     }
@@ -339,54 +337,8 @@ export class SearchViewElement extends LitElement {
    * @param reason The reason for closing, passed in the `close` and `closed`
    *     event details (see `SEARCH_CLOSE_REASONS`).
    */
-  async close(reason: string = SEARCH_CLOSE_REASONS.DISMISS): Promise<void> {
-    if (!this.isOpenInternal && !this.isOpening) {
-      return;
-    }
-
-    const preventClose = !this.dispatchEvent(
-      new CustomEvent('close', {
-        bubbles: true,
-        cancelable: true,
-        detail: {reason},
-      }),
-    );
-    if (preventClose) {
-      return;
-    }
-
-    const token = ++this.transitionCounter;
-    const prev = this.isOpenInternal;
-    this.isOpenInternal = false;
-    this.requestUpdate('open', prev);
-    this.isOpening = false;
-    this.isClosing = true;
-    this.announcement = '';
-    await this.updateComplete;
-    if (token !== this.transitionCounter) {
-      return;
-    }
-
-    await this.animateView(false);
-    if (token !== this.transitionCounter) {
-      return;
-    }
-
-    this.stopTracking();
-    this.dialog?.close();
-    this.cancelAnimations();
-    this.isClosing = false;
-    this.dispatchEvent(
-      new CustomEvent('closed', {bubbles: true, detail: {reason}}),
-    );
-  }
-
-  private focusInputEnd() {
-    const input = this.input;
-    if (!input) return;
-    input.focus();
-    const end = input.value.length;
-    input.setSelectionRange(end, end);
+  close(reason: string = SEARCH_CLOSE_REASONS.DISMISS): Promise<void> {
+    return this.modalSurface.close(reason);
   }
 
   /**
@@ -549,7 +501,7 @@ export class SearchViewElement extends LitElement {
 
   private updateAnnouncement() {
     this.announcement =
-      this.isOpenInternal && this.optionCount > 0 ? this.suggestionsLabel : '';
+      this.open && this.optionCount > 0 ? this.suggestionsLabel : '';
   }
 
   private readonly handleSlotChange = (event: Event) => {
@@ -582,11 +534,6 @@ export class SearchViewElement extends LitElement {
 
   private readonly handleKeyDown = (event: KeyboardEvent) => {
     if (event.defaultPrevented) return;
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      this.close(SEARCH_CLOSE_REASONS.ESCAPE);
-      return;
-    }
     const input = this.input;
     const results = this.results;
     if (!input || !results) return;
@@ -617,47 +564,11 @@ export class SearchViewElement extends LitElement {
     }
   };
 
-  private readonly handleCancel = (event: Event) => {
-    // Escape and the platform back gesture animate closed.
-    event.preventDefault();
-    if (closeRequestSource(event) === BACK_REASON) {
-      this.handleBack();
-    } else {
-      this.close(SEARCH_CLOSE_REASONS.ESCAPE);
-    }
-  };
-
-  private readonly handleDialogClose = () => {
-    // Closed by the platform (e.g. a `method="dialog"` form) without close().
-    if (this.isOpenInternal) {
-      this.transitionCounter++;
-      this.stopTracking();
-      this.cancelAnimations();
-      this.isOpenInternal = false;
-      this.isOpening = false;
-      this.isClosing = false;
-      this.requestUpdate('open', true);
-      this.dispatchEvent(
-        new CustomEvent('closed', {
-          bubbles: true,
-          detail: {reason: SEARCH_CLOSE_REASONS.DISMISS},
-        }),
-      );
-    }
-  };
-
-  private readonly handleDialogClick = (event: MouseEvent) => {
-    // A click on the docked scrim, outside the container.
-    if (event.target === this.dialog) {
-      this.close(SEARCH_CLOSE_REASONS.SCRIM);
-    }
-  };
-
   override render() {
-    const open = this.isOpenInternal || this.isClosing;
+    const open = this.open || this.isClosing;
     const classes = searchViewClasses({
       tokens: false,
-      open: this.isOpenInternal,
+      open: this.open,
       opening: this.isOpening,
       closing: this.isClosing,
       docked: this.docked,
@@ -671,9 +582,6 @@ export class SearchViewElement extends LitElement {
         class="${classMap(classes)}"
         part="dialog"
         aria-label=${label}
-        @cancel=${this.handleCancel}
-        @close=${this.handleDialogClose}
-        @click=${this.handleDialogClick}
         @keydown=${this.handleKeyDown}>
         <div class="${SEARCH_VIEW_CLASSES.container}" part="container">
           <div class="${SEARCH_VIEW_CLASSES.header}" part="header">

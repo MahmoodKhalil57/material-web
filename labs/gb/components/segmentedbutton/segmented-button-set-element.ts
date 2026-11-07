@@ -7,6 +7,11 @@
 import {type CSSResultOrNative, html, LitElement, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import {
+  createValidator,
+  getValidityAnchor,
+  mixinConstraintValidation,
+} from '../../../behaviors/constraint-validation.js';
+import {
   internals,
   mixinElementInternals,
 } from '../../../behaviors/element-internals.js';
@@ -17,7 +22,13 @@ import {
   getFormValue,
   mixinFormAssociated,
 } from '../../../behaviors/form-associated.js';
+import {type Validator} from '../../../behaviors/validators/validator.js';
+import {
+  FormDisabledController,
+  SelectionGroupValidator,
+} from '../shared/form-field.js';
 import {RovingFocusController} from '../shared/roving-focus.js';
+import {SelectionController} from '../shared/selection.js';
 import {
   clampDensity,
   type SegmentedButtonDensity,
@@ -31,7 +42,9 @@ const SEGMENT_TAG = 'md-gb-segmented-button';
 
 // Separate variable needed for closure.
 // spec-labels: segmented-buttons/guidelines, segmented-buttons/guidelines/usage
-const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
+const baseClass = mixinConstraintValidation(
+  mixinFormAssociated(mixinElementInternals(LitElement)),
+);
 
 /**
  * A Material Design segmented button set: two to five
@@ -56,7 +69,10 @@ const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
  *
  * The set is form-associated: with a `name`, it submits the `value` of the
  * selected segment (single-select) or one entry per selected segment
- * (multi-select).
+ * (multi-select); form reset and restore bring the selection back. A
+ * single-select set with `required` is invalid while nothing is selected.
+ * A disabled set, or one in a disabled `<fieldset>`, disables its segments
+ * and leaves its value out of the form.
  *
  * @slot - The `md-gb-segmented-button` segments.
  * @fires {InputEvent} input - Fired when the user changes the selection. --bubbles --composed
@@ -104,47 +120,61 @@ export class SegmentedButtonSetElement extends baseClass {
   }
   private densityValue: SegmentedButtonDensity = 0;
 
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the set disabled after the fieldset
+    // is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
+  private readonly formDisabled = new FormDisabledController(this);
+
   /** The segment that takes focus when tabbing into the set. */
   private tabStop: SegmentedButtonElement | null = null;
 
-  /** The initial selection of each segment, restored on form reset. */
-  private readonly defaultSelected = new WeakMap<
-    SegmentedButtonElement,
-    boolean
-  >();
-
-  /** Keeps single-select sets consistent when segments change on their own. */
-  private readonly childObserver = new MutationObserver((records) => {
-    let sync = false;
-    for (const record of records) {
-      if (record.type === 'childList') {
-        sync = true;
-        continue;
-      }
-      const segment = record.target as SegmentedButtonElement;
-      if (
-        record.attributeName === 'selected' &&
-        !this.multiselect &&
-        segment.selected
-      ) {
-        for (const other of this.segments) {
-          if (other !== segment) other.selected = false;
-        }
-      }
-      sync = true;
-    }
-    if (sync) {
+  /**
+   * The selection model (shared SelectionController): single (radio) or
+   * multiple (checkbox) with `required`, Space/Enter/click selection, the
+   * `input` and `change` events for user changes, and the form value. A
+   * segment's native button turns Space and Enter into a click.
+   */
+  // spec: segmented-buttons/accessibility/use-cases/interaction-style
+  protected readonly selection = new SelectionController<SegmentedButtonElement>(this, {
+    items: () => this.segments,
+    mode: () => (this.multiselect ? 'multiple' : 'single'),
+    required: () => this.required,
+    // `required` only stops a selected segment from being unselected.
+    autoSelectFirst: false,
+    canSelect: (segment) => !segment.effectivelyDisabled,
+    onChange: (segment) => {
+      if (segment) this.tabStop = segment;
       this.syncSegments();
-      // Update the form value.
-      this.requestUpdate();
-    }
+    },
+  });
+
+  /** Keeps segments in sync when they are added, removed, disabled or hidden. */
+  private readonly childObserver = new MutationObserver(() => {
+    this.syncSegments();
+    // Update the form value.
+    this.requestUpdate();
   });
 
   constructor() {
     super();
     this[internals].role = 'radiogroup';
     this.addEventListener('click', (event) => {
-      this.handleClick(event);
+      const segment = this.segmentFromEvent(event);
+      if (segment?.effectivelyDisabled) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
     });
     this.addEventListener('focusin', (event) => {
       const segment = this.segmentFromEvent(event);
@@ -165,21 +195,17 @@ export class SegmentedButtonSetElement extends baseClass {
 
   /** The selected segments. */
   get selectedSegments(): SegmentedButtonElement[] {
-    return this.segments.filter((segment) => segment.selected);
+    return this.selection.selectedItems;
   }
 
   /** The index of the first selected segment, or -1. */
   get selectedIndex(): number {
-    return this.segments.findIndex((segment) => segment.selected);
+    return this.selection.selectedIndex;
   }
 
   /** The indices of every selected segment. */
   get selectedIndices(): number[] {
-    const indices: number[] = [];
-    this.segments.forEach((segment, i) => {
-      if (segment.selected) indices.push(i);
-    });
-    return indices;
+    return this.selection.selectedIndices;
   }
 
   /**
@@ -187,7 +213,7 @@ export class SegmentedButtonSetElement extends baseClass {
    * `''`. Setting it selects the segment with that value, and only that one.
    */
   get value(): string {
-    return this.selectedSegments[0]?.value ?? '';
+    return this.selection.value;
   }
   set value(value: string) {
     this.values = value ? [value] : [];
@@ -198,17 +224,10 @@ export class SegmentedButtonSetElement extends baseClass {
    * those values (only the first one in single-select).
    */
   get values(): string[] {
-    return this.selectedSegments.map((segment) => segment.value);
+    return this.selection.values;
   }
   set values(values: string[]) {
-    let found = false;
-    for (const segment of this.segments) {
-      const select: boolean =
-        values.includes(segment.value) && (this.multiselect || !found);
-      found ||= select;
-      segment.selected = select;
-    }
-    this.requestUpdate();
+    this.selection.setValues(values);
   }
 
   override connectedCallback(): void {
@@ -217,9 +236,9 @@ export class SegmentedButtonSetElement extends baseClass {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['selected', 'disabled', 'hidden'],
+      attributeFilter: ['disabled', 'hidden'],
     });
-    this.normalizeSelection();
+    this.selection.normalize();
     this.syncSegments();
   }
 
@@ -232,7 +251,7 @@ export class SegmentedButtonSetElement extends baseClass {
     super.updated(changed);
     if (changed.has('multiselect')) {
       this[internals].role = this.multiselect ? 'group' : 'radiogroup';
-      this.normalizeSelection();
+      this.selection.normalize();
     }
     this[internals].ariaRequired =
       this.required && !this.multiselect ? 'true' : null;
@@ -245,12 +264,8 @@ export class SegmentedButtonSetElement extends baseClass {
   }
 
   override [getFormValue](): FormValue | null {
-    const values = this.values;
-    if (!values.length) return null;
-    if (!this.multiselect) return values[0];
-    const data = new FormData();
-    for (const value of values) data.append(this.name, value);
-    return data;
+    // `requestUpdate()` runs before the field initializers on construction.
+    return this.selection ? this.selection.formValue(this.name) : null;
   }
 
   override [getFormState](): FormValue | null {
@@ -258,10 +273,7 @@ export class SegmentedButtonSetElement extends baseClass {
   }
 
   override formResetCallback() {
-    for (const segment of this.segments) {
-      segment.selected = this.defaultSelected.get(segment) ?? false;
-    }
-    this.requestUpdate();
+    this.selection.reset();
   }
 
   override formStateRestoreCallback(state: FormRestoreState | null) {
@@ -276,8 +288,20 @@ export class SegmentedButtonSetElement extends baseClass {
     }
   }
 
+  override [createValidator](): Validator<unknown> {
+    return new SelectionGroupValidator(() => ({
+      required: this.required && !this.multiselect,
+      // Validity is read while the base class constructs.
+      hasSelection: !!this.selection && this.selection.selectedItems.length > 0,
+    }));
+  }
+
+  override [getValidityAnchor](): HTMLElement | null {
+    return this.selection ? (this.segments[0] ?? null) : null;
+  }
+
   private handleSlotChange() {
-    this.normalizeSelection();
+    this.selection.normalize();
     this.syncSegments();
     this.requestUpdate();
   }
@@ -285,33 +309,6 @@ export class SegmentedButtonSetElement extends baseClass {
   private segmentFromEvent(event: Event): SegmentedButtonElement | undefined {
     const path = event.composedPath();
     return this.segments.find((segment) => path.includes(segment));
-  }
-
-  private handleClick(event: MouseEvent) {
-    const segment = this.segmentFromEvent(event);
-    if (!segment) return;
-    if (segment.effectivelyDisabled) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      return;
-    }
-
-    if (this.multiselect) {
-      segment.selected = !segment.selected;
-    } else if (segment.selected) {
-      if (this.required) return;
-      segment.selected = false;
-    } else {
-      for (const other of this.segments) {
-        other.selected = other === segment;
-      }
-    }
-    this.tabStop = segment;
-    this.syncSegments();
-    // Update the form value before the events.
-    this.requestUpdate();
-    this.dispatchEvent(new InputEvent('input', {bubbles: true, composed: true}));
-    this.dispatchEvent(new Event('change', {bubbles: true}));
   }
 
   /**
@@ -334,15 +331,6 @@ export class SegmentedButtonSetElement extends baseClass {
     return this.segments.filter((segment) => !segment.hidden);
   }
 
-  /** In single-select mode, keeps only the last selected segment. */
-  private normalizeSelection() {
-    if (this.multiselect) return;
-    const selected = this.selectedSegments;
-    for (const segment of selected.slice(0, -1)) {
-      segment.selected = false;
-    }
-  }
-
   /** Pushes the set's mode, disabled state and tab stop to its segments. */
   private syncSegments() {
     const segments = this.segments;
@@ -354,9 +342,6 @@ export class SegmentedButtonSetElement extends baseClass {
       this.tabStop = focusable[0] ?? null;
     }
     for (const segment of segments) {
-      if (!this.defaultSelected.has(segment)) {
-        this.defaultSelected.set(segment, segment.selected);
-      }
       segment.mode = this.multiselect ? 'multiple' : 'single';
       segment.groupDisabled = this.disabled;
       segment.focusable = segment === this.tabStop;

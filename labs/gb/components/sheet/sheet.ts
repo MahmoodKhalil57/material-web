@@ -72,12 +72,3 @@ export function setupSheetEscape(
     opts,
   );
 }
-
-/** Returns the focused element, looking through open shadow roots. */
-export function deepActiveElement(): HTMLElement | null {
-  let active = document.activeElement;
-  while (active?.shadowRoot?.activeElement) {
-    active = active.shadowRoot.activeElement;
-  }
-  return active instanceof HTMLElement ? active : null;
-}

@@ -112,8 +112,10 @@
 
     &:where(:not(.list-item-static)) {
       // spec-labels: lists/specs/states/selected-list-items, lists/specs/states/default-list-items
-      &:is(:hover, .hover) {
-        @include list-tokens.item-hovered;
+      @media (hover: hover) {
+        &:is(:hover, .hover) {
+          @include list-tokens.item-hovered;
+        }
       }
 
       &:is(:focus-within, .focus) {
@@ -129,7 +131,6 @@
       @include list-tokens.item-selected;
 
       &:where(:not(.list-item-static)):is(
-          :hover,
           .hover,
           :focus-within,
           .focus,
@@ -137,6 +138,12 @@
           .active
         ) {
         @include list-tokens.item-selected-interactive;
+      }
+
+      @media (hover: hover) {
+        &:where(:not(.list-item-static)):hover {
+          @include list-tokens.item-selected-interactive;
+        }
       }
     }
 
@@ -404,7 +411,10 @@
 
       & {
         border-radius: var(--container-shape);
-        background-image: linear-gradient(var(--state-layer-color) 0 0),
+        // Dragged state layer: 16% (md.comp.list.list-item.dragged.state-layer.opacity).
+        background-image: linear-gradient(
+            hsl(from var(--state-layer-color) h s l / 16%) 0 0
+          ),
           var(--ripple, none);
       }
     }
@@ -578,13 +588,15 @@
   }
 
   // State layers (8% hover, 10% focus and pressed, like the ripple).
-  .list-item-actions-leading > :hover,
-  .list-item-actions-trailing > :hover,
-  .list-item-actions-leading::slotted(:hover),
-  .list-item-actions-trailing::slotted(:hover) {
-    background-image: linear-gradient(
-      hsl(from var(--state-layer-color) h s l / 8%) 0 0
-    );
+  @media (hover: hover) {
+    .list-item-actions-leading > :hover,
+    .list-item-actions-trailing > :hover,
+    .list-item-actions-leading::slotted(:hover),
+    .list-item-actions-trailing::slotted(:hover) {
+      background-image: linear-gradient(
+        hsl(from var(--state-layer-color) h s l / 8%) 0 0
+      );
+    }
   }
 
   .list-item-actions-leading > :is(:focus-visible, :active),

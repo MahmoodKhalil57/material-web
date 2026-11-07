@@ -32,6 +32,7 @@ describe('<md-gb-icon-button> density', () => {
     return {button, inner};
   }
 
+  // spec: icon-buttons-d8f6de
   it('defaults to density 0', async () => {
     const {button} = await setupTest();
     expect(button.density).toBe(0);

@@ -28,8 +28,10 @@
       @include switch-tokens.unselected;
 
       // spec-labels: switch/specs/states
-      &:where(:hover, .hover) {
-        @include switch-tokens.unselected-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include switch-tokens.unselected-hovered;
+        }
       }
       &:where(:focus-visible, .focus) {
         @include switch-tokens.unselected-focused;
@@ -41,8 +43,10 @@
     &:is(:checked, .checked, [aria-checked='true']) {
       @include switch-tokens.selected;
 
-      &:where(:hover, .hover) {
-        @include switch-tokens.selected-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include switch-tokens.selected-hovered;
+        }
       }
       &:where(:focus-visible, .focus) {
         @include switch-tokens.selected-focused;
@@ -87,9 +91,10 @@
       padding: 0;
       // Compose animates the handle position and size with the fast spatial
       // spring (MotionSchemeKeyTokens.FastSpatial).
-      transition: grid-template-columns
-        var(--md-sys-motion-spring-fast-spatial-duration)
-        var(--md-sys-motion-spring-fast-spatial);
+      transition:
+        grid-template-columns var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial),
+        var(--ripple-transition);
       isolation: isolate;
       position: relative;
       color: var(--icon-color);

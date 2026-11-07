@@ -89,6 +89,7 @@ describe('planPanes()', () => {
     }
   });
 
+  // spec: layout-scaffold-88b22a, layout-scaffold-8b2cb5
   it('shows a third pane at extra-large only', () => {
     const state = {
       layout: 'list-detail' as const,
@@ -271,6 +272,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(document.activeElement).toBe(item);
   });
 
+  // spec: layout-scaffold-404e4f, layout-scaffold-c07466
   it('shows both panes at expanded with a 360px fixed list', async () => {
     const {scaffold, pane, isShown} = await setup(1000, listDetail());
     expect(scaffold.windowClass).toBe('expanded');
@@ -298,6 +300,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(detail.getClientRects().length).toBeGreaterThan(0);
   });
 
+  // spec: layout-scaffold-39c2e5, layout-scaffold-83733f
   it('splits medium two-pane layouts 50/50', async () => {
     const {scaffold, pane} = await setup(
       700,
@@ -314,6 +317,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(b).toBeCloseTo(314, 0);
   });
 
+  // spec: layout-scaffold-742d83, layout-scaffold-48f69f, layout-scaffold-ba81a9, layout-scaffold-c80a1a, layout-scaffold-2e92e2
   it('reflows when the window size class changes', async () => {
     const {scaffold, frame, isShown} = await setup(1000, listDetail());
     expect(scaffold.mode).toBe('two-pane');
@@ -349,6 +353,7 @@ describe('<md-gb-pane-scaffold>', () => {
       <div slot="secondary" class="support">Support</div>
     </md-gb-pane-scaffold>`;
 
+    // spec: layout-scaffold-8cd68d, layout-scaffold-eb9816, layout-scaffold-805c34
     it('stacks the supporting pane below at compact', async () => {
       const {scaffold, pane} = await setup(500, supporting);
       expect(scaffold.mode).toBe('stacked');
@@ -357,6 +362,7 @@ describe('<md-gb-pane-scaffold>', () => {
       );
     });
 
+    // spec: layout-scaffold-404346, layout-scaffold-7d34b7
     it('puts a 360px supporting pane on the trailing side at expanded', async () => {
       const {pane} = await setup(1000, supporting);
       const primary = pane('primary').getBoundingClientRect();
@@ -385,11 +391,13 @@ describe('<md-gb-pane-scaffold>', () => {
         .filter(Boolean).length;
     }
 
+    // spec: layout-canonical-examples-34064f
     it('stacks the feed at compact', async () => {
       const {scaffold} = await setup(500, feed);
       expect(columnCount(scaffold)).toBe(1);
     });
 
+    // spec: layout-canonical-examples-34064f, layout-canonical-examples-e5fdf6
     it('adds columns as the window grows', async () => {
       const {scaffold, frame} = await setup(700, feed);
       expect(columnCount(scaffold)).toBe(4);
@@ -401,6 +409,7 @@ describe('<md-gb-pane-scaffold>', () => {
     });
   });
 
+  // spec: layout-scaffold-88b22a, layout-scaffold-8b2cb5
   it('shows the tertiary pane at extra-large only', async () => {
     const content = html`<md-gb-pane-scaffold>
       <div slot="secondary">List</div>
@@ -573,6 +582,7 @@ describe('<md-gb-pane-scaffold>', () => {
             composed: true,
             pointerId: 1,
             button: 0,
+            isPrimary: true,
             clientX,
             clientY: y,
           }),
@@ -592,6 +602,7 @@ describe('<md-gb-pane-scaffold>', () => {
       expect(pane('secondary').style.visibility).toBe('');
     });
 
+    // spec: layout-scaffold-57ce22, layout-scaffold-c2f2c5
     it('keeps a persistent width across window size classes', async () => {
       const {scaffold, frame} = await setup(1000, resizable);
       scaffold.paneWidth = 412;
@@ -603,6 +614,7 @@ describe('<md-gb-pane-scaffold>', () => {
       expect(scaffold.paneWidth).toBe(412);
     });
 
+    // spec: layout-scaffold-ed4644, layout-scaffold-dc4248
     it('resets a temporary width when the class changes', async () => {
       const {scaffold, frame} = await setup(
         1000,
@@ -1045,6 +1057,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
     expect(scaffold.mode).toBe('single');
   });
 
+  // spec: layout-scaffold-6a42d4, layout-scaffold-8822f9
   it('floats the supporting pane above the primary pane', async () => {
     const {scaffold, pane} = await setup(500, supporting('floating'));
     expect(scaffold.mode).toBe('levitated');
@@ -1070,6 +1083,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
     ).not.toBeNull();
   });
 
+  // spec: layout-scaffold-e39320
   it('docks the supporting pane to the bottom edge at compact', async () => {
     const {scaffold, pane} = await setup(500, supporting('docked'));
     scaffold.levitateOpen = true;
@@ -1082,6 +1096,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
     );
   });
 
+  // spec: layout-scaffold-a75925, layout-scaffold-94f2e1
   it('adapts a docked pane into a floating pane at medium', async () => {
     const {scaffold} = await setup(700, supporting('docked'));
     scaffold.openLevitated();
@@ -1092,6 +1107,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
     ).not.toBeNull();
   });
 
+  // spec: layout-scaffold-9515e4, layout-scaffold-7bcfc8, layout-scaffold-bf27ae
   it('shows a levitated pane co-planar where two panes fit', async () => {
     const {scaffold, pane} = await setup(1000, supporting('docked'));
     expect(scaffold.mode).toBe('two-pane');
@@ -1123,6 +1139,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
   });
 
   describe('modal levitated pane', () => {
+    // spec: layout-scaffold-a8434d, layout-scaffold-92ba79, layout-scaffold-7fa733
     it('moves focus in, makes the panes behind inert and shows a scrim', async () => {
       const {root, scaffold, pane} = await setup(
         500,
@@ -1145,6 +1162,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
       expect(document.activeElement).toBe(trigger);
     });
 
+    // spec: layout-scaffold-dd960b
     it('closes when something behind it is used', async () => {
       const {root, scaffold} = await setup(500, supporting('docked modal'));
       root.querySelector<HTMLButtonElement>('.trigger')!.focus();

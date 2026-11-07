@@ -238,6 +238,7 @@ describe('<md-gb-nav-drawer>', () => {
       expect(getComputedStyle(sheet(drawer)).visibility).toBe('visible');
     });
 
+    // spec: navigation-drawer-a25035, navigation-drawer-1be837
     it('uses spec container tokens for standard and modal', async () => {
       const {drawer} = await setupTest();
       await drawer.show();
@@ -412,6 +413,40 @@ describe('<md-gb-nav-drawer>', () => {
       expect(content.getBoundingClientRect().width).toBe(440);
     });
 
+    // spec: navigation-drawer-ec04e5
+    it('slides out with a transition when closed, not jumping to its closed position', async () => {
+      const {drawer} = await setupTest(
+        html`<md-gb-nav-drawer>
+          <md-gb-nav-drawer-item>A</md-gb-nav-drawer-item>
+        </md-gb-nav-drawer>`,
+      );
+      // `show()` resolves once the drawer has slid in.
+      await drawer.show();
+      expect(getComputedStyle(sheet(drawer)).marginInlineStart).toBe('0px');
+      const closed = drawer.close();
+      while (sheet(drawer).classList.contains('nav-drawer-open')) {
+        await drawer.updateComplete;
+        await Promise.resolve();
+      }
+      const slide = sheet(drawer)
+        .getAnimations()
+        .filter(
+          (a) =>
+            a instanceof CSSTransition &&
+            a.transitionProperty.startsWith('margin'),
+        );
+      expect(slide.length).toBe(1);
+      expect(slide[0].effect!.getComputedTiming().duration).toBeGreaterThan(0);
+      // Part way along the transition the sheet is neither open nor closed.
+      slide[0].currentTime = 40;
+      const margin = parseFloat(getComputedStyle(sheet(drawer)).marginInlineStart);
+      expect(margin).toBeLessThan(0);
+      expect(margin).toBeGreaterThan(-360);
+      for (const a of sheet(drawer).getAnimations()) a.finish();
+      await closed;
+      expect(getComputedStyle(sheet(drawer)).marginInlineStart).toBe('-360px');
+    });
+
     it('fires open, opened, close and closed events', async () => {
       const {drawer} = await setupTest();
       const events: string[] = [];
@@ -466,6 +501,7 @@ describe('<md-gb-nav-drawer>', () => {
       expect(sheet(drawer).classList).not.toContain('nav-drawer-open');
     });
 
+    // spec: navigation-drawer-0a3185, navigation-drawer-c328b0
     it('does not close on Escape or item selection', async () => {
       const {drawer, items} = await setupTest();
       await drawer.show();
@@ -510,11 +546,12 @@ describe('<md-gb-nav-drawer>', () => {
       expect(sheet(drawer).classList).toContain('nav-drawer-modal');
     });
 
-    it('moves focus to the selected item and restores it on close', async () => {
+    // spec: navigation-drawer-054d25, navigation-drawer-b59187
+    it('moves focus to the first item (not the selected one) and restores it on close', async () => {
       const {drawer, items, outside} = await setupModal();
       outside.focus();
       await drawer.show();
-      expectFocused(innerControl(items[1]));
+      expectFocused(innerControl(items[0]));
       await drawer.close();
       expectFocused(outside);
     });
@@ -559,6 +596,7 @@ describe('<md-gb-nav-drawer>', () => {
       expect(reason).toBe(NAV_DRAWER_CLOSE_REASONS.escape);
     });
 
+    // spec: navigation-drawer-5787ba
     it('closes when an item is selected', async () => {
       const {drawer, items} = await setupModal();
       await drawer.show();
@@ -645,6 +683,7 @@ describe('<md-gb-nav-drawer>', () => {
         expect(drawer.open).toBeTrue();
       });
 
+      // spec: navigation-drawer-d450da, navigation-drawer-3f8d7a
       it('closes when released past half its width', async () => {
         const {drawer, width} = await setupOpen();
         let reason = '';

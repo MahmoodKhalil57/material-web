@@ -552,6 +552,12 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    // No clip-path morphing (motion/transitions, "Follows accessibility
+    // settings"): the track segments jump to the new value.
+    .slider-track-box {
+      transition: none;
+    }
+
     .slider-handle-nub {
       transition-duration: 0s;
     }

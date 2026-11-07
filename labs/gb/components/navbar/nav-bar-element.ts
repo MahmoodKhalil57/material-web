@@ -8,6 +8,7 @@ import {css, CSSResultOrNative, html, type PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {SelectionController} from '../shared/selection.js';
 
 import navBarStyles from './nav-bar.css' with {type: 'css'}; // github-only
 // import {styles as navBarStyles} from './nav-bar.cssresult.js'; // google3-only
@@ -72,6 +73,26 @@ export class NavBarElement extends AriaTablistElement {
    */
   @property({attribute: 'item-layout', reflect: true})
   itemLayout: NavBarLayout = 'vertical';
+
+  /**
+   * The selection model (shared SelectionController): exactly one tab is
+   * selected, by click or Space/Enter (the tab turns the key into a click),
+   * with a `change` event for user changes. The controller selects during
+   * the click, so the tab list's own click handling finds the tab already
+   * selected and does nothing.
+   */
+  // spec: navigation-bar/accessibility/keyboard-navigation
+  protected readonly selectionModel = new SelectionController<HTMLElement>(this, {
+    items: () => this.tabs,
+    mode: () => 'single',
+    required: () => true,
+    // The tab list selects the first tab when its tabs change.
+    autoSelectFirst: false,
+    isSelected: (tab) => this.isTabSelected(tab),
+    setSelected: (tab, selected) => this.setTabSelected(tab, selected),
+    events: ['change'],
+    vetoable: false,
+  });
 
   @state() private mediumWindow = false;
   @state() private itemCount = 0;

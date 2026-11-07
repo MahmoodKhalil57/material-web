@@ -315,6 +315,7 @@ describe('<md-gb-date-picker>', () => {
       expect(qa(picker, '[role="row"]').length).toBeGreaterThan(4);
     });
 
+    // spec: date-pickers-45930a, date-pickers-21e315, date-pickers-d45bf1
     it('labels dates with the full date and marks the selection', async () => {
       const {picker} = await setupTest();
       const selected = cell(picker, '2025-08-17');
@@ -441,7 +442,7 @@ describe('<md-gb-date-picker>', () => {
         'September 2025',
       );
       expect(focusedCell(picker)!.dataset['date']).toBe('2025-09-17');
-      const live = q(picker, '[aria-live="polite"].date-picker-live')!;
+      const live = q(picker, '[role="status"][aria-live="polite"]')!;
       expect(live.textContent!.trim()).toBe('September 2025');
     });
 
@@ -605,6 +606,7 @@ describe('<md-gb-date-picker>', () => {
       ).toBeTrue();
     });
 
+    // spec: date-pickers-94fa70
     it('navigates months with the arrow buttons', async () => {
       const {picker} = await setupTest();
       q(picker, '.date-picker-next-month')!.click();
@@ -623,6 +625,7 @@ describe('<md-gb-date-picker>', () => {
   });
 
   describe('range', () => {
+    // spec: date-pickers-1918ad, date-pickers-37801e, date-pickers-2f509f
     it('selects a start and end date with an in-range highlight', async () => {
       const {picker} = await setupTest(
         html`<md-gb-date-picker
@@ -742,6 +745,7 @@ describe('<md-gb-date-picker>', () => {
       );
     }
 
+    // spec: date-pickers-38798a
     it('renders an outlined text field with the formatted value and format hint', async () => {
       const {picker} = await setupDocked();
       const field = q(picker, 'md-gb-text-field') as HTMLElement & {
@@ -758,6 +762,7 @@ describe('<md-gb-date-picker>', () => {
       expect(button.getAttribute('aria-expanded')).toBe('false');
     });
 
+    // spec: date-pickers-3556cc, date-pickers-7a515a
     it('opens below the field from the calendar button and focuses the date', async () => {
       const {picker} = await setupDocked();
       const openSpy = jasmine.createSpy('open');
@@ -793,6 +798,7 @@ describe('<md-gb-date-picker>', () => {
       expect(picker.open).toBeFalse();
     });
 
+    // spec: date-pickers-6be883
     it('confirms with OK and closes', async () => {
       const {picker} = await setupDocked();
       await picker.show();
@@ -809,6 +815,7 @@ describe('<md-gb-date-picker>', () => {
       expect(field.value).toBe('08/21/2025');
     });
 
+    // spec: date-pickers-9e2c86, date-pickers-de98c5, date-pickers-fa1f9e, date-pickers-f5ed8a, date-pickers-2f6e0c
     it('commits typed dates and reformats them', async () => {
       const {picker} = await setupDocked('');
       const changeSpy = jasmine.createSpy('change');
@@ -853,6 +860,7 @@ describe('<md-gb-date-picker>', () => {
       );
     });
 
+    // spec: date-pickers-94fa70, date-pickers-1d8929
     it('opens the month and year menus', async () => {
       const {picker} = await setupTest();
       q(picker, '.date-picker-month-menu')!.click();
@@ -975,6 +983,7 @@ describe('<md-gb-date-picker>', () => {
       await picker.close();
     });
 
+    // spec: date-pickers-84a745
     it('shows a year grid from the month-year button', async () => {
       const {picker} = await setupModal();
       await picker.show();
@@ -999,6 +1008,7 @@ describe('<md-gb-date-picker>', () => {
       );
     });
 
+    // spec: date-pickers-579788, date-pickers-104f17, date-pickers-be8e2b
     it('switches to the date input and validates it', async () => {
       const {picker} = await setupModal();
       await picker.show();
@@ -1118,6 +1128,7 @@ describe('<md-gb-date-picker>', () => {
   });
 
   describe('tooltips', () => {
+    // spec: date-pickers-f54e54, date-pickers-ebf805, date-pickers-b5eda3
     it('shows the shortcut key in the arrow and menu button tooltips', async () => {
       const {picker} = await setupTest();
       const previousYear = q(picker, '.date-picker-previous-year')!;
@@ -1194,6 +1205,7 @@ describe('<md-gb-date-picker>', () => {
       expect(gridLabel(picker)).toBe('August 2025');
     });
 
+    // spec: date-pickers-ff3ce4, date-pickers-cfb88e
     it('moves to the next month after a swipe to the left', async () => {
       const {picker} = await setupTest();
       const inputSpy = jasmine.createSpy('input');
@@ -1335,6 +1347,7 @@ describe('<md-gb-date-picker>', () => {
       return qa(picker, '.date-picker-month').map((el) => el.dataset['month']);
     }
 
+    // spec: date-pickers-a70c43, date-pickers-3c4f3a
     it('renders a vertically scrolling list of months with subheads', async () => {
       const {picker} = await setupRange();
       expect(q(picker, '.date-picker-scrolling')).not.toBeNull();
@@ -1505,6 +1518,7 @@ describe('<md-gb-date-picker>', () => {
       return result;
     }
 
+    // spec: date-pickers-c70830, date-pickers-11dd87, date-pickers-34a774
     it('covers the window with a close button and Save', async () => {
       const {picker} = await setupFullscreen();
       const dialog = q<HTMLDialogElement>(picker, 'dialog')!;

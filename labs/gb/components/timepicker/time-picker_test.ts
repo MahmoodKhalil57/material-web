@@ -191,6 +191,7 @@ describe('<md-gb-time-picker>', () => {
       ).not.toBeNull();
     });
 
+    // spec: time-pickers-dbff70, time-pickers-bd287c
     it('shows the 24-hour inner ring', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -207,6 +208,7 @@ describe('<md-gb-time-picker>', () => {
       expect(q(picker, '.time-picker').classList).toContain('time-picker-24h');
     });
 
+    // spec: time-pickers-3d7e71
     it('lays out horizontally', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -298,6 +300,7 @@ describe('<md-gb-time-picker>', () => {
   });
 
   describe('dial', () => {
+    // spec: time-pickers-b8f833, time-pickers-2cacc5
     it('is a slider with value text', async () => {
       const {picker} = await setupTest();
       const dial = q(picker, '.time-picker-dial');
@@ -442,6 +445,7 @@ describe('<md-gb-time-picker>', () => {
   });
 
   describe('period selector', () => {
+    // spec: time-pickers-22f87c, time-pickers-2e84bf
     it('is a labeled radio group', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -500,6 +504,7 @@ describe('<md-gb-time-picker>', () => {
   });
 
   describe('input mode', () => {
+    // spec: time-pickers-a80351, time-pickers-5c65e6, time-pickers-1f1a21, time-pickers-f26520, time-pickers-1e0ef8, time-pickers-2846c6
     it('toggles from the mode button', async () => {
       const {picker} = await setupTest();
       const toggle = q(picker, '.time-picker-mode-toggle');
@@ -519,6 +524,7 @@ describe('<md-gb-time-picker>', () => {
       expect(picker.shadowRoot!.querySelector('.time-picker-dial')).toBeNull();
     });
 
+    // spec: time-pickers-6113ac, time-pickers-999de8, time-pickers-c57fc7, time-pickers-9f19d4, time-pickers-e14b2c, time-pickers-57068d, time-pickers-881070, time-pickers-bb2d8a, time-pickers-d99e41
     it('renders labeled hour and minute fields', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -541,6 +547,7 @@ describe('<md-gb-time-picker>', () => {
       expect(hour.offsetHeight).toBe(72);
     });
 
+    // spec: time-pickers-906143, time-pickers-66ab7d, time-pickers-58fb92
     it('takes typed hours and minutes', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -596,6 +603,7 @@ describe('<md-gb-time-picker>', () => {
   });
 
   describe('actions', () => {
+    // spec: time-pickers-a7d83e, time-pickers-b0923c
     it('commits with OK', async () => {
       const {picker} = await setupTest();
       const change = jasmine.createSpy('change');
@@ -606,6 +614,7 @@ describe('<md-gb-time-picker>', () => {
       expect(change).toHaveBeenCalledTimes(1);
     });
 
+    // spec: time-pickers-b0923c
     it('reverts with Cancel', async () => {
       const {picker} = await setupTest();
       const cancel = jasmine.createSpy('cancel');
@@ -723,6 +732,7 @@ describe('<md-gb-time-picker>', () => {
       expect(picker.value).toBe('14:30');
     });
 
+    // spec: time-pickers-a7d83e
     it('confirms and closes with OK', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker

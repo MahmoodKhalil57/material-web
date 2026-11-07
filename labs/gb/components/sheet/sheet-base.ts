@@ -4,23 +4,26 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {LitElement, type PropertyValues} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {LitElement} from 'lit';
+import {property} from 'lit/decorators.js';
+import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {
   BACK_REASON,
-  closeRequestSource,
   type PredictiveBackAnimation,
-} from './predictive-back.js';
-import {CLOSE_REASONS, deepActiveElement} from './sheet.js';
+} from '../shared/predictive-back.js';
+import {isReducedMotion} from '../shared/motion.js';
+import {CLOSE_REASONS} from './sheet.js';
 
 /**
- * Shared open/close lifecycle of `md-gb-bottom-sheet` and `md-gb-side-sheet`.
+ * Shared open/close lifecycle of `md-gb-bottom-sheet` and `md-gb-side-sheet`,
+ * on the shared `ModalSurfaceController`.
  *
  * Each sheet renders a `<dialog class="sheet-dialog">` holding a
  * `.sheet-panel`. A modal sheet opens it with `showModal()`, which puts it in
  * the top layer above a `::backdrop` scrim, makes the rest of the page inert
- * (the focus trap) and moves focus into the sheet. A standard sheet opens it
- * non-modally in the page, without moving or trapping focus.
+ * (the focus trap), moves focus into the sheet and locks page scrolling. A
+ * standard sheet opens it non-modally in the page, without moving or trapping
+ * focus or locking scrolling.
  *
  * Closing animates the panel out first and closes the `<dialog>` after, then
  * returns focus to the element focused when the sheet opened.
@@ -31,15 +34,13 @@ import {CLOSE_REASONS, deepActiveElement} from './sheet.js';
  * motion and closes with reason `back` (see `handleBack()`).
  */
 export abstract class SheetBase extends LitElement {
-  private isOpenInternal = false;
-
   /** Whether the sheet is open. Setting it calls `show()` or `close()`. */
   @property({type: Boolean, reflect: true})
   get open(): boolean {
-    return this.isOpenInternal;
+    return this.modalSurface.open;
   }
   set open(value: boolean) {
-    if (value === this.isOpenInternal) {
+    if (value === this.modalSurface.open) {
       return;
     }
     if (value) {
@@ -58,12 +59,39 @@ export abstract class SheetBase extends LitElement {
   /** Whether to skip the opening and closing motion. */
   @property({type: Boolean, reflect: true}) quick = false;
 
-  @state() protected isOpening = false;
-  @state() protected isClosing = false;
+  /** Escape, back and scrim close requests, focus, scroll lock and events. */
+  protected readonly modalSurface: ModalSurfaceController =
+    new ModalSurfaceController(this, {
+      dialog: () => this.dialog,
+      modal: () => this.modal,
+      bubbles: true,
+      defaultReason: CLOSE_REASONS.DISMISS,
+      waitForMotion: () => this.waitForMotion(),
+      onWillShow: () => {
+        this.willShow();
+      },
+      onCloseRequest: (reason) => {
+        if (reason === BACK_REASON) {
+          this.handleBack();
+        } else {
+          this.close(reason);
+        }
+      },
+      // Settle back to the resting height after a drag or swipe.
+      onCloseCanceled: () => {
+        this.requestUpdate();
+      },
+    });
 
-  private transitionCounter = 0;
-  private returnFocusTo: HTMLElement | null = null;
-  private scrimPointerDown = false;
+  /** Whether the sheet is playing its opening motion. */
+  protected get isOpening(): boolean {
+    return this.modalSurface.opening;
+  }
+
+  /** Whether the sheet is playing its closing motion. */
+  protected get isClosing(): boolean {
+    return this.modalSurface.closing;
+  }
 
   /** The `<dialog>` that holds the sheet. */
   protected get dialog(): HTMLDialogElement | null {
@@ -77,50 +105,12 @@ export abstract class SheetBase extends LitElement {
 
   /** Whether the dialog is shown (open, opening or closing). */
   protected get isShown(): boolean {
-    return this.isOpenInternal || this.isClosing;
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    // A removed sheet can't finish its close motion; settle it closed.
-    if (this.isClosing) {
-      this.transitionCounter++;
-      this.isClosing = false;
-    }
+    return this.modalSurface.shown;
   }
 
   /** Opens the sheet. Resolves after the opening motion. */
-  async show(): Promise<void> {
-    if (this.isOpenInternal && !this.isClosing) {
-      return;
-    }
-    const preventOpen = !this.dispatchEvent(
-      new Event('open', {bubbles: true, cancelable: true}),
-    );
-    if (preventOpen) {
-      return;
-    }
-
-    const token = ++this.transitionCounter;
-    if (!this.isClosing) {
-      this.returnFocusTo = deepActiveElement();
-    }
-    this.willShow();
-    const prev = this.isOpenInternal;
-    this.isOpenInternal = true;
-    this.requestUpdate('open', prev);
-    this.isClosing = false;
-    this.isOpening = true;
-    await this.updateComplete;
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    await this.waitForMotion();
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    this.isOpening = false;
-    this.dispatchEvent(new Event('opened', {bubbles: true}));
+  show(): Promise<void> {
+    return this.modalSurface.show();
   }
 
   /**
@@ -129,43 +119,8 @@ export abstract class SheetBase extends LitElement {
    * @param reason The reason for closing, passed in the `close` and `closed`
    *     event details (see `CLOSE_REASONS`).
    */
-  async close(reason: string = CLOSE_REASONS.DISMISS): Promise<void> {
-    if (!this.isOpenInternal) {
-      return;
-    }
-    const preventClose = !this.dispatchEvent(
-      new CustomEvent('close', {
-        bubbles: true,
-        cancelable: true,
-        detail: {reason},
-      }),
-    );
-    if (preventClose) {
-      // Settle back to the resting height after a drag or swipe.
-      this.requestUpdate();
-      return;
-    }
-
-    const token = ++this.transitionCounter;
-    const prev = this.isOpenInternal;
-    this.isOpenInternal = false;
-    this.requestUpdate('open', prev);
-    this.isOpening = false;
-    this.isClosing = true;
-    await this.updateComplete;
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    await this.waitForMotion();
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    this.isClosing = false;
-    await this.updateComplete;
-    this.restoreFocus();
-    this.dispatchEvent(
-      new CustomEvent('closed', {bubbles: true, detail: {reason}}),
-    );
+  close(reason: string = CLOSE_REASONS.DISMISS): Promise<void> {
+    return this.modalSurface.close(reason);
   }
 
   /** Called when the sheet starts opening, before it renders open. */
@@ -181,12 +136,12 @@ export abstract class SheetBase extends LitElement {
    * back.
    */
   async handleBack(): Promise<void> {
-    if (!this.isOpenInternal || this.isClosing) {
+    if (!this.open || this.isClosing) {
       return;
     }
     const motion = this.shouldAnimate() ? this.playPredictiveBack() : null;
     await motion?.finished;
-    if (!this.isOpenInternal) {
+    if (!this.open) {
       motion?.cancel();
       return;
     }
@@ -197,7 +152,7 @@ export abstract class SheetBase extends LitElement {
     }
     // Hold the back progress through the closing motion.
     await this.close(BACK_REASON);
-    if (this.isOpenInternal) {
+    if (this.open) {
       await motion?.settle();
     } else {
       motion?.cancel();
@@ -220,43 +175,7 @@ export abstract class SheetBase extends LitElement {
 
   /** Whether the sheet animates (not `quick`, no reduced motion). */
   protected shouldAnimate(): boolean {
-    const reducedMotion = globalThis.matchMedia?.(
-      '(prefers-reduced-motion: reduce)',
-    )?.matches;
-    return !this.quick && !reducedMotion;
-  }
-
-  protected override updated(changed: PropertyValues<this>) {
-    super.updated(changed);
-    this.syncDialog(changed.has('modal'));
-  }
-
-  /** Opens or closes the `<dialog>` to match the sheet state. */
-  private syncDialog(modalChanged: boolean) {
-    const dialog = this.dialog;
-    if (!dialog) {
-      return;
-    }
-    if (!this.isShown) {
-      if (dialog.open) {
-        dialog.close();
-      }
-      return;
-    }
-    const isModal = dialog.matches(':modal');
-    if (dialog.open && (modalChanged || isModal !== this.modal)) {
-      dialog.close();
-    }
-    if (dialog.open || !this.isConnected) {
-      return;
-    }
-    if (this.modal) {
-      dialog.showModal();
-    } else {
-      // Not `show()`, which moves focus into the dialog: a standard sheet
-      // opens beside the content without taking focus.
-      dialog.setAttribute('open', '');
-    }
+    return !this.quick && !isReducedMotion(this);
   }
 
   /** Waits for the panel's and host's CSS transitions to finish. */
@@ -272,72 +191,4 @@ export abstract class SheetBase extends LitElement {
     ];
     await Promise.all(animations.map((a) => a.finished)).catch(() => {});
   }
-
-  private restoreFocus() {
-    const target = this.returnFocusTo;
-    this.returnFocusTo = null;
-    if (!target?.isConnected) {
-      return;
-    }
-    const active = deepActiveElement();
-    const focusLeft =
-      !active || active === document.body || this.matches(':focus-within');
-    if (focusLeft) {
-      target.focus();
-    }
-  }
-
-  // The listeners below are bound on the rendered `<dialog>`.
-
-  /**
-   * A close request on a modal dialog: animate closed instead of closing at
-   * once. Escape closes with reason `escape`; the back gesture or button
-   * runs `handleBack()`.
-   */
-  protected readonly handleDialogCancel = (event: Event) => {
-    event.preventDefault();
-    if (!this.modal) {
-      return;
-    }
-    if (closeRequestSource(event) === BACK_REASON) {
-      this.handleBack();
-    } else {
-      this.close(CLOSE_REASONS.ESCAPE);
-    }
-  };
-
-  /**
-   * The dialog closed without `close()`, e.g. the browser forced a close
-   * after repeated Escape presses. Sync the sheet state.
-   */
-  protected readonly handleDialogClose = () => {
-    const dialog = this.dialog;
-    if (!this.isOpenInternal || !dialog || dialog.open) {
-      return;
-    }
-    this.transitionCounter++;
-    this.isOpenInternal = false;
-    this.isOpening = false;
-    this.isClosing = false;
-    this.requestUpdate('open', true);
-    this.restoreFocus();
-    const detail = {reason: CLOSE_REASONS.ESCAPE};
-    this.dispatchEvent(new CustomEvent('close', {bubbles: true, detail}));
-    this.dispatchEvent(new CustomEvent('closed', {bubbles: true, detail}));
-  };
-
-  /** Pointer down on the dialog itself, outside the panel, is on the scrim. */
-  protected readonly handleDialogPointerDown = (event: PointerEvent) => {
-    this.scrimPointerDown = event.target === event.currentTarget;
-  };
-
-  /** A click that started and ended on the scrim closes a modal sheet. */
-  protected readonly handleDialogClick = (event: MouseEvent) => {
-    const onScrim =
-      event.target === event.currentTarget && this.scrimPointerDown;
-    this.scrimPointerDown = false;
-    if (onScrim && this.modal) {
-      this.close(CLOSE_REASONS.SCRIM);
-    }
-  };
 }

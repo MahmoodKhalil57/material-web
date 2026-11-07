@@ -202,6 +202,12 @@
     &:not(:disabled, .disabled, [aria-disabled='true']) {
       cursor: pointer;
     }
+    // Disabled outline: the outline color at `--outline-opacity` (12%).
+    &.btn-outlined:is(:disabled, .disabled, [aria-disabled='true']) {
+      border-color: hsl(
+        from var(--outline-color) h s l / var(--outline-opacity)
+      );
+    }
     &:has(.fx-playing) {
       --outline-color: transparent;
       --container-elevation: none;

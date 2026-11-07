@@ -181,8 +181,10 @@ $item-transition: (
       @include fab-menu-tokens.tertiary-close-button;
     }
     // spec-labels: fab-menu/specs/states/close-button
-    .fab-menu-open &:is(:hover, .hover) {
-      @include fab-menu-tokens.close-button-hovered;
+    @media (hover: hover) {
+      .fab-menu-open &:is(:hover, .hover) {
+        @include fab-menu-tokens.close-button-hovered;
+      }
     }
     .fab-menu-open &:is(:focus-visible, .focus-visible) {
       @include fab-menu-tokens.close-button-focused;
@@ -224,8 +226,10 @@ $item-transition: (
   // in. Padding is drawn with pseudo-elements so the width can reach 0.
   // spec-labels: fab-menu/specs/states/menu-item
   .fab-menu-item {
-    &:is(:hover, .hover) {
-      @include fab-menu-tokens.list-item-hovered;
+    @media (hover: hover) {
+      &:is(:hover, .hover) {
+        @include fab-menu-tokens.list-item-hovered;
+      }
     }
     &:is(:focus-visible, .focus-visible),
     :host(:focus-visible) &.focus-ring-host {

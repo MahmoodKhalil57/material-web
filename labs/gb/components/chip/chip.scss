@@ -132,8 +132,13 @@
     // Interaction states.
     // spec-labels: chips/specs/assist-chip/assist-chip-states, chips/specs/suggestion-chip/suggestion-chip-states
     // spec-labels: chips/specs/filter-chip/filter-chip-states, chips/specs/input-chip/input-chip-states
-    &:where(.chip-assist):where(.chip-elevated):where(:hover, .hover) {
+    &:where(.chip-assist):where(.chip-elevated):where(.hover) {
       @include chip-tokens.assist-elevated-hovered;
+    }
+    @media (hover: hover) {
+      &:where(.chip-assist):where(.chip-elevated):where(:hover) {
+        @include chip-tokens.assist-elevated-hovered;
+      }
     }
     &:where(.chip-assist):where(.chip-elevated):where(:focus-visible, :has(:focus-visible), .focus) {
       @include chip-tokens.assist-elevated-focused;
@@ -144,8 +149,13 @@
     &:where(.chip-assist):where(:not(.chip-elevated)):where(:focus-visible, :has(:focus-visible), .focus) {
       @include chip-tokens.assist-flat-focused;
     }
-    &:where(.chip-suggestion):where(.chip-elevated):where(:hover, .hover) {
+    &:where(.chip-suggestion):where(.chip-elevated):where(.hover) {
       @include chip-tokens.suggestion-elevated-hovered;
+    }
+    @media (hover: hover) {
+      &:where(.chip-suggestion):where(.chip-elevated):where(:hover) {
+        @include chip-tokens.suggestion-elevated-hovered;
+      }
     }
     &:where(.chip-suggestion):where(.chip-elevated):where(:focus-visible, :has(:focus-visible), .focus) {
       @include chip-tokens.suggestion-elevated-focused;
@@ -156,8 +166,13 @@
     &:where(.chip-suggestion):where(:not(.chip-elevated)):where(:focus-visible, :has(:focus-visible), .focus) {
       @include chip-tokens.suggestion-flat-focused;
     }
-    &:where(.chip-filter):where(.chip-elevated):where(:hover, .hover) {
+    &:where(.chip-filter):where(.chip-elevated):where(.hover) {
       @include chip-tokens.filter-elevated-hovered;
+    }
+    @media (hover: hover) {
+      &:where(.chip-filter):where(.chip-elevated):where(:hover) {
+        @include chip-tokens.filter-elevated-hovered;
+      }
     }
     &:where(.chip-filter):where(.chip-elevated):where(:focus-visible, :has(:focus-visible), .focus) {
       @include chip-tokens.filter-elevated-focused;
@@ -165,8 +180,13 @@
     &:where(.chip-filter):where(.chip-elevated):where(:active, .active) {
       @include chip-tokens.filter-elevated-pressed;
     }
-    &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:hover, .hover) {
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(.hover) {
       @include chip-tokens.filter-flat-unselected-hovered;
+    }
+    @media (hover: hover) {
+      &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:hover) {
+        @include chip-tokens.filter-flat-unselected-hovered;
+      }
     }
     &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:focus-visible, :has(:focus-visible), .focus) {
       @include chip-tokens.filter-flat-unselected-focused;
@@ -174,8 +194,13 @@
     &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:active, .active) {
       @include chip-tokens.filter-flat-unselected-pressed;
     }
-    &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])):where(:hover, .hover) {
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])):where(.hover) {
       @include chip-tokens.filter-flat-selected-hovered;
+    }
+    @media (hover: hover) {
+      &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])):where(:hover) {
+        @include chip-tokens.filter-flat-selected-hovered;
+      }
     }
     &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])):where(:focus-visible, :has(:focus-visible), .focus) {
       @include chip-tokens.filter-flat-selected-focused;
@@ -304,8 +329,10 @@
       vertical-align: middle;
       // Elevation changes use the fast effects spring (Compose
       // animateElevation; scripts/m3/gen-motion.mjs).
-      transition: box-shadow var(--md-sys-motion-spring-fast-effects-duration)
-        var(--md-sys-motion-spring-fast-effects);
+      transition:
+        box-shadow var(--md-sys-motion-spring-fast-effects-duration)
+          var(--md-sys-motion-spring-fast-effects),
+        var(--ripple-transition);
       --md-icon-color: var(--_leading-icon-color);
       --md-icon-size: var(--_leading-icon-size);
     }

@@ -51,9 +51,17 @@ $reserve: '.segmented-button-with-checkmark.segmented-button-with-label:not(.seg
   }
 
   // spec-labels: segmented-buttons/specs/states/selected, segmented-buttons/specs/states/unselected
-  :host(:is(:hover, :active)),
-  .segmented-button-set > .segmented-button:is(:hover, :active) {
+  :host(:active),
+  .segmented-button-set > .segmented-button:active {
     z-index: 2;
+  }
+
+  // Hover applies only to devices that can hover (states.md, Hover).
+  @media (hover: hover) {
+    :host(:hover),
+    .segmented-button-set > .segmented-button:hover {
+      z-index: 2;
+    }
   }
 
   :host([selected]),
@@ -61,9 +69,16 @@ $reserve: '.segmented-button-with-checkmark.segmented-button-with-label:not(.seg
     z-index: 3;
   }
 
-  :host([selected]:is(:hover, :active)),
-  .segmented-button-set > .segmented-button#{$selected}:is(:hover, :active) {
+  :host([selected]:active),
+  .segmented-button-set > .segmented-button#{$selected}:active {
     z-index: 4;
+  }
+
+  @media (hover: hover) {
+    :host([selected]:hover),
+    .segmented-button-set > .segmented-button#{$selected}:hover {
+      z-index: 4;
+    }
   }
 
   :host(:focus-within),
@@ -207,8 +222,14 @@ $reserve: '.segmented-button-with-checkmark.segmented-button-with-label:not(.seg
   .segmented-button-label {
     overflow: hidden;
     text-overflow: ellipsis;
-    // Compose `SegmentedButtonContentMeasurePolicy` animates the label offset
-    // with the fast spatial motion scheme spring.
+  }
+
+  // Compose `SegmentedButtonContentMeasurePolicy` animates the label offset
+  // with the fast spatial motion scheme spring. The transition belongs to the
+  // selected state (the label moving to its place beside the checkmark): a
+  // transition on the reserved state would also animate the physical margins
+  // swapping when the direction changes, so the label would not mirror at once.
+  .segmented-button#{$reserve}#{$selected} .segmented-button-label {
     transition: margin-inline var(--md-sys-motion-spring-fast-spatial-duration)
       var(--md-sys-motion-spring-fast-spatial);
   }

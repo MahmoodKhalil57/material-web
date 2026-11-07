@@ -222,6 +222,13 @@
     &:not(:disabled, .disabled, [aria-disabled='true']) {
       cursor: pointer;
     }
+
+    // Disabled outline: the outline color at `--outline-opacity` (12%).
+    &.icon-btn-outlined:is(:disabled, .disabled, [aria-disabled='true']) {
+      border-color: hsl(
+        from var(--outline-color) h s l / var(--outline-opacity)
+      );
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

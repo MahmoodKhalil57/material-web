@@ -183,11 +183,13 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
   // secondary-* mixins currently match the primary ones, but are applied
   // separately so spec changes to either variant reach the component.
   // spec-labels: tabs/specs/primary-tabs/primary-tabs-states, tabs/specs/secondary-tabs/secondary-tabs-states
-  .tab:is(:hover, .hover):not(#{$selected}) {
-    @include tabs-tokens.hover;
+  @media (hover: hover) {
+    .tab:is(:hover, .hover):not(#{$selected}) {
+      @include tabs-tokens.hover;
 
-    @container style(--tabs-secondary: true) {
-      @include tabs-tokens.secondary-hover;
+      @container style(--tabs-secondary: true) {
+        @include tabs-tokens.secondary-hover;
+      }
     }
   }
   .tab:is(:focus-visible, .focus):not(#{$selected}) {
@@ -225,6 +227,17 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     outline-offset: var(--focus-ring-offset);
     animation: var(--focus-ring-animation, none);
     pointer-events: none;
+  }
+
+  // TOUCH TARGET. A tab shorter than 48dp (a dense bar) keeps a 48dp hit area:
+  // this transparent box extends the tab's hit-testing block-wise to
+  // 48dp (grids-spacing.md: interactive elements keep a 48dp target) and is
+  // empty (inset 0) when the tab is already tall enough.
+  .tab::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block: min(0px, calc((100% - 48px) / 2));
   }
 
   // A selected tab's ring stops short of the indicator. The mechanic is a
@@ -285,6 +298,8 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
 
   .tabs::after {
     content: '';
+    // The indicator is decoration: it must not take hits from the tab.
+    pointer-events: none;
     position: absolute;
     inset-block-end: 0;
     block-size: var(--active-indicator-height);

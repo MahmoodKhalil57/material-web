@@ -172,6 +172,8 @@
   --icon-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --label-text-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --outline-color: var(--md-sys-color-outline-variant);
+  // EDIT: md.comp.outlined-button.disabled.outline.opacity; button.scss multiplies the outline alpha by it.
+  --outline-opacity: 0.12;
   // EDIT: md.comp.button.disabled.container.color at md.comp.button.outlined.disabled.container.opacity (buttons.md: same disabled opacity as other styles).
   --container-color: hsl(from var(--md-sys-color-on-surface) h s l / 10%);
 }

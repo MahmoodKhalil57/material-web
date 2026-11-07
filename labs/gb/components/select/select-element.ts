@@ -181,8 +181,7 @@ export class SelectElement extends SelectBase {
     }
     this.syncing = false;
     this.enforceSingleSelection();
-    this.nativeError = false;
-    this.nativeErrorText = '';
+    this.valueField.reset();
   }
 
   protected override getField() {

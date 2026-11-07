@@ -126,7 +126,9 @@
     padding: 0;
     position: relative;
     text-decoration: none;
-    transition: all var(--motion-duration) var(--motion-easing);
+    transition:
+      all var(--motion-duration) var(--motion-easing),
+      var(--ripple-transition);
     user-select: none;
     width: 100%;
     -webkit-tap-highlight-color: transparent;
@@ -166,6 +168,17 @@
     position: relative;
     transition: all var(--motion-duration) var(--motion-easing);
     width: var(--item-active-indicator-width);
+
+    // State layer (hover 8%, focus and pressed 10%) over the active indicator
+    // area; `--ripple` is resolved on the `.ripple` item and inherited.
+    &::after {
+      background-image: var(--ripple);
+      border-radius: inherit;
+      content: '';
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+    }
 
     &::before {
       background-color: var(--item-active-indicator-color);

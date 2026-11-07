@@ -81,6 +81,7 @@ describe('<md-gb-snackbar>', () => {
     // The 20px body-md line height, so the test does not depend on m3 styles.
     const bodyMd = '--md-sys-typescale-body-md: 400 14px / 20px sans-serif';
 
+    // spec: snackbar-d7b466
     it('is the spec single-line height for one line', async () => {
       const {harness} = await setupTest(
         html`<div style="width: 400px; position: relative; ${bodyMd}">
@@ -97,6 +98,7 @@ describe('<md-gb-snackbar>', () => {
       expect(`${surface.offsetHeight}px`).toBe(spec);
     });
 
+    // spec: snackbar-a59e66
     it('is the spec two-line height for two lines', async () => {
       const {harness} = await setupTest(
         html`<div style="width: 400px; position: relative; ${bodyMd}">
@@ -535,6 +537,7 @@ describe('<md-gb-snackbar>', () => {
   });
 
   describe('Escape key dismissal', () => {
+    // spec: snackbar-89d029
     it('closes on Escape key press with reason "dismiss"', async () => {
       const {snackbar} = await setupTest();
       await snackbar.show();
@@ -556,6 +559,7 @@ describe('<md-gb-snackbar>', () => {
   });
 
   describe('built-in action', () => {
+    // spec: snackbar-42a299
     it('renders a button from action-label, and nothing when empty', async () => {
       const {snackbar, harness} = await setupTest(
         html`<md-gb-snackbar
@@ -586,6 +590,7 @@ describe('<md-gb-snackbar>', () => {
       expect(harness.getActionButton()).toBe(slotted as HTMLElement);
     });
 
+    // spec: snackbar-0fc0f3
     it('closes with reason "action" when clicked', async () => {
       const {snackbar, harness} = await setupTest(
         html`<md-gb-snackbar
@@ -662,6 +667,7 @@ describe('<md-gb-snackbar>', () => {
   });
 
   describe('dismiss button', () => {
+    // spec: snackbar-da7590
     it('renders close button when hasCloseButton is true and closes on click with reason "dismiss"', async () => {
       const {snackbar, harness} = await setupTest(
         html`<md-gb-snackbar

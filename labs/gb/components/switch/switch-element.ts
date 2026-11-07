@@ -27,6 +27,10 @@ import {
 } from '../../../behaviors/form-associated.js';
 import {CheckboxValidator} from '../../../behaviors/validators/checkbox-validator.js';
 import {clampDensity, type Density} from '../shared/density.js';
+import {
+  FormDisabledController,
+  ToggleFieldController,
+} from '../shared/form-field.js';
 import {hasSlotted} from '../shared/has-slotted.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
@@ -109,17 +113,20 @@ export class SwitchElement extends baseClass {
     return this[hasState]('selected');
   }
   set selected(value: boolean) {
+    const old = this.selected;
     this[toggleState]('selected', value);
+    // Updates the form value synchronously.
+    this.requestUpdate('selected', old);
   }
 
   /**
    * The default selected state of the switch.
    */
   get defaultSelected(): boolean {
-    return this.hasAttribute('selected');
+    return this.field.defaultOn;
   }
   set defaultSelected(value: boolean) {
-    this.toggleAttribute('selected', value || false);
+    this.field.defaultOn = value;
   }
 
   /**
@@ -155,17 +162,21 @@ export class SwitchElement extends baseClass {
   }
   private densityValue: Density = 0;
 
-  @query('button', true)
+  @query('button')
   private readonly button!: HTMLButtonElement | null;
 
   /**
-   * Mimics the behavior of <input> dirty checkedness, where the `checked`
-   * attribute only updates the checked state if the checkbox has not been
-   * interacted with.
-   *
-   * @see https://html.spec.whatwg.org/multipage/input.html#concept-input-checked-dirty-flag
+   * Form value, default state, dirty checkedness (the `selected` attribute only
+   * updates the state until the switch is interacted with), reset and restore.
    */
-  private dirtyCheckedness = false;
+  private readonly formDisabled = new FormDisabledController(this);
+  private readonly field = new ToggleFieldController(this, {
+    attribute: 'selected',
+    get: () => this.selected,
+    set: (on) => {
+      this.selected = on;
+    },
+  });
 
   protected override render() {
     const {ariaLabel} = this as ARIAMixinStrict;
@@ -186,7 +197,7 @@ export class SwitchElement extends baseClass {
   }
 
   private handleChange(event: Event) {
-    this.dirtyCheckedness = true;
+    this.field.markDirty();
     this.selected = this.button?.ariaChecked === 'true';
     // Change event is not composed, re-dispatch it.
     redispatchEvent(this, event);
@@ -197,30 +208,42 @@ export class SwitchElement extends baseClass {
     oldValue: string | null,
     newValue: string | null,
   ) {
-    if (name === 'selected' && this.dirtyCheckedness) {
-      // The 'selected' attribute does not update switches that have been
-      // interacted with.
-      return;
-    }
+    // The 'selected' attribute does not update switches that have been
+    // interacted with.
+    if (this.field?.ignoresAttribute(name)) return;
 
     super.attributeChangedCallback(name, oldValue, newValue);
   }
 
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the control disabled after the
+    // fieldset is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
   override [getFormValue]() {
-    return this.selected ? this.value : null;
+    // Called while the base class constructs, before `field` exists.
+    return this.field ? this.field.formValue() : null;
   }
 
   override [getFormState]() {
-    return String(this.selected);
+    return this.field ? this.field.formState() : null;
   }
 
   override formResetCallback() {
-    this.dirtyCheckedness = false;
-    this.selected = this.defaultSelected;
+    this.field.reset();
   }
 
   override formStateRestoreCallback(state: string) {
-    this.selected = state === 'true';
+    this.field.restore(state);
   }
 
   override [createValidator]() {

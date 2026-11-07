@@ -27,8 +27,10 @@
         @include split-button-tokens.xs-trailing-button;
       }
 
-      &:where(:hover, .hover) {
-        @include split-button-tokens.xs-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include split-button-tokens.xs-hovered;
+        }
       }
 
       &:where(:active, .active) {
@@ -47,8 +49,10 @@
         @include split-button-tokens.sm-trailing-button;
       }
 
-      &:where(:hover, .hover) {
-        @include split-button-tokens.sm-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include split-button-tokens.sm-hovered;
+        }
       }
 
       &:where(:active, .active) {
@@ -67,8 +71,10 @@
         @include split-button-tokens.md-trailing-button;
       }
 
-      &:where(:hover, .hover) {
-        @include split-button-tokens.md-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include split-button-tokens.md-hovered;
+        }
       }
 
       &:where(:active, .active) {
@@ -87,8 +93,10 @@
         @include split-button-tokens.lg-trailing-button;
       }
 
-      &:where(:hover, .hover) {
-        @include split-button-tokens.lg-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include split-button-tokens.lg-hovered;
+        }
       }
 
       &:where(:active, .active) {
@@ -107,8 +115,10 @@
         @include split-button-tokens.xl-trailing-button;
       }
 
-      &:where(:hover, .hover) {
-        @include split-button-tokens.xl-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include split-button-tokens.xl-hovered;
+        }
       }
 
       &:where(:active, .active) {
@@ -161,6 +171,16 @@
       :nth-last-child(1 of .btn)::after {
       transform: rotate(180deg);
     }
+  }
+
+  // Menu placement (split-button.md "Menu placement"): below the trailing
+  // button, its end edge aligned with the button's, 4dp from it; above when
+  // there is no room below, then to the side of the button. The trailing
+  // button is the menu's invoker, so it is the anchor.
+  ::slotted(md-gb-menu:popover-open) {
+    position-area: block-end span-inline-start;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    margin: 4px 0;
   }
 
   @media (prefers-reduced-motion: reduce) {

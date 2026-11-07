@@ -11,10 +11,10 @@ import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 
-import {BOTTOM_SHEET_STATES} from './bottom-sheet.js';
-import {type BottomSheetElement} from './bottom-sheet-element.js';
-import './md-gb-bottom-sheet.js';
-import './md-gb-side-sheet.js';
+import {BOTTOM_SHEET_STATES} from '../sheet/bottom-sheet.js';
+import {type BottomSheetElement} from '../sheet/bottom-sheet-element.js';
+import '../sheet/md-gb-bottom-sheet.js';
+import '../sheet/md-gb-side-sheet.js';
 import {
   BACK_REASON,
   BackHandler,
@@ -24,9 +24,9 @@ import {
   playPredictiveBack,
   predictiveBackTransform,
 } from './predictive-back.js';
-import {CLOSE_REASONS} from './sheet.js';
+import {CLOSE_REASONS} from '../sheet/sheet.js';
 import {FakeCloseWatcher, useCloseWatcher} from './predictive-back-harness.js';
-import {type SideSheetElement} from './side-sheet-element.js';
+import {type SideSheetElement} from '../sheet/side-sheet-element.js';
 
 adoptStyles(document, [m3Styles]);
 

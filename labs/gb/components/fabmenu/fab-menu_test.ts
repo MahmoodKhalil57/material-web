@@ -183,6 +183,7 @@ describe('FAB menu', () => {
       }
     });
 
+    // spec: fab-menu-6fcfde, fab-menu-f9c15a, fab-menu-8ec7af, fab-menu-8ab78c
     it('toggles when the FAB is clicked, keeping focus on it', () => {
       const {menu, list, button} = classMenu();
       const toggles: string[] = [];
@@ -212,6 +213,7 @@ describe('FAB menu', () => {
       expectFocused(items[2]);
     });
 
+    // spec: fab-menu-dc26b8, fab-menu-fc5c9b, fab-menu-f1c4d4, fab-menu-c75cd5
     it('moves focus from the FAB to the top item with Tab', () => {
       const {menu, button, items} = classMenu();
       button.focus();
@@ -238,6 +240,7 @@ describe('FAB menu', () => {
       expectFocused(items[0]);
     });
 
+    // spec: fab-menu-ca1ce3, fab-menu-e8a4e5
     it('moves through items with Tab and closes after the last one', () => {
       const {menu, button, items} = classMenu();
       setFabMenuOpen(menu, true, 'first-item');
@@ -288,6 +291,7 @@ describe('FAB menu', () => {
       expect(isFabMenuOpen(menu)).toBeTrue();
     });
 
+    // spec: fab-menu-84c94b, fab-menu-e61b91
     it('activates non-button items with Enter and Space', () => {
       container.innerHTML = `
         <div class="fab-menu fab-menu-primary">
@@ -333,6 +337,7 @@ describe('FAB menu', () => {
       expect(style.borderRadius).toBe('28px');
     });
 
+    // spec: fab-menu-ab7d13, fab-menu-1c5a6e, fab-menu-93569a, fab-menu-891264, fab-menu-3c6061
     it('morphs a large FAB into the close button at its top-end corner', () => {
       const {menu, button} = classMenu({
         button: 'fab fab-primary-container fab-lg fab-menu-button',
@@ -349,6 +354,7 @@ describe('FAB menu', () => {
     });
 
     for (const color of ['primary', 'secondary', 'tertiary']) {
+      // spec: fab-menu-9100dd, fab-menu-4cd34f, fab-menu-07a61e, fab-menu-32c724, fab-menu-b58894, fab-menu-8a7a39, fab-menu-cc1c79, fab-menu-d073c7, fab-menu-76a51a, fab-menu-d4493c, fab-menu-0691f0, fab-menu-5c3009, fab-menu-f92b2d, fab-menu-b8ce89, fab-menu-5c99c3, fab-menu-bc20ba, fab-menu-dce772, fab-menu-60075f, fab-menu-cf46c9, fab-menu-4648ec, fab-menu-d74989, fab-menu-17b062, fab-menu-908b35, fab-menu-7f042e
       it(`uses the ${color} colors`, () => {
         const {menu, button, items} = classMenu({
           classes: `fab-menu fab-menu-${color}`,
@@ -375,6 +381,7 @@ describe('FAB menu', () => {
       });
     }
 
+    // spec: fab-menu-1ca329, fab-menu-2315f2
     it('sizes and spaces items from the spec', () => {
       const {menu, button, items} = classMenu();
       setFabMenuOpen(menu, true);
@@ -423,6 +430,7 @@ describe('FAB menu', () => {
       expect(item.visibility).toBe('hidden');
     });
 
+    // spec: fab-menu-59e91a
     it('staggers items bottom-up when opening and top-down when closing', () => {
       const {menu, items} = classMenu();
       const delays = () =>

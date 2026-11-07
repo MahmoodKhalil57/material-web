@@ -63,6 +63,7 @@ describe('<md-gb-snackbar-host>', () => {
     expect(host.pendingCount).toBe(0);
   });
 
+  // spec: snackbar-1668fa, snackbar-1daf2b
   it('shows consecutive snackbars one at a time', async () => {
     const {host, snackbar} = await setup();
     const first = host.showSnackbar('First');
@@ -120,6 +121,7 @@ describe('<md-gb-snackbar-host>', () => {
     expect(await result).toBe(SNACKBAR_RESULTS.ACTION_PERFORMED);
   });
 
+  // spec: snackbar-08f1be, snackbar-7b4505, snackbar-8ebee4, snackbar-6c1a8a, snackbar-7fe91a, snackbar-ea7b20, snackbar-dd7288
   it('times out by duration (Compose SnackbarDuration)', async () => {
     const {host, snackbar} = await setup();
     const result = host.showSnackbar({message: 'Saved'});
@@ -153,6 +155,7 @@ describe('<md-gb-snackbar-host>', () => {
     expect(snackbar.hasCloseButton).toBeTrue();
   });
 
+  // spec: snackbar-6ae67f
   it('replaces an outdated snackbar immediately', async () => {
     const {host, snackbar} = await setup();
     const outdated = host.showSnackbar('Uploading 1 file');
@@ -242,6 +245,7 @@ describe('<md-gb-snackbar-host>', () => {
     await second;
   });
 
+  // spec: snackbar-25c9f5, snackbar-3a9e88, snackbar-1381ca, snackbar-4e6745
   it('places the built-in snackbar above its anchor', async () => {
     const {host, snackbar, root} = await setup(
       html`<div style="position: relative; block-size: 400px">

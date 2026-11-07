@@ -120,6 +120,7 @@ describe('progress', () => {
       expect(getComputedStyle(track).height).toBe('4px');
     });
 
+    // spec: progress-indicators-33725a, progress-indicators-c0d08a, progress-indicators-3e59df, progress-indicators-7f0eef, progress-indicators-1f6ad7
     it('is flat and 4px tall by default', () => {
       const el = indicator('progress progress-determinate', '--progress: 0.5');
       expect(getComputedStyle(el).height).toBe('4px');
@@ -135,6 +136,7 @@ describe('progress', () => {
       );
     });
 
+    // spec: progress-indicators-57f974, progress-indicators-42b24c, progress-indicators-afd289, progress-indicators-bccae2
     it('uses the spec colors', () => {
       const el = indicator('progress progress-determinate', '--progress: 0.5');
       const probe = document.createElement('div');
@@ -168,6 +170,7 @@ describe('progress', () => {
       expect(px(getComputedStyle(track).left) + px(getComputedStyle(track).width)).toBe(200);
     });
 
+    // spec: progress-indicators-c87275, progress-indicators-ce0226
     it('shows the stop indicator at the end of the track', () => {
       const el = indicator('progress progress-determinate', '--progress: 0.5');
       const stop = part(el, '.progress-stop');
@@ -245,6 +248,7 @@ describe('progress', () => {
       expect(getComputedStyle(track).strokeWidth).toBe('4px');
     });
 
+    // spec: progress-indicators-8d2f57, progress-indicators-4b95f6, progress-indicators-c7612b, progress-indicators-8b7a2a
     it('is flat and 40px by default', () => {
       const el = indicator('progress progress-circular progress-determinate');
       expect(getComputedStyle(el).width).toBe('40px');
@@ -296,6 +300,7 @@ describe('progress', () => {
       return el.shadowRoot!.querySelector<HTMLElement>('[part="indicator"]')!;
     }
 
+    // spec: progress-indicators-236272, progress-indicators-8a09e6, progress-indicators-21e987, progress-indicators-9277b2, progress-indicators-7d9884
     it('is an indeterminate progressbar by default', async () => {
       const inner = await element(
         '<md-gb-progress aria-label="Loading"></md-gb-progress>',
@@ -307,6 +312,7 @@ describe('progress', () => {
       expect(inner.classList.contains('progress-determinate')).toBeFalse();
     });
 
+    // spec: progress-indicators-fc9ae4
     it('is determinate when a value is set', async () => {
       const inner = await element('<md-gb-progress value="0.25"></md-gb-progress>');
       expect(inner.classList.contains('progress-determinate')).toBeTrue();

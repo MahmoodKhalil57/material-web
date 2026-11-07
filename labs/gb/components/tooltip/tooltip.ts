@@ -5,6 +5,12 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
+import {
+  computeOverlayPosition,
+  type OverlayPosition,
+  type OverlayPositionInput,
+  type OverlayRect,
+} from '../shared/anchored-overlay.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /** Tooltip variants. */
@@ -124,131 +130,30 @@ export const tooltip = createClassMapDirective({
 });
 
 /** A rectangle in viewport coordinates. */
-export interface TooltipRect {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
+export type TooltipRect = OverlayRect;
 
 /** Input to `computeTooltipPosition()`. */
-export interface TooltipPositionInput {
-  /** The anchor's bounding client rect. */
-  anchor: TooltipRect;
+export interface TooltipPositionInput
+  extends Omit<OverlayPositionInput, 'surface' | 'placement'> {
   /** The tooltip's untransformed size. */
   tooltip: {width: number; height: number};
-  /** The viewport size. */
-  viewport: {width: number; height: number};
   placement: TooltipPlacement;
-  /**
-   * `center` centers the tooltip on the anchor (plain); `start` aligns it to
-   * the anchor's start edge so it extends toward the end (rich: "positioned to
-   * the bottom right of the parent element").
-   */
-  align?: 'center' | 'start';
-  /** Gap between the anchor and the tooltip (including any caret). */
-  spacing?: number;
-  /** Minimum distance kept from the viewport edges. */
-  margin?: number;
-  /** Minimum distance between the caret's center and a tooltip corner. */
-  caretInset?: number;
-  rtl?: boolean;
 }
 
 /** Output of `computeTooltipPosition()`. */
-export interface TooltipPosition {
-  /** Viewport x of the tooltip's left edge. */
-  x: number;
-  /** Viewport y of the tooltip's top edge. */
-  y: number;
-  side: TooltipSide;
-  /**
-   * The caret's center along the edge facing the anchor, from the tooltip's
-   * left (above / below) or top (left / right) edge.
-   */
-  caretOffset: number;
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), Math.max(min, max));
-}
+export type TooltipPosition = OverlayPosition;
 
 /**
  * Positions a tooltip next to its anchor, after Compose's
- * `TooltipPositionProviderImpl`: prefer the requested side, flip to the
+ * `TooltipPositionProviderImpl` (see `computeOverlayPosition()`, the shared
+ * anchored overlay placement): prefer the requested side, flip to the
  * opposite side when it doesn't fit, then keep the tooltip inside the
- * viewport.
+ * viewport. `align: 'start'` is the rich tooltip's "positioned to the
+ * bottom right of the parent element".
  */
 export function computeTooltipPosition({
-  anchor,
   tooltip,
-  viewport,
-  placement,
-  align = 'center',
-  spacing = 4,
-  margin = 8,
-  caretInset = 12,
-  rtl = false,
+  ...input
 }: TooltipPositionInput): TooltipPosition {
-  const {width, height} = tooltip;
-  const anchorWidth = anchor.right - anchor.left;
-  const anchorHeight = anchor.bottom - anchor.top;
-  const minX = margin;
-  const maxX = viewport.width - margin - width;
-  const minY = margin;
-  const maxY = viewport.height - margin - height;
-
-  let x: number;
-  let y: number;
-  let side: TooltipSide;
-
-  if (placement === 'above' || placement === 'below') {
-    if (align === 'start') {
-      // Extend from the anchor's start edge toward its end, else end-align,
-      // else center (Compose `rememberRichTooltipPositionProvider`).
-      x = rtl ? anchor.right - width : anchor.left;
-      if (x < minX || x > maxX) {
-        x = rtl ? anchor.left : anchor.right - width;
-        if (x < minX || x > maxX) {
-          x = anchor.left + (anchorWidth - width) / 2;
-        }
-      }
-    } else {
-      x = anchor.left + (anchorWidth - width) / 2;
-    }
-    x = clamp(x, minX, maxX);
-
-    const yAbove = anchor.top - spacing - height;
-    const yBelow = anchor.bottom + spacing;
-    if (placement === 'above') {
-      const fitsAbove = yAbove >= minY;
-      side = fitsAbove || yBelow > maxY ? 'above' : 'below';
-    } else {
-      const fitsBelow = yBelow <= maxY;
-      side = fitsBelow || yAbove < minY ? 'below' : 'above';
-    }
-    y = side === 'above' ? yAbove : yBelow;
-    y = clamp(y, minY, maxY);
-  } else {
-    const preferLeft = (placement === 'start') !== rtl;
-    const xLeft = anchor.left - spacing - width;
-    const xRight = anchor.right + spacing;
-    if (preferLeft) {
-      side = xLeft >= minX || xRight > maxX ? 'left' : 'right';
-    } else {
-      side = xRight <= maxX || xLeft < minX ? 'right' : 'left';
-    }
-    x = clamp(side === 'left' ? xLeft : xRight, minX, maxX);
-    y = clamp(anchor.top + (anchorHeight - height) / 2, minY, maxY);
-  }
-
-  const vertical = side === 'above' || side === 'below';
-  const length = vertical ? width : height;
-  const anchorCenter = vertical
-    ? anchor.left + anchorWidth / 2 - x
-    : anchor.top + anchorHeight / 2 - y;
-  const inset = Math.min(caretInset, length / 2);
-  const caretOffset = clamp(anchorCenter, inset, length - inset);
-
-  return {x, y, side, caretOffset};
+  return computeOverlayPosition({...input, surface: tooltip});
 }

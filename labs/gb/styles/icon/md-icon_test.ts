@@ -31,6 +31,7 @@ describe('.md-icon', () => {
     return root.querySelector('.md-icon')!;
   }
 
+  // spec: icons-c85720, icons-49ce92
   it('sets the four Material Symbols axes', () => {
     const icon = render();
     expect(axis(icon, 'opsz')).toBe(24);
@@ -60,17 +61,20 @@ describe('.md-icon', () => {
     expect(axis(icon, 'opsz')).toBe(24);
   });
 
+  // spec: icons-ab2c92
   it('uses the filled symbol with --md-icon-fill: 1', () => {
     const icon = render('--md-icon-fill: 1; transition: none');
     expect(axis(icon, 'FILL')).toBe(1);
   });
 
+  // spec: icons-e80d0b
   it('sets weight and grade', () => {
     const icon = render('--md-icon-wght: 700; --md-icon-grad: 200');
     expect(axis(icon, 'wght')).toBe(700);
     expect(axis(icon, 'GRAD')).toBe(200);
   });
 
+  // spec: icons-8d7d9a, icons-d84fab
   it('animates the fill', () => {
     const icon = render();
     expect(getComputedStyle(icon).transitionProperty).toContain(

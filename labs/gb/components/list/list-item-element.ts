@@ -19,6 +19,8 @@ import {
   internals,
   mixinElementInternals,
 } from "../../../behaviors/element-internals.js";
+import { DisclosureController } from "../shared/disclosure.js";
+import { DragSettleController } from "../shared/drag-settle.js";
 import { hasSlotted } from "../shared/has-slotted.js";
 
 import focusRingStyles from "../focus/focus-ring.css" with { type: "css" }; // github-only
@@ -43,14 +45,7 @@ export type ListItemRevealed = "" | "leading" | "trailing";
 const POSITIONAL_THRESHOLD_PX = 56;
 // Compose SwipeToDismissBox DismissVelocityThreshold (125.dp per second): a
 // faster fling settles at the next anchor in its direction.
-const VELOCITY_THRESHOLD_PX_PER_MS = 0.125;
-// Android ViewConfiguration touch slop (8dp): movement before a press becomes
-// a swipe.
-const TOUCH_SLOP_PX = 8;
-// Pointer samples used to estimate the fling velocity.
-const VELOCITY_WINDOW_MS = 100;
-// --md-sys-motion-spring-default-spatial-duration, the settle motion.
-const SETTLE_MS = 420;
+const VELOCITY_THRESHOLD_PX_PER_S = 125;
 
 /**
  * Returns the label text of a list item: its `aria-label`, or the text of its
@@ -239,10 +234,6 @@ export class ListItemElement extends baseClass {
   constructor() {
     super();
     this[internals].role = "listitem";
-    this.addEventListener("pointerdown", this.handlePointerDown);
-    this.addEventListener("pointermove", this.handlePointerMove);
-    this.addEventListener("pointerup", this.handlePointerUp);
-    this.addEventListener("pointercancel", this.handlePointerCancel);
     this.addEventListener("keydown", this.handleHostKeydown);
     this.addEventListener("focusout", this.handleFocusOut);
   }
@@ -356,16 +347,55 @@ export class ListItemElement extends baseClass {
 
   /** The swipe offset in logical pixels (positive reveals leading). */
   private offset = 0;
-  private gesture: {
-    pointerId: number;
-    startX: number;
-    startY: number;
-    startOffset: number;
-    active: boolean;
-    samples: Array<{ t: number; x: number }>;
-  } | null = null;
-  private suppressClick = false;
-  private fullSwipeTimeout?: ReturnType<typeof setTimeout>;
+
+  /** Expand and collapse of an `expandable` item (aria-expanded, inert). */
+  protected readonly disclosure = new DisclosureController(this, {
+    trigger: () => this.itemElement,
+    region: () => this.renderRoot.querySelector<HTMLElement>("#nested"),
+    expanded: () => this.expanded,
+    setExpanded: (expanded) => {
+      this.expanded = expanded;
+    },
+    disabled: () => this.disabled,
+    enabled: () => this.expandable,
+  });
+
+  /** Swipe to reveal: drag between the closed and revealed positions. */
+  private readonly swipe = new DragSettleController(this, {
+    axis: "x",
+    // The item itself, so a press on an action never starts a swipe and the
+    // click that ends a swipe is suppressed on the item only.
+    target: () => this.itemElement,
+    anchors: () => this.swipeAnchors(),
+    value: () => this.offset,
+    bounds: () => ({
+      min: this.fullSwipeAnchor() ?? 0,
+      max: this.actionsWidth("leading"),
+    }),
+    velocityThreshold: VELOCITY_THRESHOLD_PX_PER_S,
+    // A full swipe needs to cross half the way to it and is never triggered
+    // by a fling alone.
+    positionalThreshold: (distance) => {
+      const toFull = Math.abs(distance - this.fullSwipeDistance()) < 0.5;
+      return toFull
+        ? distance / 2
+        : Math.min(POSITIONAL_THRESHOLD_PX, distance / 2);
+    },
+    flingAnchors: (anchors) =>
+      anchors.filter((a) => a !== this.fullSwipeAnchor()),
+    consumeSlop: true,
+    disabled: () => this.disabled || !this.hasActions(),
+    onDragStart: () => {
+      this.swiping = true;
+    },
+    onDrag: (offset) => this.setOffset(offset),
+    onSettle: (anchor) => this.settleAt(anchor),
+    onCancel: (to) => {
+      this.swiping = false;
+      this.setOffset(to);
+    },
+    onSettled: () => this.finishFullSwipe(),
+  });
 
   /** Focuses the item's drag handle, if it has one. */
   focusDragHandle() {
@@ -429,11 +459,6 @@ export class ListItemElement extends baseClass {
     this.revealed = "";
   }
 
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    clearTimeout(this.fullSwipeTimeout);
-  }
-
   protected override updated(changed: PropertyValues<this>) {
     if (changed.has("rovingTabIndex")) this.syncSlottedTabIndex();
     if (changed.has("revealed") && !this.swiping) {
@@ -477,8 +502,6 @@ export class ListItemElement extends baseClass {
         class="${listItem(state)}"
         ?disabled=${this.disabled}
         aria-label=${ariaLabel || nothing}
-        aria-expanded=${expandable ? String(this.expanded) : nothing}
-        aria-controls=${expandable ? "nested" : nothing}
         tabindex=${this.rovingTabIndex ?? nothing}
         @click=${this.handleClick}
       >
@@ -648,7 +671,6 @@ export class ListItemElement extends baseClass {
       class="list-item-expand-region"
       role="group"
       aria-labelledby="item"
-      ?inert=${!this.expanded}
     >
       <div class="list-item-expand-content">
         <slot name="nested"></slot>
@@ -679,25 +701,15 @@ export class ListItemElement extends baseClass {
   }
 
   private handleClick(event: Event) {
-    if (this.suppressClick) {
-      // The click that ends a swipe gesture.
-      this.suppressClick = false;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      return;
-    }
+    // The click that ends a swipe is suppressed by the swipe's drag gesture.
     if (this.revealed) {
       // Tapping a swiped item puts it back.
       event.stopImmediatePropagation();
       this.closeByUser();
       return;
     }
-    if (this.expandable && !this.disabled) {
-      const oldState = this.expanded ? "open" : "closed";
-      this.expanded = !this.expanded;
-      const newState = this.expanded ? "open" : "closed";
-      this.dispatchEvent(new ToggleEvent("toggle", { newState, oldState }));
-    }
+    // Otherwise the click toggles an expandable item: the disclosure
+    // controller listens on the same button.
   }
 
   private readonly handleHostKeydown = (event: KeyboardEvent) => {
@@ -751,87 +763,11 @@ export class ListItemElement extends baseClass {
 
   private readonly handleFocusOut = (event: FocusEvent) => {
     const next = event.relatedTarget as Node | null;
-    if (!this.revealed || this.gesture) return;
+    if (!this.revealed || this.swipe.dragging) return;
     if (next && (this.contains(next) || this.shadowRoot?.contains(next))) {
       return;
     }
     this.closeByUser();
-  };
-
-  private readonly handlePointerDown = (event: PointerEvent) => {
-    this.suppressClick = false;
-    if (!this.hasActions() || this.disabled) return;
-    if (event.button !== 0 || !event.isPrimary) return;
-    const item = this.itemElement;
-    if (!item || !event.composedPath().includes(item)) return;
-    clearTimeout(this.fullSwipeTimeout);
-    this.gesture = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      startOffset: this.offset,
-      active: false,
-      samples: [{ t: event.timeStamp, x: event.clientX }],
-    };
-  };
-
-  private readonly handlePointerMove = (event: PointerEvent) => {
-    const gesture = this.gesture;
-    if (!gesture || event.pointerId !== gesture.pointerId) return;
-    const dx = event.clientX - gesture.startX;
-    const dy = event.clientY - gesture.startY;
-    if (!gesture.active) {
-      if (Math.abs(dy) > TOUCH_SLOP_PX && Math.abs(dy) >= Math.abs(dx)) {
-        // A vertical scroll, not a swipe.
-        this.gesture = null;
-        return;
-      }
-      if (Math.abs(dx) <= TOUCH_SLOP_PX) return;
-      gesture.active = true;
-      gesture.startX = event.clientX;
-      this.swiping = true;
-      try {
-        this.itemElement?.setPointerCapture(event.pointerId);
-      } catch {
-        // The pointer may already be released.
-      }
-    }
-    event.preventDefault();
-    gesture.samples.push({ t: event.timeStamp, x: event.clientX });
-    while (
-      gesture.samples.length > 2 &&
-      event.timeStamp - gesture.samples[0].t > VELOCITY_WINDOW_MS
-    ) {
-      gesture.samples.shift();
-    }
-    const logical =
-      gesture.startOffset +
-      (event.clientX - gesture.startX) * (this.isRtl() ? -1 : 1);
-    this.setOffset(this.clampOffset(logical));
-  };
-
-  private readonly handlePointerUp = (event: PointerEvent) => {
-    const gesture = this.gesture;
-    if (!gesture || event.pointerId !== gesture.pointerId) return;
-    this.gesture = null;
-    if (!gesture.active) return;
-    this.suppressClick = true;
-    this.swiping = false;
-    const first = gesture.samples[0];
-    const last = gesture.samples[gesture.samples.length - 1];
-    const dt = last.t - first.t;
-    const velocity =
-      dt > 0 ? ((last.x - first.x) / dt) * (this.isRtl() ? -1 : 1) : 0;
-    this.settle(this.computeTarget(this.offset, velocity, gesture.startOffset));
-  };
-
-  private readonly handlePointerCancel = (event: PointerEvent) => {
-    const gesture = this.gesture;
-    if (!gesture || event.pointerId !== gesture.pointerId) return;
-    this.gesture = null;
-    if (!gesture.active) return;
-    this.swiping = false;
-    this.setOffset(this.anchorFor(this.revealed));
   };
 
   private hasActions() {
@@ -871,72 +807,37 @@ export class ListItemElement extends baseClass {
       : undefined;
   }
 
-  private clampOffset(offset: number) {
-    const min = this.fullSwipeAnchor() ?? 0;
-    const max = this.actionsWidth("leading");
-    return Math.min(max, Math.max(min, offset));
-  }
-
-  /**
-   * Picks the anchor a released swipe settles at, like Compose's
-   * AnchoredDraggable: a fast fling goes to the next anchor in its direction,
-   * otherwise the item must travel the positional threshold past an anchor.
-   */
-  private computeTarget(offset: number, velocity: number, from: number) {
+  /** The swipe positions: closed, each side's actions, and a full swipe. */
+  private swipeAnchors() {
     const full = this.fullSwipeAnchor();
-    const anchors = [
+    return [
       0,
       this.anchorFor("leading"),
       this.anchorFor("trailing"),
       ...(full === undefined ? [] : [full]),
-    ]
-      .filter((a, i, all) => all.indexOf(a) === i)
-      .sort((a, b) => a - b);
-    const lower = [...anchors].reverse().find((a) => a <= offset);
-    const upper = anchors.find((a) => a >= offset);
-    if (lower === undefined) return upper!;
-    if (upper === undefined || lower === upper) return lower;
-    // A full swipe needs to cross half the remaining distance and is never
-    // triggered by a fling alone.
-    const toFull = full !== undefined && lower === full;
-    if (!toFull && Math.abs(velocity) >= VELOCITY_THRESHOLD_PX_PER_MS) {
-      return velocity > 0 ? upper : lower;
-    }
-    const threshold = toFull
-      ? (upper - lower) / 2
-      : Math.min(POSITIONAL_THRESHOLD_PX, (upper - lower) / 2);
-    if (from <= lower) return offset - lower >= threshold ? upper : lower;
-    if (from >= upper) return upper - offset >= threshold ? lower : upper;
-    return offset - lower < upper - offset ? lower : upper;
+    ].filter((a, i, all) => all.indexOf(a) === i);
   }
 
-  private settle(target: number) {
+  /** The distance between a full swipe and the trailing actions' anchor. */
+  private fullSwipeDistance() {
+    const full = this.fullSwipeAnchor();
+    return full === undefined
+      ? NaN
+      : Math.abs(full - this.anchorFor("trailing"));
+  }
+
+  /** Applies the anchor a swipe (or the "more" button) settled at. */
+  private settleAt(target: number) {
+    this.swiping = false;
     const full = this.fullSwipeAnchor();
     if (full !== undefined && target === full && full !== 0) {
       // A full swipe clears the item off-screen and triggers the primary
-      // action (spec: Swipe), then the item settles back unless the action
-      // removed it.
+      // action (spec: Swipe); the item then settles back unless the action
+      // removed it (finishFullSwipe, after the settle motion).
       this.setOffset(full);
       this.swipedAway = true;
       const actions = this.actionsFor("trailing");
       (actions[actions.length - 1] as HTMLElement | undefined)?.click();
-      const reduceMotion = matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-      this.fullSwipeTimeout = setTimeout(
-        () => {
-          const item = this.itemElement;
-          if (item) item.style.transition = "none";
-          this.revealed = "";
-          this.swipedAway = false;
-          this.setOffset(0);
-          if (item) {
-            void item.offsetWidth;
-            item.style.transition = "";
-          }
-        },
-        reduceMotion ? 0 : SETTLE_MS,
-      );
       return;
     }
     const side: ListItemRevealed =
@@ -948,16 +849,34 @@ export class ListItemElement extends baseClass {
     }
   }
 
+  private finishFullSwipe() {
+    if (!this.swipedAway) return;
+    const item = this.itemElement;
+    if (item) item.style.transition = "none";
+    this.revealed = "";
+    this.swipedAway = false;
+    this.setOffset(0);
+    if (item) {
+      void item.offsetWidth;
+      item.style.transition = "";
+    }
+  }
+
+  // The "more" button, focus and the keyboard reach the same positions a
+  // swipe does, through the same settle (the single-pointer alternative).
   private revealByUser(side: "leading" | "trailing") {
     if (this.revealed === side) return;
-    this.revealed = side;
-    this.dispatchEvent(new Event("reveal-change", { bubbles: true }));
+    this.swipe.settleTo(this.anchorFor(side));
+    if (this.revealed !== side) {
+      // The actions have no width yet (not laid out): still reveal them.
+      this.revealed = side;
+      this.dispatchEvent(new Event("reveal-change", { bubbles: true }));
+    }
   }
 
   private closeByUser() {
     if (!this.revealed) return;
-    this.revealed = "";
-    this.dispatchEvent(new Event("reveal-change", { bubbles: true }));
+    this.swipe.settleTo(0);
   }
 
   private setOffset(offset: number) {

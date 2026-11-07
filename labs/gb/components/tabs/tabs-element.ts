@@ -9,6 +9,7 @@ import {property} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {clampDensity, type Density} from '../shared/density.js';
+import {SelectionController} from '../shared/selection.js';
 import {updateClassList} from '../shared/update-class-list.js';
 
 import tabsStyles from './tabs.css' with {type: 'css'}; // github-only
@@ -64,6 +65,26 @@ export class TabsElement extends AriaTablistElement {
     this.requestUpdate('density', old);
   }
   private densityValue: Density = 0;
+
+  /**
+   * The selection model (shared SelectionController): exactly one tab is
+   * selected, by click or Space/Enter (the tab turns the key into a click),
+   * with a `change` event for user changes. The controller selects during
+   * the click, so the tab list's own click handling finds the tab already
+   * selected and does nothing.
+   */
+  // spec: tabs/accessibility/keyboard-navigation
+  protected readonly selectionModel = new SelectionController<HTMLElement>(this, {
+    items: () => this.tabs,
+    mode: () => 'single',
+    required: () => true,
+    // The tab list selects the first tab when its tabs change.
+    autoSelectFirst: false,
+    isSelected: (tab) => this.isTabSelected(tab),
+    setSelected: (tab, selected) => this.setTabSelected(tab, selected),
+    events: ['change'],
+    vetoable: false,
+  });
 
   constructor() {
     super();

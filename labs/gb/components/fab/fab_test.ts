@@ -86,6 +86,7 @@ describe('.fab styles', () => {
     ['fab-md', {leading: '26px', trailing: '26px', gap: '12px', font: '22px'}],
     ['fab-lg', {leading: '28px', trailing: '28px', gap: '16px', font: '24px'}],
   ] as const) {
+    // spec: extended-fab-d418c6
     it(`uses the extended FAB ${size || 'small'} padding, gap and type`, () => {
       const {button} = render(`fab ${size}`, 'Compose');
       const style = getComputedStyle(button);
@@ -165,6 +166,7 @@ describe('<md-gb-fab>', () => {
     expect(button.getAttribute('aria-label')).toBe('Add');
   });
 
+  // spec: floating-action-button-45ef94
   it('collapses with expanded="false" and keeps the label', async () => {
     const {fab, button} = await setupTest(
       html`<md-gb-fab label="Compose" expanded="false"></md-gb-fab>`,
@@ -194,6 +196,7 @@ describe('<md-gb-fab>', () => {
     expect(button.classList).toContain(FAB_CLASSES.fabTertiary);
   });
 
+  // spec: extended-fab-a2d0b8, extended-fab-b48f68, extended-fab-df20bc, floating-action-button-45ef94
   it('collapses on scroll down and expands on scroll up', async () => {
     const {root, fab} = await setupTest(html`
       <div id="list" style="block-size: 100px; inline-size: 100px; overflow: auto">

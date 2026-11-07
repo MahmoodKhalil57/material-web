@@ -18,6 +18,8 @@ export const NAV_DRAWER_CLOSE_REASONS = {
   scrim: 'scrim',
   /** Escape was pressed in a modal drawer. */
   escape: 'escape',
+  /** The Android back gesture or button closed a modal drawer. */
+  back: 'back',
   /** An item of a modal drawer was selected. */
   item: 'item',
   /** A modal drawer was swiped (dragged or flung) toward its edge. */

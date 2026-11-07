@@ -28,6 +28,7 @@ describe('<md-gb-switch> density', () => {
     return {toggle, button, touch};
   }
 
+  // spec: switch-81e20c, switch-81e20c
   it('defaults to density 0', async () => {
     const {toggle} = await setupTest();
     expect(toggle.density).toBe(0);
@@ -59,6 +60,7 @@ describe('<md-gb-switch> density', () => {
     expect(touch.getBoundingClientRect().height).toBe(48);
   });
 
+  // spec: switch-c900e6, switch-c900e6
   it('clamps density to 0..-3 and reflects it', async () => {
     const {toggle} = await setupTest();
     toggle.density = -7;

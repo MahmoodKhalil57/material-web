@@ -61,11 +61,38 @@
     // Pseudo class emulation is only needed for the `.ripple` element, not for
     // the target or host elements.
 
-    &:is(:hover, .hover),
-    &:has(.ripple-target:hover),
-    .ripple-target:hover &,
-    :host(:hover) &.ripple-host {
+    // Hover applies only to devices that can hover ("initiated by the user
+    // pausing over an interactive element using a cursor"), so a tap on a touch
+    // screen does not leave the layer on. `.hover` stays for emulation.
+    &.hover {
       --ripple-hover-opacity: 8%;
+    }
+
+    @media (hover: hover) {
+      &:hover,
+      &:has(.ripple-target:hover),
+      .ripple-target:hover &,
+      :host(:hover) &.ripple-host {
+        --ripple-hover-opacity: 8%;
+      }
+    }
+
+    // Focus: a 10% layer for keyboard focus (states.md, Focus). It shares the
+    // hover opacity property and follows it, so a focused hovered element shows
+    // the focus layer, not both.
+    &:is(:focus-visible, .focus),
+    &:has(.ripple-target:focus-visible),
+    .ripple-target:focus-visible &,
+    :host(:focus-visible) &.ripple-host {
+      --ripple-hover-opacity: 10%;
+    }
+
+    // Dragged: a 16% layer on a component being dragged (states.md, Dragged).
+    // The component, or an ancestor of the ripple, is marked `.dragged` or
+    // `aria-grabbed="true"`.
+    &:is(.dragged, [aria-grabbed='true']),
+    :is(.dragged, [aria-grabbed='true']) > & {
+      --ripple-hover-opacity: 16%;
     }
 
     &:is(:active, .active),

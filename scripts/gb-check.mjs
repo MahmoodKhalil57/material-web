@@ -29,7 +29,7 @@
 
 import {execFileSync} from 'node:child_process';
 import {existsSync, readdirSync, readFileSync, statSync, writeFileSync} from 'node:fs';
-import {join, relative} from 'node:path';
+import {dirname, join, relative} from 'node:path';
 
 const argv = process.argv.slice(2);
 const all = argv.includes('--all');
@@ -57,7 +57,11 @@ const targets = all
       }
       return dir;
     });
-const sassTargets = styles && !all ? [...targets, join(GB, 'styles')] : targets;
+// A target may be one test file (`labs/gb/components/x/x_test.ts`): only that
+// file runs, and Sass compiles its folder.
+const isFile = (p) => statSync(p).isFile();
+const folderOf = (p) => (isFile(p) ? dirname(p) : p);
+const sassTargets = [...new Set([...targets.map(folderOf), ...(styles && !all ? [join(GB, 'styles')] : [])])];
 
 const started = Date.now();
 const step = (name, fn) => {
@@ -65,19 +69,29 @@ const step = (name, fn) => {
   fn();
   console.log(`[gb:check] ${name} ${((Date.now() - t) / 1000).toFixed(1)}s`);
 };
-const run = (cmd, args) =>
-  execFileSync(cmd, args, {stdio: 'inherit', shell: process.platform === 'win32'});
+// Tools run straight from node_modules: `npx` spends 1-2s per call just
+// resolving the binary, which used to be about half of a check.
+const node = (script, args) => execFileSync(process.execPath, [script, ...args], {stdio: 'inherit'});
+const BIN = {
+  tsgo: join('node_modules', '@typescript', 'native-preview', 'bin', 'tsgo'),
+  tsc: join('node_modules', 'typescript', 'bin', 'tsc'),
+  wtr: join('node_modules', '@web', 'test-runner', 'dist', 'bin.js'),
+};
 
+// Sass in this process (same options as the CLI build: compressed, no
+// source maps, both load paths); only changed .css files are rewritten.
+const sass = await import('sass');
 step('sass', () => {
-  run('npx', [
-    'sass',
-    '--no-source-map',
-    '--style=compressed',
-    '--quiet-deps',
-    '--load-path=node_modules',
-    '--load-path=node_modules/sass-true/sass',
-    ...sassTargets.map((d) => `${d}:${d}`),
-  ]);
+  for (const scss of sassTargets.flatMap((d) => sassFiles(d))) {
+    const css = sass.compile(scss, {
+      style: 'compressed',
+      loadPaths: ['node_modules', join('node_modules', 'sass-true', 'sass')],
+      quietDeps: true,
+      logger: sass.Logger.silent,
+    }).css + '\n'; // The CLI ends files with a newline.
+    const out = scss.replace(/\.scss$/, '.css');
+    if (!existsSync(out) || readFileSync(out, 'utf8') !== css) writeFileSync(out, css);
+  }
 });
 
 // Same output as scripts/css-to-ts.js --suffix=.cssresult, without starting a
@@ -109,24 +123,40 @@ export default styles.styleSheet!;
 // (TypeScript's native compiler) when installed, else tsc.
 if (typecheck) {
   step('typecheck', () => {
-    const tsgo = existsSync(join('node_modules', '.bin', process.platform === 'win32' ? 'tsgo.cmd' : 'tsgo'));
-    run('npx', [tsgo ? 'tsgo' : 'tsc', '-p', join(GB, 'tsconfig.json'), '--noEmit']);
+    node(existsSync(BIN.tsgo) ? BIN.tsgo : BIN.tsc, ['-p', join(GB, 'tsconfig.json'), '--noEmit']);
   });
 }
 
 if (emit) {
   step('emit', () => {
-    run('npx', ['tsc', '-p', join(GB, 'tsconfig.json'), '--incremental', '--tsBuildInfoFile', join('.m3-specs', 'gb.tsbuildinfo')]);
+    node(BIN.tsc, ['-p', join(GB, 'tsconfig.json'), '--incremental', '--tsBuildInfoFile', join('.m3-specs', 'gb.tsbuildinfo')]);
   });
 }
 
 if (test) {
   step('test', () => {
-    const globs = targets.map((d) => `${relative('.', d).replace(/\\/g, '/')}/**/*_test.ts`);
-    run('npx', ['wtr', ...globs.map((g) => `"${g}"`)]);
+    // `*_gap.ts`: red tests for spec features not built yet (`--gaps` runs
+    // them instead). They count as tested only once moved into a `*_test.ts`.
+    const pattern = argv.includes('--gaps') ? '*_gap.ts' : '*_test.ts';
+    const globs = targets.map((d) =>
+      isFile(d) ? relative('.', d).replace(/\\/g, '/') : `${relative('.', d).replace(/\\/g, '/')}/**/${pattern}`,
+    );
+    node(BIN.wtr, globs);
   });
 }
 console.log(`[gb:check] done in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+
+/** Non-partial .scss files (what the Sass CLI compiles for `dir:dir`). */
+function sassFiles(dir) {
+  const out = [];
+  for (const name of readdirSync(dir)) {
+    if (name === 'node_modules') continue;
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) out.push(...sassFiles(path));
+    else if (name.endsWith('.scss') && !name.startsWith('_')) out.push(path);
+  }
+  return out;
+}
 
 function cssFiles(dir) {
   const out = [];

@@ -130,6 +130,7 @@ describe('<md-gb-dialog>', () => {
   });
 
   describe('accessibility', () => {
+    // spec: dialogs-bad019
     it('is an alert dialog by default (basic)', async () => {
       const {dialog} = await setupTest();
       expect(dialog.getAttribute('role')).toBe('alertdialog');
@@ -153,6 +154,7 @@ describe('<md-gb-dialog>', () => {
       expect(dialog.getAttribute('role')).toBe('alertdialog');
     });
 
+    // spec: dialogs-f42094
     it('is labelled by the headline and described by the content', async () => {
       const {el, dialog} = await setupTest();
       expect(dialog.getAttribute('aria-labelledby')).toBe('headline');
@@ -188,6 +190,7 @@ describe('<md-gb-dialog>', () => {
   });
 
   describe('show() and close()', () => {
+    // spec: dialogs-e3e81c
     it('opens as a modal and closes', async () => {
       const {el, dialog} = await setupTest();
       await el.show();
@@ -426,6 +429,7 @@ describe('<md-gb-dialog>', () => {
       expect(document.activeElement).toBe(opener);
     });
 
+    // spec: dialogs-a0ef2d, dialogs-ff0390
     it('traps Tab focus inside the dialog', async () => {
       const {el} = await setupTest();
       await el.show();
@@ -468,6 +472,7 @@ describe('<md-gb-dialog>', () => {
       );
     }
 
+    // spec: dialogs-f7459c, dialogs-4e6044
     it('renders a close button and the actions in the header', async () => {
       const {el} = await setupFullScreen();
       const header = el.shadowRoot!.querySelector('.dialog-header')!;
@@ -480,6 +485,7 @@ describe('<md-gb-dialog>', () => {
       expect(el.shadowRoot!.querySelector('.dialog-actions')).toBeNull();
     });
 
+    // spec: dialogs-1bb3d9, dialogs-6777bc
     it('fills the window', async () => {
       const {el, dialog} = await setupFullScreen();
       await el.show();

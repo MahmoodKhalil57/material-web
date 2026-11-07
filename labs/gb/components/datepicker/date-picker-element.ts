@@ -33,11 +33,26 @@ import {
   getFormValue,
   mixinFormAssociated,
 } from '../../../behaviors/form-associated.js';
+import {
+  mixinOnReportValidity,
+  onReportValidity,
+} from '../../../behaviors/on-report-validity.js';
 import {button} from '../button/button.js';
 import {divider} from '../divider/divider.js';
 import {iconButton} from '../iconbutton/icon-button.js';
 import {ripple} from '../ripple/ripple.js';
+import {
+  AnchoredOverlayController,
+  composedContains,
+} from '../shared/anchored-overlay.js';
+import {AnnouncerController} from '../shared/announcer.js';
 import {clampDensity, type Density} from '../shared/density.js';
+import {
+  FormDisabledController,
+  ValueFieldController,
+} from '../shared/form-field.js';
+import {ModalSurfaceController} from '../shared/modal-surface.js';
+import {isReducedMotion, waitForMotion} from '../shared/motion.js';
 import {
   addMonths,
   type CalendarDate,
@@ -235,17 +250,10 @@ function formatString(template: string, ...args: string[]) {
   return template.replace(/\{(\d)\}/g, (_, i) => args[Number(i)] ?? '');
 }
 
-/** Returns the focused element, looking inside open shadow roots. */
-function getDeepActiveElement(): HTMLElement | null {
-  let active = document.activeElement;
-  while (active?.shadowRoot?.activeElement) {
-    active = active.shadowRoot.activeElement;
-  }
-  return active as HTMLElement | null;
-}
-
-const baseClass = mixinConstraintValidation(
-  mixinFormAssociated(mixinElementInternals(LitElement)),
+const baseClass = mixinOnReportValidity(
+  mixinConstraintValidation(
+    mixinFormAssociated(mixinElementInternals(LitElement)),
+  ),
 );
 
 /**
@@ -475,6 +483,12 @@ export class DatePickerElement extends baseClass {
   /** Shows a Clear button that removes the selection. */
   @property({type: Boolean}) clearable = false;
 
+  /** Forces the error state of the docked field. */
+  @property({type: Boolean, reflect: true}) error = false;
+
+  /** The message shown on the docked field while `error` is set. */
+  @property({attribute: 'error-text'}) errorText = '';
+
   /** Skips animations. */
   @property({type: Boolean, reflect: true}) quick = false;
 
@@ -488,7 +502,7 @@ export class DatePickerElement extends baseClass {
   /** Overrides for the user-facing strings. */
   @property({attribute: false}) strings: Partial<DatePickerStrings> = {};
 
-  private isOpenInternal = false;
+  private dockedOpen = false;
 
   /** Whether the popup (docked) or dialog (modal) is open. */
   @property({type: Boolean, reflect: true})
@@ -536,8 +550,67 @@ export class DatePickerElement extends baseClass {
   @state() private focusedDate: CalendarDate = today();
   @state() private focusedIndex = 0;
   @state() private view: View = 'days';
-  @state() private isClosing = false;
-  @state() private liveText = '';
+  @state() private dockedClosing = false;
+  /** Announces month changes to screen readers (polite). */
+  private readonly announcer = new AnnouncerController(this, {
+    container: () => this.surface,
+  });
+  /**
+   * Modal variant: opens and closes the `<dialog>`, closes it with Escape,
+   * back or the scrim, traps and restores focus, locks page scrolling and
+   * fires the `open`, `opened`, `close` and `closed` events.
+   */
+  private readonly modalSurface = new ModalSurfaceController(this, {
+    dialog: () => (this.isModalDialog ? this.dialogElement : null),
+    surface: () => (this.isModalDialog ? this.dialogElement : null),
+    modal: () => this.isModalDialog,
+    closeOnDisconnect: true,
+    isScrim: (event) => this.isOnScrim(event),
+    initialFocus: () =>
+      this.mode === 'input'
+        ? this.renderRoot.querySelector<HTMLElement>(
+            '.date-picker-inputs md-gb-text-field',
+          )
+        : this.getFocusTarget(),
+    waitForMotion: () => this.waitForTransitions(),
+    onCloseRequest: (reason) => {
+      if (reason === 'escape' && this.view !== 'days') {
+        // Close the month / year list instead of the dialog.
+        this.closeList();
+        return;
+      }
+      this.cancel(reason);
+    },
+  });
+
+  /** Docked variant: the calendar popup below the field. */
+  private readonly overlay = new AnchoredOverlayController(this, {
+    surface: () => (this.isDockedPopup ? this.surface : null),
+    anchor: () =>
+      this.renderRoot.querySelector<HTMLElement>('.date-picker-field'),
+    positioning: 'js',
+    placement: () => ({
+      placement: 'below',
+      align: 'start',
+      spacing: this.anchorSpacing(),
+      margin: 0,
+    }),
+    // Escape is handled by the picker (it closes an open month or year list
+    // first).
+    dismiss: {escape: false},
+    contains: (node) => composedContains(this, node),
+    onDismiss: () => {
+      this.cancel();
+    },
+    returnTarget: () => this.calendarButton,
+  });
+
+  /** Disabled by a disabled fieldset, which the attribute can't follow. */
+  private readonly formDisabled = new FormDisabledController(this);
+
+  /** The dirty value and the validation error shown on the docked field. */
+  private readonly field = new ValueFieldController(this);
+
   @state() private slide: '' | 'next' | 'prev' = '';
   @state() private slideKey = 0;
   @state() private fieldText = '';
@@ -561,8 +634,9 @@ export class DatePickerElement extends baseClass {
 
   private focusAfterUpdate: 'date' | 'list' | 'input' | '' = '';
   private transitionCounter = 0;
-  private previouslyFocused: HTMLElement | null = null;
-  private openAbort: AbortController | null = null;
+  /** The modal headline as last rendered, for the announcer. */
+  private headlineLabelText = '';
+  private announcedHeadline: string | null = null;
   private cachedFormat: {locale: string; format: DateInputFormat} | null = null;
   private swipe: {
     pointerId: number;
@@ -580,19 +654,43 @@ export class DatePickerElement extends baseClass {
     super();
     if (!isServer) {
       this.addEventListener('keydown', this.handleHostKeydown);
-      this.addEventListener('invalid', this.handleInvalid);
     }
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.openAbort?.abort();
-    this.openAbort = null;
-    if (this.isOpenInternal || this.isClosing) {
+    if (this.dockedOpen || this.dockedClosing) {
       this.transitionCounter++;
-      this.isClosing = false;
-      this.setOpenInternal(false);
+      this.dockedClosing = false;
+      this.setDockedOpen(false);
     }
+  }
+
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the picker disabled after the
+    // fieldset is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
+  override attributeChangedCallback(
+    attribute: string,
+    oldValue: string | null,
+    newValue: string | null,
+  ) {
+    if (this.field?.ignoresAttribute(attribute)) {
+      // After the person picked a date, the value attribute no longer
+      // updates the value (until reset), like a native <input>.
+      return;
+    }
+    super.attributeChangedCallback(attribute, oldValue, newValue);
   }
 
   override focus(options?: FocusOptions) {
@@ -616,35 +714,27 @@ export class DatePickerElement extends baseClass {
     if (this.inline || (this.isOpenInternal && !this.isClosing)) {
       return;
     }
-    const token = ++this.transitionCounter;
+    if (!this.hasUpdated) {
+      // The variant may still be set by later attributes.
+      await this.updateComplete;
+      if (this.inline) {
+        return;
+      }
+    }
     this.resetPending();
     this.view = 'days';
-    this.previouslyFocused = getDeepActiveElement();
-    this.isClosing = false;
-    this.setOpenInternal(true);
+    if (this.isModal) {
+      return this.modalSurface.show();
+    }
+    const token = ++this.transitionCounter;
+    this.dockedClosing = false;
+    this.setDockedOpen(true);
     await this.updateComplete;
     if (token !== this.transitionCounter || !this.isConnected) {
       return;
     }
-    if (this.variant === 'modal') {
-      const dialogElement = this.dialogElement;
-      if (dialogElement && !dialogElement.open) {
-        dialogElement.showModal();
-      }
-    } else {
-      const surface = this.surface;
-      try {
-        if (surface && !surface.matches(':popover-open')) {
-          surface.showPopover();
-        }
-      } catch {
-        // Popover unsupported: the surface stays absolutely positioned.
-      }
-      this.positionPopup();
-      this.listenWhileOpen();
-    }
-    this.focusAfterUpdate =
-      this.mode === 'input' && this.variant === 'modal' ? 'input' : 'date';
+    this.overlay.open(this.calendarButton);
+    this.focusAfterUpdate = 'date';
     this.requestUpdate();
     this.dispatchEvent(new Event('open'));
   }
@@ -653,37 +743,30 @@ export class DatePickerElement extends baseClass {
    * Closes the popup or dialog without changing the value (use `confirm()`
    * to commit the pending selection).
    *
-   * @param reason Passed in the `close` event's detail.
+   * @param reason Passed in the `close` event's detail: `confirm`,
+   *     `cancel`, or for a dialog `escape`, `back` or `scrim`.
    */
   async close(
     reason: string = DATE_PICKER_CLOSE_REASONS.CANCEL,
   ): Promise<void> {
-    if (!this.isOpenInternal) {
+    if (this.isModal) {
+      return this.modalSurface.close(reason);
+    }
+    if (!this.dockedOpen) {
       return;
     }
     this.dispatchEvent(new CustomEvent('close', {detail: {reason}}));
     const token = ++this.transitionCounter;
-    this.openAbort?.abort();
-    this.openAbort = null;
-    this.setOpenInternal(false);
-    this.isClosing = true;
+    this.setDockedOpen(false);
+    this.dockedClosing = true;
     await this.updateComplete;
     await this.waitForTransitions();
     if (token !== this.transitionCounter) {
       return;
     }
-    this.isClosing = false;
-    if (this.variant === 'modal') {
-      this.dialogElement?.close();
-    } else {
-      try {
-        this.surface?.hidePopover();
-      } catch {
-        // Not shown as a popover.
-      }
-    }
+    this.dockedClosing = false;
+    this.overlay.close(reason);
     await this.updateComplete;
-    this.restoreFocus();
   }
 
   /**
@@ -716,7 +799,7 @@ export class DatePickerElement extends baseClass {
    *
    * @return Whether the picker was canceled (`cancel` wasn't prevented).
    */
-  cancel(): boolean {
+  cancel(reason: string = DATE_PICKER_CLOSE_REASONS.CANCEL): boolean {
     const proceed = this.dispatchEvent(
       new Event('cancel', {bubbles: true, cancelable: true}),
     );
@@ -725,7 +808,7 @@ export class DatePickerElement extends baseClass {
     }
     this.resetPending();
     if (!this.inline) {
-      this.close(DATE_PICKER_CLOSE_REASONS.CANCEL);
+      this.close(reason);
     }
     return true;
   }
@@ -741,6 +824,7 @@ export class DatePickerElement extends baseClass {
   }
 
   override formResetCallback() {
+    this.field.reset();
     this.value = this.getAttribute('value') ?? '';
   }
 
@@ -766,12 +850,11 @@ export class DatePickerElement extends baseClass {
   }
 
   /** Docked: an invalid picker shows its validation message on the field. */
-  private readonly handleInvalid = (event: Event) => {
-    if (event.defaultPrevented || this.variant !== 'docked' || this.inline) {
-      return;
+  override [onReportValidity](invalidEvent: Event | null) {
+    if (this.variant === 'docked' && !this.inline) {
+      this.field.report(invalidEvent);
     }
-    this.fieldError = this.validationMessage;
-  };
+  }
 
   // ---------------------------------------------------------------------
   // Model helpers.
@@ -971,6 +1054,7 @@ export class DatePickerElement extends baseClass {
     if (value === this.value) {
       return;
     }
+    this.field.markDirty();
     this.value = value;
     this.dispatchEvent(
       new CustomEvent<DatePickerValueDetail>('change', {
@@ -1019,10 +1103,30 @@ export class DatePickerElement extends baseClass {
     return true;
   }
 
-  private setOpenInternal(open: boolean) {
-    const prev = this.isOpenInternal;
-    this.isOpenInternal = open;
+  private setDockedOpen(open: boolean) {
+    const prev = this.dockedOpen;
+    this.dockedOpen = open;
     this.requestUpdate('open', prev);
+  }
+
+  /** Whether the picker is open (the dialog or the docked popup). */
+  private get isOpenInternal() {
+    return this.isModal ? this.modalSurface.open : this.dockedOpen;
+  }
+
+  /** Whether the picker is animating closed. */
+  private get isClosing() {
+    return this.isModal ? this.modalSurface.closing : this.dockedClosing;
+  }
+
+  /** The modal variant renders a dialog (not inline). */
+  private get isModalDialog() {
+    return this.isModal && !this.inline;
+  }
+
+  /** The docked variant renders a popup (not inline). */
+  private get isDockedPopup() {
+    return !this.isModal && !this.inline;
   }
 
   /** Shows the month of `date` and moves the roving focus into it. */
@@ -1041,10 +1145,12 @@ export class DatePickerElement extends baseClass {
       this.slideKey++;
       this.displayYear = target.year;
       this.displayMonth = target.month;
-      this.liveText = formatDate(target, this.resolvedLocale, {
-        year: 'numeric',
-        month: 'long',
-      });
+      this.announcer.announce(
+        formatDate(target, this.resolvedLocale, {
+          year: 'numeric',
+          month: 'long',
+        }),
+      );
     }
     this.focusedDate = target;
   }
@@ -1097,6 +1203,7 @@ export class DatePickerElement extends baseClass {
 
   protected override updated() {
     this.syncMonthList();
+    this.announceHeadline();
     const focus = this.focusAfterUpdate;
     if (!focus) {
       return;
@@ -1119,6 +1226,22 @@ export class DatePickerElement extends baseClass {
     if (focus === 'list') {
       target?.scrollIntoView?.({block: 'center'});
     }
+  }
+
+  /**
+   * Announces the modal headline (the selected date or range) when a pick
+   * changes it; opening the dialog doesn't announce it again.
+   */
+  private announceHeadline() {
+    if (!this.isModalDialog || !this.isOpenInternal) {
+      this.announcedHeadline = null;
+      return;
+    }
+    const label = this.headlineLabelText;
+    if (this.announcedHeadline !== null && label !== this.announcedHeadline) {
+      this.announcer.announce(label);
+    }
+    this.announcedHeadline = label;
   }
 
   private getFocusTarget(): HTMLElement | null {
@@ -1163,101 +1286,22 @@ export class DatePickerElement extends baseClass {
     }
   }
 
-  private restoreFocus() {
-    const previous = this.previouslyFocused;
-    this.previouslyFocused = null;
-    const active = getDeepActiveElement();
-    if (active && active !== document.body && !this.containsDeep(active)) {
-      // Focus already moved elsewhere (e.g. a click outside).
-      return;
-    }
-    if (this.variant === 'docked') {
-      this.calendarButton?.focus();
-    } else if (previous?.isConnected) {
-      previous.focus();
-    }
-  }
-
-  /** Whether the node is this element or inside it, across shadow roots. */
-  private containsDeep(node: Node) {
-    let current: Node | null = node;
-    while (current) {
-      if (current === this) {
-        return true;
-      }
-      const root = current.getRootNode();
-      current = root instanceof ShadowRoot ? root.host : null;
-    }
-    return false;
-  }
-
   private async waitForTransitions() {
     const element = this.isModal ? this.dialogElement : this.surface;
     if (this.quick || !element) {
       return;
     }
-    const animations = element
-      .getAnimations({subtree: true})
-      .filter(
-        (animation) =>
-          (animation.effect as KeyframeEffect | null)?.target === element,
-      );
-    await Promise.all(
-      animations.map((animation) =>
-        animation.finished.catch(() => {
-          // Ignore canceled transitions.
-        }),
-      ),
-    );
+    await waitForMotion(element);
   }
 
-  /** Light dismiss and repositioning while the docked popup is open. */
-  private listenWhileOpen() {
-    this.openAbort?.abort();
-    const abort = new AbortController();
-    this.openAbort = abort;
-    const {signal} = abort;
-    document.addEventListener(
-      'pointerdown',
-      (event) => {
-        if (!event.composedPath().includes(this)) {
-          this.cancel();
-        }
-      },
-      {signal, capture: true},
-    );
-    const reposition = () => {
-      this.positionPopup();
-    };
-    window.addEventListener('resize', reposition, {signal});
-    window.addEventListener('scroll', reposition, {signal, capture: true});
-  }
-
-  /** Places the docked popup below the field (above it if it doesn't fit). */
-  private positionPopup() {
+  /** The gap between the docked field and its popup. */
+  private anchorSpacing() {
     const surface = this.surface;
-    const anchor =
-      this.renderRoot.querySelector<HTMLElement>('.date-picker-field');
-    if (!surface || !anchor || this.inline || this.isModal) {
-      return;
-    }
-    const rect = anchor.getBoundingClientRect();
-    const spacing =
-      parseFloat(
-        getComputedStyle(surface).getPropertyValue('--anchor-spacing'),
-      ) || 0;
-    const height = surface.offsetHeight;
-    const width = surface.offsetWidth;
-    const below = rect.bottom + spacing;
-    const fitsBelow = below + height <= window.innerHeight;
-    const top =
-      fitsBelow || rect.top - spacing - height < 0
-        ? below
-        : rect.top - spacing - height;
-    let left = this.isRtl() ? rect.right - width : rect.left;
-    left = Math.max(0, Math.min(left, window.innerWidth - width));
-    surface.style.top = `${Math.round(top)}px`;
-    surface.style.left = `${Math.round(left)}px`;
+    return surface
+      ? parseFloat(
+          getComputedStyle(surface).getPropertyValue('--anchor-spacing'),
+        ) || 0
+      : 0;
   }
 
   // ---------------------------------------------------------------------
@@ -1654,30 +1698,6 @@ export class DatePickerElement extends baseClass {
     this.dispatchInput();
   };
 
-  private readonly handleNativeCancel = (event: Event) => {
-    if (event.target !== this.dialogElement) {
-      return;
-    }
-    event.preventDefault();
-    this.cancel();
-  };
-
-  private readonly handleNativeClose = () => {
-    // The browser closed the dialog without `close()`: sync state.
-    if (this.isOpenInternal) {
-      this.transitionCounter++;
-      this.isClosing = false;
-      this.setOpenInternal(false);
-      this.dispatchEvent(
-        new CustomEvent('close', {
-          detail: {reason: DATE_PICKER_CLOSE_REASONS.CANCEL},
-        }),
-      );
-    }
-  };
-
-  private pointerDownOnScrim = false;
-
   private isOnScrim(event: MouseEvent) {
     const dialogElement = this.dialogElement;
     if (!dialogElement || event.composedPath()[0] !== dialogElement) {
@@ -1691,18 +1711,6 @@ export class DatePickerElement extends baseClass {
       event.clientY > rect.bottom
     );
   }
-
-  private readonly handleDialogPointerDown = (event: PointerEvent) => {
-    this.pointerDownOnScrim = this.isOnScrim(event);
-  };
-
-  private readonly handleDialogClick = (event: MouseEvent) => {
-    const onScrim = this.pointerDownOnScrim && this.isOnScrim(event);
-    this.pointerDownOnScrim = false;
-    if (onScrim && this.isOpenInternal) {
-      this.cancel();
-    }
-  };
 
   // ---------------------------------------------------------------------
   // Month swipe (one-month calendars) and the scrolling month list.
@@ -1865,10 +1873,8 @@ export class DatePickerElement extends baseClass {
         }
       }
     };
-    const reduceMotion =
-      typeof matchMedia === 'function' &&
-      matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (this.quick || reduceMotion || this.dragOffset === target) {
+    // Reduced motion: the month changes without the slide (spatial motion off).
+    if (this.quick || isReducedMotion(this) || this.dragOffset === target) {
       finish();
       return;
     }
@@ -1876,13 +1882,7 @@ export class DatePickerElement extends baseClass {
     this.dragOffset = target;
     await this.updateComplete;
     const track = this.renderRoot.querySelector('.date-picker-pager-track');
-    await Promise.all(
-      (track?.getAnimations() ?? []).map((animation) =>
-        animation.finished.catch(() => {
-          // Canceled: finish anyway.
-        }),
-      ),
-    );
+    await waitForMotion(track);
     if (this.swipeSettling && this.dragOffset === target) {
       finish();
     }
@@ -1921,12 +1921,8 @@ export class DatePickerElement extends baseClass {
         })}"
         aria-labelledby="${titleId}"
         aria-describedby="headline"
-        @cancel=${this.handleNativeCancel}
-        @close=${this.handleNativeClose}
-        @pointerdown=${this.handleDialogPointerDown}
-        @click=${this.handleDialogClick}
       >
-        ${this.isOpenInternal || this.isClosing ? this.renderSurface() : nothing}
+        ${this.modalSurface.shown ? this.renderSurface() : nothing}
       </dialog>`;
     }
     return html`${this.renderField()}${this.renderSurface()}`;
@@ -1948,8 +1944,8 @@ export class DatePickerElement extends baseClass {
         supporting-text="${this.supportingText || pattern}"
         autocomplete="off"
         .value=${live(this.fieldText)}
-        ?error=${!!this.fieldError}
-        error-text="${this.fieldError}"
+        ?error=${!!this.fieldError || this.field.hasError}
+        error-text="${this.fieldError || this.field.message}"
         ?disabled=${this.disabled}
         has-trailing-icon
         @input=${this.handleFieldInput}
@@ -2003,9 +1999,6 @@ export class DatePickerElement extends baseClass {
       ${this.isModal ? this.renderModalHeader() : nothing}
       ${input ? this.renderInputs() : this.renderCalendar()}
       ${this.renderActions()}
-      <div class="date-picker-live" aria-live="polite" aria-atomic="true">
-        ${this.liveText}
-      </div>
     </div>`;
   }
 
@@ -2091,6 +2084,7 @@ export class DatePickerElement extends baseClass {
         ? formatDate(this.pendingStart, locale, longFormat)
         : String(headline);
     }
+    this.headlineLabelText = headlineLabel;
     const fullscreen = this.fullscreen;
     return html`<div
         class="date-picker-header date-picker-modal-header"
@@ -2102,7 +2096,6 @@ export class DatePickerElement extends baseClass {
           <div
             class="date-picker-headline"
             id="headline"
-            aria-live="polite"
             aria-label="${headlineLabel}"
           >
             ${headline}

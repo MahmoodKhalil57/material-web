@@ -40,6 +40,7 @@ describe('md-gb-app-bar', () => {
     expect(getComputedStyle(bar).minHeight).toBe('64px');
   });
 
+  // spec: app-bars-a54714
   it('shows a subtitle in the small app bar', async () => {
     const appBar = await render(
       html`<md-gb-app-bar
@@ -60,6 +61,7 @@ describe('md-gb-app-bar', () => {
     expect(getComputedStyle(subtitle).display).toBe('none');
   });
 
+  // spec: app-bars-e2923e, app-bars-6b056f, app-bars-1aa0c4
   it('uses the taller flexible heights with a subtitle', async () => {
     const md = await render(
       html`<md-gb-app-bar size="md"
@@ -75,6 +77,7 @@ describe('md-gb-app-bar', () => {
     expect(getComputedStyle(inner(lg)).minHeight).toBe('152px');
   });
 
+  // spec: app-bars-03803d, app-bars-91aba2
   it('lets flexible headlines wrap to two lines', async () => {
     const appBar = await render(html`<md-gb-app-bar size="lg">T</md-gb-app-bar>`);
     const title = inner(appBar).querySelector<HTMLElement>('.app-bar-title')!;
@@ -108,6 +111,7 @@ describe('md-gb-app-bar', () => {
       expect(inner(appBar).classList.contains('app-bar-centered')).toBeTrue();
     });
 
+    // spec: app-bars-1132de, app-bars-4a6536, app-bars-3296eb
     it('centers the small title on the whole bar', async () => {
       const appBar = await render(
         html`<div style="width: 600px">
@@ -154,6 +158,7 @@ describe('md-gb-app-bar', () => {
       expect(style.borderTopLeftRadius).not.toBe('0px');
     });
 
+    // spec: app-bars-99d94f
     it('changes the search bar color on scroll', async () => {
       const appBar = await render(
         html`<md-gb-app-bar variant="search"

@@ -55,6 +55,7 @@ describe('<md-gb-button-group> density', () => {
     ['sm', 40],
     ['md', 56],
   ] as const) {
+    // spec: button-groups-818d7c, button-groups-32df96
     it(`removes 4px per step from ${size} buttons inside`, async () => {
       const {root, group} = await setup(buttons(size));
       const [one, two] = Array.from(root.querySelectorAll('md-gb-button'));

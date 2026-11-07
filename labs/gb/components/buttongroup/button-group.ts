@@ -8,6 +8,10 @@ import {type ClassInfo} from 'lit/directives/class-map.js';
 import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {
+  nextSelection,
+  normalizeSelection as normalizeSelectionState,
+} from '../shared/selection.js';
 
 /** Button group variant layout types. */
 export type ButtonGroupVariant = 'standard' | 'connected';
@@ -105,49 +109,28 @@ export interface NormalizeSelectionOptions<
 }
 
 /**
- * Pure selection normalization logic for button groups.
- *
- * - In 'none' mode: clears all selected items.
- * - In 'single' mode: enforces at most 1 item selected.
- *   - If preferred is given and selected, keeps preferred and clears others.
- *   - Otherwise keeps the last selected item and clears earlier ones.
- *   - If required is true and 0 items are selected, auto-selects the first selectable item.
- * - In 'multiple' mode: items keep their selected states as is.
- *
- * Mutates `item.selected` in place.
+ * Selection normalization of button group items: the shared
+ * `normalizeSelection()` rules (none: nothing selected; single: at most one,
+ * the preferred or last selected; required: the first selectable item when
+ * none is selected; multiple: unchanged), applied to `item.selected` in
+ * place.
  */
 export function normalizeSelection<T extends ButtonGroupItem>(
   items: T[],
   options: NormalizeSelectionOptions<T>,
 ): void {
   const {selection = 'none', required = false, preferred} = options;
-
-  if (selection === 'none') {
-    for (const item of items) {
-      item.selected = false;
-    }
-    return;
-  }
-
-  if (selection === 'single') {
-    const selectedItems = items.filter((item) => item.selected);
-
-    if (selectedItems.length > 1) {
-      const itemToKeep =
-        preferred && preferred.selected
-          ? preferred
-          : selectedItems[selectedItems.length - 1];
-      for (const item of items) {
-        item.selected = item === itemToKeep;
-      }
-    } else if (selectedItems.length === 0 && required) {
-      const firstSelectable = items.find(isItemSelectable);
-      if (firstSelectable) {
-        firstSelectable.selected = true;
-      }
-    }
-    return;
-  }
+  const after = normalizeSelectionState(
+    items.map((item) => Boolean(item.selected)),
+    {mode: selection, required},
+    {
+      preferred: preferred ? items.indexOf(preferred) : undefined,
+      selectable: items.map(isItemSelectable),
+    },
+  );
+  items.forEach((item, i) => {
+    if (Boolean(item.selected) !== after[i]) item.selected = after[i];
+  });
 }
 
 /** Options provided to the `shouldBlockToggle()` function. */
@@ -159,10 +142,9 @@ export interface ShouldBlockToggleOptions {
 }
 
 /**
- * Pure helper to determine if a toggle interaction on item `i` should be blocked.
- *
- * In required single-select mode, clicking an already selected button must not deselect it,
- * ensuring exactly 1 item remains selected at all times.
+ * Whether a toggle interaction on item `i` should be blocked: in required
+ * single-select mode, clicking the selected button must not unselect it, so
+ * exactly one item stays selected.
  */
 export function shouldBlockToggle(
   items: ButtonGroupItem[],
@@ -170,8 +152,7 @@ export function shouldBlockToggle(
   options: ShouldBlockToggleOptions,
 ): boolean {
   const {selection = 'none', required = false} = options;
-  if (selection === 'single' && required) {
-    return Boolean(items[i]?.selected);
-  }
-  return false;
+  if (selection !== 'single') return false;
+  const selected = items.map((item) => Boolean(item.selected));
+  return nextSelection(selected, i, {mode: selection, required})[i] === selected[i];
 }

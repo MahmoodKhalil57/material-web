@@ -18,7 +18,6 @@ import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {styles as tabPanelsStyles} from './tab-panels.cssresult.js';
 import {
-  parseCssTime,
   TAB_PANEL_OFFSET_PROPERTY,
   TAB_PANELS_CLASSES,
 } from './tab-panels.js';
@@ -384,6 +383,7 @@ describe('md-gb-tab-panels', () => {
       expect(visible(panels)).toEqual([true, false, false]);
     });
 
+    // spec: tabs-2a02c1, tabs-79df51, tabs-fd3bbd
     it('moves to the next tab when released past half the width', async () => {
       const {tabs, panels} = await setup();
       const onChange = jasmine.createSpy('change');
@@ -573,15 +573,6 @@ describe('md-gb-tab-panels', () => {
       swipePointer('pointerup', button, 150, 2000);
       button.click();
       expect(clicks).toBe(0);
-    });
-  });
-
-  describe('parseCssTime()', () => {
-    it('parses ms and s', () => {
-      expect(parseCssTime('430ms')).toBe(430);
-      expect(parseCssTime(' 0.5s')).toBe(500);
-      expect(parseCssTime('0s')).toBe(0);
-      expect(parseCssTime('')).toBe(0);
     });
   });
 });

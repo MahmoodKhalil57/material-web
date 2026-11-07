@@ -127,9 +127,14 @@ report.push('`~` = high confidence (synced by `--sync`), `?~` = needs review. Fu
 section('Generated spec tests');
 report.push(fence(node('scripts/m3/gen-spec-tests.mjs', [], {capture: true})));
 // Keyboard tests from the spec's key tables, and contract tests from each
-// component's shared-controller config (CONTRACTS).
+// component's shared-controller config (CONTRACTS and scripts/m3/contracts/),
+// measurement tests from the spec's measurement tables and anatomy tests from
+// its anatomy lists (both from scripts/m3/gen-measurement-configs.mjs and the
+// tables in gen-anatomy-tests.mjs).
 report.push(fence(node('scripts/m3/gen-keyboard-tests.mjs', [], {capture: true, allowFail: true})));
 report.push(fence(node('scripts/m3/gen-contract-tests.mjs', [], {capture: true, allowFail: true})));
+report.push(fence(node('scripts/m3/gen-measurement-tests.mjs', [], {capture: true, allowFail: true})));
+report.push(fence(node('scripts/m3/gen-anatomy-tests.mjs', [], {capture: true, allowFail: true})));
 report.push('Run `npm test` to check every component against the spec in a browser.');
 
 // 5. Upstream Compose files changed since last review.

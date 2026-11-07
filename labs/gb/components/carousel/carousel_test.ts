@@ -389,6 +389,95 @@ describe('<md-gb-carousel>', () => {
     });
   });
 
+  describe('mouse drag', () => {
+    function mouse(
+      type: string,
+      target: Element,
+      x: number,
+      y: number,
+      time: number,
+    ) {
+      const event = new PointerEvent(type, {
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+        pointerId: 3,
+        pointerType: 'mouse',
+        isPrimary: true,
+        button: 0,
+        clientX: x,
+        clientY: y,
+      });
+      Object.defineProperty(event, 'timeStamp', {value: time});
+      target.dispatchEvent(event);
+    }
+
+    // Touch and pen scroll natively; a mouse drags the carousel through the
+    // shared DragGesture and follows the pointer in real time.
+    it('scrolls with the pointer while a mouse drags, in the drag direction', async () => {
+      const {scroller} = await setupTest();
+      const rect = scroller.getBoundingClientRect();
+      const x = rect.left + 200;
+      const y = rect.top + 60;
+      mouse('pointerdown', scroller, x, y, 0);
+      mouse('pointermove', scroller, x - 40, y, 50);
+      mouse('pointermove', scroller, x - 100, y, 100);
+      expect(scroller.scrollLeft).toBeCloseTo(100, 0);
+      mouse('pointercancel', scroller, x - 100, y, 150);
+    });
+
+    it('mirrors the drag in right-to-left layouts', async () => {
+      const {scroller} = await setupTest({dir: 'rtl'});
+      const rect = scroller.getBoundingClientRect();
+      const x = rect.left + 100;
+      const y = rect.top + 60;
+      mouse('pointerdown', scroller, x, y, 0);
+      mouse('pointermove', scroller, x + 40, y, 50);
+      mouse('pointermove', scroller, x + 100, y, 100);
+      // Scrolling toward the end in RTL is a negative scrollLeft.
+      expect(scroller.scrollLeft).toBeCloseTo(-100, 0);
+      mouse('pointercancel', scroller, x + 100, y, 150);
+    });
+
+    it('does not click the item under the pointer after a drag', async () => {
+      const {items, scroller} = await setupTest();
+      const spy = jasmine.createSpy('click');
+      items[0].addEventListener('click', spy);
+      const rect = scroller.getBoundingClientRect();
+      const x = rect.left + 100;
+      const y = rect.top + 60;
+      mouse('pointerdown', actionOf(items[0]), x, y, 0);
+      mouse('pointermove', actionOf(items[0]), x - 40, y, 50);
+      mouse('pointerup', actionOf(items[0]), x - 40, y, 600);
+      actionOf(items[0]).click();
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('ignores a touch pointer, which scrolls natively', async () => {
+      const {scroller} = await setupTest();
+      const rect = scroller.getBoundingClientRect();
+      const x = rect.left + 200;
+      const y = rect.top + 60;
+      const touch = (type: string, px: number, time: number) => {
+        const event = new PointerEvent(type, {
+          bubbles: true,
+          composed: true,
+          pointerId: 4,
+          pointerType: 'touch',
+          isPrimary: true,
+          clientX: px,
+          clientY: y,
+        });
+        Object.defineProperty(event, 'timeStamp', {value: time});
+        scroller.dispatchEvent(event);
+      };
+      touch('pointerdown', x, 0);
+      touch('pointermove', x - 100, 50);
+      expect(scroller.scrollLeft).toBe(0);
+      touch('pointerup', x - 100, 100);
+    });
+  });
+
   describe('events', () => {
     it('fires click when an item is activated', async () => {
       const {items} = await setupTest();

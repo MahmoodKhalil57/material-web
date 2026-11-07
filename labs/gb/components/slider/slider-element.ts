@@ -29,6 +29,12 @@ import {
   mixinFormAssociated,
 } from '../../../behaviors/form-associated.js';
 import {
+  FormDisabledController,
+  numberAttribute,
+  parseNumberState,
+  rangeFormData,
+} from '../shared/form-field.js';
+import {
   computeSliderProperties,
   formatValueIndicatorLabel,
   handleClasses,
@@ -139,7 +145,6 @@ export class SliderElement extends baseClass {
   @property({type: Boolean, reflect: true}) centered = false;
   @property({type: Boolean}) ticks = false;
   @property({type: Boolean}) labeled = false;
-  @property({type: Boolean, reflect: true}) override disabled = false;
   @property({attribute: 'value-label'}) valueLabel = '';
   @property({attribute: 'value-label-start'}) valueLabelStart = '';
   @property({attribute: 'value-label-end'}) valueLabelEnd = '';
@@ -147,6 +152,8 @@ export class SliderElement extends baseClass {
   @property({attribute: 'aria-label-end'}) ariaLabelEnd = '';
   @property({attribute: 'aria-valuetext-start'}) ariaValueTextStart = '';
   @property({attribute: 'aria-valuetext-end'}) ariaValueTextEnd = '';
+
+  private readonly formDisabled = new FormDisabledController(this);
 
   private get isRange(): boolean {
     return this.range && this.orientation !== 'vertical';
@@ -729,18 +736,28 @@ export class SliderElement extends baseClass {
     this.finishAction();
   }
 
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the control disabled after the
+    // fieldset is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
   override [getFormValue]() {
     if (this.isRange) {
-      const data = new FormData();
-      data.append(
+      return rangeFormData(
         this.nameStart,
-        String(this.valueStart ?? this.renderValueStart ?? this.min),
-      );
-      data.append(
+        this.valueStart ?? this.renderValueStart ?? this.min,
         this.nameEnd,
-        String(this.valueEnd ?? this.renderValueEnd ?? this.max),
+        this.valueEnd ?? this.renderValueEnd ?? this.max,
       );
-      return data;
     }
 
     return String(this.value ?? this.renderValueEnd ?? this.min);
@@ -748,28 +765,25 @@ export class SliderElement extends baseClass {
 
   override formResetCallback() {
     if (this.isRange) {
-      const valueStart = this.getAttribute('value-start');
-      this.valueStart = valueStart !== null ? Number(valueStart) : undefined;
-      const valueEnd = this.getAttribute('value-end');
-      this.valueEnd = valueEnd !== null ? Number(valueEnd) : undefined;
+      this.valueStart = numberAttribute(this, 'value-start');
+      this.valueEnd = numberAttribute(this, 'value-end');
       return;
     }
-    const value = this.getAttribute('value');
-    this.value = value !== null ? Number(value) : undefined;
+    this.value = numberAttribute(this, 'value');
   }
 
   override formStateRestoreCallback(
     state: string | Array<[string, string]> | null,
   ) {
+    const [first, second] = parseNumberState(state);
     if (Array.isArray(state)) {
-      const [[, valueStart], [, valueEnd]] = state;
-      this.valueStart = Number(valueStart);
-      this.valueEnd = Number(valueEnd);
+      this.valueStart = first;
+      this.valueEnd = second;
       this.range = true;
       return;
     }
 
-    this.value = Number(state);
+    this.value = first;
     this.range = false;
   }
 

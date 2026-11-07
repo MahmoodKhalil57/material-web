@@ -8,7 +8,13 @@ import {type CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {
-  computeTooltipPosition,
+  AnchoredOverlayController,
+  composedContains,
+  deepActiveElement,
+  type OverlayDismissReason,
+  type OverlayPosition,
+} from '../shared/anchored-overlay.js';
+import {
   TOOLTIP_HIDE_DELAY_MS,
   TOOLTIP_LONG_PRESS_MS,
   TOOLTIP_SHOW_DELAY_MS,
@@ -42,24 +48,6 @@ let idCounter = 0;
 function px(style: CSSStyleDeclaration, prop: string, fallback: number) {
   const value = parseFloat(style.getPropertyValue(prop));
   return Number.isFinite(value) ? value : fallback;
-}
-
-/** `node` is `parent` or inside it, across shadow roots. */
-function composedContains(parent: Node | null, node: Node | null): boolean {
-  while (parent && node) {
-    if (node === parent) return true;
-    node = node.parentNode ?? (node as ShadowRoot).host ?? null;
-  }
-  return false;
-}
-
-/** The focused element, looking inside open shadow roots. */
-function deepActiveElement(): Element | null {
-  let active = document.activeElement;
-  while (active?.shadowRoot?.activeElement) {
-    active = active.shadowRoot.activeElement;
-  }
-  return active;
 }
 
 function matchesFocusVisible(element: Element) {
@@ -216,7 +204,6 @@ export class TooltipElement extends LitElement {
   private explicitAnchor: HTMLElement | null = null;
   private boundAnchor: HTMLElement | null = null;
   private anchorAbort: AbortController | null = null;
-  private openAbort: AbortController | null = null;
   private addedDescribedBy = false;
   private addedExpanded = false;
   private showTimer?: number;
@@ -225,8 +212,38 @@ export class TooltipElement extends LitElement {
   private longPressStart: {x: number; y: number} | null = null;
   private longPressShown = false;
   private suppressClickUntil = 0;
-  private repositionFrame = 0;
-  private resizeObserver?: ResizeObserver;
+  private restoringFocus = false;
+
+  /**
+   * The popover, its position next to the anchor, light dismiss (Escape, a
+   * press or focus outside) and the return of focus to the anchor.
+   */
+  private readonly overlay = new AnchoredOverlayController(this, {
+    surface: () => this,
+    anchor: () => this.boundAnchor,
+    popover: 'manual',
+    positioning: 'js',
+    dismiss: {escape: true, outside: true, focusIn: true},
+    restoreFocus: (reason) => reason === 'escape',
+    returnTarget: () => this.boundAnchor,
+    placement: () => {
+      const style = getComputedStyle(this);
+      const caretHeight = this.caret ? px(style, '--caret-height', 8) : 0;
+      return {
+        placement: this.placement || (this.isRich ? 'below' : 'above'),
+        align: this.isRich ? 'start' : 'center',
+        spacing: px(style, '--anchor-spacing', 4) + caretHeight,
+        margin: px(style, '--viewport-margin', 8),
+        caretInset: px(style, '--caret-width', 16) / 2 + 4,
+      };
+    },
+    onDismiss: (reason: OverlayDismissReason) => {
+      this.close(reason === 'focus' ? 'outside' : reason);
+    },
+    onPosition: (position: OverlayPosition) => {
+      this.applyPosition(position);
+    },
+  });
 
   private get isRich() {
     return this.variant === TOOLTIP_VARIANTS.rich;
@@ -292,16 +309,7 @@ export class TooltipElement extends LitElement {
     this.isOpenInternal = true;
     this.requestUpdate('open', false);
 
-    try {
-      const source = this.boundAnchor ?? undefined;
-      (
-        this.showPopover as (options?: {source?: HTMLElement}) => void
-      ).call(this, {source});
-    } catch {
-      // Not connected or popover unsupported.
-    }
-    this.reposition();
-    this.addOpenListeners();
+    this.overlay.open(this.boundAnchor);
     this.syncAnchorExpanded();
     this.dispatchEvent(new Event('opened', {bubbles: true}));
   }
@@ -339,15 +347,10 @@ export class TooltipElement extends LitElement {
     if (activeTooltip === this) {
       activeTooltip = null;
     }
-    this.openAbort?.abort();
-    this.openAbort = null;
-    this.resizeObserver?.disconnect();
-    cancelAnimationFrame(this.repositionFrame);
-    try {
-      this.hidePopover();
-    } catch {
-      // Already hidden.
-    }
+    // Focus returning to the anchor must not show the tooltip again.
+    this.restoringFocus = true;
+    this.overlay.close(reason);
+    this.restoringFocus = false;
     this.syncAnchorExpanded();
     this.dispatchEvent(
       new CustomEvent('closed', {bubbles: true, detail: {reason}}),
@@ -356,29 +359,10 @@ export class TooltipElement extends LitElement {
 
   /** Recomputes the tooltip's position next to its anchor. */
   reposition(): void {
-    const anchor = this.boundAnchor;
-    if (!this.isOpenInternal || !anchor) return;
-    const style = getComputedStyle(this);
-    const caretHeight = this.caret ? px(style, '--caret-height', 8) : 0;
-    const placement =
-      this.placement || (this.isRich ? 'below' : 'above');
-    const position = computeTooltipPosition({
-      anchor: anchor.getBoundingClientRect(),
-      // Untransformed size: the enter animation scales the host.
-      tooltip: {width: this.offsetWidth, height: this.offsetHeight},
-      viewport: {
-        width: document.documentElement.clientWidth || window.innerWidth,
-        height: document.documentElement.clientHeight || window.innerHeight,
-      },
-      placement,
-      align: this.isRich ? 'start' : 'center',
-      spacing: px(style, '--anchor-spacing', 4) + caretHeight,
-      margin: px(style, '--viewport-margin', 8),
-      caretInset: px(style, '--caret-width', 16) / 2 + 4,
-      rtl: getComputedStyle(anchor).direction === 'rtl',
-    });
-    this.style.left = `${position.x}px`;
-    this.style.top = `${position.y}px`;
+    this.overlay.reposition();
+  }
+
+  private applyPosition(position: OverlayPosition) {
     this.style.setProperty('--_caret-offset', `${position.caretOffset}px`);
     const origin = {
       above: `${position.caretOffset}px 100%`,
@@ -573,35 +557,6 @@ export class TooltipElement extends LitElement {
     this.boundAnchor = null;
   }
 
-  private addOpenListeners() {
-    this.openAbort?.abort();
-    this.openAbort = new AbortController();
-    const opts = {signal: this.openAbort.signal, capture: true};
-    document.addEventListener('keydown', this.handleDocumentKeyDown, opts);
-    document.addEventListener(
-      'pointerdown',
-      this.handleDocumentPointerDown,
-      opts,
-    );
-    document.addEventListener('focusin', this.handleDocumentFocusIn, opts);
-    window.addEventListener('scroll', this.scheduleReposition, {
-      ...opts,
-      passive: true,
-    });
-    window.addEventListener('resize', this.scheduleReposition, opts);
-    if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver ??= new ResizeObserver(this.scheduleReposition);
-      this.resizeObserver.observe(this);
-    }
-  }
-
-  private readonly scheduleReposition = () => {
-    cancelAnimationFrame(this.repositionFrame);
-    this.repositionFrame = requestAnimationFrame(() => {
-      this.reposition();
-    });
-  };
-
   private clearTimers() {
     window.clearTimeout(this.showTimer);
     window.clearTimeout(this.hideTimer);
@@ -636,15 +591,6 @@ export class TooltipElement extends LitElement {
   private cancelHide() {
     window.clearTimeout(this.hideTimer);
     this.hideTimer = undefined;
-  }
-
-  /** The event came from the anchor or the tooltip. */
-  private isInside(event: Event) {
-    const path = event.composedPath();
-    return (
-      path.includes(this) ||
-      (!!this.boundAnchor && path.includes(this.boundAnchor))
-    );
   }
 
   private focusFirstAction(): boolean {
@@ -730,7 +676,7 @@ export class TooltipElement extends LitElement {
   };
 
   private readonly handleAnchorFocusIn = () => {
-    if (this.isPersistent) return;
+    if (this.isPersistent || this.restoringFocus) return;
     const focused = deepActiveElement();
     if (focused && !matchesFocusVisible(focused)) return;
     this.cancelHide();
@@ -783,29 +729,5 @@ export class TooltipElement extends LitElement {
       event.preventDefault();
       this.boundAnchor.focus();
     }
-  };
-
-  private readonly handleDocumentKeyDown = (event: KeyboardEvent) => {
-    if (event.key !== 'Escape' || !this.isOpenInternal) return;
-    const focused = deepActiveElement();
-    const focusInTooltip = composedContains(this, focused);
-    if (focusInTooltip || composedContains(this.boundAnchor, focused)) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    this.close('escape');
-    if (focusInTooltip) {
-      this.boundAnchor?.focus();
-    }
-  };
-
-  private readonly handleDocumentPointerDown = (event: PointerEvent) => {
-    if (this.isInside(event)) return;
-    this.close('outside');
-  };
-
-  private readonly handleDocumentFocusIn = (event: FocusEvent) => {
-    if (this.isInside(event)) return;
-    this.close('outside');
   };
 }

@@ -6,11 +6,13 @@
 
 import {css, type CSSResultOrNative, html, isServer, LitElement, nothing} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {ARIAMixinStrict} from '../../../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../../../internal/aria/delegate.js';
 import {divider} from '../divider/divider.js';
 import {iconButton} from '../iconbutton/icon-button.js';
-import {dialog, getFocusableElements} from './dialog.js';
+import {ModalSurfaceController} from '../shared/modal-surface.js';
+import {dialogClasses} from './dialog.js';
 
 import dividerStyles from '../divider/divider.css' with {type: 'css'}; // github-only
 // import dividerStyles from '../divider/divider.cssresult.js'; // google3-only
@@ -25,15 +27,6 @@ import dialogStyles from './dialog.css' with {type: 'css'}; // github-only
 
 /** The dialog's accessibility type. */
 export type DialogType = 'alert' | 'dialog' | '';
-
-/** Returns the focused element, looking inside open shadow roots. */
-function getDeepActiveElement(): HTMLElement | null {
-  let active = document.activeElement;
-  while (active?.shadowRoot?.activeElement) {
-    active = active.shadowRoot.activeElement;
-  }
-  return active as HTMLElement | null;
-}
 
 const baseClass = mixinDelegatesAria(LitElement);
 
@@ -130,17 +123,15 @@ export class DialogElement extends baseClass {
     `,
   ];
 
-  private isOpenInternal = false;
-
   /**
    * Opens the dialog when set to `true` and closes it when set to `false`.
    */
   @property({type: Boolean, reflect: true})
   get open(): boolean {
-    return this.isOpenInternal;
+    return this.modalSurface.open;
   }
   set open(value: boolean) {
-    if (value === this.isOpenInternal) {
+    if (value === this.modalSurface.open) {
       return;
     }
     if (value) {
@@ -190,7 +181,6 @@ export class DialogElement extends baseClass {
    */
   @property({attribute: 'close-label'}) closeLabel = 'Close';
 
-  @state() private isClosing = false;
   @state() private hasIcon = false;
   @state() private hasHeadline = false;
   @state() private hasActions = false;
@@ -204,12 +194,39 @@ export class DialogElement extends baseClass {
   @query('.dialog-anchor-bottom')
   private readonly bottomAnchor!: HTMLElement | null;
 
-  private transitionCounter = 0;
-  private pendingShow = false;
-  private isClosingNatively = false;
-  private pointerDownOnScrim = false;
-  private previouslyFocused: HTMLElement | null = null;
+  private previousReturnValue = '';
   private intersectionObserver?: IntersectionObserver;
+
+  /**
+   * Opens and closes the native dialog, closes it with Escape, back or the
+   * scrim, traps and restores focus, locks page scrolling and fires the
+   * `open`, `opened`, `close` and `closed` events.
+   */
+  private readonly modalSurface = new ModalSurfaceController(this, {
+    dialog: () => this.dialogElement,
+    closeOnDisconnect: true,
+    trapFocus: () => !this.noFocusTrap,
+    isScrim: (event) => this.isOnScrim(event),
+    waitForMotion: () => this.waitForTransitions(),
+    onCloseRequest: (reason) => {
+      this.cancel(reason);
+    },
+    onShown: () => {
+      if (this.scroller) {
+        this.scroller.scrollTop = 0;
+      }
+    },
+    onCloseCanceled: () => {
+      this.returnValue = this.previousReturnValue;
+    },
+    onForcedClose: (dialog) => {
+      this.returnValue = dialog.returnValue ?? this.returnValue;
+    },
+  });
+
+  private get isClosing() {
+    return this.modalSurface.closing;
+  }
 
   constructor() {
     super();
@@ -221,21 +238,6 @@ export class DialogElement extends baseClass {
   override connectedCallback() {
     super.connectedCallback();
     this.updateSlotState();
-    if (this.pendingShow) {
-      this.pendingShow = false;
-      this.isOpenInternal = false;
-      this.show();
-    }
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    // A disconnected `<dialog>` leaves the top layer without close events.
-    if (this.isOpenInternal || this.isClosing) {
-      this.transitionCounter++;
-      this.isClosing = false;
-      this.setOpenInternal(false);
-    }
   }
 
   /**
@@ -246,47 +248,8 @@ export class DialogElement extends baseClass {
    *
    * @return Resolves after the animation, when `opened` was fired.
    */
-  async show(): Promise<void> {
-    if (this.isOpenInternal && !this.isClosing) {
-      return;
-    }
-    const token = ++this.transitionCounter;
-    this.setOpenInternal(true);
-    this.isClosing = false;
-    await this.updateComplete;
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    if (!this.isConnected) {
-      // Dialogs can open before being attached; `showModal()` needs a
-      // connected element.
-      this.pendingShow = true;
-      return;
-    }
-
-    const preventOpen = !this.dispatchEvent(
-      new Event('open', {cancelable: true}),
-    );
-    if (preventOpen) {
-      this.setOpenInternal(false);
-      return;
-    }
-
-    const dialogElement = this.dialogElement!;
-    if (!dialogElement.open) {
-      this.previouslyFocused = getDeepActiveElement();
-      dialogElement.showModal();
-      if (this.scroller) {
-        this.scroller.scrollTop = 0;
-      }
-      this.focusInitialElement();
-    }
-
-    await this.waitForTransitions();
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    this.dispatchEvent(new Event('opened'));
+  show(): Promise<void> {
+    return this.modalSurface.show();
   }
 
   /**
@@ -296,93 +259,28 @@ export class DialogElement extends baseClass {
    *
    * @param returnValue A value usually indicating which button closed the
    *     dialog. Defaults to the current `returnValue`.
+   * @param reason Why the dialog closes, given in `detail.reason` of the
+   *     `close` and `closed` events. Defaults to `dismiss`; Escape, back,
+   *     scrim and close button requests use `escape`, `back`, `scrim` and
+   *     `close-button`.
    * @return Resolves after the animation, when `closed` was fired.
    */
-  async close(returnValue = this.returnValue): Promise<void> {
-    if (!this.isOpenInternal) {
+  async close(returnValue = this.returnValue, reason?: string): Promise<void> {
+    if (!this.modalSurface.open) {
       return;
     }
-    const dialogElement = this.dialogElement;
-    if (!dialogElement?.open) {
-      // Not shown yet (still awaiting render or connection).
-      this.transitionCounter++;
-      this.pendingShow = false;
-      this.setOpenInternal(false);
-      return;
-    }
-
-    const prevReturnValue = this.returnValue;
+    this.previousReturnValue = this.returnValue;
     this.returnValue = returnValue;
-    const preventClose = !this.dispatchEvent(
-      new Event('close', {cancelable: true}),
-    );
-    if (preventClose) {
-      this.returnValue = prevReturnValue;
-      return;
-    }
-
-    const token = ++this.transitionCounter;
-    this.setOpenInternal(false);
-    this.isClosing = true;
-    await this.updateComplete;
-    await this.waitForTransitions();
-    if (token !== this.transitionCounter) {
-      return;
-    }
-
-    this.isClosing = false;
-    this.isClosingNatively = true;
-    dialogElement.close(returnValue);
-    this.isClosingNatively = false;
-    await this.updateComplete;
-    this.restoreFocus();
-    this.dispatchEvent(new Event('closed'));
-  }
-
-  private setOpenInternal(open: boolean) {
-    const prev = this.isOpenInternal;
-    this.isOpenInternal = open;
-    this.requestUpdate('open', prev);
+    await this.modalSurface.close(reason);
   }
 
   /** Cancels the dialog: a cancelable `cancel` event, then `close()`. */
-  private cancel() {
+  private cancel(reason: string) {
     const preventCancel = !this.dispatchEvent(
       new Event('cancel', {cancelable: true}),
     );
     if (!preventCancel) {
-      this.close();
-    }
-  }
-
-  private focusInitialElement() {
-    const autofocus = this.querySelector<HTMLElement>('[autofocus]');
-    if (autofocus) {
-      autofocus.focus();
-      return;
-    }
-    const [first] = getFocusableElements(this.dialogElement!);
-    if (first) {
-      first.focus();
-    } else {
-      this.dialogElement!.focus();
-    }
-  }
-
-  private restoreFocus() {
-    const previous = this.previouslyFocused;
-    this.previouslyFocused = null;
-    if (!previous?.isConnected) {
-      return;
-    }
-    const active = getDeepActiveElement();
-    const focusIsInDialog =
-      !active ||
-      active === document.body ||
-      this.contains(active) ||
-      !!this.shadowRoot?.contains(active);
-    if (focusIsInDialog) {
-      previous.focus();
+      this.close(this.returnValue, reason);
     }
   }
 
@@ -420,35 +318,6 @@ export class DialogElement extends baseClass {
     this.close(event.submitter?.getAttribute('value') ?? this.returnValue);
   };
 
-  private readonly handleNativeCancel = (event: Event) => {
-    if (event.target !== this.dialogElement) {
-      return;
-    }
-    // Always prevent the native close; `close()` animates it out first.
-    event.preventDefault();
-    this.cancel();
-  };
-
-  private readonly handleNativeClose = () => {
-    if (this.isClosingNatively) {
-      return;
-    }
-    // The browser closed the dialog without `close()` (for example a second
-    // Escape after a prevented cancel, or `requestClose()`): sync state.
-    if (!this.isOpenInternal && !this.isClosing) {
-      return;
-    }
-    this.transitionCounter++;
-    this.isClosing = false;
-    this.returnValue = this.dialogElement?.returnValue ?? this.returnValue;
-    if (this.isOpenInternal) {
-      this.setOpenInternal(false);
-      this.dispatchEvent(new Event('close'));
-    }
-    this.restoreFocus();
-    this.dispatchEvent(new Event('closed'));
-  };
-
   private isOnScrim(event: MouseEvent) {
     const dialogElement = this.dialogElement;
     if (!dialogElement || this.fullScreen || event.composedPath()[0] !== dialogElement) {
@@ -463,22 +332,8 @@ export class DialogElement extends baseClass {
     );
   }
 
-  private readonly handlePointerDown = (event: PointerEvent) => {
-    this.pointerDownOnScrim = this.isOnScrim(event);
-  };
-
-  private readonly handleDialogClick = (event: MouseEvent) => {
-    // Cancel only when the press both started and ended on the scrim, so a
-    // text selection dragged out of the dialog doesn't close it.
-    const onScrim = this.pointerDownOnScrim && this.isOnScrim(event);
-    this.pointerDownOnScrim = false;
-    if (onScrim && this.isOpenInternal) {
-      this.cancel();
-    }
-  };
-
   private readonly handleCloseClick = () => {
-    this.cancel();
+    this.cancel('close-button');
   };
 
   private readonly handleSlotChange = () => {
@@ -529,12 +384,12 @@ export class DialogElement extends baseClass {
   }
 
   protected override render() {
-    const visible = this.isOpenInternal || this.isClosing;
+    const visible = this.modalSurface.shown;
     const scrollable =
       visible && !(this.isAtScrollTop && this.isAtScrollBottom);
     // The full-screen variant is set on the host (`:host([full-screen])`),
     // not with the `dialog-full-screen` class; see dialog.scss.
-    const classes = dialog({
+    const classes = classMap(dialogClasses({
       closing: this.isClosing,
       hasIcon: this.hasIcon && !this.fullScreen,
       hasHeadline: this.hasHeadline,
@@ -542,7 +397,7 @@ export class DialogElement extends baseClass {
       scrollable,
       scrolledFromTop: !this.isAtScrollTop,
       scrolledFromBottom: !this.isAtScrollBottom,
-    });
+    }));
     const {ariaLabel} = this as ARIAMixinStrict;
 
     const actions = html`<slot
@@ -560,11 +415,7 @@ export class DialogElement extends baseClass {
           ? 'headline'
           : nothing}"
         aria-describedby="${this.hasContent ? 'content' : nothing}"
-        ?data-no-focus-trap=${this.noFocusTrap}
-        @cancel=${this.handleNativeCancel}
-        @close=${this.handleNativeClose}
-        @pointerdown=${this.handlePointerDown}
-        @click=${this.handleDialogClick}>
+>
         <div class="dialog-header" part="header">
           ${this.fullScreen
             ? html`<button

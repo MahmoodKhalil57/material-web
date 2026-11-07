@@ -107,6 +107,7 @@ describe('search', () => {
       expect(bar.disabled).toBeFalse();
     });
 
+    // spec: search-e5c04d, search-632ef0
     it('renders a combobox input labeled by the hinted text', async () => {
       const {barInput} = await setupBar();
       expect(barInput.getAttribute('role')).toBe('combobox');
@@ -151,6 +152,7 @@ describe('search', () => {
       expect(container.getBoundingClientRect().height).toBe(56);
     });
 
+    // spec: search-4ddb97, search-cfac1d, search-284084
     it('opens the view when clicked', async () => {
       const {bar, view, dialog, barInput} = await setupBar();
       barInput.click();
@@ -343,6 +345,7 @@ describe('search', () => {
       });
     });
 
+    // spec: search-1b376d, search-094a06, search-18cc24
     it('closes from the back button and returns focus to the bar', async () => {
       const {bar, view, barInput} = await setupBar();
       barInput.focus();
@@ -360,6 +363,7 @@ describe('search', () => {
       expect(deepActiveElement()).toBe(barInput);
     });
 
+    // spec: search-bedcd3
     it('fires input, change and search from the view', async () => {
       const {bar, viewInput} = await setupBar();
       await bar.show();
@@ -394,6 +398,7 @@ describe('search', () => {
       expect(barInput.value).toBe('pasta');
     });
 
+    // spec: search-a7e755, search-1bcb5c
     it('forwards docked and divided to the view', async () => {
       const {bar, view, dialog} = await setupBar(
         html`<md-gb-search-bar docked divided quick></md-gb-search-bar>`,
@@ -406,6 +411,7 @@ describe('search', () => {
       expect(dialog.classList).toContain(SEARCH_VIEW_CLASSES.anchored);
     });
 
+    // spec: search-49682c, search-2c41bb, search-05229d
     it('docks the view over the search bar', async () => {
       const {bar, view} = await setupBar(
         html`<md-gb-search-bar docked quick></md-gb-search-bar>`,
@@ -469,6 +475,7 @@ describe('search', () => {
       expect(view.clearLabel).toBe('Clear search');
     });
 
+    // spec: search-c3cd3d
     it('renders a combobox that controls a results listbox', async () => {
       const {view, input, results} = await setupView();
       expect(input.getAttribute('role')).toBe('combobox');
@@ -508,6 +515,7 @@ describe('search', () => {
       expect(dialog.open).toBeTrue();
     });
 
+    // spec: search-c3ffc1, search-220ea8, search-6898a8, search-bb2242, search-9c42a1
     it('fills the viewport when full-screen', async () => {
       const {view} = await setupView();
       await view.show();
@@ -524,6 +532,7 @@ describe('search', () => {
       expect(header.getBoundingClientRect().height).toBe(56);
     });
 
+    // spec: search-97e2b1, search-825ed3
     it('uses a 72dp header and a divider in the divided style', async () => {
       const {view} = await setupView(
         html`<md-gb-search-view divided quick></md-gb-search-view>`,
@@ -539,6 +548,7 @@ describe('search', () => {
       expect(divider.getBoundingClientRect().height).toBe(1);
     });
 
+    // spec: search-2ba730, search-7a9d08, search-c08556
     it('moves focus through the options with the arrow keys', async () => {
       const {view, input} = await setupView();
       await view.show();
@@ -558,6 +568,7 @@ describe('search', () => {
       expect(document.activeElement).toBe(three);
     });
 
+    // spec: search-33b69d
     it('activates a focused option with Enter', async () => {
       const {view, input} = await setupView();
       await view.show();
@@ -569,6 +580,7 @@ describe('search', () => {
       expect(click).toHaveBeenCalledTimes(1);
     });
 
+    // spec: search-314f92, search-6a73ef
     it('announces suggestions when it opens with results', async () => {
       const {view} = await setupView();
       await view.show();
@@ -578,6 +590,7 @@ describe('search', () => {
       expect(status.textContent!.trim()).toBe('Suggestions available');
     });
 
+    // spec: search-4e1678
     it('shows a clear button that clears the text', async () => {
       const {view, input} = await setupView();
       await view.show();

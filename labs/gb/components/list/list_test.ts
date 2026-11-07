@@ -444,6 +444,7 @@ describe("<md-gb-list-item> reveal", () => {
     pointer(el, "pointerup", x + Math.sign(dx) * 10 + dx, y + dy);
   }
 
+  // spec: lists-08ada0
   it("renders the actions behind the item", async () => {
     const { item } = await setupTest();
     const actions =
@@ -719,6 +720,7 @@ describe("<md-gb-list-item> line heights", () => {
     return parseFloat(getComputedStyle(itemOf(item)).minHeight);
   }
 
+  // spec: lists-6e4b72, lists-310ec0, lists-1381de, lists-b19cca
   it("uses the one-, two- and three-line heights", async () => {
     expect(await heightOf(html`<md-gb-list-item>One</md-gb-list-item>`)).toBe(
       56,

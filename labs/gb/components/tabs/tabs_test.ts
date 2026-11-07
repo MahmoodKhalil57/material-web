@@ -74,6 +74,7 @@ describe('md-gb-tabs', () => {
       expect(tabs.getAttribute('focusgroup')).toBe('tablist block');
     });
 
+    // spec: tabs-4f4caa, tabs-7c2fb5
     it('toggles .tabs-secondary with the variant property', async () => {
       const root = env.render(html`<md-gb-tabs></md-gb-tabs>`);
       await env.waitForStability();
@@ -111,6 +112,7 @@ describe('md-gb-tabs', () => {
       host.remove();
     });
 
+    // spec: tabs-2a02c1
     it('selects a clicked tab, deselects the previous one, and fires change', async () => {
       const root = env.render(html`
         <md-gb-tabs>
@@ -290,6 +292,7 @@ describe('md-gb-tabs', () => {
   });
 
   describe('raw HTML mode', () => {
+    // spec: tabs-e1b4ab, tabs-0bbe12
     it('scrolls on overflow in both modes, with no scrollable modifier', async () => {
       const labels = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot'];
       const root = env.render(html`
@@ -935,6 +938,7 @@ describe('md-gb-tabs', () => {
       expect(tab2BadgeRect.left).toBeCloseTo(tab2IconRect.right - 6, 0);
     });
 
+    // spec: tabs-472bf6
     it('keeps badge in flex flow after the label with a 4px gap in secondary tabs', async () => {
       const root = env.render(html`
         <md-gb-tabs variant="secondary">
@@ -959,6 +963,7 @@ describe('md-gb-tabs', () => {
   });
 
   describe('density', () => {
+    // spec: tabs-9c7a63
     it('defaults to 0, clamps to 0..-3 and reflects', async () => {
       const root = env.render(html`<md-gb-tabs></md-gb-tabs>`);
       await env.waitForStability();

@@ -20,8 +20,10 @@
     &:not(:checked, .checked, :indeterminate, .indeterminate) {
       @include checkbox-tokens.unselected;
 
-      &:where(:hover, .hover) {
-        @include checkbox-tokens.unselected-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include checkbox-tokens.unselected-hovered;
+        }
       }
 
       &:where(:focus-within, .focus) {
@@ -36,8 +38,10 @@
     &:is(:checked, .checked, :indeterminate, .indeterminate) {
       @include checkbox-tokens.selected;
 
-      &:where(:hover, .hover) {
-        @include checkbox-tokens.selected-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include checkbox-tokens.selected-hovered;
+        }
       }
 
       &:where(:focus-within, .focus) {
@@ -53,8 +57,10 @@
       &:where(:not(:checked, .checked, :indeterminate, .indeterminate)) {
         @include checkbox-tokens.unselected-error;
 
-        &:where(:hover, .hover) {
-          @include checkbox-tokens.unselected-error-hovered;
+        @media (hover: hover) {
+          &:where(:hover, .hover) {
+            @include checkbox-tokens.unselected-error-hovered;
+          }
         }
 
         &:where(:focus-within, .focus) {
@@ -70,8 +76,10 @@
         @include checkbox-tokens.selected-error;
       }
 
-      &:where(:hover, .hover) {
-        @include checkbox-tokens.error-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include checkbox-tokens.error-hovered;
+        }
       }
 
       &:where(:focus-within, .focus) {

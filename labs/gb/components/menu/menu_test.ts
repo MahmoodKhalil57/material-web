@@ -120,6 +120,7 @@ describe('<md-gb-menu>', () => {
       expect(part(items[3]).borderBottomRightRadius).toBe('12px');
     });
 
+    // spec: menus-14f041
     it('rounds every corner of a selected item', async () => {
       const {items} = await setupTest();
       items[2].checked = true;
@@ -132,6 +133,7 @@ describe('<md-gb-menu>', () => {
       expect(part.borderBottomRightRadius).toBe('12px');
     });
 
+    // spec: menus-962801, menus-e401ee
     it('keeps a 48px target for 44px items', async () => {
       const {menu, items} = await setupTest();
       await open(menu);
@@ -142,6 +144,7 @@ describe('<md-gb-menu>', () => {
   });
 
   describe('keyboard', () => {
+    // spec: menus-7c5dc4
     it('focuses the first item when opened', async () => {
       const {menu, items} = await setupTest();
       await open(menu);
@@ -207,6 +210,7 @@ describe('<md-gb-menu>', () => {
       expect(menu.matches(':popover-open')).toBeFalse();
     });
 
+    // spec: menus-9997b0
     it('closes when an item is selected', async () => {
       const {menu, items} = await setupTest();
       await open(menu);
@@ -278,6 +282,7 @@ describe('<md-gb-menu>', () => {
   });
 
   describe('density', () => {
+    // spec: menus-98d439
     it('defaults to 0, clamps to 0..-3 and reflects', async () => {
       const {menu} = await setupTest();
       expect(menu.density).toBe(0);
@@ -291,6 +296,7 @@ describe('<md-gb-menu>', () => {
       expect(menu.getAttribute('density')).toBe('-2');
     });
 
+    // spec: menus-f2762d
     it('removes 4px of item height per step', async () => {
       const {menu, items, submenu} = await setupTest();
       await open(menu);
@@ -324,6 +330,7 @@ describe('<md-gb-menu>', () => {
       ).not.toBeNull();
     });
 
+    // spec: menus-442139
     it('opens with Right and focuses its first item', async () => {
       const {menu, items, submenu} = await setupTest();
       await open(menu);
@@ -470,6 +477,7 @@ describe('<md-gb-menu>', () => {
       expect(plain[internals].role).toBe('none');
     });
 
+    // spec: menus-84240e, menus-6c46c3, menus-0fc992, menus-a5c30b
     it('separates groups with gaps in the grouped layout', async () => {
       const {root, menu} = await setupTest(html`
         <md-gb-menu id="menu" layout="grouped">
@@ -571,6 +579,7 @@ describe('<md-gb-menu>', () => {
       return {...result, target};
     }
 
+    // spec: menus-2a9e9f, menus-c96306, menus-e642e4
     it('opens at the pointer on a secondary click', async () => {
       const {menu, target} = await setupContext();
       const event = new MouseEvent('contextmenu', {

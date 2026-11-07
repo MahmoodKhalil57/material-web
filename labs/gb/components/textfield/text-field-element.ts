@@ -12,9 +12,8 @@ import {
   nothing,
   type PropertyValues,
 } from 'lit';
-import {property, query, state} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {keyed} from 'lit/directives/keyed.js';
 import {live} from 'lit/directives/live.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {type ARIAMixinStrict} from '../../../../internal/aria/aria.js';
@@ -37,7 +36,12 @@ import {
 } from '../../../behaviors/on-report-validity.js';
 import {TextFieldValidator} from '../../../behaviors/validators/text-field-validator.js';
 import {type Validator} from '../../../behaviors/validators/validator.js';
+import {AnnouncerController} from '../shared/announcer.js';
 import {clampDensity, type Density} from '../shared/density.js';
+import {
+  FormDisabledController,
+  ValueFieldController,
+} from '../shared/form-field.js';
 import {textFieldClasses, type TextFieldVariant} from './text-field.js';
 
 import textFieldStyles from './text-field.css' with {type: 'css'}; // github-only
@@ -224,6 +228,17 @@ export class TextFieldElement extends baseClass {
   /** The current value. It is always a string. */
   @property() value = '';
 
+  /**
+   * The default value, the `value` attribute: what the field shows until the
+   * person edits it and what form reset restores.
+   */
+  get defaultValue(): string {
+    return this.getAttribute('value') ?? '';
+  }
+  set defaultValue(value: string) {
+    this.setAttribute('value', value);
+  }
+
   /** Text shown before the input value, such as a currency symbol. */
   @property({attribute: 'prefix-text'}) prefixText = '';
 
@@ -298,26 +313,43 @@ export class TextFieldElement extends baseClass {
   /** The input's `autocomplete` hint. */
   @property({reflect: true}) autocomplete = '';
 
-  // Writable mixin properties for lit-html binding, needed for lit-analyzer.
-  declare disabled: boolean;
+  // Writable mixin property for lit-html binding, needed for lit-analyzer.
   declare name: string;
 
-  /** Whether the user has edited the value since the last reset. */
-  @state() private dirty = false;
-  /** Whether `reportValidity()` found a native error. */
-  @state() private nativeError = false;
-  /** The message of the native error found by `reportValidity()`. */
-  @state() private nativeErrorText = '';
-  /** Bumped to re-announce an unchanged error message. */
-  @state() private errorAnnouncement = 0;
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the field disabled after the fieldset
+    // is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
+  private readonly formDisabled = new FormDisabledController(this);
+
+  override setCustomValidity(error: string) {
+    super.setCustomValidity(error);
+    // Shows or clears the message of an error that was already reported.
+    this.requestUpdate();
+  }
+  /**
+   * Re-announces an error message that did not change (the visible message
+   * has `role="alert"`, which only announces changes).
+   */
+  private readonly announcer = new AnnouncerController(this);
+  /** The dirty value and the error shown after validation. */
+  private readonly field = new ValueFieldController(this, {
+    onRepeat: (message) => this.announcer.announce(message, 'assertive'),
+  });
 
   @query('.text-field-input')
   private readonly inputOrTextarea!:
     HTMLInputElement | HTMLTextAreaElement | null;
-
-  private get hasError() {
-    return this.error || this.nativeError;
-  }
 
   /** The direction in which selection occurred. */
   get selectionDirection() {
@@ -417,10 +449,8 @@ export class TextFieldElement extends baseClass {
 
   /** Resets the value to the `value` attribute and clears native errors. */
   reset() {
-    this.dirty = false;
-    this.value = this.getAttribute('value') ?? '';
-    this.nativeError = false;
-    this.nativeErrorText = '';
+    this.field.reset();
+    this.value = this.defaultValue;
   }
 
   override focus(options?: FocusOptions) {
@@ -433,7 +463,7 @@ export class TextFieldElement extends baseClass {
     oldValue: string | null,
     newValue: string | null,
   ) {
-    if (attribute === 'value' && this.dirty) {
+    if (this.field?.ignoresAttribute(attribute)) {
       // After user input, the value attribute no longer updates the value
       // (until reset), like a native <input>.
       return;
@@ -452,8 +482,8 @@ export class TextFieldElement extends baseClass {
 
   protected override render() {
     const textarea = this.type === 'textarea';
-    const showError = !this.disabled && this.hasError;
-    const errorText = this.error ? this.errorText : this.nativeErrorText;
+    const showError = !this.disabled && this.field.hasError;
+    const errorText = this.field.message;
     const supporting = showError && errorText ? errorText : this.supportingText;
     const hasCounter = (this.maxLength ?? -1) > -1;
     const describedBy = [
@@ -526,16 +556,13 @@ export class TextFieldElement extends baseClass {
         ${
           supporting || hasCounter
             ? html`<div class="text-field-supporting">
-                ${keyed(
-                  this.errorAnnouncement,
-                  html`<span
-                    id="supporting-text"
-                    class="text-field-supporting-text"
-                    part="supporting-text"
-                    role=${showError && errorText ? 'alert' : nothing}
-                    >${supporting}</span
-                  >`,
-                )}
+                <span
+                  id="supporting-text"
+                  class="text-field-supporting-text"
+                  part="supporting-text"
+                  role=${showError && errorText ? 'alert' : nothing}
+                  >${supporting}</span
+                >
                 ${
                   hasCounter
                     ? html`<span
@@ -649,7 +676,7 @@ export class TextFieldElement extends baseClass {
   }
 
   private handleInput(event: InputEvent) {
-    this.dirty = true;
+    this.field.markDirty();
     this.value = (event.target as HTMLInputElement).value;
     // The native `input` event is composed; no need to redispatch it.
   }
@@ -715,8 +742,8 @@ export class TextFieldElement extends baseClass {
     this.reset();
   }
 
-  override formStateRestoreCallback(state: string) {
-    this.value = state;
+  override formStateRestoreCallback(state: string | null) {
+    this.value = state ?? '';
   }
 
   override [createValidator](): Validator<unknown> {
@@ -731,16 +758,6 @@ export class TextFieldElement extends baseClass {
   }
 
   override [onReportValidity](invalidEvent: Event | null) {
-    // Show the message in the field instead of the browser pop-up.
-    invalidEvent?.preventDefault();
-    const previous = this.error ? this.errorText : this.nativeErrorText;
-    const wasError = this.nativeError;
-    this.nativeError = !!invalidEvent;
-    this.nativeErrorText = this.validationMessage;
-    const next = this.error ? this.errorText : this.nativeErrorText;
-    if (wasError && this.nativeError && previous === next) {
-      // Re-render the alert so assistive technology announces it again.
-      this.errorAnnouncement++;
-    }
+    this.field.report(invalidEvent);
   }
 }

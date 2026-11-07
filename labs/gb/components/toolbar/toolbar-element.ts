@@ -13,6 +13,10 @@ import {
 } from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {
+  DisclosureController,
+  reflectedExpandedConverter,
+} from '../shared/disclosure.js';
 import toolbarStyles from './toolbar.css' with {type: 'css'}; // github-only
 // import {styles as toolbarStyles} from './toolbar.cssresult.js'; // google3-only
 
@@ -108,10 +112,7 @@ export class ToolbarElement extends LitElement {
   @property({
     type: Boolean,
     reflect: true,
-    converter: {
-      fromAttribute: (value) => value !== null && value !== 'false',
-      toAttribute: (value) => (value ? '' : null),
-    },
+    converter: reflectedExpandedConverter,
   })
   expanded = true;
 
@@ -120,6 +121,17 @@ export class ToolbarElement extends LitElement {
   fabPosition: 'start' | 'end' = 'end';
 
   @state() private hasFab = false;
+
+  /** A collapsed floating toolbar with a FAB hides its items (inert). */
+  protected readonly disclosure = new DisclosureController(this, {
+    region: () => this.renderRoot.querySelector<HTMLElement>('.toolbar'),
+    expanded: () => this.expanded,
+    setExpanded: (expanded) => {
+      this.expanded = expanded;
+    },
+    enabled: () => this.hasFab && !this.docked,
+    aria: false,
+  });
 
   override connectedCallback() {
     super.connectedCallback();
@@ -157,8 +169,7 @@ export class ToolbarElement extends LitElement {
           color: this.color,
           orientation: this.docked ? 'horizontal' : this.orientation,
           docked: this.docked,
-        })}"
-        ?inert=${withFab && !this.expanded}>
+        })}">
         <slot name="leading"></slot>
         <slot></slot>
         <slot name="trailing"></slot>

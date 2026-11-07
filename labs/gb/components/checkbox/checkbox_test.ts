@@ -27,6 +27,7 @@ describe('<md-gb-checkbox> density', () => {
     return {checkbox, input};
   }
 
+  // spec: checkbox-d70081
   it('defaults to density 0', async () => {
     const {checkbox} = await setupTest();
     expect(checkbox.density).toBe(0);
@@ -73,6 +74,7 @@ describe('<md-gb-checkbox> density', () => {
     expect(checkbox.getBoundingClientRect().width).toBe(32);
   });
 
+  // spec: checkbox-9233c9
   it('clamps density to 0..-3 and reflects it', async () => {
     const {checkbox} = await setupTest();
     checkbox.density = -7;

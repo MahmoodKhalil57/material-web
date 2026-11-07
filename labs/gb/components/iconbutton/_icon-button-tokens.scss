@@ -103,6 +103,8 @@
 @mixin outlined-disabled {
   --icon-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --outline-color: var(--md-sys-color-outline-variant);
+  // EDIT: md.comp.outlined-icon-button.disabled.outline.opacity; icon-button.scss multiplies the outline alpha by it.
+  --outline-opacity: 0.12;
   // EDIT: icon-buttons.md outlined states: Disabled (10% state layer), md.comp.icon-button.disabled.container.color/opacity.
   --container-color: hsl(from var(--md-sys-color-on-surface) h s l / 10%);
 }

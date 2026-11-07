@@ -32,6 +32,7 @@ describe('<md-gb-radio> density', () => {
     expect(radio.density).toBe(0);
   });
 
+  // spec: radio-button-ecfc98
   it('removes 4px from the box and state layer per step', async () => {
     const {radio, inner} = await setupTest();
     for (const [density, box, stateLayer] of [

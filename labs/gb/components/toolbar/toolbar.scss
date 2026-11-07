@@ -308,8 +308,10 @@
     transition-timing-function: var(--motion-easing);
   }
 
-  md-gb-toolbar > [slot='fab']::part(fab):hover {
-    --container-elevation: var(--fab-hovered-container-elevation);
+  @media (hover: hover) {
+    md-gb-toolbar > [slot='fab']::part(fab):hover {
+      --container-elevation: var(--fab-hovered-container-elevation);
+    }
   }
 
   md-gb-toolbar:not([expanded]) > [slot='fab']::part(fab) {

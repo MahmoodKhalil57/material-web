@@ -100,6 +100,7 @@ describe('<md-gb-tooltip>', () => {
   });
 
   describe('accessibility', () => {
+    // spec: tooltips-cc831f, tooltips-4f688f, tooltips-58e7c8
     it('has the tooltip role and describes the anchor', async () => {
       const {tooltip, anchor} = await setupTest();
       expect(tooltip['internals'].role).toBe('tooltip');
@@ -209,6 +210,7 @@ describe('<md-gb-tooltip>', () => {
       expect(isOpen(tooltip)).toBeTrue();
     });
 
+    // spec: tooltips-7960b5, tooltips-7ffbff
     it('shows only one tooltip at a time', async () => {
       const {root} = await setupTest(html`
         <button id="a">A</button>
@@ -226,6 +228,7 @@ describe('<md-gb-tooltip>', () => {
   });
 
   describe('interaction', () => {
+    // spec: tooltips-de9425
     it('shows on hover and hides after the hide delay', async () => {
       const {tooltip, anchor} = await setupTest();
       tooltip.hideDelay = 20;
@@ -256,6 +259,7 @@ describe('<md-gb-tooltip>', () => {
       expect(isOpen(tooltip)).toBeTrue();
     });
 
+    // spec: tooltips-f78c78
     it('shows on keyboard focus and hides on blur', async () => {
       const {tooltip, anchor} = await setupTest();
       anchor.focus();
@@ -264,6 +268,7 @@ describe('<md-gb-tooltip>', () => {
       expect(isOpen(tooltip)).toBeFalse();
     });
 
+    // spec: tooltips-de9425
     it('shows on touch long press and suppresses the click', async () => {
       const {tooltip, anchor} = await setupTest();
       const clicked = jasmine.createSpy('click');
@@ -320,6 +325,7 @@ describe('<md-gb-tooltip>', () => {
       `);
     }
 
+    // spec: tooltips-18a955, tooltips-61fea7, tooltips-c39e72, tooltips-f1de0f
     it('ignores hover and toggles on click', async () => {
       const {tooltip, anchor} = await setupPersistent();
       anchor.dispatchEvent(pointer('pointerenter'));
@@ -339,6 +345,7 @@ describe('<md-gb-tooltip>', () => {
       expect(isOpen(tooltip)).toBeFalse();
     });
 
+    // spec: tooltips-146e23, tooltips-24ed13
     it('moves focus into the actions on Tab and back on Escape', async () => {
       const {tooltip, anchor, root} = await setupPersistent();
       await tooltip.updateComplete;

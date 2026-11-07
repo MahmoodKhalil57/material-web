@@ -133,6 +133,7 @@ describe('dynamic color', () => {
       expect(hct(theme.light.surface).chroma).toBeLessThan(4);
     });
 
+    // spec: color-advanced-1b60f6, color-advanced-7d0681
     it('matches the source tone with fidelity', () => {
       const source = '#b33b15';
       const fidelity = themeFromSource({source, variant: 'fidelity'});
@@ -192,6 +193,7 @@ describe('dynamic color', () => {
       }
     });
 
+    // spec: color-system-8a5f95, color-system-4cc19f
     it('raises contrast for medium (3:1+) and high (7:1+) levels', () => {
       const pairs = [
         ['on-surface-variant', 'surface-container-highest'],
@@ -322,6 +324,7 @@ describe('dynamic color', () => {
       ).toEqual(themeFromSource({source, specVersion: '2021'}).dark);
     });
 
+    // spec: color-choosing-a-scheme-1b7f48
     it('keeps on-colors at 4.5:1 or more in both versions', () => {
       for (const specVersion of SPEC_VERSIONS) {
         for (const variant of SCHEME_VARIANTS) {
@@ -375,6 +378,7 @@ describe('dynamic color', () => {
       });
     }
 
+    // spec: color-advanced-4adc56, color-advanced-b234a7, color-advanced-d5db50, color-advanced-1dbb9a, color-advanced-4f2269, color-system-6b31b7
     it('adds color, on-color, container and on-container roles', () => {
       const theme = themeFromSource({source: '#6750a4', customColors: [success]});
       expect(theme.customRoles).toEqual(customColorRoles('success'));
@@ -401,6 +405,7 @@ describe('dynamic color', () => {
       expect(hct(theme.dark['success']).tone).toBeGreaterThan(50);
     });
 
+    // spec: color-advanced-f4af44, color-advanced-dabda6
     it('harmonizes toward the source hue by default', () => {
       const source = '#6750a4';
       const harmonized = themeFromSource({source, customColors: [success]});
@@ -457,6 +462,7 @@ describe('dynamic color', () => {
   });
 
   describe('harmonize()', () => {
+    // spec: color-advanced-0a8cd9
     it('moves hue at most 15 degrees toward the source', () => {
       const red = '#ff0000';
       const blue = '#0000ff';
@@ -628,6 +634,7 @@ describe('dynamic color', () => {
       expect(hueDistance(hct(source).hue, hct('#2e7d32').hue)).toBeLessThan(5);
     });
 
+    // spec: color-dynamic-e85e37, color-dynamic-7aa671
     it('generates a content-based theme from an image', async () => {
       const theme = await themeFromImage(canvas(['#ef6c00']));
       expect(theme.variant).toBe('content');

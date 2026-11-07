@@ -16,7 +16,9 @@ import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {button} from '../button/button.js';
 import {iconButton} from '../iconbutton/icon-button.js';
+import {AnnouncerController} from '../shared/announcer.js';
 import {hasSlotted} from '../shared/has-slotted.js';
+import {waitForMotion} from '../shared/motion.js';
 import {CLOSE_REASONS, snackbarClasses} from './snackbar.js';
 
 import buttonStyles from '../button/button.css' with {type: 'css'}; // github-only
@@ -109,16 +111,6 @@ export class SnackbarElement extends LitElement {
       :host([quick]) .snackbar-surface {
         transition: none;
       }
-
-      /* The polite live region: visually hidden, always rendered. */
-      .snackbar-announcer {
-        position: absolute;
-        inline-size: 1px;
-        block-size: 1px;
-        overflow: hidden;
-        clip-path: inset(50%);
-        white-space: nowrap;
-      }
     `,
   ];
 
@@ -197,8 +189,9 @@ export class SnackbarElement extends LitElement {
 
   @state() private isOpening = false;
   @state() private isClosing = false;
-  /** The text of the polite live region. */
-  @state() private announcement = '';
+
+  /** The polite live region that announces each message. */
+  private readonly announcer = new AnnouncerController(this);
 
   private isHovered = false;
   private isFocused = false;
@@ -397,7 +390,7 @@ export class SnackbarElement extends LitElement {
     }
     // Fill the live region after the snackbar renders, so the change is
     // announced (politely, without moving focus).
-    this.announcement = this.announcementText();
+    this.announcer.announce(this.announcementText());
 
     await this.waitForAnimation(OPEN_DURATION_MS);
     if (token !== this.transitionCounter) {
@@ -445,7 +438,7 @@ export class SnackbarElement extends LitElement {
     this.requestUpdate('open', prev);
     this.isOpening = false;
     this.isClosing = true;
-    this.announcement = '';
+    this.announcer.clear();
     this.requestUpdate();
     await this.updateComplete;
     if (token !== this.transitionCounter) {
@@ -468,16 +461,18 @@ export class SnackbarElement extends LitElement {
     );
   }
 
+  /**
+   * Waits for the surface transition to end (the fade stays with reduced
+   * motion), or `durationMs` when the browser has not started it yet.
+   */
   private async waitForAnimation(durationMs: number): Promise<void> {
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    if (this.quick || durationMs <= 0 || prefersReducedMotion) {
+    if (this.quick || durationMs <= 0) {
       return;
     }
-    await new Promise<void>((resolve) => {
-      globalThis.setTimeout(resolve, durationMs);
-    });
+    await waitForMotion(
+      this.renderRoot.querySelector('.snackbar-surface'),
+      {idle: durationMs, timeout: durationMs + 100},
+    );
   }
 
   private startAutoDismissTimer() {
@@ -600,13 +595,6 @@ export class SnackbarElement extends LitElement {
     });
 
     return html`
-      <div
-        class="snackbar-announcer"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true">
-        ${this.announcement}
-      </div>
       <div class="${classMap(classes)}">
         <div class="snackbar-surface" part="surface">
           <div class="snackbar-content">

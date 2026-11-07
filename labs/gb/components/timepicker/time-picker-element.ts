@@ -25,7 +25,11 @@ import {mixinElementInternals} from '../../../behaviors/element-internals.js';
 import {button} from '../button/button.js';
 import {iconButton} from '../iconbutton/icon-button.js';
 import {ripple} from '../ripple/ripple.js';
+import {AnnouncerController} from '../shared/announcer.js';
 import {clampDensity, type Density} from '../shared/density.js';
+import {FormDisabledController} from '../shared/form-field.js';
+import {ModalSurfaceController} from '../shared/modal-surface.js';
+import {waitForMotion} from '../shared/motion.js';
 import {
   angleToValue,
   displayHour12,
@@ -87,15 +91,6 @@ const CLOCK_ICON =
 
 /** The 12/24-hour setting: from the locale (`''`) or forced. */
 export type TimePickerHourCycle = '' | '12' | '24';
-
-/** Returns the focused element, looking inside open shadow roots. */
-function getDeepActiveElement(): HTMLElement | null {
-  let active = document.activeElement;
-  while (active?.shadowRoot?.activeElement) {
-    active = active.shadowRoot.activeElement;
-  }
-  return active as HTMLElement | null;
-}
 
 function pad(value: number) {
   return String(value).padStart(2, '0');
@@ -330,10 +325,10 @@ export class TimePickerElement extends baseClass {
    */
   @property({type: Boolean, reflect: true})
   get open(): boolean {
-    return this.isOpenInternal;
+    return this.modalSurface.open;
   }
   set open(value: boolean) {
-    if (value === this.isOpenInternal) {
+    if (value === this.modalSurface.open) {
       return;
     }
     if (value) {
@@ -366,20 +361,20 @@ export class TimePickerElement extends baseClass {
 
   @state() private pending: TimeOfDay = {hour: 0, minute: 0};
   @state() private dragging = false;
-  @state() private isClosing = false;
   @state() private hourText = '';
   @state() private minuteText = '';
   @state() private hourInvalid = false;
   @state() private minuteInvalid = false;
-  @state() private announcement = '';
+  /** Announces the selection (hour or minutes) and the mode to screen readers. */
+  private readonly announcer = new AnnouncerController(this, {
+    container: () => this.container,
+  });
   @state() private viewportIsShort = false;
 
   @query('.time-picker') private readonly container!: HTMLElement | null;
   @query('.time-picker-dial') private readonly dial!: HTMLElement | null;
 
   private committed: TimeOfDay | null = null;
-  private defaultValue = '';
-  private isOpenInternal = false;
   private isInteracting = false;
   private pendingChanged = false;
   /** The selector angle, unwrapped so it always turns the short way. */
@@ -387,9 +382,37 @@ export class TimePickerElement extends baseClass {
   private pointerStart: {x: number; y: number} | null = null;
   private typeAhead = '';
   private typeAheadTimer?: ReturnType<typeof setTimeout>;
-  private transitionCounter = 0;
-  private previouslyFocused: HTMLElement | null = null;
-  private pointerDownOnScrim = false;
+
+  /**
+   * Opens and closes the modal `<dialog>`, closes it with Escape, back or
+   * the scrim, traps and restores focus, locks page scrolling and fires the
+   * `open`, `opened`, `close` and `closed` events.
+   */
+  private readonly modalSurface = new ModalSurfaceController(this, {
+    dialog: () =>
+      this.container instanceof HTMLDialogElement ? this.container : null,
+    surface: () => this.container,
+    modal: () => this.modal,
+    closeOnDisconnect: true,
+    isScrim: (event) => this.isOnScrim(event),
+    initialFocus: () =>
+      this.shadowRoot?.querySelector<HTMLElement>(
+        this.mode === 'input'
+          ? 'input[data-selection="hour"]'
+          : '.time-picker-selector[data-selection="hour"]',
+      ),
+    waitForMotion: () => this.waitForTransitions(),
+    onCloseRequest: (reason) => {
+      this.cancel(reason);
+    },
+  });
+
+  /** Disabled by a disabled fieldset, which the attribute can't follow. */
+  private readonly formDisabled = new FormDisabledController(this);
+
+  private get isClosing() {
+    return this.modalSurface.closing;
+  }
   private mediaQuery?: MediaQueryList;
 
   constructor() {
@@ -401,7 +424,6 @@ export class TimePickerElement extends baseClass {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.defaultValue = this.getAttribute('value') ?? '';
     if (!isServer && window.matchMedia) {
       this.mediaQuery = window.matchMedia(HORIZONTAL_LAYOUT_QUERY);
       this.viewportIsShort = this.mediaQuery.matches;
@@ -413,64 +435,44 @@ export class TimePickerElement extends baseClass {
     super.disconnectedCallback();
     this.mediaQuery?.removeEventListener('change', this.handleViewportChange);
     clearTimeout(this.typeAheadTimer);
-    if (this.isOpenInternal || this.isClosing) {
-      this.transitionCounter++;
-      this.isClosing = false;
-      this.setOpenInternal(false);
-    }
+  }
+
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the picker disabled after the
+    // fieldset is enabled again.
+    this.formDisabled.set(disabled);
   }
 
   /**
    * Opens a modal picker on the committed time, starting with the hours.
    * Fires `open`.
    */
-  async show(): Promise<void> {
-    if (this.isOpenInternal && !this.isClosing) {
-      return;
+  show(): Promise<void> {
+    if (this.modalSurface.open && !this.modalSurface.closing) {
+      return Promise.resolve();
     }
-    const token = ++this.transitionCounter;
-    this.isClosing = false;
     this.resetPending();
     this.selection = 'hour';
-    this.setOpenInternal(true);
-    await this.updateComplete;
-    if (token !== this.transitionCounter || !this.modal || !this.isConnected) {
-      return;
-    }
-    const dialog = this.container as HTMLDialogElement | null;
-    if (dialog && !dialog.open) {
-      this.previouslyFocused = getDeepActiveElement();
-      dialog.showModal();
-      this.focusFirst();
-    }
-    this.dispatchEvent(new Event('open'));
+    return this.modalSurface.show();
   }
 
   /**
-   * Closes a modal picker without committing. Fires `close` after the exit
-   * transition.
+   * Closes a modal picker without committing. Fires a cancelable `close`
+   * event with `detail.reason`, then `closed` after the exit transition.
+   *
+   * @param reason Why the picker closes (`confirm`, `cancel`, `escape`,
+   *     `back`, `scrim` or your own). Defaults to `dismiss`.
    */
-  async close(): Promise<void> {
-    if (!this.isOpenInternal) {
-      return;
-    }
-    const token = ++this.transitionCounter;
-    this.setOpenInternal(false);
-    const dialog = this.container as HTMLDialogElement | null;
-    if (!dialog || !(dialog instanceof HTMLDialogElement) || !dialog.open) {
-      return;
-    }
-    this.isClosing = true;
-    await this.updateComplete;
-    await this.waitForTransitions();
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    this.isClosing = false;
-    dialog.close();
-    await this.updateComplete;
-    this.restoreFocus();
-    this.dispatchEvent(new Event('close'));
+  close(reason?: string): Promise<void> {
+    return this.modalSurface.close(reason);
   }
 
   /**
@@ -484,7 +486,7 @@ export class TimePickerElement extends baseClass {
     if (this.value !== prev) {
       this.dispatchEvent(new Event('change', {bubbles: true}));
     }
-    this.close();
+    this.close('confirm');
   }
 
   /**
@@ -492,13 +494,13 @@ export class TimePickerElement extends baseClass {
    * unless the event is canceled (canceling keeps the pending time). What the
    * Cancel action does.
    */
-  cancel() {
+  cancel(reason = 'cancel') {
     const proceed = this.dispatchEvent(new Event('cancel', {cancelable: true}));
     if (!proceed) {
       return;
     }
     this.resetPending();
-    this.close();
+    this.close(reason);
   }
 
   /** Switches between the dial and input modes. */
@@ -509,7 +511,7 @@ export class TimePickerElement extends baseClass {
   }
 
   override formResetCallback() {
-    this.value = this.defaultValue;
+    this.value = this.getAttribute('value') ?? '';
   }
 
   override formStateRestoreCallback(state: string) {
@@ -536,12 +538,6 @@ export class TimePickerElement extends baseClass {
 
   private get isPm() {
     return this.pending.hour >= 12;
-  }
-
-  private setOpenInternal(open: boolean) {
-    const prev = this.isOpenInternal;
-    this.isOpenInternal = open;
-    this.requestUpdate('open', prev);
   }
 
   private resetPending() {
@@ -597,8 +593,7 @@ export class TimePickerElement extends baseClass {
   }
 
   private announce(message: string) {
-    // Re-setting the same text would not be announced again.
-    this.announcement = this.announcement === message ? `${message} ` : message;
+    this.announcer.announce(message);
   }
 
   private setHour(hour: number) {
@@ -960,57 +955,12 @@ export class TimePickerElement extends baseClass {
 
   // ---- Modal ----
 
-  private focusFirst() {
-    this.updateComplete.then(() => {
-      this.shadowRoot
-        ?.querySelector<HTMLElement>(
-          this.mode === 'input'
-            ? 'input[data-selection="hour"]'
-            : '.time-picker-selector[data-selection="hour"]',
-        )
-        ?.focus();
-    });
-  }
-
-  private restoreFocus() {
-    const previous = this.previouslyFocused;
-    this.previouslyFocused = null;
-    if (previous?.isConnected) {
-      previous.focus();
-    }
-  }
-
   private async waitForTransitions() {
-    const dialog = this.container;
-    if (this.quick || !dialog || !dialog.getAnimations) {
+    if (this.quick) {
       return;
     }
-    const animations = dialog
-      .getAnimations({subtree: true})
-      .filter(
-        (animation) =>
-          (animation.effect as KeyframeEffect | null)?.target === dialog,
-      );
-    await Promise.all(animations.map((a) => a.finished.catch(() => {})));
+    await waitForMotion(this.container);
   }
-
-  private readonly handleNativeCancel = (event: Event) => {
-    if (event.target !== this.container) {
-      return;
-    }
-    event.preventDefault();
-    this.cancel();
-  };
-
-  private readonly handleNativeClose = () => {
-    // The browser closed the dialog without `close()`: sync state.
-    if (this.isOpenInternal && !this.isClosing) {
-      this.transitionCounter++;
-      this.setOpenInternal(false);
-      this.restoreFocus();
-      this.dispatchEvent(new Event('close'));
-    }
-  };
 
   private isOnScrim(event: MouseEvent) {
     const dialog = this.container;
@@ -1025,18 +975,6 @@ export class TimePickerElement extends baseClass {
       event.clientY > rect.bottom
     );
   }
-
-  private readonly handleContainerPointerDown = (event: PointerEvent) => {
-    this.pointerDownOnScrim = this.modal && this.isOnScrim(event);
-  };
-
-  private readonly handleContainerClick = (event: MouseEvent) => {
-    const onScrim = this.pointerDownOnScrim && this.isOnScrim(event);
-    this.pointerDownOnScrim = false;
-    if (onScrim && this.isOpenInternal) {
-      this.cancel();
-    }
-  };
 
   private readonly handleViewportChange = (event: MediaQueryListEvent) => {
     this.viewportIsShort = event.matches;
@@ -1085,9 +1023,6 @@ export class TimePickerElement extends baseClass {
         ${this.mode === 'input' ? this.renderInputs() : this.renderDialMode()}
       </div>
       ${this.renderActions()}
-      <div class="time-picker-live" role="status" aria-live="polite">
-        ${this.announcement}
-      </div>
     `;
 
     if (this.modal) {
@@ -1095,10 +1030,6 @@ export class TimePickerElement extends baseClass {
         class="${classAttr}"
         part="container"
         aria-labelledby="headline"
-        @cancel=${this.handleNativeCancel}
-        @close=${this.handleNativeClose}
-        @pointerdown=${this.handleContainerPointerDown}
-        @click=${this.handleContainerClick}
       >
         ${content}
       </dialog>`;

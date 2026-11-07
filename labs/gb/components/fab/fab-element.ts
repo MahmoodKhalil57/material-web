@@ -8,6 +8,10 @@ import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {ARIAMixinStrict} from '../../../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../../../internal/aria/delegate.js';
+import {
+  DisclosureController,
+  expandedUnlessFalseConverter,
+} from '../shared/disclosure.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
@@ -108,10 +112,7 @@ export class FabElement extends baseClass {
    * collapses and the FAB becomes an icon-only FAB. Set the attribute to
    * `expanded="false"` to collapse it from markup.
    */
-  @property({
-    type: Boolean,
-    converter: {fromAttribute: (value: string | null) => value !== 'false'},
-  })
+  @property({type: Boolean, converter: expandedUnlessFalseConverter})
   expanded = true;
 
   /**
@@ -121,6 +122,18 @@ export class FabElement extends baseClass {
   @property({attribute: 'scroll-target'}) scrollTarget = '';
 
   private scrollCleanup?: AbortController;
+
+  /**
+   * Collapsing and expanding on scroll fire a cancelable `toggle` event
+   * first, so an app can keep the label.
+   */
+  private readonly disclosure = new DisclosureController(this, {
+    expanded: () => this.expanded,
+    setExpanded: (expanded) => {
+      this.expanded = expanded;
+    },
+    aria: false,
+  });
 
   override connectedCallback() {
     super.connectedCallback();
@@ -166,7 +179,11 @@ export class FabElement extends baseClass {
     setupCollapseOnScroll(
       target,
       (expanded) => {
-        this.expanded = expanded;
+        if (expanded) {
+          this.disclosure.expand();
+        } else {
+          this.disclosure.collapse();
+        }
       },
       {signal: this.scrollCleanup.signal},
     );

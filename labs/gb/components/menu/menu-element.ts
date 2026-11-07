@@ -13,6 +13,7 @@ import {
 } from '../../../behaviors/element-internals.js';
 import {mixinFocusable} from '../../../behaviors/focusable.js';
 
+import {AnchoredOverlayController} from '../shared/anchored-overlay.js';
 import {clampDensity, type Density} from '../shared/density.js';
 import {nextFocusIndex} from '../shared/roving-focus.js';
 import menuStyles from './menu.css' with {type: 'css'}; // github-only
@@ -47,8 +48,7 @@ const LONG_PRESS_SLOP_PX = 10;
  * Space kept between a context menu and the window edges (Compose
  * `MenuHorizontalMargin` / `MenuVerticalMargin`).
  */
-const WINDOW_MARGIN_INLINE_PX = 8;
-const WINDOW_MARGIN_BLOCK_PX = 48;
+const CONTEXT_MENU_MARGIN = {inline: 8, blockStart: 0, blockEnd: 48};
 
 /** Keys that open a submenu or close it, by text direction. */
 function submenuKeys(element: Element) {
@@ -190,7 +190,6 @@ export class MenuElement extends baseClass {
    */
   skipInitialFocus = false;
 
-  private previouslyFocused?: HTMLElement | null;
   private readonly itemsSet = new Set<HTMLElement>();
   private typeahead = '';
   private typeaheadTime = -Infinity;
@@ -201,6 +200,54 @@ export class MenuElement extends baseClass {
   private invokerAbort?: AbortController;
   /** The invoker that opened the menu from the keyboard, for focus return. */
   private keyboardInvoker: HTMLElement | null = null;
+
+  /**
+   * The popover (shown in front of all other UI), its position next to the
+   * invoker or parent item (flipping when there is no room; context menus at
+   * the pointer), light dismiss with a reason, and focus returning to the
+   * invoker.
+   */
+  private readonly overlay = new AnchoredOverlayController(this, {
+    surface: () => this,
+    anchor: (): HTMLElement | null => this.parentItem ?? this.overlay.source,
+    popover: 'auto',
+    placement: () =>
+      this.hasAttribute('context-menu')
+        ? {
+            placement: 'below',
+            align: 'start',
+            spacing: 0,
+            margin: CONTEXT_MENU_MARGIN,
+          }
+        : this.hasAttribute('submenu')
+          ? {placement: 'end', align: 'start', spacing: 0}
+          : {placement: 'below', align: 'start', spacing: 0},
+    returnTarget: (source) =>
+      this.parentItem ??
+      source ??
+      this.keyboardInvoker ??
+      (this.contextTarget ? this.activeElementOutside() : null),
+    onOpen: () => {
+      // Focus the first item (menus.md "Initial focus": "focus should be
+      // placed on the first menu item").
+      const skip = this.skipInitialFocus;
+      this.skipInitialFocus = false;
+      this.keyboardInvoker = null;
+      if (!skip) {
+        setTimeout(() => {
+          this.items[0]?.focus();
+        });
+      }
+    },
+    onClose: () => {
+      this.inactive = false;
+      this.removeAttribute('context-menu');
+      const parentMenu = closestMenu(this.parentElement);
+      if (parentMenu && this.hasAttribute('submenu')) {
+        parentMenu.inactive = false;
+      }
+    },
+  });
 
   constructor() {
     super();
@@ -234,55 +281,10 @@ export class MenuElement extends baseClass {
     };
     this.addEventListener('focusin', engage);
     this.addEventListener('pointerover', engage);
-
-    this.addEventListener(
-      'toggle',
-      (event: ToggleEvent & {source?: Element | null}) => {
-        // Toggle events of submenus do not bubble, but guard anyway.
-        if (event.target !== this) return;
-        if (event.newState === 'open') {
-          this.previouslyFocused =
-            this.parentItem ??
-            (event.source as HTMLElement | null) ??
-            this.keyboardInvoker ??
-            (this.contextTarget ? this.activeElementOutside() : null);
-          // Focus the first item (menus.md "Initial focus": "focus should be
-          // placed on the first menu item").
-          const skip = this.skipInitialFocus;
-          this.skipInitialFocus = false;
-          this.keyboardInvoker = null;
-          if (!skip) {
-            setTimeout(() => {
-              this.items[0]?.focus();
-            });
-          }
-        } else {
-          this.inactive = false;
-          this.removeAttribute('context-menu');
-          const parentMenu = closestMenu(this.parentElement);
-          if (parentMenu && this.hasAttribute('submenu')) {
-            parentMenu.inactive = false;
-          }
-          // Return focus only if it is still inside this menu (not when the
-          // menu closes because focus moved elsewhere).
-          if (
-            this.matches(':focus-within') ||
-            !document.activeElement ||
-            document.activeElement === document.body
-          ) {
-            this.previouslyFocused?.focus();
-          }
-          this.previouslyFocused = undefined;
-        }
-      },
-    );
   }
 
   override connectedCallback() {
     super.connectedCallback();
-    // Set popover behavior in connectedCallback since constructor may not
-    // sprout attributes.
-    this.popover = 'auto';
     this.bindContextTarget();
     this.bindInvokerKeys();
   }
@@ -310,25 +312,7 @@ export class MenuElement extends baseClass {
    */
   showAt(x: number, y: number) {
     this.setAttribute('context-menu', '');
-    this.style.position = 'fixed';
-    this.style.inset = 'auto';
-    this.style.left = `${x}px`;
-    this.style.top = `${y}px`;
-    if (!this.matches(':popover-open')) {
-      this.showPopover();
-    }
-    const {width, height} = this.getBoundingClientRect();
-    const rtl = this.matches(':dir(rtl)');
-    const maxX = window.innerWidth - WINDOW_MARGIN_INLINE_PX;
-    const maxY = window.innerHeight - WINDOW_MARGIN_BLOCK_PX;
-    // Opens toward the inline end: right in LTR, left in RTL.
-    let left = rtl ? x - width : x;
-    if (left + width > maxX) left = x - width;
-    if (left < WINDOW_MARGIN_INLINE_PX) left = Math.min(x, maxX - width);
-    let top = y;
-    if (top + height > maxY) top = y - height;
-    this.style.left = `${Math.max(WINDOW_MARGIN_INLINE_PX, left)}px`;
-    this.style.top = `${Math.max(0, top)}px`;
+    this.overlay.openAt(x, y);
   }
 
   /** Closes this menu and every menu it is a submenu of. */

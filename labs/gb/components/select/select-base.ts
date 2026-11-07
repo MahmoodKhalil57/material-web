@@ -25,6 +25,15 @@ import {
   onReportValidity,
 } from '../../../behaviors/on-report-validity.js';
 import {menu} from '../menu/menu.js';
+import {
+  AnchoredOverlayController,
+  composedContains,
+  type OverlayDismissReason,
+} from '../shared/anchored-overlay.js';
+import {
+  FormDisabledController,
+  ValueFieldController,
+} from '../shared/form-field.js';
 import {SELECT_CLASSES, selectClasses, type SelectVariant} from './select.js';
 import {SelectOptionElement} from './select-option-element.js';
 
@@ -120,16 +129,41 @@ export abstract class SelectBase extends baseClass {
   /** Whether the menu is open. */
   @property({type: Boolean, reflect: true}) open = false;
 
-  // Writable mixin properties for lit-html binding, needed for lit-analyzer.
-  declare disabled: boolean;
+  // Writable mixin property for lit-html binding, needed for lit-analyzer.
   declare name: string;
 
-  /** Whether `reportValidity()` found a native error. */
-  @state() protected nativeError = false;
-  /** The message of the native error found by `reportValidity()`. */
-  @state() protected nativeErrorText = '';
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the field disabled after the fieldset
+    // is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
+  private readonly formDisabled = new FormDisabledController(this);
+
+  override setCustomValidity(error: string) {
+    super.setCustomValidity(error);
+    // Shows or clears the message of an error that was already reported.
+    this.requestUpdate();
+  }
+
   /** Bumped to re-announce an unchanged error message. */
   @state() private errorAnnouncement = 0;
+
+  /** The dirty value and the error shown after validation. */
+  protected readonly valueField = new ValueFieldController(this, {
+    onRepeat: () => {
+      // Re-render the alert so assistive technology announces it again.
+      this.errorAnnouncement++;
+    },
+  });
 
   @query('.select-menu') protected readonly listbox!: HTMLElement | null;
 
@@ -152,18 +186,35 @@ export abstract class SelectBase extends baseClass {
     return this.options.filter((option) => !option.filtered && !option.hidden);
   }
 
-  protected get hasError() {
-    return this.error || this.nativeError;
-  }
+  /** Why the menu was last asked to close (a light dismiss), for `close()`. */
+  private dismissReason: OverlayDismissReason | null = null;
 
-  constructor() {
-    super();
-    this.addEventListener('focusout', (event) => {
-      const next = event.relatedTarget as Node | null;
-      if (next && (next === this || this.contains(next))) return;
+  /**
+   * The listbox popover under the field's width (Compose
+   * `ExposedDropdownMenuBox`): below the field, above it when there is no
+   * room; Escape, a press outside or focus leaving the field close it.
+   * Focus stays on the field.
+   */
+  protected readonly overlay = new AnchoredOverlayController(this, {
+    surface: () => this.listbox,
+    anchor: () =>
+      this.shadowRoot?.querySelector<HTMLElement>('.text-field-container') ??
+      null,
+    popover: 'manual',
+    dismiss: {escape: true, outside: true, focusOut: true},
+    contains: (node) => composedContains(this, node),
+    returnTarget: () => this.getField(),
+    placement: () => ({placement: 'below', align: 'start', spacing: 0}),
+    onDismiss: (reason) => {
+      this.dismissReason = reason;
       this.open = false;
-    });
-  }
+    },
+    onPosition: () => {
+      // Without CSS anchor positioning: as wide as the field.
+      const width = this.overlay.anchorRect()?.width;
+      if (width && this.listbox) this.listbox.style.inlineSize = `${width}px`;
+    },
+  });
 
   /** Opens the menu. */
   showPicker() {
@@ -214,17 +265,14 @@ export abstract class SelectBase extends baseClass {
   }
 
   private syncPopover(notify: boolean) {
-    const listbox = this.listbox;
-    if (!listbox) return;
-    const shown = listbox.matches(':popover-open');
+    if (!this.listbox) return;
+    const shown = this.overlay.isOpen;
     if (this.open === shown) return;
     if (notify) {
       this.dispatchEvent(new Event(this.open ? 'opening' : 'closing'));
     }
     if (this.open) {
-      try {
-        listbox.showPopover();
-      } catch {
+      if (!this.overlay.open()) {
         // Not connected to a document; stays closed.
         this.open = false;
         return;
@@ -235,14 +283,15 @@ export abstract class SelectBase extends baseClass {
         this.activeOption.scrollIntoView({block: 'nearest'});
       }
     } else {
-      listbox.hidePopover();
+      this.overlay.close(this.dismissReason ?? 'method');
+      this.dismissReason = null;
       this.setActive(null);
     }
   }
 
   protected override render() {
-    const showError = !this.disabled && this.hasError;
-    const errorText = this.error ? this.errorText : this.nativeErrorText;
+    const showError = !this.disabled && this.valueField.hasError;
+    const errorText = this.valueField.message;
     const supporting = showError && errorText ? errorText : this.supportingText;
     const labelText = this.getLabelText();
     const classes = selectClasses({
@@ -311,7 +360,6 @@ export abstract class SelectBase extends baseClass {
           id="listbox"
           class=${menu({classes: {[SELECT_CLASSES.menu]: true}})}
           part="menu"
-          popover="manual"
           role="listbox"
           aria-labelledby=${labelText ? 'label' : nothing}
           @mousedown=${this.handleListboxMousedown}
@@ -405,9 +453,6 @@ export abstract class SelectBase extends baseClass {
       case 'PageUp':
         this.moveActive(-PAGE_SIZE);
         return true;
-      case 'Escape':
-        this.open = false;
-        return true;
       default:
         return false;
     }
@@ -483,16 +528,6 @@ export abstract class SelectBase extends baseClass {
   }
 
   override [onReportValidity](invalidEvent: Event | null) {
-    // Show the message in the field instead of the browser pop-up.
-    invalidEvent?.preventDefault();
-    const previous = this.error ? this.errorText : this.nativeErrorText;
-    const wasError = this.nativeError;
-    this.nativeError = !!invalidEvent;
-    this.nativeErrorText = this.validationMessage;
-    const next = this.error ? this.errorText : this.nativeErrorText;
-    if (wasError && this.nativeError && previous === next) {
-      // Re-render the alert so assistive technology announces it again.
-      this.errorAnnouncement++;
-    }
+    this.valueField.report(invalidEvent);
   }
 }

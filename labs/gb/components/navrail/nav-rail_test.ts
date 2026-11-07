@@ -18,7 +18,7 @@ import {FabElement} from '../fab/fab-element.js';
 import {
   FakeCloseWatcher,
   useCloseWatcher,
-} from '../sheet/predictive-back-harness.js';
+} from '../shared/predictive-back-harness.js';
 import {NavRailElement} from './nav-rail-element.js';
 
 adoptStyles(document, [m3Styles]);
@@ -63,6 +63,7 @@ describe('md-gb-nav-rail', () => {
     <md-gb-nav-rail-item>Chat</md-gb-nav-rail-item>
   `;
 
+  // spec: navigation-rail-f0a5c6, navigation-rail-83e989
   it('uses the collapsed width and top space', async () => {
     const rail = await render(html`<md-gb-nav-rail>${items}</md-gb-nav-rail>`);
     const style = getComputedStyle(railEl(rail));
@@ -88,6 +89,7 @@ describe('md-gb-nav-rail', () => {
   });
 
   describe('header FAB', () => {
+    // spec: navigation-rail-ce2310
     it('is an extended FAB only while the rail is expanded', async () => {
       const rail = await render(
         html`<md-gb-nav-rail>
@@ -117,6 +119,7 @@ describe('md-gb-nav-rail', () => {
       return rail;
     }
 
+    // spec: navigation-rail-eddba8, navigation-rail-7610d0, navigation-rail-47a2d3
     it('expands over the content without changing the layout', async () => {
       const rail = await setupModal();
       const before = rail.getBoundingClientRect().width;

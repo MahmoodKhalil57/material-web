@@ -43,18 +43,26 @@ function panelOf(sheet: HTMLElement) {
   return sheet.shadowRoot!.querySelector<HTMLElement>('.sheet-panel')!;
 }
 
-function pointer(type: string, target: Element, y: number, init = {}) {
-  target.dispatchEvent(
-    new PointerEvent(type, {
-      bubbles: true,
-      composed: true,
-      pointerId: 1,
-      pointerType: 'touch',
-      clientY: y,
-      button: 0,
-      ...init,
-    }),
-  );
+function pointer(
+  type: string,
+  target: Element,
+  y: number,
+  {timeStamp, ...init}: {timeStamp?: number} = {},
+) {
+  const event = new PointerEvent(type, {
+    bubbles: true,
+    composed: true,
+    pointerId: 1,
+    pointerType: 'touch',
+    isPrimary: true,
+    clientY: y,
+    button: 0,
+    ...init,
+  });
+  if (timeStamp !== undefined) {
+    Object.defineProperty(event, 'timeStamp', {value: timeStamp});
+  }
+  target.dispatchEvent(event);
 }
 
 describe('<md-gb-bottom-sheet>', () => {
@@ -105,6 +113,7 @@ describe('<md-gb-bottom-sheet>', () => {
   });
 
   describe('show and close', () => {
+    // spec: bottom-sheets-039878
     it('opens a non-modal dialog for a standard sheet', async () => {
       const {sheet} = await setupTest();
       await sheet.show();
@@ -123,6 +132,7 @@ describe('<md-gb-bottom-sheet>', () => {
       expect(document.activeElement).toBe(trigger);
     });
 
+    // spec: bottom-sheets-ec6577
     it('opens a modal dialog for a modal sheet', async () => {
       const {sheet} = await setupTest(
         html`<md-gb-bottom-sheet modal quick
@@ -297,6 +307,7 @@ describe('<md-gb-bottom-sheet>', () => {
       expect(dialogOf(sheet).getAttribute('aria-label')).toBe('Share');
     });
 
+    // spec: bottom-sheets-5d874e, bottom-sheets-4177f7
     it('renders the drag handle as a labeled button', async () => {
       const {sheet} = await setupTest();
       const handle = dragHandleOf(sheet)!;
@@ -318,6 +329,7 @@ describe('<md-gb-bottom-sheet>', () => {
       <div style="block-size: 400px">Tall content</div>
     </md-gb-bottom-sheet>`;
 
+    // spec: bottom-sheets-834155
     it('rests at the peek height when partially expanded', async () => {
       const {sheet} = await setupTest(tall);
       await sheet.show();
@@ -329,6 +341,7 @@ describe('<md-gb-bottom-sheet>', () => {
       expect(visible).toBeCloseTo(56, 0);
     });
 
+    // spec: bottom-sheets-834155
     it('rests fully visible when expanded', async () => {
       const {sheet} = await setupTest(tall);
       sheet.state = BOTTOM_SHEET_STATES.expanded;
@@ -341,6 +354,7 @@ describe('<md-gb-bottom-sheet>', () => {
       );
     });
 
+    // spec: bottom-sheets-e29c10, bottom-sheets-ba6d67, bottom-sheets-350a86, bottom-sheets-95e993, bottom-sheets-37c60f, bottom-sheets-af31de, bottom-sheets-4f8489, bottom-sheets-a92fca, bottom-sheets-6aab83, bottom-sheets-11be19
     it('toggles heights with the drag handle and reports aria-expanded', async () => {
       const {sheet} = await setupTest(tall);
       await sheet.show();
@@ -373,6 +387,7 @@ describe('<md-gb-bottom-sheet>', () => {
       expect(sheet.state).toBe(BOTTOM_SHEET_STATES.expanded);
     });
 
+    // spec: bottom-sheets-483039
     it('closes from the drag handle without a lower height', async () => {
       const {sheet} = await setupTest(
         html`<md-gb-bottom-sheet quick skip-partially-expanded>
@@ -423,6 +438,7 @@ describe('<md-gb-bottom-sheet>', () => {
       expect(panel.getBoundingClientRect().top).toBeCloseTo(top, 0);
     });
 
+    // spec: bottom-sheets-aca585
     it('closes a modal sheet dragged down past its height', async () => {
       const {sheet} = await setupTest(tallModal);
       await sheet.show();
@@ -442,11 +458,11 @@ describe('<md-gb-bottom-sheet>', () => {
       const {sheet} = await setupTest(tallModal);
       await sheet.show();
       const area = dragArea(sheet);
-      pointer('pointerdown', area, 100);
-      pointer('pointermove', area, 120);
+      pointer('pointerdown', area, 100, {timeStamp: 0});
+      pointer('pointermove', area, 120, {timeStamp: 50});
       // A later move without travel ends the drag at rest (no fling).
-      pointer('pointermove', area, 120);
-      pointer('pointerup', area, 120);
+      pointer('pointermove', area, 120, {timeStamp: 400});
+      pointer('pointerup', area, 120, {timeStamp: 450});
       await sheet.updateComplete;
       expect(sheet.open).toBeTrue();
       expect(sheet.state).toBe(BOTTOM_SHEET_STATES.expanded);
@@ -563,6 +579,7 @@ describe('<md-gb-side-sheet>', () => {
   });
 
   describe('standard', () => {
+    // spec: side-sheets-877430, side-sheets-f2546f, side-sheets-085f99
     it('reserves the sheet width while open', async () => {
       const {sheet, main} = await setupTest();
       await sheet.show();
@@ -571,8 +588,10 @@ describe('<md-gb-side-sheet>', () => {
       expect(dialogOf(sheet).matches(':modal')).toBeFalse();
       await sheet.close();
       expect(sheet.getBoundingClientRect().width).toBe(0);
+      expect(main.getBoundingClientRect().width).toBe(800);
     });
 
+    // spec: side-sheets-a8810a
     it('adds the detached margins to the reserved width', async () => {
       const {sheet} = await setupTest(
         html`<md-gb-side-sheet
@@ -589,6 +608,7 @@ describe('<md-gb-side-sheet>', () => {
   });
 
   describe('modal', () => {
+    // spec: side-sheets-346816
     it('opens a modal dialog at the inline end of the window', async () => {
       const {sheet} = await setupTest(
         html`<md-gb-side-sheet
@@ -659,6 +679,7 @@ describe('<md-gb-side-sheet>', () => {
   });
 
   describe('header', () => {
+    // spec: side-sheets-2a70b6
     it('closes from the close button', async () => {
       const {sheet} = await setupTest();
       await sheet.show();
@@ -806,6 +827,7 @@ describe('<md-gb-side-sheet>', () => {
   });
 
   describe('accessibility', () => {
+    // spec: side-sheets-d5fc77, side-sheets-fe938d
     it('is a dialog labelled by its headline', async () => {
       const {sheet} = await setupTest();
       const dialog = dialogOf(sheet);

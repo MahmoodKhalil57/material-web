@@ -8,6 +8,7 @@ import {type ClassInfo} from 'lit/directives/class-map.js';
 import {fabClasses, type FabSize} from '../fab/fab.js';
 import {focusRingClasses} from '../focus/focus-ring.js';
 import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {applyDisclosure, requestToggle} from '../shared/disclosure.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
 import {nextFocusIndex} from '../shared/roving-focus.js';
@@ -201,41 +202,37 @@ export function isFabMenuOpen(menu: HTMLElement): boolean {
 
 /**
  * Opens or closes a FAB menu: toggles its open class, the FAB's
- * `aria-expanded` and the list's `inert`, optionally moves focus, and fires a
- * `toggle` event on the menu when the state changes.
+ * `aria-expanded` / `aria-controls` and the list's `inert` (the shared
+ * disclosure), and optionally moves focus. When the state changes it first
+ * fires a cancelable `toggle` event on the menu (a `ToggleEvent`, before the
+ * change); cancelling it leaves the menu as it is.
  *
  * @param menu The FAB menu's root element.
  * @param open Whether the menu should be open.
  * @param focus Where to move focus afterwards, if anywhere.
+ * @return Whether the menu is open afterwards.
  */
 export function setFabMenuOpen(
   menu: HTMLElement,
   open: boolean,
   focus?: FabMenuFocus,
-): void {
+): boolean {
   const wasOpen = isFabMenuOpen(menu);
+  if (wasOpen !== open && !requestToggle(menu, wasOpen)) return wasOpen;
   const button = buttonOf(menu);
   const list = listOf(menu);
   // Move focus out of the list before it becomes inert.
   if (focus === 'button') button?.focus();
   if (wasOpen !== open) {
     menu.classList.toggle(FAB_MENU_CLASSES.fabMenuOpen, open);
-    button?.setAttribute('aria-expanded', String(open));
-    list?.toggleAttribute('inert', !open);
+    applyDisclosure(open, {trigger: button, region: list});
   }
   if (focus === 'first-item') itemsOf(menu)[0]?.focus();
   if (focus === 'last-item') {
     const items = itemsOf(menu);
     items[items.length - 1]?.focus();
   }
-  if (wasOpen !== open) {
-    menu.dispatchEvent(
-      new ToggleEvent('toggle', {
-        oldState: wasOpen ? 'open' : 'closed',
-        newState: open ? 'open' : 'closed',
-      }),
-    );
-  }
+  return open;
 }
 
 function isNativelyActivated(item: HTMLElement) {
@@ -273,12 +270,10 @@ export function setupFabMenu(
   if (list) {
     if (!list.id) list.id = `fab-menu-list-${++idCounter}`;
     if (!list.hasAttribute('role')) list.setAttribute('role', 'menu');
-    list.toggleAttribute('inert', !open);
   }
+  applyDisclosure(open, {trigger: button, region: list});
   if (button) {
     button.setAttribute('aria-haspopup', 'menu');
-    button.setAttribute('aria-expanded', String(open));
-    if (list) button.setAttribute('aria-controls', list.id);
     if (list && button.id && !list.hasAttribute('aria-labelledby')) {
       list.setAttribute('aria-labelledby', button.id);
     }

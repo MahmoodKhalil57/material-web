@@ -162,16 +162,6 @@
     }
   }
 
-  // Visually hidden live region announcing the refresh.
-  .pull-to-refresh-status {
-    block-size: 1px;
-    clip-path: inset(50%);
-    inline-size: 1px;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .pull-to-refresh-indicator,
     .pull-to-refresh-refreshing > .pull-to-refresh-indicator {

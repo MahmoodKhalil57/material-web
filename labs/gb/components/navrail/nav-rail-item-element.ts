@@ -44,9 +44,11 @@ export class NavRailItemElement extends AriaTabElement {
         outline: none;
       }
 
-      :host(:hover) .nav-rail-item {
-        --md-icon-color: var(--item-inactive-hovered-icon-color);
-        color: var(--item-inactive-hovered-label-text-color);
+      @media (hover: hover) {
+        :host(:hover) .nav-rail-item {
+          --md-icon-color: var(--item-inactive-hovered-icon-color);
+          color: var(--item-inactive-hovered-label-text-color);
+        }
       }
 
       :host(:focus-visible) .nav-rail-item,
@@ -60,10 +62,12 @@ export class NavRailItemElement extends AriaTabElement {
         color: var(--item-inactive-pressed-label-text-color);
       }
 
-      :host(:hover)
-        .nav-rail-item:is(.nav-rail-item-active, [aria-selected='true']) {
-        --md-icon-color: var(--item-active-hovered-icon-color);
-        color: var(--item-active-hovered-label-text-color);
+      @media (hover: hover) {
+        :host(:hover)
+          .nav-rail-item:is(.nav-rail-item-active, [aria-selected='true']) {
+          --md-icon-color: var(--item-active-hovered-icon-color);
+          color: var(--item-active-hovered-label-text-color);
+        }
       }
 
       :host(:focus-visible)

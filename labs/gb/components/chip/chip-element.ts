@@ -135,6 +135,29 @@ export class ChipElement extends LitElement {
   /** Whether the chip is disabled. */
   @property({ type: Boolean, reflect: true }) disabled = false;
 
+  /**
+   * The value a chip set submits while the chip is selected. Defaults to the
+   * label text, like a native `<option>`.
+   */
+  @property()
+  get value(): string {
+    return this.explicitValue ?? (this.label || this.textContent?.trim() || "");
+  }
+  set value(value: string | null) {
+    const old = this.value;
+    this.explicitValue = value;
+    this.requestUpdate("value", old);
+  }
+  private explicitValue: string | null = null;
+
+  /** Whether the chip's set is disabled (a disabled form fieldset). */
+  @property({ attribute: false }) groupDisabled = false;
+
+  /** Disabled by itself or by its set. */
+  get effectivelyDisabled(): boolean {
+    return this.disabled || this.groupDisabled;
+  }
+
   /** Whether the chip is soft-disabled (`aria-disabled="true"` while preserving focusability). */
   @property({ type: Boolean, attribute: "soft-disabled", reflect: true })
   softDisabled = false;
@@ -208,7 +231,7 @@ export class ChipElement extends LitElement {
    * `{trailing: true}` (chip set navigation backwards into a chip).
    */
   override focus(options?: FocusOptions & { trailing?: boolean }) {
-    if (this.disabled) return;
+    if (this.effectivelyDisabled) return;
     if (options?.trailing && this.removeAction) {
       this.removeAction.focus(options);
       return;
@@ -221,7 +244,8 @@ export class ChipElement extends LitElement {
   }
 
   protected override updated(changed: PropertyValues<this>) {
-    if (changed.has("disabled") && changed.get("disabled") !== undefined) {
+    if ((changed.has("disabled") && changed.get("disabled") !== undefined) ||
+      (changed.has("groupDisabled") && changed.get("groupDisabled") !== undefined)) {
       this.dispatchEvent(new Event("update-focus", { bubbles: true }));
     }
   }
@@ -242,7 +266,7 @@ export class ChipElement extends LitElement {
       selected: this.selected,
       removable: this.removable,
       dragged: this.dragged,
-      disabled: this.softDisabled || this.disabled,
+      disabled: this.softDisabled || this.effectivelyDisabled,
       withLeadingIcon,
       withAvatar,
       withTrailingIcon: this.removable || this.hasTrailingIcon,
@@ -261,8 +285,8 @@ export class ChipElement extends LitElement {
         }
         rel=${this.rel || nothing}
         referrerpolicy=${this.referrerPolicy || nothing}
-        aria-disabled=${this.disabled || this.softDisabled ? "true" : nothing}
-        tabindex=${this.disabled && !this.softDisabled ? -1 : nothing}
+        aria-disabled=${this.effectivelyDisabled || this.softDisabled ? "true" : nothing}
+        tabindex=${this.effectivelyDisabled && !this.softDisabled ? -1 : nothing}
         @keydown=${this.handleKeydown}
       >
         ${content}
@@ -281,7 +305,7 @@ export class ChipElement extends LitElement {
           class="${CHIP_CLASSES.action} focus-ring-target ripple-target"
           type="button"
           tabindex=${this.removeFocused ? -1 : nothing}
-          ?disabled=${this.disabled}
+          ?disabled=${this.effectivelyDisabled}
           aria-disabled=${this.softDisabled ? "true" : nothing}
           aria-pressed=${pressed}
           @keydown=${this.handleKeydown}
@@ -296,7 +320,7 @@ export class ChipElement extends LitElement {
       part="chip"
       class="${chipClasses}"
       type="button"
-      ?disabled=${this.disabled}
+      ?disabled=${this.effectivelyDisabled}
       aria-disabled=${this.softDisabled ? "true" : nothing}
       aria-pressed=${pressed}
       @keydown=${this.handleKeydown}
@@ -347,7 +371,7 @@ export class ChipElement extends LitElement {
       type="button"
       aria-label=${label}
       tabindex="-1"
-      ?disabled=${this.disabled}
+      ?disabled=${this.effectivelyDisabled}
       aria-disabled=${this.softDisabled ? "true" : nothing}
       @focus=${this.handleRemoveFocus}
       @blur=${this.handleRemoveBlur}
@@ -447,7 +471,7 @@ export class ChipElement extends LitElement {
   }
 
   private remove_() {
-    if (this.disabled || this.softDisabled) return;
+    if (this.effectivelyDisabled || this.softDisabled) return;
     this.dispatchEvent(new Event("remove", { bubbles: true, composed: true }));
   }
 }

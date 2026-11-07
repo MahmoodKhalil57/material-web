@@ -22,6 +22,7 @@ import {styleMap} from 'lit/directives/style-map.js';
 import pullToRefreshStyles from './pull-to-refresh.css' with {type: 'css'}; // github-only
 // import {styles as pullToRefreshStyles} from './pull-to-refresh.cssresult.js'; // google3-only
 
+import {AnnouncerController} from '../shared/announcer.js';
 import {
   PULL_TO_REFRESH_THRESHOLD_PX,
   pullToRefreshArrow,
@@ -159,8 +160,21 @@ export class PullToRefreshElement extends LitElement {
     return true;
   }
 
+  /** Announces that content is refreshing (polite). */
+  private readonly announcer = new AnnouncerController(this);
+
   protected override firstUpdated() {
     this.connectGesture();
+  }
+
+  protected override updated(changed: PropertyValues<this>) {
+    if (changed.has('refreshing') || changed.has('indicatorLabel')) {
+      if (this.refreshing) {
+        this.announcer.announce(this.indicatorLabel);
+      } else {
+        this.announcer.clear();
+      }
+    }
   }
 
   protected override willUpdate(changed: PropertyValues<this>) {
@@ -198,9 +212,6 @@ export class PullToRefreshElement extends LitElement {
           ${this.indicator === 'circular'
             ? this.renderCircular()
             : this.renderLoading()}
-        </div>
-        <div class="pull-to-refresh-status" role="status">
-          ${this.refreshing ? this.indicatorLabel : nothing}
         </div>
       </div>
     `;

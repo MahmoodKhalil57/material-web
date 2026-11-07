@@ -95,6 +95,11 @@ export function trackEscapeKey() {
 
 trackEscapeKey();
 
+/** Forgets recorded Escape presses (for tests). */
+export function resetEscapeTracking() {
+  lastEscapeTime = Number.NEGATIVE_INFINITY;
+}
+
 /** Whether Escape was pressed just now. */
 function escapeJustPressed(): boolean {
   return performance.now() - lastEscapeTime < ESCAPE_WINDOW_MS;

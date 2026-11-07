@@ -30,6 +30,10 @@ import checkboxStyles from './checkbox.css' with {type: 'css'}; // github-only
 // import checkboxStyles from './checkbox.cssresult.js'; // google3-only
 
 import {clampDensity, type Density} from '../shared/density.js';
+import {
+  FormDisabledController,
+  ToggleFieldController,
+} from '../shared/form-field.js';
 import {checkbox} from './checkbox.js';
 
 // Separate variable needed for closure.
@@ -95,10 +99,10 @@ export class CheckboxElement extends baseClass {
    * The default checked state of the checkbox.
    */
   get defaultChecked(): boolean {
-    return this.hasAttribute('checked');
+    return this.field.defaultOn;
   }
   set defaultChecked(value: boolean) {
-    this.toggleAttribute('checked', value || false);
+    this.field.defaultOn = value;
   }
 
   /**
@@ -142,28 +146,34 @@ export class CheckboxElement extends baseClass {
   }
   private densityValue: Density = 0;
 
-  @query('input', true)
+  @query('input')
   private readonly input!: HTMLInputElement | null;
   /**
-   * Mimics the behavior of <input> dirty checkedness, where the `checked`
-   * attribute only updates the checked state if the checkbox has not been
-   * interacted with.
-   *
-   * @see https://html.spec.whatwg.org/multipage/input.html#concept-input-checked-dirty-flag
+   * Form value, default state, dirty checkedness (the `checked` attribute only
+   * updates the state until the checkbox is interacted with), reset, restore
+   * and the error shown after `reportValidity()`.
    */
-  private dirtyCheckedness = false;
+  private readonly formDisabled = new FormDisabledController(this);
+  private readonly field = new ToggleFieldController(this, {
+    attribute: 'checked',
+    get: () => this.checked,
+    set: (on) => {
+      this.checked = on;
+    },
+  });
 
   protected override render() {
     // Needed for closure conformance
     const {ariaLabel, ariaInvalid} = this as ARIAMixinStrict;
+    const invalid = this.error || this.field.invalid;
     return html`
       <input
         part="checkbox"
-        class="${checkbox({invalid: this.error, density: this.density})}"
+        class="${checkbox({invalid, density: this.density})}"
         type="checkbox"
         aria-checked=${this.indeterminate ? 'mixed' : nothing}
         aria-label=${ariaLabel || nothing}
-        aria-invalid=${ariaInvalid || this.error || nothing}
+        aria-invalid=${ariaInvalid || invalid || nothing}
         ?disabled=${this.disabled}
         ?required=${this.required}
         .indeterminate=${this.indeterminate}
@@ -174,7 +184,7 @@ export class CheckboxElement extends baseClass {
   }
 
   private handleInput(event: Event) {
-    this.dirtyCheckedness = true;
+    this.field.markDirty();
     const target = event.target as HTMLInputElement;
     this.checked = target.checked;
     this.indeterminate = target.indeterminate;
@@ -182,7 +192,7 @@ export class CheckboxElement extends baseClass {
   }
 
   private handleChange(event: Event) {
-    this.dirtyCheckedness = true;
+    this.field.markDirty();
     // <input> 'change' event is not composed, re-dispatch it.
     redispatchEvent(this, event);
   }
@@ -192,30 +202,42 @@ export class CheckboxElement extends baseClass {
     oldValue: string | null,
     newValue: string | null,
   ) {
-    if (name === 'checked' && this.dirtyCheckedness) {
-      // The 'checked' attribute does not update checkboxes that have been
-      // interacted with.
-      return;
-    }
+    // The 'checked' attribute does not update checkboxes that have been
+    // interacted with.
+    if (this.field?.ignoresAttribute(name)) return;
 
     super.attributeChangedCallback(name, oldValue, newValue);
   }
 
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the control disabled after the
+    // fieldset is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
   override [getFormValue]() {
-    return this.checked ? this.value : null;
+    // Called while the base class constructs, before `field` exists.
+    return this.field ? this.field.formValue() : null;
   }
 
   override [getFormState]() {
-    return String(this.checked);
+    return this.field ? this.field.formState() : null;
   }
 
   override formResetCallback() {
-    this.dirtyCheckedness = false;
-    this.checked = this.defaultChecked;
+    this.field.reset();
   }
 
   override formStateRestoreCallback(state: string) {
-    this.checked = state === 'true';
+    this.field.restore(state);
   }
 
   override [createValidator]() {

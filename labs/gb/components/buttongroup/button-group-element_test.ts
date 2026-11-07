@@ -153,6 +153,7 @@ describe("ButtonGroupElement", () => {
       return Array.from(root.querySelectorAll<ButtonElement>("md-gb-button"));
     }
 
+    // spec: button-groups-df84a5
     it("move focus between buttons, skipping disabled ones, and wrap", async () => {
       const [a, , c, d] = await setupArrows();
       inner(a).focus();
@@ -953,6 +954,7 @@ describe("ButtonGroupElement", () => {
       expect(s3.borderBottomRightRadius).toBe("20px");
     });
 
+    // spec: button-groups-4d0b18, button-groups-82d44d, button-groups-ee8f7d
     it("morphs inner corners of selected button into a pill", async () => {
       const root = env.render(html`
         <md-gb-button-group variant="connected" selection="single">
@@ -1017,6 +1019,7 @@ describe("ButtonGroupElement", () => {
       expect(testIcon.assignedSlot).toBe(defaultSlot);
     });
 
+    // spec: button-groups-6bac81
     it("computes pill corners on selected button in square connected group in any position", async () => {
       const root = env.render(html`
         <md-gb-button-group variant="connected" selection="single">
@@ -1056,6 +1059,7 @@ describe("ButtonGroupElement", () => {
       expect(s1After.borderBottomRightRadius).toBe("8px");
     });
 
+    // spec: button-groups-8e6a2b, button-groups-7a90b2, button-groups-e2950b
     it("real hit test for the xs/sm 48px touch target toggles button in Chrome and Firefox", async () => {
       const root = env.render(html`
         <div style="padding-top: 50px;">
@@ -1113,6 +1117,7 @@ describe("ButtonGroupElement", () => {
       expect(s3.borderBottomLeftRadius).toBe("20px");
     });
 
+    // spec: button-groups-1efa60, button-groups-b41b29, button-groups-dd6cd1
     it("computes square outer corners on all four corners per size", async () => {
       const root = env.render(html`
         <div>
@@ -1444,6 +1449,7 @@ describe("ButtonGroupElement", () => {
       expect(Math.round(rect2After.left)).toBe(Math.round(rect2Before.left));
     });
 
+    // spec: button-groups-9f6482, button-groups-8587a6, button-groups-f455d8, button-groups-44b557, button-groups-f9ea48, button-groups-81cb09
     it("preserves button dimensions and neighbour position when selecting xl outlined button in connected variant", async () => {
       const root = env.render(html`
         <md-gb-button-group variant="connected" selection="single">

@@ -26,8 +26,10 @@
     &.card-elevated {
       @include card-tokens.elevated;
 
-      &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
-        @include card-tokens.elevated-hover;
+      @media (hover: hover) {
+        &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+          @include card-tokens.elevated-hover;
+        }
       }
 
       &:where(:focus-within, .focus) {
@@ -50,8 +52,10 @@
     &.card-filled {
       @include card-tokens.filled;
 
-      &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
-        @include card-tokens.filled-hover;
+      @media (hover: hover) {
+        &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+          @include card-tokens.filled-hover;
+        }
       }
 
       &:where(:focus-within, .focus) {
@@ -74,8 +78,10 @@
     &.card-outlined {
       @include card-tokens.outlined;
 
-      &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
-        @include card-tokens.outlined-hover;
+      @media (hover: hover) {
+        &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+          @include card-tokens.outlined-hover;
+        }
       }
 
       &:where(:focus-within, .focus) {
@@ -115,6 +121,15 @@
     // Compose CardDefaults: disabled content uses 38% of the content color.
     &:is(:disabled, .disabled, [aria-disabled="true"]) > :not(.card-btn, slot) {
       opacity: var(--disabled-content-opacity);
+    }
+    // The default slot holds the card's own content (text, icons): it takes the
+    // content color at the same opacity, which slotted content inherits. A
+    // slot has no box, so its color is used instead of opacity.
+    &:is(:disabled, .disabled, [aria-disabled="true"]) > slot:not([name]) {
+      color: hsl(
+        from var(--md-sys-color-on-surface) h s l /
+          var(--disabled-content-opacity)
+      );
     }
 
     &:has(> .fx-playing) {

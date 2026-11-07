@@ -77,6 +77,10 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
 
     &:popover-open,
     :host(:popover-open):has(&.menu-host) {
+      // Anchored to the invoker: auto insets and no centering margin let
+      // `position-area` place it (the popover UA style centers it).
+      inset: auto;
+      margin: 0;
       position-area: end span-end;
       position-try-fallbacks: flip-block, flip-inline;
       border: none;
@@ -225,8 +229,10 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
     }
 
     // spec-labels: menus/specs/states
-    &:where(:hover, .hover) {
-      @include menu-tokens.item-standard-hovered;
+    @media (hover: hover) {
+      &:where(:hover, .hover) {
+        @include menu-tokens.item-standard-hovered;
+      }
     }
     &:where(:focus-within, .focus) {
       @include menu-tokens.item-standard-focused;
@@ -239,8 +245,10 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       & {
         @include menu-tokens.item-vibrant;
       }
-      &:where(:hover, .hover) {
-        @include menu-tokens.item-vibrant-hovered;
+      @media (hover: hover) {
+        &:where(:hover, .hover) {
+          @include menu-tokens.item-vibrant-hovered;
+        }
       }
       &:where(:focus-within, .focus) {
         @include menu-tokens.item-vibrant-focused;
@@ -318,7 +326,8 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       -webkit-font-smoothing: antialiased;
       transition:
         border-radius $fast-spatial,
-        color $fast-effects;
+        color $fast-effects,
+        var(--ripple-transition);
     }
 
     &::before {
@@ -394,6 +403,17 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       --md-sys-motion-spring-default-spatial-duration: 0.001ms;
       --md-sys-motion-spring-fast-spatial-duration: 0.001ms;
       --md-sys-motion-spring-fast-effects-duration: 0.001ms;
+    }
+
+    // Reduced motion (motion/transitions, "Follows accessibility settings"):
+    // no shape morphing; the color and state-layer fades stay.
+    .menu {
+      transition: none;
+    }
+    .menu-item {
+      transition:
+        color $fast-effects,
+        var(--ripple-transition);
     }
   }
 }

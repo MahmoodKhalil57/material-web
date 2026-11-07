@@ -76,6 +76,17 @@ export class AutocompleteElement extends SelectBase {
   /** The text in the field. */
   @property() value = '';
 
+  /**
+   * The default value, the `value` attribute: what the field shows until the
+   * person edits it and what form reset restores.
+   */
+  get defaultValue(): string {
+    return this.getAttribute('value') ?? '';
+  }
+  set defaultValue(value: string) {
+    this.setAttribute('value', value);
+  }
+
   /** Hint text shown in the input while it is empty and the label floats. */
   @property({reflect: true, converter: stringConverter}) placeholder = '';
 
@@ -95,16 +106,11 @@ export class AutocompleteElement extends SelectBase {
    * when they pick an option so that reopening shows every option.
    */
   private query = '';
-  /** Whether the user has edited the value since the last reset. */
-  private dirty = false;
-
   /** Restores the `value` attribute and clears native errors. */
   reset() {
-    this.dirty = false;
-    this.value = this.getAttribute('value') ?? '';
+    this.valueField.reset();
+    this.value = this.defaultValue;
     this.query = '';
-    this.nativeError = false;
-    this.nativeErrorText = '';
   }
 
   /** Selects all the text. */
@@ -117,7 +123,7 @@ export class AutocompleteElement extends SelectBase {
     oldValue: string | null,
     newValue: string | null,
   ) {
-    if (attribute === 'value' && this.dirty) {
+    if (this.valueField?.ignoresAttribute(attribute)) {
       // After user input, the value attribute no longer updates the value.
       return;
     }
@@ -187,7 +193,7 @@ export class AutocompleteElement extends SelectBase {
     this.query = '';
     this.applyFilter();
     if (text !== this.value) {
-      this.dirty = true;
+      this.valueField.markDirty();
       this.value = text;
       this.dispatchUserChange();
     }
@@ -195,7 +201,7 @@ export class AutocompleteElement extends SelectBase {
   }
 
   private handleInput(event: InputEvent) {
-    this.dirty = true;
+    this.valueField.markDirty();
     this.value = (event.target as HTMLInputElement).value;
     this.query = this.value;
     this.applyFilter();
@@ -224,7 +230,7 @@ export class AutocompleteElement extends SelectBase {
       } else if (key === 'Escape' && this.value) {
         // Escape on a closed combobox clears it (ARIA combobox pattern).
         event.preventDefault();
-        this.dirty = true;
+        this.valueField.markDirty();
         this.value = '';
         this.query = '';
         this.applyFilter();

@@ -25,7 +25,8 @@ import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-on
 import navDrawerStyles from './nav-drawer.css' with {type: 'css'}; // github-only
 // import {styles as navDrawerStyles} from './nav-drawer.cssresult.js'; // google3-only
 
-import {DragGesture, settleAnchor} from '../shared/drag-gesture.js';
+import {DragSettleController} from '../shared/drag-settle.js';
+import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {RovingFocusController} from '../shared/roving-focus.js';
 import {
   NAV_DRAWER_CLASSES,
@@ -155,15 +156,13 @@ export class NavDrawerElement extends baseClass {
     `,
   ];
 
-  private isOpenInternal = false;
-
   /** Whether the drawer is open. */
   @property({type: Boolean, reflect: true})
   get open(): boolean {
-    return this.isOpenInternal;
+    return this.modalSurface.open;
   }
   set open(value: boolean) {
-    if (value === this.isOpenInternal) {
+    if (value === this.modalSurface.open) {
       return;
     }
     if (value) {
@@ -190,9 +189,6 @@ export class NavDrawerElement extends baseClass {
   @property({type: Boolean, reflect: true, attribute: 'gestures-disabled'})
   gesturesDisabled = false;
 
-  /** Whether the sheet is on screen (drives the transitions). */
-  @state() private visible = false;
-
   /**
    * While a modal drawer is dragged: how far it is dragged toward its edge,
    * from 0 (open) to its width (closed).
@@ -205,14 +201,30 @@ export class NavDrawerElement extends baseClass {
   private dragWidth = 0;
   /** 1 when the drawer closes toward the left (LTR), -1 toward the right. */
   private dragDirection = 1;
-  private dragGesture: DragGesture | null = null;
-  private dragTarget: HTMLElement | null = null;
 
   @query('.nav-drawer') private readonly sheet!: HTMLElement | null;
   @query('dialog') private readonly dialog!: HTMLDialogElement | null;
 
-  private transitionCounter = 0;
-  private restoreFocusTo: HTMLElement | null = null;
+  /**
+   * A modal drawer is a native `<dialog>` over a scrim: Escape, back and
+   * scrim close requests, a focus trap, initial focus on the first item,
+   * focus restore and page scroll lock. A standard drawer only opens and
+   * closes.
+   */
+  private readonly modalSurface = new ModalSurfaceController(this, {
+    dialog: () => this.dialog,
+    scrim: () => this.shadowRoot?.querySelector<HTMLElement>('.nav-drawer-scrim') ?? null,
+    modal: () => this.modal,
+    defaultReason: NAV_DRAWER_CLOSE_REASONS.method,
+    waitForMotion: () => this.waitForTransitions(),
+    // Initial focus lands on the first destination (navigation-drawer.md).
+    initialFocus: () => this.items.find((item) => !item.disabled),
+  });
+
+  /** Whether the sheet is on screen (drives the transitions). */
+  private get visible(): boolean {
+    return this.modalSurface.entered;
+  }
 
   /** The drawer's items. */
   get items(): NavDrawerItemElement[] {
@@ -240,59 +252,16 @@ export class NavDrawerElement extends baseClass {
   override connectedCallback() {
     super.connectedCallback();
     adoptStyles(this, [focusRingStyles, rippleStyles, navDrawerStyles]);
-    if (this.hasUpdated) {
-      this.syncDragGesture();
-    }
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.dragGesture?.disconnect();
-    this.dragGesture = null;
-    this.dragTarget = null;
     this.dragOffset = null;
   }
 
   /** Opens the drawer. Resolves once it has finished animating. */
-  async show(): Promise<void> {
-    if (this.isOpenInternal) {
-      return;
-    }
-    const preventOpen = !this.dispatchEvent(
-      new Event('open', {cancelable: true}),
-    );
-    if (preventOpen) {
-      return;
-    }
-
-    const token = ++this.transitionCounter;
-    // A drawer that starts open renders open without animating.
-    const initial = !this.hasUpdated;
-    this.isOpenInternal = true;
-    this.requestUpdate('open', false);
-    if (initial) {
-      this.visible = true;
-    }
-    await this.updateComplete;
-    if (token !== this.transitionCounter) {
-      return;
-    }
-
-    if (this.modal) {
-      this.showDialog();
-      // Render the closed sheet before sliding it in.
-      this.sheet?.getBoundingClientRect();
-    }
-    this.visible = true;
-    await this.updateComplete;
-    if (this.modal) {
-      this.focusInitialItem();
-    }
-    await this.waitForTransitions();
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    this.dispatchEvent(new Event('opened'));
+  show(): Promise<void> {
+    return this.modalSurface.show();
   }
 
   /**
@@ -301,30 +270,8 @@ export class NavDrawerElement extends baseClass {
    * @param reason Why the drawer closes, given in the `close` and `closed`
    *     events (see `NAV_DRAWER_CLOSE_REASONS`).
    */
-  async close(
-    reason: string = NAV_DRAWER_CLOSE_REASONS.method,
-  ): Promise<void> {
-    if (!this.isOpenInternal) {
-      return;
-    }
-    const preventClose = !this.dispatchEvent(
-      new CustomEvent('close', {cancelable: true, detail: {reason}}),
-    );
-    if (preventClose) {
-      return;
-    }
-
-    const token = ++this.transitionCounter;
-    this.isOpenInternal = false;
-    this.requestUpdate('open', true);
-    this.visible = false;
-    await this.updateComplete;
-    await this.waitForTransitions();
-    if (token !== this.transitionCounter) {
-      return;
-    }
-    this.closeDialog();
-    this.dispatchEvent(new CustomEvent('closed', {detail: {reason}}));
+  close(reason: string = NAV_DRAWER_CLOSE_REASONS.method): Promise<void> {
+    return this.modalSurface.close(reason);
   }
 
   /**
@@ -338,18 +285,7 @@ export class NavDrawerElement extends baseClass {
 
   protected override updated(changed: PropertyValues<this>) {
     super.updated(changed);
-    if (changed.has('modal') && changed.get('modal') !== undefined) {
-      // Switching between standard and modal while open: show the new
-      // container without animating.
-      if (this.open && this.modal) {
-        this.showDialog();
-      }
-      if (!this.modal) {
-        this.restoreFocusTo = null;
-      }
-    }
     this.syncTabStops();
-    this.syncDragGesture();
   }
 
   protected override render() {
@@ -387,9 +323,7 @@ export class NavDrawerElement extends baseClass {
       <dialog
         part="dialog"
         class=${classMap(navDrawerDialogClasses({open: this.visible}))}
-        aria-label=${label}
-        @cancel=${this.handleCancel}
-        @close=${this.handleDialogClose}>
+        aria-label=${label}>
         <div
           part="scrim"
           class=${classMap({
@@ -397,106 +331,67 @@ export class NavDrawerElement extends baseClass {
             [NAV_DRAWER_CLASSES.navDrawerDragging]: dragging,
           })}
           style=${styleMap(scrimStyle)}
-          aria-hidden="true"
-          @click=${this.handleScrimClick}></div>
+          aria-hidden="true"></div>
         ${sheet}
       </dialog>
     `;
   }
 
-  /** Swipe to dismiss: tracks horizontal drags on the modal `<dialog>`. */
-  private syncDragGesture() {
-    const target = this.isConnected && this.modal ? this.dialog : null;
-    if (target === this.dragTarget) {
-      return;
-    }
-    this.dragGesture?.disconnect();
-    this.dragTarget = target;
-    this.dragGesture = target
-      ? new DragGesture(target, {
-          axis: 'x',
-          canStart: () =>
-            this.modal && this.open && this.visible && !this.gesturesDisabled,
-          onStart: () => {
-            const sheet = this.sheet;
-            this.dragWidth = sheet?.offsetWidth ?? 0;
-            this.dragDirection =
-              sheet && getComputedStyle(sheet).direction === 'rtl' ? -1 : 1;
-            this.dragOffset = 0;
-          },
-          onMove: (delta) => {
-            this.dragOffset = this.closingOffset(delta);
-          },
-          onEnd: (delta, velocity) => this.settleDrag(delta, velocity),
-          onCancel: () => {
-            this.dragOffset = null;
-          },
-        })
-      : null;
-  }
-
-  /** How far a drag of `delta` px moved the drawer toward its edge. */
-  private closingOffset(delta: number) {
-    return Math.min(this.dragWidth, Math.max(0, -delta * this.dragDirection));
-  }
-
   /**
-   * Settles a released drag at the open or closed anchor, like Compose's
-   * `AnchoredDraggableState` with the drawer's thresholds.
+   * Swipe to dismiss: a drag on the modal `<dialog>` (the sheet or the
+   * scrim) moves the sheet between the open and closed anchors, and settles
+   * on release like Compose's `AnchoredDraggableState`. Shared
+   * DragSettleController, with the closing direction positive.
    */
-  private settleDrag(delta: number, velocity: number) {
-    const offset = this.closingOffset(delta);
-    const target = settleAnchor(
-      [0, this.dragWidth],
-      0,
-      offset,
-      -velocity * this.dragDirection,
-      {
-        positionalThreshold: (distance) =>
-          distance * NAV_DRAWER_POSITIONAL_THRESHOLD,
-        velocityThreshold: NAV_DRAWER_VELOCITY_THRESHOLD_PX_PER_S,
-      },
-    );
+  // spec: navigation-drawer-d450da, navigation-drawer-f7bd4b, navigation-drawer-3f8d7a
+  protected readonly swipe = new DragSettleController(this, {
+    axis: 'x',
+    target: () => (this.modal ? this.dialog : null),
+    anchors: () => [0, this.sheet?.offsetWidth ?? 0],
+    value: () => 0,
+    // The drawer closes toward the left in LTR: against the pointer's x.
+    reverse: () => !this.sheetIsRtl(),
+    velocityThreshold: NAV_DRAWER_VELOCITY_THRESHOLD_PX_PER_S,
+    positionalThreshold: (distance) =>
+      distance * NAV_DRAWER_POSITIONAL_THRESHOLD,
+    disabled: () =>
+      !(this.modal && this.open && this.visible) || this.gesturesDisabled,
+    onDragStart: () => {
+      this.dragWidth = this.sheet?.offsetWidth ?? 0;
+      this.dragDirection = this.sheetIsRtl() ? -1 : 1;
+      this.dragOffset = 0;
+    },
+    onDrag: (offset) => {
+      this.dragOffset = offset;
+    },
     // Clearing the offset in the same update as the open/closed change lets
     // the sheet transition from where it was released.
-    this.dragOffset = null;
-    if (this.dragWidth > 0 && target === this.dragWidth) {
-      this.swipeSettling = true;
-      this.close(NAV_DRAWER_CLOSE_REASONS.swipe).finally(() => {
-        this.swipeSettling = false;
-      });
-    }
-  }
+    onSettle: (anchor) => {
+      this.dragOffset = null;
+      if (this.dragWidth > 0 && anchor === this.dragWidth) {
+        this.swipeSettling = true;
+        this.close(NAV_DRAWER_CLOSE_REASONS.swipe).finally(() => {
+          this.swipeSettling = false;
+        });
+      }
+    },
+    onCancel: () => {
+      this.dragOffset = null;
+    },
+  });
 
-  private showDialog() {
-    const dialog = this.dialog;
-    if (!dialog || dialog.open || !this.isConnected) {
-      return;
-    }
-    this.restoreFocusTo = getDeepActiveElement();
-    dialog.showModal();
-  }
-
-  private closeDialog() {
-    const dialog = this.dialog;
-    if (dialog?.open) {
-      dialog.close();
-    }
-    const restoreTo = this.restoreFocusTo;
-    this.restoreFocusTo = null;
-    if (restoreTo?.isConnected) {
-      restoreTo.focus();
-    }
-  }
-
-  private focusInitialItem() {
-    // Initial focus lands on the selected item, else the first item.
-    const items = this.items.filter((item) => !item.disabled);
-    const target = items.find((item) => item.selected) ?? items[0];
-    target?.focus();
+  private sheetIsRtl() {
+    const sheet = this.sheet;
+    return !!sheet && getComputedStyle(sheet).direction === 'rtl';
   }
 
   private async waitForTransitions() {
+    // A freshly opened drawer renders a closed frame first and enters on the
+    // next update: wait for that render, or the open transition isn't there
+    // to wait for yet and `show()` resolves before the drawer is on screen.
+    while (this.isConnected && this.isUpdatePending) {
+      await this.updateComplete;
+    }
     const sheet = this.sheet;
     if (!sheet || this.quick) {
       return;
@@ -534,32 +429,6 @@ export class NavDrawerElement extends baseClass {
     this.syncTabStops();
   }
 
-  private readonly handleCancel = (event: Event) => {
-    // Escape: animate the close instead of closing the dialog at once.
-    event.preventDefault();
-    this.close(NAV_DRAWER_CLOSE_REASONS.escape);
-  };
-
-  private readonly handleDialogClose = () => {
-    // The dialog was closed without `close()`, e.g. by the browser.
-    if (this.isOpenInternal) {
-      this.transitionCounter++;
-      this.isOpenInternal = false;
-      this.visible = false;
-      this.requestUpdate('open', true);
-      this.restoreFocusTo = null;
-      this.dispatchEvent(
-        new CustomEvent('closed', {
-          detail: {reason: NAV_DRAWER_CLOSE_REASONS.escape},
-        }),
-      );
-    }
-  };
-
-  private readonly handleScrimClick = () => {
-    this.close(NAV_DRAWER_CLOSE_REASONS.scrim);
-  };
-
   private readonly handleItemClick = (event: MouseEvent) => {
     const item = this.findItem(event);
     if (!item || item.disabled) {
@@ -588,14 +457,4 @@ export class NavDrawerElement extends baseClass {
     }
     return null;
   }
-}
-
-function getDeepActiveElement(): HTMLElement | null {
-  let active: Element | null = document.activeElement;
-  while (active?.shadowRoot?.activeElement) {
-    active = active.shadowRoot.activeElement;
-  }
-  return active instanceof HTMLElement && active !== document.body
-    ? active
-    : null;
 }

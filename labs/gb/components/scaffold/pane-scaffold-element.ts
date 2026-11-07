@@ -13,6 +13,7 @@ import {
   type PropertyValues,
 } from 'lit';
 import {property, query, state} from 'lit/decorators.js';
+import {DragSettleController} from '../shared/drag-settle.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {
@@ -27,7 +28,6 @@ import {
   type WindowSizeClass,
 } from '../../styles/layout/window-size-class.js';
 import {
-  nearestSnapTarget,
   nextPaneSnapTarget,
   type PaneArrangement,
   type PaneHandleTap,
@@ -76,8 +76,11 @@ export interface PaneResizeDetail {
   collapsedPane: 'primary' | 'secondary' | null;
 }
 
-/** Distance in px a pointer moves before a press becomes a drag. */
-const DRAG_SLOP = 4;
+/**
+ * The handle's release velocity (px/s) above which a fling goes to the next
+ * snap width in its direction.
+ */
+const RESIZE_VELOCITY_THRESHOLD_PX_PER_S = 500;
 
 /** Focusable descendants, for moving focus into a modal levitated pane. */
 const FOCUSABLE =
@@ -314,7 +317,6 @@ export class PaneScaffoldElement extends LitElement {
   @state() private hasSecondary = false;
   @state() private hasTertiary = false;
   @state() private hasPlaceholder = false;
-  @state() private dragging = false;
   @state() private pressed = false;
   @state() private elementFold: ElementFold | null = null;
 
@@ -329,14 +331,6 @@ export class PaneScaffoldElement extends LitElement {
   });
   private appScaffold: HTMLElement | null = null;
   private lastSecondaryFocus: HTMLElement | null = null;
-  private drag: {
-    pointerId: number;
-    startX: number;
-    startWidth: number;
-    available: number;
-    leftSide: boolean;
-  } | null = null;
-  private suppressClick = false;
   private lastLayoutKey = '';
   private viewportFold: Fold | null = null;
   private foldResizeObserver: ResizeObserver | null = null;
@@ -412,7 +406,6 @@ export class PaneScaffoldElement extends LitElement {
       this.handleAppScaffoldHeightClass,
     );
     this.appScaffold = null;
-    this.endDrag();
     this.stopFold?.();
     this.stopFold = null;
     this.viewportFold = null;
@@ -824,60 +817,69 @@ export class PaneScaffoldElement extends LitElement {
     }
   }
 
-  private readonly handlePointerDown = (event: PointerEvent) => {
-    if (event.button !== 0 || !this.dragHandle) return;
-    const {available, current} = this.measurePanes();
-    this.drag = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startWidth: current,
-      available,
-      leftSide: this.secondaryOnLeft,
-    };
+  /** A press on the handle, until it is released (the pressed state). */
+  private readonly handlePress = () => {
     this.pressed = true;
-    this.dragHandle.setPointerCapture?.(event.pointerId);
+    const release = () => {
+      this.pressed = false;
+      window.removeEventListener('pointerup', release, true);
+      window.removeEventListener('pointercancel', release, true);
+    };
+    window.addEventListener('pointerup', release, true);
+    window.addEventListener('pointercancel', release, true);
   };
 
-  private readonly handlePointerMove = (event: PointerEvent) => {
-    const drag = this.drag;
-    if (!drag || event.pointerId !== drag.pointerId) return;
-    const dx = event.clientX - drag.startX;
-    if (!this.dragging && Math.abs(dx) < DRAG_SLOP) return;
-    this.dragging = true;
-    const width = Math.min(
-      drag.available,
-      Math.max(0, drag.startWidth + (drag.leftSide ? dx : -dx)),
-    );
-    // Free resize while dragging; snapping happens on release.
-    this.paneWidth = Math.round(width);
-    this.collapsedPane = null;
-  };
+  /** The snap widths while a drag lasts (measured once, at its start). */
+  private dragSnap: {available: number; targets: number[]} | null = null;
 
-  private readonly handlePointerUp = (event: PointerEvent) => {
-    const drag = this.drag;
-    if (!drag || event.pointerId !== drag.pointerId) return;
-    if (this.dragging) {
-      this.suppressClick = true;
-      const width = this.paneWidth ?? drag.startWidth;
-      const target = nearestSnapTarget(width, this.snapTargets(drag.available));
-      // Report the snapped state, even if it equals the drag width.
+  private snapAnchors(): number[] {
+    if (this.dragSnap) return this.dragSnap.targets;
+    const {available} = this.measurePanes();
+    return this.snapTargets(available);
+  }
+
+  /**
+   * Dragging the handle resizes the secondary pane freely and settles on a
+   * snap width at release; the handle's tap and keys reach the same widths
+   * through `settleTo()` (the single-pointer alternative).
+   */
+  private readonly resizeDrag = new DragSettleController(this, {
+    axis: 'x',
+    target: () => this.dragHandle,
+    anchors: () => this.snapAnchors(),
+    value: () => this.measurePanes().current,
+    bounds: () => ({min: 0, max: this.measurePanes().available}),
+    // The secondary pane grows toward the handle's side of the other pane.
+    reverse: () => !this.secondaryOnLeft,
+    velocityThreshold: RESIZE_VELOCITY_THRESHOLD_PX_PER_S,
+    onDragStart: () => {
+      const {available} = this.measurePanes();
+      this.dragSnap = {available, targets: this.snapTargets(available)};
+    },
+    onDrag: (width) => {
+      // Free resize while dragging; snapping happens on release.
+      this.paneWidth = Math.round(width);
+      this.collapsedPane = null;
+    },
+    onSettle: (width, {source}) => {
+      const available = this.dragSnap?.available ?? this.measurePanes().available;
+      this.dragSnap = null;
+      if (source === 'drag') {
+        // Report the snapped state, even if it equals the drag width.
+        this.paneWidth = null;
+        this.collapsedPane = null;
+      }
+      this.applyWidth(width, available);
+    },
+    onCancel: () => {
+      this.dragSnap = null;
       this.paneWidth = null;
       this.collapsedPane = null;
-      this.applyWidth(target, drag.available);
-    }
-    this.endDrag();
-  };
+    },
+  });
 
-  private endDrag() {
-    if (
-      this.drag &&
-      this.dragHandle?.hasPointerCapture?.(this.drag.pointerId)
-    ) {
-      this.dragHandle.releasePointerCapture(this.drag.pointerId);
-    }
-    this.drag = null;
-    this.dragging = false;
-    this.pressed = false;
+  private get dragging() {
+    return this.resizeDrag.dragging;
   }
 
   /**
@@ -887,9 +889,8 @@ export class PaneScaffoldElement extends LitElement {
   private toggleCollapsed() {
     if (this.handleTap === 'cycle') {
       const {available, current} = this.measurePanes();
-      this.applyWidth(
+      this.resizeDrag.settleTo(
         nextPaneSnapTarget(current, this.snapTargets(available), available),
-        available,
       );
       return;
     }
@@ -900,11 +901,8 @@ export class PaneScaffoldElement extends LitElement {
     }
   }
 
+  // The click that ends a drag is suppressed by the drag gesture.
   private readonly handleHandleClick = () => {
-    if (this.suppressClick) {
-      this.suppressClick = false;
-      return;
-    }
     this.toggleCollapsed();
   };
 
@@ -938,7 +936,7 @@ export class PaneScaffoldElement extends LitElement {
         return;
     }
     event.preventDefault();
-    this.applyWidth(next, available);
+    this.resizeDrag.settleTo(next);
   };
 
   // --- Rendering -------------------------------------------------------------
@@ -1011,11 +1009,7 @@ export class PaneScaffoldElement extends LitElement {
       aria-label=${this.dragHandleLabel}
       aria-valuemin="0"
       aria-valuemax="100"
-      @pointerdown=${this.handlePointerDown}
-      @pointermove=${this.handlePointerMove}
-      @pointerup=${this.handlePointerUp}
-      @pointercancel=${this.handlePointerUp}
-      @lostpointercapture=${this.handlePointerUp}
+      @pointerdown=${this.handlePress}
       @click=${this.handleHandleClick}
       @keydown=${this.handleHandleKeyDown}>
       <span class="drag-handle-indicator"></span>

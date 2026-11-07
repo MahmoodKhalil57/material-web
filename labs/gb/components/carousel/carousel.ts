@@ -7,6 +7,8 @@
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
 import {createClassMapDirective} from '../shared/directives.js';
+import {DragGesture} from '../shared/drag-gesture.js';
+import {isReducedMotion, onReducedMotionChange} from '../shared/motion.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
 import {nextFocusIndex} from '../shared/roving-focus.js';
 import {
@@ -251,10 +253,6 @@ function toPx(value: string, el: Element, percentBasis: number): number {
   return num;
 }
 
-function prefersReducedMotion() {
-  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-}
-
 const controllers = new WeakMap<HTMLElement, CarouselController>();
 
 /**
@@ -265,17 +263,6 @@ export function getCarouselController(
   carousel: HTMLElement,
 ): CarouselController | undefined {
   return controllers.get(carousel);
-}
-
-interface DragState {
-  pointerId: number;
-  start: number;
-  startOffset: number;
-  startIndex: number;
-  last: number;
-  lastTime: number;
-  velocity: number;
-  active: boolean;
 }
 
 /**
@@ -308,10 +295,11 @@ export class CarouselController {
   private crossSize = 0;
   private vertical = false;
   private rtl = false;
-  private reducedMotion = prefersReducedMotion();
+  private reducedMotion = false;
   private frame = 0;
   private animation = 0;
-  private drag: DragState | null = null;
+  private dragStartOffset = 0;
+  private dragStartIndex = 0;
   private pointerFocus = false;
   private readonly observed = new WeakSet<Element>();
   private readonly resizeObserver = new ResizeObserver(() => {
@@ -326,14 +314,27 @@ export class CarouselController {
       root.querySelector<HTMLElement>(`:scope > .${CAROUSEL_CLASSES.scroller}`) ??
       root;
     controllers.set(root, this);
+    this.reducedMotion = isReducedMotion(root);
 
     const opts = {signal};
     const passive = {signal, passive: true};
     this.scroller.addEventListener('scroll', () => this.requestUpdate(), passive);
     this.scroller.addEventListener('pointerdown', this.onPointerDown, opts);
-    this.scroller.addEventListener('pointermove', this.onPointerMove, opts);
-    this.scroller.addEventListener('pointerup', this.onPointerUp, opts);
-    this.scroller.addEventListener('pointercancel', this.onPointerUp, opts);
+    const carousel = this;
+    const gesture = new DragGesture(this.scroller, {
+      // The scroll axis follows the orientation, which can change.
+      get axis() {
+        return carousel.vertical ? 'y' : 'x';
+      },
+      slop: DRAG_SLOP_PX,
+      canStart: (event) => event.pointerType === 'mouse',
+      onStart: () => this.startDrag(),
+      onMove: (delta) =>
+        this.setOffset(this.dragStartOffset - delta * this.direction),
+      onEnd: (_delta, velocity) => this.endDrag(velocity),
+      onCancel: () => this.endDrag(0),
+    });
+    signal?.addEventListener('abort', () => gesture.disconnect());
     this.scroller.addEventListener('dragstart', this.onDragStart, opts);
     this.scroller.addEventListener('keydown', this.onKeyDown, opts);
     this.scroller.addEventListener('focusin', this.onFocusIn, opts);
@@ -346,15 +347,10 @@ export class CarouselController {
       passive,
     );
 
-    const motion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    motion?.addEventListener(
-      'change',
-      () => {
-        this.reducedMotion = motion.matches;
-        this.measure();
-      },
-      opts,
-    );
+    onReducedMotionChange(() => {
+      this.reducedMotion = isReducedMotion(this.root);
+      this.measure();
+    }, signal);
 
     this.resizeObserver.observe(this.scroller);
     // Layout, alignment and orientation are read from the classes; children
@@ -791,81 +787,37 @@ export class CarouselController {
     this.root.classList.remove(CAROUSEL_CLASSES.animating);
   }
 
-  private pointerPosition(event: PointerEvent) {
-    return this.vertical ? event.clientY : event.clientX;
-  }
-
   /** Reading-direction sign of a physical pointer movement. */
   private get direction() {
     return this.rtl ? -1 : 1;
   }
 
   // Touch and pen scroll natively (with native snapping and momentum); a
-  // mouse drags the carousel like a touch would.
+  // mouse drags the carousel like a touch would, through the shared
+  // DragGesture (slop, pointer capture, release velocity, and no click on the
+  // item under the pointer after a drag).
   private readonly onPointerDown = (event: PointerEvent) => {
     this.pointerFocus = true;
     setTimeout(() => {
       this.pointerFocus = false;
     });
-    if (event.pointerType !== 'mouse' || event.button !== 0) return;
-    this.stopAnimation();
-    const position = this.pointerPosition(event);
-    this.drag = {
-      pointerId: event.pointerId,
-      start: position,
-      startOffset: this.getOffset(),
-      startIndex: this.currentIndex,
-      last: position,
-      lastTime: event.timeStamp,
-      velocity: 0,
-      active: false,
-    };
+    if (event.pointerType === 'mouse' && event.button === 0) {
+      this.stopAnimation();
+    }
   };
 
-  private readonly onPointerMove = (event: PointerEvent) => {
-    const drag = this.drag;
-    if (!drag || event.pointerId !== drag.pointerId) return;
-    const position = this.pointerPosition(event);
-    const delta = position - drag.start;
-    if (!drag.active) {
-      if (Math.abs(delta) < DRAG_SLOP_PX) return;
-      drag.active = true;
-      this.scroller.setPointerCapture?.(drag.pointerId);
-      this.root.classList.add(CAROUSEL_CLASSES.dragging);
-    }
-    const dt = event.timeStamp - drag.lastTime;
-    if (dt > 0) {
-      const v = (position - drag.last) / dt;
-      drag.velocity = drag.velocity * 0.2 + v * 0.8;
-    }
-    drag.last = position;
-    drag.lastTime = event.timeStamp;
-    this.setOffset(drag.startOffset - delta * this.direction);
-  };
+  private startDrag() {
+    this.dragStartOffset = this.getOffset();
+    this.dragStartIndex = this.currentIndex;
+    this.root.classList.add(CAROUSEL_CLASSES.dragging);
+  }
 
-  private readonly onPointerUp = (event: PointerEvent) => {
-    const drag = this.drag;
-    if (!drag || event.pointerId !== drag.pointerId) return;
-    this.drag = null;
-    if (!drag.active) return;
-    this.scroller.releasePointerCapture?.(drag.pointerId);
+  private endDrag(velocity: number) {
     this.root.classList.remove(CAROUSEL_CLASSES.dragging);
-    // A drag is not a click on the item under the pointer.
-    const suppressClick = (click: Event) => {
-      click.preventDefault();
-      click.stopPropagation();
-    };
-    this.scroller.addEventListener('click', suppressClick, {
-      capture: true,
-      once: true,
-    });
-    setTimeout(() => {
-      this.scroller.removeEventListener('click', suppressClick, {capture: true});
-    });
-    const offsetVelocity =
-      event.type === 'pointercancel' ? 0 : -drag.velocity * this.direction;
-    this.settle(drag.startIndex, offsetVelocity);
-  };
+    // The gesture reports px/s along the axis; settling takes px/ms of the
+    // scroll offset (against the pointer in the reading direction).
+    this.settle(this.dragStartIndex, (-velocity * this.direction) / 1000);
+  }
 
   private readonly onDragStart = (event: DragEvent) => {
     // Keep images and links from starting a native drag.

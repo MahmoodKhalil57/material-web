@@ -14,13 +14,13 @@ import { adoptStyles } from "../../styles/adopt-styles.js";
 import { type ButtonElement } from "../button/button-element.js";
 import { clampDensity, type Density } from "../shared/density.js";
 import { RovingFocusController } from "../shared/roving-focus.js";
+import { SelectionController } from "../shared/selection.js";
 import { updateClassList } from "../shared/update-class-list.js";
 import {
   buttonGroupClasses,
   type ButtonGroupSelection,
   type ButtonGroupVariant,
-  normalizeSelection,
-  shouldBlockToggle,
+  isItemSelectable,
 } from "./button-group.js";
 
 import buttonGroupStyles from "./button-group.css" with { type: "css" }; // github-only
@@ -58,57 +58,15 @@ export class ButtonGroupElement extends baseClass {
     super();
     this[internals].role = "toolbar";
 
-    const handleClick = (event: MouseEvent): void => {
+    // Disabled buttons don't reach the group's listeners.
+    this.addEventListener("click", (event: MouseEvent): void => {
       const path = event.composedPath();
       const button = this.buttons.find((b) => path.includes(b));
-      if (!button) return;
-
-      if (button.disabled || button.softDisabled) {
+      if (button && (button.disabled || button.softDisabled)) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        return;
       }
-
-      const index = this.buttons.indexOf(button);
-      if (
-        shouldBlockToggle(this.buttons, index, {
-          selection: this.selection,
-          required: this.required,
-        })
-      ) {
-        event.preventDefault();
-      }
-    };
-
-    const handleInput = (event: Event): void => {
-      if (event.target === this) return;
-
-      const path = event.composedPath();
-      const child = this.buttons.find((b) => path.includes(b));
-      if (!child || child.disabled || child.softDisabled) return;
-
-      event.stopImmediatePropagation();
-      this.syncSelectionFromChild(child);
-      this.dispatchEvent(
-        new InputEvent("input", { bubbles: true, composed: true }),
-      );
-    };
-
-    const handleChange = (event: Event): void => {
-      if (event.target === this) return;
-
-      const path = event.composedPath();
-      const child = this.buttons.find((b) => path.includes(b));
-      if (!child || child.disabled || child.softDisabled) return;
-
-      event.stopImmediatePropagation();
-      this.syncSelectionFromChild(child);
-      this.dispatchEvent(new Event("change", { bubbles: true }));
-    };
-
-    this.addEventListener("click", handleClick);
-    this.addEventListener("input", handleInput);
-    this.addEventListener("change", handleChange);
+    });
   }
 
   /** The visual variant of the button group. */
@@ -146,22 +104,21 @@ export class ButtonGroupElement extends baseClass {
 
   private readonly groupDisabledButtons = new WeakSet<HTMLElement>();
 
-  private readonly childObserver = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.attributeName === "selected") {
-        const target = mutation.target as ButtonElement;
-        if (this.selection === "single") {
-          if (target.selected) {
-            this.normalizeGroupSelection({ preferred: target });
-          } else if (this.required) {
-            const anySelected = this.buttons.some((b) => b.selected);
-            if (!anySelected) {
-              this.normalizeGroupSelection();
-            }
-          }
-        }
-      }
-    }
+  /**
+   * The selection model (shared SelectionController): none, single (with
+   * `required`) or multiple, selected by click and Space/Enter, `input` and
+   * `change` events for user changes. The buttons are toggle buttons that
+   * would toggle themselves, so the controller claims the click.
+   */
+  // spec: button-groups/accessibility/keyboard-navigation
+  private readonly selectionModel = new SelectionController<ButtonElement>(this, {
+    items: () => this.buttons,
+    mode: () => this.selection,
+    required: () => this.required,
+    canSelect: isItemSelectable,
+    claimClicks: () => this.selection !== "none",
+    // Listeners on a button itself get the events too.
+    eventsFrom: "both",
   });
 
   /** Returns all child `md-gb-button` elements. */
@@ -173,43 +130,34 @@ export class ButtonGroupElement extends baseClass {
 
   /** Returns currently selected buttons. */
   get selectedButtons(): ButtonElement[] {
-    return this.buttons.filter((b) => b.selected);
+    return this.selectionModel.selectedItems;
   }
 
   /** Returns index of first selected button or -1. */
   get selectedIndex(): number {
-    return this.buttons.findIndex((b) => b.selected);
+    return this.selectionModel.selectedIndex;
   }
 
   /** Returns indices of all selected buttons. */
   get selectedIndices(): number[] {
-    const indices: number[] = [];
-    const buttons = this.buttons;
-    for (let i = 0; i < buttons.length; i++) {
-      if (buttons[i].selected) {
-        indices.push(i);
-      }
-    }
-    return indices;
+    return this.selectionModel.selectedIndices;
   }
 
   /** Value of the currently selected button (or first selected). */
   get value(): string {
-    return this.selectedButtons[0]?.value ?? "";
+    return this.selectionModel.value;
   }
 
   /** Silent setter for single-select mode. */
   set value(val: string) {
     if (this.selection !== "single") return;
-    for (const b of this.buttons) {
-      b.selected = b.value === val;
-    }
-    this.normalizeGroupSelection();
+    this.selectionModel.setValues([val]);
+    this.selectionModel.normalize();
   }
 
   /** Values of all currently selected buttons. */
   get values(): string[] {
-    return this.selectedButtons.map((b) => b.value);
+    return this.selectionModel.values;
   }
 
   override connectedCallback(): void {
@@ -223,14 +171,6 @@ export class ButtonGroupElement extends baseClass {
         density: this.density,
       }),
     );
-    if (this.hasUpdated) {
-      this.observeChildren();
-    }
-  }
-
-  override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    this.childObserver.disconnect();
   }
 
   protected override firstUpdated(
@@ -238,8 +178,7 @@ export class ButtonGroupElement extends baseClass {
   ): void {
     super.firstUpdated(changedProperties);
     this.syncButtonsDisabledAndType();
-    this.normalizeGroupSelection();
-    this.observeChildren();
+    this.selectionModel.normalize();
   }
 
   protected override updated(changedProperties: PropertyValues<this>): void {
@@ -274,32 +213,7 @@ export class ButtonGroupElement extends baseClass {
       changedProperties.has("selection") ||
       changedProperties.has("required")
     ) {
-      this.normalizeGroupSelection();
-      this.observeChildren();
-    }
-  }
-
-  private syncSelectionFromChild(child: ButtonElement): void {
-    // ButtonElement updates its own `selected` property on the `change` event;
-    // during an `input` event, the custom element's `selected` property has not
-    // yet been updated by its internal listener, so we inspect `aria-pressed` on
-    // the inner button element to capture the immediate interactive toggle state.
-    const innerBtn = child.shadowRoot?.querySelector('[part="btn"]');
-    if (innerBtn) {
-      const isPressed =
-        innerBtn.getAttribute("aria-pressed") === "true" ||
-        (innerBtn as HTMLElement).ariaPressed === "true";
-      child.selected = isPressed;
-    }
-
-    if (this.selection === "single") {
-      if (child.selected) {
-        for (const button of this.buttons) {
-          if (button !== child) {
-            button.selected = false;
-          }
-        }
-      }
+      this.selectionModel.normalize();
     }
   }
 
@@ -326,27 +240,6 @@ export class ButtonGroupElement extends baseClass {
     }
   }
 
-  private normalizeGroupSelection(
-    options: { preferred?: ButtonElement } = {},
-  ): void {
-    normalizeSelection(this.buttons, {
-      selection: this.selection,
-      required: this.required,
-      preferred: options.preferred,
-    });
-    this.childObserver.takeRecords();
-  }
-
-  private observeChildren(): void {
-    this.childObserver.disconnect();
-    for (const button of this.buttons) {
-      this.childObserver.observe(button, {
-        attributes: true,
-        attributeFilter: ["selected"],
-      });
-    }
-  }
-
   /**
    * Arrow keys move focus between the buttons (button-groups.md, Keyboard
    * navigation: "Arrow keys | Navigate inside the component"). Left/Right
@@ -366,10 +259,7 @@ export class ButtonGroupElement extends baseClass {
 
   protected handleSlotChange(): void {
     this.syncButtonsDisabledAndType();
-    const selected = this.buttons.filter((b) => b.selected);
-    const preferred = selected[selected.length - 1];
-    this.normalizeGroupSelection({ preferred });
-    this.observeChildren();
+    this.selectionModel.normalize();
   }
 
   protected override render() {

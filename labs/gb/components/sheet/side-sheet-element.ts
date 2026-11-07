@@ -9,18 +9,17 @@ import {
   type CSSResultOrNative,
   html,
   nothing,
-  type PropertyValues,
 } from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {iconButton} from '../iconbutton/icon-button.js';
-import {DragGesture, settleAnchor} from '../shared/drag-gesture.js';
+import {DragSettleController} from '../shared/drag-settle.js';
 import {hasSlotted} from '../shared/has-slotted.js';
 import {
   playPredictiveBack,
   type PredictiveBackAnimation,
-} from './predictive-back.js';
+} from '../shared/predictive-back.js';
 import {CLOSE_REASONS} from './sheet.js';
 import {SheetBase} from './sheet-base.js';
 import {
@@ -177,87 +176,53 @@ export class SideSheetElement extends SheetBase {
   private dragWidth = 0;
   /** 1 when the sheet closes toward +x (LTR), -1 in RTL. */
   private dragDirection = 1;
-  private dragGesture: DragGesture | null = null;
-  private dragTarget: HTMLElement | null = null;
-
-  override connectedCallback() {
-    super.connectedCallback();
-    if (this.hasUpdated) {
-      this.syncDragGesture();
-    }
-  }
-
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.dragGesture?.disconnect();
-    this.dragGesture = null;
-    this.dragTarget = null;
     this.dragOffset = null;
-  }
-
-  protected override updated(changed: PropertyValues<this>) {
-    super.updated(changed);
-    this.syncDragGesture();
-  }
-
-  /** Swipe to dismiss: tracks horizontal drags on the modal `<dialog>`. */
-  private syncDragGesture() {
-    const target = this.isConnected && this.modal ? this.dialog : null;
-    if (target === this.dragTarget) {
-      return;
-    }
-    this.dragGesture?.disconnect();
-    this.dragTarget = target;
-    this.dragGesture = target
-      ? new DragGesture(target, {
-          axis: 'x',
-          canStart: () =>
-            this.modal && this.open && !this.isClosing && !this.gesturesDisabled,
-          onStart: () => {
-            const panel = this.panel;
-            this.dragWidth = panel?.offsetWidth ?? 0;
-            this.dragDirection =
-              panel && getComputedStyle(panel).direction === 'rtl' ? -1 : 1;
-            this.dragOffset = 0;
-          },
-          onMove: (delta) => {
-            this.dragOffset = this.closingOffset(delta);
-          },
-          onEnd: (delta, velocity) => this.settleDrag(delta, velocity),
-          onCancel: () => {
-            this.dragOffset = null;
-          },
-        })
-      : null;
-  }
-
-  /** How far a drag of `delta` px moved the sheet toward its edge. */
-  private closingOffset(delta: number) {
-    return Math.min(this.dragWidth, Math.max(0, delta * this.dragDirection));
   }
 
   /**
-   * Settles a released drag open or closed (Compose `AnchoredDraggableState`
-   * thresholds). Clearing the drag offset in the same render as the close
-   * lets the panel spring from where it was released.
+   * Swipe to dismiss: a drag on the modal `<dialog>` moves the sheet between
+   * the open and closed anchors and settles on release (Compose
+   * `AnchoredDraggableState` thresholds). Shared DragSettleController, with
+   * the closing direction positive. Clearing the drag offset in the same
+   * render as the close lets the panel spring from where it was released.
    */
-  private settleDrag(delta: number, velocity: number) {
-    const offset = this.closingOffset(delta);
-    const target = settleAnchor(
-      [0, this.dragWidth],
-      0,
-      offset,
-      velocity * this.dragDirection,
-      {
-        positionalThreshold: (distance) =>
-          distance * SIDE_SHEET_POSITIONAL_THRESHOLD,
-        velocityThreshold: SIDE_SHEET_VELOCITY_THRESHOLD_PX_PER_S,
-      },
-    );
-    this.dragOffset = null;
-    if (this.dragWidth > 0 && target === this.dragWidth) {
-      this.close(CLOSE_REASONS.SWIPE);
-    }
+  // spec: side-sheets-2a70b6
+  protected readonly swipe = new DragSettleController(this, {
+    axis: 'x',
+    target: () => (this.isConnected && this.modal ? this.dialog : null),
+    anchors: () => [0, this.panel?.offsetWidth ?? 0],
+    value: () => 0,
+    // The sheet closes toward +x in LTR, toward -x in RTL.
+    reverse: () => this.panelIsRtl(),
+    velocityThreshold: SIDE_SHEET_VELOCITY_THRESHOLD_PX_PER_S,
+    positionalThreshold: (distance) =>
+      distance * SIDE_SHEET_POSITIONAL_THRESHOLD,
+    disabled: () =>
+      !(this.modal && this.open && !this.isClosing) || this.gesturesDisabled,
+    onDragStart: () => {
+      this.dragWidth = this.panel?.offsetWidth ?? 0;
+      this.dragDirection = this.panelIsRtl() ? -1 : 1;
+      this.dragOffset = 0;
+    },
+    onDrag: (offset) => {
+      this.dragOffset = offset;
+    },
+    onSettle: (anchor) => {
+      this.dragOffset = null;
+      if (this.dragWidth > 0 && anchor === this.dragWidth) {
+        this.close(CLOSE_REASONS.SWIPE);
+      }
+    },
+    onCancel: () => {
+      this.dragOffset = null;
+    },
+  });
+
+  private panelIsRtl() {
+    const panel = this.panel;
+    return !!panel && getComputedStyle(panel).direction === 'rtl';
   }
 
   protected override playPredictiveBack(): PredictiveBackAnimation | null {
@@ -304,10 +269,6 @@ export class SideSheetElement extends SheetBase {
         part="dialog"
         aria-labelledby=${hasHeadline ? 'headline' : nothing}
         aria-label=${!hasHeadline && this.label ? this.label : nothing}
-        @cancel=${this.handleDialogCancel}
-        @close=${this.handleDialogClose}
-        @pointerdown=${this.handleDialogPointerDown}
-        @click=${this.handleDialogClick}
       >
         <div
           class="sheet-panel side-sheet-panel"

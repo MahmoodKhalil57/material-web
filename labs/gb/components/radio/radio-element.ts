@@ -10,7 +10,6 @@ import {
   afterDispatch,
   setupDispatchHooks,
 } from '../../../../internal/events/dispatch-hooks.js';
-import {SingleSelectionController} from '../../../../radio/internal/single-selection-controller.js';
 import {
   createValidator,
   getValidityAnchor,
@@ -36,6 +35,11 @@ import radioStyles from './radio.css' with {type: 'css'}; // github-only
 // import {styles as radioStyles} from './radio.cssresult.js'; // google3-only
 
 import {clampDensity, type Density} from '../shared/density.js';
+import {
+  FormDisabledController,
+  FormScopedSelectionController,
+  ToggleFieldController,
+} from '../shared/form-field.js';
 import {radio} from './radio.js';
 
 // Separate variable needed for closure.
@@ -97,10 +101,10 @@ export class RadioElement extends radioBaseClass {
    * The default checked state of the radio.
    */
   get defaultChecked(): boolean {
-    return this.hasAttribute('checked');
+    return this.field.defaultOn;
   }
   set defaultChecked(value: boolean) {
-    this.toggleAttribute('checked', value || false);
+    this.field.defaultOn = value;
   }
 
   /**
@@ -133,16 +137,23 @@ export class RadioElement extends radioBaseClass {
   }
   private densityValue: Density = 0;
 
-  @query('.radio', true) private readonly radio!: HTMLElement;
-  private readonly selectionController = new SingleSelectionController(this);
+  @query('.radio') private readonly radio!: HTMLElement;
+  /** The radio group: same `name`, same root and same form. */
+  private readonly selectionController = new FormScopedSelectionController(
+    this,
+  );
   /**
-   * Mimics the behavior of <input> dirty checkedness, where the `checked`
-   * attribute only updates the checked state if the radio has not been
-   * interacted with.
-   *
-   * @see https://html.spec.whatwg.org/multipage/input.html#concept-input-checked-dirty-flag
+   * Form value, default state, dirty checkedness (the `checked` attribute only
+   * updates the state until the radio is interacted with), reset and restore.
    */
-  private dirtyCheckedness = false;
+  private readonly formDisabled = new FormDisabledController(this);
+  private readonly field = new ToggleFieldController(this, {
+    attribute: 'checked',
+    get: () => this.checked,
+    set: (on) => {
+      this.checked = on;
+    },
+  });
   @state() private isFocused = false;
 
   constructor() {
@@ -159,7 +170,7 @@ export class RadioElement extends radioBaseClass {
         if (event.defaultPrevented) return;
         // Per spec, clicking on a radio input always selects it.
         this.checked = true;
-        this.dirtyCheckedness = true;
+        this.field.markDirty();
         this.dispatchEvent(new Event('change', {bubbles: true}));
         this.dispatchEvent(
           new InputEvent('input', {bubbles: true, composed: true}),
@@ -202,30 +213,42 @@ export class RadioElement extends radioBaseClass {
     oldValue: string | null,
     newValue: string | null,
   ) {
-    if (name === 'checked' && this.dirtyCheckedness) {
-      // The 'checked' attribute does not update radios that have been
-      // interacted with.
-      return;
-    }
+    // The 'checked' attribute does not update radios that have been
+    // interacted with.
+    if (this.field?.ignoresAttribute(name)) return;
 
     super.attributeChangedCallback(name, oldValue, newValue);
   }
 
+  /** Disabled by the attribute or by a disabled fieldset. */
+  override get disabled(): boolean {
+    return super.disabled || !!this.formDisabled?.value;
+  }
+  override set disabled(disabled: boolean) {
+    super.disabled = disabled;
+  }
+
+  override formDisabledCallback(disabled: boolean) {
+    // Not the attribute: it would keep the control disabled after the
+    // fieldset is enabled again.
+    this.formDisabled.set(disabled);
+  }
+
   override [getFormValue]() {
-    return this.checked ? this.value : null;
+    // Called while the base class constructs, before `field` exists.
+    return this.field ? this.field.formValue() : null;
   }
 
   override [getFormState]() {
-    return String(this.checked);
+    return this.field ? this.field.formState() : null;
   }
 
   override formResetCallback() {
-    this.dirtyCheckedness = false;
-    this.checked = this.defaultChecked;
+    this.field.reset();
   }
 
   override formStateRestoreCallback(state: string) {
-    this.checked = state === 'true';
+    this.field.restore(state);
   }
 
   override [createValidator]() {

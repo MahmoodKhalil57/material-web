@@ -500,6 +500,7 @@ describe('md-gb-slider', () => {
       expect(labelContent.textContent?.trim()).toBe('Custom 45');
     });
 
+    // spec: sliders-a8673d, sliders-9a8698, sliders-4e06c3
     it('renders slotted md-gb-icon with size-specific dimensions on md, lg, and xl horizontal sliders', async () => {
       for (const size of ['md', 'lg', 'xl'] as const) {
         const root = env.render(html`
@@ -527,6 +528,7 @@ describe('md-gb-slider', () => {
       }
     });
 
+    // spec: sliders-d8281f
     it('does not render slotted icon on xs, sm, vertical, centered, or range sliders', async () => {
       for (const size of ['xs', 'sm'] as const) {
         const root = env.render(html`

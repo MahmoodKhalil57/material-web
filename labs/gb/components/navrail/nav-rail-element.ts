@@ -9,13 +9,9 @@ import {property, query, state} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {setupRipple} from '../ripple/ripple.js';
-import {DragGesture, settleAnchor} from '../shared/drag-gesture.js';
-import {
-  BACK_REASON,
-  BackHandler,
-  type CloseRequestSource,
-  playPredictiveBack,
-} from '../sheet/predictive-back.js';
+import {DragSettleController} from '../shared/drag-settle.js';
+import {ModalSurfaceController} from '../shared/modal-surface.js';
+import {BACK_REASON, playPredictiveBack} from '../shared/predictive-back.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
 // import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
@@ -62,13 +58,17 @@ export const NAV_RAIL_VELOCITY_THRESHOLD_PX_PER_S = 125;
  * @csspart menu-button - The built-in expand/collapse menu button when `collapsible`.
  * @csspart items - The navigation rail's items container.
  * @fires {Event} change - Fired when the selected item changes. --bubbles
- * @fires {Event} toggle - Fired when the expanded state is toggled. --bubbles
+ * @fires {CustomEvent<{expanded: boolean, reason?: string}>} toggle - Fired when the expanded state is toggled. --bubbles
  * @csspart scrim - The modal rail's scrim, while expanded.
  *
  * A `modal` rail expands over the content with a scrim, like Compose
  * `ModalWideNavigationRail`. Clicking the scrim, pressing Escape or swiping
  * the rail toward its edge collapses it. The scrim (and the menu button of a
  * `collapsible` rail) are the single-pointer alternatives to the swipe.
+ * While a modal rail is expanded, focus moves into it, Tab stays inside it,
+ * page scrolling is locked, and focus returns to the previous element when
+ * it collapses. The `toggle` event's `detail.reason` says why a modal rail
+ * collapsed (`escape`, `back`, `scrim` or `swipe`).
  *
  * Predictive back applies to the modal expanded rail (navigation-rail.md):
  * while it is expanded the rail listens for back requests with a
@@ -192,12 +192,27 @@ export class NavRailElement extends AriaTablistElement {
   @query('.nav-rail')
   private readonly railElement!: HTMLElement | null;
 
-  private readonly backHandler = new BackHandler((source) => {
-    this.handleBackRequest(source);
+  private collapseReason: string | undefined;
+
+  /**
+   * The modal expanded rail: Escape, back and scrim close requests, focus
+   * in, trap and restore, and page scroll lock. The rail owns `expanded`.
+   */
+  protected readonly modalSurface = new ModalSurfaceController(this, {
+    isOpen: () => this.modal && this.expanded,
+    modal: () => this.modal,
+    surface: () => this,
+    scrim: () =>
+      this.shadowRoot?.querySelector<HTMLElement>('.nav-rail-scrim') ?? null,
+    onCloseRequest: (reason) => {
+      if (reason === BACK_REASON) {
+        this.handleBack();
+      } else {
+        this.collapseFor(reason);
+      }
+    },
   });
 
-  private dragGesture: DragGesture | null = null;
-  private dragTarget: HTMLElement | null = null;
   private dragWidth = 0;
   private dragDirection = 1;
 
@@ -243,13 +258,28 @@ export class NavRailElement extends AriaTablistElement {
       return this.expanded;
     }
     this.expanded = nextExpanded;
-    this.dispatchEvent(new Event('toggle', {bubbles: true, composed: true}));
+    const reason = this.collapseReason;
+    this.collapseReason = undefined;
+    this.dispatchEvent(
+      new CustomEvent('toggle', {
+        bubbles: true,
+        composed: true,
+        detail: {expanded: this.expanded, reason},
+      }),
+    );
     return this.expanded;
   }
 
   /** Expands the navigation rail. */
   expand(): void {
     this.toggle(true);
+  }
+
+  /** Collapses the rail, reporting why in the `toggle` event's `detail.reason`. */
+  private collapseFor(reason: string) {
+    this.collapseReason = reason;
+    this.toggle(false);
+    this.collapseReason = undefined;
   }
 
   /** Collapses the navigation rail. */
@@ -260,16 +290,10 @@ export class NavRailElement extends AriaTablistElement {
   override connectedCallback() {
     super.connectedCallback();
     adoptStyles(this, [focusRingStyles, rippleStyles, navRailStyles]);
-    this.addEventListener('keydown', this.handleKeydown);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('keydown', this.handleKeydown);
-    this.backHandler.disable();
-    this.dragGesture?.disconnect();
-    this.dragGesture = null;
-    this.dragTarget = null;
     this.menuButtonAbortController?.abort();
     this.menuButtonAbortController = null;
   }
@@ -286,8 +310,6 @@ export class NavRailElement extends AriaTablistElement {
     if (changedProperties.has('collapsible')) {
       this.setupBuiltInMenuButton();
     }
-    this.syncDragGesture();
-    this.syncBackHandler();
   }
 
   /**
@@ -309,27 +331,10 @@ export class NavRailElement extends AriaTablistElement {
       motion?.cancel();
       return;
     }
-    this.toggle(false);
+    this.collapseFor(BACK_REASON);
     // The rail stays on screen collapsed: settle back to its resting scale
     // while it collapses.
     await motion?.settle();
-  }
-
-  private handleBackRequest(source: CloseRequestSource) {
-    if (source === BACK_REASON) {
-      this.handleBack();
-    } else {
-      this.toggle(false);
-    }
-  }
-
-  /** Listens for back requests while the modal rail is expanded. */
-  private syncBackHandler() {
-    if (this.isConnected && this.modal && this.expanded) {
-      this.backHandler.enable();
-    } else {
-      this.backHandler.disable();
-    }
   }
 
   protected override render() {
@@ -401,80 +406,51 @@ export class NavRailElement extends AriaTablistElement {
             part="scrim"
             class="nav-rail-scrim"
             style=${scrimStyle}
-            aria-hidden="true"
-            @click=${this.handleScrimClick}></div>`
+            aria-hidden="true"></div>`
         : nothing}
       ${rail}
     </div>`;
   }
 
-  private handleScrimClick() {
-    this.toggle(false);
-  }
+  /**
+   * Swipe to dismiss the expanded modal rail: a drag on the rail moves it
+   * between the expanded and collapsed anchors and settles on release
+   * (shared DragSettleController, with the closing direction positive).
+   */
+  // spec: navigation-rail-b492a0
+  protected readonly swipe = new DragSettleController(this, {
+    axis: 'x',
+    target: () =>
+      this.isConnected && this.modal && this.expanded ? this.railElement : null,
+    anchors: () => [0, this.railElement?.offsetWidth ?? 0],
+    value: () => 0,
+    // The rail closes toward the left in LTR: against the pointer's x.
+    reverse: () => !this.railIsRtl(),
+    velocityThreshold: NAV_RAIL_VELOCITY_THRESHOLD_PX_PER_S,
+    positionalThreshold: (distance) => distance * NAV_RAIL_POSITIONAL_THRESHOLD,
+    disabled: () => !(this.modal && this.expanded),
+    onDragStart: () => {
+      this.dragWidth = this.railElement?.offsetWidth ?? 0;
+      this.dragDirection = this.railIsRtl() ? -1 : 1;
+      this.dragOffset = 0;
+    },
+    onDrag: (offset) => {
+      this.dragOffset = offset;
+    },
+    onSettle: (anchor) => {
+      this.dragOffset = null;
+      if (this.dragWidth > 0 && anchor === this.dragWidth) {
+        this.collapseFor('swipe');
+      }
+    },
+    onCancel: () => {
+      this.dragOffset = null;
+    },
+  });
 
-  private readonly handleKeydown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape' && this.modal && this.expanded) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.toggle(false);
-    }
-  };
-
-  /** Swipe to dismiss: tracks horizontal drags on the expanded modal rail. */
-  private syncDragGesture() {
-    const target =
-      this.isConnected && this.modal && this.expanded ? this.railElement : null;
-    if (target === this.dragTarget) {
-      return;
-    }
-    this.dragGesture?.disconnect();
-    this.dragTarget = target;
-    this.dragGesture = target
-      ? new DragGesture(target, {
-          axis: 'x',
-          canStart: () => this.modal && this.expanded,
-          onStart: () => {
-            this.dragWidth = target.offsetWidth;
-            this.dragDirection =
-              getComputedStyle(target).direction === 'rtl' ? -1 : 1;
-            this.dragOffset = 0;
-          },
-          onMove: (delta) => {
-            this.dragOffset = this.closingOffset(delta);
-          },
-          onEnd: (delta, velocity) => {
-            this.settleDrag(delta, velocity);
-          },
-          onCancel: () => {
-            this.dragOffset = null;
-          },
-        })
-      : null;
-  }
-
-  /** How far a drag of `delta` px moved the rail toward its edge. */
-  private closingOffset(delta: number) {
-    return Math.min(this.dragWidth, Math.max(0, -delta * this.dragDirection));
-  }
-
-  /** Settles a released drag at the expanded or collapsed anchor. */
-  private settleDrag(delta: number, velocity: number) {
-    const offset = this.closingOffset(delta);
-    const target = settleAnchor(
-      [0, this.dragWidth],
-      0,
-      offset,
-      -velocity * this.dragDirection,
-      {
-        positionalThreshold: (distance) =>
-          distance * NAV_RAIL_POSITIONAL_THRESHOLD,
-        velocityThreshold: NAV_RAIL_VELOCITY_THRESHOLD_PX_PER_S,
-      },
-    );
-    this.dragOffset = null;
-    if (this.dragWidth > 0 && target === this.dragWidth) {
-      this.toggle(false);
-    }
+  private railIsRtl() {
+    const rail = this.railElement;
+    return !!rail && getComputedStyle(rail).direction === 'rtl';
   }
 
   private setupBuiltInMenuButton() {

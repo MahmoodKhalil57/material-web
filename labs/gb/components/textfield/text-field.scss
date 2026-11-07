@@ -265,14 +265,19 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     box-sizing: border-box;
   }
 
+  // The icon box already has its 12dp padding; the rest of the 16dp between
+  // an icon and the text is a margin, so the input area itself starts 16dp
+  // from the icon's edge.
   .text-field-has-leading-icon .text-field-content {
-    padding-inline-start: calc(
+    padding-inline-start: 0;
+    margin-inline-start: calc(
       var(--icon-input-space) - var(--icon-leading-space)
     );
   }
 
   .text-field-has-trailing-icon .text-field-content {
-    padding-inline-end: calc(
+    padding-inline-end: 0;
+    margin-inline-end: calc(
       var(--icon-input-space) - var(--icon-trailing-space)
     );
   }
@@ -466,6 +471,9 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     display: block;
     visibility: hidden;
     white-space: nowrap;
+    // Hidden, but in the label color so a disabled field has no full-opacity
+    // text.
+    color: var(--label-text-color);
     font: var(--label-text);
     font-size: var(--label-text-populated-size);
     line-height: var(--label-text-populated-line-height);
@@ -511,7 +519,9 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
 
   @media (prefers-reduced-motion: reduce) {
     .text-field {
-      --md-sys-motion-spring-fast-spatial-duration: 0.001ms;
+      // Spatial motion stops (motion-transitions: reduced motion); effects
+      // still fade.
+      --md-sys-motion-spring-fast-spatial-duration: 0s;
       --md-sys-motion-spring-fast-effects-duration: 0.001ms;
     }
   }

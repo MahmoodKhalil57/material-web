@@ -525,11 +525,13 @@ $window-margin: 24px;
     text-align: center;
   }
 
-  .time-picker-field-input:hover:not(:focus, :disabled) {
-    background-image: linear-gradient(
-      hsl(from var(--time-input-field-label-text-color) h s l / 8%),
-      hsl(from var(--time-input-field-label-text-color) h s l / 8%)
-    );
+  @media (hover: hover) {
+    .time-picker-field-input:hover:not(:focus, :disabled) {
+      background-image: linear-gradient(
+        hsl(from var(--time-input-field-label-text-color) h s l / 8%),
+        hsl(from var(--time-input-field-label-text-color) h s l / 8%)
+      );
+    }
   }
 
   .time-picker-field-input:focus {
@@ -572,16 +574,6 @@ $window-margin: 24px;
 
   .time-picker-cancel,
   .time-picker-confirm {
-    white-space: nowrap;
-  }
-
-  // Announcements for screen readers only.
-  .time-picker-live {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
     white-space: nowrap;
   }
 

@@ -109,6 +109,8 @@ Everything listed on https://m3.material.io/components, /styles and
   - [x] Headline, section labels, dividers, badges, link items
   - [x] Swipe to dismiss the modal drawer
   - Note: the Expressive spec suggests the expanded navigation rail for most cases.
+  - [ ] Group dividers are full-width (the divider is inset by `--divider-inset`, 16px, like the section labels) <!-- spec-gap: navigation-drawer-b6b096 -->
+  - [ ] Icons on all destinations or none (consumer content; mixed icon and text-only destinations are not flagged) <!-- spec-gap: navigation-drawer-0c57fa, navigation-drawer-91dcd7 -->
 - [x] **Navigation rail** (`navrail`)
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog
   - [x] Collapsed, expanded
@@ -141,6 +143,9 @@ Everything listed on https://m3.material.io/components, /styles and
   - [x] Scrolled state
   - [x] Centered title
   - Gaps: the baseline medium/large app bar sets (the spec no longer recommends them; gb uses the flexible ones)
+  - [ ] Search bar placeholder contains the word "Search" (the `search` slot is consumer content; nothing enforces or defaults it) <!-- spec-gap: app-bars-6ca9a4 -->
+  - [ ] Search app bar on mobile fits a trailing avatar plus two trailing icons (the compact limit counts every trailing element, avatar included, so the avatar is the first to overflow) <!-- spec-gap: app-bars-57f1db -->
+  - [ ] Alternate search colors keep search text and container at 3:1 (a consumer choice; the component does not check overrides) <!-- spec-gap: app-bars-321317 -->
 - [x] **Badges** (`badge`)
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog
   - [x] Small (dot), large (count, `max` shows "999+"), screen reader label
@@ -363,34 +368,38 @@ per-component behavior is checked by contract tests generated from one
 config (like the token spec tests). Estimates come from keyword grouping of
 the 2,187 tracked units (±20%).
 
-- [x] **`tested` status in spec-checks**: a unit counts as tested when a `*_test.ts` file cites it (the suite keeps those green); the report's "Tested" line counts them (109 after RovingFocus). `--strict` can later require tested
-- [ ] **Shared controllers** (Lit `ReactiveController`s in `labs/gb/components/shared/`; each: extract, one thorough suite, migrate its users one at a time with the existing tests as the safety net, add it to the contract config)
-  - [x] RovingFocus: arrows, Home/End, wrap, RTL (computed direction), disabled skip, direction-aware entry, initial tab stop — `shared/roving-focus.ts` + suite (`roving-focus_test.ts`)
+- [x] **`tested` status in spec-checks**: a unit counts as tested when a `*_test.ts` file cites it (the suite keeps those green); the report's "Tested" line counts them (109 after RovingFocus, 2,911 after the controllers, suites, generators and citation passes). `*_gap.ts` files hold red tests for unbuilt spec features (`gb:check --gaps`); they don't count
+- [x] **Shared controllers** (Lit `ReactiveController`s in `labs/gb/components/shared/`, each with one thorough suite and a contract module in `scripts/m3/contracts/`)
+  - [x] RovingFocus: arrows, Home/End, wrap, RTL (computed direction), disabled skip, direction-aware entry, initial tab stop — `roving-focus.ts`
     - [x] Controller: button group (horizontal, every button tabbable, no Home/End), segmented button (one tab stop), chip set (backwards enters a chip at its remove button), nav drawer (Tab enters on the first destination, per the spec's initial-focus rule; it used to start on the selected one)
     - [x] Shared movement (`nextFocusIndex`) inside their own models: list (two tab stops while outside, item controls), menu (typeahead, submenus, disabled items stay focusable), FAB menu (menu button), carousel (no wrap; the other axis leaves the carousel)
     - [-] Not roving focus, so not migrated: select and search results (listbox with `aria-activedescendant`, clamped, page keys), slider and time picker (arrows change a value), scaffold (arrows resize panes), date picker (2-D grid; a grid controller if another grid appears)
-  - [ ] ModalSurface: showModal, scrim, Escape / back (CloseWatcher, predictive back), focus trap and restore, open/close events, scroll lock (backlog) — date picker, dialog, nav drawer, nav rail, scaffold, search, sheets, time picker
-  - [ ] AnchoredOverlay: popover top layer, positioning and flip, light dismiss — menu, select, tooltip, docked date picker, split button, search, FAB menu, snackbar anchor
-  - [ ] Selection: none / single / multi, required, `aria-checked` / `pressed` / `selected`, form value — button group, chip set, segmented button, list, menu, select, tabs, nav bar, nav rail, date/time pickers
-  - [ ] Disclosure: `aria-expanded` / `aria-controls`, expand/collapse motion — list, menu submenus, FAB menu, search, sheets, nav rail, extended FAB, toolbar
-  - [ ] DragSettle: drag / swipe / fling and spring settle on `drag-gesture.ts` — sheets, nav drawer, nav rail, tab panels, list reveal and reorder, carousel, date picker months, pull to refresh, scaffold handle
-  - [ ] Announcer: one polite / assertive live region — badge, carousel, date picker, list, pull to refresh, search, segmented button, select, snackbar, text field, time picker
-  - [ ] Form: one validation and form-association layer on `labs/behaviors` — text field, select, autocomplete, date picker, time picker, checkbox, radio, switch, slider, chips, segmented button
-  - [ ] Motion: springs, reduced motion, transition/animation end in one helper — date picker, dialog, nav drawer, ripple, search, select, sheets, tabs, time picker
-  - [ ] Adaptive: window size class wiring (`window-size-class.ts`) for components that change by window size — nav bar, nav rail, search, sheets, dialogs, scaffold
-- [ ] **Central CSS / token suites** (one parametrized suite each, run over every component)
-  - [ ] State layers, with hover gated to hover-capable pointers (backlog item)
-  - [ ] Focus indicator
-  - [ ] Touch target and density
-  - [ ] Disabled state
-  - [ ] RTL mirroring
-  - [ ] Reduced motion
-  - [ ] Color roles, shape, type scale and elevation per part (extends the generated token spec tests)
-- [ ] **Generators**
-  - [~] Contract tests from a per-component controller config (`scripts/m3/gen-contract-tests.mjs`, `CONTRACTS`; run by `npm run m3:update`): roving focus for button group, segmented button, chip set and nav drawer (list, menu and carousel are proven by their generated keyboard spec tests); add each controller's checks as it lands
-  - [ ] Measurement tests from the spec's measurement tables (dp values already extracted and matched to parts)
-  - [ ] Anatomy tests: each component exposes the parts its spec anatomy lists
-- [ ] **Component-specific tests** (~60–90, for behavior, adaptive layout, keyboard / screen reader and motion units no shared piece covers), batched per component, must/should units first
+    - [ ] Toolbar and nav rail rely on the native `focusgroup` attribute, which Chromium doesn't ship: arrow keys don't move focus (`toolbar_gap.ts`)
+  - [x] ModalSurface: `showModal`, close requests with a reason (Escape, back / predictive back, scrim, cancel, confirm), focus in and restore, Tab trap, ref-counted scroll lock (`:root[data-md-gb-scroll-lock]`, modal surfaces only) — `modal-surface.ts`; dialog, bottom and side sheets, nav drawer, modal nav rail, search view, modal date picker, time picker. `predictive-back.ts` moved here from `sheet/`
+  - [x] AnchoredOverlay: popover top layer, positioning with flip and clamp, light dismiss with a reason, focus return — `anchored-overlay.ts`; menu (fixed: it was never anchored), select, tooltip, split button, docked date picker
+  - [x] Selection: none / single / multi, required, `aria-checked` / `pressed` / `selected` — `selection.ts`; button group, segmented button, chip set, tabs, nav bar
+  - [x] Disclosure: `aria-expanded` / `aria-controls`, expand/collapse motion, cancelable `toggle` event fired before the change — `disclosure.ts`; list, FAB, FAB menu, toolbar, scaffold
+  - [x] DragSettle: drag / swipe / fling and spring settle on `drag-gesture.ts` — `drag-settle.ts`; list swipe-reveal, scaffold pane resize, bottom sheet resize and dismiss, side sheet dismiss, modal nav drawer, modal nav rail, tab panels. Carousel mouse drag uses `DragGesture` (it snaps by fling projection, not anchors); pull to refresh already did
+  - [x] Announcer: one polite / assertive live region — `announcer.ts`; snackbar, date picker, time picker, pull to refresh, text field, carousel
+  - [x] Form: `form-field.ts` — ToggleFieldController (checkbox, switch), FormScopedSelectionController (radio), FormDisabledController (fieldset-disabled with recovery), ValueFieldController (dirty value, reset, restore, reported error replacing supporting text: text field, select, autocomplete, date picker), SelectionGroupValidator (required chip set and segmented set; chip set is now form-associated). Slider and time picker use the disabled layer
+    - [ ] Time picker has no constraint validation (`required`, `setCustomValidity`)
+  - [x] Motion: durations, easings, reduced motion, transition end in one helper — `motion.ts`; date and time pickers, pull to refresh, text field, carousel, tab panels, sheets
+  - [x] Adaptive: window size class wiring — `adaptive.ts`; app bar collapses trailing actions to an `overflow` slot (2 compact, 4 otherwise)
+- [x] **Central CSS / token suites** (`labs/gb/components/shared/central/`, one parametrized suite each over every component in `subjects.ts`; `KNOWN_GAPS` lists the ones still red, `SPEC_EXCEPTIONS` the ones the spec waives)
+  - [x] State layers: hover gated on `@media (hover: hover)` (centrally in `ripple.scss`, plus every component `:hover` rule), 10% focus layer, 16% dragged layer, hover fade
+  - [x] Focus indicator (nav drawer item no longer hides the ring)
+  - [x] Touch target and density (tabs fixed; text field at density -3 is a spec exception: density is opt-in)
+  - [x] Disabled state (38% content, 12% outlined button and icon button outline)
+  - [x] RTL mirroring (segmented-button label)
+  - [x] Reduced motion (text field label, menu radius, slider clip-path)
+  - [x] Color roles, shape, type scale and elevation scales (`scales_test.ts`)
+- [x] **Generators** (all run by `npm run m3:update`; each has `--check`)
+  - [x] Contract tests (`scripts/m3/gen-contract-tests.mjs`): roving focus from `CONTRACTS`, every other controller from its module in `scripts/m3/contracts/`; emits only the helpers a file uses
+  - [x] Measurement tests from the spec's measurement tables (`gen-measurement-tests.mjs`, rows in `gen-measurement-configs.mjs`); rows measured wrong go to `*_measurement_gap.ts`
+  - [x] Anatomy tests: each component exposes the parts its spec anatomy lists (`gen-anatomy-tests.mjs`)
+- [~] **Component-specific tests**: citation passes over every component (`*_units_test.ts`, `*_behavior_test.ts`, `*_states_test.ts`) cite each implemented unit to a test or write one; still to do: red tests for the 2,133 tracked units, and fixing the red ones
+  - Red now: measurement gaps (dialog, nav drawer badge, search paddings, menu, tooltip, sheet, list, split button, toolbar, progress), button hover elevation, split button leading height, button group disabled selected label, side sheet divider color, nav rail label wrap, time picker at 400px height, tabs anatomy (divider, indicator part), card padding, extended FAB 80dp minimum
+  - Unconfirmed: carousel `alignment="center"` hero item at rest; button keeps `.active` after a mouse release
 - [ ] **Exclusion review**: ~90 tracked description / usage-advice units that can't be tested get an explicit reason instead of a test
 
 ## Engineering backlog (not spec requirements)

@@ -13,14 +13,14 @@ import {
 } from 'lit';
 import {property} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
-import {DragGesture, settleAnchor} from '../shared/drag-gesture.js';
+import {DragSettleController} from '../shared/drag-settle.js';
+import {isReducedMotion, parseDuration} from '../shared/motion.js';
 import {updateClassList} from '../shared/update-class-list.js';
 
 import tabPanelsStyles from './tab-panels.css' with {type: 'css'}; // github-only
 // import tabPanelsStyles from './tab-panels.cssresult.js'; // google3-only
 
 import {
-  parseCssTime,
   TAB_PANEL_OFFSET_PROPERTY,
   TAB_PANELS_CLASSES,
   TAB_PANELS_POSITIONAL_THRESHOLD,
@@ -149,10 +149,7 @@ export class TabPanelsElement extends LitElement {
   private index = -1;
   /** Panels on screen besides the active one (mid-drag or mid-slide). */
   private readonly visiblePanels = new Set<HTMLElement>();
-  private dragGesture: DragGesture | null = null;
   private dragWidth = 0;
-  /** 1 when the next panel is to the right (LTR), -1 in RTL. */
-  private dragDirection = 1;
   /** The fractional panel position while dragging, null otherwise. */
   private dragPosition: number | null = null;
   private slideTimer: ReturnType<typeof setTimeout> | null = null;
@@ -168,25 +165,11 @@ export class TabPanelsElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     updateClassList(this, {[TAB_PANELS_CLASSES.tabPanels]: true});
-    this.dragGesture ??= new DragGesture(this, {
-      axis: 'x',
-      canStart: (event) =>
-        !this.gesturesDisabled &&
-        this.panels.length > 1 &&
-        this.index >= 0 &&
-        !isEditablePath(event.composedPath()),
-      onStart: () => this.startDrag(),
-      onMove: (delta) => this.moveDrag(delta),
-      onEnd: (delta, velocity) => this.endDrag(delta, velocity),
-      onCancel: () => this.cancelDrag(),
-    });
     this.linkTabs();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.dragGesture?.disconnect();
-    this.dragGesture = null;
     this.dragPosition = null;
     this.finishSlide();
     this.observeTabs(null);
@@ -198,7 +181,7 @@ export class TabPanelsElement extends LitElement {
       this.linkTabs();
     }
     if (changed.has('gesturesDisabled') && this.gesturesDisabled) {
-      this.dragGesture?.cancel();
+      this.swipe.cancel();
     }
   }
 
@@ -335,7 +318,7 @@ export class TabPanelsElement extends LitElement {
     if (target !== this.index) {
       if (this.dragPosition !== null) {
         // The selection changed mid-drag (a tab click): drop the drag.
-        this.dragGesture?.cancel();
+        this.swipe.cancel();
       }
       this.slideTo(target);
       return;
@@ -364,8 +347,13 @@ export class TabPanelsElement extends LitElement {
 
   /** The slide duration in ms (0 with reduced motion). */
   private get slideDuration(): number {
-    return parseCssTime(
-      getComputedStyle(this).getPropertyValue('--transition-duration'),
+    if (isReducedMotion(this)) {
+      return 0;
+    }
+    return (
+      parseDuration(
+        getComputedStyle(this).getPropertyValue('--transition-duration'),
+      ) ?? 0
     );
   }
 
@@ -468,7 +456,6 @@ export class TabPanelsElement extends LitElement {
   private startDrag() {
     this.finishSlide();
     this.dragWidth = this.clientWidth;
-    this.dragDirection = getComputedStyle(this).direction === 'rtl' ? -1 : 1;
     this.dragPosition = this.index;
     updateClassList(this, {[TAB_PANELS_CLASSES.dragging]: true});
     const panels = this.panels;
@@ -481,24 +468,44 @@ export class TabPanelsElement extends LitElement {
     this.positionDrag();
   }
 
-  /** The fractional panel position after a drag of `delta` px. */
-  private dragPositionFor(delta: number) {
-    const last = this.panels.length - 1;
-    const width = this.dragWidth || 1;
-    // Dragging toward the reading start reveals the next panel.
-    const position = this.index - (delta * this.dragDirection) / width;
-    // A drag moves at most one panel and not past the first or last one
-    // (Compose pager `pagerSnapDistance` of one page, no overscroll).
-    return Math.min(
-      Math.min(last, this.index + 1),
-      Math.max(Math.max(0, this.index - 1), position),
-    );
-  }
-
-  private moveDrag(delta: number) {
-    this.dragPosition = this.dragPositionFor(delta);
-    this.positionDrag();
-  }
+  /**
+   * Swiping between panels: a drag along the reading direction moves the
+   * panels with the pointer, and settles at a panel on release (shared
+   * DragSettleController; Compose pager snapping: a fling faster than the
+   * velocity threshold moves to the next panel in its direction, otherwise
+   * the nearer panel past the positional threshold). The anchors are the
+   * active panel and its neighbors in px; a drag moves at most one panel and
+   * not past the first or last one (pager `pagerSnapDistance` of one page,
+   * no overscroll). The panel position grows against the pointer in the
+   * reading direction.
+   */
+  // spec: tabs-79df51, tabs-52e127, tabs-fd3bbd
+  private readonly swipe = new DragSettleController(this, {
+    axis: 'x',
+    target: () => this,
+    anchors: () => {
+      const width = this.clientWidth || 1;
+      const last = this.panels.length - 1;
+      return [this.index - 1, this.index, this.index + 1]
+        .filter((i) => i >= 0 && i <= last)
+        .map((i) => i * width);
+    },
+    value: () => this.index * (this.clientWidth || 1),
+    reverse: () => getComputedStyle(this).direction !== 'rtl',
+    velocityThreshold: TAB_PANELS_VELOCITY_THRESHOLD_PX_PER_S,
+    positionalThreshold: (distance) =>
+      distance * TAB_PANELS_POSITIONAL_THRESHOLD,
+    disabled: () =>
+      this.gesturesDisabled || this.panels.length < 2 || this.index < 0,
+    canStart: (event) => !isEditablePath(event.composedPath()),
+    onDragStart: () => this.startDrag(),
+    onDrag: (offset) => {
+      this.dragPosition = offset / (this.dragWidth || 1);
+      this.positionDrag();
+    },
+    onSettle: (anchor) => this.endDrag(Math.round(anchor / (this.dragWidth || 1))),
+    onCancel: () => this.cancelDrag(),
+  });
 
   private positionDrag() {
     const position = this.dragPosition ?? this.index;
@@ -511,33 +518,8 @@ export class TabPanelsElement extends LitElement {
     }
   }
 
-  /**
-   * Settles a released drag at a panel (Compose pager snapping: a fling
-   * faster than the velocity threshold moves to the next panel in its
-   * direction, otherwise the nearer panel past the positional threshold).
-   */
-  private endDrag(delta: number, velocity: number) {
-    const position = this.dragPositionFor(delta);
-    const width = this.dragWidth || 1;
-    const last = this.panels.length - 1;
-    const anchors = [this.index - 1, this.index, this.index + 1]
-      .filter((i) => i >= 0 && i <= last)
-      .map((i) => i * width);
-    const target = Math.round(
-      settleAnchor(
-        anchors,
-        this.index * width,
-        position * width,
-        // The panel position grows against the pointer in the reading
-        // direction.
-        -velocity * this.dragDirection,
-        {
-          positionalThreshold: (distance) =>
-            distance * TAB_PANELS_POSITIONAL_THRESHOLD,
-          velocityThreshold: TAB_PANELS_VELOCITY_THRESHOLD_PX_PER_S,
-        },
-      ) / width,
-    );
+  /** Settles the released drag at the panel `target`. */
+  private endDrag(target: number) {
     this.dragPosition = null;
     updateClassList(this, {[TAB_PANELS_CLASSES.dragging]: false});
     const changed = target !== this.index;

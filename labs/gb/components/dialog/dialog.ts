@@ -6,6 +6,7 @@
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {createClassMapDirective} from '../shared/directives.js';
+import {getFocusableElements, trapTabFocus} from '../shared/modal-surface.js';
 
 /**
  * Dialog CSS classes.
@@ -70,66 +71,7 @@ export function dialogClasses({
   };
 }
 
-const FOCUSABLE =
-  ':is(button,input,select,textarea,object,:is(a,area)[href],[tabindex],[contenteditable=true],[contenteditable=""])' +
-  ':not(:disabled,[disabled],[tabindex^="-"],[inert])';
-
-function isFocusable(element: Element): element is HTMLElement {
-  if (element.matches(FOCUSABLE)) {
-    return true;
-  }
-  // A custom element without a tabindex is focusable when its shadow root
-  // delegates focus (like `md-gb-button`).
-  return (
-    element.localName.includes('-') &&
-    !element.matches(':disabled,[disabled]') &&
-    (element.shadowRoot?.delegatesFocus ?? false)
-  );
-}
-
-function isRendered(element: Element) {
-  return element.checkVisibility?.({visibilityProperty: true}) ?? true;
-}
-
-function isDisplayContents(element: Element) {
-  return getComputedStyle(element).display === 'contents';
-}
-
-/**
- * Returns the keyboard-focusable elements inside `root` in flat tree
- * (rendered) order: slots are expanded to their assigned elements and open
- * shadow roots are walked, except for custom elements that delegate focus,
- * which count as one stop.
- */
-export function getFocusableElements(root: Element | ShadowRoot): HTMLElement[] {
-  const result: HTMLElement[] = [];
-  const visit = (node: Element) => {
-    if (node instanceof HTMLSlotElement) {
-      const assigned = node.assignedElements({flatten: true});
-      const children = assigned.length ? assigned : [...node.children];
-      children.forEach(visit);
-      return;
-    }
-    if (node.hasAttribute('inert')) {
-      return;
-    }
-    const rendered = isRendered(node);
-    // `display: contents` elements have no box but their children do.
-    if (!rendered && !isDisplayContents(node)) {
-      return;
-    }
-    if (rendered && isFocusable(node)) {
-      result.push(node);
-      if (node.shadowRoot?.delegatesFocus) {
-        return;
-      }
-    }
-    const children = node.shadowRoot ? node.shadowRoot.children : node.children;
-    [...children].forEach(visit);
-  };
-  [...root.children].forEach(visit);
-  return result;
-}
+export {getFocusableElements};
 
 /**
  * Set this attribute on the `<dialog>` to turn off `setupDialog()` focus
@@ -154,30 +96,12 @@ export function setupDialog(
   dialog.addEventListener(
     'keydown',
     (event: KeyboardEvent) => {
-      if (event.key !== 'Tab' || event.defaultPrevented) {
-        return;
-      }
-      if (dialog.hasAttribute(NO_FOCUS_TRAP_ATTRIBUTE)) {
-        return;
-      }
-      const focusable = getFocusableElements(dialog);
-      if (!focusable.length) {
-        event.preventDefault();
-        dialog.focus();
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const path = event.composedPath();
-      const current = path.find(
-        (target) => target instanceof HTMLElement && focusable.includes(target),
-      );
-      if (event.shiftKey && (current === first || !current)) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && (current === last || !current)) {
-        event.preventDefault();
-        first.focus();
+      if (
+        event.key === 'Tab' &&
+        !event.defaultPrevented &&
+        !dialog.hasAttribute(NO_FOCUS_TRAP_ATTRIBUTE)
+      ) {
+        trapTabFocus(event, dialog);
       }
     },
     opts,

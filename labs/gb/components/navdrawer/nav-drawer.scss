@@ -241,7 +241,9 @@ $overshoot: 24px;
     letter-spacing: var(--label-text-tracking);
     margin: 0;
     max-inline-size: var(--active-indicator-width);
-    outline: none;
+    // The focus ring (focus-ring.scss) draws through these variables.
+    outline: var(--focus-ring-outline);
+    outline-offset: var(--focus-ring-offset);
     padding-block: 0;
     padding-inline: var(--item-leading-space) var(--item-trailing-space);
     position: relative;
@@ -256,9 +258,11 @@ $overshoot: 24px;
     -webkit-tap-highlight-color: transparent;
 
     // spec-labels: navigation-drawer/specs/states
-    &:is(:hover, .hover) {
-      --md-icon-color: var(--inactive-hover-icon-color);
-      color: var(--inactive-hover-label-text-color);
+    @media (hover: hover) {
+      &:is(:hover, .hover) {
+        --md-icon-color: var(--inactive-hover-icon-color);
+        color: var(--inactive-hover-label-text-color);
+      }
     }
 
     &:is(:focus-visible, .focus-visible) {
@@ -286,9 +290,11 @@ $overshoot: 24px;
     font: var(--active-label-text);
     font-variation-settings: var(--active-label-text-axes);
 
-    &:is(:hover, .hover) {
-      --md-icon-color: var(--active-hover-icon-color);
-      color: var(--active-hover-label-text-color);
+    @media (hover: hover) {
+      &:is(:hover, .hover) {
+        --md-icon-color: var(--active-hover-icon-color);
+        color: var(--active-hover-label-text-color);
+      }
     }
 
     &:is(:focus-visible, .focus-visible) {

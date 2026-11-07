@@ -49,11 +49,13 @@ $clip-left: var(--_carousel-item-clip-left, 0px);
     }
 
     // spec-labels: carousel/specs/states
-    &:is(:hover, .hover):not(.disabled) {
-      @include carousel-tokens.hover;
+    @media (hover: hover) {
+      &:is(:hover, .hover):not(.disabled) {
+        @include carousel-tokens.hover;
 
-      &.carousel-item-outlined {
-        @include carousel-tokens.with-outline-hover;
+        &.carousel-item-outlined {
+          @include carousel-tokens.with-outline-hover;
+        }
       }
     }
 
@@ -82,11 +84,13 @@ $clip-left: var(--_carousel-item-clip-left, 0px);
     }
   }
 
-  :host(:hover) .carousel-item:not(.disabled) {
-    @include carousel-tokens.hover;
+  @media (hover: hover) {
+    :host(:hover) .carousel-item:not(.disabled) {
+      @include carousel-tokens.hover;
 
-    &.carousel-item-outlined {
-      @include carousel-tokens.with-outline-hover;
+      &.carousel-item-outlined {
+        @include carousel-tokens.with-outline-hover;
+      }
     }
   }
 
