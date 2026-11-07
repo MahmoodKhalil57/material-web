@@ -31,7 +31,12 @@ const DEFAULT_SEED = '#6750a4';
  * Bump when themeToCss output changes: the pre-paint script in
  * catalog/site/_includes/gb/default.html ignores caches of other versions.
  */
-const THEME_CACHE_VERSION = 1;
+const THEME_CACHE_VERSION = 2;
+/**
+ * The 3.0 site's own seed key: the v2.5 site saves its default seed under
+ * `seed-color` on first visit, which would recolor 3.0 without a choice.
+ */
+const SEED_KEY = 'gb-seed-color';
 const MODES = ['auto', 'light', 'dark'] as const;
 type Mode = (typeof MODES)[number];
 const MODE_ICON: Record<Mode, string> = {
@@ -108,7 +113,9 @@ function applySeed(seed: string) {
     // Regenerate below.
   }
   if (!css) {
-    const standard = themeToCss(themeFromSource({source: seed}));
+    // Unlayered, so it wins over the baseline tokens (layer md.sys.color)
+    // that demos adopt into the document after this style element.
+    const standard = themeToCss(themeFromSource({source: seed}), {layer: ''});
     const high = themeToCss(themeFromSource({source: seed, contrast: 'high'}), {
       layer: '',
     });
@@ -124,7 +131,7 @@ function applySeed(seed: string) {
   style.textContent = css;
 }
 
-const seed = read('seed-color') || DEFAULT_SEED;
+const seed = read(SEED_KEY) || DEFAULT_SEED;
 // The baseline tokens are the default seed's; others need generating.
 if (seed.toLowerCase() !== DEFAULT_SEED) {
   try {
@@ -140,7 +147,7 @@ if (seed.toLowerCase() !== DEFAULT_SEED) {
 /** Sets the seed color of the dynamic theme and remembers it. */
 (window as unknown as {gbTheme: object}).gbTheme = {
   setSeed(hex: string) {
-    write('seed-color', hex);
+    write(SEED_KEY, hex);
     applySeed(hex);
   },
 };
