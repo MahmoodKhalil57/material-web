@@ -128,6 +128,7 @@ const VARIANTS = {
   'tabs': 'tabs',
   'dialog': 'dialog',
   'text-field': 'textfield',
+  'select': 'select',
 };
 
 /** labs/gb components that only exist in M3 Expressive, and their page slug. */
@@ -143,11 +144,17 @@ const EXPRESSIVE_ONLY = {
   navbar: 'navigation-bar',
   navdrawer: 'navigation-drawer',
   navrail: 'navigation-rail',
+  pulltorefresh: 'pull-to-refresh',
+  scaffold: 'scaffold',
   search: 'search',
   segmentedbutton: 'segmented-button',
   sheet: 'sheets',
   snackbar: 'snackbar',
   splitbutton: 'split-button',
+  'style-color': 'dynamic-color',
+  'style-icon': 'material-symbols',
+  'style-layout': 'layout',
+  'style-transitions': 'motion-transitions',
   timepicker: 'time-picker',
   toolbar: 'toolbar',
   tooltip: 'tooltip',
@@ -193,11 +200,30 @@ log(
 
 // ---------------------------------------------------------------------------
 
-/** labs/gb components that have a demo. */
+/**
+ * labs/gb styles with a demo, shown as their own pages: page key -> folder
+ * under labs/gb/styles.
+ */
+function styleDemos() {
+  return {
+    'style-color': 'color',
+    'style-icon': 'icon',
+    'style-layout': 'layout',
+    'style-transitions': 'motion/transitions',
+  };
+}
+
+/** Source folder of a component (or style) key. */
+function srcDir(dir) {
+  const styles = styleDemos();
+  return dir in styles ? join(ROOT, 'labs', 'gb', 'styles', styles[dir]) : join(GB, dir);
+}
+
+/** labs/gb components (and styles) that have a demo. */
 async function gbDemoDirs() {
   const dirs = [];
-  for (const dir of (await readdir(GB)).sort()) {
-    if (existsSync(join(GB, dir, 'demo', 'demo.ts'))) dirs.push(dir);
+  for (const dir of [...(await readdir(GB)), ...Object.keys(styleDemos())].sort()) {
+    if (existsSync(join(srcDir(dir), 'demo', 'demo.ts'))) dirs.push(dir);
   }
   return dirs;
 }
@@ -213,7 +239,7 @@ async function prepareExamples(dirs) {
   await rm(EXAMPLES, {recursive: true, force: true});
   const tsconfigRaw = {compilerOptions: {experimentalDecorators: true, useDefineForClassFields: false}};
   for (const dir of dirs) {
-    const demo = join(GB, dir, 'demo');
+    const demo = join(srcDir(dir), 'demo');
     for (const f of await readdir(demo)) {
       if (!f.endsWith('.ts')) continue;
       const source = (await readFile(join(demo, f), 'utf8')).replace(
@@ -281,7 +307,7 @@ async function addStories(dirs) {
   for (const dir of dirs) {
     const stories = join(CATALOG, 'stories', `gb-${dir}`);
     await rm(stories, {recursive: true, force: true});
-    await cp(join(GB, dir, 'demo'), stories, {recursive: true});
+    await cp(join(srcDir(dir), 'demo'), stories, {recursive: true});
     await writeFile(
       join(stories, 'project.json'),
       JSON.stringify(
@@ -520,6 +546,18 @@ function transformToExpressive(html) {
     rename(el, 'md-gb-text-field', outlined ? {variant: 'outlined'} : {}, []);
   });
 
+  // Selects: one element with a variant; options take their headline as text.
+  each('md-filled-select, md-outlined-select', (el) => {
+    const outlined = el.localName === 'md-outlined-select';
+    rename(el, 'md-gb-select', outlined ? {variant: 'outlined'} : {}, ['menu-positioning', 'clamp-menu-width', 'menu-align', 'quick']);
+  });
+  each('md-select-option', (el) => {
+    const option = rename(el, 'md-gb-select-option', {}, []);
+    for (const child of option.querySelectorAll(':scope > [slot="headline"]')) unwrap(child);
+    for (const child of option.querySelectorAll(':scope > [slot="start"]')) child.setAttribute('slot', 'leading');
+    for (const child of option.querySelectorAll(':scope > [slot="end"]')) child.setAttribute('slot', 'trailing');
+  });
+
   // Dialogs: the content goes in the default slot.
   each('md-dialog', (el) => {
     const dialog = rename(el, 'md-gb-dialog', {}, []);
@@ -590,20 +628,20 @@ function transformToExpressive(html) {
 
 /** Reads the title from the demo and the API from the element's jsdoc. */
 async function describeComponent(dir) {
-  const files = await readdir(join(GB, dir));
-  const demo = await readFile(join(GB, dir, 'demo', 'demo.ts'), 'utf8');
+  const files = await readdir(join(srcDir(dir)));
+  const demo = await readFile(join(srcDir(dir), 'demo', 'demo.ts'), 'utf8');
   const title = demo.match(/MaterialCollection<[^>]*>>\(\s*'([^']+)'/)?.[1] ?? dir;
 
   // Tag names from md-gb-*.ts registrations.
   const tags = new Map(); // class -> tag
   for (const f of files.filter((f) => /^md-gb-.*\.ts$/.test(f) && !f.endsWith('.d.ts'))) {
-    const src = await readFile(join(GB, dir, f), 'utf8');
+    const src = await readFile(join(srcDir(dir), f), 'utf8');
     for (const m of src.matchAll(/customElements\.define\(\s*'([^']+)'\s*,\s*(\w+)\s*\)/g)) tags.set(m[2], m[1]);
   }
 
   const elements = [];
   for (const f of files.filter((f) => /-element\.ts$/.test(f) && !f.endsWith('.d.ts'))) {
-    const src = (await readFile(join(GB, dir, f), 'utf8')).replace(/\r\n/g, '\n');
+    const src = (await readFile(join(srcDir(dir), f), 'utf8')).replace(/\r\n/g, '\n');
     const cls = src.match(/\/\*\*((?:(?!\*\/)[\s\S])*)\*\/\s*export class (\w+)/);
     if (!cls) continue;
     const doc = jsdoc(cls[1]);
