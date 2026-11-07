@@ -7,7 +7,9 @@
 import {css, CSSResultOrNative, html, type PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
+import {internals} from '../../../behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {hasLinkItems, NAV_LINK_CHANGE} from '../shared/nav-link.js';
 import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
 import {SelectionController} from '../shared/selection.js';
 
@@ -155,6 +157,7 @@ export class NavBarElement extends AriaTablistElement {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.addEventListener(NAV_LINK_CHANGE, this.syncRole);
     adoptStyles(this, navBarStyles);
     this.mediaQuery = window.matchMedia?.(MEDIUM_WINDOW_QUERY);
     this.mediaQuery?.addEventListener('change', this.onMediaChange);
@@ -163,6 +166,7 @@ export class NavBarElement extends AriaTablistElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener(NAV_LINK_CHANGE, this.syncRole);
     this.mediaQuery?.removeEventListener('change', this.onMediaChange);
   }
 
@@ -189,8 +193,24 @@ export class NavBarElement extends AriaTablistElement {
     `;
   }
 
+  /**
+   * Destinations that are links make the bar a navigation landmark of links;
+   * a tab list can only hold tabs. Without links it stays a tab list.
+   */
+  private readonly syncRole = () => {
+    const state = this[internals];
+    if (hasLinkItems(this.tabs)) {
+      state.role = 'navigation';
+      state.ariaOrientation = null;
+    } else {
+      state.role = 'tablist';
+      state.ariaOrientation = this.orientation;
+    }
+  };
+
   protected override handleSlotChange() {
     super.handleSlotChange();
+    this.syncRole();
     this.itemCount = this.tabs.length;
     this.syncItemsLayout();
   }

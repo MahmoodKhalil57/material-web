@@ -91,9 +91,12 @@ Attributes and properties
 | `active` | `active` (reflects) | `boolean` |  | Whether the navigation bar item is active. Alias for `selected`. |
 | `badge` | `badge` | `string` | `''` | Optional badge text (or 'dot' / 'true' for a small dot badge). |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the navigation bar item is disabled. |
+| `href` | `href` | `string` | `''` | The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. |
 | `itemLayout` | `item-layout` (reflects) | `NavBarItemLayout` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
 | `label` | `label` | `string` | `''` | Optional label text if not provided via default slot. |
+| `rel` | `rel` | `string` | `''` | The link's `rel` attribute, when `href` is set. |
 | `tabpanel` | `tabpanel` (reflects) | `string` |  | ID of the associated `md-aria-tabpanel` element. |
+| `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to open the linked `href`, e.g. `_blank`. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Whether the icon has no filled style. The active destination then uses the semibold icon weight instead of the filled icon. |
 
 Slots
@@ -104,6 +107,7 @@ Slots
 
 Methods
 
+- `click`: `() => void` Activates the destination: follows its link, else clicks the tab.
 - `connectedCallback`: `() => void` Invoked when the component is added to the document's DOM. In `connectedCallback()` you should setup tasks that should only occur when the element is connected to the document. The most common of these is adding event listeners to nodes external to the element, like a keydown event handler added to the window. ```ts connectedCallback() { super.connectedCallback(); addEventListener('keydown', this._handleKeydown); } ``` Typically, anything done in `connectedCallback()` should be undone when the element is disconnected, in `disconnectedCallback()`.
 
 CSS parts

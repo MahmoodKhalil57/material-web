@@ -10,6 +10,7 @@ import {AriaTabElement} from '../../../aria/tabs/tab.js';
 import {internals} from '../../../behaviors/element-internals.js';
 import {isFocusable} from '../../../behaviors/focusable.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {NavLinkController, navLinkStyles} from '../shared/nav-link.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
 // import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
@@ -38,6 +39,7 @@ export class NavBarItemElement extends AriaTabElement {
     focusRingStyles,
     rippleStyles,
     navBarStyles,
+    navLinkStyles,
     css`
       :host {
         display: flex;
@@ -52,6 +54,8 @@ export class NavBarItemElement extends AriaTabElement {
     `,
   ];
 
+  private readonly navLink = new NavLinkController(this);
+
   constructor() {
     super();
     this.addEventListener('click', (event: Event) => {
@@ -63,12 +67,22 @@ export class NavBarItemElement extends AriaTabElement {
   }
 
   override get selected(): boolean {
-    return super.selected;
+    return this.href ? this.navLink.selected : super.selected;
   }
   override set selected(value: boolean) {
     const oldValue = this.selected;
     super.selected = value;
+    // A link keeps its state apart from `aria-selected`, which it can't have.
+    if (this.navLink) {
+      this.navLink.selected = Boolean(value);
+      this.navLink.sync();
+    }
     this.requestUpdate('active', oldValue);
+  }
+
+  /** Activates the destination: follows its link, else clicks the tab. */
+  override click() {
+    if (!this.navLink.activate()) super.click();
   }
 
   /** Whether the navigation bar item is active. Alias for `selected`. */
@@ -86,6 +100,18 @@ export class NavBarItemElement extends AriaTabElement {
   /** The layout orientation of the item ('vertical' or 'horizontal'). */
   @property({attribute: 'item-layout', reflect: true})
   itemLayout: NavBarItemLayout = 'vertical';
+
+  /**
+   * The URL the destination links to. The item is then a link (role `link`,
+   * `aria-current="page"` while selected) instead of a tab.
+   */
+  @property() href = '';
+
+  /** Where to open the linked `href`, e.g. `_blank`. */
+  @property() target: '_blank' | '_parent' | '_self' | '_top' | '' = '';
+
+  /** The link's `rel` attribute, when `href` is set. */
+  @property() rel = '';
 
   /** Optional label text if not provided via default slot. */
   @property() label = '';
@@ -146,6 +172,7 @@ export class NavBarItemElement extends AriaTabElement {
             <slot @slotchange=${this.syncSlottedIcons}>${this.label}</slot>
           </span>
         </span>
+        ${this.navLink.render()}
       </div>
     `;
   }

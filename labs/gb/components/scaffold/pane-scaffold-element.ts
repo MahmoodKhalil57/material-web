@@ -15,6 +15,7 @@ import {
 import {property, query, state} from 'lit/decorators.js';
 import {DragGesture} from '../shared/drag-gesture.js';
 import {DragSettleController} from '../shared/drag-settle.js';
+import {getFocusableElements} from '../shared/modal-surface.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {
@@ -317,6 +318,13 @@ export class PaneScaffoldElement extends LitElement {
   /** Accessible label of a modal levitated pane (its dialog role). */
   @property({attribute: 'levitate-label'}) levitateLabel = '';
 
+  /**
+   * Accessible label of the stacked panes' scroll region. Only used while the
+   * stacked panes overflow and hold nothing focusable: the region is then
+   * focusable (so the keyboard can scroll it) and a labelled `region`.
+   */
+  @property({attribute: 'scroll-label'}) scrollLabel = 'Panes';
+
   /** Accessible label of the drag handle. */
   @property({attribute: 'drag-handle-label'})
   dragHandleLabel = 'Resize panes';
@@ -388,6 +396,8 @@ export class PaneScaffoldElement extends LitElement {
   private lastLayoutKey = '';
   private viewportFold: Fold | null = null;
   private foldResizeObserver: ResizeObserver | null = null;
+  private scrollObserver: ResizeObserver | null = null;
+  private readonly scrollTargets = new Set<Element>();
   private stopFold: (() => void) | null = null;
   private lastFocusBeforeOpen: HTMLElement | null = null;
   private outsideListening = false;
@@ -442,6 +452,7 @@ export class PaneScaffoldElement extends LitElement {
       if (app.windowClass) this.size.set(app.windowClass);
       if (app.windowHeightClass) this.size.setHeight(app.windowHeightClass);
     }
+    if (this.hasUpdated) this.syncScroller();
     this.stopFold = observeFold((fold) => {
       this.viewportFold = fold;
       this.observeFoldResize();
@@ -465,6 +476,9 @@ export class PaneScaffoldElement extends LitElement {
     this.viewportFold = null;
     this.foldResizeObserver?.disconnect();
     this.foldResizeObserver = null;
+    this.scrollObserver?.disconnect();
+    this.scrollObserver = null;
+    this.scrollTargets.clear();
     this.listenOutside(false);
     this.disconnectFloatGestures();
   }
@@ -924,6 +938,7 @@ export class PaneScaffoldElement extends LitElement {
 
   protected override updated(changed: PropertyValues<this>) {
     this.syncHandleValue();
+    this.syncScroller();
     this.syncFloatGestures();
     const key = `${this.size.value}|${this.plan.mode}|${this.plan.visible.join()}|${this.plan.tertiary}`;
     if (key !== this.lastLayoutKey) {
@@ -989,8 +1004,63 @@ export class PaneScaffoldElement extends LitElement {
     }
   };
 
+  // --- Keyboard scrolling ----------------------------------------------------
+
+  /**
+   * Makes the stacked scroller keyboard-scrollable when it needs to be: it
+   * overflows and holds nothing focusable, so a keyboard user has no other
+   * way to scroll it (axe `scrollable-region-focusable`). It then gets
+   * `tabindex="0"`, and, because a focusable element needs a name,
+   * `role="region"` and an `aria-label`. A scroller that doesn't overflow,
+   * or whose content has a focus stop (the browser scrolls to it), is left
+   * out of the tab order and out of the landmarks.
+   */
+  private syncScroller() {
+    const scroller = this.renderRoot.querySelector<HTMLElement>(
+      '.pane-scaffold-stacked',
+    );
+    if (!scroller) {
+      this.scrollObserver?.disconnect();
+      this.scrollObserver = null;
+      this.scrollTargets.clear();
+      return;
+    }
+    if (!this.scrollObserver) {
+      this.scrollObserver = new ResizeObserver(() => this.syncScroller());
+    }
+    // Observe the scroller and the panes inside it: the scroller's own size
+    // doesn't change when its content grows.
+    // `observe()` reports the size once, so only new targets are added.
+    const targets = [scroller, ...scroller.querySelectorAll('.pane')];
+    for (const target of this.scrollTargets) {
+      if (!targets.includes(target)) {
+        this.scrollObserver.unobserve(target);
+        this.scrollTargets.delete(target);
+      }
+    }
+    for (const target of targets) {
+      if (!this.scrollTargets.has(target)) {
+        this.scrollTargets.add(target);
+        this.scrollObserver.observe(target);
+      }
+    }
+    const focusable =
+      scroller.scrollHeight > scroller.clientHeight &&
+      getFocusableElements(scroller).length === 0;
+    if (focusable) {
+      scroller.setAttribute('tabindex', '0');
+      scroller.setAttribute('role', 'region');
+      scroller.setAttribute('aria-label', this.scrollLabel);
+    } else {
+      scroller.removeAttribute('tabindex');
+      scroller.removeAttribute('role');
+      scroller.removeAttribute('aria-label');
+    }
+  }
+
   private handleSlotChange(event: Event) {
     const slot = event.target as HTMLSlotElement;
+    this.syncScroller();
     const has = slot
       .assignedNodes({flatten: true})
       .some(

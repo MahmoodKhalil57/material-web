@@ -88,6 +88,7 @@ Attributes and properties
 | `paneWidth` | `pane-width` | `number` | `null` | Width in px of the secondary pane set with the drag handle, or null for the default width. Set it to restore a persisted width. |
 | `resizable` | `resizable` (reflects) | `boolean` | `false` | Whether two-pane layouts render a drag handle to resize the panes. |
 | `resizeBehavior` | `resize-behavior` | `PaneResizeBehavior` | `undefined` | `persistent` keeps a resized width or collapsed pane across window size class changes; `temporary` returns to the default layout. Defaults to persistent for list-detail and temporary for the other layouts. |
+| `scrollLabel` | `scroll-label` | `string` | `'Panes'` | Accessible label of the stacked panes' scroll region. Only used while the stacked panes overflow and hold nothing focusable: the region is then focusable (so the keyboard can scroll it) and a labelled `region`. |
 | `secondaryPosition` | `secondary-position` (reflects) | `PanePosition` | `undefined` | Where the secondary pane sits in two-pane layouts. Defaults to `start` for list-detail and `end` for supporting pane and feed layouts. Mirrors in right-to-left. |
 
 Slots

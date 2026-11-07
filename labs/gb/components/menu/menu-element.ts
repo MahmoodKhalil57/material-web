@@ -593,7 +593,17 @@ export class MenuElement extends baseClass {
           root.querySelectorAll<HTMLElement>('[popovertarget], [commandfor]'),
         ).filter((el) => isInvokerOf(el, this)),
       );
-      if (source && !this.contains(source)) invokers.add(source);
+      // A source inside an invoker's shadow root (the button of an
+      // `md-gb-button`) is covered by its host, which carries the state.
+      const sourceHost = (source?.getRootNode() as ShadowRoot | undefined)
+        ?.host;
+      if (
+        source &&
+        !this.contains(source) &&
+        !(sourceHost && invokers.has(sourceHost as HTMLElement))
+      ) {
+        invokers.add(source);
+      }
       if (this.keyboardInvoker) invokers.add(this.keyboardInvoker);
       this.markedInvokers = invokers;
     }

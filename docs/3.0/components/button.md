@@ -95,6 +95,18 @@ A disabled button can't be focused with the keyboard. A `soft-disabled` button s
 <md-gb-button color="filled" soft-disabled>Soft-disabled</md-gb-button>
 {% enddemo %}
 
+### Opening a popover or menu
+
+Like a native button, an `md-gb-button` (and `md-gb-icon-button`) takes `popovertarget` (with `popovertargetaction`) or `commandfor` (with `command`) naming an element in the same tree. A menu opened this way also opens with the arrow keys.
+
+{% demo "A button that opens a menu" %}
+<md-gb-button color="tonal" popovertarget="button-menu">Options</md-gb-button>
+<md-gb-menu id="button-menu">
+  <md-gb-menu-item>Rename</md-gb-menu-item>
+  <md-gb-menu-item>Duplicate</md-gb-menu-item>
+</md-gb-menu>
+{% enddemo %}
+
 ## Accessibility
 
 *   Buttons need a visible label; add an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) to icon-only buttons or when the label needs to be more descriptive.

@@ -5,7 +5,7 @@ order: 17
 description: Menus show a temporary set of actions or choices, opened from a button, a text field or a context.
 ---
 {% demo "A button that opens a menu of file actions" %}
-<button popovertarget="file-menu">File</button>
+<md-gb-button popovertarget="file-menu">File</md-gb-button>
 <md-gb-menu id="file-menu">
   <md-gb-menu-item>New</md-gb-menu-item>
   <md-gb-menu-item>Open</md-gb-menu-item>
@@ -45,10 +45,10 @@ A menu holds items, groups and dividers. An item holds a label and optional slot
 
 ### Opening a menu
 
-A menu is a popover. Point a native button at it with `popovertarget`, or call `showPopover()` from script. The menu positions itself next to the button and closes on Escape, when focus leaves, or when an item is chosen.
+A menu is a popover. Point an `md-gb-button` (or `md-gb-icon-button`, or a native button) at it with `popovertarget`, or call `showPopover()` from script. The menu positions itself next to the button and closes on Escape, when focus leaves, or when an item is chosen.
 
 {% demo "A button that opens a menu of sort options" %}
-<button popovertarget="sort-menu">Sort</button>
+<md-gb-button popovertarget="sort-menu">Sort</md-gb-button>
 <md-gb-menu id="sort-menu">
   <md-gb-menu-item>Name</md-gb-menu-item>
   <md-gb-menu-item>Date modified</md-gb-menu-item>
@@ -61,7 +61,7 @@ A menu is a popover. Point a native button at it with `popovertarget`, or call `
 Fill the `leading`, `supporting-text`, `trailing-text` and `trailing` slots to add detail to an item.
 
 {% demo "Menu items with leading icons and keyboard shortcuts" %}
-<button popovertarget="edit-menu">Edit</button>
+<md-gb-button popovertarget="edit-menu">Edit</md-gb-button>
 <md-gb-menu id="edit-menu">
   <md-gb-menu-item>
     <md-gb-icon slot="leading">content_cut</md-gb-icon>
@@ -86,7 +86,7 @@ Fill the `leading`, `supporting-text`, `trailing-text` and `trailing` slots to a
 Wrap related items in an `md-gb-menu-group`. Set `label` for a heading, and `checkable` to `single` or `multiple` to make the items selectable like radio buttons or checkboxes. Use `checked` on the selected items.
 
 {% demo "A menu with a single-select group and a multi-select group" %}
-<button popovertarget="view-menu">View</button>
+<md-gb-button popovertarget="view-menu">View</md-gb-button>
 <md-gb-menu id="view-menu">
   <md-gb-menu-group label="Sort by" checkable="single">
     <md-gb-menu-item checked>Name</md-gb-menu-item>
@@ -105,7 +105,7 @@ Wrap related items in an `md-gb-menu-group`. Set `label` for a heading, and `che
 Set `layout="grouped"` to show each group on its own surface with a gap between them, instead of one surface with dividers.
 
 {% demo "A menu with two groups on separate surfaces" %}
-<button popovertarget="actions-menu">Actions</button>
+<md-gb-button popovertarget="actions-menu">Actions</md-gb-button>
 <md-gb-menu id="actions-menu" layout="grouped">
   <md-gb-menu-group>
     <md-gb-menu-item>Undo</md-gb-menu-item>
@@ -124,7 +124,7 @@ Set `layout="grouped"` to show each group on its own surface with a gap between 
 Set `color="vibrant"` to use the tertiary color roles instead of the surface-based `standard` style.
 
 {% demo "A vibrant menu with a checked item" %}
-<button popovertarget="theme-menu">Theme</button>
+<md-gb-button popovertarget="theme-menu">Theme</md-gb-button>
 <md-gb-menu id="theme-menu" color="vibrant">
   <md-gb-menu-group checkable="single">
     <md-gb-menu-item checked>System</md-gb-menu-item>
@@ -139,7 +139,7 @@ Set `color="vibrant"` to use the tertiary color roles instead of the surface-bas
 Put an `md-gb-menu` in an item's `submenu` slot. It opens beside the item on click, Enter, Space or the Right arrow key (Left in right-to-left layouts).
 
 {% demo "A menu item that opens a submenu" %}
-<button popovertarget="share-menu">Share</button>
+<md-gb-button popovertarget="share-menu">Share</md-gb-button>
 <md-gb-menu id="share-menu">
   <md-gb-menu-item>Copy link</md-gb-menu-item>
   <md-gb-menu-item>
@@ -170,7 +170,7 @@ Set `context-for` to the id of an element to open the menu on a secondary click,
 Set `density` from `0` (default) down to `-3` to remove 4px of height per item for each step. Submenus inherit it. Keep it off by default and let people opt in.
 
 {% demo "A menu at density -2" %}
-<button popovertarget="dense-menu">Open</button>
+<md-gb-button popovertarget="dense-menu">Open</md-gb-button>
 <md-gb-menu id="dense-menu" density="-2">
   <md-gb-menu-item>Rename</md-gb-menu-item>
   <md-gb-menu-item>Duplicate</md-gb-menu-item>

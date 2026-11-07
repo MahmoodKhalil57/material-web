@@ -6,19 +6,19 @@ description: A navigation bar lets people switch between a small number of top-l
 ---
 {% demo "A navigation bar with four destinations and Home active" %}
 <md-gb-nav-bar aria-label="Primary">
-  <md-gb-nav-bar-item active>
+  <md-gb-nav-bar-item active href="#home">
     <md-gb-icon slot="icon">home</md-gb-icon>
     Home
   </md-gb-nav-bar-item>
-  <md-gb-nav-bar-item>
+  <md-gb-nav-bar-item href="#explore">
     <md-gb-icon slot="icon">explore</md-gb-icon>
     Explore
   </md-gb-nav-bar-item>
-  <md-gb-nav-bar-item>
+  <md-gb-nav-bar-item href="#library">
     <md-gb-icon slot="icon">library_music</md-gb-icon>
     Library
   </md-gb-nav-bar-item>
-  <md-gb-nav-bar-item>
+  <md-gb-nav-bar-item href="#profile">
     <md-gb-icon slot="icon">person</md-gb-icon>
     Profile
   </md-gb-nav-bar-item>
@@ -93,6 +93,10 @@ Set `badge` on an item to show a count, or `badge="dot"` for a small dot that si
 </md-gb-nav-bar>
 {% enddemo %}
 
+### Links
+
+Give an item an `href` (and optionally `target` and `rel`) to make the destination a link, as in the first example. The item then has the `link` role and the selected one is marked `aria-current="page"`. Without `href` an item is a tab that just reports the selection.
+
 ### Hide on scroll
 
 Set `scroll-behavior="hide"` to hide the bar when the page scrolls down and show it again on scroll up. By default it follows the window; set `scroll-target` to the id of another scrolling element. Fix the bar to the bottom of the page.
@@ -117,7 +121,8 @@ bar.addEventListener('change', () => {
 ## Accessibility
 
 *   Give the bar an `aria-label` such as "Primary navigation".
-*   The bar is a tab list and its items are tabs, with exactly one selected. Tab moves focus into the bar, the arrow keys move between items, and Enter and Space select one.
+*   Without links the bar is a tab list and its items are tabs, with exactly one selected. Tab moves focus into the bar, the arrow keys move between items, and Enter and Space select one.
+*   When the items have an `href` the bar is a navigation landmark of links and the selected one is `aria-current="page"`. Enter follows a link; Space doesn't.
 *   Every item needs a visible label, which is also its accessible name. If the label is ambiguous, add a more descriptive `aria-label` to the item.
 *   A hidden bar never hides while focus is inside it or when the page scrolls from a key press, and it reappears when focus moves into it. Leave `scroll-behavior` off if screen reader users rely on the bar.
 *   Disabled items leave the tab order.

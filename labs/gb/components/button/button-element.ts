@@ -21,6 +21,7 @@ import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-on
 import {safeHref} from '../../../../internal/directives/safe-href.js';
 import {fxSlot} from '../shared/fx.js';
 import {hasSlotted} from '../shared/has-slotted.js';
+import {InvokerController} from '../shared/invoker.js';
 
 import buttonStyles from './button.css' with {type: 'css'}; // github-only
 // import buttonStyles from './button.cssresult.js'; // google3-only
@@ -35,6 +36,10 @@ const baseClass = mixinDelegatesAria(
 
 /**
  * A Material Design button.
+ *
+ * Like a native button, it can invoke a popover or another element: set
+ * `popovertarget` (+ `popovertargetaction`) or `commandfor` (+ `command`) on
+ * the host to the id of an element in the same tree.
  *
  * @slot - Used to display a label and optional icon.
  * @slot container - Used to set a custom background container for the button.
@@ -212,6 +217,12 @@ export class ButtonElement extends baseClass {
    * `href` is set.
    */
   @property() referrerPolicy = '';
+
+  // Resolves `popovertarget` / `commandfor` on the host for the inner button.
+  constructor() {
+    super();
+    new InvokerController(this, () => this.renderRoot?.querySelector('button'));
+  }
 
   protected override render() {
     const classes = button({

@@ -19,6 +19,7 @@ import rippleStyles from '../ripple/ripple.cssresult.js';
 import iconButtonStyles from './icon-button.cssresult.js';
 
 import {clampDensity, type Density} from '../shared/density.js';
+import {InvokerController} from '../shared/invoker.js';
 import type {
   IconButtonColor,
   IconButtonSize,
@@ -36,6 +37,10 @@ const baseClass = mixinDelegatesAria(
 
 /**
  * A Material Design icon button component.
+ *
+ * Like a native button, it can invoke a popover or another element: set
+ * `popovertarget` (+ `popovertargetaction`) or `commandfor` (+ `command`) on
+ * the host to the id of an element in the same tree.
  *
  * @slot - Used to display an icon.
  * @fires {InputEvent} input - Fired when a toggle icon button is selected or unselected. --bubbles --composed
@@ -212,6 +217,12 @@ export class IconButtonElement extends baseClass {
    * `href` is set.
    */
   @property() referrerPolicy = '';
+
+  // Resolves `popovertarget` / `commandfor` on the host for the inner button.
+  constructor() {
+    super();
+    new InvokerController(this, () => this.renderRoot?.querySelector('button'));
+  }
 
   protected override render() {
     const classes = iconButton({
