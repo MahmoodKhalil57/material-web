@@ -9,7 +9,7 @@ import './md-gb-split-button.js';
 import '../menu/md-gb-menu.js';
 import '../menu/md-gb-menu-item.js';
 
-import {sendKeys} from '@web/test-runner-commands';
+import {sendKeys, sendMouse} from '@web/test-runner-commands';
 import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
@@ -231,5 +231,54 @@ describe('<md-gb-split-button> spec behavior', () => {
       expect(leading.getBoundingClientRect().height).withContext(`${size} leading`).toBe(height);
       expect(trailing.getBoundingClientRect().height).withContext(`${size} trailing`).toBe(height);
     }
+  });
+
+  describe('pointer targets', () => {
+    async function setupMenu() {
+      const {els, slot} = await setup(html`
+        <md-gb-split-button>
+          <button slot="leading">Save</button>
+          <button slot="trailing" aria-label="More" popovertarget="pm"></button>
+          <md-gb-menu id="pm"><md-gb-menu-item>One</md-gb-menu-item></md-gb-menu>
+        </md-gb-split-button>
+        <button id="outside">Outside</button>`);
+      const menu = els[0].querySelector('md-gb-menu')!;
+      return {el: els[0], slot, menu};
+    }
+    const center = (r: DOMRect): [number, number] => [
+      Math.round(r.x + r.width / 2),
+      Math.round(r.y + r.height / 2),
+    ];
+
+    it('opens the menu from a click on the menu icon', async () => {
+      const {el, slot, menu} = await setupMenu();
+      // The icon is the trailing slot's ::after, centered in the slot.
+      const opened = new Promise((r) => menu.addEventListener('toggle', r, {once: true}));
+      await sendMouse({type: 'click', position: center(slot(el, 'trailing').getBoundingClientRect())});
+      await opened;
+      expect(menu.matches(':popover-open')).toBeTrue();
+    });
+
+    it('activates the trailing button from its touch target outside the button', async () => {
+      const {el, slot, menu} = await setupMenu();
+      const r = slot(el, 'trailing').getBoundingClientRect();
+      // Just below the button, inside the 48dp touch target (the size is 40).
+      const opened = new Promise((r) => menu.addEventListener('toggle', r, {once: true}));
+      await sendMouse({type: 'click', position: [Math.round(r.x + r.width / 2), Math.round(r.bottom + 2)]});
+      await opened;
+      expect(menu.matches(':popover-open')).toBeTrue();
+    });
+
+    it('keeps its touch targets around the buttons, not over the page', async () => {
+      const {el} = await setupMenu();
+      const host = el.getBoundingClientRect();
+      const outside = document.getElementById('outside')!;
+      const [x, y] = center(outside.getBoundingClientRect());
+      // The leading slot is display: contents; its touch target once sized
+      // against the viewport and covered everything near the split button.
+      expect(document.elementFromPoint(x, y)).toBe(outside);
+      const far = document.elementFromPoint(Math.round(host.x + host.width / 2), Math.round(host.bottom + 40));
+      expect(far === el || el.contains(far)).withContext('40px below the split button').toBeFalse();
+    });
   });
 });
