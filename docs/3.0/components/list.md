@@ -38,20 +38,19 @@ description: Lists are continuous, vertical indexes of text and images, with opt
 
 A list holds list items. Each item has a label and slots around it.
 
-```html
-<md-gb-list>
+{% demo "A list item with every part filled in" %}
+<md-gb-list aria-label="Messages">
   <md-gb-list-item>
-    <div slot="avatar"></div>
-    <md-gb-icon slot="leading"></md-gb-icon>
-    <span slot="overline"></span>
-    Label
-    <span slot="supporting-text"></span>
-    <span slot="trailing-text"></span>
-    <md-gb-icon slot="trailing"></md-gb-icon>
+    <div slot="avatar">A</div>
+    <md-gb-icon slot="leading">mail</md-gb-icon>
+    <span slot="overline">Inbox</span>
+    Ada Lovelace
+    <span slot="supporting-text">Notes on the engine</span>
+    <span slot="trailing-text">9:41 AM</span>
+    <md-gb-icon slot="trailing">star</md-gb-icon>
   </md-gb-list-item>
-  …
 </md-gb-list>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -202,11 +201,12 @@ Set `density` on the list from `0` (default) down to `-3` to remove 4px of heigh
 *   Give swipe action buttons an `aria-label` that names the item, such as "Share Fresh baked breads".
 *   Selecting and reordering must not need a gesture only: the checkboxes, the move buttons and the "more" button are the single-pointer alternatives.
 
-```html
+{% demo "A list labelled Shopping list" %}
 <md-gb-list aria-label="Shopping list">
   <md-gb-list-item>Bread</md-gb-list-item>
+  <md-gb-list-item>Milk</md-gb-list-item>
 </md-gb-list>
-```
+{% enddemo %}
 
 ## API reference
 

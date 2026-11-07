@@ -35,16 +35,27 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A search bar holds the leading and trailing elements; its default slot holds the suggestions or results shown in its search view.
 
-```html
-<md-gb-search-bar>
-  <md-gb-icon-button slot="leading"></md-gb-icon-button>
-  <md-gb-icon-button slot="trailing"></md-gb-icon-button>
-  <img slot="avatar">
-  <md-gb-icon-button slot="view-trailing"></md-gb-icon-button>
-  <md-gb-list-item></md-gb-list-item>
-  …
+{% demo "A search bar with leading, trailing and view trailing buttons and suggestions" height=360 %}
+<md-gb-search-bar placeholder="Search recipes">
+  <md-gb-icon-button slot="leading" aria-label="Open menu">
+    <md-gb-icon>menu</md-gb-icon>
+  </md-gb-icon-button>
+  <md-gb-icon-button slot="trailing" aria-label="Voice search">
+    <md-gb-icon>mic</md-gb-icon>
+  </md-gb-icon-button>
+  <md-gb-icon-button slot="view-trailing" aria-label="Voice search">
+    <md-gb-icon>mic</md-gb-icon>
+  </md-gb-icon-button>
+  <md-gb-list-item static role="option">
+    <md-gb-icon slot="leading">history</md-gb-icon>
+    Mexican dishes
+  </md-gb-list-item>
+  <md-gb-list-item static role="option">
+    <md-gb-icon slot="leading">search</md-gb-icon>
+    Pasta recipes
+  </md-gb-list-item>
 </md-gb-search-bar>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -114,7 +125,8 @@ Put a search bar in the `search` slot of an [app bar](/3.0/components/app-bar/) 
 
 Use `md-gb-search-view` on its own for a search that opens from an icon button. Set `open` from the button.
 
-{% demo "An icon button that opens a search view" %}
+{% demo "An icon button that opens a search view" height=360 %}
+```html
 <md-gb-icon-button id="open-search" aria-label="Search">
   <md-gb-icon>search</md-gb-icon>
 </md-gb-icon-button>
@@ -128,25 +140,32 @@ Use `md-gb-search-view` on its own for a search that opens from an icon button. 
     Pad thai
   </md-gb-list-item>
 </md-gb-search-view>
+```
+```js
+document.querySelector('#open-search').addEventListener('click', () => {
+  document.querySelector('#recipes').open = true;
+});
+```
 {% enddemo %}
-<script type="module">
-  document.querySelector('#open-search').addEventListener('click', () => {
-    document.querySelector('#recipes').open = true;
-  });
-</script>
 
 ### Searching
 
 Set `searching` while you wait for results. The view shows a progress indicator and marks the results as busy.
 
+{% demo "A search bar that shows it is searching for a second" height=360 %}
+```html
+<md-gb-search-bar placeholder="Search recipes"></md-gb-search-bar>
+```
 ```js
 const bar = document.querySelector('md-gb-search-bar');
+const loadResults = (query) => new Promise((resolve) => setTimeout(resolve, 1000));
 bar.addEventListener('search', async (event) => {
   bar.searching = true;
   await loadResults(event.detail.value);
   bar.searching = false;
 });
 ```
+{% enddemo %}
 
 ## Accessibility
 

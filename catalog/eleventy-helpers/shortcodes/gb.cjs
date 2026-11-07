@@ -95,7 +95,8 @@ function gb(eleventyConfig) {
    * can use `document` as a reader's page would. `height` (px) is what the
    * preview reserves, so the page below doesn't move when it loads; `frame=true`
    * renders the iframe also without a script (markup that takes over the
-   * page, such as an open modal dialog).
+   * page, such as an open modal dialog). Demos with heading elements always
+   * get the iframe, so their headings stay out of the page's outline.
    */
   eleventyConfig.addPairedShortcode('demo', function (content, label, kwargs) {
     const where = this.page?.inputPath;
@@ -111,7 +112,10 @@ function gb(eleventyConfig) {
     const lib = process.env.MWC_GB_LIB;
     const files_ = cardFiles(files);
     const style = height ? `--gb-demo-height: ${height}px` : '';
-    if (script || kwargs?.frame) {
+    // Headings in a demo belong to the demo's document, not the docs page's
+    // outline and table of contents: render those in a frame too.
+    const hasHeading = /<h[1-6][\s>]/i.test(html);
+    if (script || kwargs?.frame || hasHeading) {
       const js = script ? scriptJs(script, where) : '';
       const doc = frameDoc({id, html, css, js, lib});
       const srcdoc = escapeHtml(doc).replace(/\n/g, '&#10;');

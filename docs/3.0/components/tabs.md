@@ -23,20 +23,23 @@ description: Tabs organize groups of related content that are at the same level 
 
 A tab list holds tabs, and each tab has an optional icon, a label and an optional badge. Tab panels hold the content.
 
-```html
-<md-gb-tabs>
-  <md-gb-tab>
-    <md-gb-icon></md-gb-icon>
-    <span slot="label"></span>
-    <span slot="badge"></span>
+{% demo "Tabs with an icon, label and badge, and their panels" %}
+<md-gb-tabs id="anatomy-tabs" aria-label="Mail">
+  <md-gb-tab selected>
+    <md-gb-icon>inbox</md-gb-icon>
+    <span slot="label">Inbox</span>
+    <span class="badge badge-large tab-badge" slot="badge">3</span>
   </md-gb-tab>
-  …
+  <md-gb-tab>
+    <md-gb-icon>send</md-gb-icon>
+    <span slot="label">Sent</span>
+  </md-gb-tab>
 </md-gb-tabs>
-<md-gb-tab-panels>
-  <div role="tabpanel"></div>
-  …
+<md-gb-tab-panels for="anatomy-tabs">
+  <div role="tabpanel">Three new messages.</div>
+  <div role="tabpanel">Messages you sent.</div>
 </md-gb-tab-panels>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -151,11 +154,23 @@ Set `density` from 0 (default) to -3 to remove 4px of height per step.
 
 The tab list fires `change` when a person picks a tab. Read the new tab from `selectedTabIndex`.
 
+{% demo "Tabs that print the index of the selected tab" height=120 %}
+```html
+<md-gb-tabs aria-label="Travel">
+  <md-gb-tab selected><span slot="label">Flights</span></md-gb-tab>
+  <md-gb-tab><span slot="label">Trips</span></md-gb-tab>
+  <md-gb-tab><span slot="label">Explore</span></md-gb-tab>
+</md-gb-tabs>
+<output>Selected tab: 0</output>
+```
 ```js
+const tabs = document.querySelector('md-gb-tabs');
+const output = document.querySelector('output');
 tabs.addEventListener('change', () => {
-  console.log(tabs.selectedTabIndex);
+  output.textContent = `Selected tab: ${tabs.selectedTabIndex}`;
 });
 ```
+{% enddemo %}
 
 ## Accessibility
 

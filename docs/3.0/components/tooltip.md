@@ -21,14 +21,19 @@ description: Tooltips add context to a button or other element, as a short plain
 
 A tooltip points at an anchor element by its id. A rich tooltip can add a subhead and actions.
 
+{% demo "A rich tooltip with a subhead, text and an action, open on a button" height=240 %}
 ```html
-<button id="anchor">…</button>
-<md-gb-tooltip for="anchor">
-  <span slot="subhead"></span>
-  …
-  <md-gb-button slot="action"></md-gb-button>
+<button id="anchor">Storage</button>
+<md-gb-tooltip for="anchor" variant="rich" persistent>
+  <span slot="subhead">Storage</span>
+  Photos and files you keep in your account.
+  <md-gb-button slot="action" color="text">Manage</md-gb-button>
 </md-gb-tooltip>
 ```
+```js
+document.querySelector('md-gb-tooltip').show();
+```
+{% enddemo %}
 
 ## Examples
 

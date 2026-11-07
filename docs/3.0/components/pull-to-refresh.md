@@ -4,7 +4,8 @@ section: components
 order: 22
 description: A pull to refresh container lets people pull its content down to reload it, with a loading indicator that shows progress.
 ---
-{% demo "A list of news stories that refreshes when pulled down" %}
+{% demo "A list of news stories that refreshes when pulled down" height=240 %}
+```html
 <md-gb-pull-to-refresh id="news" indicator-label="Refreshing news" style="block-size: 200px">
   <ul>
     <li>Markets rally on new data</li>
@@ -15,23 +16,16 @@ description: A pull to refresh container lets people pull its content down to re
     <li>Festival lineup announced</li>
   </ul>
 </md-gb-pull-to-refresh>
-{% enddemo %}
-<script type="module">
-  const news = document.querySelector('#news');
-  news.addEventListener('refresh', () => {
-    setTimeout(() => {
-      news.refreshing = false;
-    }, 1500);
-  });
-</script>
-
+```
 ```js
 const news = document.querySelector('#news');
+const loadNews = () => new Promise((resolve) => setTimeout(resolve, 1500));
 news.addEventListener('refresh', async () => {
   await loadNews();
   news.refreshing = false;
 });
 ```
+{% enddemo %}
 
 ## Usage guidelines
 
@@ -45,11 +39,15 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A pull to refresh container holds the scrolling content (default slot). An indicator appears above it while people pull and while it refreshes.
 
-```html
-<md-gb-pull-to-refresh>
-  …
+{% demo "A pull to refresh container holding a list" %}
+<md-gb-pull-to-refresh indicator-label="Refreshing tasks" style="block-size: 120px">
+  <ul>
+    <li>Water the plants</li>
+    <li>Pay the rent</li>
+    <li>Call the dentist</li>
+  </ul>
 </md-gb-pull-to-refresh>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -57,7 +55,8 @@ A pull to refresh container holds the scrolling content (default slot). An indic
 
 Call `refresh()` from a button to start the same refresh without a gesture. It fires `refresh` and sets `refreshing`.
 
-{% demo "A refresh button above a pull to refresh list" %}
+{% demo "A refresh button above a pull to refresh list" height=240 %}
+```html
 <md-gb-icon-button id="reload" aria-label="Refresh">
   <md-gb-icon>refresh</md-gb-icon>
 </md-gb-icon-button>
@@ -69,16 +68,17 @@ Call `refresh()` from a button to start the same refresh without a gesture. It f
     <li>Pantry staples to stock</li>
   </ul>
 </md-gb-pull-to-refresh>
+```
+```js
+const feed = document.querySelector('#feed');
+document.querySelector('#reload').addEventListener('click', () => feed.refresh());
+feed.addEventListener('refresh', () => {
+  setTimeout(() => {
+    feed.refreshing = false;
+  }, 1500);
+});
+```
 {% enddemo %}
-<script type="module">
-  const feed = document.querySelector('#feed');
-  document.querySelector('#reload').addEventListener('click', () => feed.refresh());
-  feed.addEventListener('refresh', () => {
-    setTimeout(() => {
-      feed.refreshing = false;
-    }, 1500);
-  });
-</script>
 
 ### Circular indicator
 

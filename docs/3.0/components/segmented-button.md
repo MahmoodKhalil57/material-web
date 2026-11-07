@@ -23,15 +23,18 @@ description: A segmented button set lets people pick one or several options from
 
 A segmented button set holds segments. Each segment has a label and an optional icon.
 
-```html
-<md-gb-segmented-button-set>
-  <md-gb-segmented-button>
-    <md-gb-icon slot="icon"></md-gb-icon>
-    Label
+{% demo "A segmented button set whose segments have an icon and a label" %}
+<md-gb-segmented-button-set aria-label="View">
+  <md-gb-segmented-button selected>
+    <md-gb-icon slot="icon">view_list</md-gb-icon>
+    List
   </md-gb-segmented-button>
-  …
+  <md-gb-segmented-button>
+    <md-gb-icon slot="icon">grid_view</md-gb-icon>
+    Grid
+  </md-gb-segmented-button>
 </md-gb-segmented-button-set>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -114,14 +117,26 @@ Set `density` on the set from `0` (default, 40px tall) down to `-3` to remove 4p
 
 The set is form-associated. Give it a `name` and it submits the selected segment's `value`, one entry for each selected segment in a multi-select set. It fires `input` and `change` when people change the selection.
 
+{% demo "A form whose segmented button set submits the chosen range" height=120 %}
 ```html
 <form>
   <md-gb-segmented-button-set name="range" aria-label="Time range">
     <md-gb-segmented-button value="day" selected>Day</md-gb-segmented-button>
     <md-gb-segmented-button value="week">Week</md-gb-segmented-button>
   </md-gb-segmented-button-set>
+  <output></output>
 </form>
 ```
+```js
+const form = document.querySelector('form');
+const output = document.querySelector('output');
+const show = () => {
+  output.textContent = `range=${new FormData(form).get('range')}`;
+};
+form.addEventListener('change', show);
+show();
+```
+{% enddemo %}
 
 ## Accessibility
 

@@ -76,7 +76,7 @@ explains when to use each typescale role.
 The type scale is applied with the `font` shorthand tokens and their `-axes`
 and `-tracking` companions, which also work inside shadow roots.
 
-{% demo "A heading in the medium display style" %}
+{% demo "A heading in the medium display style" frame=true height=160 %}
 ```html
 <h1>Welcome back</h1>
 ```

@@ -21,12 +21,12 @@ description: Switches toggle the state of an item on or off.
 
 A switch has a track, a handle and optional icons shown in the handle.
 
-```html
-<md-gb-switch>
-  <md-gb-icon slot="off-icon"></md-gb-icon>
-  <md-gb-icon slot="on-icon"></md-gb-icon>
+{% demo "A switch with an icon in the handle for each state" %}
+<md-gb-switch aria-label="Airplane mode" selected>
+  <md-gb-icon slot="off-icon">close</md-gb-icon>
+  <md-gb-icon slot="on-icon">check</md-gb-icon>
 </md-gb-switch>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -89,9 +89,9 @@ A switch submits its `value` (`on` by default) under its `name` when it is selec
 *   Add an `aria-label` to a switch with no visible label.
 *   Space toggles the switch.
 
-```html
+{% demo "A switch with no visible label, named Lights" %}
 <md-gb-switch aria-label="Lights"></md-gb-switch>
-```
+{% enddemo %}
 
 ## API reference
 

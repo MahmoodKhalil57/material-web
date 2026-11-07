@@ -28,10 +28,10 @@ description: Radio buttons let people select one option from a set of options.
 
 A radio is one element, paired with an adjacent label.
 
-```html
-<md-gb-radio></md-gb-radio>
-<label></label>
-```
+{% demo "A radio button with its label" %}
+<md-gb-radio id="anatomy-radio" name="anatomy" value="email" checked></md-gb-radio>
+<label for="anatomy-radio">Email</label>
+{% enddemo %}
 
 ## Examples
 

@@ -25,18 +25,19 @@ description: A split button pairs a main action with a trailing button that open
 
 A split button holds a leading button, a trailing button and the menu the trailing button opens.
 
-```html
+{% demo "A split button with an icon, a label and a menu" height=240 %}
 <md-gb-split-button>
   <button slot="leading">
-    <md-gb-icon></md-gb-icon>
-    Label
+    <md-gb-icon>send</md-gb-icon>
+    Send
   </button>
-  <button slot="trailing" popovertarget="menu"></button>
-  <md-gb-menu id="menu">
-    …
+  <button slot="trailing" aria-label="More send options" popovertarget="anatomy-menu"></button>
+  <md-gb-menu id="anatomy-menu">
+    <md-gb-menu-item>Send later</md-gb-menu-item>
+    <md-gb-menu-item>Schedule send</md-gb-menu-item>
   </md-gb-menu>
 </md-gb-split-button>
-```
+{% enddemo %}
 
 ## Examples
 

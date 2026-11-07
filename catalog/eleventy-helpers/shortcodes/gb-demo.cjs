@@ -146,7 +146,8 @@ function demoCard(label, preview, files, {id = '', style = '', frame = false, he
 /** Splits the content of {% demo %} into its html, css and ts or js. */
 function parseDemo(content, where) {
   const files = {};
-  const rest = content.replace(
+  // Pages may have CRLF line endings; the fence pattern expects \n.
+  const rest = content.replace(/\r\n?/g, '\n').replace(
     /^[ \t]*```(html|css|ts|js)[ \t]*\n([\s\S]*?)^[ \t]*```[ \t]*$/gm,
     (m, lang, code) => {
       if (files[lang] !== undefined) throw new Error(`demo (${where}): two ${lang} blocks`);

@@ -18,9 +18,9 @@ description: Time pickers let people choose an hour and minute on a clock dial, 
 
 A time picker has a headline, the hour and minute selectors, an AM or PM toggle in 12 hour mode, a dial, and the actions.
 
-```html
-<md-gb-time-picker></md-gb-time-picker>
-```
+{% demo "A time picker with its headline, selectors, dial and actions" %}
+<md-gb-time-picker value="09:30"></md-gb-time-picker>
+{% enddemo %}
 
 ## Examples
 
@@ -28,25 +28,22 @@ A time picker has a headline, the hour and minute selectors, an AM or PM toggle 
 
 Add `modal` to show the picker in a dialog with a scrim. Open it with `show()`. It fires `change` when a time is confirmed and `cancel` when it is dismissed.
 
-{% demo "A modal time picker opened from a Set alarm button" %}
+{% demo "A modal time picker opened from a Set alarm button" height=360 %}
+```html
 <md-gb-button id="set-alarm">Set alarm</md-gb-button>
 <md-gb-time-picker id="alarm" modal headline="Set alarm"></md-gb-time-picker>
-{% enddemo %}
-
+<output id="time" for="alarm"></output>
+```
 ```js
+const alarm = document.querySelector('#alarm');
 document.querySelector('#set-alarm').addEventListener('click', () => {
-  document.querySelector('#alarm').show();
+  alarm.show();
 });
-document.querySelector('#alarm').addEventListener('change', (event) => {
-  console.log(event.target.value);
+alarm.addEventListener('change', (event) => {
+  document.querySelector('#time').textContent = event.target.value;
 });
 ```
-
-<script type="module">
-  document.querySelector('#set-alarm').addEventListener('click', () => {
-    document.querySelector('#alarm').show();
-  });
-</script>
+{% enddemo %}
 
 ### Input mode
 

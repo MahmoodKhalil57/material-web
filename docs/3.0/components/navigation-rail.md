@@ -38,18 +38,21 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A rail has an optional header, such as a menu button or a FAB, and items. Each item has an icon, a label and an optional badge.
 
-```html
-<md-gb-nav-rail>
-  <md-gb-icon-button slot="header"></md-gb-icon-button>
-  <md-gb-fab slot="header"></md-gb-fab>
-  <md-gb-nav-rail-item>
-    <md-gb-icon slot="icon"></md-gb-icon>
-    <span slot="badge"></span>
-    Label
+{% demo "A rail with a menu button, a FAB and items, one with a badge" %}
+<md-gb-nav-rail aria-label="Mail">
+  <md-gb-icon-button slot="header" aria-label="Open menu"><md-gb-icon>menu</md-gb-icon></md-gb-icon-button>
+  <md-gb-fab slot="header" aria-label="Compose"><md-gb-icon>edit</md-gb-icon></md-gb-fab>
+  <md-gb-nav-rail-item selected href="#anatomy-inbox">
+    <md-gb-icon slot="icon">inbox</md-gb-icon>
+    <span slot="badge">3</span>
+    Inbox
   </md-gb-nav-rail-item>
-  …
+  <md-gb-nav-rail-item href="#anatomy-sent">
+    <md-gb-icon slot="icon">send</md-gb-icon>
+    Sent
+  </md-gb-nav-rail-item>
 </md-gb-nav-rail>
-```
+{% enddemo %}
 
 ## Examples
 

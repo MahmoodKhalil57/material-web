@@ -22,19 +22,24 @@ description: Select menus let people choose one option from a list that opens on
 
 A select holds options and a field that shows the chosen one. Options can have icons and extra text.
 
-```html
-<md-gb-select>
-  <md-gb-icon slot="leading-icon"></md-gb-icon>
-  <md-gb-select-option>
-    <md-gb-icon slot="leading"></md-gb-icon>
-    <span slot="supporting-text"></span>
-    <span slot="trailing-text"></span>
-    <md-gb-icon slot="trailing"></md-gb-icon>
-    Label
+{% demo "A select whose options have icons, supporting text and trailing text" height=300 %}
+<md-gb-select label="Delivery">
+  <md-gb-icon slot="leading-icon">local_shipping</md-gb-icon>
+  <md-gb-select-option value="standard">
+    <md-gb-icon slot="leading">schedule</md-gb-icon>
+    <span slot="supporting-text">3 to 5 days</span>
+    <span slot="trailing-text">Free</span>
+    <md-gb-icon slot="trailing">check</md-gb-icon>
+    Standard
   </md-gb-select-option>
-  …
+  <md-gb-select-option value="express">
+    <md-gb-icon slot="leading">bolt</md-gb-icon>
+    <span slot="supporting-text">Next day</span>
+    <span slot="trailing-text">$8</span>
+    Express
+  </md-gb-select-option>
 </md-gb-select>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -145,12 +150,12 @@ A select takes part in a form through its `name` and `value`, and `required` is 
 *   The field is a `combobox` and the menu a `listbox`. The `label` names the field; add an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) when the label is elsewhere.
 *   Enter, Space, or the arrow keys open the menu, the arrow keys move between options, and Escape closes it. Typing a few letters jumps to a matching option.
 
-```html
-<md-gb-select aria-label="Sort by">
+{% demo "A select with no visible label, named Sort by" height=300 %}
+<md-gb-select aria-label="Sort by" value="new">
   <md-gb-select-option value="new">Newest</md-gb-select-option>
   <md-gb-select-option value="old">Oldest</md-gb-select-option>
 </md-gb-select>
-```
+{% enddemo %}
 
 ## API reference
 

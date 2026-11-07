@@ -18,11 +18,11 @@ description: Sliders let people view and select a value, or a range of values, a
 
 A slider has a track, a handle, an optional value label and an optional icon.
 
-```html
-<md-gb-slider>
-  <md-gb-icon slot="icon"></md-gb-icon>
+{% demo "A slider with an icon and a value label" %}
+<md-gb-slider aria-label="Volume" value="40" labeled>
+  <md-gb-icon slot="icon">volume_up</md-gb-icon>
 </md-gb-slider>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -82,9 +82,9 @@ A `disabled` slider can't be changed and leaves the focus order.
 *   The handle is a `slider` that exposes its minimum, maximum and value. Set `value-label` (or `value-label-start` and `value-label-end`) when the number alone is unclear: the text is shown on the label and read out, such as "5 minutes".
 *   Arrow keys change the value by one step, Page Up and Page Down by a larger amount, and Home and End jump to the ends.
 
-```html
+{% demo "A slider whose value label reads 5 minutes" %}
 <md-gb-slider aria-label="Timer" min="1" max="60" value="5" value-label="5 minutes" labeled></md-gb-slider>
-```
+{% enddemo %}
 
 ## API reference
 

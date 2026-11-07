@@ -18,12 +18,12 @@ description: Text fields let people enter and edit text.
 
 A text field has a label, the input, optional icons and prefix or suffix text, and supporting text.
 
-```html
-<md-gb-text-field>
-  <md-gb-icon slot="leading-icon"></md-gb-icon>
-  <md-gb-icon slot="trailing-icon"></md-gb-icon>
+{% demo "A field with a label, icons, prefix, suffix and supporting text" %}
+<md-gb-text-field label="Website" prefix-text="https://" suffix-text=".com" supporting-text="Your public address">
+  <md-gb-icon slot="leading-icon">language</md-gb-icon>
+  <md-gb-icon slot="trailing-icon">link</md-gb-icon>
 </md-gb-text-field>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -134,9 +134,9 @@ Set `density` from 0 (default) to -3 to remove 4px of height per step.
 *   Supporting and error text are linked to the input, so screen readers read them with it. An invalid field is marked with `aria-invalid`.
 *   Icon buttons in a slot need their own `aria-label`.
 
-```html
-<md-gb-text-field aria-label="Search the catalog"></md-gb-text-field>
-```
+{% demo "A field with no visible label, named Search the catalog" %}
+<md-gb-text-field aria-label="Search the catalog" placeholder="Search"></md-gb-text-field>
+{% enddemo %}
 
 ## API reference
 

@@ -21,9 +21,9 @@ description: Progress indicators inform people about the status of ongoing proce
 
 A progress indicator is one element: an active indicator over a track. It is linear unless `circular` is set.
 
-```html
-<md-gb-progress></md-gb-progress>
-```
+{% demo "An indeterminate linear progress indicator" %}
+<md-gb-progress aria-label="Loading"></md-gb-progress>
+{% enddemo %}
 
 ## Examples
 
@@ -69,9 +69,9 @@ Add `wavy` to give the active indicator a wave. It works on linear and circular 
 *   A progress indicator is a `progressbar`. Give it an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) that says what is in progress, such as "Download progress".
 *   A determinate indicator exposes its value from 0 to 100 to assistive technology. An indeterminate one has no value.
 
-```html
+{% demo "A progress indicator labelled Download progress" %}
 <md-gb-progress value="0.5" aria-label="Download progress"></md-gb-progress>
-```
+{% enddemo %}
 
 ## API reference
 

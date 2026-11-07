@@ -23,14 +23,14 @@ description: A toolbar holds actions that relate to the content on the screen, d
 
 A toolbar holds actions, such as buttons and icon buttons. A floating toolbar can have a FAB.
 
-```html
-<md-gb-toolbar>
-  <md-gb-icon-button slot="leading"></md-gb-icon-button>
-  <md-gb-button></md-gb-button>
-  <md-gb-icon-button slot="trailing"></md-gb-icon-button>
-  <md-gb-fab slot="fab"></md-gb-fab>
+{% demo "A toolbar with leading and trailing buttons, a button and a FAB" %}
+<md-gb-toolbar aria-label="Compose actions">
+  <md-gb-icon-button slot="leading" aria-label="Attach"><md-gb-icon>attach_file</md-gb-icon></md-gb-icon-button>
+  <md-gb-button>Draft</md-gb-button>
+  <md-gb-icon-button slot="trailing" aria-label="Delete"><md-gb-icon>delete</md-gb-icon></md-gb-icon-button>
+  <md-gb-fab slot="fab" aria-label="Send"><md-gb-icon>send</md-gb-icon></md-gb-fab>
 </md-gb-toolbar>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -114,11 +114,34 @@ Add `overflow-menu` to move trailing actions that don't fit into a "More actions
 
 Set `scroll-behavior="hide"` to move a docked or floating toolbar off screen when the page scrolls down and bring it back when it scrolls up. `scroll-target` names the element that scrolls; it defaults to the window.
 
+{% demo "A docked toolbar that hides when its page scrolls down" height=240 %}
 ```html
-<md-gb-toolbar docked scroll-behavior="hide" aria-label="Page actions">
-  …
-</md-gb-toolbar>
+<div id="page">
+  <p>Scroll this page down to hide the toolbar and up to bring it back.</p>
+  <p>Bread, milk, eggs, butter, cheese, apples, rice, beans, flour, sugar.</p>
+  <p>Coffee, tea, honey, oats, lentils, pasta, tomatoes, onions, garlic.</p>
+  <p>Lemons, limes, oranges, bananas, grapes, pears, plums, peaches, figs.</p>
+  <md-gb-toolbar docked scroll-behavior="hide" scroll-target="page" aria-label="Page actions">
+    <md-gb-icon-button aria-label="Undo"><md-gb-icon>undo</md-gb-icon></md-gb-icon-button>
+    <md-gb-icon-button aria-label="Share"><md-gb-icon>share</md-gb-icon></md-gb-icon-button>
+  </md-gb-toolbar>
+</div>
 ```
+```css
+#page {
+  block-size: 200px;
+  overflow-y: auto;
+  padding-inline: 16px;
+}
+#page md-gb-toolbar {
+  position: sticky;
+  inset-block-end: 0;
+}
+#page p {
+  margin-block: 56px;
+}
+```
+{% enddemo %}
 
 ## Accessibility
 
