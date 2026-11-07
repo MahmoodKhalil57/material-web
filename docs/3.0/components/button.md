@@ -19,8 +19,7 @@ outlined, and text.
 
 ## Types
 
-<div class="figure-wrapper">
-  <figure class="types-image" style="justify-content:center;" title="Elevated, filled, filled tonal, outlined, and text buttons" aria-label="The 5 types of common buttons">
+<figure class="types-image gb-demo-figure" style="justify-content:center;" title="Elevated, filled, filled tonal, outlined, and text buttons" aria-label="The 5 types of common buttons">
     <style>
       .types-image .wrapper,
       .types-image .wrapper > * {
@@ -72,7 +71,6 @@ outlined, and text.
       </div>
     </div>
   </figure>
-</div>
 
 1.  [Elevated button](#elevated-button)
 1.  [Filled button](#filled-button)
@@ -85,35 +83,17 @@ outlined, and text.
 Buttons have label text that describes the action that will occur if a user taps
 a button.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;gap: 8px;" title="Outlined and filled buttons." aria-label="An outlined button with the text 'Back' next to a filled button with the text 'Complete'">
-    <md-gb-button color="outlined">Back</md-gb-button>
-    <md-gb-button color="filled">Complete</md-gb-button>
-  </figure>
-</div>
-
-```html
+{% demo "An outlined button with the text 'Back' next to a filled button with the text 'Complete'" %}
 <md-gb-button color="outlined">Back</md-gb-button>
 <md-gb-button color="filled">Complete</md-gb-button>
-```
+{% enddemo %}
 
 ### Icon
 
 An icon may optionally be added to a button to help communicate the button's
 action and help draw attention.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;gap: 8px;" title="Outlined and filled buttons." aria-label="An outlined button with the text 'Back' next to a filled button with the text 'Complete'">
-    <md-gb-button color="tonal"><md-gb-icon><svg viewBox="0 0 48 48"><path d="M6 40V8l38 16Zm3-4.65L36.2 24 9 12.5v8.4L21.1 24 9 27Zm0 0V12.5 27Z"></path></svg></md-gb-icon>
-      Send
-    </md-gb-button>
-    <md-gb-button color="text">
-      Open
-    <md-gb-icon><svg viewBox="0 0 48 48"><path d="M9 42q-1.2 0-2.1-.9Q6 40.2 6 39V9q0-1.2.9-2.1Q7.8 6 9 6h13.95v3H9v30h30V25.05h3V39q0 1.2-.9 2.1-.9.9-2.1.9Zm10.1-10.95L17 28.9 36.9 9H25.95V6H42v16.05h-3v-10.9Z"></path></svg></md-gb-icon></md-gb-button>
-  </figure>
-</div>
-
-```html
+{% demo "A tonal button with a send icon and the text Send, next to a text button with the text Open and an open-in-new icon" %}
 <md-gb-button color="tonal"><md-gb-icon><svg viewBox="0 0 48 48"><path d="M6 40V8l38 16Zm3-4.65L36.2 24 9 12.5v8.4L21.1 24 9 27Zm0 0V12.5 27Z"></path></svg></md-gb-icon>
   Send
 
@@ -123,7 +103,7 @@ action and help draw attention.
   Open
 
 <md-gb-icon><svg viewBox="0 0 48 48"><path d="M9 42q-1.2 0-2.1-.9Q6 40.2 6 39V9q0-1.2.9-2.1Q7.8 6 9 6h13.95v3H9v30h30V25.05h3V39q0 1.2-.9 2.1-.9.9-2.1.9Zm10.1-10.95L17 28.9 36.9 9H25.95V6H42v16.05h-3v-10.9Z"></path></svg></md-gb-icon></md-gb-button>
-```
+{% enddemo %}
 
 ## Accessibility
 
@@ -164,15 +144,9 @@ are essentially filled tonal buttons with a shadow. To prevent shadow creep,
 only use them when absolutely necessary, such as when the button requires visual
 separation from a patterned background.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;align-items:center;" aria-label="An elevated button.">
-    <md-gb-button color="elevated">Elevated</md-gb-button>
-  </figure>
-</div>
-
-```html
+{% demo "An elevated button." %}
 <md-gb-button color="elevated">Elevated</md-gb-button>
-```
+{% enddemo %}
 
 ## Filled button
 
@@ -180,15 +154,9 @@ separation from a patterned background.
 have the most visual impact after the FAB, and should be used for important,
 final actions that complete a flow, like Save, Join now, or Confirm.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;align-items:center;" aria-label="A filled button.">
-    <md-gb-button color="filled">Filled</md-gb-button>
-  </figure>
-</div>
-
-```html
+{% demo "A filled button." %}
 <md-gb-button color="filled">Filled</md-gb-button>
-```
+{% enddemo %}
 
 ## Filled tonal button
 
@@ -198,15 +166,9 @@ is an alternative middle ground between filled and outlined buttons. They're
 useful in contexts where a lower-priority button requires slightly more emphasis
 than an outline would give, such as "Next" in an onboarding flow.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;align-items:center;" aria-label="A tonal button.">
-    <md-gb-button color="tonal">Tonal</md-gb-button>
-  </figure>
-</div>
-
-```html
+{% demo "A tonal button." %}
 <md-gb-button color="tonal">Tonal</md-gb-button>
-```
+{% enddemo %}
 
 ## Outlined button
 
@@ -214,15 +176,9 @@ than an outline would give, such as "Next" in an onboarding flow.
 are medium-emphasis buttons. They contain actions that are important, but aren’t
 the primary action in an app.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;align-items:center;" aria-label="An outlined button.">
-    <md-gb-button color="outlined">Outlined</md-gb-button>
-  </figure>
-</div>
-
-```html
+{% demo "An outlined button." %}
 <md-gb-button color="outlined">Outlined</md-gb-button>
-```
+{% enddemo %}
 
 ## Text button
 
@@ -230,15 +186,9 @@ the primary action in an app.
 are used for the lowest priority actions, especially when presenting multiple
 options.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;align-items:center;" aria-label="A text button.">
-    <md-gb-button color="text">Text</md-gb-button>
-  </figure>
-</div>
-
-```html
+{% demo "A text button." %}
 <md-gb-button color="text">Text</md-gb-button>
-```
+{% enddemo %}
 
 ## API
 

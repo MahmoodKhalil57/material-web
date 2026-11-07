@@ -23,8 +23,7 @@ people take supplementary actions with a single tap.
 
 ## Types
 
-<div class="figure-wrapper">
-  <figure class="types-image" style="justify-content:center;" title="1 - Standard Icon Button. 2 - Contained Icon Button (including filled, filled tonal, and outlined styles)" aria-label="Side by side view of standard and contained icon buttons">
+<figure class="types-image gb-demo-figure" style="justify-content:center;" title="1 - Standard Icon Button. 2 - Contained Icon Button (including filled, filled tonal, and outlined styles)" aria-label="Side by side view of standard and contained icon buttons">
     <style>
       .types-image .wrapper,
       .types-image .wrapper > * {
@@ -83,7 +82,6 @@ people take supplementary actions with a single tap.
       </div>
     </div>
   </figure>
-</div>
 
 1.  [Icon Button](#icon-button)
 2.  [Filled Icon Button](#filled-icon-button)
@@ -102,24 +100,7 @@ Icon buttons can be grouped together or they can stand alone.
 To use icons by name, see the [Icon](icon.md#usage) documentation for loading
 the icon font.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;gap: 8px;" title="Icon buttons can be used within other components, such as a bottom app bar" aria-label="A row of icon buttons">
-    <md-gb-icon-button color="standard" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-    <md-gb-icon-button color="filled" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-    <md-gb-icon-button color="tonal" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-    <md-gb-icon-button color="outlined" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-  </figure>
-</div>
-
-```html
+{% demo "A row of icon buttons" %}
 <md-gb-icon-button color="standard" aria-label="Check">
   <md-gb-icon>check</md-gb-icon>
 </md-gb-icon-button>
@@ -132,7 +113,7 @@ the icon font.
 <md-gb-icon-button color="outlined" aria-label="Check">
   <md-gb-icon>check</md-gb-icon>
 </md-gb-icon-button>
-```
+{% enddemo %}
 
 ### Links
 
@@ -150,8 +131,7 @@ attribute to turn the icon button into a link.
 
 ### Toggle
 
-<div class="figure-wrapper">
-  <figure style="gap:8px;flex-direction:column;padding-block:8px;" aria-label="Two rows of toggling icon buttons, the top row is unselected and the bottom row is selected">
+<figure class="gb-demo-figure" style="gap:8px;flex-direction:column;padding-block:8px;" aria-label="Two rows of toggling icon buttons, the top row is unselected and the bottom row is selected">
     <div style="display:flex;gap:8px;">
       <md-gb-icon-button color="standard" aria-label="Close">
         <md-gb-icon>close</md-gb-icon>
@@ -181,7 +161,6 @@ attribute to turn the icon button into a link.
       </md-gb-icon-button>
     </div>
   </figure>
-</div>
 
 Toggle icon buttons allow a single choice to be selected or deselected, such as
 adding or removing something from favorites.
@@ -286,29 +265,19 @@ for guidance on when this is recommended.
 Standard icon buttons do not have a background or outline, and have the lowest
 emphasis of the icon buttons.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;gap: 8px;" title="Standard Icon Button with Check icon" aria-label="A check icon">
-    <md-gb-icon-button color="standard" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-  </figure>
-</div>
-
-```html
+{% demo "A check icon" %}
 <md-gb-icon-button color="standard" aria-label="Check">
   <md-gb-icon>check</md-gb-icon>
 </md-gb-icon-button>
-```
+{% enddemo %}
 
 ## Filled Icon Button
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;gap: 8px;" title="Filled Icon Button" aria-label="A circular button with a check icon">
+<figure class="gb-demo-figure" style="justify-content:center;gap: 8px;" title="Filled Icon Button" aria-label="A circular button with a check icon">
     <md-gb-icon-button color="filled" aria-label="Check">
       <md-gb-icon>check</md-gb-icon>
     </md-gb-icon-button>
   </figure>
-</div>
 
 Filled icon buttons have higher visual impact and are best for high emphasis
 actions.
@@ -321,13 +290,11 @@ actions.
 
 ## Filled Tonal Icon Button
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;gap: 8px;" title="Filled Tonal Icon Button" aria-label="A filled tonal icon button with a check icon">
+<figure class="gb-demo-figure" style="justify-content:center;gap: 8px;" title="Filled Tonal Icon Button" aria-label="A filled tonal icon button with a check icon">
     <md-gb-icon-button color="tonal" aria-label="Check">
       <md-gb-icon>check</md-gb-icon>
     </md-gb-icon-button>
   </figure>
-</div>
 
 Filled tonal icon buttons are a middle ground between filled and outlined icon
 buttons. They're useful in contexts where the button requires slightly more
@@ -342,13 +309,11 @@ high emphasis action.
 
 ## Outlined Icon Button
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;gap: 8px;" title="Outlined Icon button" aria-label="An outlined circular icon button with a check icon">
+<figure class="gb-demo-figure" style="justify-content:center;gap: 8px;" title="Outlined Icon button" aria-label="An outlined circular icon button with a check icon">
     <md-gb-icon-button color="outlined" aria-label="Check">
       <md-gb-icon>check</md-gb-icon>
     </md-gb-icon-button>
   </figure>
-</div>
 
 Outlined icon buttons are medium-emphasis buttons. They're useful when an icon
 button needs more emphasis than a standard icon button but less than a filled or

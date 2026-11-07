@@ -30,43 +30,25 @@ There are two types of progress indicators: linear and circular.
 Progress indicators may be determinate to show progress, or indeterminate for an
 unspecified amount of progress.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center; gap: 16px" title="Determinate and indeterminate progress indicators." aria-label="Two circular and linear progress indicator examples, one with three quarters of the track full
+{% demo "Two circular and linear progress indicator examples, one with three quarters of the track full
 and the other
-indeterminate.">
-    <md-gb-progress value="0.75" circular></md-gb-progress>
-    <md-gb-progress circular></md-gb-progress>
-    <div style="display: flex; flex-direction: column; align-self: stretch; justify-content: space-evenly;">
-      <md-gb-progress value="0.75"></md-gb-progress>
-      <md-gb-progress></md-gb-progress>
-    </div>
-  </figure>
-</div>
-
-```html
+indeterminate." %}
 <md-gb-progress value="0.75" circular></md-gb-progress>
 <md-gb-progress circular></md-gb-progress>
 
 <md-gb-progress></md-gb-progress>
 <md-gb-progress value="0.5"></md-gb-progress>
-```
+{% enddemo %}
 
 ### Four colors
 
 Indeterminate progress indicators may cycle between four colors (primary,
 primary container, tertiary, and tertiary container by default).
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center; gap: 16px;" title="A four-color indeterminate circular and linear progress indicator" aria-label="Indeterminate progress indicators that cycles between four colors.">
-    <md-gb-progress circular></md-gb-progress>
-    <md-gb-progress></md-gb-progress>
-  </figure>
-</div>
-
-```html
+{% demo "Indeterminate progress indicators that cycles between four colors." %}
 <md-gb-progress circular></md-gb-progress>
 <md-gb-progress></md-gb-progress>
-```
+{% enddemo %}
 
 ## Accessibility
 
@@ -85,34 +67,20 @@ attribute to progress indicators to give them a descriptive name.
 Circular progress indicators display progress by animating along an invisible
 circular track in a clockwise direction.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center; gap: 16px;" title="Circular progress indicators" aria-label="An indeterminate and determinate circular progress indicator.">
-    <md-gb-progress circular></md-gb-progress>
-    <md-gb-progress value="0.6" circular></md-gb-progress>
-  </figure>
-</div>
-
-```html
+{% demo "An indeterminate and determinate circular progress indicator." %}
 <md-gb-progress circular></md-gb-progress>
 <md-gb-progress value="0.6" circular></md-gb-progress>
-```
+{% enddemo %}
 
 ## Linear progress
 
 Linear progress indicators display progress by animating along the length of a
 fixed, visible track.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center; gap: 16px;" title="Linear progress indicators" aria-label="An indeterminate and determinate linear progress indicator.">
-    <md-gb-progress></md-gb-progress>
-    <md-gb-progress value="0.6"></md-gb-progress>
-  </figure>
-</div>
-
-```html
+{% demo "An indeterminate and determinate linear progress indicator." %}
 <md-gb-progress></md-gb-progress>
 <md-gb-progress value="0.6"></md-gb-progress>
-```
+{% enddemo %}
 
 ### Buffer
 
@@ -120,15 +88,9 @@ Linear progress indicators may show a buffer to communicate both determinate and
 indeterminate progress. The progress bar and track represent known progress
 while the buffer dots represent unknown progress.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;" title="Progress and buffer" aria-label="A linear progress indicator with partial progress and an indeterminate buffer.">
-    <md-gb-progress value="0.5"></md-gb-progress>
-  </figure>
-</div>
-
-```html
+{% demo "A linear progress indicator with partial progress and an indeterminate buffer." %}
 <md-gb-progress value="0.5"></md-gb-progress>
-```
+{% enddemo %}
 
 ## API
 

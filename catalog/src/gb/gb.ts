@@ -9,10 +9,12 @@
  * registers the labs/gb components it uses, switches the navigation drawer
  * between modal and standard, wires the version select and theme button,
  * keeps the dynamic color theme, marks the current section in the table of
- * contents and adds copy buttons to code blocks.
+ * contents, adds copy buttons to code blocks and collapses the code of demo
+ * cards.
  */
 
 import '@material/web/labs/gb/components/appbar/md-gb-app-bar.js';
+import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/divider/md-gb-divider.js';
 import '@material/web/labs/gb/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/labs/gb/components/navdrawer/md-gb-nav-drawer-item.js';
@@ -250,10 +252,14 @@ for (const pre of document.querySelectorAll<HTMLElement>('.gb-content pre')) {
   // that element is not part of this site.
   const old = pre.parentElement;
   if (old?.localName === 'copy-code-button') old.replaceWith(pre);
-  const wrap = document.createElement('div');
-  wrap.className = 'gb-code';
-  pre.replaceWith(wrap);
-  wrap.append(pre);
+  // Demo cards (shortcodes/gb.cjs) come with the wrapper, so nothing moves.
+  let wrap = pre.parentElement!;
+  if (!wrap.classList.contains('gb-code')) {
+    wrap = document.createElement('div');
+    wrap.className = 'gb-code';
+    pre.replaceWith(wrap);
+    wrap.append(pre);
+  }
   // A scrollable region must be reachable and named for keyboard users.
   pre.tabIndex = 0;
   pre.setAttribute('role', 'region');
@@ -298,4 +304,35 @@ for (const table of document.querySelectorAll<HTMLElement>(
   wrap.setAttribute('aria-label', `Table ${++tableIndex}`);
   table.replaceWith(wrap);
   wrap.append(table);
+}
+
+// --- Demo cards ------------------------------------------------------------
+
+// Code longer than a few lines is collapsed to its first lines (CSS, under
+// :root.js, so the height is reserved before this runs) behind a "View code"
+// button. The collapsed code is inert: its hidden part is out of the tab
+// order and the accessibility tree, while the copy button stays usable.
+let demoIndex = 0;
+for (const demo of document.querySelectorAll<HTMLElement>(
+  '.gb-demo:not([data-short])',
+)) {
+  const wrap = demo.querySelector<HTMLElement>('.gb-code');
+  const pre = wrap?.querySelector('pre');
+  if (!wrap || !pre) continue;
+  wrap.id = 'gb-demo-code-' + ++demoIndex;
+  const button = document.createElement('md-gb-button');
+  button.className = 'gb-demo-toggle';
+  button.setAttribute('color', 'tonal');
+  button.setAttribute('aria-controls', wrap.id);
+  const set = (open: boolean) => {
+    demo.toggleAttribute('data-open', open);
+    pre.inert = !open;
+    button.setAttribute('aria-expanded', String(open));
+    button.textContent = open ? 'Hide code' : 'View code';
+  };
+  set(false);
+  button.addEventListener('click', () => {
+    set(!demo.hasAttribute('data-open'));
+  });
+  wrap.after(button);
 }

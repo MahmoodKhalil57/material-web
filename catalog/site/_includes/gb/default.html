@@ -26,6 +26,8 @@
       // dynamic color CSS generated for the saved seed (cached by gb.js).
       (() => {
         const root = document.documentElement;
+        // Demo cards collapse their code only with JS (gb.css, gb.ts).
+        root.classList.add('js');
         try {
           const mode = localStorage.getItem('color-mode') || 'auto';
           root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
@@ -91,6 +93,8 @@
         </details>
       </aside>
     </div>
+
+    {{ content | gbcomponents | safe }}
 
     <div id="gb-status" role="status" aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></div>
   </body>

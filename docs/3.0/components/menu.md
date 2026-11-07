@@ -154,35 +154,7 @@ rendering into the
 > For browsers that do not support the Popover API, `md-menu` will fall back to
 > using [fixed-positioned menus](#fixed-positioned-menus).
 
-<div class="figure-wrapper">
-  <figure style="justify-content: center" aria-label="A filled button that says open popover menu. Interact with the button to open a popover menu.">
-    <div>
-      <div style="margin: 16px">
-        <md-gb-button id="usage-popover-anchor" color="filled">Open popover menu</md-gb-button>
-      </div>
-      <md-gb-menu id="usage-popover" anchor="usage-popover-anchor">
-        <md-gb-menu-item>
-          Apple
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Banana
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Cucumber
-        </md-gb-menu-item>
-      </md-gb-menu>
-    </div>
-    <script type="module">
-      const anchorEl = document.body.querySelector("#usage-popover-anchor");
-      const menuEl = document.body.querySelector("#usage-popover");
-      anchorEl.addEventListener("click", () => {
-        menuEl.open = !menuEl.open;
-      });
-    </script>
-  </figure>
-</div>
-
-```html
+{% demo "A filled button that says open popover menu. Interact with the button to open a popover menu." %}
 <!-- Note the lack of position: relative parent. -->
 <div style="margin: 16px;">
   <md-gb-button id="usage-popover-anchor" color="filled">Open popover menu</md-gb-button>
@@ -207,7 +179,7 @@ rendering into the
 
   anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
 </script>
-```
+{% enddemo %}
 
 ### Fixed-positioned menus
 
@@ -220,35 +192,7 @@ relative to the window rather than the element.
 > document. This means that the menu will not scroll with the anchor as the page
 > is scrolled.
 
-<div class="figure-wrapper">
-  <figure style="justify-content: center" aria-label="A filled button that says open fixed menu. Interact with the button to open a fixed menu.">
-    <div>
-      <div style="margin: 16px">
-        <md-gb-button id="usage-fixed-anchor" color="filled">Open fixed menu</md-gb-button>
-      </div>
-      <md-gb-menu id="usage-fixed" anchor="usage-fixed-anchor">
-        <md-gb-menu-item>
-          Apple
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Banana
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Cucumber
-        </md-gb-menu-item>
-      </md-gb-menu>
-    </div>
-    <script type="module">
-      const anchorEl = document.body.querySelector("#usage-fixed-anchor");
-      const menuEl = document.body.querySelector("#usage-fixed");
-      anchorEl.addEventListener("click", () => {
-        menuEl.open = !menuEl.open;
-      });
-    </script>
-  </figure>
-</div>
-
-```html
+{% demo "A filled button that says open fixed menu. Interact with the button to open a fixed menu." %}
 <!-- Note the lack of position: relative parent. -->
 <div style="margin: 16px;">
   <md-gb-button id="usage-fixed-anchor" color="filled">Open fixed menu</md-gb-button>
@@ -273,7 +217,7 @@ relative to the window rather than the element.
 
   anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
 </script>
-```
+{% enddemo %}
 
 ### Document-positioned menus
 
@@ -297,35 +241,7 @@ Document level positioning is useful for the following cases:
 -   The same `md-menu` is being reused and the contents and anchors are being
     dynamically changed
 
-<div class="figure-wrapper">
-  <figure style="justify-content: center" aria-label="A filled button that says open document menu. Interact with the button to open a document menu.">
-    <div>
-      <div style="margin: 16px">
-        <md-gb-button id="usage-document-anchor" color="filled">Open document menu</md-gb-button>
-      </div>
-      <md-gb-menu id="usage-document" anchor="usage-document-anchor">
-        <md-gb-menu-item>
-          Apple
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Banana
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Cucumber
-        </md-gb-menu-item>
-      </md-gb-menu>
-    </div>
-    <script type="module">
-      const anchorEl = document.body.querySelector("#usage-document-anchor");
-      const menuEl = document.body.querySelector("#usage-document");
-      anchorEl.addEventListener("click", () => {
-        menuEl.open = !menuEl.open;
-      });
-    </script>
-  </figure>
-</div>
-
-```html
+{% demo "A filled button that says open document menu. Interact with the button to open a document menu." %}
 <!-- Note the lack of position: relative parent. -->
 <div style="margin: 16px;">
   <md-gb-button id="usage-document-anchor" color="filled">Open document menu</md-gb-button>
@@ -350,7 +266,7 @@ Document level positioning is useful for the following cases:
 
   anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
 </script>
-```
+{% enddemo %}
 
 ## Accessibility
 

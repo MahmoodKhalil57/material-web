@@ -26,20 +26,13 @@ Text fields behave like
 [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
 elements. They provide a container with labels for user input.
 
-<div class="figure-wrapper">
-  <figure aria-label="A filled textfield next to an outlined textfield. Both have a value of Value prefilled" style="padding-block: 16px; gap: 16px">
-    <md-gb-text-field label="Label" value="Value"></md-gb-text-field>
-    <md-gb-text-field label="Label" value="Value" variant="outlined"></md-gb-text-field>
-  </figure>
-</div>
-
-```html
+{% demo "A filled textfield next to an outlined textfield. Both have a value of Value prefilled" %}
 <md-gb-text-field label="Label" value="Value">
 </md-gb-text-field>
 
 <md-gb-text-field label="Label" value="Value" variant="outlined">
 </md-gb-text-field>
-```
+{% enddemo %}
 
 ### Input type
 
@@ -62,20 +55,13 @@ displaying a different keyboard or providing default validation.
 
 -   [`type="textarea"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)
 
-<div class="figure-wrapper">
-  <figure aria-label="Two filled textfields next to each other. The first has a label of Username and the outlined one has a label of Password" style="padding-block: 16px; gap: 16px">
-    <md-gb-text-field label="Username" type="email"></md-gb-text-field>
-    <md-gb-text-field label="Password" type="password"></md-gb-text-field>
-  </figure>
-</div>
-
-```html
+{% demo "Two filled textfields next to each other. The first has a label of Username and the outlined one has a label of Password" %}
 <md-gb-text-field label="Username" type="email">
 </md-gb-text-field>
 
 <md-gb-text-field label="Password" type="password">
 </md-gb-text-field>
-```
+{% enddemo %}
 
 > Tip: use the
 > [`inputmode`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode)
@@ -86,16 +72,7 @@ displaying a different keyboard or providing default validation.
 Text fields should label their value with a floating `label`, a `placeholder`,
 or an external label. Labels help the user understand what value to input.
 
-<div class="figure-wrapper">
-  <figure aria-label="Three outlined textfields next to each other. the first has a label of Favorite food, the second one a placeholder of email@domain.com and there is a label that says First name and an empty outlined textfield next to it" style="padding-block: 16px; gap: 16px">
-    <md-gb-text-field label="Favorite food" variant="outlined"></md-gb-text-field>
-    <md-gb-text-field placeholder="email@domain.com" variant="outlined"></md-gb-text-field>
-    <div>First name</div>
-    <md-gb-text-field aria-label="First name" variant="outlined"></md-gb-text-field>
-  </figure>
-</div>
-
-```html
+{% demo "Three outlined textfields next to each other. the first has a label of Favorite food, the second one a placeholder of email@domain.com and there is a label that says First name and an empty outlined textfield next to it" %}
 <md-gb-text-field label="Favorite food" variant="outlined">
 </md-gb-text-field>
 
@@ -105,7 +82,7 @@ or an external label. Labels help the user understand what value to input.
 <div>First name</div>
 <md-gb-text-field aria-label="First name" variant="outlined">
 </md-gb-text-field>
-```
+{% enddemo %}
 
 > Note: text fields do not currently support `aria-labelledby`. External labels
 > must provide an `aria-label`. See b/276484803.
@@ -146,23 +123,7 @@ Text fields may display optional icons. Use icons to describe the input method
 (such as a search icon), provide additional functionality (such as a clear
 icon), or to express errors.
 
-<div class="figure-wrapper">
-  <figure aria-label="Three outlined textfields next to each other the first has a search icon at the start the label Search Messages, the second a label that says Password and an eye icon toggle button at the end, and a red, visually errored outlined textfield with the label Username with an exclamation icon at the end and helper error text under the field that says Username not available" style="padding-block: 16px; gap: 16px">
-    <md-gb-text-field placeholder="Search for messages" has-leading-icon variant="outlined">
-      <md-gb-icon slot="leading-icon">search</md-gb-icon>
-    </md-gb-text-field>
-    <md-gb-text-field label="Password" type="password" has-trailing-icon variant="outlined">
-      <md-gb-icon-button slot="trailing-icon" color="standard" aria-label="Visibility">
-        <md-gb-icon>visibility</md-gb-icon>
-      </md-gb-icon-button>
-    </md-gb-text-field>
-    <md-gb-text-field label="Username" error error-text="Username not available" has-trailing-icon variant="outlined">
-      <md-gb-icon slot="trailing-icon">error</md-gb-icon>
-    </md-gb-text-field>
-  </figure>
-</div>
-
-```html
+{% demo "Three outlined textfields next to each other the first has a search icon at the start the label Search Messages, the second a label that says Password and an eye icon toggle button at the end, and a red, visually errored outlined textfield with the label Username with an exclamation icon at the end and helper error text under the field that says Username not available" %}
 <md-gb-text-field placeholder="Search for messages" has-leading-icon variant="outlined">
   <md-gb-icon slot="leading-icon">search</md-gb-icon>
 </md-gb-text-field>
@@ -177,7 +138,7 @@ icon), or to express errors.
 <md-gb-text-field label="Username" error error-text="Username not available" has-trailing-icon variant="outlined">
   <md-gb-icon slot="trailing-icon">error</md-gb-icon>
 </md-gb-text-field>
-```
+{% enddemo %}
 
 ### Prefix and suffix
 
@@ -201,35 +162,22 @@ Supporting text conveys additional information about the input field, such as
 how it will be used. Supporting text can be replaced with error text when
 [validating](#validation).
 
-<div class="figure-wrapper">
-  <figure aria-label="Two filled fields next to each other. The first has a label that says comments and supporting text under the field that says Provide comments for the issue. The second field has a label of Name with an asterisk and supporting text under the field that has an asterisk followed by the word required" style="padding-block: 16px; gap: 16px">
-    <md-gb-text-field label="Comments" supporting-text="Provide comments for the issue"></md-gb-text-field>
-    <md-gb-text-field label="Name" required supporting-text="*required" error-text="Please fill out this field"></md-gb-text-field>
-  </figure>
-</div>
-
-```html
+{% demo "Two filled fields next to each other. The first has a label that says comments and supporting text under the field that says Provide comments for the issue. The second field has a label of Name with an asterisk and supporting text under the field that has an asterisk followed by the word required" %}
 <md-gb-text-field label="Comments" supporting-text="Provide comments for the issue">
 </md-gb-text-field>
 
 <md-gb-text-field label="Name" required supporting-text="*required" error-text="Please fill out this field">
 </md-gb-text-field>
-```
+{% enddemo %}
 
 ### Character counter
 
 Text fields with a `maxlength` attribute will display a character counter.
 
-<div class="figure-wrapper">
-  <figure aria-label="An outlined textfield with a floating label that says Title and a filled value that says Short and the text 5 / 10 under the field at the end" style="padding-block: 16px; gap: 16px">
-    <md-gb-text-field label="Title" value="Short" maxlength="10" variant="outlined"></md-gb-text-field>
-  </figure>
-</div>
-
-```html
+{% demo "An outlined textfield with a floating label that says Title and a filled value that says Short and the text 5 / 10 under the field at the end" %}
 <md-gb-text-field label="Title" value="Short" maxlength="10" variant="outlined">
 </md-gb-text-field>
-```
+{% enddemo %}
 
 ### Validation
 

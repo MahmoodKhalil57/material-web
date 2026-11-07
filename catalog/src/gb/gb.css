@@ -262,6 +262,9 @@ md-gb-nav-drawer:not(:defined) {
   position: absolute;
   inset-block-start: var(--md-sys-space-50);
   inset-inline-end: var(--md-sys-space-50);
+  /* Long lines scroll under the button: keep the code from showing through. */
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-container);
 }
 .token.comment,
 .token.prolog,
@@ -393,14 +396,106 @@ md-gb-nav-drawer:not(:defined) {
   .gb-drawer,
   .gb-toc,
   .gb-copy,
-  .gb-skip {
+  .gb-skip,
+  .gb-demo-toggle {
     display: none;
+  }
+  :root.js .gb-demo .gb-code {
+    block-size: auto !important;
+    mask-image: none !important;
   }
 }
 
-/* Live demos (gbexample) reserve the height measured when they were captured,
-   so the code after them doesn't move when they load: the phone column
-   height below the medium window class, the desktop one from it. */
+/* Demo cards (shortcodes {% demo %} and {% gbexample %}): a figure with a
+   preview on top and the code below, collapsed to its first lines (behind a
+   "View code" button, gb.ts) when the script runs. */
+:root {
+  interpolate-size: allow-keywords;
+}
+.gb-demo {
+  margin: 0 0 var(--md-sys-space-200);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-lg);
+  overflow: clip;
+}
+/* The preview is also the class of figures that have no code. */
+.gb-demo-preview,
+.gb-content figure.gb-demo-figure {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--md-sys-space-200);
+  min-block-size: 12rem;
+  margin: 0;
+  padding: var(--md-sys-space-400);
+  background: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+}
+.gb-content figure.gb-demo-figure {
+  margin-block-end: var(--md-sys-space-200);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-lg);
+}
+.gb-demo-preview > .gb-example {
+  inline-size: 100%;
+}
+.gb-demo-code {
+  position: relative;
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+}
+.gb-demo .gb-code {
+  margin: 0;
+  font: var(--md-sys-typescale-body-md);
+  font-family: ui-monospace, 'Roboto Mono', Menlo, Consolas, monospace;
+}
+.gb-demo pre {
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+}
+/* Collapsed: three lines and padding, faded out; the height is reserved from
+   the first paint (:root.js is set by the script in the layout head). */
+:root.js .gb-demo:not([data-short]):not([data-open]) .gb-code {
+  block-size: calc(3lh + 2 * var(--md-sys-space-200));
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 35%, transparent);
+}
+:root.js .gb-demo:not([data-short])[data-open] .gb-code {
+  block-size: auto;
+}
+:root.js .gb-demo:not([data-short]) .gb-code {
+  transition: block-size var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-emphasized);
+}
+.gb-demo-toggle {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: var(--md-sys-space-150);
+  margin-inline: auto;
+  inline-size: fit-content;
+}
+.gb-demo[data-open] .gb-demo-toggle {
+  position: static;
+  display: block;
+  margin-block: 0 var(--md-sys-space-150);
+}
+/* Without script there is no button and the code shows in full. */
+.gb-demo-toggle:not(:defined) {
+  visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.js .gb-demo:not([data-short]) .gb-code {
+    transition: none;
+  }
+}
+
+/* Live demos (gbexample) reserve the height measured when they were captured
+   (set on the preview), so the code after them doesn't move when they load:
+   the phone column height below the medium window class, the desktop one from
+   it. */
 .gb-example {
   min-block-size: var(--gb-example-narrow-height, 0);
 }

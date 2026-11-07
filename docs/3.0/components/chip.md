@@ -38,14 +38,14 @@ Choose the type of chip based on its purpose and author.
 -   **Suggestion** chips represent dynamic suggestions for user input, such as
     text message replies.
 
-```html
+{% demo "Assist, filter, input and suggestion chips" %}
 <md-gb-chip-set>
   <md-gb-chip type="action" color="outlined">Assist</md-gb-chip>
   <md-gb-chip type="filter" color="outlined">Filter</md-gb-chip>
   <md-gb-chip type="action" color="outlined" removable>Input</md-gb-chip>
   <md-gb-chip type="action" color="outlined">Suggestion</md-gb-chip>
 </md-gb-chip-set>
-```
+{% enddemo %}
 
 ### Chip sets
 
@@ -53,21 +53,21 @@ Chips should always appear in a set. Chip sets are
 [toolbars](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/toolbar_role)
 that can display any type of chip or other toolbar items.
 
-```html
+{% demo "Chip set with a heading" %}
 <h3>New event</h3>
 <md-gb-chip-set>
   <md-gb-chip type="filter" color="outlined">All day</md-gb-chip>
   <md-gb-chip type="action" color="outlined">Add to calendar</md-gb-chip>
   <md-gb-chip type="action" color="outlined">Set a reminder</md-gb-chip>
 </md-gb-chip-set>
-```
+{% enddemo %}
 
 ### Icons
 
 All chips may display an optional icon. Input chips can specify if an avatar
 picture is displayed.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <md-gb-chip-set>
@@ -86,7 +86,7 @@ picture is displayed.
 Assist, filter, and suggestion chips can be elevated if the placement requires
 protection, such as on top of an image.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <div>
@@ -146,7 +146,7 @@ opening a calendar event from the home screen.
 Assist chips function as though the user asked an assistant to complete the
 action. They should appear dynamically and contextually in a UI.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <h3>A restaraunt location</h3>
@@ -166,7 +166,7 @@ action. They should appear dynamically and contextually in a UI.
 use tags or descriptive words to filter content. They can be a good alternative
 to toggle buttons or checkboxes.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <h3>Choose where to share</h3>
@@ -183,7 +183,7 @@ to toggle buttons or checkboxes.
 Filter chips can optionally be removable from the chip set. Removable chips have
 a trailing remove icon.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <h3>Colors</h3>
@@ -204,7 +204,7 @@ contacts or filter options within a search field.
 Input chips whose icons are user images may add the `avatar` attribute to
 display the image in a larger circle.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <md-gb-text-field label="Attendees" type="email" variant="outlined"></md-gb-text-field>
@@ -224,7 +224,7 @@ display the image in a larger circle.
 All input chips are removable. If an input chip does not have an action
 associated with clicking on it, it may be marked as `remove-only`.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <h3>Favorite movies</h3>
@@ -240,7 +240,7 @@ associated with clicking on it, it may be marked as `remove-only`.
 help narrow a user’s intent by presenting dynamically generated suggestions,
 such as possible responses or search filters.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html"
+<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
 
 ```html
 <h3>Suggested reply</h3>

@@ -29,36 +29,17 @@ user needs to select one or more options from a list.
 
 Checkboxes may be standalone, pre-checked, or indeterminate.
 
-<div class="figure-wrapper">
-  <figure style="justify-content:center;" aria-label="Three checkboxes in a row that are unselected, selected, and indeterminate">
-    <md-gb-checkbox></md-gb-checkbox>
-    <md-gb-checkbox checked></md-gb-checkbox>
-    <md-gb-checkbox indeterminate></md-gb-checkbox>
-  </figure>
-</div>
-
-```html
+{% demo "Three checkboxes in a row that are unselected, selected, and indeterminate" %}
 <md-gb-checkbox></md-gb-checkbox>
 <md-gb-checkbox checked></md-gb-checkbox>
 <md-gb-checkbox indeterminate></md-gb-checkbox>
-```
+{% enddemo %}
 
 ### Label
 
 Associate a label with a checkbox using the `<label>` element.
 
-<div class="figure-wrapper">
-  <figure style="justify-content: center; align-items: center" aria-label="Two checkboxes with labels">
-    <label style="display: flex; align-items: center">
-      <md-gb-checkbox></md-gb-checkbox>
-      Checkbox one
-    </label>
-    <md-gb-checkbox id="checkbox-two"></md-gb-checkbox>
-    <label for="checkbox-two">Checkbox two</label>
-  </figure>
-</div>
-
-```html
+{% demo "Two checkboxes with labels" %}
 <label>
   <md-gb-checkbox></md-gb-checkbox>
   Checkbox one
@@ -66,7 +47,7 @@ Associate a label with a checkbox using the `<label>` element.
 
 <md-gb-checkbox id="checkbox-two"></md-gb-checkbox>
 <label for="checkbox-two">Checkbox two</label>
-```
+{% enddemo %}
 
 ## Accessibility
 
