@@ -23,6 +23,16 @@
     --md-sys-shape-corner-xl-top: #{tokens.$md-sys-shape--corner-extra-large-top};
     --md-sys-shape-corner-xl-increased: #{tokens.$md-sys-shape--corner-extra-large-increased};
     --md-sys-shape-corner-xxl: #{tokens.$md-sys-shape--corner-extra-extra-large};
+    // Full (md.sys.shape.corner.full): a corner of half the shorter side.
+    // A custom property cannot know the size of the element that uses it, so
+    // this is `50cqmin`, which resolves against the nearest size container
+    // or the viewport. That is fine for a corner that never animates (it is
+    // clamped to half the box), but a corner that morphs through "full"
+    // (press, selected, expand) animates from that far larger radius: nothing
+    // visibly changes for a while and then the corner snaps. A component whose
+    // corner animates sets this token locally to half its own height, like
+    // Compose's CircleShape (`--md-sys-shape-corner-full: calc(
+    // var(--container-height) / 2)` in button.scss and icon-button.scss).
     --md-sys-shape-corner-full: 50cqmin;
 
     // Single-corner values (md.sys.shape.corner-value.*): what component

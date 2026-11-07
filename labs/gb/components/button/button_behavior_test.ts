@@ -67,6 +67,12 @@ describe('<md-gb-button> spec behavior', () => {
     return out;
   }
 
+  /**
+   * The "full" corner of a button: half its own height (not the system
+   * `50cqmin`, which cannot know the element's size and would morph badly).
+   */
+  const fullOf = (btn: HTMLElement) => `${btn.getBoundingClientRect().height / 2}px`;
+
   function settle(el: Element) {
     document.body.getBoundingClientRect();
     getComputedStyle(el.shadowRoot!.querySelector('[part="btn"]')!).borderTopLeftRadius;
@@ -161,11 +167,10 @@ describe('<md-gb-button> spec behavior', () => {
 
   // spec: buttons-355f27, buttons-af408b, buttons-0a6888, buttons-922017
   it('is round (fully rounded) by default at every size, and 40dp tall by default', async () => {
-    const {root, buttons, part} = await setup(html`
+    const {buttons, part} = await setup(html`
       ${SIZES.map((s) => html`<md-gb-button size=${s}>Label</md-gb-button>`)}`);
-    const full = shape(root, 'full');
     buttons.forEach((b, i) => {
-      expect(corner(part(b))).withContext(SIZES[i]).toBe(full);
+      expect(corner(part(b))).withContext(SIZES[i]).toBe(fullOf(part(b)));
     });
     const {buttons: [def], part: p2} = await setup(html`<md-gb-button>Label</md-gb-button>`);
     expect(getComputedStyle(p2(def)).minHeight).toBe('40px');
@@ -241,7 +246,7 @@ describe('<md-gb-button> spec behavior', () => {
       <md-gb-button type="toggle" size="md">Round</md-gb-button>
       <md-gb-button type="toggle" size="md" square>Square</md-gb-button>`);
     const [round, square] = buttons;
-    expect(corner(part(round))).toBe(shape(root, 'full'));
+    expect(corner(part(round))).toBe(fullOf(part(round)));
     expect(corner(part(square))).toBe(shape(root, 'lg'));
     round.selected = true;
     square.selected = true;
@@ -250,7 +255,7 @@ describe('<md-gb-button> spec behavior', () => {
     settle(square);
     // Selected: the round button turns square, the square one turns round.
     expect(corner(part(round))).toBe(shape(root, 'lg'));
-    expect(corner(part(square))).toBe(shape(root, 'full'));
+    expect(corner(part(square))).toBe(fullOf(part(square)));
     // A selected toggle still morphs when pressed.
     const c = center(part(round));
     await sendMouse({type: 'move', position: [c.x, c.y]});

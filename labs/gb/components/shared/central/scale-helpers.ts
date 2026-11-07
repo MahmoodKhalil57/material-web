@@ -121,9 +121,17 @@ export function offShapeScale(root: Element, scale = shapeScale()): Violation[] 
         if (part.endsWith('%')) continue;
         const px = parseFloat(part);
         if (px >= 100 || scale.has(px)) continue;
-        // Half the box is the "full" corner of any size.
-        const box = e.getBoundingClientRect();
-        if (Math.abs(px - Math.min(box.width, box.height) / 2) < 0.6) continue;
+        // Half the box is the "full" corner of any size. An element that
+        // takes its corner from an ancestor (a slot that inherits it) is
+        // measured against the ancestors too.
+        let full = false;
+        let box: Element | null = e;
+        for (let i = 0; box && i < 4 && !full; i++) {
+          const r = box.getBoundingClientRect();
+          full = r.width > 0 && Math.abs(px - Math.min(r.width, r.height) / 2) < 0.6;
+          box = box.parentElement ?? (box.getRootNode() as ShadowRoot).host ?? null;
+        }
+        if (full) continue;
         bad.push(`${label(e)}: ${corner}`);
       }
     }

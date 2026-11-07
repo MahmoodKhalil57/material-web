@@ -105,7 +105,8 @@ describe('shape customization', () => {
       <md-gb-card id="c" color="elevated"></md-gb-card>`);
     await env.waitForStability();
     const radius = (el: Element) => parseFloat(getComputedStyle(el).borderTopLeftRadius);
-    expect(radius(root.querySelector('#a')!)).toBeGreaterThan(20);
+    // A round button's full corner is half its own 40dp height.
+    expect(radius(root.querySelector('#a')!)).toBe(20);
     expect(radius(root.querySelector('#b')!)).toBe(8);
     expect(radius(root.querySelector('#c')!.shadowRoot!.querySelector('.card')!)).toBe(12);
   });

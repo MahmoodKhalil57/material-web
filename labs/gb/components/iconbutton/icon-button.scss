@@ -177,6 +177,15 @@
       place-items: center;
       background-color: var(--container-color);
       border: var(--outline-width) solid var(--outline-color);
+      // See button.scss: "full" is half this element's own height, not
+      // `50cqmin`, so the pressed/selected corner morph interpolates
+      // visible values. The height below includes density.
+      --md-sys-shape-corner-full: calc(
+        max(
+            var(--icon-size) + 2 * var(--outline-width),
+            #{density.size(var(--container-height))}
+          ) / 2
+      );
       border-radius: var(--container-shape);
       // Density removes `--density-step` from the container per step; the
       // default width follows (aspect-ratio). The icon keeps its size, so

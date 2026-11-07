@@ -61,6 +61,7 @@ export class TopAppBar extends SignalElement(LitElement) {
             Material Web
             <md-focus-ring for="home-link"></md-focus-ring>
           </a>
+          <slot name="start"></slot>
 
           <a id="skip-to-main" href="#main-content" tabindex="0">
             Skip to main content
@@ -217,6 +218,20 @@ export class TopAppBar extends SignalElement(LitElement) {
 
     #menu-island {
       position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    #home-link {
+      white-space: nowrap;
+    }
+
+    /* Narrow windows: the version select (slot="start") needs the room; the
+       navigation drawer still links home. */
+    @media (max-width: 480px) {
+      #home-link {
+        display: none;
+      }
     }
 
     #skip-to-main {

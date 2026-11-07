@@ -192,6 +192,12 @@
       gap: var(--icon-label-space);
       padding-inline: var(--leading-space) var(--trailing-space);
       border: var(--outline-width) solid var(--outline-color);
+      // `--md-sys-shape-corner-full` is `50cqmin`, which resolves against
+      // the nearest size container, not this button, so the corner would
+      // animate through a far larger radius and the morph would show dead
+      // time and a snap. Here "full" is half this button's height (Compose
+      // CircleShape), so the shape morph interpolates visible values.
+      --md-sys-shape-corner-full: calc(var(--container-height) / 2);
       border-radius: var(--container-shape);
       box-shadow: var(--container-elevation);
       background-color: var(--container-color);

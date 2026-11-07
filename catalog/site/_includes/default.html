@@ -48,16 +48,28 @@
       </style>
     </noscript>
     {% if expressive %}
-    <!-- M3 Expressive toggle (local builds with labs/gb, `npm run catalog:dev`).
-         Applied before first paint to avoid flashing the other variant. -->
+    <!-- Version (local builds with labs/gb, `npm run catalog:dev`): pages under
+         /3.0/ are v3.0-Alpha and show the M3 Expressive components; the rest
+         are v2.5.0. Applied before first paint to avoid flashing the other
+         variant. -->
     <script>
       (() => {
-        let on = false;
-        try { on = localStorage.getItem('mwc-expressive') === '1'; } catch {}
+        const prefix = '/3.0';
+        const path = location.pathname;
+        const on = path === prefix || path.startsWith(prefix + '/');
         {% if expressiveOnly %}
-        // Expressive-only pages always show Expressive.
-        on = true;
-        try { localStorage.setItem('mwc-expressive', '1'); } catch {}
+        // Components that only exist in M3 Expressive live under /3.0/ only.
+        if (!on) {
+          location.replace(prefix + path + location.search + location.hash);
+          return;
+        }
+        {% endif %}
+        {% if isComponent and not expressiveOnly and not expressiveDir %}
+        // Components without an M3 Expressive version are not part of v3.0.
+        if (on) {
+          location.replace(prefix + '/');
+          return;
+        }
         {% endif %}
         if (on) document.documentElement.setAttribute('data-expressive', '');
       })();
@@ -70,53 +82,46 @@
       }
       html:not([data-expressive]) [data-variant='expressive'],
       html[data-expressive] [data-variant='standard'],
-      html:not([data-expressive]) [data-expressive-only] {
+      html:not([data-expressive]) [data-expressive-only],
+      html[data-expressive] [data-standard-only] {
         display: none !important;
       }
       /* The inline Expressive demo has no separate stories page. */
       [data-variant='expressive'] a[href='./stories/'] {
         display: none;
       }
-      .expressive-mark {
-        border-radius: 8px;
-        background: var(--md-sys-color-tertiary-container);
-        color: var(--md-sys-color-on-tertiary-container);
-        font: 500 11px / 16px var(--catalog-font-family, inherit);
-        letter-spacing: 0.5px;
-        padding: 2px 8px;
-      }
-      .expressive-mark.none {
-        background: none;
-        color: var(--md-sys-color-on-surface-variant);
-        opacity: 0.7;
-      }
-      .expressive-toggle {
-        align-items: center;
-        background: transparent;
+      .version-select {
+        appearance: none;
+        background: transparent
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2349454f' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")
+          no-repeat right 8px center / 20px;
         border: 1px solid var(--md-sys-color-outline);
-        border-radius: 999px;
+        border-radius: 8px;
         color: var(--md-sys-color-on-surface);
         cursor: pointer;
-        display: inline-flex;
         font: 500 14px / 20px inherit;
-        gap: 6px;
         height: 40px;
-        margin-inline-end: 8px;
-        padding: 0 16px 0 12px;
+        margin-inline-start: 16px;
+        padding: 0 36px 0 12px;
       }
-      .expressive-toggle[aria-pressed='true'] {
-        background: var(--md-sys-color-tertiary-container);
-        border-color: transparent;
-        color: var(--md-sys-color-on-tertiary-container);
+      .version-select:focus-visible {
+        outline: 2px solid var(--md-sys-color-secondary);
+        outline-offset: 2px;
       }
-      .expressive-toggle:disabled {
-        cursor: not-allowed;
-        opacity: 0.85;
+      .version-select option {
+        background: var(--md-sys-color-surface-container);
+        color: var(--md-sys-color-on-surface);
       }
-      .expressive-toggle svg {
-        fill: currentColor;
-        height: 18px;
-        width: 18px;
+      @media (max-width: 600px) {
+        .version-select {
+          font-size: 13px;
+          height: 36px;
+          margin-inline-start: 4px;
+          max-width: 6.75rem;
+          padding: 0 26px 0 8px;
+          background-position: right 4px center;
+          text-overflow: ellipsis;
+        }
       }
     </style>
     {% endif %}
@@ -130,17 +135,15 @@
       <nav-drawer page-title="{{name}}" {% if hasToc %}has-toc{% endif %}>
         <top-app-bar slot="top-app-bar" baseURI="/">
           {% if expressive %}
-          <button
-              slot="end"
-              type="button"
-              id="expressive-toggle"
-              class="expressive-toggle"
-              aria-pressed="false"
-              {% if expressiveOnly %}data-locked{% endif %}
-              title="Show M3 Expressive components">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/></svg>
-            Expressive
-          </button>
+          <select
+              slot="start"
+              id="version-select"
+              class="version-select"
+              aria-label="Material Web version"
+              {% if expressiveOnly %}data-locked{% endif %}>
+            <option value="standard">v2.5.0 Current - Latest</option>
+            <option value="expressive">v3.0-Alpha</option>
+          </select>
           {% endif %}
           {% block topappbar %}{{ topappbar | safe }}{% endblock %}
         </top-app-bar>
@@ -189,10 +192,10 @@
               href="{{ file.url }}"
               role="menuitem"
               {% if file.url == page.url %}selected{% endif %}
-              {% if file.data.expressiveOnly %}data-expressive-only{% endif %}
+              {% if expressive and file.data.expressiveOnly %}data-expressive-only{% elif expressive and not file.data.expressiveDir %}data-standard-only{% endif %}
               type="link"
               tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
-            >{{ file.data.name }}{% if expressive %}{% if file.data.expressiveOnly %}<span slot="end" class="expressive-mark" title="New M3 Expressive component">New</span>{% elif file.data.expressiveDir %}<span slot="end" class="expressive-mark" title="Has an M3 Expressive version">Expressive</span>{% else %}<span slot="end" class="expressive-mark none" title="No M3 Expressive version yet">Standard</span>{% endif %}{% endif %}</md-list-item>
+            >{{ file.data.name }}</md-list-item>
           {% endfor %}
         </md-list>
       </nav-drawer>
@@ -201,26 +204,48 @@
     <script>
       (() => {
         const root = document.documentElement;
-        const toggle = document.getElementById('expressive-toggle');
-        const locked = toggle.hasAttribute('data-locked');
+        // v3.0-Alpha shows the M3 Expressive (labs/gb) components.
+        const select = document.getElementById('version-select');
+        const locked = select.hasAttribute('data-locked');
+        const standard = select.querySelector('option[value="standard"]');
         const sync = () => {
           const on = root.hasAttribute('data-expressive');
-          toggle.setAttribute('aria-pressed', String(on));
-          // Expressive-only pages cannot switch to the standard components.
-          toggle.disabled = locked && on;
-          toggle.title = toggle.disabled
-            ? 'This component only exists in M3 Expressive'
-            : on
-              ? 'Showing M3 Expressive components'
-              : 'Show M3 Expressive components';
+          select.value = on ? 'expressive' : 'standard';
+          // Expressive-only pages have no v2.5.0 version.
+          standard.disabled = locked && on;
+          select.title = standard.disabled
+            ? 'This component only exists in v3.0-Alpha (M3 Expressive)'
+            : 'Material Web version';
         };
-        toggle.addEventListener('click', () => {
-          if (toggle.disabled) return;
-          const on = !root.hasAttribute('data-expressive');
-          root.toggleAttribute('data-expressive', on);
-          try { localStorage.setItem('mwc-expressive', on ? '1' : '0'); } catch {}
-          sync();
+        const prefix = '/3.0';
+        const inVersion = (path) => path === prefix || path.startsWith(prefix + '/');
+        const base = (path) => (inVersion(path) ? path.slice(prefix.length) || '/' : path);
+        // Switching versions loads the same page under the other base URL.
+        select.addEventListener('change', () => {
+          const path = base(location.pathname);
+          const next = select.value === 'expressive' ? prefix + path : path;
+          location.assign(next + location.search + location.hash);
         });
+        // Inside v3.0-Alpha, links to other catalog pages keep the /3.0/ base
+        // (links in the navigation's shadow roots too, via composedPath).
+        if (root.hasAttribute('data-expressive')) {
+          document.addEventListener('click', (event) => {
+            if (event.defaultPrevented || event.button !== 0) return;
+            const link = event.composedPath().find((el) => el instanceof HTMLAnchorElement && el.href);
+            if (!link || link.target && link.target !== '_self' || link.hasAttribute('download')) return;
+            const url = new URL(link.href, location.href);
+            if (url.origin !== location.origin || inVersion(url.pathname)) return;
+            // Same-page anchors stay as they are.
+            if (url.pathname === location.pathname.slice(prefix.length) && url.hash) return;
+            url.pathname = prefix + url.pathname;
+            event.preventDefault();
+            if (event.metaKey || event.ctrlKey || event.shiftKey) {
+              window.open(url.href, '_blank');
+            } else {
+              location.assign(url.href);
+            }
+          }, true);
+        }
         sync();
       })();
     </script>

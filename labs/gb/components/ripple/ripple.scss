@@ -43,21 +43,36 @@
     --ripple-y: 50%;
   }
 
-  .ripple {
-    --ripple-color: currentColor;
-    --ripple-press-transition: --ripple-press-opacity 375ms linear;
-    --ripple-transition: --ripple-hover-opacity 15ms linear,
-      var(--ripple-press-transition);
-    --ripple-animation: ripple-release 375ms linear;
+  // The layers of a ripple, with the pressed circle growing from `$position`.
+  @mixin ripple-layers($position) {
     --ripple: radial-gradient(
         hsl(from var(--ripple-color) h s l / var(--ripple-hover-opacity))
       ),
       radial-gradient(
-        circle at var(--ripple-x) var(--ripple-y),
+        circle at #{$position},
         hsl(from var(--ripple-color) h s l / var(--ripple-press-opacity))
           var(--ripple-scale),
         transparent calc(var(--ripple-scale) * 1.35)
       );
+  }
+
+  // Pressed ripple timing (Compose material3-ripple, RippleAnimation.kt): the
+  // layer fades in over 75ms, the circle grows over 225ms (fast-out slow-in)
+  // while its center moves to the middle (linear), and the fade out (150ms)
+  // starts once the press is released and the growth is done (ripple.ts keeps
+  // `.active` until then).
+  .ripple {
+    --ripple-color: currentColor;
+    --ripple-press-transition: --ripple-press-opacity 150ms linear;
+    --ripple-transition: --ripple-hover-opacity 15ms linear,
+      var(--ripple-press-transition);
+    // Holds the circle's end state while the layer fades out, so it does not
+    // jump when the press animation is removed.
+    --ripple-animation: ripple-release 150ms linear;
+    @include ripple-layers('var(--ripple-x) var(--ripple-y)');
+
+    // The M3 ripple is the touch feedback, not the browser's grey highlight.
+    -webkit-tap-highlight-color: transparent;
 
     background-image: var(--ripple);
     transition: var(--ripple-transition);
@@ -110,8 +125,10 @@
     .ripple-target:active &,
     :host(:active) &.ripple-host {
       --ripple-press-opacity: 10%;
-      --ripple-press-transition: --ripple-press-opacity 100ms linear;
-      --ripple-animation: ripple-press forwards 450ms cubic-bezier(0.2, 0, 0, 1);
+      --ripple-press-transition: --ripple-press-opacity 75ms linear;
+      --ripple-animation: ripple-press 225ms cubic-bezier(0.4, 0, 0.2, 1)
+          forwards,
+        ripple-press-center 225ms linear forwards;
     }
 
     // Expanded: the trigger of an open menu holds the pressed layer
@@ -130,23 +147,46 @@
     }
   }
 
+  :where(.ripple-target) {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :host {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  // Reduced motion: no growing circle. The layer covers the element from the
+  // middle and only its opacity changes (75ms in, 150ms out).
+  @media (prefers-reduced-motion: reduce) {
+    .ripple {
+      --ripple-scale: 100%;
+      @include ripple-layers('50% 50%');
+      animation: var(--focus-ring-animation, none);
+    }
+  }
+
   @keyframes ripple-press {
     from {
       --ripple-scale: 20%;
     }
     to {
       --ripple-scale: 100%;
+    }
+  }
+
+  @keyframes ripple-press-center {
+    to {
       --ripple-x: 50%;
       --ripple-y: 50%;
     }
   }
 
   @keyframes ripple-release {
-    from {
-      --ripple-scale: 100%;
-    }
+    from,
     to {
       --ripple-scale: 100%;
+      --ripple-x: 50%;
+      --ripple-y: 50%;
     }
   }
 }

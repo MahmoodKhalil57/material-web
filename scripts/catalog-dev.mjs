@@ -381,10 +381,10 @@ async function addExpressiveVariants() {
     md = md.replace(
       /^\{% playgroundexample dirname=dirname %\}$/m,
       `<div data-variant="standard">\n\n{% playgroundexample dirname=dirname %}\n\n</div>\n` +
-        `<div data-variant="expressive">\n\n{% playgroundexample dirname="gb-${dir}" %}\n\n</div>`,
+        `<div data-variant="expressive">\n\n{% playgroundexample dirname="gb-${dir}", id="project-gb" %}\n\n</div>`,
     );
     md = md.replace(/^---\n/, `---\nexpressiveDir: ${dir}\n`);
-    md += `\n<script type="module" src="${LIB}catalog/_dev-gb/variants/${slug}.js"></script>\n`;
+    md += `\n<script type="module">if (location.pathname.startsWith('/3.0/')) import('${LIB}catalog/_dev-gb/variants/${slug}.js');</script>\n`;
     await writeFile(file, md);
 
     // Loads the labs/gb elements used by the Expressive variants.
@@ -779,7 +779,7 @@ ${api}
     max-width: 100%;
   }
 </style>
-<script type="module" src="${LIB}catalog/_dev-gb/${dir}/demo.js"></script>
+<script type="module">if (location.pathname.startsWith('/3.0/')) import('${LIB}catalog/_dev-gb/${dir}/demo.js');</script>
 `;
 }
 
@@ -931,7 +931,26 @@ async function startLibraryServer() {
 async function startCatalogServer() {
   const {startDevServer} = await import('@web/dev-server');
   await startDevServer({
-    config: {rootDir: OUT, port: PORT, open: argv.includes('--no-open') ? false : '/'},
+    config: {
+      rootDir: OUT,
+      port: PORT,
+      open: argv.includes('--no-open') ? false : '/',
+      middleware: [
+        // v3.0-Alpha (M3 Expressive) lives under /3.0/: the same pages, which
+        // switch to the Expressive components when the path starts with /3.0/
+        // (site/_includes/default.html).
+        (ctx, next) => {
+          if (ctx.path === '/3.0') {
+            ctx.redirect('/3.0/');
+            return;
+          }
+          if (ctx.path.startsWith('/3.0/')) {
+            ctx.url = ctx.url.slice('/3.0'.length);
+          }
+          return next();
+        },
+      ],
+    },
     readCliArgs: false,
     readFileConfig: false,
     logStartMessage: false,

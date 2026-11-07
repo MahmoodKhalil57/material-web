@@ -89,28 +89,62 @@ export function setupRipple(
     }
   }
 
-  let minimumPressTimeoutId: number | undefined;
+  // The pressed ripple stays until the press is released AND the circle has
+  // finished growing (Compose material3-ripple: the fade out starts after
+  // both), so a quick tap still shows the full expansion.
+  let holdTimeoutId: number | undefined;
+  let pressStart = 0;
+  let pressing = false;
+
+  const removeActive = () => {
+    clearTimeout(holdTimeoutId);
+    holdTimeoutId = undefined;
+    ripple.classList.remove(RIPPLE_CLASSES.active);
+  };
+
   const activateRipple = () => {
     // If the ripple is already active, restart the current press animation.
     if (ripple.classList.contains(RIPPLE_CLASSES.active)) {
-      const pressAnimation = ripple
-        .getAnimations()
-        .find(
-          (animation) =>
-            (animation as Partial<CSSAnimation>).animationName ===
+      for (const animation of ripple.getAnimations()) {
+        if (
+          (animation as Partial<CSSAnimation>).animationName?.startsWith(
             'ripple-press',
-        );
-      pressAnimation?.cancel();
-      pressAnimation?.play();
+          )
+        ) {
+          animation.cancel();
+          animation.play();
+        }
+      }
     }
 
-    // Emulate the `:active` class for a minimum press duration to show the
-    // ripple effect on short clicks.
     ripple.classList.add(RIPPLE_CLASSES.active);
-    clearTimeout(minimumPressTimeoutId);
-    minimumPressTimeoutId = window.setTimeout(() => {
-      ripple.classList.remove(RIPPLE_CLASSES.active);
-    }, MINIMUM_PRESS_MS);
+    clearTimeout(holdTimeoutId);
+    holdTimeoutId = undefined;
+    pressing = true;
+    pressStart = performance.now();
+  };
+
+  const releaseRipple = () => {
+    if (!pressing) return;
+    pressing = false;
+    clearTimeout(holdTimeoutId);
+    const remaining = MINIMUM_PRESS_MS - (performance.now() - pressStart);
+    if (remaining <= 0) {
+      removeActive();
+    } else {
+      holdTimeoutId = window.setTimeout(removeActive, remaining);
+    }
+  };
+
+  // Keyboard activation (Space and Enter) shows the same pressed ripple from
+  // the center. The click that follows is not a second press.
+  let keyPressed = false;
+  const pressesWithKey = (event: KeyboardEvent) => {
+    if (event.key !== ' ' && event.key !== 'Enter') return false;
+    const target = event.target as Element | null;
+    return !target?.closest?.(
+      'input:not([type=button],[type=checkbox],[type=radio],[type=submit],[type=reset]),textarea,select,[contenteditable]:not([contenteditable=false])',
+    );
   };
 
   // Return true if the ripple is disabled, or if the ripple class has been
@@ -129,6 +163,15 @@ export function setupRipple(
       ripple.style.setProperty('--ripple-x', `${x * 100}%`);
       ripple.style.setProperty('--ripple-y', `${y * 100}%`);
       activateRipple();
+      // The press can end anywhere, also outside the ripple.
+      const release = () => {
+        window.removeEventListener('pointerup', release);
+        window.removeEventListener('pointercancel', release);
+        releaseRipple();
+      };
+      window.addEventListener('pointerup', release);
+      window.addEventListener('pointercancel', release);
+      opts?.signal?.addEventListener('abort', release, {once: true});
     },
     opts,
   );
@@ -139,8 +182,33 @@ export function setupRipple(
       // Reset ripple pointer position when a key is pressed.
       ripple.style.removeProperty('--ripple-x');
       ripple.style.removeProperty('--ripple-y');
+      if (event.repeat || isRippleDisabled() || !pressesWithKey(event)) return;
+      keyPressed = true;
+      activateRipple();
     },
     opts,
+  );
+
+  ripple.addEventListener(
+    'keyup',
+    (event: KeyboardEvent): void => {
+      if (!keyPressed || !pressesWithKey(event)) return;
+      releaseRipple();
+      // Space clicks after its keyup: let that click pass first.
+      setTimeout(() => (keyPressed = false));
+    },
+    opts,
+  );
+
+  ripple.addEventListener(
+    'blur',
+    () => {
+      if (keyPressed) {
+        keyPressed = false;
+        releaseRipple();
+      }
+    },
+    {...opts, capture: true},
   );
 
   ripple.addEventListener(
@@ -148,8 +216,9 @@ export function setupRipple(
     (event) => {
       // A UIEvent.detail click count of 0 indicates the click was not triggered
       // by a pointer. Show the ripple press effect for these clicks as well.
-      if (event.detail === 0 && !isRippleDisabled()) {
+      if (event.detail === 0 && !keyPressed && !isRippleDisabled()) {
         activateRipple();
+        releaseRipple();
       }
     },
     opts,
