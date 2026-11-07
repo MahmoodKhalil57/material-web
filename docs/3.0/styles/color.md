@@ -6,14 +6,9 @@ description: Color creates meaning and communicates hierarchy, state, and brand.
 ---
 ## Color scheme
 
-This page follows the subpages of the
-[M3 color guidance](https://m3.material.io/styles/color/overview)
-in order: the color system, color roles, choosing a scheme, static color,
-dynamic color, advanced customization, and resources. Each part says what the
-spec asks for and how to do it with labs/gb. Where labs/gb does not build a
-feature yet, the page says so.
-
-All imports come from `@material/web/labs/gb/styles/color/`.
+The page follows the subpages of the
+[M3 color guidance](https://m3.material.io/styles/color/overview) in order. All
+imports come from `@material/web/labs/gb/styles/color/`.
 
 ## Color system
 
@@ -127,15 +122,15 @@ and a good starting point for prototypes. **Custom brand** keeps the same
 roles but replaces the key colors with your brand colors, usually exported from
 the Material Theme Builder or a design tool.
 
-Baseline in labs/gb is the default stylesheet:
+Baseline in labs/gb is the default stylesheet. It is also part of `m3Styles`,
+which `adoptStyles()` loads.
 
-```html
-<link rel="stylesheet" href="@material/web/labs/gb/styles/color/md-color-tokens.css">
+```css
+@import '@material/web/labs/gb/styles/color/md-color-tokens.css';
 ```
 
-For a custom brand scheme, generate the roles once and keep the CSS, or
-override the tokens by hand. If your brand colors should become the whole
-scheme, give them to `palettes` (see Advanced customization).
+For a custom brand scheme, override the tokens by hand, or generate the roles
+once and keep the CSS.
 
 ```css
 :root {
@@ -145,28 +140,33 @@ scheme, give them to `palettes` (see Advanced customization).
 }
 ```
 
-Generating a brand scheme from a source color and exporting a stylesheet is
-one call: `themeToCss(themeFromSource({source: '#006a6a'}))`. To start from a
-Material Theme Builder export, pass its JSON to `themeFromThemeBuilder()`:
+```ts
+import {
+  themeFromSource,
+  themeToCss,
+} from '@material/web/labs/gb/styles/color/dynamic-color.js';
+
+const css = themeToCss(themeFromSource({source: '#006a6a'}));
+```
+
+To start from a Material Theme Builder export, pass its JSON to
+`themeFromThemeBuilder()`, or apply it live with `themeOptionsFromThemeBuilder()`.
 
 ```ts
 import {
   applyTheme,
-  themeFromThemeBuilder,
   themeOptionsFromThemeBuilder,
-  themeToCss,
 } from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
 const json = await (await fetch('material-theme.json')).json();
-const css = themeToCss(themeFromThemeBuilder(json)); // keep the CSS
-applyTheme(document, themeOptionsFromThemeBuilder(json)); // or apply it live
+applyTheme(document, themeOptionsFromThemeBuilder(json));
 ```
 
 The seed (or the core primary) is the source, other core colors become
 `palettes`, extended colors become harmonized or exact `customColors`, and a
-`variant` or `contrast` field in the file is used if present. The export's
-generated schemes and palettes are ignored: the roles are regenerated, so they
-match the rest of labs/gb. A second argument overrides any option.
+`variant` or `contrast` field in the file is used if present. The generated
+schemes and palettes in the export are ignored, so the roles match the rest of
+labs/gb. A second argument overrides any option.
 
 ## Dynamic color
 
@@ -177,28 +177,29 @@ on screen, with the `content` variant), and **multiple sources** (several
 schemes on one screen, each scoped to a region).
 
 ```ts
-import {
-  applyTheme,
-  sourceColorFromImage,
-  themeFromImage,
-  themeFromSource,
-  themeToStyleSheet,
-} from '@material/web/labs/gb/styles/color/dynamic-color.js';
+import {applyTheme} from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
-// User-generated: a hand-picked source for the whole document.
-const theme = themeFromSource({
+applyTheme(document, {
   source: '#006a6a',
   variant: 'tonal-spot',
   contrast: 'medium',
 });
-document.adoptedStyleSheets.push(themeToStyleSheet(theme));
-
-// Content-based: quantize an image, and scope the result to one element.
-applyTheme(card, {source: await sourceColorFromImage(img), variant: 'content'});
-
-// Or generate directly from an image.
-const albumTheme = await themeFromImage(img);
 ```
+
+For content-based color, scope the scheme to one element with a source taken
+from an image:
+
+```ts
+import {
+  applyTheme,
+  sourceColorFromImage,
+} from '@material/web/labs/gb/styles/color/dynamic-color.js';
+
+applyTheme(card, {source: await sourceColorFromImage(img), variant: 'content'});
+```
+
+To get the theme without applying it, use `themeFromSource()` or
+`themeFromImage(img)`, and `themeToStyleSheet(theme)` for a stylesheet.
 
 *   Variants: `tonal-spot`, `neutral`, `vibrant`, `expressive`, `fidelity`,
     `content`, `monochrome`, `rainbow`, and `fruit-salad`. The spec page does

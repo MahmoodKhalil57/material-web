@@ -45,12 +45,8 @@ Guard your own newer CSS the same way, so older browsers keep a usable
 fallback:
 
 ```css
-.notes textarea {
-  /* The fixed rows height is the fallback. */
-}
-
 @supports (field-sizing: content) {
-  .notes textarea {
+  textarea {
     field-sizing: content;
   }
 }

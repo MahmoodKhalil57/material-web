@@ -44,14 +44,14 @@ Use the ripple as written. Do not add a second press effect on top of it.
 
 ## Usage
 
-Components apply their states on their own. Use them like any other element:
+Components apply their states on their own. Use them like any other element.
 
-```html
-<md-gb-button>Save</md-gb-button>
+{% demo "A button and an icon button, both with state layers" %}
+<md-gb-button color="tonal">Save</md-gb-button>
 <md-gb-icon-button aria-label="Add">
   <md-gb-icon>add</md-gb-icon>
 </md-gb-icon-button>
-```
+{% enddemo %}
 
 ## Watch out for
 

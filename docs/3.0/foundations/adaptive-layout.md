@@ -27,15 +27,24 @@ needs it.
 A component gets its class from `AdaptiveController` in
 `labs/gb/components/shared/adaptive.ts`. The controller sets the
 `window-size-class` attribute on the host, so CSS can match it. Options are
-keyed by class and apply from that class up:
+keyed by class and apply from that class up. Match the attribute in CSS and
+use `atLeast('expanded')` in code. Do not read the window width directly.
 
-```js
-// max 2 at compact and medium, 4 from expanded up
-{compact: {max: 2}, expanded: {max: 4}}
+```ts
+import {html, LitElement} from 'lit';
+import {AdaptiveController} from '@material/web/labs/gb/components/shared/adaptive.js';
+
+class ActionBar extends LitElement {
+  // 2 actions at compact and medium, 4 from expanded up.
+  private readonly adaptive = new AdaptiveController(this, {
+    options: {compact: {actions: 2}, expanded: {actions: 4}},
+  });
+
+  render() {
+    return html`${this.adaptive.options.actions} actions`;
+  }
+}
 ```
-
-Use `atLeast('expanded')` in code and the attribute in CSS. Do not read the
-window width directly.
 
 ### App scaffold
 

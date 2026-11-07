@@ -34,6 +34,8 @@ A dialog fires `cancel` on Escape, a scrim click or the full-screen close
 button. Canceling keeps the dialog open if you call `preventDefault()`:
 
 ```js
+const dialog = document.querySelector('md-gb-dialog');
+
 dialog.addEventListener('cancel', (event) => {
   if (hasUnsavedChanges) event.preventDefault();
 });

@@ -10,9 +10,8 @@ of the symbol, such as `home`. Find names and previews at
 [fonts.google.com/icons](https://fonts.google.com/icons). Symbols come in three
 styles: outlined, rounded and sharp.
 
-The element is a thin wrapper over the font. It sets the size, color, baseline
-and font variation settings, and it reads them from custom properties, so you
-can change an icon without writing a new selector.
+The element is a thin wrapper over the font. It reads its size, color and font
+variation settings from custom properties.
 
 ## Loading the font
 
@@ -26,8 +25,13 @@ family for the outlined style is `Material Symbols Outlined`, so set
 }
 ```
 
-Request only the axes you use. The gb demos request `opsz`, `wght` and `FILL`.
-To use `--md-icon-grad`, add `GRAD` to the request as well.
+Load the font once in the page head. Request only the axes you use; add `GRAD`
+to use `--md-icon-grad`.
+
+```html
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200&display=block">
+```
 
 ## Size and color
 
@@ -77,24 +81,23 @@ rather than a bare icon in a clickable element.
 - Add a text label when the symbol is abstract, complex, or carries a key
   action. A symbol shown below 20dp should have one too.
 
-## Code sample
+## Examples
 
-```html
+Change an axis or the size with the custom properties.
+
+{% demo "A default icon, a filled icon and a large bold icon" %}
 <md-gb-icon>home</md-gb-icon>
 <md-gb-icon style="--md-icon-fill: 1">home</md-gb-icon>
 <md-gb-icon style="--md-icon-size: 40px; --md-icon-wght: 500">star</md-gb-icon>
+{% enddemo %}
 
+Put the accessible name on the control, not on the icon.
+
+{% demo "An icon-only button with an accessible name" %}
 <md-gb-icon-button aria-label="Favorite">
   <md-gb-icon>favorite</md-gb-icon>
 </md-gb-icon-button>
-```
-
-Load the font once in the page head, with the axes you use:
-
-```html
-<link rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200&display=block">
-```
+{% enddemo %}
 
 ## What to watch out for
 

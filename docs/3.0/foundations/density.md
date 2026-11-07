@@ -10,11 +10,18 @@ components more compact. A component's density is a number from `0` (the
 default) to `-3` (the densest). Each step down makes the component smaller.
 Values are rounded and clamped to that range.
 
-Use the `density` attribute:
+Use the `density` attribute.
 
-```html
-<md-gb-checkbox density="-2">Notify me</md-gb-checkbox>
-```
+{% demo "Checkboxes at density 0 and -3" %}
+<label>
+  Default
+  <md-gb-checkbox></md-gb-checkbox>
+</label>
+<label>
+  Dense
+  <md-gb-checkbox density="-3"></md-gb-checkbox>
+</label>
+{% enddemo %}
 
 ## Which components support it
 

@@ -21,30 +21,19 @@ These roadmap items represent what used to be planned.
 
 ### New components
 
-These are components we have not built yet.
+Version 3.0 builds every component in the list 2.5.0 planned except these:
 
 *   Autocomplete
-*   Badge
 *   Banner
-*   Bottom app bar
-*   Bottom sheet
-*   Card
 *   Data table
-*   Date picker
-*   Navigation bar
-*   Navigation drawer
-*   Navigation rail
-*   Search
-*   Segmented button
-*   Snackbar
-*   Time picker
-*   Top app bar
-*   Tooltip
+
+The badge, bottom sheet, card, date and time pickers, navigation bar, drawer
+and rail, search, segmented button, snackbar, tooltip and top app bar are in
+`labs/gb`. The toolbar replaces the bottom app bar in M3 Expressive.
 
 ### Expand Material Design tokens
 
-We are adding shape and motion system tokens to support building expressive
-Material experiences.
+Version 3.0 has the shape and motion system tokens.
 
 We also want to make it easier to use Material Design tokens, such as applying
 Material typescale, shape, and color to your own components.

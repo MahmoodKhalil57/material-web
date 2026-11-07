@@ -14,14 +14,16 @@ DevTools Performance panel as a custom track named `md-gb`, in the group
 
 ## Turn them on
 
-Use any one of these. The flag is read once, on first use, so set it before you
-interact with the components:
+The flag is read once, on first use, so set it before you interact with the
+components. Use any one of these:
 
 - Add `?md-gb-perf` to the page address and load it.
-- Set it in the console, then reload:
+- Set the flag in the console, then reload. Any value turns the marks on, even
+  `0`. Remove the key to turn them off:
 
   ```js
   localStorage.setItem('md-gb-perf', '1');
+  localStorage.removeItem('md-gb-perf');
   ```
 
 - Set it before any component runs:
@@ -30,15 +32,13 @@ interact with the components:
   globalThis.MD_GB_DEBUG_PERF = true;
   ```
 
-Any value of the `localStorage` key turns the marks on, even `0`. To turn them
-off again, remove the key with `localStorage.removeItem('md-gb-perf')` and
-reload.
-
 ## Record a trace
 
 Open the Performance panel, start a recording, use the component, and stop it.
-Look for the `md-gb` track. Each span is also a `performance.measure()` entry, so
-`performance.getEntriesByType('measure')` lists them.
+Look for the `md-gb` track. Each span is also a `performance.measure()` entry:
 
-When the flag is off, each call costs one boolean check and allocates nothing,
-so the marks cost nothing in normal use.
+```js
+performance.getEntriesByType('measure');
+```
+
+When the flag is off, each call costs one boolean check and allocates nothing.

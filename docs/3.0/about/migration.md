@@ -12,8 +12,7 @@ changes. The 2.5.0 docs stay on the root of this site.
 
 ## Start with the styles
 
-Load the 3.0 design tokens once per document. Import the Expressive styles and
-adopt them on `document`:
+Load the 3.0 design tokens once per document:
 
 ```js
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
@@ -22,7 +21,8 @@ import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 adoptStyles(document, [m3Styles]);
 ```
 
-Import each `md-gb-*` element you use from `@material/web/labs/gb/components/`.
+Then import each `md-gb-*` element you use from
+`@material/web/labs/gb/components/`.
 
 ## Element and attribute map
 
@@ -59,15 +59,14 @@ attribute has no 3.0 counterpart and you can remove it.
 | `md-tabs` | `md-gb-tabs` | `variant="secondary"` when it holds secondary tabs; `auto-activate` and `active-tab-index` dropped |
 | `md-primary-tab`, `md-secondary-tab` | `md-gb-tab` | the label goes in `slot="label"`; `inline-icon`, `has-icon`, `active` and `icon-only` dropped |
 | `md-chip-set` | `md-gb-chip-set` | none |
-| `md-assist-chip` | `md-gb-chip` | `type="action"`; `color="elevated"` if it was `elevated`, otherwise `outlined`; `label` becomes text content |
+| `md-assist-chip` | `md-gb-chip` | `color="elevated"` if it was `elevated`; `label` becomes text content |
 | `md-filter-chip` | `md-gb-chip` | `type="filter"`; same color rule |
-| `md-input-chip` | `md-gb-chip` | `type="action"` with `removable` |
-| `md-suggestion-chip` | `md-gb-chip` | `type="action"`; same color rule |
+| `md-input-chip` | `md-gb-chip` | `type="input"` with `removable` |
+| `md-suggestion-chip` | `md-gb-chip` | `type="suggestion"`; same color rule |
 | `md-icon` | `md-gb-icon` | inside a button, icon button, FAB or tab, the `slot="icon"` is removed and the icon goes in DOM order |
 
-Icons in buttons, FABs and tabs need no `slot`. Expressive buttons, FABs and
-tabs take their icon as a child, in the order it appears. If the icon is not an
-`md-icon` (for example an inline SVG), wrap it in `md-gb-icon`.
+If the icon is not an `md-icon` (for example an inline SVG), wrap it in
+`md-gb-icon`.
 
 ## Attributes to rename by hand
 
@@ -103,7 +102,7 @@ remain available, but for new work use the replacement below.
 
 - Chips and FABs no longer take their text from a `label` attribute. Put the
   text in the element instead, as the table shows.
-- Import each `md-gb-*` element. An element that is not imported is not
-  upgraded, so it renders as an unknown element.
+- An `md-gb-*` element that is not imported is not upgraded, so it renders as
+  an unknown element.
 - Selectors, queries and tests that use the old `md-*` tag names need the new
   names too.

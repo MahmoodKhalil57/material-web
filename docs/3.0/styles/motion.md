@@ -5,11 +5,6 @@ order: 8
 description: "This page follows the three subpages of the M3 motion guidance: the motion physics system, easing and duration and transitions."
 ---
 
-This page follows the three subpages of the M3 motion guidance: the
-[motion physics system](#overview), [easing and duration](#easing-and-duration)
-and [transitions](#transitions). Each section says what the spec asks for and
-how to do it with `labs/gb`.
-
 ## Overview
 
 Material 3 Expressive uses a physics-based motion system. Springs drive
@@ -34,11 +29,11 @@ The spec's three levels of customization map to CSS like this:
    `:root` rule.
 3. Swap the scheme for one element: put `md-motion-standard` on that element.
 
-```html
-<section class="md-motion-standard">
-  <md-gb-button>Save</md-gb-button>
-</section>
-```
+{% demo "A button in a subtree that uses the standard motion scheme" %}
+<div class="md-motion-standard">
+  <md-gb-button color="filled">Save</md-gb-button>
+</div>
+{% enddemo %}
 
 ### Spring tokens
 
@@ -67,15 +62,9 @@ values from the spec's web conversion table.
 
 Reduced motion is on when the platform asks for it
 (`prefers-reduced-motion: reduce`) or inside an element with the
-`md-motion-reduced` class. The spatial springs then become instant (0ms) and
+`md-motion-reduced` class (spatial motion is off there, fades stay). The spatial springs then become instant (0ms) and
 the effects springs keep their timing. People still see fades and color
 changes, but not sliding, scaling, parallax or shape morphing.
-
-```html
-<div class="md-motion-reduced">
-  <!-- Spatial motion is off here, fades stay. -->
-</div>
-```
 
 Do not build your own motion gate. Read the durations from the tokens so the
 scheme and reduced motion apply without extra code.
@@ -91,15 +80,17 @@ Standard, whichever applies to the element), and `Spring` solves it in closed
 form and samples it every animation frame:
 
 ```ts
-import {readSpring, Spring} from './spring.js';
+import {
+  readSpring,
+  Spring,
+} from '@material/web/labs/gb/components/shared/spring.js';
 
 const spring = new Spring({
   spec: readSpring(panel, 'default-spatial'),
-  onFrame: (x, velocity) => (panel.style.translate = `${x}px`),
-  onRest: () => panel.removeAttribute('data-settling'),
+  onFrame: (x) => (panel.style.translate = `${x}px`),
 });
-spring.start(releaseX, anchorX, releaseVelocity); // px and px/s
-spring.retarget(otherAnchorX); // keeps position and velocity
+spring.start(0, 240, 1500); // from and to in px, release velocity in px/s
+spring.retarget(120); // keeps position and velocity
 ```
 
 Under reduced motion the spring jumps to its target and rests at once.
@@ -191,23 +182,10 @@ implements them in `styles/motion/transitions/` with the View Transitions API,
 and falls back to the Web Animations API when the browser lacks it (or when you
 pass `viewTransition: false`).
 
-Adopt the stylesheet in the document, because `::view-transition-*` rules only
-work there. Then import the helpers:
-
-```ts
-import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
-import transitionStyles from '@material/web/labs/gb/styles/motion/transitions/md-motion-transitions.cssresult.js';
-import {
-  containerTransform,
-  sharedAxis,
-  lateral,
-  fadeThrough,
-  enter,
-  exit,
-} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
-
-adoptStyles(document, [transitionStyles]);
-```
+The pattern styles are part of `m3Styles` (see
+[Quick Start](/3.0/about/quick-start/#import)). Adopt them on the document,
+because `::view-transition-*` rules only work there. The helpers come from
+`@material/web/labs/gb/styles/motion/transitions/transitions.js`.
 
 Every helper takes `update`, a function that changes the DOM to the new state,
 and returns a promise that resolves when the motion ends. Common options:
@@ -224,6 +202,8 @@ through (Emphasized, 500ms by default). `from` and `to` can be the same element
 or different ones. Swap them to collapse back.
 
 ```ts
+import {containerTransform} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
+
 await containerTransform(card, () => detail, {
   update: () => (detail.hidden = false),
 });
@@ -241,6 +221,8 @@ available too). Always pair `forward` with `backward` when the user goes back,
 so the direction stays consistent.
 
 ```ts
+import {sharedAxis} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
+
 await sharedAxis('forward', () => showThread(), {scope: stage});
 await sharedAxis('backward', () => showInbox(), {scope: stage});
 ```
@@ -254,6 +236,8 @@ slide the full width together. The direction is `next` or `previous` and
 follows the writing direction (RTL is handled).
 
 ```ts
+import {lateral} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
+
 await lateral('next', () => selectTab(2), {scope: panels});
 ```
 
@@ -265,6 +249,8 @@ overlap. These destinations are not related spatially, so there is no
 directional slide; the new screen only scales up slightly as it fades in.
 
 ```ts
+import {fadeThrough} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
+
 await fadeThrough(() => showDestination('Library'), {scope: main});
 ```
 
@@ -284,6 +270,8 @@ or remove it. Both resolve when the animation ends.
   Emphasized curve instead of the accelerate one.
 
 ```ts
+import {enter, exit} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
+
 // A menu at the top of the screen expands downwards.
 await enter(menu, {origin: 'top'});
 await exit(menu, {origin: 'top'});
@@ -311,7 +299,6 @@ import {scrollEnterExit} from '@material/web/labs/gb/styles/motion/transitions/t
 
 // The element is sticky or fixed at the top edge.
 const handle = scrollEnterExit(topBar, {target: 'content', origin: 'top'});
-const navHandle = scrollEnterExit(navBar, {origin: 'bottom'});
 ```
 
 `target` is the scrolling element or its id (the window by default), `origin`
@@ -333,6 +320,8 @@ with the exit motion), so a flex or grid neighbor resizes with it. It shows the
 element when opening and sets `hidden` when closing ends.
 
 ```ts
+import {coplanar} from '@material/web/labs/gb/styles/motion/transitions/transitions.js';
+
 await coplanar(panel, true); // The main content narrows as the panel opens.
 await coplanar(panel, false);
 ```
@@ -350,13 +339,12 @@ where content will appear and holds its space, so the layout does not shift.
 It pulses subtly from the top left to the bottom right, and the content fades in
 on top when it is ready.
 
-```html
-<md-gb-skeleton loading shape="text" style="inline-size: 12rem"></md-gb-skeleton>
-
-<md-gb-skeleton id="card" loading>
+{% demo "A text skeleton and a skeleton that holds a paragraph" %}
+<md-gb-skeleton loading shape="text"></md-gb-skeleton>
+<md-gb-skeleton loading>
   <p>Content that loads.</p>
 </md-gb-skeleton>
-```
+{% enddemo %}
 
 ```ts
 import '@material/web/labs/gb/styles/motion/transitions/md-gb-skeleton.js';

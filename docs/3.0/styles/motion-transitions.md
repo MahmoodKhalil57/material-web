@@ -2,44 +2,26 @@
 title: Transitions
 section: styles
 order: 9
-description: "A skeleton loader: a placeholder that hints at where content will appear and holds its space while it loads (m3.material.io/styles/motion/transitions, \"Skeleton loaders\")."
-hero: style-transitions/container-transform
+description: "Transition patterns connect elements and views, and skeleton loaders hold space while content loads."
 ---
-This component is new in [M3 Expressive](https://m3.material.io/blog/building-with-m3-expressive).
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-style-transitions" %}
-
-## Container transform
-
-{% gbexample "style-transitions/container-transform" %}
-
-## Forward and backward
-
-{% gbexample "style-transitions/forward-and-backward" %}
-
-## Lateral
-
-{% gbexample "style-transitions/lateral" %}
-
-## Top level
-
-{% gbexample "style-transitions/top-level" %}
-
-## Enter and exit
-
-{% gbexample "style-transitions/enter-and-exit" %}
+The six transition patterns (container transform, forward and backward,
+lateral, top level, enter and exit, and skeleton loaders) are helper functions
+and classes. See [Motion](/3.0/styles/motion/#transitions) for the helpers.
 
 ## Skeleton loaders
 
-{% gbexample "style-transitions/skeleton-loaders" %}
+A skeleton hints at where content will appear and holds its space while it
+loads. Set `loading` and clear it when the content is ready.
 
-## Usage
+{% demo "A text skeleton and a skeleton that holds a paragraph" %}
+<md-gb-skeleton loading shape="text"></md-gb-skeleton>
+<md-gb-skeleton loading>
+  <p>Content that loads.</p>
+</md-gb-skeleton>
+{% enddemo %}
 
 ```js
-import '@material/web/labs/gb/components/style-transitions/md-gb-skeleton.js';
-```
+import '@material/web/labs/gb/styles/motion/transitions/md-gb-skeleton.js';
 
-Every component also has a class API for plain HTML; see
-`labs/gb/components/style-transitions/` and its stories above.
+document.querySelector('md-gb-skeleton').loading = false;
+```

@@ -1,31 +1,38 @@
 ---
-title: Color
+title: Dynamic color
 section: styles
 order: 2
 description: "Dynamic color builds a full color scheme, light and dark, from a seed color."
-hero: style-color/dynamic-color-playground
 ---
-## Interactive Demo
+Dynamic color turns one source color into every color role, in light and dark.
+Pick a source and a variant, and apply the result to the document or to one
+element.
 
-{% playgroundexample dirname="gb-style-color" %}
+```js
+import {applyTheme} from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
-## Dynamic color playground
-
-{% gbexample "style-color/dynamic-color-playground" %}
+applyTheme(document, {source: '#6750a4', variant: 'expressive'});
+```
 
 ## Scheme variants
 
-{% gbexample "style-color/scheme-variants" %}
+The `variant` decides how the palettes are derived from the source:
+`tonal-spot` (the default), `neutral`, `vibrant`, `expressive`, `fidelity`,
+`content`, `monochrome`, `rainbow` and `fruit-salad`.
 
-## Static baseline contrast levels
+## Contrast levels
 
-{% gbexample "style-color/static-baseline-contrast-levels" %}
+Each scheme has standard, medium and high contrast. Set `contrast` on
+`applyTheme()`, or select a level for a subtree of the static tokens with a
+class.
 
-## Usage
+{% demo "Tonal buttons at standard and high contrast" %}
+<div class="md-contrast-standard">
+  <md-gb-button color="tonal">Standard</md-gb-button>
+</div>
+<div class="md-contrast-high">
+  <md-gb-button color="tonal">High</md-gb-button>
+</div>
+{% enddemo %}
 
-```js
-
-```
-
-Every component also has a class API for plain HTML; see
-`labs/gb/components/style-color/` and its stories above.
+See [Color](/3.0/styles/color/) for roles, custom colors and the full options.

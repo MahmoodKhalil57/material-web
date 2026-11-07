@@ -18,9 +18,9 @@ A [typeface](https://m3.material.io/styles/typography/fonts) is a
 Each typeface has normal, medium, and bold styles (defaults to `400`, `500`, and
 `700`). All three weight styles need to be included for a font.
 
-> Important: if you do not change the typeface, be sure to load the default
-> `'Roboto'` font. For example, from
-> [fonts.google.com](https://fonts.google.com/share?selection.family=Roboto:wght@400;500;700).
+> Important: the default typeface is Roboto Flex, then Roboto. If you do not
+> change it, load one of them. For example, from
+> [fonts.google.com](https://fonts.google.com/specimen/Roboto+Flex).
 
 ### Tokens
 
@@ -92,7 +92,6 @@ from `:lang()`.
 
 ```css
 :root {
-  --md-ref-typeface-brand: 'Open Sans';
   --md-sys-typescale-body-md-size: 1rem;
   --md-sys-typescale-body-md-line-height: 1.5rem;
 }
