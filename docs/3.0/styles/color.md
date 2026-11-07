@@ -68,17 +68,29 @@ should not flip, such as a brand surface. Use `surface-dim` and
 `surface-bright` for areas that stay darker or brighter than the main surface
 in both themes.
 
+{% demo "A card and a badge colored with roles" %}
+```html
+<div class="card">
+  Inbox
+  <span class="badge">3 new</span>
+</div>
+```
 ```css
 .card {
+  padding: 16px;
+  border-radius: 12px;
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
   border: 1px solid var(--md-sys-color-outline-variant);
 }
 .card .badge {
+  padding: 2px 8px;
+  border-radius: 8px;
   background: var(--md-sys-color-tertiary-container);
   color: var(--md-sys-color-on-tertiary-container);
 }
 ```
+{% enddemo %}
 
 ### Light and dark
 
@@ -86,6 +98,11 @@ The tokens use `light-dark()`, so they follow the standard `color-scheme`
 property. Where `light-dark()` is not available, the Baseline fallback keeps
 the light values and switches to the dark values with `prefers-color-scheme`.
 
+{% demo "Two boxes: one follows the system color scheme, one is always dark" %}
+```html
+<div class="box">Follows the system</div>
+<div class="box always-dark">Always dark</div>
+```
 ```css
 :root {
   color-scheme: light dark; /* follow the system */
@@ -94,7 +111,15 @@ the light values and switches to the dark values with `prefers-color-scheme`.
 .always-dark {
   color-scheme: dark;
 }
+
+.box {
+  padding: 16px;
+  border-radius: 12px;
+  background: Canvas;
+  color: CanvasText;
+}
 ```
+{% enddemo %}
 
 The deprecated `background` and `surface-tint` roles are not defined; use
 `surface` and a surface container instead.
@@ -125,13 +150,30 @@ the Material Theme Builder or a design tool.
 Baseline in labs/gb is the default stylesheet. It is also part of `m3Styles`,
 which `adoptStyles()` loads.
 
+{% demo "A sample colored with the baseline tokens" %}
+```html
+<p class="sample">Primary container</p>
+```
 ```css
 @import '@material/web/labs/gb/styles/color/md-color-tokens.css';
+
+.sample {
+  margin: 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
 ```
+{% enddemo %}
 
 For a custom brand scheme, override the tokens by hand, or generate the roles
 once and keep the CSS.
 
+{% demo "A button in a custom teal brand color" %}
+```html
+<md-gb-button color="filled">Save</md-gb-button>
+```
 ```css
 :root {
   --md-sys-color-primary: light-dark(#006a6a, #4cdada);
@@ -139,7 +181,12 @@ once and keep the CSS.
   /* ... the rest of the roles you need ... */
 }
 ```
+{% enddemo %}
 
+{% demo "A button themed with CSS generated from a source color" height=160 %}
+```html
+<md-gb-button color="filled">Save</md-gb-button>
+```
 ```ts
 import {
   themeFromSource,
@@ -147,20 +194,32 @@ import {
 } from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
 const css = themeToCss(themeFromSource({source: '#006a6a'}));
+
+// Ship the CSS in a stylesheet, or add it to the page.
+const style = document.createElement('style');
+style.textContent = css;
+document.head.append(style);
 ```
+{% enddemo %}
 
 To start from a Material Theme Builder export, pass its JSON to
 `themeFromThemeBuilder()`, or apply it live with `themeOptionsFromThemeBuilder()`.
 
+{% demo "A button themed with a Material Theme Builder export" height=160 %}
+```html
+<md-gb-button color="filled">Save</md-gb-button>
+```
 ```ts
 import {
   applyTheme,
   themeOptionsFromThemeBuilder,
 } from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
-const json = await (await fetch('material-theme.json')).json();
+// Normally: await (await fetch('material-theme.json')).json()
+const json = {seed: '#006a6a', variant: 'tonal-spot'};
 applyTheme(document, themeOptionsFromThemeBuilder(json));
 ```
+{% enddemo %}
 
 The seed (or the core primary) is the source, other core colors become
 `palettes`, extended colors become harmonized or exact `customColors`, and a
@@ -176,6 +235,10 @@ A dynamic scheme is generated from a source. The spec distinguishes
 on screen, with the `content` variant), and **multiple sources** (several
 schemes on one screen, each scoped to a region).
 
+{% demo "A button themed at runtime with medium contrast" height=160 %}
+```html
+<md-gb-button color="filled">Save</md-gb-button>
+```
 ```ts
 import {applyTheme} from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
@@ -185,18 +248,40 @@ applyTheme(document, {
   contrast: 'medium',
 });
 ```
+{% enddemo %}
 
 For content-based color, scope the scheme to one element with a source taken
 from an image:
 
+{% demo "A card themed from the color of its image" height=200 %}
+```html
+<div id="card" class="card">
+  <img id="cover" alt="A magenta cover" width="64" height="64"
+    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23c2185b'/%3E%3C/svg%3E">
+  <md-gb-button>Play</md-gb-button>
+</div>
+```
+```css
+.card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--md-sys-color-primary-container);
+}
+```
 ```ts
 import {
   applyTheme,
   sourceColorFromImage,
 } from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
+const card = document.querySelector('#card') as HTMLElement;
+const img = document.querySelector('#cover') as HTMLImageElement;
 applyTheme(card, {source: await sourceColorFromImage(img), variant: 'content'});
 ```
+{% enddemo %}
 
 To get the theme without applying it, use `themeFromSource()` or
 `themeFromImage(img)`, and `themeToStyleSheet(theme)` for a stylesheet.
@@ -238,8 +323,29 @@ Define your own dynamic scheme | Yes: `palettes` takes your own primary, seconda
 Use color fidelity | Yes: `fidelity` per role.
 Harmonize colors | Yes: `customColors` harmonize toward the source by default, and `harmonize(color, source)` is exported.
 
+{% demo "Swatches of a harmonized and an exact custom color" height=160 %}
+```html
+<span class="swatch success">Success</span>
+<span class="swatch brand">Brand</span>
+```
+```css
+.swatch {
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+.success {
+  background: var(--md-sys-color-success-container);
+  color: var(--md-sys-color-on-success-container);
+}
+.brand {
+  background: var(--md-sys-color-brand-container);
+  color: var(--md-sys-color-on-brand-container);
+}
+```
 ```ts
-const theme = themeFromSource({
+import {applyTheme} from '@material/web/labs/gb/styles/color/dynamic-color.js';
+
+applyTheme(document, {
   source: '#6750a4',
   // A static color gets --md-sys-color-success, -on-success,
   // -success-container and -on-success-container.
@@ -253,6 +359,7 @@ const theme = themeFromSource({
   palettes: {tertiary: '#b3261e'},
 });
 ```
+{% enddemo %}
 
 Harmonize colors that carry meaning but should still sit in the theme, such
 as success and warning. Do not harmonize brand colors that must stay exact.
@@ -264,8 +371,28 @@ built-in roles. It makes `--md-sys-color-<name>` only; pick a tone that
 meets contrast against the role it sits on (3:1 for graphics) and check the
 pair yourself.
 
+{% demo "Swatches of two custom color roles" height=160 %}
+```html
+<span class="swatch graphic">primary-graphic</span>
+<span class="swatch warning">warning</span>
+```
+```css
+.swatch {
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: black;
+}
+.graphic {
+  background: var(--md-sys-color-primary-graphic);
+}
+.warning {
+  background: var(--md-sys-color-warning);
+}
+```
 ```ts
-const theme = themeFromSource({
+import {applyTheme} from '@material/web/labs/gb/styles/color/dynamic-color.js';
+
+applyTheme(document, {
   source: '#6750a4',
   customRoles: [
     // Primary palette, tone 50 in light, 70 in dark; darker with more contrast.
@@ -282,6 +409,7 @@ const theme = themeFromSource({
   ],
 });
 ```
+{% enddemo %}
 
 `palette` is one of `primary`, `secondary`, `tertiary`, `neutral`,
 `neutralVariant`, `error`. Tones are 0 to 100; a number applies to both themes.
@@ -291,13 +419,20 @@ const theme = themeFromSource({
 Colors in the system are built in HCT (hue, chroma, tone). To work in it
 yourself:
 
+{% demo "Colors computed in HCT" height=160 %}
+```html
+<output id="out"></output>
+```
 ```ts
 import {hctFromColor, hctToHex, hctWith} from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
 const {hue, chroma, tone} = hctFromColor('#6750a4');
-hctToHex({hue, chroma, tone: 90}); // the same color, lighter
-hctWith('#6750a4', {tone: 20});     // change one channel
+const lighter = hctToHex({hue, chroma, tone: 90}); // the same color, lighter
+const darker = hctWith('#6750a4', {tone: 20}); // change one channel
+
+document.querySelector('#out')!.textContent = `${lighter} and ${darker}`;
 ```
+{% enddemo %}
 
 Colors outside the sRGB range are brought in by lowering chroma.
 

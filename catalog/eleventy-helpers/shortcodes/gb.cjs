@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {existsSync, readFileSync, readdirSync} = require('node:fs');
+const {existsSync, readFileSync} = require('node:fs');
 const {join} = require('node:path');
 const {pathToFileURL} = require('node:url');
 
@@ -22,81 +22,20 @@ function loadExamples() {
   return examples;
 }
 
-const escapeHtml = (s) =>
-  s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-
-let prism;
-/** Highlights HTML like the fenced ```html blocks (eleventy-plugin-syntaxhighlight). */
-function highlightHtml(code) {
-  if (!prism) {
-    prism = {
-      Prism: require('prismjs'),
-      loader: require('@11ty/eleventy-plugin-syntaxhighlight/src/PrismLoader'),
-    };
-  }
-  const {Prism, loader} = prism;
-  const grammar = loader('html', {});
-  return grammar ? Prism.highlight(code, grammar, 'html') : escapeHtml(code);
-}
-
-/** Removes the common indentation and surrounding blank lines. */
-function dedent(text) {
-  const lines = text.replace(/\r\n?/g, '\n').replace(/\s+$/, '').split('\n');
-  while (lines.length && !lines[0].trim()) lines.shift();
-  const indents = lines
-    .filter((l) => l.trim())
-    .map((l) => /^ */.exec(l)[0].length);
-  const indent = indents.length ? Math.min(...indents) : 0;
-  return lines.map((l) => l.slice(indent)).join('\n');
-}
-
-/** Code up to this many lines is not collapsed (no "View code" button). */
-const SHORT_CODE_LINES = 4;
-
-/**
- * The demo card (styles in catalog/src/gb/gb.css, behavior in gb.ts): a
- * figure with the preview and the code. No blank lines in the output (they
- * would end the raw HTML block in Markdown), so the code's line breaks are
- * entities.
- */
-function demoCard(label, preview, code, style = '') {
-  const source = dedent(code);
-  const short = source.split('\n').length <= SHORT_CODE_LINES;
-  const highlighted = highlightHtml(source).replace(/\n/g, '&#10;');
-  return (
-    '\n\n<figure class="gb-demo" aria-label="' + escapeHtml(label) + '"' +
-    (short ? ' data-short' : '') + '>\n' +
-    '<div class="gb-demo-preview"' + (style ? ' style="' + style + '"' : '') + '>\n' +
-    preview +
-    '\n</div>\n<div class="gb-demo-code"><div class="gb-code">' +
-    '<pre class="language-html"><code class="language-html">' + highlighted + '</code></pre>' +
-    '</div></div>\n</figure>\n\n'
-  );
-}
-
-let tagModules;
-/** md-gb-* tag name -> module path under the repo (labs/gb). */
-function loadTagModules() {
-  if (!tagModules) {
-    tagModules = new Map();
-    const scan = (dir, base) => {
-      if (!existsSync(dir)) return;
-      for (const entry of readdirSync(dir, {withFileTypes: true})) {
-        if (entry.isDirectory()) scan(join(dir, entry.name), `${base}/${entry.name}`);
-        else if (/^md-gb-[a-z0-9-]+\.js$/.test(entry.name)) {
-          tagModules.set(entry.name.slice(0, -3), `${base}/${entry.name}`);
-        }
-      }
-    };
-    scan(join(ROOT, 'labs', 'gb', 'components'), 'labs/gb/components');
-    scan(join(ROOT, 'labs', 'gb', 'styles'), 'labs/gb/styles');
-  }
-  return tagModules;
-}
+const {
+  cardFiles,
+  demoCard,
+  demoId,
+  dedent,
+  frameDoc,
+  loadTagModules,
+  oneBlock,
+  parseDemo,
+  resetDemoIds,
+  scopeCss,
+  scriptJs,
+  escapeHtml,
+} = require('./gb-demo.cjs');
 
 /**
  * Shortcodes of the /3.0/ pages (docs/3.0, layout gb/default.html).
@@ -113,6 +52,15 @@ function loadTagModules() {
  * @param eleventyConfig The 11ty config in which to attach the shortcodes.
  */
 function gb(eleventyConfig) {
+  eleventyConfig.on('eleventy.before', resetDemoIds);
+  // Nunjucks wants commas between arguments; the docs write
+  // {% demo "label" height=240 %}.
+  eleventyConfig.addPreprocessor('gb-demo-args', 'md', (data, content) =>
+    content.replace(
+      /(\{%-?\s*demo\s+(?:"[^"]*"|'[^']*'))([^%]*)%\}/g,
+      (m, head, args) => head + args.replace(/[ \t]+(?=\w+\s*=)/g, ', ') + '%}',
+    ),
+  );
   eleventyConfig.addShortcode('gbexample', function (id) {
     const [dir, slug] = String(id).split('/');
     const list = loadExamples()[dir];
@@ -136,23 +84,47 @@ function gb(eleventyConfig) {
     const style = story.height
       ? `--gb-example-height: ${story.height}px; --gb-example-narrow-height: ${story.narrowHeight ?? story.height}px`
       : '';
-    return demoCard(`${story.name} example`, live, story.html, style);
+    return demoCard(`${story.name} example`, live, [{lang: 'html', code: story.html}], {style});
   });
 
   /**
-   * `{% demo "Accessible label" %}<html>{% enddemo %}`: the HTML is the
-   * preview and, formatted and highlighted, the code of a demo card.
+   * `{% demo "Accessible label" [height=240] [frame=true] %}...{% enddemo %}`: a demo card
+   * for html written once, or for fenced `html`, `css` and `ts`/`js` blocks
+   * (one each, one tab per file). Without a script the preview is inline
+   * (light DOM, the css scoped to it); with one it is an iframe, so the code
+   * can use `document` as a reader's page would. `height` (px) is what the
+   * preview reserves, so the page below doesn't move when it loads; `frame=true`
+   * renders the iframe also without a script (markup that takes over the
+   * page, such as an open modal dialog).
    */
-  eleventyConfig.addPairedShortcode('demo', function (content, label) {
-    if (!label) {
-      throw new Error(`demo (${this.page?.inputPath}): needs an accessible label`);
+  eleventyConfig.addPairedShortcode('demo', function (content, label, kwargs) {
+    const where = this.page?.inputPath;
+    if (!label || typeof label !== 'string') {
+      throw new Error(`demo (${where}): needs an accessible label`);
     }
-    // Blank lines would end the raw HTML block in Markdown.
-    const preview = dedent(content)
-      .split('\n')
-      .filter((line) => line.trim())
-      .join('\n');
-    return demoCard(String(label), preview, content);
+    const height = Number(kwargs?.height) || 0;
+    const files = parseDemo(content, where);
+    const html = oneBlock(dedent(files.html ?? ''));
+    const css = files.css !== undefined ? dedent(files.css) : '';
+    const script = files.ts !== undefined ? {lang: 'ts', code: files.ts} : files.js !== undefined ? {lang: 'js', code: files.js} : null;
+    const id = demoId(where + '|' + label);
+    const lib = process.env.MWC_GB_LIB;
+    const files_ = cardFiles(files);
+    const style = height ? `--gb-demo-height: ${height}px` : '';
+    if (script || kwargs?.frame) {
+      const js = script ? scriptJs(script, where) : '';
+      const doc = frameDoc({id, html, css, js, lib});
+      const srcdoc = escapeHtml(doc).replace(/\n/g, '&#10;');
+      const frame =
+        `<iframe class="gb-demo-frame" data-id="${id}" data-min="${height || 192}" title="${escapeHtml(label)} preview" ` +
+        `loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms" srcdoc="${srcdoc}"></iframe>`;
+      return demoCard(label, frame, files_, {id, style, frame: true});
+    }
+    const head = css ? `<style>${scopeCss(css, id + '-preview', lib)}</style>` : '';
+    const preview = `<div class="gb-demo-inline" id="${id}-preview">
+${html}
+</div>`;
+    return demoCard(label, preview, files_, {id, style, head});
   });
 
   /**

@@ -1,0 +1,93 @@
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Page-to-page navigation inside /3.0/ (navigation.ts): cross-document view
+   transitions and the route progress indicator. */
+
+/* Cross-document view transitions (progressive enhancement: unsupported
+   browsers navigate as usual). Both documents of a navigation must opt in,
+   and only /3.0/ pages carry this sheet, so leaving to "/" never animates.
+   Not under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+/* The shell stays put while the page cross-fades. Named elements leave the
+   root snapshot, which then holds only the main content. */
+.gb-header {
+  view-transition-name: gb-header;
+}
+.gb-drawer {
+  view-transition-name: gb-drawer;
+}
+.gb-toc {
+  view-transition-name: gb-toc;
+}
+
+::view-transition-group(root),
+::view-transition-group(gb-toc),
+::view-transition-group(gb-drawer),
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-old(gb-toc),
+::view-transition-new(gb-toc),
+::view-transition-old(gb-drawer),
+::view-transition-new(gb-drawer) {
+  animation-duration: var(--md-sys-motion-duration-medium1, 250ms);
+  animation-timing-function: var(--md-sys-motion-easing-standard, ease);
+}
+/* The app bar is identical on every page: the new one replaces the old at
+   once, so it never dims mid-fade. */
+::view-transition-old(gb-header) {
+  display: none;
+}
+::view-transition-new(gb-header),
+::view-transition-group(gb-header) {
+  animation: none;
+}
+
+/* Route progress indicator. One element, so its transition name is unique:
+   the next page renders it again and it stays still across the transition.
+   The loading indicator sits at the top center of the content pane, the
+   linear indicator along the top edge of the page under the app bar. */
+.gb-route {
+  position: fixed;
+  z-index: 19;
+  pointer-events: none;
+  view-transition-name: gb-route;
+  opacity: 1;
+  transition: opacity var(--md-sys-motion-duration-short3, 200ms)
+    var(--md-sys-motion-easing-standard, ease);
+}
+.gb-route[data-out] {
+  opacity: 0;
+}
+.gb-route[data-stage='loading'] {
+  inset-block-start: calc(var(--gb-header-height) + var(--md-sys-space-100, 8px));
+  inset-inline-start: 50%;
+  translate: -50% 0;
+}
+.gb-route[data-stage='linear'] {
+  inset-block-start: var(--gb-header-height);
+  inset-inline: 0;
+}
+.gb-route md-gb-progress {
+  display: block;
+  inline-size: 100%;
+}
+@media (min-width: 840px) {
+  /* Centered over the content pane, beside the standard drawer. */
+  .gb-route[data-stage='loading'] {
+    inset-inline-start: calc(50% + var(--gb-drawer-width) / 2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gb-route {
+    transition: none;
+  }
+}

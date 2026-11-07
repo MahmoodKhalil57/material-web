@@ -103,8 +103,54 @@ so keep it simple and best practice.
     `aria-label`, and groups get a label. Never use `data-aria-label`.
 6.  **Realistic labels** such as "Save", "Back" or "Inbox", never "Label" or
     "Lorem ipsum".
-7.  **JS or CSS** goes in a separate small fenced block (`js` or `css`) under
-    the card: imports plus the 1 to 5 lines that matter, no framework setup.
-    A demo that needs script gets the same script as a raw
-    `<script type="module">` after the card so it works live.
-8.  **Anatomy blocks** contain tags and slot names only.
+7.  **JS, TS or CSS** goes in the same demo as a fenced block (see "Demo
+    syntax"): imports plus the 1 to 5 lines that matter, no framework setup.
+    Never add a raw `<script>` after the card.
+8.  **Anatomy blocks** are a live minimal instance of the component in a demo:
+    valid markup with the parts and slots, real short content (not empty
+    tags). Components that need to be opened (dialog, menu) use `frame=true`
+    and the `open` attribute, or a short script.
+
+## Demo syntax
+
+Every code block on a page except shell (`sh`, `bash`) is a demo file: it
+shows what the code does, not only the code. A standalone snippet gets the
+minimal html that makes its effect visible (a CSS block gets the element it
+styles, a TS block the element it changes or an `<output>` for a result).
+
+````md
+{% demo "Accessible label" height=240 %}
+```html
+<md-gb-button id="open">Open</md-gb-button>
+```
+```css
+md-gb-button { margin: 8px; }
+```
+```ts
+import '@material/web/labs/gb/styles/color/dynamic-color.js';
+document.querySelector('#open')!.addEventListener('click', () => {});
+```
+{% enddemo %}
+````
+
+*   Plain html without fences still works (one file, no tabs). Otherwise one
+    fenced block each of `html`, `css`, and `ts` or `js`; the code area gets
+    one tab per file (HTML, CSS, TS or JS).
+*   **html + css only:** the preview is inline (light DOM, so md-gb elements
+    and the page theme work). The css is scoped to the preview with `@scope`:
+    `:root`, `html` and `body` select the preview itself, and `@import` of
+    `@material/web/labs/gb/...` is rewritten to the library server.
+*   **With ts or js** (or `frame=true`): the preview is an iframe
+    (`srcdoc`, `loading="lazy"`) so the script can use `document`. It gets
+    `m3.css`, the page's theme (kept in sync), the md-gb elements the html
+    uses, and an import map, so write real imports:
+    `@material/web/labs/gb/...`. TS is only type-stripped. Errors show as
+    small text in the preview.
+*   **height:** (px) set it for every demo with a script and whenever the
+    preview is taller than 12rem: it is reserved before load so nothing
+    moves, and the iframe only grows beyond it. Dialogs, menus and other
+    overlays need about 360. Always set it on a hero with a script.
+*   Arguments come after the label, `name=value`, separated by spaces.
+*   Ids in a demo are local to it (each iframe is its own document), so the
+    same ids can repeat on a page. Inline demos share the page: keep ids and
+    class names distinct.

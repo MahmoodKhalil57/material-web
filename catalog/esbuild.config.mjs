@@ -159,8 +159,11 @@ const gbBuild = esbuild
                       ...config,
                       splitting: false,
                       plugins: [...(config.plugins ?? []), cssModulePlugin],
-                      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css'],
+                      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css', 'src/gb/sw.ts'],
                       outbase: 'src',
+                      // Names the service worker's caches: every build is a new
+                      // worker, which replaces the old one and its caches.
+                      define: {__GB_BUILD_ID__: JSON.stringify(Date.now().toString(36))},
                     })
                     .catch(() => process.exit(1));
 

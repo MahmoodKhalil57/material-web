@@ -44,7 +44,32 @@
         } catch (e) {}
       })();
     </script>
-    <script type="module" src="/js/gb/gb.js"></script>
+    {#- Same-site links under /3.0/ (the drawer's links are in shadow roots:
+        src/gb/navigation.ts adds rules for those). Hover/press prerenders,
+        which makes the click near-instant; prefetch is the cheap step before. -#}
+    <script type="speculationrules">
+      {
+        "prefetch": [{
+          "where": {"and": [
+            {"href_matches": "/3.0/*"},
+            {"not": {"href_matches": "/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }],
+        "prerender": [{
+          "where": {"and": [
+            {"href_matches": "/3.0/*"},
+            {"not": {"href_matches": "/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }]
+      }
+    </script>
+    {#- Render-blocking, so the shell (drawer, app bar) is defined before the
+        first frame and cross-document view transitions capture it. -#}
+    <script type="module" src="/js/gb/gb.js" blocking="render"></script>
   </head>
   <body>
     <header class="gb-header">

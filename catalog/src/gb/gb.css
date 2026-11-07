@@ -7,6 +7,7 @@
 /* Site shell of the /3.0/ pages: M3 tokens from labs/gb, layout from here.
    Colors, type and shape come from --md-sys-* tokens only. */
 @import '../../../labs/gb/styles/m3.css';
+@import './navigation.css';
 
 :root {
   --gb-header-height: 64px;
@@ -481,6 +482,42 @@ md-gb-nav-drawer:not(:defined) {
 }
 .gb-demo-preview > .gb-example {
   inline-size: 100%;
+}
+/* The inline preview of html and css (the css is scoped to it by @scope). */
+.gb-demo-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--md-sys-space-200);
+  inline-size: 100%;
+}
+.gb-demo-preview:has(> .gb-demo-inline) {
+  min-block-size: var(--gb-demo-height, 12rem);
+}
+/* A demo with a script is an iframe that fills the preview; it reserves the
+   author's height (or 12rem) and only grows when its content is taller
+   (gb.ts). */
+.gb-demo-preview[data-frame] {
+  display: block;
+  padding: 0;
+  min-block-size: var(--gb-demo-height, 12rem);
+}
+.gb-demo-frame {
+  display: block;
+  inline-size: 100%;
+  block-size: var(--gb-demo-height, 12rem);
+  border: 0;
+}
+/* File tabs of a demo with several files. The space is reserved before the
+   tabs are defined. */
+.gb-demo-tabs {
+  min-block-size: 48px;
+}
+.gb-demo-tabs:not(:defined) {
+  display: block;
+  block-size: 48px;
+  visibility: hidden;
 }
 .gb-demo-code {
   position: relative;

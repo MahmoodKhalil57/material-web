@@ -31,6 +31,8 @@ module.exports = function (eleventyConfig) {
   // copy folders to the 11ty output folder
   eleventyConfig
     .addPassthroughCopy({ [`${jsDir}/`]: 'js/' })
+    // The /3.0/ service worker is served from its scope (src/gb/sw.ts).
+    .addPassthroughCopy({ [`${jsDir}/gb/sw.js`]: '3.0/sw.js' })
     .addPassthroughCopy('site/css')
     .addPassthroughCopy('site/fonts')
     .addPassthroughCopy('site/images')

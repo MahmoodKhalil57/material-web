@@ -21,7 +21,11 @@ import '@material/web/labs/gb/components/navdrawer/md-gb-nav-drawer-item.js';
 import '@material/web/labs/gb/components/navdrawer/md-gb-nav-drawer.js';
 import '@material/web/labs/gb/components/select/md-gb-select-option.js';
 import '@material/web/labs/gb/components/select/md-gb-select.js';
+import '@material/web/labs/gb/components/tabs/md-gb-tab.js';
+import '@material/web/labs/gb/components/tabs/md-gb-tabs.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
+
+import './navigation.js';
 
 import {
   themeFromSource,
@@ -263,11 +267,8 @@ for (const pre of document.querySelectorAll<HTMLElement>('.gb-content pre')) {
   // A scrollable region must be reachable and named for keyboard users.
   pre.tabIndex = 0;
   pre.setAttribute('role', 'region');
-  const lang = /language-([w-]+)/.exec(pre.className)?.[1];
-  pre.setAttribute(
-    'aria-label',
-    `${lang ? lang.toUpperCase() + ' code' : 'Code'} ${++codeIndex}`,
-  );
+  const lang = pre.dataset['file'] ?? /language-(w+)/.exec(pre.className)?.[1]?.toUpperCase();
+  pre.setAttribute('aria-label', `${lang ? lang + ' code' : 'Code'} ${++codeIndex}`);
 
   const button = document.createElement('md-gb-icon-button');
   button.className = 'gb-copy';
@@ -316,17 +317,18 @@ let demoIndex = 0;
 for (const demo of document.querySelectorAll<HTMLElement>(
   '.gb-demo:not([data-short])',
 )) {
-  const wrap = demo.querySelector<HTMLElement>('.gb-code');
-  const pre = wrap?.querySelector('pre');
-  if (!wrap || !pre) continue;
-  wrap.id = 'gb-demo-code-' + ++demoIndex;
+  const wraps = [...demo.querySelectorAll<HTMLElement>('.gb-code')];
+  const pres = wraps.map((w) => w.querySelector('pre')).filter((p) => p);
+  if (!wraps.length) continue;
+  ++demoIndex;
+  wraps.forEach((w, i) => (w.id ||= `gb-demo-code-${demoIndex}-${i}`));
   const button = document.createElement('md-gb-button');
   button.className = 'gb-demo-toggle';
   button.setAttribute('color', 'tonal');
-  button.setAttribute('aria-controls', wrap.id);
+  button.setAttribute('aria-controls', wraps.map((w) => w.id).join(' '));
   const set = (open: boolean) => {
     demo.toggleAttribute('data-open', open);
-    pre.inert = !open;
+    for (const pre of pres) pre!.inert = !open;
     button.setAttribute('aria-expanded', String(open));
     button.textContent = open ? 'Hide code' : 'View code';
   };
@@ -334,5 +336,41 @@ for (const demo of document.querySelectorAll<HTMLElement>(
   button.addEventListener('click', () => {
     set(!demo.hasAttribute('data-open'));
   });
-  wrap.after(button);
+  wraps[wraps.length - 1].after(button);
+}
+
+// --- Demo previews with a script (iframes) ------------------------------------
+
+// The iframe documents (shortcodes/gb-demo.cjs) report their height, and
+// get the page's theme (the generated dynamic color CSS and the color scheme)
+// when they are ready and whenever it changes.
+const frames = [...document.querySelectorAll<HTMLIFrameElement>('iframe.gb-demo-frame')];
+if (frames.length) {
+  const theme = () => ({
+    type: 'gb-demo-theme',
+    css: document.getElementById('gb-theme-style')?.textContent ?? '',
+    colorScheme: document.documentElement.style.colorScheme,
+  });
+  const send = (frame: HTMLIFrameElement) =>
+    frame.contentWindow?.postMessage(theme(), '*');
+  addEventListener('message', (e) => {
+    const frame = frames.find((f) => f.contentWindow === e.source);
+    if (!frame) return;
+    if (e.data?.type === 'gb-demo-ready') send(frame);
+    if (e.data?.type === 'gb-demo-height') {
+      const min = Number(frame.dataset['min']) || 0;
+      frame.style.blockSize = Math.max(min, e.data.height) + 'px';
+    }
+  });
+  for (const frame of frames) frame.addEventListener('load', () => send(frame));
+  const broadcast = () => frames.forEach(send);
+  new MutationObserver(broadcast).observe(document.head, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+  new MutationObserver(broadcast).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['style'],
+  });
 }

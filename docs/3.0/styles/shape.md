@@ -36,12 +36,27 @@ all-corner token; override one to shape a single corner.
 size container), so it rounds fully only inside a container. Components that
 animate through "full" set it to half their own height.
 
+{% demo "A box with medium corners and one square corner" %}
+```html
+<div class="box">Medium corners</div>
+```
 ```css
 :root {
   --md-sys-shape-corner-md: 12px;
   --md-sys-shape-corner-md-start-end: 0;
 }
+
+.box {
+  padding: 24px 32px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-start-start-radius: var(--md-sys-shape-corner-md-start-start);
+  border-start-end-radius: var(--md-sys-shape-corner-md-start-end);
+  border-end-end-radius: var(--md-sys-shape-corner-md-end-end);
+  border-end-start-radius: var(--md-sys-shape-corner-md-end-start);
+}
 ```
+{% enddemo %}
 
 Set `data-shape-family="cut"` on `<html>` to cut corners in browsers that
 support `corner-shape`.
