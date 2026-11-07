@@ -27,7 +27,7 @@
     isolation: isolate;
     justify-content: flex-start;
     margin: 0;
-    padding-block: var(--container-vertical-padding);
+    padding-block: var(--collapsed-top-space) var(--container-vertical-padding);
     padding-inline: 0;
     position: relative;
     transition: all var(--motion-duration) var(--motion-easing);
@@ -41,9 +41,14 @@
       @include nav-rail-tokens.expanded;
 
       align-items: stretch;
+      padding-block-start: var(--expanded-top-space);
       inline-size: var(--expanded-container-width-minimum);
       max-inline-size: var(--expanded-container-width-maximum);
       min-inline-size: var(--expanded-container-width-minimum);
+    }
+
+    &.nav-rail-narrow:not(.nav-rail-expanded) {
+      --container-width: var(--collapsed-narrow-container-width);
     }
 
     &.nav-rail-modal {
@@ -51,11 +56,11 @@
     }
 
     &.nav-rail-horizontal {
-      @include nav-rail-tokens.horizontal-item;
+      @include nav-rail-tokens.horizontal;
     }
 
     &.nav-rail-vertical {
-      @include nav-rail-tokens.vertical-item;
+      @include nav-rail-tokens.vertical;
     }
   }
 
@@ -68,8 +73,7 @@
     inline-size: 100%;
     justify-content: center;
     margin-block-end: var(--header-space-minimum);
-    padding-inline: var(--item-full-width-leading-space)
-      var(--item-full-width-trailing-space);
+    padding-inline: var(--item-outer-space);
     transition: all var(--motion-duration) var(--motion-easing);
 
     &:empty,
@@ -134,7 +138,7 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    gap: var(--item-container-vertical-space);
+    gap: var(--collapsed-item-vertical-space);
     inline-size: 100%;
     isolation: isolate;
     justify-content: flex-start;
@@ -149,9 +153,10 @@
 
   .nav-rail-expanded .nav-rail-items {
     align-items: stretch;
-    padding-inline: var(--item-full-width-leading-space)
-      var(--item-full-width-trailing-space);
+    gap: 0;
+    padding-inline: var(--item-outer-space);
   }
+
 
   .nav-rail-align-top,
   .nav-rail-align-top .nav-rail-items {
@@ -186,11 +191,11 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    font: var(--item-label-text);
-    font-variation-settings: var(--item-label-text-axes);
+    font: var(--item-label-text-font);
+    font-variation-settings: var(--item-label-text-font-axes);
     inline-size: var(--container-width);
     justify-content: center;
-    letter-spacing: var(--item-label-text-tracking);
+    letter-spacing: var(--item-label-text-font-tracking);
     margin: 0;
     min-block-size: var(--item-container-height);
     min-inline-size: 48px;
@@ -236,6 +241,8 @@
     flex-direction: column;
     gap: var(--item-vertical-icon-label-space);
     justify-content: center;
+    // Compose TopIconItemVerticalPadding
+    padding-block: var(--item-container-vertical-space);
     position: relative;
     transition:
       all var(--motion-duration) var(--motion-easing),
@@ -283,9 +290,9 @@
 
   .nav-rail-item-label {
     color: inherit;
-    font: var(--item-label-text);
-    font-variation-settings: var(--item-label-text-axes);
-    letter-spacing: var(--item-label-text-tracking);
+    font: var(--item-label-text-font);
+    font-variation-settings: var(--item-label-text-font-axes);
+    letter-spacing: var(--item-label-text-font-tracking);
     overflow: hidden;
     text-align: center;
     text-overflow: ellipsis;
@@ -354,11 +361,11 @@
   }
 
   .nav-rail-item-vertical {
-    @include nav-rail-tokens.vertical-item;
+    @include nav-rail-tokens.vertical;
   }
 
   .nav-rail-item-horizontal {
-    @include nav-rail-tokens.horizontal-item;
+    @include nav-rail-tokens.horizontal;
 
     align-items: flex-start;
     inline-size: 100%;
@@ -374,8 +381,8 @@
       justify-content: flex-start;
       max-inline-size: 100%;
       padding-block: 0;
-      padding-inline: var(--item-vertical-leading-space)
-        var(--item-vertical-trailing-space);
+      padding-inline: var(--item-full-width-leading-space)
+        var(--item-full-width-trailing-space);
 
       &::before {
         background-color: var(--item-active-indicator-color);
@@ -414,6 +421,57 @@
         opacity: 1;
         transform: scaleX(1);
       }
+    }
+  }
+
+  // Modal expanded rail (Compose ModalWideNavigationRail): the expanded rail
+  // is elevated over the content with a scrim and does not change the
+  // layout; the host keeps the collapsed width.
+  .nav-rail-modal-host {
+    @include nav-rail-tokens.root;
+
+    block-size: 100%;
+    display: flex;
+    inline-size: var(--container-width);
+    position: relative;
+
+    &.nav-rail-modal-host-narrow {
+      --container-width: var(--collapsed-narrow-container-width);
+    }
+
+    > .nav-rail.nav-rail-modal.nav-rail-expanded {
+      inset-block: 0;
+      inset-inline-start: 0;
+      position: absolute;
+      // Swipe to dismiss: horizontal drags move the rail; vertical ones
+      // still scroll.
+      touch-action: pan-y;
+      z-index: 2;
+    }
+  }
+
+  .nav-rail.nav-rail-dragging {
+    transition: none;
+  }
+
+  .nav-rail-scrim {
+    background-color: var(--modal-scrim-color);
+    inset: 0;
+    position: fixed;
+    transition: opacity var(--md-sys-motion-spring-default-effects-duration)
+      var(--md-sys-motion-spring-default-effects);
+    z-index: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-rail,
+    .nav-rail-item,
+    .nav-rail-modal-host {
+      --motion-duration: 0s;
+    }
+
+    .nav-rail-scrim {
+      transition: none;
     }
   }
 }

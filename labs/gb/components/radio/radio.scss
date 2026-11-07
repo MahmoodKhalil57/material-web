@@ -4,6 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'radio-tokens';
 // go/keep-sorted end
 
@@ -12,27 +13,43 @@
   .radio {
     & {
       @include radio-tokens.root;
+    }
+    @include density.classes('radio');
+    &:not(:checked, .checked) {
+      @include radio-tokens.unselected;
 
       &:where(:hover, .hover) {
-        @include radio-tokens.hovered;
+        @include radio-tokens.unselected-hovered;
       }
       &:where(:focus-within, .focus) {
-        @include radio-tokens.focused;
+        @include radio-tokens.unselected-focused;
       }
       &:where(:active, .active) {
-        @include radio-tokens.pressed;
+        @include radio-tokens.unselected-pressed;
       }
     }
     &:is(:checked, .checked) {
       @include radio-tokens.selected;
 
+      &:where(:hover, .hover) {
+        @include radio-tokens.selected-hovered;
+      }
+      &:where(:focus-within, .focus) {
+        @include radio-tokens.selected-focused;
+      }
       &:where(:active, .active) {
         @include radio-tokens.selected-pressed;
       }
     }
     &:is(:disabled, .disabled) {
-      @include radio-tokens.disabled;
       --disabled: true;
+
+      &:where(:not(:checked, .checked)) {
+        @include radio-tokens.disabled-unselected;
+      }
+      &:where(:checked, .checked) {
+        @include radio-tokens.disabled-selected;
+      }
     }
 
     & {
@@ -41,8 +58,16 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
+      // Density (radio-button.md: "Avoid applying density by default"): each
+      // step removes `--density-step` from the layout box (48px at density 0)
+      // and the state layer. The radio stays a `--target-size` target,
+      // centered on the smaller box with negative margins.
+      --_box: #{density.size(max(var(--state-layer-size), var(--target-size)))};
+      --_target: #{density.target(var(--_box))};
+      flex: none;
+      width: var(--_target);
+      height: var(--_target);
+      margin: calc((var(--_box) - var(--_target)) / 2);
       background-image: none;
       outline: none;
       --icon: 'radio_button_unchecked';
@@ -51,6 +76,8 @@
         content: var(--icon);
         color: var(--icon-color);
         font: var(--icon-size) / 1 var(--md-icon-font);
+        // Material Symbols axes at the icon's 20px optical size.
+        font-variation-settings: 'FILL' 0, 'opsz' 20;
         width: var(--icon-size);
         aspect-ratio: 1;
       }
@@ -63,7 +90,7 @@
         aspect-ratio: 1;
         background-image: var(--ripple);
         color: var(--state-layer-color);
-        width: var(--state-layer-size);
+        width: #{density.size(var(--state-layer-size))};
         border-radius: var(--state-layer-shape);
         outline: var(--focus-ring-outline);
         outline-offset: var(--focus-ring-offset);

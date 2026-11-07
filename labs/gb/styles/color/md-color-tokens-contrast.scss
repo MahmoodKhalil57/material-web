@@ -1,0 +1,64 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// Contrast levels of the static baseline scheme: standard, medium and high.
+// Spec: https://m3.material.io/styles/color/system "Color roles support three
+// levels of contrast" (.m3-specs/pages/styles/color/system.md). Medium gives a
+// minimum 3:1 ratio, high 7:1. Values come from the spec token sets
+// md.sys.color (medium-contrast / high-contrast contexts), generated into
+// tokens/versions/latest/sass by scripts/m3/gen-sass-tokens.mjs.
+//
+// Use with md-color-tokens.css:
+// - `prefers-contrast: more` selects high contrast on :root.
+// - `.md-contrast-standard`, `.md-contrast-medium` and `.md-contrast-high`
+//   select a level for an element's subtree (on :root, they override the
+//   media query).
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sass:meta';
+@use '../../../../tokens/versions/latest/sass/md-sys-color';
+@use '../../../../tokens/versions/latest/sass/md-sys-color__dark';
+@use '../../../../tokens/versions/latest/sass/md-sys-color__dark__high-contrast';
+@use '../../../../tokens/versions/latest/sass/md-sys-color__dark__medium-contrast';
+@use '../../../../tokens/versions/latest/sass/md-sys-color__high-contrast';
+@use '../../../../tokens/versions/latest/sass/md-sys-color__medium-contrast';
+@use 'internal/color-tokens';
+// go/keep-sorted end
+
+@mixin -level($light, $dark) {
+  @include color-tokens.emit-custom-properties(
+    $light-vars: meta.module-variables($light),
+    $dark-vars: meta.module-variables($dark),
+  );
+}
+
+@layer md.sys.color {
+  @media (prefers-contrast: more) {
+    :root {
+      @include -level(
+        md-sys-color__high-contrast,
+        md-sys-color__dark__high-contrast
+      );
+    }
+  }
+
+  .md-contrast-standard {
+    @include -level(md-sys-color, md-sys-color__dark);
+  }
+
+  .md-contrast-medium {
+    @include -level(
+      md-sys-color__medium-contrast,
+      md-sys-color__dark__medium-contrast
+    );
+  }
+
+  .md-contrast-high {
+    @include -level(
+      md-sys-color__high-contrast,
+      md-sys-color__dark__high-contrast
+    );
+  }
+}

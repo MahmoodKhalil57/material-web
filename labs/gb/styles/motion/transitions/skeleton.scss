@@ -1,0 +1,86 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'skeleton-styles';
+// go/keep-sorted end
+
+// <md-gb-skeleton>: a placeholder that holds the content's space while it
+// loads, then lets the content fade in on top of it.
+
+@layer md.sys.motion {
+  @include skeleton-styles.styles('.skeleton-placeholder');
+
+  :host {
+    --_fade-duration: var(
+      --md-transition-skeleton-fade-duration,
+      var(--md-sys-motion-duration-short4)
+    );
+    --_fade-easing: var(
+      --md-transition-skeleton-fade-easing,
+      var(--md-sys-motion-easing-standard)
+    );
+
+    display: block;
+    position: relative;
+  }
+
+  :host([hidden]) {
+    display: none;
+  }
+
+  :host([shape='text']) {
+    // An empty text skeleton is one line tall.
+    min-block-size: 1lh;
+  }
+
+  :host([shape='circle']) {
+    aspect-ratio: 1;
+  }
+
+  .skeleton-placeholder {
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    // Hidden once the content has faded in over it.
+    transition: opacity 0s linear var(--_fade-duration);
+  }
+
+  :host([shape='text']) .skeleton-placeholder {
+    block-size: 1em;
+    border-radius: var(--md-skeleton-shape, var(--md-sys-shape-corner-xs));
+    inset-block-start: calc((1lh - 1em) / 2);
+  }
+
+  :host([shape='circle']) .skeleton-placeholder {
+    border-radius: var(--md-sys-shape-corner-full);
+  }
+
+  .skeleton-content {
+    transition: opacity var(--_fade-duration) var(--_fade-easing);
+  }
+
+  :host([loading]) .skeleton-placeholder {
+    opacity: 1;
+    transition: none;
+  }
+
+  // The content keeps its layout while loading, so nothing shifts when it
+  // appears (spec: "Stable layouts").
+  :host([loading]) .skeleton-content {
+    opacity: 0;
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-content {
+      transition-duration: var(
+        --md-transition-reduced-duration,
+        var(--md-sys-motion-duration-short4)
+      );
+    }
+  }
+}

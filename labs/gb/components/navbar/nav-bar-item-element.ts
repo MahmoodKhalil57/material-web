@@ -40,8 +40,6 @@ export class NavBarItemElement extends AriaTabElement {
     css`
       :host {
         display: flex;
-        flex: 1 1 0;
-        min-width: 48px;
         outline: none;
       }
     `,

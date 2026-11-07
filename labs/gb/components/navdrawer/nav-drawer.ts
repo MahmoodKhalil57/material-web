@@ -19,6 +19,8 @@ export const NAV_DRAWER_CLOSE_REASONS = {
   escape: 'escape',
   /** An item of a modal drawer was selected. */
   item: 'item',
+  /** A modal drawer was swiped (dragged or flung) toward its edge. */
+  swipe: 'swipe',
 } as const;
 
 /** Navigation drawer close reason type. */
@@ -31,6 +33,10 @@ export const NAV_DRAWER_CLASSES = {
   navDrawer: 'nav-drawer',
   navDrawerModal: 'nav-drawer-modal',
   navDrawerOpen: 'nav-drawer-open',
+  /** A modal drawer sheet that follows the pointer (no transitions). */
+  navDrawerDragging: 'nav-drawer-dragging',
+  /** A modal drawer sheet settling closed after a swipe. */
+  navDrawerSwipeSettle: 'nav-drawer-swipe-settle',
   navDrawerDialog: 'nav-drawer-dialog',
   navDrawerDialogOpen: 'nav-drawer-dialog-open',
   navDrawerScrim: 'nav-drawer-scrim',
@@ -79,6 +85,18 @@ export function navDrawerDialogClasses({
     [NAV_DRAWER_CLASSES.navDrawerDialogOpen]: Boolean(open),
   };
 }
+
+/**
+ * Compose `NavigationDrawer.kt` `DrawerPositionalThreshold`: a released drag
+ * closes the drawer once dragged past this fraction of its width.
+ */
+export const NAV_DRAWER_POSITIONAL_THRESHOLD = 0.5;
+
+/**
+ * Compose `NavigationDrawer.kt` `DrawerVelocityThreshold` (400dp/s): a faster
+ * fling toward the edge closes the drawer however far it was dragged.
+ */
+export const NAV_DRAWER_VELOCITY_THRESHOLD_PX_PER_S = 400;
 
 /** Selector for the enabled, focusable items of a Light DOM drawer. */
 const LIGHT_DOM_ITEM_SELECTOR =

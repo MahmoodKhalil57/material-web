@@ -51,6 +51,18 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
       defaultValue: 'dial',
     }),
     new Knob('disabled', {ui: boolInput(), defaultValue: false}),
+    // time-pickers.md "Density": 4px less per step (not the horizontal dial).
+    new Knob('density', {
+      ui: selectDropdown({
+        options: [
+          {value: '0', label: '0'},
+          {value: '-1', label: '-1'},
+          {value: '-2', label: '-2'},
+          {value: '-3', label: '-3'},
+        ],
+      }),
+      defaultValue: '0',
+    }),
   ],
 );
 

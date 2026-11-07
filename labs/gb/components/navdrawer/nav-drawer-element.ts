@@ -13,6 +13,7 @@ import {
 } from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {styleMap} from 'lit/directives/style-map.js';
 import {ARIAMixinStrict} from '../../../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../../../internal/aria/delegate.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
@@ -24,9 +25,13 @@ import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-on
 import navDrawerStyles from './nav-drawer.css' with {type: 'css'}; // github-only
 // import {styles as navDrawerStyles} from './nav-drawer.cssresult.js'; // google3-only
 
+import {DragGesture, settleAnchor} from '../shared/drag-gesture.js';
 import {
   getNextNavDrawerItem,
+  NAV_DRAWER_CLASSES,
   NAV_DRAWER_CLOSE_REASONS,
+  NAV_DRAWER_POSITIONAL_THRESHOLD,
+  NAV_DRAWER_VELOCITY_THRESHOLD_PX_PER_S,
   navDrawerClasses,
   navDrawerDialogClasses,
 } from './nav-drawer.js';
@@ -44,7 +49,11 @@ const baseClass = mixinDelegatesAria(LitElement);
  * A standard drawer sits next to the app content and slides in and out with
  * `open`. A `modal` drawer opens over a scrim in a modal `<dialog>`: focus is
  * trapped inside it and restored when it closes, and it closes on Escape, a
- * scrim click, or when an item is selected.
+ * scrim click, when an item is selected, or when it is swiped toward its edge
+ * (Compose `ModalNavigationDrawer`: the drawer follows a horizontal drag on
+ * the drawer or the scrim, and a release past half its width or a fling
+ * faster than 400px/s settles it closed with the spatial spring, otherwise it
+ * settles back open). Set `gestures-disabled` to turn swiping off.
  *
  * @slot - Navigation items (`md-gb-nav-drawer-item`), section labels (headings
  *     or `.nav-drawer-section-label`) and dividers (`md-gb-divider` or `<hr>`).
@@ -168,8 +177,31 @@ export class NavDrawerElement extends baseClass {
   /** Whether to skip the open and close transitions. */
   @property({type: Boolean, reflect: true}) quick = false;
 
+  /**
+   * Whether swiping a modal drawer closed is turned off (Compose
+   * `gesturesEnabled = false`). Escape, the scrim and `close()` still close
+   * it.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'gestures-disabled'})
+  gesturesDisabled = false;
+
   /** Whether the sheet is on screen (drives the transitions). */
   @state() private visible = false;
+
+  /**
+   * While a modal drawer is dragged: how far it is dragged toward its edge,
+   * from 0 (open) to its width (closed).
+   */
+  @state() private dragOffset: number | null = null;
+
+  /** Whether a swiped drawer is settling closed (spatial spring). */
+  @state() private swipeSettling = false;
+
+  private dragWidth = 0;
+  /** 1 when the drawer closes toward the left (LTR), -1 toward the right. */
+  private dragDirection = 1;
+  private dragGesture: DragGesture | null = null;
+  private dragTarget: HTMLElement | null = null;
 
   @query('.nav-drawer') private readonly sheet!: HTMLElement | null;
   @query('dialog') private readonly dialog!: HTMLDialogElement | null;
@@ -205,6 +237,17 @@ export class NavDrawerElement extends baseClass {
   override connectedCallback() {
     super.connectedCallback();
     adoptStyles(this, [focusRingStyles, rippleStyles, navDrawerStyles]);
+    if (this.hasUpdated) {
+      this.syncDragGesture();
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.dragGesture?.disconnect();
+    this.dragGesture = null;
+    this.dragTarget = null;
+    this.dragOffset = null;
   }
 
   /** Opens the drawer. Resolves once it has finished animating. */
@@ -303,18 +346,31 @@ export class NavDrawerElement extends baseClass {
       }
     }
     this.syncTabStops();
+    this.syncDragGesture();
   }
 
   protected override render() {
     // Needed for closure conformance
     const {ariaLabel} = this as ARIAMixinStrict;
     const label = ariaLabel || DEFAULT_LABEL;
+    const dragging = this.modal && this.dragOffset !== null;
+    const sheetStyle = dragging
+      ? {translate: `${-this.dragDirection * this.dragOffset!}px 0`}
+      : {};
+    const scrimStyle =
+      dragging && this.dragWidth > 0
+        ? {opacity: String(1 - this.dragOffset! / this.dragWidth)}
+        : {};
     const sheet = html`
       <div
         part="drawer"
-        class=${classMap(
-          navDrawerClasses({modal: this.modal, open: this.visible}),
-        )}>
+        class=${classMap({
+          ...navDrawerClasses({modal: this.modal, open: this.visible}),
+          [NAV_DRAWER_CLASSES.navDrawerDragging]: dragging,
+          [NAV_DRAWER_CLASSES.navDrawerSwipeSettle]:
+            this.modal && this.swipeSettling,
+        })}
+        style=${styleMap(sheetStyle)}>
         <nav part="nav" class="nav-drawer-nav" aria-label=${label}>
           <slot name="headline"></slot>
           <slot @slotchange=${this.handleSlotChange}></slot>
@@ -333,12 +389,80 @@ export class NavDrawerElement extends baseClass {
         @close=${this.handleDialogClose}>
         <div
           part="scrim"
-          class="nav-drawer-scrim"
+          class=${classMap({
+            [NAV_DRAWER_CLASSES.navDrawerScrim]: true,
+            [NAV_DRAWER_CLASSES.navDrawerDragging]: dragging,
+          })}
+          style=${styleMap(scrimStyle)}
           aria-hidden="true"
           @click=${this.handleScrimClick}></div>
         ${sheet}
       </dialog>
     `;
+  }
+
+  /** Swipe to dismiss: tracks horizontal drags on the modal `<dialog>`. */
+  private syncDragGesture() {
+    const target = this.isConnected && this.modal ? this.dialog : null;
+    if (target === this.dragTarget) {
+      return;
+    }
+    this.dragGesture?.disconnect();
+    this.dragTarget = target;
+    this.dragGesture = target
+      ? new DragGesture(target, {
+          axis: 'x',
+          canStart: () =>
+            this.modal && this.open && this.visible && !this.gesturesDisabled,
+          onStart: () => {
+            const sheet = this.sheet;
+            this.dragWidth = sheet?.offsetWidth ?? 0;
+            this.dragDirection =
+              sheet && getComputedStyle(sheet).direction === 'rtl' ? -1 : 1;
+            this.dragOffset = 0;
+          },
+          onMove: (delta) => {
+            this.dragOffset = this.closingOffset(delta);
+          },
+          onEnd: (delta, velocity) => this.settleDrag(delta, velocity),
+          onCancel: () => {
+            this.dragOffset = null;
+          },
+        })
+      : null;
+  }
+
+  /** How far a drag of `delta` px moved the drawer toward its edge. */
+  private closingOffset(delta: number) {
+    return Math.min(this.dragWidth, Math.max(0, -delta * this.dragDirection));
+  }
+
+  /**
+   * Settles a released drag at the open or closed anchor, like Compose's
+   * `AnchoredDraggableState` with the drawer's thresholds.
+   */
+  private settleDrag(delta: number, velocity: number) {
+    const offset = this.closingOffset(delta);
+    const target = settleAnchor(
+      [0, this.dragWidth],
+      0,
+      offset,
+      -velocity * this.dragDirection,
+      {
+        positionalThreshold: (distance) =>
+          distance * NAV_DRAWER_POSITIONAL_THRESHOLD,
+        velocityThreshold: NAV_DRAWER_VELOCITY_THRESHOLD_PX_PER_S,
+      },
+    );
+    // Clearing the offset in the same update as the open/closed change lets
+    // the sheet transition from where it was released.
+    this.dragOffset = null;
+    if (this.dragWidth > 0 && target === this.dragWidth) {
+      this.swipeSettling = true;
+      this.close(NAV_DRAWER_CLOSE_REASONS.swipe).finally(() => {
+        this.swipeSettling = false;
+      });
+    }
   }
 
   private showDialog() {

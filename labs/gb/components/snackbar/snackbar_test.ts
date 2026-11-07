@@ -77,6 +77,46 @@ describe('<md-gb-snackbar>', () => {
     });
   });
 
+  describe('container height', () => {
+    // The 20px body-md line height, so the test does not depend on m3 styles.
+    const bodyMd = '--md-sys-typescale-body-md: 400 14px / 20px sans-serif';
+
+    it('is the spec single-line height for one line', async () => {
+      const {harness} = await setupTest(
+        html`<div style="width: 400px; position: relative; ${bodyMd}">
+          <md-gb-snackbar
+            open
+            quick
+            label-text="One line"></md-gb-snackbar>
+        </div>`,
+      );
+      const surface = harness.getSurfaceElement()!;
+      const spec = getComputedStyle(surface)
+        .getPropertyValue('--with-single-line-container-height')
+        .trim();
+      expect(`${surface.offsetHeight}px`).toBe(spec);
+    });
+
+    it('is the spec two-line height for two lines', async () => {
+      const {harness} = await setupTest(
+        html`<div style="width: 400px; position: relative; ${bodyMd}">
+          <md-gb-snackbar
+            open
+            quick
+            label-text="Two lines of supporting text that wrap onto a second line here"></md-gb-snackbar>
+        </div>`,
+      );
+      const surface = harness.getSurfaceElement()!;
+      const label = harness.getLabelElement()!;
+      // 14px padding top and bottom around two 20px lines.
+      expect(label.offsetHeight).toBe(68);
+      const spec = getComputedStyle(surface)
+        .getPropertyValue('--with-two-lines-container-height')
+        .trim();
+      expect(`${surface.offsetHeight}px`).toBe(spec);
+    });
+  });
+
   describe('show and close', () => {
     it('sets open to true on show() and false on close()', async () => {
       const {snackbar} = await setupTest();

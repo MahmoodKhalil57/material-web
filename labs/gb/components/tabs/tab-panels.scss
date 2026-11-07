@@ -1,0 +1,85 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// The settle spring of a pager (Compose foundation `PagerDefaults
+// .flingBehavior` snap spec, `spring(stiffness = Spring.StiffnessMediumLow)`:
+// stiffness 400, damping ratio 1, no bounce), sampled into a `linear()`
+// easing with scripts/m3/spring.mjs: `settleTime(1, 400)` is 0.43s and
+// `springEasing(1, 400, 0.43)` the curve below.
+$settle-duration: 430ms;
+$settle-easing: linear(
+  0,
+  0.005 1.25%,
+  0.02 2.5%,
+  0.047 4%,
+  0.082 5.5%,
+  0.159 8.25%,
+  0.362 14.75%,
+  0.458 18%,
+  0.552 21.5%,
+  0.628 24.75%,
+  0.698 28.25%,
+  0.757 31.75%,
+  0.809 35.5%,
+  0.85 39.25%,
+  0.889 43.75%,
+  0.922 48.75%,
+  0.947 54.25%,
+  0.966 60.5%,
+  0.979 67.25%,
+  0.988 75.25%,
+  1
+);
+
+@layer md.comp.tab-panels {
+  :host {
+    --transition-duration: #{$settle-duration};
+    --transition-easing: #{$settle-easing};
+    // The reading direction as a sign for translations: panels after the
+    // active one sit to the right (left in RTL).
+    --_direction: 1;
+
+    // Every visible panel shares the one grid cell, so the container is as
+    // tall as the active panel (and, mid-slide, the taller of the two) and
+    // each panel is as wide as the container.
+    display: grid;
+    overflow: clip;
+    // Vertical scrolling stays with the page; horizontal drags swipe panels.
+    touch-action: pan-y;
+  }
+
+  :host(:dir(rtl)) {
+    --_direction: -1;
+  }
+
+  :host([gestures-disabled]) {
+    touch-action: auto;
+  }
+
+  ::slotted(*) {
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+    translate: calc(var(--_tab-panel-offset, 0) * var(--_direction) * 100%) 0;
+    transition: translate var(--transition-duration) var(--transition-easing);
+  }
+
+  :host(.tab-panels-dragging) ::slotted(*),
+  :host(.tab-panels-instant) ::slotted(*) {
+    transition: none;
+  }
+
+  :host(.tab-panels-dragging) {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  // Reduced motion: panels change instantly (the element reads the duration
+  // and skips the slide).
+  @media (prefers-reduced-motion: reduce) {
+    :host {
+      --transition-duration: 0s;
+    }
+  }
+}

@@ -107,6 +107,22 @@ $overshoot: 24px;
         visibility 0s;
       translate: 0 0;
     }
+
+    // Swipe to dismiss: horizontal drags move the sheet (vertical ones still
+    // scroll it). While dragged, it follows the pointer without transitions.
+    touch-action: pan-y;
+
+    &.nav-drawer-dragging {
+      transition: none;
+      user-select: none;
+    }
+
+    // A swiped drawer settles closed with the spatial spring (Compose: the
+    // anchored draggable settles with MotionSchemeKeyTokens.DefaultSpatial).
+    &.nav-drawer-swipe-settle {
+      --_close-duration: var(--_open-duration);
+      --_close-easing: var(--_open-easing);
+    }
   }
 
   // The modal drawer's `<dialog>`: a transparent full-viewport layer holding
@@ -147,6 +163,14 @@ $overshoot: 24px;
       opacity: 1;
       transition: opacity var(--motion-effects-duration)
         var(--motion-effects-easing);
+    }
+
+    // Dragging the scrim also swipes the drawer; its opacity follows the
+    // drawer's position (Compose: the scrim alpha is the open fraction).
+    touch-action: pan-y;
+
+    &.nav-drawer-dragging {
+      transition: none;
     }
   }
 

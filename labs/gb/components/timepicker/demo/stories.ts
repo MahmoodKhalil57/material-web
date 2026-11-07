@@ -29,6 +29,7 @@ export interface StoryKnobs {
   orientation: string;
   mode: string;
   disabled: boolean;
+  density: string;
 }
 
 adoptStyles(document, [m3Styles]);
@@ -91,10 +92,12 @@ const playground: MaterialStoryInit<StoryKnobs> = {
             .hourCycle=${knobs.hourCycle as TimePickerHourCycle}
             .orientation=${knobs.orientation as TimePickerOrientation | ''}
             .mode=${knobs.mode as TimePickerMode}
+            density=${knobs.density}
             ?disabled=${knobs.disabled}
             @input=${show}
             @change=${show}
-            @cancel=${show}></md-gb-time-picker>
+            @cancel=${show}
+          ></md-gb-time-picker>
           <output class="demo-output" ${ref(output)}></output>
         </section>
       </div>
@@ -127,7 +130,8 @@ const modal: MaterialStoryInit<StoryKnobs> = {
             }}
             @cancel=${() => {
               output.value!.textContent = 'Canceled';
-            }}></md-gb-time-picker>
+            }}
+          ></md-gb-time-picker>
           <output class="demo-output" ${ref(output)}></output>
         </section>
       </div>
@@ -147,11 +151,13 @@ const variants: MaterialStoryInit<StoryKnobs> = {
             <md-gb-time-picker
               value="07:00"
               hour-cycle="12"
-              orientation="vertical"></md-gb-time-picker>
+              orientation="vertical"
+            ></md-gb-time-picker>
             <md-gb-time-picker
               value="20:00"
               hour-cycle="24"
-              orientation="vertical"></md-gb-time-picker>
+              orientation="vertical"
+            ></md-gb-time-picker>
           </div>
         </section>
         <section class="demo-section">
@@ -160,11 +166,13 @@ const variants: MaterialStoryInit<StoryKnobs> = {
             <md-gb-time-picker
               value="07:00"
               hour-cycle="12"
-              orientation="horizontal"></md-gb-time-picker>
+              orientation="horizontal"
+            ></md-gb-time-picker>
             <md-gb-time-picker
               value="20:00"
               hour-cycle="24"
-              orientation="horizontal"></md-gb-time-picker>
+              orientation="horizontal"
+            ></md-gb-time-picker>
           </div>
         </section>
         <section class="demo-section">
@@ -173,11 +181,60 @@ const variants: MaterialStoryInit<StoryKnobs> = {
             <md-gb-time-picker
               mode="input"
               value="07:00"
-              hour-cycle="12"></md-gb-time-picker>
+              hour-cycle="12"
+            ></md-gb-time-picker>
             <md-gb-time-picker
               mode="input"
               value="20:00"
-              hour-cycle="24"></md-gb-time-picker>
+              hour-cycle="24"
+            ></md-gb-time-picker>
+          </div>
+        </section>
+      </div>
+    `;
+  },
+};
+
+// time-pickers.md "Density": "High-density time picker displayed on mobile";
+// "Don't apply density to the time picker dial when the viewport is
+// constrained. Instead, use an input picker." The horizontal layout keeps a
+// full-size dial.
+const density: MaterialStoryInit<StoryKnobs> = {
+  name: 'Density',
+  styles,
+  render() {
+    return html`
+      <div class="demo-container">
+        <section class="demo-section">
+          <h2>Dial, vertical: density 0 and -3</h2>
+          <div class="demo-row">
+            <md-gb-time-picker
+              value="07:00"
+              hour-cycle="12"
+              orientation="vertical"
+            ></md-gb-time-picker>
+            <md-gb-time-picker
+              value="07:00"
+              hour-cycle="12"
+              orientation="vertical"
+              density="-3"
+            ></md-gb-time-picker>
+          </div>
+        </section>
+        <section class="demo-section">
+          <h2>Input: density 0 and -3</h2>
+          <div class="demo-row">
+            <md-gb-time-picker
+              mode="input"
+              value="07:00"
+              hour-cycle="12"
+            ></md-gb-time-picker>
+            <md-gb-time-picker
+              mode="input"
+              value="07:00"
+              hour-cycle="12"
+              density="-3"
+            ></md-gb-time-picker>
           </div>
         </section>
       </div>
@@ -186,4 +243,4 @@ const variants: MaterialStoryInit<StoryKnobs> = {
 };
 
 /** Time picker demo stories. */
-export const stories = [playground, modal, variants];
+export const stories = [playground, modal, variants, density];

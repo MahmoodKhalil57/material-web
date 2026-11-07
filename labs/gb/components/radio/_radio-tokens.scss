@@ -3,25 +3,43 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
+// Values from the `md.comp.radio-button` spec token set. Each mixin is named
+// after the token path it implements (`unselected-hovered` ->
+// `md.comp.radio-button.unselected.hover.*`). State layer opacities are
+// applied by the shared ripple.
+
 @mixin root {
   // LINT.IfChange
   --icon-color: var(--md-sys-color-on-surface-variant);
   --icon-size: 20px;
   --state-layer-color: var(--md-sys-color-on-surface);
-  --state-layer-shape: 50%;
+  --state-layer-shape: var(--md-sys-shape-corner-full);
   --state-layer-size: 40px;
-  // LINT.ThenChange(md-radio.ts) keep in sync with `@cssprop` jsdoc tags
+  // Not spec tokens. foundations/layout/grids-spacing.md, Component scaling:
+  // each density step removes 4dp from the state layer and the layout box.
+  --density-step: 4px;
+  // grids-spacing.md, Targets: targets keep at least 48x48dp at any density
+  // (Compose LocalMinimumInteractiveComponentSize).
+  --target-size: 48px;
+  // LINT.ThenChange(radio-element.ts) keep in sync with `@cssprop` jsdoc tags
 }
 
-@mixin hovered {
+@mixin unselected {
+  --icon-color: var(--md-sys-color-on-surface-variant);
+}
+
+@mixin unselected-hovered {
   --icon-color: var(--md-sys-color-on-surface);
+  --state-layer-color: var(--md-sys-color-on-surface);
 }
 
-@mixin focused {
+@mixin unselected-focused {
   --icon-color: var(--md-sys-color-on-surface);
+  --state-layer-color: var(--md-sys-color-on-surface);
 }
 
-@mixin pressed {
+@mixin unselected-pressed {
+  --icon-color: var(--md-sys-color-on-surface);
   --state-layer-color: var(--md-sys-color-primary);
 }
 
@@ -30,10 +48,27 @@
   --state-layer-color: var(--md-sys-color-primary);
 }
 
+@mixin selected-hovered {
+  --icon-color: var(--md-sys-color-primary);
+  --state-layer-color: var(--md-sys-color-primary);
+}
+
+@mixin selected-focused {
+  --icon-color: var(--md-sys-color-primary);
+  --state-layer-color: var(--md-sys-color-primary);
+}
+
 @mixin selected-pressed {
+  --icon-color: var(--md-sys-color-primary);
   --state-layer-color: var(--md-sys-color-on-surface);
 }
 
-@mixin disabled {
+// md.comp.radio-button.disabled.unselected.icon.color + .opacity
+@mixin disabled-unselected {
+  --icon-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
+}
+
+// md.comp.radio-button.disabled.selected.icon.color + .opacity
+@mixin disabled-selected {
   --icon-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
 }

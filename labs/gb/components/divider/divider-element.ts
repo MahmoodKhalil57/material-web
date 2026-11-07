@@ -18,6 +18,8 @@ import {divider} from './divider.js';
  * @csspart divider - The divider element.
  * @cssprop --color
  * @cssprop --thickness
+ * @cssprop --inset-leading-space
+ * @cssprop --inset-trailing-space
  */
 export class DividerElement extends LitElement {
   /** @nocollapse */
@@ -43,6 +45,17 @@ export class DividerElement extends LitElement {
    * Whether or not the divider is vertical.
    */
   @property({type: Boolean, reflect: true}) vertical = false;
+
+  /** Indents both ends 16dp (spec: middle-inset divider). */
+  @property({type: Boolean, reflect: true}) inset = false;
+
+  /** Indents the leading end 16dp (spec: inset divider). */
+  @property({type: Boolean, reflect: true, attribute: 'inset-start'})
+  insetStart = false;
+
+  /** Indents the trailing end 16dp. */
+  @property({type: Boolean, reflect: true, attribute: 'inset-end'})
+  insetEnd = false;
 
   protected override render() {
     return html`<div part="divider" class="${divider(this)}"></div>`;

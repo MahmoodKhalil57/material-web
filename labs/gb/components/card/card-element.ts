@@ -30,10 +30,11 @@ const baseClass = mixinDelegatesAria(LitElement);
  * @slot - Used to display the card's content. Note: add padding to content, not the host <md-gb-card> element.
  * @slot container - Used to set a custom background container for the card.
  * @csspart card - The card's root element.
- * @csspart card-btn - The card's main action button, when interactive.
+ * @csspart card-btn - The card's main action (a button, or a link when `href` is set), when interactive.
  * @cssprop --container-color
  * @cssprop --container-elevation
  * @cssprop --container-shape
+ * @cssprop --disabled-content-opacity
  * @cssprop --outline-color
  * @cssprop --outline-width
  * @cssprop --state-layer-color
@@ -72,6 +73,9 @@ export class CardElement extends baseClass {
         z-index: -1;
         transition: inherit;
       }
+      :is(.disabled, [aria-disabled='true']) > slot:not([name])::slotted(*) {
+        opacity: var(--disabled-content-opacity);
+      }
       slot[name='container']::slotted(*) {
         width: 100%;
         height: 100%;
@@ -88,6 +92,25 @@ export class CardElement extends baseClass {
   /** Whether the card is interactive. */
   @property({type: Boolean}) interactive = false;
 
+  /**
+   * Whether the card is picked up and being dragged (raised elevation). The
+   * app moves the card. Spec Cards > Accessibility > Dragging and dismissing
+   * (WCAG 2.5.7): also offer a single-pointer alternative, e.g. a menu opened
+   * by tapping a "more" button or pressing and holding the card, with move
+   * and delete actions (see the "Reorder (drag or menu)" demo). Don't let
+   * the menu cover the card.
+   */
+  @property({type: Boolean, reflect: true}) dragged = false;
+
+  /**
+   * Makes an interactive card a link (spec: directly actionable cards have the
+   * button or link role).
+   */
+  @property() href = '';
+
+  /** The link target, when `href` is set. */
+  @property() target: '_blank' | '_parent' | '_self' | '_top' | '' = '';
+
   protected override render() {
     const {ariaLabel} = this as ARIAMixinStrict;
     return html`<div
@@ -95,18 +118,35 @@ export class CardElement extends baseClass {
       class="${card({
         color: this.color,
         disabled: this.disabled,
+        dragged: this.dragged,
         interactive: this.interactive,
       })}">
-      ${this.interactive
-        ? html`<button
-            part="card-btn"
-            class="card-btn ripple focus-ring-target"
-            ${ripple()}
-            ?disabled="${this.disabled}"
-            aria-label="${ariaLabel || nothing}"></button>`
-        : nothing}
+      ${this.renderAction(ariaLabel)}
       <slot></slot>
       <slot name="container" ${hasSlotted()} ${fxSlot()}></slot>
     </div>`;
+  }
+
+  private renderAction(ariaLabel: string | null) {
+    if (!this.interactive) return nothing;
+    if (this.href) {
+      // A disabled link has no href, so it is neither focusable nor followed.
+      return html`<a
+        part="card-btn"
+        class="card-btn ripple focus-ring-target ${this.disabled
+          ? 'disabled'
+          : ''}"
+        ${ripple()}
+        href="${this.disabled ? nothing : this.href}"
+        target="${this.target || nothing}"
+        aria-disabled="${this.disabled ? 'true' : nothing}"
+        aria-label="${ariaLabel || nothing}"></a>`;
+    }
+    return html`<button
+      part="card-btn"
+      class="card-btn ripple focus-ring-target"
+      ${ripple()}
+      ?disabled="${this.disabled}"
+      aria-label="${ariaLabel || nothing}"></button>`;
   }
 }

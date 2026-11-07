@@ -8,6 +8,7 @@ import {type CSSResultOrNative, type PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {clampDensity, type Density} from '../shared/density.js';
 import {updateClassList} from '../shared/update-class-list.js';
 
 import tabsStyles from './tabs.css' with {type: 'css'}; // github-only
@@ -29,6 +30,7 @@ import {setupTabs, tabsClasses, type TabsVariant} from './tabs.js';
  * @cssprop --active-indicator-shape
  * @cssprop --container-color
  * @cssprop --container-height
+ * @cssprop --density-step - Tab height removed per density step.
  * @cssprop --container-shape
  * @cssprop --divider-color
  * @cssprop --divider-thickness
@@ -41,6 +43,26 @@ export class TabsElement extends AriaTablistElement {
    * The visual variant of the tabs.
    */
   @property({reflect: true}) variant: TabsVariant = 'primary';
+
+  /**
+   * The density, from 0 (default) to -3. Each step down removes 4px from the
+   * tabs' height (48px, or 64px with icon and label); values are clamped to
+   * that range.
+   *
+   * tabs.md "Avoid applying density by default": dense tabs are below the
+   * 48x48 CSS pixel target, so let people opt in (a denser layout or theme)
+   * and keep the controls that change it at 48x48.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
 
   constructor() {
     super();
@@ -56,16 +78,20 @@ export class TabsElement extends AriaTablistElement {
     adoptStyles(this, tabsStyles);
     // Apply initial classes synchronously on connect as a guard against a
     // frame of unstyled content before the first updated lifecycle callback.
-    updateClassList(this, tabsClasses({variant: this.variant}));
+    updateClassList(this, this.classes());
+  }
+
+  private classes() {
+    return tabsClasses({variant: this.variant, density: this.density});
   }
 
   protected override updated(changedProperties: PropertyValues<this>) {
     super.updated(changedProperties);
-    if (changedProperties.has('variant')) {
+    if (changedProperties.has('variant') || changedProperties.has('density')) {
       // The variant modifier is a utility class rather than an attribute
       // selector so that non-element consumers (raw HTML, React, Angular) use
       // the same hook.
-      updateClassList(this, tabsClasses({variant: this.variant}));
+      updateClassList(this, this.classes());
     }
   }
 }

@@ -12,11 +12,10 @@
 @mixin root {
   --container-color: var(--md-sys-color-surface-container-low);
   --container-elevation: var(--md-sys-elevation-shadow-1);
+  --container-shape: var(--md-sys-shape-corner-xl-top);
   --drag-handle-color: var(--md-sys-color-on-surface-variant);
   --drag-handle-height: 4px;
   --drag-handle-width: 32px;
-  // EDIT: md.comp.sheet.bottom.docked.container.shape is corner-extra-large-top; the gb shape scale has no -top variant, so bottom-sheet.scss rounds only the top corners with this radius.
-  --container-shape: var(--md-sys-shape-corner-xl);
   // EDIT: SheetDefaults.SheetMaxWidth (640dp) and the spec Measurements table.
   --max-width: 640px;
   // EDIT: Spec Measurements, top margin (72dp).
@@ -73,7 +72,7 @@
 @mixin side-modal {
   --container-color: var(--md-sys-color-surface-container-low);
   --container-elevation: var(--md-sys-elevation-shadow-1);
-  // EDIT: md.comp.sheet.side.docked.modal.container.shape is corner-large-start; the gb shape scale has no -start variant, so side-sheet.scss rounds only the inline-start corners with this radius.
+  // EDIT: md.comp.sheet.side.docked.modal.container.shape is corner-large-start. --md-sys-shape-corner-lg-start is a physical (left) 4-value radius that does not flip in RTL, so side-sheet.scss rounds the inline-start corners with this one radius instead.
   --container-shape: var(--md-sys-shape-corner-lg);
 }
 

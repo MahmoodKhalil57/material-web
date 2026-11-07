@@ -5,10 +5,14 @@
  */
 
 import '@material/web/labs/gb/components/button/md-gb-button.js';
+import '@material/web/labs/gb/components/fab/md-gb-fab.js';
 import '@material/web/labs/gb/components/snackbar/md-gb-snackbar.js';
+import '@material/web/labs/gb/components/snackbar/md-gb-snackbar-host.js';
+import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type SnackbarElement} from '@material/web/labs/gb/components/snackbar/snackbar-element.js';
+import {type SnackbarHostElement} from '@material/web/labs/gb/components/snackbar/snackbar-host-element.js';
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
 import {css, html, nothing, type TemplateResult} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
@@ -207,5 +211,85 @@ const playground: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const queue: MaterialStoryInit<StoryKnobs> = {
+  name: 'Consecutive snackbars',
+  styles,
+  render() {
+    const hostRef = createRef<SnackbarHostElement>();
+    const resultRef = createRef<HTMLElement>();
+    let count = 0;
+    const show = async (options: {
+      message: string;
+      actionLabel?: string;
+      replace?: boolean;
+    }) => {
+      const host = hostRef.value;
+      if (!host) return;
+      const result = await host.showSnackbar(options);
+      if (resultRef.value) {
+        resultRef.value.textContent = `"${options.message}": ${result}`;
+      }
+    };
+
+    return html`
+      <div class="demo-container">
+        <section class="demo-section">
+          <h2>Queue (md-gb-snackbar-host)</h2>
+          <p class="demo-hint">
+            Snackbars appear one at a time: each one waits until the previous
+            one is dismissed. Messages are announced in a polite live region
+            without moving focus. Snackbars without an action time out after
+            4s (Compose SnackbarDuration.Short); with an action they stay until
+            dismissed. "Replace" shows updated information right away. The
+            snackbar sits above the FAB (its <code>anchor</code>).
+          </p>
+          <div class="demo-controls">
+            <md-gb-button
+              color="filled"
+              @click=${() => {
+                count++;
+                show({message: `Message ${count} sent`});
+              }}>
+              Queue a message
+            </md-gb-button>
+            <md-gb-button
+              color="tonal"
+              @click=${() => {
+                show({message: 'Conversation archived', actionLabel: 'Undo'});
+              }}>
+              Queue with action
+            </md-gb-button>
+            <md-gb-button
+              color="outlined"
+              @click=${() => {
+                count++;
+                show({message: `Uploading ${count} files`, replace: true});
+              }}>
+              Replace
+            </md-gb-button>
+            <md-gb-button
+              color="text"
+              @click=${() => hostRef.value?.dismissAll()}>
+              Dismiss all
+            </md-gb-button>
+          </div>
+          <p class="demo-hint" ${ref(resultRef)}></p>
+          <div class="interactive-stage" style="block-size: 320px">
+            <md-gb-fab
+              id="queue-fab"
+              aria-label="Compose"
+              style="position: absolute; inset-block-end: 16px; inset-inline-end: 16px">
+              <md-gb-icon>edit</md-gb-icon>
+            </md-gb-fab>
+            <md-gb-snackbar-host
+              ${ref(hostRef)}
+              anchor="queue-fab"></md-gb-snackbar-host>
+          </div>
+        </section>
+      </div>
+    `;
+  },
+};
+
 /** Snackbar demo stories. */
-export const stories = [playground];
+export const stories = [playground, queue];

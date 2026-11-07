@@ -49,14 +49,8 @@
     width: 100%;
   }
 
-  :host(md-gb-toolbar[orientation='vertical']:not([docked])) {
-    @include toolbar-tokens.vertical;
-  }
-
   :host(md-gb-toolbar[orientation='vertical']:not([docked])) [part='toolbar'],
   :host(md-gb-toolbar[orientation='vertical']:not([docked])) .toolbar {
-    @include toolbar-tokens.vertical;
-
     flex-direction: column;
     height: fit-content;
     min-width: var(--vertical-container-width);
@@ -84,10 +78,6 @@
 
       --toolbar-icon-color: var(--icon-color);
       --toolbar-label-text-color: var(--label-text-color);
-    }
-
-    &[orientation='vertical']:not([docked]) {
-      @include toolbar-tokens.vertical;
     }
 
     &[docked] {
@@ -156,8 +146,6 @@
     }
 
     &.toolbar-vertical:not(.toolbar-docked) {
-      @include toolbar-tokens.vertical;
-
       flex-direction: column;
       height: fit-content;
       min-width: var(--vertical-container-width);
@@ -236,5 +224,107 @@
     --container-color: var(--selected-button-container-color);
     --icon-color: var(--selected-icon-color);
     --md-icon-color: var(--selected-icon-color);
+  }
+
+  // Floating toolbar with a FAB (toolbars.md; Compose
+  // HorizontalFloatingToolbar / VerticalFloatingToolbar with
+  // `floatingActionButton`): the FAB sits `--fab-between-space` after (or
+  // before) the toolbar. When the toolbar collapses, it shrinks away and the
+  // FAB grows to the medium FAB size.
+  .toolbar-with-fab {
+    @include toolbar-tokens.root;
+
+    align-items: center;
+    display: inline-flex;
+    gap: var(--fab-between-space);
+
+    &.toolbar-with-fab-vertical {
+      flex-direction: column;
+    }
+
+    &.toolbar-with-fab-start {
+      flex-direction: row-reverse;
+
+      &.toolbar-with-fab-vertical {
+        flex-direction: column-reverse;
+      }
+    }
+
+    &.toolbar-with-fab-standard {
+      @include toolbar-tokens.standard;
+    }
+
+    &.toolbar-with-fab-vibrant {
+      @include toolbar-tokens.vibrant;
+    }
+
+    ::slotted([slot='fab']) {
+      flex: none;
+    }
+
+    > .toolbar {
+      flex: none;
+      interpolate-size: allow-keywords;
+      overflow: hidden;
+    }
+
+    &.toolbar-with-fab-collapsed {
+      gap: 0;
+
+      > .toolbar {
+        box-shadow: none;
+        opacity: 0;
+        padding: 0;
+        pointer-events: none;
+      }
+
+      &:not(.toolbar-with-fab-vertical) > .toolbar {
+        inline-size: 0;
+      }
+
+      &.toolbar-with-fab-vertical > .toolbar {
+        block-size: 0;
+        min-width: 0;
+      }
+    }
+  }
+
+  // The slotted FAB (`md-gb-fab`) takes the toolbar FAB tokens. `::part()`
+  // reaches its button from this (outer) tree, so these win over the FAB's
+  // own defaults.
+  md-gb-toolbar > [slot='fab']::part(fab) {
+    --container-color: var(--fab-container-color);
+    --container-elevation: var(--fab-container-elevation);
+    --container-height: var(--fab-container-height);
+    --container-shape: var(--fab-container-shape);
+    --container-width: var(--fab-container-width);
+    --icon-color: var(--fab-icon-color);
+    --icon-size: var(--fab-icon-size);
+    --md-icon-color: var(--fab-icon-color);
+    --md-icon-size: var(--fab-icon-size);
+    transition-duration: var(--motion-duration);
+    transition-property: width, height, border-radius, box-shadow;
+    transition-timing-function: var(--motion-easing);
+  }
+
+  md-gb-toolbar > [slot='fab']::part(fab):hover {
+    --container-elevation: var(--fab-hovered-container-elevation);
+  }
+
+  md-gb-toolbar:not([expanded]) > [slot='fab']::part(fab) {
+    --container-elevation: var(--fab-medium-container-elevation);
+    --container-height: var(--fab-medium-container-height);
+    --container-shape: var(--fab-medium-container-shape);
+    --container-width: var(--fab-medium-container-width);
+    --icon-size: var(--fab-medium-icon-size);
+    --md-icon-size: var(--fab-medium-icon-size);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toolbar,
+    .toolbar-with-fab,
+    :host {
+      --motion-duration: 0s;
+    }
   }
 }

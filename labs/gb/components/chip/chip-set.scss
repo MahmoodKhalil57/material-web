@@ -1,0 +1,66 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// Chip set (`md-gb-chip-set`, or `.chip-set` on any container): a row of
+// chips that wraps onto more lines, or scrolls in a single line.
+// The spec has no token for the space between chips.
+@use '../shared/density';
+
+@layer md.comp.chip-set {
+  :host,
+  .chip-set {
+    // EDIT: Spec guidelines (chips, placement): "Keep an 8dp minimum space
+    // between chips", both between chips and between lines.
+    --chip-set-space: 8px;
+    // EDIT: Room for the 48dp touch target and focus ring of 32dp chips
+    // ((48dp - 32dp) / 2) when a single-line set clips its overflow; dense
+    // chips are 4dp shorter per step (2dp more room on each side).
+    --chip-set-overflow-inset: calc(8px - var(--_density, 0) * 2px);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--chip-set-space);
+  }
+
+  :host([hidden]) {
+    display: none;
+  }
+
+  // Density of the chips inside (`density` attribute or class): chips read
+  // the inherited `--_density`.
+  @include density.levels('chip-set');
+
+  // Single line: the chips keep their size and the row scrolls
+  // horizontally (spec: horizontal overflow).
+  :host([single-line]),
+  .chip-set-single-line {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    // Scrolling clips the vertical overflow too: pad the scroll box so the
+    // touch targets and focus rings stay visible without changing layout.
+    padding: var(--chip-set-overflow-inset);
+    margin: calc(-1 * var(--chip-set-overflow-inset));
+    scroll-padding-inline: var(--chip-set-overflow-inset);
+  }
+
+  :host([single-line]) ::slotted(*),
+  .chip-set-single-line > * {
+    flex-shrink: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :host([single-line]),
+    .chip-set-single-line {
+      scroll-behavior: smooth;
+    }
+  }
+
+  [role="row"] {
+    display: contents;
+  }
+}

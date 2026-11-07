@@ -4,7 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {css, type CSSResultOrNative, html, LitElement, nothing} from 'lit';
+import {
+  css,
+  type CSSResultOrNative,
+  html,
+  LitElement,
+  nothing,
+  type PropertyValues,
+} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {button} from '../button/button.js';
@@ -36,6 +43,17 @@ export const CLOSE_DURATION_MS = 75;
 /**
  * A Material Design snackbar component.
  *
+ * The message is announced in a polite live region when the snackbar opens,
+ * without moving focus (snackbar.md, Accessibility). The live region stays in
+ * the page while the snackbar is closed, so each message is announced.
+ *
+ * To show consecutive snackbars one at a time, use `md-gb-snackbar-host`.
+ *
+ * Placement: snackbars appear above FABs and docked toolbars (snackbar.md,
+ * "Snackbars and floating action buttons"). Set `anchor` to the FAB (or the
+ * bottom bar) and the snackbar sits `--bottom-offset` above it, so it covers
+ * neither the FAB nor its focus indicator.
+ *
  * @fires {Event} open - Fired when the snackbar begins opening.
  * @fires {Event} opened - Fired when the snackbar has opened and animations finished.
  * @fires {CustomEvent<{reason: string}>} close - Fired when the snackbar begins closing.
@@ -61,8 +79,10 @@ export const CLOSE_DURATION_MS = 75;
  * @cssprop --supporting-text-tracking - Supporting label letter spacing.
  * @cssprop --min-width - Minimum surface width in wide layout.
  * @cssprop --max-width - Maximum surface width in wide layout.
- * @cssprop --min-height - Minimum surface height.
- * @cssprop --bottom-offset - Inset block end distance from container bottom.
+ * @cssprop --with-single-line-container-height - Single-line container height (spec 48dp).
+ * @cssprop --with-two-lines-container-height - Two-line container height (spec 68dp).
+ * @cssprop --min-height - Minimum surface height (the single-line height).
+ * @cssprop --bottom-offset - Inset block end distance from container bottom, or from the top of the `anchor`.
  * @cssprop --position - CSS position property (`absolute` by default).
  * @cssprop --z-index - Z-index of the snackbar.
  */
@@ -87,6 +107,16 @@ export class SnackbarElement extends LitElement {
 
       :host([quick]) .snackbar-surface {
         transition: none;
+      }
+
+      /* The polite live region: visually hidden, always rendered. */
+      .snackbar-announcer {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
       }
     `,
   ];
@@ -150,16 +180,34 @@ export class SnackbarElement extends LitElement {
    */
   @property({type: Boolean, reflect: true}) quick = false;
 
+  /**
+   * The id of an element the snackbar appears above, such as a FAB or a
+   * docked toolbar, in the snackbar's root (document or shadow root). See
+   * `anchorElement`.
+   */
+  @property() anchor = '';
+
+  /**
+   * An element the snackbar appears above, such as a FAB or a docked
+   * toolbar: while open, the snackbar's bottom edge sits `--bottom-offset`
+   * above the element's top edge. Takes precedence over `anchor`.
+   */
+  @property({attribute: false}) anchorElement: HTMLElement | null = null;
+
   @state() private isOpening = false;
   @state() private isClosing = false;
+  /** The text of the polite live region. */
+  @state() private announcement = '';
 
   private isHovered = false;
   private isFocused = false;
   private isPaused = false;
-  private autoDismissTimerId: number | null = null;
+  private autoDismissTimerId: ReturnType<typeof setTimeout> | null = null;
   private remainingTimeMs = 0;
   private timerStartTime = 0;
   private transitionCounter = 0;
+  private anchorTracking: AbortController | null = null;
+  private anchorObserver: ResizeObserver | null = null;
 
   override connectedCallback() {
     super.connectedCallback();
@@ -183,6 +231,137 @@ export class SnackbarElement extends LitElement {
     this.removeEventListener('keydown', this.handleKeyDown);
     this.removeEventListener('click', this.handleClick);
     this.clearAutoDismissTimer();
+    this.stopAnchorTracking();
+  }
+
+  protected override updated(changed: PropertyValues<this>) {
+    super.updated(changed);
+    if (
+      changed.has('anchor') ||
+      changed.has('anchorElement') ||
+      changed.has('fixed') ||
+      changed.has('open' as keyof SnackbarElement)
+    ) {
+      this.syncAnchorTracking();
+    }
+  }
+
+  /** The element the snackbar appears above, if any. */
+  get resolvedAnchor(): HTMLElement | null {
+    if (this.anchorElement) {
+      return this.anchorElement;
+    }
+    if (!this.anchor) {
+      return null;
+    }
+    const root = this.getRootNode() as Document | ShadowRoot;
+    const el =
+      typeof root.getElementById === 'function'
+        ? root.getElementById(this.anchor)
+        : null;
+    return el instanceof HTMLElement ? el : null;
+  }
+
+  /**
+   * Places the snackbar above its anchor. Called while open when the window
+   * or the anchor resizes; call it after moving the anchor.
+   */
+  updateAnchorPosition() {
+    const anchor = this.resolvedAnchor;
+    const offset = anchor && this.isShown() ? this.anchorOffset(anchor) : null;
+    if (offset === null) {
+      this.style.removeProperty('--_anchor-offset');
+      return;
+    }
+    this.style.setProperty('--_anchor-offset', `${offset}px`);
+  }
+
+  /**
+   * The distance from the bottom of the snackbar's containing block to the
+   * top of the anchor, or null when the anchor isn't rendered.
+   */
+  private anchorOffset(anchor: HTMLElement): number | null {
+    const rect = anchor.getBoundingClientRect();
+    if (!rect.width && !rect.height) {
+      return null;
+    }
+    let bottom: number;
+    const parent = this.offsetParent;
+    if (
+      this.fixed ||
+      getComputedStyle(this).position === 'fixed' ||
+      !parent ||
+      parent === document.body ||
+      parent === document.documentElement
+    ) {
+      // Fixed: the viewport. Absolute without a positioned ancestor: the
+      // initial containing block, which scrolls with the document.
+      const scrolled =
+        this.fixed || getComputedStyle(this).position === 'fixed'
+          ? 0
+          : (document.scrollingElement?.scrollTop ?? 0);
+      bottom = window.innerHeight - scrolled;
+    } else {
+      bottom = parent.getBoundingClientRect().bottom;
+    }
+    return Math.max(0, bottom - rect.top);
+  }
+
+  private isShown() {
+    return this.isOpenInternal || this.isClosing;
+  }
+
+  private syncAnchorTracking() {
+    const anchor = this.resolvedAnchor;
+    if (!anchor || !this.isOpenInternal || !this.isConnected) {
+      if (!this.isClosing) {
+        this.stopAnchorTracking();
+        this.updateAnchorPosition();
+      }
+      return;
+    }
+    this.stopAnchorTracking();
+    const controller = new AbortController();
+    this.anchorTracking = controller;
+    const update = () => {
+      this.updateAnchorPosition();
+    };
+    window.addEventListener('resize', update, {
+      signal: controller.signal,
+      passive: true,
+    });
+    if (typeof ResizeObserver === 'function') {
+      this.anchorObserver = new ResizeObserver(update);
+      this.anchorObserver.observe(anchor);
+    }
+    update();
+  }
+
+  private stopAnchorTracking() {
+    this.anchorTracking?.abort();
+    this.anchorTracking = null;
+    this.anchorObserver?.disconnect();
+    this.anchorObserver = null;
+  }
+
+  /**
+   * The announced text: the message (label text and slotted text) and the
+   * action label.
+   */
+  private announcementText(): string {
+    const slotText = (name?: string) => {
+      const selector = name ? `slot[name="${name}"]` : 'slot:not([name])';
+      const slot =
+        this.renderRoot?.querySelector<HTMLSlotElement>(selector) ?? null;
+      return (slot?.assignedNodes({flatten: true}) ?? [])
+        .map((node) => node.textContent ?? '')
+        .join(' ');
+    };
+    const action = slotText('action').trim() || this.actionLabel.trim();
+    return [this.labelText, slotText(), action]
+      .map((text) => text.replace(/\s+/g, ' ').trim())
+      .filter(Boolean)
+      .join('. ');
   }
 
   /**
@@ -215,6 +394,9 @@ export class SnackbarElement extends LitElement {
     if (token !== this.transitionCounter) {
       return;
     }
+    // Fill the live region after the snackbar renders, so the change is
+    // announced (politely, without moving focus).
+    this.announcement = this.announcementText();
 
     await this.waitForAnimation(OPEN_DURATION_MS);
     if (token !== this.transitionCounter) {
@@ -262,6 +444,7 @@ export class SnackbarElement extends LitElement {
     this.requestUpdate('open', prev);
     this.isOpening = false;
     this.isClosing = true;
+    this.announcement = '';
     this.requestUpdate();
     await this.updateComplete;
     if (token !== this.transitionCounter) {
@@ -275,6 +458,7 @@ export class SnackbarElement extends LitElement {
 
     this.isClosing = false;
     this.requestUpdate();
+    this.syncAnchorTracking();
     this.dispatchEvent(
       new CustomEvent('closed', {
         bubbles: true,
@@ -416,10 +600,13 @@ export class SnackbarElement extends LitElement {
 
     return html`
       <div
-        class="${classMap(classes)}"
+        class="snackbar-announcer"
         role="status"
         aria-live="polite"
         aria-atomic="true">
+        ${this.announcement}
+      </div>
+      <div class="${classMap(classes)}">
         <div class="snackbar-surface" part="surface">
           <div class="snackbar-content">
             <div class="snackbar-label" part="label">

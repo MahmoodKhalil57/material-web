@@ -38,6 +38,8 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
       }),
     }),
     new Knob('scrolled', {ui: boolInput()}),
+    new Knob('centered', {ui: boolInput()}),
+    new Knob('subtitle', {ui: boolInput(), defaultValue: true}),
   ],
 );
 

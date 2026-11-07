@@ -11,6 +11,10 @@ import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 import {MaterialStoryInit} from './material-collection.js';
 import {styles as checkboxStyles} from '@material/web/labs/gb/components/checkbox/checkbox.cssresult.js';
 import {styles as focusRingStyles} from '@material/web/labs/gb/components/focus/focus-ring.cssresult.js';
+import {
+  type ListReorderEvent,
+  type ListSelectionChangeEvent,
+} from '@material/web/labs/gb/components/list/list-element.js';
 import {list, listItem} from '@material/web/labs/gb/components/list/list.js';
 import {styles as listStyles} from '@material/web/labs/gb/components/list/list.cssresult.js';
 import {styles as radioStyles} from '@material/web/labs/gb/components/radio/radio.cssresult.js';
@@ -23,6 +27,7 @@ import {css, html} from 'lit';
 export interface StoryKnobs {
   segmented: boolean;
   nonInteractive: boolean;
+  density: string;
 }
 
 adoptStyles(document, [
@@ -59,7 +64,7 @@ const playground: MaterialStoryInit<StoryKnobs> = {
   render(knobs) {
     return html`
       <div class="container" style="width: 360px;">
-        <md-gb-list ?segmented=${knobs.segmented}>
+        <md-gb-list ?segmented=${knobs.segmented} density=${knobs.density}>
           <md-gb-list-item ?static=${knobs.nonInteractive}>
             Basic Item
           </md-gb-list-item>
@@ -233,6 +238,196 @@ const multiSelect: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const expand: MaterialStoryInit<StoryKnobs> = {
+  name: 'Expand',
+  styles,
+  render(knobs) {
+    return html`
+      <div class="container" style="width: 360px;">
+        <md-gb-list ?segmented=${knobs.segmented}>
+          <md-gb-list-item expandable expanded>
+            <md-gb-icon slot="leading">checklist</md-gb-icon>
+            Groceries
+            <span slot="supporting-text">3 items</span>
+            <md-gb-list slot="nested" ?segmented=${knobs.segmented}>
+              <md-gb-list-item>Bread</md-gb-list-item>
+              <md-gb-list-item>Milk</md-gb-list-item>
+              <md-gb-list-item>Eggs</md-gb-list-item>
+            </md-gb-list>
+          </md-gb-list-item>
+          <md-gb-list-item expandable>
+            <md-gb-icon slot="leading">home_repair_service</md-gb-icon>
+            Chores
+            <span slot="supporting-text">2 items</span>
+            <md-gb-list slot="nested" ?segmented=${knobs.segmented}>
+              <md-gb-list-item>Laundry</md-gb-list-item>
+              <md-gb-list-item>Water the plants</md-gb-list-item>
+            </md-gb-list>
+          </md-gb-list-item>
+          <md-gb-list-item>
+            <md-gb-icon slot="leading">event</md-gb-icon>
+            Book a dentist appointment
+          </md-gb-list-item>
+        </md-gb-list>
+      </div>
+    `;
+  },
+};
+
+const reorder: MaterialStoryInit<StoryKnobs> = {
+  name: 'Reorder',
+  styles,
+  render(knobs) {
+    return html`
+      <div class="container" style="width: 360px;">
+        <p>
+          Drag a handle, or tap it and use the move up and move down buttons;
+          tap the handle again to drop the item.
+        </p>
+        <md-gb-list
+          reorderable
+          ?segmented=${knobs.segmented}
+          density=${knobs.density}
+          @reorder=${(event: Event) => {
+            const {from, to} = event as ListReorderEvent;
+            console.log(`reorder: ${from} -> ${to}`);
+          }}>
+          <md-gb-list-item>
+            <md-gb-icon slot="leading">looks_one</md-gb-icon>
+            Preheat the oven
+          </md-gb-list-item>
+          <md-gb-list-item>
+            <md-gb-icon slot="leading">looks_two</md-gb-icon>
+            Mix the dough
+            <span slot="supporting-text">Flour, water, yeast, salt</span>
+          </md-gb-list-item>
+          <md-gb-list-item>
+            <md-gb-icon slot="leading">looks_3</md-gb-icon>
+            Let it rise
+          </md-gb-list-item>
+          <md-gb-list-item>
+            <md-gb-icon slot="leading">looks_4</md-gb-icon>
+            Bake for 40 minutes
+          </md-gb-list-item>
+        </md-gb-list>
+      </div>
+    `;
+  },
+};
+
+const reveal: MaterialStoryInit<StoryKnobs> = {
+  name: 'Swipe to reveal',
+  styles,
+  render(knobs) {
+    const recipes = [
+      'Fresh baked breads',
+      'Summer salads',
+      'Weeknight pastas',
+      'Slow cooker soups',
+    ];
+    const archive = (event: Event) => {
+      (event.target as Element).closest('md-gb-list-item')?.remove();
+    };
+    return html`
+      <div class="container" style="width: 360px;">
+        <md-gb-list ?segmented=${knobs.segmented} density=${knobs.density}>
+          ${recipes.map(
+            (recipe) => html`
+              <md-gb-list-item>
+                <md-gb-icon slot="leading">restaurant</md-gb-icon>
+                ${recipe}
+                <span slot="supporting-text">
+                  Swipe, tap More, or press the arrow keys
+                </span>
+                <button slot="leading-actions" aria-label="Pin ${recipe}">
+                  <md-gb-icon>keep</md-gb-icon>
+                </button>
+                <button slot="trailing-actions" aria-label="Share ${recipe}">
+                  <md-gb-icon>share</md-gb-icon>
+                </button>
+                <button
+                  slot="trailing-actions"
+                  aria-label="Archive ${recipe}"
+                  @click=${archive}>
+                  <md-gb-icon>archive</md-gb-icon>
+                </button>
+              </md-gb-list-item>
+            `,
+          )}
+        </md-gb-list>
+      </div>
+    `;
+  },
+};
+
+const longPressSelect: MaterialStoryInit<StoryKnobs> = {
+  name: 'Long press to select',
+  styles,
+  render(knobs) {
+    const photos = ['Beach', 'Forest', 'Mountains', 'City', 'Desert', 'Lake'];
+    return html`
+      <div class="container" style="width: 360px;">
+        <p>
+          Long press an item to select it and enter selection mode, then tap
+          items to select more. Long press and drag to select several.
+        </p>
+        <md-gb-list
+          selectable
+          ?segmented=${knobs.segmented}
+          @itemselectionchange=${(event: Event) => {
+            const {selected} = event as ListSelectionChangeEvent;
+            console.log(`selected: ${selected.length}`);
+          }}>
+          ${photos.map(
+            (photo) => html`
+              <md-gb-list-item>
+                <md-gb-icon slot="leading">image</md-gb-icon>
+                ${photo}
+              </md-gb-list-item>
+            `,
+          )}
+        </md-gb-list>
+      </div>
+    `;
+  },
+};
+
+const density: MaterialStoryInit<StoryKnobs> = {
+  name: 'Density',
+  styles,
+  render(knobs) {
+    return html`
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+        ${[0, -1, -2, -3].map(
+          (value) => html`
+            <div class="container" style="width: 240px;">
+              <span>Density ${value}</span>
+              <md-gb-list
+                ?segmented=${knobs.segmented}
+                density=${value}
+                aria-label="Density ${value}">
+                <md-gb-list-item>
+                  <md-gb-icon slot="leading">inbox</md-gb-icon>
+                  Inbox
+                </md-gb-list-item>
+                <md-gb-list-item>
+                  <md-gb-icon slot="leading">send</md-gb-icon>
+                  Sent
+                  <span slot="supporting-text">Two-line item</span>
+                </md-gb-list-item>
+                <md-gb-list-item>
+                  <md-gb-icon slot="leading">drafts</md-gb-icon>
+                  Drafts
+                </md-gb-list-item>
+              </md-gb-list>
+            </div>
+          `,
+        )}
+      </div>
+    `;
+  },
+};
+
 /** List stories. */
 export const stories = [
   playground,
@@ -240,4 +435,9 @@ export const stories = [
   singleSelect,
   multiSelect,
   staticList,
+  expand,
+  reorder,
+  reveal,
+  longPressSelect,
+  density,
 ];

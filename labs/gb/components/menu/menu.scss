@@ -4,18 +4,40 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'menu-tokens';
 // go/keep-sorted end
+
+// Motion: container and group corners morph with the default spatial spring
+// (menus.md "Shape morphing in vertical menus creates an expressive active
+// state"); item corners and colors use the fast springs (Compose
+// `DropdownMenuGroup` / `rememberAnimatedShape`: `MotionSchemeKeyTokens.
+// FastSpatial`).
+$default-spatial: var(--md-sys-motion-spring-default-spatial-duration)
+  var(--md-sys-motion-spring-default-spatial);
+$fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
+  var(--md-sys-motion-spring-fast-spatial);
+$fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
+  var(--md-sys-motion-spring-fast-effects);
 
 @layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.divider;
 @layer md.comp.menu {
   .menu {
     & {
       @include menu-tokens.root;
+      @include menu-tokens.standard;
     }
+    // Density (menus.md "Density", web only): the items, and the items of
+    // submenus, inherit `--_density` from the menu.
+    @include density.classes('menu');
     &.menu-vibrant {
       @include menu-tokens.vibrant;
       --menu-vibrant: true;
+    }
+    // Grouped layout (menus.md "Vertical menus layout: Standard, Grouped"):
+    // the groups are the surfaces, separated by gaps.
+    &.menu-grouped {
+      --menu-grouped: true;
     }
     // Submenu focus shape morph: the menu holding focus is active, a menu
     // whose submenu holds focus is inactive.
@@ -28,12 +50,24 @@
 
     & {
       flex-direction: column;
+      box-sizing: border-box;
+      min-inline-size: var(--container-min-width);
+      max-inline-size: var(--container-max-width);
       box-shadow: var(--container-elevation);
       border-radius: var(--container-shape);
       background-color: var(--container-color);
       padding-block: var(--group-padding);
-      transition: border-radius var(--md-sys-motion-spring-default-spatial-duration)
-        var(--md-sys-motion-spring-default-spatial);
+      transition: border-radius $default-spatial;
+    }
+
+    &.menu-grouped {
+      gap: var(--gap);
+      padding: 0;
+      box-shadow: none;
+      background: none;
+      // Group shadows must not be clipped (menus.md: "Don't use gaps in
+      // scrollable menus").
+      overflow: visible;
     }
 
     &:popover-open,
@@ -44,6 +78,7 @@
     &:popover-open,
     :host(:popover-open):has(&.menu-host) {
       position-area: end span-end;
+      position-try-fallbacks: flip-block, flip-inline;
       border: none;
     }
 
@@ -51,10 +86,34 @@
       overflow: visible;
       background: none;
       padding: 0;
+      // The host is only a positioning box; the shadow is on `.menu`.
+      box-shadow: none;
+    }
+
+    // Submenus open next to their item without overlapping it (menus.md
+    // "Submenus should open next to the parent menu item without
+    // overlapping it"), aligned with the item's top edge.
+    :host([submenu]:popover-open):has(&.menu-host) {
+      position-area: inline-end span-block-end;
+      position-try-fallbacks: flip-inline, flip-block;
+      // Lines the submenu's first item up with the item that opened it.
+      @include menu-tokens.root;
+      margin-block-start: calc(-1 * var(--group-padding));
+    }
+
+    // Context menus open at the pointer (`showAt()`), not at an anchor.
+    :host([context-menu]:popover-open):has(&.menu-host) {
+      position-area: none;
+      position-try-fallbacks: none;
+      margin: 0;
     }
 
     &.menu-host {
       overflow: auto;
+    }
+
+    &.menu-host.menu-grouped {
+      overflow: visible;
     }
 
     .divider,
@@ -63,16 +122,118 @@
     }
   }
 
+  // A group of items: a `<div class="menu-group">` in Light DOM, or the
+  // root of `md-gb-menu-group`. In the standard layout it only groups items
+  // (and an optional section label); in the grouped layout it is a surface.
+  .menu-group {
+    display: contents;
+  }
+
+  @container style(--menu-grouped: true) {
+    .menu-group {
+      // Compose `DropdownMenuGroup`: a Surface in the menu's container color
+      // and elevation with `group.padding` above and below its items.
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--container-elevation);
+      background-color: var(--container-color);
+      padding-block: var(--group-padding);
+      // Compose `MenuDefaults.groupShape()`: the middle group has
+      // `group.shape`; the first and last groups round their outer corners
+      // with the container shape.
+      --_top-shape: var(--group-shape);
+      --_bottom-shape: var(--group-shape);
+      border-start-start-radius: var(--_top-shape);
+      border-start-end-radius: var(--_top-shape);
+      border-end-start-radius: var(--_bottom-shape);
+      border-end-end-radius: var(--_bottom-shape);
+      transition:
+        border-radius $default-spatial,
+        background-color $fast-effects;
+    }
+
+    .menu-group:first-child:not(:host > *),
+    :host(:first-of-type) > .menu-group {
+      --_top-shape: var(--container-shape);
+    }
+
+    .menu-group:last-child:not(:host > *),
+    :host(:last-of-type) > .menu-group {
+      --_bottom-shape: var(--container-shape);
+    }
+
+    // A group the pointer or focus has left after engaging it is inactive
+    // (Compose `shapeByInteraction`: `inactiveShape` once hovered and no
+    // longer hovered).
+    .menu-group.menu-group-inactive {
+      @include menu-tokens.inactive;
+      --_top-shape: var(--container-shape);
+      --_bottom-shape: var(--container-shape);
+    }
+  }
+
+  // Section label (menus.md anatomy "Label text (optional)", Compose
+  // `MenuDefaults.DropdownMenuGroupLabel`).
+  .menu-section-label {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-block-size: var(--section-label-height);
+    padding-inline: var(--section-label-leading-space)
+      var(--section-label-trailing-space);
+    color: var(--section-label-text-color);
+    font: var(--section-label-text);
+    letter-spacing: var(--section-label-text-tracking);
+    font-variation-settings: var(--section-label-text-axes);
+    user-select: none;
+  }
+
   .menu-item {
     & {
       @include menu-tokens.item;
+      @include menu-tokens.item-standard;
+      // Corner sizes: the item's own shape on every corner, replaced at the
+      // start and end of a menu or group and when selected.
+      --_top-shape: var(--shape);
+      --_bottom-shape: var(--shape);
+      --_selected-shape: initial;
     }
-    &:first-child {
+
+    // The first and last items of a menu or group round their outer corners
+    // (`menu-item.first-child.shape` / `last-child.shape`) and keep small
+    // inner corners (`*.inner-corner.corner-size`). Light DOM items match
+    // by position (after a section label), `md-gb-menu-item` hosts among
+    // their siblings of the same tag.
+    &:first-child:not(:host > *),
+    .menu-section-label + &,
+    :host(:first-of-type) > & {
       @include menu-tokens.item-first-child;
+      --_top-shape: var(--shape);
+      --_bottom-shape: var(--inner-corner-corner-size);
     }
-    &:last-child {
+    &:last-child:not(:host > *),
+    :host(:last-of-type) > & {
       @include menu-tokens.item-last-child;
+      --_top-shape: var(--inner-corner-corner-size);
+      --_bottom-shape: var(--shape);
     }
+    &:first-child:last-child:not(:host > *),
+    .menu-section-label + &:last-child,
+    :host(:only-of-type) > & {
+      --_top-shape: var(--shape);
+      --_bottom-shape: var(--shape);
+    }
+
+    &:where(:hover, .hover) {
+      @include menu-tokens.item-standard-hovered;
+    }
+    &:where(:focus-within, .focus) {
+      @include menu-tokens.item-standard-focused;
+    }
+    &:where(:active, .active) {
+      @include menu-tokens.item-standard-pressed;
+    }
+
     @container style(--menu-vibrant: true) {
       & {
         @include menu-tokens.item-vibrant;
@@ -88,21 +249,36 @@
       }
     }
 
+    // An item whose submenu is open keeps its hovered colors.
+    &.menu-item-expanded {
+      @include menu-tokens.item-standard-hovered;
+      @container style(--menu-vibrant: true) {
+        @include menu-tokens.item-vibrant-hovered;
+      }
+    }
+
     &:is(:checked, .checked) {
       @include menu-tokens.item-selected;
+      @include menu-tokens.item-standard-selected;
+      --_selected-shape: var(--shape);
+      // Selected items show the filled icon (styles/icons.md "Fill").
+      --md-icon-fill: 1;
       @container style(--menu-vibrant: true) {
-        @include menu-tokens.item-selected-vibrant;
+        @include menu-tokens.item-vibrant-selected;
       }
     }
 
     &:is(:disabled, .disabled) {
-      @include menu-tokens.item-disabled;
+      @include menu-tokens.item-standard-disabled;
       --disabled: true;
       @container style(--menu-vibrant: true) {
-        @include menu-tokens.item-disabled-vibrant;
+        @include menu-tokens.item-vibrant-disabled;
       }
-      &:where(:checked, .checked) {
-        @include menu-tokens.item-disabled-selected;
+      &:is(:checked, .checked) {
+        @include menu-tokens.item-standard-selected-disabled;
+        @container style(--menu-vibrant: true) {
+          @include menu-tokens.item-vibrant-selected-disabled;
+        }
       }
     }
 
@@ -114,9 +290,23 @@
       user-select: none;
       box-sizing: border-box;
       gap: var(--between-space);
-      min-height: calc(var(--height) + 4px);
-      border-radius: var(--shape);
-      padding-block: var(--top-space) var(--bottom-space);
+      // 44dp items with 2dp above and below keep a 48dp target at density
+      // 0. Density (menus.md "Density": "Increasing density decreases the
+      // top and bottom padding") removes `--density-step` per step, half
+      // above and half below, so a row is 44, 40 or 36px at -1 to -3. Rows
+      // are stacked full-width targets, so they cannot keep 48px without
+      // overlapping; density is opt-in (grids-spacing.md "Avoid applying
+      // component scaling by default").
+      min-height: #{density.size(calc(var(--height) + 4px))};
+      border-start-start-radius: var(--_selected-shape, var(--_top-shape));
+      border-start-end-radius: var(--_selected-shape, var(--_top-shape));
+      border-end-start-radius: var(--_selected-shape, var(--_bottom-shape));
+      border-end-end-radius: var(--_selected-shape, var(--_bottom-shape));
+      padding-block: #{density.size(
+          var(--top-space),
+          calc(var(--density-step) / 2)
+        )}
+        #{density.size(var(--bottom-space), calc(var(--density-step) / 2))};
       padding-inline: var(--leading-space) var(--trailing-space);
       background-image: none;
       outline: none;
@@ -125,6 +315,9 @@
       letter-spacing: var(--label-text-tracking);
       font-variation-settings: var(--label-text-axes);
       -webkit-font-smoothing: antialiased;
+      transition:
+        border-radius $fast-spatial,
+        color $fast-effects;
     }
 
     &::before {
@@ -137,7 +330,9 @@
       background-color: var(--container-color);
       background-image: var(--ripple);
       animation: var(--ripple-animation), var(--focus-ring-animation);
-      transition: var(--ripple-transition);
+      transition:
+        var(--ripple-transition),
+        background-color $fast-effects;
       outline: var(--focus-ring-outline);
       outline-offset: var(--focus-ring-offset);
     }
@@ -176,11 +371,28 @@
     .menu-item-leading {
       --md-icon-color: var(--leading-icon-color);
       --md-icon-size: var(--leading-icon-size);
+      color: var(--leading-icon-color);
     }
 
     .menu-item-trailing {
       --md-icon-color: var(--trailing-icon-color);
       --md-icon-size: var(--trailing-icon-size);
+      color: var(--trailing-icon-color);
+    }
+
+    // The submenu arrow points to where the submenu opens.
+    .menu-item-submenu-icon:dir(rtl) {
+      scale: -1 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu,
+    .menu-group,
+    .menu-item {
+      --md-sys-motion-spring-default-spatial-duration: 0.001ms;
+      --md-sys-motion-spring-fast-spatial-duration: 0.001ms;
+      --md-sys-motion-spring-fast-effects-duration: 0.001ms;
     }
   }
 }

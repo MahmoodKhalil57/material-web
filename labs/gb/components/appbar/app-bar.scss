@@ -7,6 +7,10 @@
 @use 'app-bar-tokens';
 // go/keep-sorted end
 
+// Compose SearchBarMaxWidth: the search bar in a search app bar stops
+// growing at 720dp and is centered in the remaining space.
+$search-bar-max-width: 720px;
+
 @layer md.sys;
 @layer md.comp.app-bar {
   // Component tokens
@@ -14,25 +18,16 @@
     @include app-bar-tokens.root;
   }
   .app-bar-md {
-    @include app-bar-tokens.medium;
+    @include app-bar-tokens.md-flexible;
   }
   .app-bar-lg {
-    @include app-bar-tokens.large;
+    @include app-bar-tokens.lg-flexible;
   }
-  .app-bar-with-subtitle {
-    @include app-bar-tokens.with-subtitle;
+  .app-bar-with-subtitle.app-bar-md {
+    @include app-bar-tokens.md-flexible-with-subtitle;
   }
   .app-bar-with-subtitle.app-bar-lg {
-    @include app-bar-tokens.with-subtitle-large;
-  }
-  .app-bar-search {
-    @include app-bar-tokens.search;
-  }
-  .app-bar-scrolled {
-    @include app-bar-tokens.on-scroll;
-  }
-  .app-bar-scrolled.app-bar-search {
-    @include app-bar-tokens.on-scroll-search;
+    @include app-bar-tokens.lg-flexible-with-subtitle;
   }
 
   // Component styles
@@ -47,22 +42,34 @@
     box-shadow: var(--container-elevation);
     color: var(--title-color);
     -webkit-font-smoothing: antialiased;
-    transition:
-      background-color 200ms ease,
-      box-shadow 200ms ease,
-      min-height 200ms ease;
+    // Compose animates the on-scroll container color with the default
+    // effects spring (TopAppBar / AppBarWithSearch).
+    transition-property: background-color, box-shadow;
+    transition-duration: var(--md-sys-motion-spring-default-effects-duration);
+    transition-timing-function: var(--md-sys-motion-spring-default-effects);
     padding-inline: var(--leading-space) var(--trailing-space);
   }
 
-  // Small and Search layouts (single row)
+  .app-bar-scrolled {
+    background-color: var(--on-scroll-container-color);
+    box-shadow: var(--on-scroll-container-elevation);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-bar,
+    .app-bar-search-bar {
+      transition: none;
+    }
+  }
+
+  // Small and search layouts (single row)
   .app-bar-sm,
   .app-bar-search {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
   }
 
-  // Medium and Large layouts (two rows)
+  // Medium and large flexible layouts (two rows)
   .app-bar-md,
   .app-bar-lg {
     flex-direction: column;
@@ -74,7 +81,7 @@
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      min-height: 64px;
+      min-height: var(--collapsed-height);
       width: 100%;
     }
 
@@ -82,10 +89,24 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding-bottom: 24px;
-      padding-inline: 12px;
+      // Compose: the title starts TopAppBarTitleInset after the 4dp
+      // horizontal padding, and sits Medium/LargeTitleBottomPadding above
+      // the bottom edge.
+      padding-block-end: var(--title-bottom-space);
+      padding-inline: var(--title-inset);
       flex: 1 1 auto;
       min-height: 0;
+    }
+
+    // Headlines can wrap to two lines in flexible app bars; they are not
+    // truncated (app-bars.md, Headline).
+    .app-bar-title {
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      overflow-wrap: anywhere;
     }
   }
 
@@ -104,27 +125,36 @@
 
   .app-bar-trailing {
     color: var(--trailing-icon-color);
+    margin-inline-start: auto;
   }
 
   .app-bar-title-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: flex-start;
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
   }
 
+  // Compose TopAppBarLayout: the title has 4dp horizontal padding and starts
+  // at least TopAppBarTitleInset from the leading padding, so it lines up
+  // 16dp from the edge when there is no navigation icon.
   .app-bar-sm .app-bar-title-wrapper {
     margin-inline: 4px;
+  }
+  .app-bar-sm:not(.app-bar-has-leading) .app-bar-title-wrapper {
+    margin-inline-start: var(--title-inset);
   }
 
   .app-bar-title {
     margin: 0;
-    font: var(--title);
-    font-variation-settings: var(--title-axes);
-    letter-spacing: var(--title-tracking);
+    font: var(--title-font);
+    font-variation-settings: var(--title-font-axes);
+    letter-spacing: var(--title-font-tracking);
     color: var(--title-color);
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -140,11 +170,11 @@
 
   .app-bar-subtitle {
     margin: 0;
-    margin-top: 2px;
-    font: var(--subtitle);
-    font-variation-settings: var(--subtitle-axes);
-    letter-spacing: var(--subtitle-tracking);
+    font: var(--subtitle-font);
+    font-variation-settings: var(--subtitle-font-axes);
+    letter-spacing: var(--subtitle-font-tracking);
     color: var(--subtitle-color);
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -158,11 +188,74 @@
     }
   }
 
+  .app-bar:not(.app-bar-with-subtitle) .app-bar-subtitle {
+    display: none;
+  }
+
+  // Centered text (app-bars.md, Configurations: text alignment). As in
+  // Compose, the title is centered on the whole app bar and only shifts when
+  // the leading or trailing content would overlap it.
+  .app-bar-sm.app-bar-centered {
+    display: grid;
+    grid-template-columns:
+      minmax(max-content, 1fr) minmax(0, max-content)
+      minmax(max-content, 1fr);
+
+    .app-bar-leading {
+      justify-self: start;
+    }
+    .app-bar-trailing {
+      justify-self: end;
+    }
+    .app-bar-title-wrapper,
+    &:not(.app-bar-has-leading) .app-bar-title-wrapper {
+      grid-column: 2;
+      margin-inline: 4px;
+    }
+  }
+
+  .app-bar-centered .app-bar-title-wrapper {
+    align-items: center;
+    text-align: center;
+  }
+
+  // Search app bar (Compose AppBarWithSearch): a small app bar holding a
+  // search bar, inset by the search leading / trailing space.
   .app-bar-search-container {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
+    justify-content: center;
     min-width: 0;
-    margin-inline: 8px;
+    padding-inline: var(--search-leading-space) var(--search-trailing-space);
+  }
+
+  .app-bar-search-bar {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: $search-bar-max-width;
+    min-height: var(--search-container-height);
+    background-color: var(--search-container-color);
+    border-radius: var(--search-container-shape);
+    color: var(--search-label-color);
+    font: var(--search-label-text-font);
+    font-variation-settings: var(--search-label-text-font-axes);
+    letter-spacing: var(--search-label-text-font-tracking);
+    transition: background-color
+      var(--md-sys-motion-spring-default-effects-duration)
+      var(--md-sys-motion-spring-default-effects);
+    overflow: hidden;
+  }
+
+  .app-bar-scrolled .app-bar-search-bar {
+    background-color: var(--search-on-scroll-container-color);
+  }
+
+  .app-bar-centered .app-bar-search-bar {
+    justify-content: center;
+    text-align: center;
   }
 }

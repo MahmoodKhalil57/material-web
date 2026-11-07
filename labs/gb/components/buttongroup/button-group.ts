@@ -5,6 +5,7 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
 
@@ -33,6 +34,7 @@ export const BUTTON_GROUP_CLASSES = {
   btnGroupStandard: 'btn-group-standard',
   btnGroupConnected: 'btn-group-connected',
   disabled: PSEUDO_CLASSES.disabled,
+  ...densityClassNames('btn-group'),
 };
 
 /** The state provided to the `buttonGroupClasses()` function. */
@@ -41,6 +43,8 @@ export interface ButtonGroupClassesState {
   variant?: ButtonGroupVariant;
   /** Whether the button group is disabled. */
   disabled?: boolean;
+  /** The density of the buttons inside, 0 (default) to -3. */
+  density?: number;
 }
 
 /**
@@ -52,12 +56,14 @@ export interface ButtonGroupClassesState {
 export function buttonGroupClasses({
   variant = 'standard',
   disabled = false,
+  density = 0,
 }: ButtonGroupClassesState = {}): ClassInfo {
   return {
     [BUTTON_GROUP_CLASSES.btnGroup]: true,
     [BUTTON_GROUP_CLASSES.btnGroupStandard]: variant === 'standard' || !variant,
     [BUTTON_GROUP_CLASSES.btnGroupConnected]: variant === 'connected',
     [BUTTON_GROUP_CLASSES.disabled]: disabled,
+    ...densityClasses(BUTTON_GROUP_CLASSES.btnGroup, density),
   };
 }
 

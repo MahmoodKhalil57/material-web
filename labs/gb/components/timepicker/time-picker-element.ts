@@ -25,6 +25,7 @@ import {mixinElementInternals} from '../../../behaviors/element-internals.js';
 import {button} from '../button/button.js';
 import {iconButton} from '../iconbutton/icon-button.js';
 import {ripple} from '../ripple/ripple.js';
+import {clampDensity, type Density} from '../shared/density.js';
 import {
   angleToValue,
   displayHour12,
@@ -183,6 +184,8 @@ const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
  * @cssprop --time-input-field-supporting-text - Input mode field label typography.
  * @cssprop --scrim-color - Modal scrim color.
  * @cssprop --scrim-opacity - Modal scrim opacity.
+ * @cssprop --density-step - Size removed per density step (time selectors,
+ *   input fields, period selector, dial).
  */
 export class TimePickerElement extends baseClass {
   // Layer order is pinned by the `@layer` statement at the top of
@@ -235,6 +238,27 @@ export class TimePickerElement extends baseClass {
    * one from the viewport (horizontal in short landscape viewports).
    */
   @property({reflect: true}) orientation: TimePickerOrientation | '' = '';
+
+  /**
+   * The density, from 0 (default) to -3 (time-pickers.md "Density",
+   * "High-density time picker"). Each step down removes 4px from the time
+   * selectors (80px), input fields (72px), the period selector (which
+   * follows their height) and the dial (256px); the time selectors, fields
+   * and dial labels stay at least 48px. The horizontal layout, used
+   * when the viewport is short, keeps the full-size dial ("Don't apply
+   * density to the time picker dial when the viewport is constrained.
+   * Instead, use an input picker"). Values are clamped to that range.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
 
   /**
    * `12` (with an AM/PM period selector), `24`, or `''` (default) to follow
@@ -294,7 +318,8 @@ export class TimePickerElement extends baseClass {
   inputModeLabel = 'Switch to text input mode';
 
   /** Accessible label of the mode toggle in input mode. */
-  @property({attribute: 'dial-mode-label'}) dialModeLabel = 'Switch to clock mode';
+  @property({attribute: 'dial-mode-label'}) dialModeLabel =
+    'Switch to clock mode';
 
   /**
    * Whether a modal picker is open. Setting it opens or closes the picker.
@@ -496,7 +521,9 @@ export class TimePickerElement extends baseClass {
   }
 
   private get headlineText() {
-    return this.headline || (this.mode === 'input' ? 'Enter time' : 'Select time');
+    return (
+      this.headline || (this.mode === 'input' ? 'Enter time' : 'Select time')
+    );
   }
 
   private get autoCommit() {
@@ -531,7 +558,10 @@ export class TimePickerElement extends baseClass {
 
   /** Updates the pending time and fires `input` when it changed. */
   private setPending(time: TimeOfDay) {
-    if (time.hour === this.pending.hour && time.minute === this.pending.minute) {
+    if (
+      time.hour === this.pending.hour &&
+      time.minute === this.pending.minute
+    ) {
       return;
     }
     this.pending = time;
@@ -568,11 +598,17 @@ export class TimePickerElement extends baseClass {
   }
 
   private setHour(hour: number) {
-    this.setPending({hour: ((hour % 24) + 24) % 24, minute: this.pending.minute});
+    this.setPending({
+      hour: ((hour % 24) + 24) % 24,
+      minute: this.pending.minute,
+    });
   }
 
   private setMinute(minute: number) {
-    this.setPending({hour: this.pending.hour, minute: ((minute % 60) + 60) % 60});
+    this.setPending({
+      hour: this.pending.hour,
+      minute: ((minute % 60) + 60) % 60,
+    });
   }
 
   /** Sets the hour from a displayed hour (1-12 on a 12-hour clock). */
@@ -743,13 +779,19 @@ export class TimePickerElement extends baseClass {
     event: KeyboardEvent,
     selection: TimePickerSelection,
   ): boolean {
-    if (!/^\d$/.test(event.key) || event.ctrlKey || event.metaKey || event.altKey) {
+    if (
+      !/^\d$/.test(event.key) ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey
+    ) {
       return false;
     }
     const combined = this.typeAhead + event.key;
     const max = selection === 'minute' ? 59 : this.is24Hour ? 23 : 12;
     const min = selection === 'hour' && !this.is24Hour ? 1 : 0;
-    let text = Number(combined) <= max && combined.length <= 2 ? combined : event.key;
+    let text =
+      Number(combined) <= max && combined.length <= 2 ? combined : event.key;
     let number = Number(text);
     if (number < min) {
       // `0` alone is no 12-hour hour yet; wait for the next digit.
@@ -823,14 +865,18 @@ export class TimePickerElement extends baseClass {
   };
 
   private readonly handlePeriodKeyDown = (event: KeyboardEvent) => {
-    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+    if (
+      !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)
+    ) {
       return;
     }
     event.preventDefault();
     this.setPeriod(!this.isPm);
     this.updateComplete.then(() => {
       this.shadowRoot
-        ?.querySelector<HTMLElement>('.time-picker-period [aria-checked="true"]')
+        ?.querySelector<HTMLElement>(
+          '.time-picker-period [aria-checked="true"]',
+        )
         ?.focus();
     });
   };
@@ -890,7 +936,8 @@ export class TimePickerElement extends baseClass {
   private readonly handleFieldKeyDown = (event: KeyboardEvent) => {
     const input = event.target as HTMLInputElement;
     const hour = input.dataset['selection'] === 'hour';
-    const delta = event.key === 'ArrowUp' ? 1 : event.key === 'ArrowDown' ? -1 : 0;
+    const delta =
+      event.key === 'ArrowUp' ? 1 : event.key === 'ArrowDown' ? -1 : 0;
     if (delta) {
       event.preventDefault();
       if (hour) {
@@ -1047,7 +1094,8 @@ export class TimePickerElement extends baseClass {
         @cancel=${this.handleNativeCancel}
         @close=${this.handleNativeClose}
         @pointerdown=${this.handleContainerPointerDown}
-        @click=${this.handleContainerClick}>
+        @click=${this.handleContainerClick}
+      >
         ${content}
       </dialog>`;
     }
@@ -1055,7 +1103,8 @@ export class TimePickerElement extends baseClass {
       class="${classAttr}"
       part="container"
       role="group"
-      aria-labelledby="headline">
+      aria-labelledby="headline"
+    >
       ${content}
     </div>`;
   }
@@ -1084,16 +1133,17 @@ export class TimePickerElement extends baseClass {
       selection === 'hour' ? this.selectHourLabel : this.selectMinuteLabel;
     return html`<button
       type="button"
-      class="time-picker-selector ripple focus-ring-outer ${selected
-        ? 'time-picker-selector-selected'
-        : ''}"
+      class="time-picker-selector ripple focus-ring-outer ${
+        selected ? 'time-picker-selector-selected' : ''
+      }"
       data-selection=${selection}
       aria-pressed=${selected ? 'true' : 'false'}
       aria-label="${label}, ${this.valueText(selection, value)}"
       ?disabled=${this.disabled}
       @click=${this.handleSelectorClick}
       @keydown=${this.handleSelectorKeyDown}
-      ${ripple()}>
+      ${ripple()}
+    >
       ${pad(value)}
     </button>`;
   }
@@ -1108,23 +1158,25 @@ export class TimePickerElement extends baseClass {
       return html`<button
         type="button"
         role="radio"
-        class="time-picker-period-button ripple focus-ring-inner ${checked
-          ? 'time-picker-period-selected'
-          : ''}"
+        class="time-picker-period-button ripple focus-ring-inner ${
+          checked ? 'time-picker-period-selected' : ''
+        }"
         data-period=${isPm ? 'pm' : 'am'}
         aria-checked=${checked ? 'true' : 'false'}
         tabindex=${checked ? '0' : '-1'}
         ?disabled=${this.disabled}
         @click=${this.handlePeriodClick}
         @keydown=${this.handlePeriodKeyDown}
-        ${ripple()}>
+        ${ripple()}
+      >
         ${label}
       </button>`;
     };
     return html`<div
       class="time-picker-period"
       role="radiogroup"
-      aria-label=${this.periodLabel}>
+      aria-label=${this.periodLabel}
+    >
       ${period(false, am)}${period(true, pm)}
     </div>`;
   }
@@ -1171,17 +1223,20 @@ export class TimePickerElement extends baseClass {
       @pointermove=${this.handleDialPointerMove}
       @pointerup=${this.handleDialPointerUp}
       @pointercancel=${this.handleDialPointerCancel}
-      @keydown=${this.handleDialKeyDown}>
+      @keydown=${this.handleDialKeyDown}
+    >
       <div
         class="time-picker-dial-face time-picker-dial-face-hour"
         ?data-active=${hourMode}
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         ${labels('hour')}
       </div>
       <div
         class="time-picker-dial-face time-picker-dial-face-minute"
         ?data-active=${!hourMode}
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         ${labels('minute')}
       </div>
       <div class="time-picker-dial-arm" aria-hidden="true">
@@ -1209,9 +1264,9 @@ export class TimePickerElement extends baseClass {
         top: `${50 - radius * 100 * Math.cos(angle)}%`,
       };
       return html`<span
-        class="time-picker-dial-label ${inner
-          ? 'time-picker-dial-label-inner'
-          : ''}"
+        class="time-picker-dial-label ${
+          inner ? 'time-picker-dial-label-inner' : ''
+        }"
         style=${styleMap(style)}
         >${format(value)}</span
       >`;
@@ -1223,9 +1278,9 @@ export class TimePickerElement extends baseClass {
       const hour = selection === 'hour';
       const label = hour ? this.hourLabel : this.minuteLabel;
       const invalid = hour ? this.hourInvalid : this.minuteInvalid;
-      return html`<label class="time-picker-field ${invalid
-        ? 'time-picker-field-error'
-        : ''}">
+      return html`<label
+        class="time-picker-field ${invalid ? 'time-picker-field-error' : ''}"
+      >
         <input
           class="time-picker-field-input"
           type="text"
@@ -1240,7 +1295,8 @@ export class TimePickerElement extends baseClass {
           @input=${this.handleFieldInput}
           @focus=${this.handleFieldFocus}
           @blur=${this.handleFieldBlur}
-          @keydown=${this.handleFieldKeyDown} />
+          @keydown=${this.handleFieldKeyDown}
+        />
         <span class="time-picker-field-label" aria-hidden="true">${label}</span>
       </label>`;
     };
@@ -1263,46 +1319,53 @@ export class TimePickerElement extends baseClass {
     }
     const toDial = this.mode === 'input';
     return html`<div class="time-picker-actions" part="actions">
-      ${showToggle
-        ? html`<button
-            type="button"
-            class="${iconButton({
-              color: 'standard',
-              size: 'sm',
-              classes: {'time-picker-mode-toggle': true},
-            })}"
-            aria-label=${toDial ? this.dialModeLabel : this.inputModeLabel}
-            ?disabled=${this.disabled}
-            @click=${this.toggleMode}>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d=${toDial ? CLOCK_ICON : KEYBOARD_ICON} />
-            </svg>
-          </button>`
-        : nothing}
-      <span class="time-picker-actions-spacer"></span>
-      ${this.hideActions
-        ? nothing
-        : html`<button
+      ${
+        showToggle
+          ? html`<button
               type="button"
-              class="${button({
-                color: 'text',
+              class="${iconButton({
+                color: 'standard',
                 size: 'sm',
-                classes: {'time-picker-cancel': true},
+                classes: {'time-picker-mode-toggle': true},
               })}"
-              @click=${this.cancel}>
-              ${this.cancelLabel}
-            </button>
-            <button
-              type="button"
-              class="${button({
-                color: 'text',
-                size: 'sm',
-                classes: {'time-picker-confirm': true},
-              })}"
+              aria-label=${toDial ? this.dialModeLabel : this.inputModeLabel}
               ?disabled=${this.disabled}
-              @click=${this.confirm}>
-              ${this.confirmLabel}
-            </button>`}
+              @click=${this.toggleMode}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d=${toDial ? CLOCK_ICON : KEYBOARD_ICON} />
+              </svg>
+            </button>`
+          : nothing
+      }
+      <span class="time-picker-actions-spacer"></span>
+      ${
+        this.hideActions
+          ? nothing
+          : html`<button
+                type="button"
+                class="${button({
+                  color: 'text',
+                  size: 'sm',
+                  classes: {'time-picker-cancel': true},
+                })}"
+                @click=${this.cancel}
+              >
+                ${this.cancelLabel}
+              </button>
+              <button
+                type="button"
+                class="${button({
+                  color: 'text',
+                  size: 'sm',
+                  classes: {'time-picker-confirm': true},
+                })}"
+                ?disabled=${this.disabled}
+                @click=${this.confirm}
+              >
+                ${this.confirmLabel}
+              </button>`
+      }
     </div>`;
   }
 

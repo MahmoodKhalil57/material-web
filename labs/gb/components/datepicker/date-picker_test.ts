@@ -30,11 +30,17 @@ import {
 import {DatePickerElement} from './date-picker-element.js';
 import './md-gb-date-picker.js';
 
-function q<T extends Element = HTMLElement>(el: DatePickerElement, selector: string) {
+function q<T extends Element = HTMLElement>(
+  el: DatePickerElement,
+  selector: string,
+) {
   return el.shadowRoot!.querySelector<T>(selector);
 }
 
-function qa<T extends Element = HTMLElement>(el: DatePickerElement, selector: string) {
+function qa<T extends Element = HTMLElement>(
+  el: DatePickerElement,
+  selector: string,
+) {
   return [...el.shadowRoot!.querySelectorAll<T>(selector)];
 }
 
@@ -82,7 +88,11 @@ function change(field: Element) {
 
 describe('date picker calendar model', () => {
   it('parses and formats ISO dates', () => {
-    expect(parseIsoDate('2025-08-17')).toEqual({year: 2025, month: 8, day: 17});
+    expect(parseIsoDate('2025-08-17')).toEqual({
+      year: 2025,
+      month: 8,
+      day: 17,
+    });
     expect(parseIsoDate('2025-02-30')).toBeNull();
     expect(parseIsoDate('17/08/2025')).toBeNull();
     expect(toIsoDate({year: 987, month: 1, day: 2})).toBe('0987-01-02');
@@ -168,7 +178,8 @@ describe('date picker calendar model', () => {
   it('reads the first day of the week from Intl', () => {
     expect(getFirstDayOfWeek('en-US')).toBe(0);
     const supported =
-      'getWeekInfo' in Intl.Locale.prototype || 'weekInfo' in Intl.Locale.prototype;
+      'getWeekInfo' in Intl.Locale.prototype ||
+      'weekInfo' in Intl.Locale.prototype;
     if (supported) {
       expect(getFirstDayOfWeek('de-DE')).toBe(1);
     }
@@ -188,17 +199,26 @@ describe('date picker keyboard targets', () => {
   it('moves by day and week, mirrored in RTL', () => {
     expect(getKeyboardTargetDate(keyOf('ArrowRight'), date)?.day).toBe(14);
     expect(getKeyboardTargetDate(keyOf('ArrowLeft'), date)?.day).toBe(12);
-    expect(getKeyboardTargetDate(keyOf('ArrowRight'), date, {rtl: true})?.day).toBe(12);
+    expect(
+      getKeyboardTargetDate(keyOf('ArrowRight'), date, {rtl: true})?.day,
+    ).toBe(12);
     expect(getKeyboardTargetDate(keyOf('ArrowDown'), date)?.day).toBe(20);
     expect(getKeyboardTargetDate(keyOf('ArrowUp'), date)?.day).toBe(6);
   });
 
-  it('moves to the week and month edges', () => {
-    expect(getKeyboardTargetDate(keyOf('Home'), date)?.day).toBe(10);
-    expect(getKeyboardTargetDate(keyOf('End'), date)?.day).toBe(16);
-    expect(getKeyboardTargetDate(keyOf('Home'), date, {firstDayOfWeek: 1})?.day).toBe(11);
-    expect(getKeyboardTargetDate(keyOf('Home', {ctrlKey: true}), date)?.day).toBe(1);
-    expect(getKeyboardTargetDate(keyOf('End', {ctrlKey: true}), date)?.day).toBe(31);
+  it('moves to the first and last day of the month with Home and End (spec)', () => {
+    expect(getKeyboardTargetDate(keyOf('Home'), date)).toEqual({
+      year: 2025,
+      month: 8,
+      day: 1,
+    });
+    expect(getKeyboardTargetDate(keyOf('End'), date)?.day).toBe(31);
+    expect(
+      getKeyboardTargetDate(keyOf('End'), {year: 2024, month: 2, day: 3})?.day,
+    ).toBe(29);
+    expect(
+      getKeyboardTargetDate(keyOf('Home', {ctrlKey: true}), date)?.day,
+    ).toBe(1);
   });
 
   it('moves by month and year', () => {
@@ -207,7 +227,9 @@ describe('date picker keyboard targets', () => {
       month: 9,
       day: 13,
     });
-    expect(getKeyboardTargetDate(keyOf('PageUp', {shiftKey: true}), date)).toEqual({
+    expect(
+      getKeyboardTargetDate(keyOf('PageUp', {shiftKey: true}), date),
+    ).toEqual({
       year: 2024,
       month: 8,
       day: 13,
@@ -218,12 +240,18 @@ describe('date picker keyboard targets', () => {
 
 describe('date picker classes', () => {
   it('returns container classes', () => {
-    const classes = datePickerClasses({modal: true, range: true, input: true});
+    const classes = datePickerClasses({
+      modal: true,
+      range: true,
+      input: true,
+    });
     expect(classes[DATE_PICKER_CLASSES.datePicker]).toBeTrue();
     expect(classes[DATE_PICKER_CLASSES.modal]).toBeTrue();
     expect(classes[DATE_PICKER_CLASSES.range]).toBeTrue();
     expect(classes[DATE_PICKER_CLASSES.input]).toBeTrue();
-    expect(datePickerClasses({input: true})[DATE_PICKER_CLASSES.input]).toBeFalse();
+    expect(
+      datePickerClasses({input: true})[DATE_PICKER_CLASSES.input],
+    ).toBeFalse();
   });
 
   it('returns day classes with a ripple', () => {
@@ -238,11 +266,14 @@ describe('date picker classes', () => {
 describe('<md-gb-date-picker>', () => {
   const env = new Environment();
 
-  async function setupTest(template = html`<md-gb-date-picker
-    inline
-    quick
-    locale="en-US"
-    value="2025-08-17"></md-gb-date-picker>`) {
+  async function setupTest(
+    template = html`<md-gb-date-picker
+      inline
+      quick
+      locale="en-US"
+      value="2025-08-17"
+    ></md-gb-date-picker>`,
+  ) {
     const root = env.render(template);
     await env.waitForStability();
     const picker = root.querySelector('md-gb-date-picker');
@@ -260,7 +291,9 @@ describe('<md-gb-date-picker>', () => {
   }
 
   it('is an instance of DatePickerElement with defaults', async () => {
-    const {picker} = await setupTest(html`<md-gb-date-picker></md-gb-date-picker>`);
+    const {picker} = await setupTest(
+      html`<md-gb-date-picker></md-gb-date-picker>`,
+    );
     expect(picker).toBeInstanceOf(DatePickerElement);
     expect(picker.variant).toBe('docked');
     expect(picker.range).toBeFalse();
@@ -286,9 +319,13 @@ describe('<md-gb-date-picker>', () => {
       const {picker} = await setupTest();
       const selected = cell(picker, '2025-08-17');
       expect(selected.getAttribute('role')).toBe('gridcell');
-      expect(selected.getAttribute('aria-label')).toBe('Sunday, August 17, 2025');
+      expect(selected.getAttribute('aria-label')).toBe(
+        'Sunday, August 17, 2025',
+      );
       expect(selected.getAttribute('aria-selected')).toBe('true');
-      expect(cell(picker, '2025-08-18').getAttribute('aria-selected')).toBe('false');
+      expect(cell(picker, '2025-08-18').getAttribute('aria-selected')).toBe(
+        'false',
+      );
       expect(
         selected.querySelector(`.${DATE_PICKER_CLASSES.daySelected}`),
       ).not.toBeNull();
@@ -302,10 +339,13 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('marks today', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        locale="en-US"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          locale="en-US"
+        ></md-gb-date-picker>`,
+      );
       const todayCell = cell(picker, toIsoDate(today()));
       expect(todayCell.getAttribute('aria-current')).toBe('date');
       expect(todayCell.getAttribute('aria-label')).toMatch(/^Today, /);
@@ -315,29 +355,35 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('starts the week on first-day-of-week', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        locale="en-US"
-        first-day-of-week="1"
-        value="2025-08-17"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          locale="en-US"
+          first-day-of-week="1"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
       const headers = qa(picker, '[role="columnheader"]');
       expect(headers[0].getAttribute('aria-label')).toBe('Monday');
     });
 
     it('localizes names with Intl', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        locale="de-DE"
-        first-day-of-week="1"
-        value="2025-08-17"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          locale="de-DE"
+          first-day-of-week="1"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
       expect(q(picker, '[role="grid"]')!.getAttribute('aria-label')).toBe(
         'August 2025',
       );
-      expect(qa(picker, '[role="columnheader"]')[0].getAttribute('aria-label')).toBe(
-        'Montag',
-      );
+      expect(
+        qa(picker, '[role="columnheader"]')[0].getAttribute('aria-label'),
+      ).toBe('Montag');
       expect(cell(picker, '2025-08-17').getAttribute('aria-label')).toBe(
         'Sonntag, 17. August 2025',
       );
@@ -372,13 +418,16 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('mirrors left and right in RTL', async () => {
-      const {picker} = await setupTest(html`<div dir="rtl">
-        <md-gb-date-picker
-          inline
-          quick
-          locale="en-US"
-          value="2025-08-17"></md-gb-date-picker>
-      </div>`);
+      const {picker} = await setupTest(
+        html`<div dir="rtl">
+          <md-gb-date-picker
+            inline
+            quick
+            locale="en-US"
+            value="2025-08-17"
+          ></md-gb-date-picker>
+        </div>`,
+      );
       key(cell(picker, '2025-08-17'), 'ArrowRight');
       await settle(picker);
       expect(focusedCell(picker)!.dataset['date']).toBe('2025-08-16');
@@ -403,14 +452,14 @@ describe('<md-gb-date-picker>', () => {
       expect(focusedCell(picker)!.dataset['date']).toBe('2024-08-17');
     });
 
-    it('moves to the start and end of the week with Home and End', async () => {
+    it('moves to the first and last day of the month with Home and End', async () => {
       const {picker} = await setupTest();
       key(cell(picker, '2025-08-13'), 'Home');
       await settle(picker);
-      expect(focusedCell(picker)!.dataset['date']).toBe('2025-08-10');
+      expect(focusedCell(picker)!.dataset['date']).toBe('2025-08-01');
       key(focusedCell(picker)!, 'End');
       await settle(picker);
-      expect(focusedCell(picker)!.dataset['date']).toBe('2025-08-16');
+      expect(focusedCell(picker)!.dataset['date']).toBe('2025-08-31');
     });
 
     it('selects with Space and confirms with Enter', async () => {
@@ -431,16 +480,21 @@ describe('<md-gb-date-picker>', () => {
       await settle(picker);
       expect(picker.value).toBe('2025-08-21');
       expect(changeSpy).toHaveBeenCalledTimes(1);
-      expect(changeSpy.calls.mostRecent().args[0].detail.value).toBe('2025-08-21');
+      expect(changeSpy.calls.mostRecent().args[0].detail.value).toBe(
+        '2025-08-21',
+      );
     });
 
     it('does not move past max', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        locale="en-US"
-        max="2025-08-20"
-        value="2025-08-17"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          locale="en-US"
+          max="2025-08-20"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
       key(cell(picker, '2025-08-17'), 'PageDown');
       await settle(picker);
       expect(focusedCell(picker)!.dataset['date']).toBe('2025-08-20');
@@ -454,7 +508,9 @@ describe('<md-gb-date-picker>', () => {
       picker.addEventListener('change', changeSpy);
       cell(picker, '2025-08-05').click();
       await settle(picker);
-      expect(cell(picker, '2025-08-05').getAttribute('aria-selected')).toBe('true');
+      expect(cell(picker, '2025-08-05').getAttribute('aria-selected')).toBe(
+        'true',
+      );
       expect(picker.value).toBe('2025-08-17');
 
       q(picker, '.date-picker-confirm')!.click();
@@ -473,16 +529,21 @@ describe('<md-gb-date-picker>', () => {
       await settle(picker);
       expect(cancelSpy).toHaveBeenCalledTimes(1);
       expect(picker.pendingValue).toBe('2025-08-17');
-      expect(cell(picker, '2025-08-17').getAttribute('aria-selected')).toBe('true');
+      expect(cell(picker, '2025-08-17').getAttribute('aria-selected')).toBe(
+        'true',
+      );
     });
 
     it('commits right away with hide-actions', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        hide-actions
-        locale="en-US"
-        value="2025-08-17"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          hide-actions
+          locale="en-US"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
       expect(q(picker, '.date-picker-actions')).toBeNull();
       cell(picker, '2025-08-09').click();
       await settle(picker);
@@ -490,12 +551,15 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('clears the selection with Clear', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        clearable
-        locale="en-US"
-        value="2025-08-17"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          clearable
+          locale="en-US"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
       q(picker, '.date-picker-clear')!.click();
       await settle(picker);
       expect(picker.pendingValue).toBe('');
@@ -505,25 +569,40 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('disables dates outside min and max and from isDateDisabled', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        locale="en-US"
-        min="2025-08-05"
-        max="2025-08-25"
-        .isDateDisabled=${(iso: string) => iso === '2025-08-12'}
-        value="2025-08-17"></md-gb-date-picker>`);
-      expect(cell(picker, '2025-08-04').getAttribute('aria-disabled')).toBe('true');
-      expect(cell(picker, '2025-08-26').getAttribute('aria-disabled')).toBe('true');
-      expect(cell(picker, '2025-08-12').getAttribute('aria-disabled')).toBe('true');
-      expect(cell(picker, '2025-08-13').hasAttribute('aria-disabled')).toBeFalse();
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          locale="en-US"
+          min="2025-08-05"
+          max="2025-08-25"
+          .isDateDisabled=${(iso: string) => iso === '2025-08-12'}
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
+      expect(cell(picker, '2025-08-04').getAttribute('aria-disabled')).toBe(
+        'true',
+      );
+      expect(cell(picker, '2025-08-26').getAttribute('aria-disabled')).toBe(
+        'true',
+      );
+      expect(cell(picker, '2025-08-12').getAttribute('aria-disabled')).toBe(
+        'true',
+      );
+      expect(
+        cell(picker, '2025-08-13').hasAttribute('aria-disabled'),
+      ).toBeFalse();
 
       cell(picker, '2025-08-12').click();
       await settle(picker);
       expect(picker.pendingValue).toBe('2025-08-17');
 
-      expect(q<HTMLButtonElement>(picker, '.date-picker-previous-month')!.disabled).toBeTrue();
-      expect(q<HTMLButtonElement>(picker, '.date-picker-next-month')!.disabled).toBeTrue();
+      expect(
+        q<HTMLButtonElement>(picker, '.date-picker-previous-month')!.disabled,
+      ).toBeTrue();
+      expect(
+        q<HTMLButtonElement>(picker, '.date-picker-next-month')!.disabled,
+      ).toBeTrue();
     });
 
     it('navigates months with the arrow buttons', async () => {
@@ -545,11 +624,14 @@ describe('<md-gb-date-picker>', () => {
 
   describe('range', () => {
     it('selects a start and end date with an in-range highlight', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        range
-        locale="en-US"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          range
+          locale="en-US"
+        ></md-gb-date-picker>`,
+      );
       picker.showMonth(2025, 8);
       await settle(picker);
       cell(picker, '2025-08-10').click();
@@ -584,24 +666,80 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('restarts the range when picking before the start', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        inline
-        quick
-        range
-        locale="en-US"
-        value="2025-08-10/"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          range
+          locale="en-US"
+          value="2025-08-10/"
+        ></md-gb-date-picker>`,
+      );
       cell(picker, '2025-08-05').click();
       await settle(picker);
       expect(picker.pendingValue).toBe('2025-08-05/');
     });
   });
 
+  describe('density', () => {
+    it('defaults to 0, clamps to 0..-3 and reflects', async () => {
+      const {picker} = await setupTest();
+      expect(picker.density).toBe(0);
+      picker.density = -8;
+      expect(picker.density).toBe(-3);
+      picker.density = 4;
+      expect(picker.density).toBe(0);
+      picker.density = -1;
+      await picker.updateComplete;
+      expect(picker.getAttribute('density')).toBe('-1');
+    });
+
+    it('passes the density to the docked text field', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          quick
+          locale="en-US"
+          density="-2"
+        ></md-gb-date-picker>`,
+      );
+      const field = q(picker, 'md-gb-text-field') as HTMLElement & {
+        density: number;
+      };
+      expect(field.density).toBe(-2);
+      await (field as unknown as {updateComplete: Promise<unknown>})
+        .updateComplete;
+      const container = field.shadowRoot!.querySelector(
+        '.text-field-container',
+      )!;
+      expect(container.getBoundingClientRect().height).toBe(48);
+    });
+
+    it('keeps the calendar out of an enclosing dense container', async () => {
+      const {picker} = await setupTest(
+        html`<div style="--_density: -3">
+          <md-gb-date-picker
+            inline
+            quick
+            locale="en-US"
+            value="2025-08-17"
+          ></md-gb-date-picker>
+        </div>`,
+      );
+      expect(
+        getComputedStyle(picker).getPropertyValue('--_density').trim(),
+      ).toBe('0');
+    });
+  });
+
   describe('docked', () => {
     async function setupDocked(value = '2025-08-17') {
-      return setupTest(html`<md-gb-date-picker
-        quick
-        locale="en-US"
-        value=${value}></md-gb-date-picker>`);
+      return setupTest(
+        html`<md-gb-date-picker
+          quick
+          locale="en-US"
+          value=${value}
+        ></md-gb-date-picker>`,
+      );
     }
 
     it('renders an outlined text field with the formatted value and format hint', async () => {
@@ -633,7 +771,9 @@ describe('<md-gb-date-picker>', () => {
       expect(surface.getAttribute('role')).toBe('dialog');
       expect(picker.shadowRoot!.activeElement).toBe(cell(picker, '2025-08-17'));
       expect(
-        q(picker, '.date-picker-calendar-button')!.getAttribute('aria-expanded'),
+        q(picker, '.date-picker-calendar-button')!.getAttribute(
+          'aria-expanded',
+        ),
       ).toBe('true');
     });
 
@@ -663,7 +803,9 @@ describe('<md-gb-date-picker>', () => {
       await settle(picker);
       expect(picker.value).toBe('2025-08-21');
       expect(picker.open).toBeFalse();
-      const field = q(picker, 'md-gb-text-field') as HTMLElement & {value: string};
+      const field = q(picker, 'md-gb-text-field') as HTMLElement & {
+        value: string;
+      };
       expect(field.value).toBe('08/21/2025');
     });
 
@@ -682,11 +824,14 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('shows an error for invalid typed dates', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        quick
-        locale="en-US"
-        min="2025-01-01"
-        max="2025-12-31"></md-gb-date-picker>`);
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          quick
+          locale="en-US"
+          min="2025-01-01"
+          max="2025-12-31"
+        ></md-gb-date-picker>`,
+      );
       const field = q(picker, 'md-gb-text-field') as HTMLElement & {
         error: boolean;
         errorText: string;
@@ -695,13 +840,17 @@ describe('<md-gb-date-picker>', () => {
       change(field);
       await settle(picker);
       expect(field.error).toBeTrue();
-      expect(field.errorText).toBe('Date does not match expected pattern: MM/DD/YYYY');
+      expect(field.errorText).toBe(
+        'Date does not match expected pattern: MM/DD/YYYY',
+      );
       expect(picker.value).toBe('');
 
       type(field, '01/01/2030');
       change(field);
       await settle(picker);
-      expect(field.errorText).toBe('Date out of expected year range 2025 - 2025');
+      expect(field.errorText).toBe(
+        'Date out of expected year range 2025 - 2025',
+      );
     });
 
     it('opens the month and year menus', async () => {
@@ -714,12 +863,16 @@ describe('<md-gb-date-picker>', () => {
       expect(options.length).toBe(12);
       expect(options[7].getAttribute('aria-selected')).toBe('true');
       expect(picker.shadowRoot!.activeElement).toBe(options[7]);
-      expect(q<HTMLButtonElement>(picker, '.date-picker-year-menu')!.disabled).toBeTrue();
+      expect(
+        q<HTMLButtonElement>(picker, '.date-picker-year-menu')!.disabled,
+      ).toBeTrue();
       expect(q(picker, '.date-picker-actions')).toBeNull();
 
       options[2].click();
       await settle(picker);
-      expect(q(picker, '[role="grid"]')!.getAttribute('aria-label')).toBe('March 2025');
+      expect(q(picker, '[role="grid"]')!.getAttribute('aria-label')).toBe(
+        'March 2025',
+      );
 
       q(picker, '.date-picker-year-menu')!.click();
       await settle(picker);
@@ -729,25 +882,34 @@ describe('<md-gb-date-picker>', () => {
       await settle(picker);
       key(picker.shadowRoot!.activeElement!, 'Enter');
       await settle(picker);
-      expect(q(picker, '[role="grid"]')!.getAttribute('aria-label')).toBe('March 2026');
+      expect(q(picker, '[role="grid"]')!.getAttribute('aria-label')).toBe(
+        'March 2026',
+      );
     });
 
     it('focuses the menus with Shift+M and Shift+Y', async () => {
       const {picker} = await setupTest();
       key(cell(picker, '2025-08-17'), 'M', {shiftKey: true});
-      expect(picker.shadowRoot!.activeElement).toBe(q(picker, '.date-picker-month-menu'));
+      expect(picker.shadowRoot!.activeElement).toBe(
+        q(picker, '.date-picker-month-menu'),
+      );
       key(cell(picker, '2025-08-17'), 'Y', {shiftKey: true});
-      expect(picker.shadowRoot!.activeElement).toBe(q(picker, '.date-picker-year-menu'));
+      expect(picker.shadowRoot!.activeElement).toBe(
+        q(picker, '.date-picker-year-menu'),
+      );
     });
   });
 
   describe('modal', () => {
     async function setupModal() {
-      const result = await setupTest(html`<md-gb-date-picker
-        variant="modal"
-        quick
-        locale="en-US"
-        value="2025-08-17"></md-gb-date-picker>`);
+      const result = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          quick
+          locale="en-US"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
       return result;
     }
 
@@ -760,9 +922,13 @@ describe('<md-gb-date-picker>', () => {
       expect(dialog.matches(':modal')).toBeTrue();
       expect(q(picker, '#title')!.textContent!.trim()).toBe('Select date');
       expect(dialog.getAttribute('aria-labelledby')).toBe('title');
-      expect(q(picker, '.date-picker-headline')!.textContent!.trim()).toBe('Sun, Aug 17');
+      expect(q(picker, '.date-picker-headline')!.textContent!.trim()).toBe(
+        'Sun, Aug 17',
+      );
       expect(picker.shadowRoot!.activeElement).toBe(cell(picker, '2025-08-17'));
-      expect(q(picker, '.date-picker-year-menu')!.textContent!.trim()).toBe('August 2025');
+      expect(q(picker, '.date-picker-year-menu')!.textContent!.trim()).toBe(
+        'August 2025',
+      );
     });
 
     it('updates the headline with the pending date', async () => {
@@ -771,7 +937,9 @@ describe('<md-gb-date-picker>', () => {
       await settle(picker);
       cell(picker, '2025-08-20').click();
       await settle(picker);
-      expect(q(picker, '.date-picker-headline')!.textContent!.trim()).toBe('Wed, Aug 20');
+      expect(q(picker, '.date-picker-headline')!.textContent!.trim()).toBe(
+        'Wed, Aug 20',
+      );
       q(picker, '.date-picker-confirm')!.click();
       await settle(picker);
       expect(picker.value).toBe('2025-08-20');
@@ -785,7 +953,9 @@ describe('<md-gb-date-picker>', () => {
       await settle(picker);
       const cancelSpy = jasmine.createSpy('cancel');
       picker.addEventListener('cancel', cancelSpy);
-      q(picker, 'dialog')!.dispatchEvent(new Event('cancel', {cancelable: true}));
+      q(picker, 'dialog')!.dispatchEvent(
+        new Event('cancel', {cancelable: true}),
+      );
       await settle(picker);
       expect(cancelSpy).toHaveBeenCalledTimes(1);
       expect(picker.open).toBeFalse();
@@ -819,10 +989,14 @@ describe('<md-gb-date-picker>', () => {
       // Three years per row.
       key(selected, 'ArrowDown');
       await settle(picker);
-      expect(picker.shadowRoot!.activeElement!.textContent!.trim()).toBe('2028');
+      expect(picker.shadowRoot!.activeElement!.textContent!.trim()).toBe(
+        '2028',
+      );
       key(picker.shadowRoot!.activeElement!, 'Enter');
       await settle(picker);
-      expect(q(picker, '[role="grid"]')!.getAttribute('aria-label')).toBe('August 2028');
+      expect(q(picker, '[role="grid"]')!.getAttribute('aria-label')).toBe(
+        'August 2028',
+      );
     });
 
     it('switches to the date input and validates it', async () => {
@@ -830,12 +1004,17 @@ describe('<md-gb-date-picker>', () => {
       await picker.show();
       await settle(picker);
       const toggle = q(picker, '.date-picker-mode-toggle')!;
-      expect(toggle.getAttribute('aria-label')).toBe('Switch to text input mode');
+      expect(toggle.getAttribute('aria-label')).toBe(
+        'Switch to text input mode',
+      );
       toggle.click();
       await settle(picker);
       expect(picker.mode).toBe('input');
       expect(q(picker, '[role="grid"]')).toBeNull();
-      const field = q(picker, '.date-picker-inputs md-gb-text-field') as HTMLElement & {
+      const field = q(
+        picker,
+        '.date-picker-inputs md-gb-text-field',
+      ) as HTMLElement & {
         value: string;
         label: string;
         error: boolean;
@@ -850,7 +1029,9 @@ describe('<md-gb-date-picker>', () => {
       type(field, '9/1/2025');
       await settle(picker);
       expect(picker.pendingValue).toBe('2025-09-01');
-      expect(q(picker, '.date-picker-headline')!.textContent!.trim()).toBe('Mon, Sep 1');
+      expect(q(picker, '.date-picker-headline')!.textContent!.trim()).toBe(
+        'Mon, Sep 1',
+      );
 
       type(field, '99/99/2025');
       await settle(picker);
@@ -867,15 +1048,21 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('shows two fields for a range input', async () => {
-      const {picker} = await setupTest(html`<md-gb-date-picker
-        variant="modal"
-        inline
-        range
-        mode="input"
-        quick
-        locale="en-US"
-        value="2025-08-17/2025-08-23"></md-gb-date-picker>`);
-      const fields = qa(picker, '.date-picker-inputs md-gb-text-field') as Array<
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          inline
+          range
+          mode="input"
+          quick
+          locale="en-US"
+          value="2025-08-17/2025-08-23"
+        ></md-gb-date-picker>`,
+      );
+      const fields = qa(
+        picker,
+        '.date-picker-inputs md-gb-text-field',
+      ) as Array<
         HTMLElement & {label: string; value: string; errorText: string}
       >;
       expect(fields.map((f) => f.label)).toEqual(['Start date', 'End date']);
@@ -891,14 +1078,17 @@ describe('<md-gb-date-picker>', () => {
 
   describe('form association', () => {
     it('submits the value under its name and resets', async () => {
-      const {root, picker} = await setupTest(html`<form>
-        <md-gb-date-picker
-          name="date"
-          inline
-          quick
-          locale="en-US"
-          value="2025-08-17"></md-gb-date-picker>
-      </form>`);
+      const {root, picker} = await setupTest(
+        html`<form>
+          <md-gb-date-picker
+            name="date"
+            inline
+            quick
+            locale="en-US"
+            value="2025-08-17"
+          ></md-gb-date-picker>
+        </form>`,
+      );
       const form = root.querySelector('form')!;
       expect(new FormData(form).get('date')).toBe('2025-08-17');
       picker.value = '2025-09-01';
@@ -910,17 +1100,540 @@ describe('<md-gb-date-picker>', () => {
     });
 
     it('submits a range as an ISO interval', async () => {
-      const {root} = await setupTest(html`<form>
-        <md-gb-date-picker
-          name="trip"
-          range
-          inline
-          quick
-          value="2025-08-17/2025-08-23"></md-gb-date-picker>
-      </form>`);
+      const {root} = await setupTest(
+        html`<form>
+          <md-gb-date-picker
+            name="trip"
+            range
+            inline
+            quick
+            value="2025-08-17/2025-08-23"
+          ></md-gb-date-picker>
+        </form>`,
+      );
       expect(new FormData(root.querySelector('form')!).get('trip')).toBe(
         '2025-08-17/2025-08-23',
       );
+    });
+  });
+
+  describe('tooltips', () => {
+    it('shows the shortcut key in the arrow and menu button tooltips', async () => {
+      const {picker} = await setupTest();
+      const previousYear = q(picker, '.date-picker-previous-year')!;
+      expect(previousYear.hasAttribute('title')).toBeFalse();
+      expect(previousYear.getAttribute('aria-keyshortcuts')).toBe(
+        'Shift+PageUp',
+      );
+      const tooltip = q(picker, `md-gb-tooltip[for="${previousYear.id}"]`)!;
+      expect(tooltip.textContent!.trim()).toBe(
+        'Change to previous year (Shift + Page Up)',
+      );
+      expect(
+        q(picker, 'md-gb-tooltip[for="next-month"]')!.textContent!.trim(),
+      ).toBe('Change to next month (Page Down)');
+      expect(
+        q(picker, 'md-gb-tooltip[for="month-menu"]')!.textContent!.trim(),
+      ).toBe('Select month (Shift + M)');
+      expect(
+        q(picker, '.date-picker-year-menu')!.getAttribute('aria-keyshortcuts'),
+      ).toBe('Shift+Y');
+      expect(qa(picker, '[title]').length).toBe(0);
+    });
+
+    it('names the weekdays in tooltips', async () => {
+      const {picker} = await setupTest();
+      const weekdays = qa(picker, '[role="columnheader"]');
+      expect(weekdays.length).toBe(7);
+      const tooltip = q(picker, `md-gb-tooltip[for="${weekdays[0].id}"]`)!;
+      expect(tooltip.textContent!.trim()).toBe('Sunday');
+      expect(weekdays[0].getAttribute('aria-label')).toBe('Sunday');
+      expect(weekdays[0].textContent!.trim()).toBe('S');
+    });
+  });
+
+  describe('swipe', () => {
+    function pointer(
+      target: Element,
+      typeName: string,
+      clientX: number,
+      clientY = 100,
+    ) {
+      target.dispatchEvent(
+        new PointerEvent(typeName, {
+          pointerId: 1,
+          isPrimary: true,
+          button: 0,
+          pointerType: 'touch',
+          clientX,
+          clientY,
+          bubbles: true,
+          composed: true,
+          cancelable: true,
+        }),
+      );
+    }
+
+    function gridLabel(picker: DatePickerElement) {
+      return q(picker, '[role="grid"]')!.getAttribute('aria-label');
+    }
+
+    it('drags the month with the previous and next months beside it', async () => {
+      const {picker} = await setupTest();
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(cell(picker, '2025-08-13'), 'pointerdown', 200);
+      pointer(pager, 'pointermove', 140);
+      await settle(picker);
+      const track = q(picker, '.date-picker-pager-track')!;
+      expect(track.style.translate).toBe('-60px');
+      const next = q(picker, '.date-picker-weeks-adjacent-next')!;
+      expect(next.getAttribute('aria-hidden')).toBe('true');
+      expect(next.hasAttribute('inert')).toBeTrue();
+      expect(next.querySelector('[data-date="2025-09-10"]')).not.toBeNull();
+      expect(q(picker, '.date-picker-weeks-adjacent-prev')).not.toBeNull();
+      expect(gridLabel(picker)).toBe('August 2025');
+    });
+
+    it('moves to the next month after a swipe to the left', async () => {
+      const {picker} = await setupTest();
+      const inputSpy = jasmine.createSpy('input');
+      picker.addEventListener('input', inputSpy);
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(cell(picker, '2025-08-13'), 'pointerdown', 300);
+      pointer(pager, 'pointermove', 250);
+      pointer(pager, 'pointermove', 60);
+      pointer(pager, 'pointerup', 60);
+      // The click that ends the swipe doesn't pick a date.
+      cell(picker, '2025-08-13').click();
+      await settle(picker);
+      expect(gridLabel(picker)).toBe('September 2025');
+      expect(q(picker, '.date-picker-weeks-adjacent-next')).toBeNull();
+      expect(q(picker, '.date-picker-pager-track')!.style.translate).toBe('');
+      expect(inputSpy).not.toHaveBeenCalled();
+      expect(picker.pendingValue).toBe('2025-08-17');
+    });
+
+    it('moves to the previous month after a swipe to the right', async () => {
+      const {picker} = await setupTest();
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(pager, 'pointerdown', 40);
+      pointer(pager, 'pointermove', 60);
+      pointer(pager, 'pointermove', 300);
+      pointer(pager, 'pointerup', 300);
+      await settle(picker);
+      expect(gridLabel(picker)).toBe('July 2025');
+    });
+
+    it('mirrors the swipe direction in RTL', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          dir="rtl"
+          inline
+          quick
+          locale="en-US"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(pager, 'pointerdown', 300);
+      pointer(pager, 'pointermove', 250);
+      pointer(pager, 'pointermove', 60);
+      pointer(pager, 'pointerup', 60);
+      await settle(picker);
+      expect(gridLabel(picker)).toBe('July 2025');
+    });
+
+    it('springs back when released short of halfway after a pause', async () => {
+      const {picker} = await setupTest();
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(pager, 'pointerdown', 200);
+      pointer(pager, 'pointermove', 100);
+      // Hold still past the velocity horizon (the mock clock doesn't move
+      // event time stamps), so the release isn't a fling.
+      const until = performance.now() + 150;
+      while (performance.now() < until) {
+        // Wait.
+      }
+      pointer(pager, 'pointermove', 100);
+      pointer(pager, 'pointerup', 100);
+      await settle(picker);
+      expect(gridLabel(picker)).toBe('August 2025');
+      expect(q(picker, '.date-picker-weeks-adjacent-next')).toBeNull();
+    });
+
+    it('leaves vertical gestures alone', async () => {
+      const {picker} = await setupTest();
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(pager, 'pointerdown', 200, 100);
+      pointer(pager, 'pointermove', 195, 160);
+      pointer(pager, 'pointermove', 60, 170);
+      await settle(picker);
+      expect(q(picker, '.date-picker-weeks-adjacent-next')).toBeNull();
+      pointer(pager, 'pointerup', 60, 170);
+      await settle(picker);
+      expect(gridLabel(picker)).toBe('August 2025');
+    });
+
+    it('does not move past max', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          inline
+          quick
+          locale="en-US"
+          max="2025-08-31"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(pager, 'pointerdown', 300);
+      pointer(pager, 'pointermove', 100);
+      await settle(picker);
+      expect(q(picker, '.date-picker-pager-track')!.style.translate).toBe(
+        '0px',
+      );
+      expect(q(picker, '.date-picker-weeks-adjacent-next')).toBeNull();
+      pointer(pager, 'pointermove', 40);
+      pointer(pager, 'pointerup', 40);
+      await settle(picker);
+      expect(gridLabel(picker)).toBe('August 2025');
+    });
+
+    it('keeps the focused date focusable after a swipe', async () => {
+      const {picker} = await setupTest();
+      cell(picker, '2025-08-17').focus();
+      const pager = q(picker, '.date-picker-pager')!;
+      pointer(pager, 'pointerdown', 300);
+      pointer(pager, 'pointermove', 250);
+      pointer(pager, 'pointermove', 60);
+      pointer(pager, 'pointerup', 60);
+      await settle(picker);
+      expect(picker.shadowRoot!.activeElement).toBe(cell(picker, '2025-09-17'));
+    });
+  });
+
+  describe('modal range (scrolling months)', () => {
+    async function setupRange() {
+      const result = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          inline
+          range
+          quick
+          locale="en-US"
+          value="2025-08-17/2025-08-23"
+        ></md-gb-date-picker>`,
+      );
+      await settle(result.picker);
+      return result;
+    }
+
+    function list(picker: DatePickerElement) {
+      return q(picker, '.date-picker-months')!;
+    }
+
+    function months(picker: DatePickerElement) {
+      return qa(picker, '.date-picker-month').map((el) => el.dataset['month']);
+    }
+
+    it('renders a vertically scrolling list of months with subheads', async () => {
+      const {picker} = await setupRange();
+      expect(q(picker, '.date-picker-scrolling')).not.toBeNull();
+      // No arrows or year menu: the months scroll (spec, Compose).
+      expect(q(picker, '.date-picker-next-month')).toBeNull();
+      expect(q(picker, '.date-picker-year-menu')).toBeNull();
+      const august = q(picker, '[data-month="2025-08"]')!;
+      const subhead = august.querySelector('.date-picker-month-subhead')!;
+      expect(subhead.textContent!.trim()).toBe('August 2025');
+      const grid = august.querySelector('[role="grid"]')!;
+      expect(grid.getAttribute('aria-labelledby')).toBe(subhead.id);
+      // The list starts at the displayed month.
+      expect(Math.abs(august.offsetTop - list(picker).scrollTop)).toBeLessThan(
+        2,
+      );
+      // Six weeks per month (Compose MaxCalendarRows).
+      expect(grid.querySelectorAll('[role="row"]').length).toBe(6);
+    });
+
+    it('uses the month subhead tokens', async () => {
+      const {picker} = await setupRange();
+      const subhead = q(picker, '.date-picker-month-subhead')!;
+      const style = getComputedStyle(subhead);
+      const probe = document.createElement('div');
+      probe.style.color = 'var(--md-sys-color-on-surface-variant)';
+      picker.shadowRoot!.appendChild(probe);
+      expect(style.color).toBe(getComputedStyle(probe).color);
+      probe.remove();
+      expect(style.paddingTop).toBe('20px');
+      expect(style.paddingBottom).toBe('8px');
+      expect(style.paddingInlineStart).toBe('24px');
+    });
+
+    it('renders only the months in view', async () => {
+      const {picker} = await setupRange();
+      // 1900-2100 is 2412 months.
+      expect(months(picker).length).toBeLessThan(8);
+      expect(months(picker)).toContain('2025-08');
+      const scroller = list(picker);
+      const height = q(picker, '.date-picker-month')!.offsetHeight;
+      scroller.scrollTop = (2030 - 1900) * 12 * height;
+      scroller.dispatchEvent(new Event('scroll'));
+      await settle(picker);
+      expect(months(picker)).toContain('2030-01');
+      expect(months(picker)).toContain('2030-02');
+      expect(months(picker)).not.toContain('2025-09');
+      // The month with the focused date stays rendered so Tab can reach it.
+      expect(months(picker)).toContain('2025-08');
+      expect(
+        q(picker, '.date-picker-months [tabindex="0"]')!.dataset['date'],
+      ).toBe('2025-08-17');
+    });
+
+    it('moves focus across months with the keyboard', async () => {
+      const {picker} = await setupRange();
+      const start = cell(picker, '2025-08-17');
+      start.focus();
+      key(start, 'PageDown');
+      await settle(picker);
+      expect(picker.shadowRoot!.activeElement).toBe(cell(picker, '2025-09-17'));
+      key(cell(picker, '2025-09-17'), 'End');
+      await settle(picker);
+      key(cell(picker, '2025-09-30'), 'ArrowDown');
+      await settle(picker);
+      expect(picker.shadowRoot!.activeElement).toBe(cell(picker, '2025-10-07'));
+      // The focused date is scrolled into view.
+      const scroller = list(picker).getBoundingClientRect();
+      const focused = cell(picker, '2025-10-07').getBoundingClientRect();
+      expect(focused.top).toBeGreaterThanOrEqual(scroller.top - 1);
+      expect(focused.bottom).toBeLessThanOrEqual(scroller.bottom + 1);
+    });
+
+    it('selects a range across months', async () => {
+      const {picker} = await setupRange();
+      cell(picker, '2025-08-30').click();
+      await settle(picker);
+      cell(picker, '2025-09-02').click();
+      await settle(picker);
+      expect(picker.pendingValue).toBe('2025-08-30/2025-09-02');
+      expect(cell(picker, '2025-08-31').classList).toContain(
+        'date-picker-cell-in-range',
+      );
+      expect(cell(picker, '2025-09-01').classList).toContain(
+        'date-picker-cell-in-range',
+      );
+      expect(cell(picker, '2025-09-02').classList).toContain(
+        'date-picker-cell-range-end',
+      );
+      expect(
+        q(picker, '.date-picker-headline')!
+          .textContent!.replace(/\s+/g, ' ')
+          .trim(),
+      ).toBe('Aug 30 – Sep 2');
+    });
+
+    it('limits the months to the min and max years', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          inline
+          range
+          quick
+          locale="en-US"
+          min="2025-03-01"
+          max="2025-10-31"
+          value="2025-08-17/2025-08-23"
+        ></md-gb-date-picker>`,
+      );
+      await settle(picker);
+      const content = q(picker, '.date-picker-months-content')!;
+      const height = q(picker, '.date-picker-month')!.offsetHeight;
+      expect(content.offsetHeight).toBe(12 * height);
+      expect(cell(picker, '2025-08-17')).toBeTruthy();
+    });
+
+    it('scrolls to the displayed month when opened as a dialog', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          range
+          quick
+          locale="en-US"
+          value="2025-08-17/2025-08-23"
+        ></md-gb-date-picker>`,
+      );
+      await picker.show();
+      await settle(picker);
+      const august = q(picker, '[data-month="2025-08"]')!;
+      expect(Math.abs(august.offsetTop - list(picker).scrollTop)).toBeLessThan(
+        2,
+      );
+      expect(picker.shadowRoot!.activeElement).toBe(cell(picker, '2025-08-17'));
+      await picker.close();
+    });
+
+    it('switches between the month list and the date input', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          inline
+          range
+          quick
+          mode="input"
+          locale="en-US"
+        ></md-gb-date-picker>`,
+      );
+      expect(q(picker, '.date-picker-months')).toBeNull();
+      q(picker, '.date-picker-mode-toggle')!.click();
+      await settle(picker);
+      expect(q(picker, '.date-picker-months')).not.toBeNull();
+    });
+  });
+
+  describe('full screen', () => {
+    async function setupFullscreen() {
+      const result = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          fullscreen
+          range
+          quick
+          locale="en-US"
+          value="2025-08-17/2025-08-23"
+        ></md-gb-date-picker>`,
+      );
+      await result.picker.show();
+      await settle(result.picker);
+      return result;
+    }
+
+    it('covers the window with a close button and Save', async () => {
+      const {picker} = await setupFullscreen();
+      const dialog = q<HTMLDialogElement>(picker, 'dialog')!;
+      expect(dialog.classList).toContain('date-picker-dialog-fullscreen');
+      const rect = dialog.getBoundingClientRect();
+      expect(Math.round(rect.width)).toBe(document.documentElement.clientWidth);
+      expect(Math.round(rect.height)).toBe(
+        document.documentElement.clientHeight,
+      );
+      const surface = q(picker, '.date-picker')!;
+      expect(getComputedStyle(surface).borderTopLeftRadius).toBe('0px');
+      expect(getComputedStyle(surface).boxShadow).toBe('none');
+      expect(q(picker, '.date-picker-close')!.getAttribute('aria-label')).toBe(
+        'Close',
+      );
+      expect(q(picker, '.date-picker-save')!.textContent!.trim()).toBe('Save');
+      expect(q(picker, '.date-picker-actions')).toBeNull();
+      expect(
+        q(picker, '.date-picker-modal-header')!.offsetHeight,
+      ).toBeGreaterThanOrEqual(128);
+      expect(q(picker, '.date-picker-months')).not.toBeNull();
+      await picker.close();
+    });
+
+    it('saves the pending range with Save', async () => {
+      const {picker} = await setupFullscreen();
+      cell(picker, '2025-08-20').click();
+      cell(picker, '2025-08-22').click();
+      await settle(picker);
+      q(picker, '.date-picker-save')!.click();
+      await settle(picker);
+      expect(picker.value).toBe('2025-08-20/2025-08-22');
+      expect(picker.open).toBeFalse();
+    });
+
+    it('discards the pending range with the close button', async () => {
+      const {picker} = await setupFullscreen();
+      const cancelSpy = jasmine.createSpy('cancel');
+      picker.addEventListener('cancel', cancelSpy);
+      cell(picker, '2025-08-20').click();
+      await settle(picker);
+      q(picker, '.date-picker-close')!.click();
+      await settle(picker);
+      expect(cancelSpy).toHaveBeenCalledTimes(1);
+      expect(picker.open).toBeFalse();
+      expect(picker.value).toBe('2025-08-17/2025-08-23');
+    });
+
+    it('also works for a single date', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          variant="modal"
+          fullscreen
+          inline
+          quick
+          locale="en-US"
+          value="2025-08-17"
+        ></md-gb-date-picker>`,
+      );
+      expect(q(picker, '.date-picker-close')).not.toBeNull();
+      expect(q(picker, '.date-picker-save')).not.toBeNull();
+      expect(q(picker, '.date-picker-next-month')).not.toBeNull();
+      expect(q(picker, '.date-picker-months')).toBeNull();
+    });
+  });
+
+  describe('required', () => {
+    it('is invalid without a value', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          required
+          quick
+          locale="en-US"
+        ></md-gb-date-picker>`,
+      );
+      expect(picker.required).toBeTrue();
+      expect(picker.checkValidity()).toBeFalse();
+      expect(picker.validity.valueMissing).toBeTrue();
+      expect(picker.validationMessage).not.toBe('');
+      picker.value = '2025-08-17';
+      await settle(picker);
+      expect(picker.checkValidity()).toBeTrue();
+      picker.required = false;
+      picker.value = '';
+      await settle(picker);
+      expect(picker.checkValidity()).toBeTrue();
+    });
+
+    it('needs both dates of a range', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-date-picker
+          required
+          range
+          quick
+          locale="en-US"
+          value="2025-08-17/"
+        ></md-gb-date-picker>`,
+      );
+      expect(picker.validity.valueMissing).toBeTrue();
+      picker.value = '2025-08-17/2025-08-20';
+      await settle(picker);
+      expect(picker.validity.valid).toBeTrue();
+    });
+
+    it('blocks form submission and shows the message on the field', async () => {
+      const {root, picker} = await setupTest(
+        html`<form>
+          <md-gb-date-picker
+            name="date"
+            required
+            quick
+            locale="en-US"
+          ></md-gb-date-picker>
+        </form>`,
+      );
+      const form = root.querySelector('form')!;
+      expect(form.checkValidity()).toBeFalse();
+      picker.reportValidity();
+      await settle(picker);
+      const field = q(picker, '.date-picker-text-field') as HTMLElement & {
+        error: boolean;
+        errorText: string;
+      };
+      expect(field.error).toBeTrue();
+      expect(field.errorText).toBe(picker.validationMessage);
+      picker.value = '2025-08-17';
+      await settle(picker);
+      expect(form.checkValidity()).toBeTrue();
+      expect(field.error).toBeFalse();
     });
   });
 });

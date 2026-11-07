@@ -117,8 +117,8 @@ $drag-target-size: 48px;
     max-block-size: calc(100% - var(--top-margin));
     background-color: var(--container-color);
     box-shadow: var(--container-elevation);
-    border-start-start-radius: var(--container-shape);
-    border-start-end-radius: var(--container-shape);
+    // md.comp.sheet.bottom.docked.container.shape: corner-extra-large-top.
+    border-radius: var(--container-shape);
     pointer-events: auto;
     transform: translateY(var(--_offset));
     // Compose BottomSheet: defaultSpatialSpec to show and settle,

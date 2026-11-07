@@ -4,6 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'time-picker-tokens';
 // go/keep-sorted end
 
@@ -65,6 +66,18 @@ $window-margin: 24px;
   // inherits the host's tokens, so values set on the host still apply.
   :host > .time-picker {
     @include time-picker-tokens.inherit;
+  }
+
+  // Density (time-pickers.md "Density"): the `density` attribute of the host
+  // or a `.time-picker-density-N` class, 0 to -3. Each step removes
+  // `--density-step` from the time selectors, input fields, period selector
+  // (it follows their height) and the dial; at -3 the selectors (68dp),
+  // fields (60dp) and dial labels (48dp) are still 48dp targets. The actions
+  // and mode toggle keep their size.
+  @include density.levels('time-picker');
+
+  .time-picker-actions {
+    --_density: 0;
   }
 
   // ---- Container ----
@@ -204,7 +217,7 @@ $window-margin: 24px;
     justify-content: center;
     flex: none;
     inline-size: $separator-width;
-    block-size: var(--time-selector-container-height);
+    block-size: #{density.size(var(--time-selector-container-height))};
     color: var(--time-selector-separator-color);
     font: var(--time-selector-separator);
     letter-spacing: var(--time-selector-separator-tracking);
@@ -214,7 +227,7 @@ $window-margin: 24px;
 
   .time-picker-separator {
     @include input-mode {
-      block-size: var(--time-input-field-container-height);
+      block-size: #{density.size(var(--time-input-field-container-height))};
       color: var(--time-input-field-separator-color);
       font: var(--time-input-field-separator);
       letter-spacing: var(--time-input-field-separator-tracking);
@@ -232,7 +245,7 @@ $window-margin: 24px;
     justify-content: center;
     flex: none;
     inline-size: var(--time-selector-container-width);
-    block-size: var(--time-selector-container-height);
+    block-size: #{density.size(var(--time-selector-container-height))};
     padding: 0;
     border: none;
     border-radius: var(--time-selector-container-shape);
@@ -265,7 +278,9 @@ $window-margin: 24px;
     flex: none;
     margin-inline-start: $period-gap;
     inline-size: var(--period-selector-vertical-container-width);
-    block-size: var(--period-selector-vertical-container-height);
+    block-size: #{density.size(
+        var(--period-selector-vertical-container-height)
+      )};
     border: var(--period-selector-outline-width) solid
       var(--period-selector-outline-color);
     border-radius: var(--period-selector-container-shape);
@@ -288,7 +303,7 @@ $window-margin: 24px;
       margin-block-start: 0;
       margin-inline-start: $period-gap;
       inline-size: var(--period-selector-container-width);
-      block-size: var(--period-selector-container-height);
+      block-size: #{density.size(var(--period-selector-container-height))};
     }
   }
 
@@ -343,7 +358,9 @@ $window-margin: 24px;
   .time-picker-dial {
     // `--_angle` (selector angle) and `--_radius` (ring radius as a fraction
     // of the dial size) are set by the element.
-    --_size: var(--clock-dial-container-size);
+    // Dense dials shrink by `--density-step` per step; the labels keep 48dp
+    // targets and the ring stays a fraction of the dial.
+    --_size: #{density.size(var(--clock-dial-container-size))};
     --_handle: var(--clock-dial-selector-handle-container-size);
     --_ring: calc(var(--_radius, 0.3945) * var(--_size));
     --_spatial: var(--md-sys-motion-spring-default-spatial-duration)
@@ -373,6 +390,14 @@ $window-margin: 24px;
     @include input-mode {
       display: none;
     }
+  }
+
+  // time-pickers.md "Density": "Don't apply density to the time picker dial
+  // when the viewport is constrained. Instead, use an input picker." The
+  // horizontal layout is the constrained-viewport layout (short landscape),
+  // so its dial keeps its full size.
+  .time-picker-horizontal .time-picker-dial {
+    --_size: var(--clock-dial-container-size);
   }
 
   // Hour and minute faces cross-fade (Compose ClockFace Crossfade with the
@@ -483,7 +508,7 @@ $window-margin: 24px;
   .time-picker-field-input {
     box-sizing: border-box;
     inline-size: 100%;
-    block-size: var(--time-input-field-container-height);
+    block-size: #{density.size(var(--time-input-field-container-height))};
     margin: 0;
     padding: 0;
     border: none;

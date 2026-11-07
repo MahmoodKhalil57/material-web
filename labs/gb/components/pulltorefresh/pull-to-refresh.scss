@@ -1,0 +1,197 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'pull-to-refresh-tokens';
+// go/keep-sorted end
+
+@layer md.sys;
+
+@layer md.comp.pull-to-refresh {
+  :host,
+  .pull-to-refresh {
+    @include pull-to-refresh-tokens.root;
+  }
+
+  :host([indicator='circular']),
+  .pull-to-refresh-circular {
+    @include pull-to-refresh-tokens.circular;
+  }
+
+  // The container clips the indicator above its top edge (Compose
+  // IndicatorBox clips its content at the top).
+  .pull-to-refresh {
+    block-size: 100%;
+    box-sizing: border-box;
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .pull-to-refresh-scroller {
+    block-size: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    // The page does not scroll or refresh once the content reaches its top.
+    overscroll-behavior-y: contain;
+
+    // At the top, downward touch drags pull instead of scrolling; upward
+    // ones still scroll the content.
+    &.pull-to-refresh-at-top {
+      touch-action: pan-x pan-down pinch-zoom;
+    }
+  }
+
+  // The indicator sits at the top center, on top of the content (Compose
+  // PullToRefreshBox: `Modifier.align(Alignment.TopCenter)`), and moves
+  // `fraction * max distance` below its hidden position above the top edge.
+  .pull-to-refresh-indicator {
+    --_fraction: 0;
+    align-items: center;
+    background-color: var(--indicator-container-color);
+    block-size: var(--indicator-container-height);
+    border-radius: var(--indicator-container-shape);
+    box-shadow: var(--indicator-elevation);
+    box-sizing: border-box;
+    color: var(--indicator-color);
+    display: flex;
+    inline-size: var(--indicator-container-width);
+    inset-block-start: 0;
+    inset-inline: 0;
+    justify-content: center;
+    margin-inline: auto;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    transition:
+      translate var(--motion-settle-duration) var(--motion-settle-easing),
+      visibility 0s linear var(--motion-settle-duration);
+    translate: 0
+      calc(var(--_fraction) * var(--indicator-max-distance) - 100%);
+    // Hidden (and its shadow with it) once it has settled above the edge
+    // (Compose: no elevation at a fraction of 0).
+    visibility: hidden;
+    z-index: 1;
+  }
+
+  .pull-to-refresh-pulling > .pull-to-refresh-indicator {
+    --_fraction: var(--pull-to-refresh-fraction, 0);
+    transition: none;
+    visibility: visible;
+  }
+
+  .pull-to-refresh-refreshing > .pull-to-refresh-indicator {
+    --_fraction: 1;
+    transition:
+      translate var(--motion-settle-duration) var(--motion-settle-easing),
+      visibility 0s;
+    visibility: visible;
+  }
+
+  .pull-to-refresh-pulling {
+    user-select: none;
+  }
+
+  // The contained loading indicator takes the indicator colors. Past the
+  // threshold it keeps turning (Compose: `rotate(-(progress - 1) * 180)`).
+  .pull-to-refresh-loading {
+    display: flex;
+    flex: none;
+  }
+
+  md-gb-loading-indicator::part(indicator),
+  .pull-to-refresh-indicator > .loading-indicator {
+    --active-indicator-color: var(--indicator-color);
+    --container-color: var(--indicator-container-color);
+    --container-height: var(--indicator-container-height);
+    --container-width: var(--indicator-container-width);
+  }
+
+  // Circular indicator: the arrow while pulling, a spinner while refreshing,
+  // cross-faded (Compose Crossfade on DefaultEffects).
+  .pull-to-refresh-arrow,
+  .pull-to-refresh-spinner {
+    block-size: 16px; // Compose SpinnerSize
+    flex: none;
+    grid-area: 1 / 1;
+    inline-size: 16px;
+    overflow: visible;
+    transition: opacity var(--motion-effects-duration)
+      var(--motion-effects-easing);
+  }
+
+  .pull-to-refresh-circular-stack {
+    display: grid;
+    place-items: center;
+  }
+
+  .pull-to-refresh-arrow {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5px; // Compose StrokeWidth
+  }
+
+  .pull-to-refresh-arrow-arc {
+    opacity: var(--_alpha, 1);
+    transition: opacity var(--motion-effects-duration)
+      var(--motion-effects-easing);
+  }
+
+  .pull-to-refresh-spinner {
+    animation: md-pull-to-refresh-spin 1333ms linear infinite;
+    fill: none;
+    opacity: 0;
+    stroke: currentColor;
+    stroke-dasharray: 32 42.4; // ~3/4 of the 6.75px-radius ring
+    stroke-width: 2.5px;
+  }
+
+  .pull-to-refresh-refreshing .pull-to-refresh-arrow {
+    opacity: 0;
+  }
+
+  .pull-to-refresh-refreshing .pull-to-refresh-spinner {
+    opacity: 1;
+  }
+
+  @keyframes md-pull-to-refresh-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  // Visually hidden live region announcing the refresh.
+  .pull-to-refresh-status {
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pull-to-refresh-indicator,
+    .pull-to-refresh-refreshing > .pull-to-refresh-indicator {
+      transition: visibility 0s;
+    }
+
+    .pull-to-refresh-arrow,
+    .pull-to-refresh-arrow-arc,
+    .pull-to-refresh-spinner {
+      transition: none;
+    }
+
+    .pull-to-refresh-spinner {
+      animation-duration: 4000ms;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .pull-to-refresh-indicator {
+      border: 1px solid CanvasText;
+    }
+  }
+}

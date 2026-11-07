@@ -322,4 +322,83 @@ const sideSheets: MaterialStoryInit<StoryKnobs> = {
 };
 
 /** Sheet demo stories. */
-export const stories = [bottomSheets, sideSheets];
+const predictiveBack: MaterialStoryInit<StoryKnobs> = {
+  name: 'Predictive back',
+  styles,
+  render(knobs) {
+    const bottomRef = createRef<BottomSheetElement>();
+    const sideRef = createRef<SideSheetElement>();
+    const reasonRef = createRef<HTMLElement>();
+    const dir = knobs.rtl ? 'rtl' : 'ltr';
+    const showReason = (event: Event) => {
+      const reason = (event as CustomEvent<{reason: string}>).detail.reason;
+      if (reasonRef.value) {
+        reasonRef.value.textContent = `Last close reason: ${reason}`;
+      }
+    };
+
+    return html`
+      <div class="demo-container" dir=${dir}>
+        <section class="demo-section">
+          <h2>Back gesture</h2>
+          <p class="demo-hint">
+            On Android, the system back gesture or button closes a modal sheet
+            with reason <code>back</code>, after the predictive back motion:
+            the bottom sheet shrinks away from the window's side edges, the
+            side sheet away from the top and bottom edges. An expanded bottom
+            sheet first settles partially expanded. Escape closes with reason
+            <code>escape</code>. "Simulate back" calls
+            <code>handleBack()</code>.
+          </p>
+          <div class="demo-controls">
+            <md-gb-button
+              color="filled"
+              @click=${() => bottomRef.value?.show()}
+            >
+              Show bottom sheet
+            </md-gb-button>
+            <md-gb-button color="filled" @click=${() => sideRef.value?.show()}>
+              Show side sheet
+            </md-gb-button>
+          </div>
+          <p class="demo-hint" ${ref(reasonRef)} aria-live="polite"></p>
+          <md-gb-bottom-sheet
+            ${ref(bottomRef)}
+            modal
+            label="Predictive back bottom sheet"
+            @close=${showReason}
+          >
+            <div class="demo-controls" style="padding: 0 24px">
+              <md-gb-button
+                color="tonal"
+                @click=${() => bottomRef.value?.handleBack()}
+              >
+                Simulate back
+              </md-gb-button>
+            </div>
+            ${sheetList()} ${sheetList()}
+          </md-gb-bottom-sheet>
+          <md-gb-side-sheet
+            ${ref(sideRef)}
+            modal
+            headline="Filters"
+            @close=${showReason}
+          >
+            <p class="side-sheet-text">
+              The close button and the scrim are the single-pointer
+              alternatives to swiping the sheet closed.
+            </p>
+            <md-gb-button
+              color="tonal"
+              @click=${() => sideRef.value?.handleBack()}
+            >
+              Simulate back
+            </md-gb-button>
+          </md-gb-side-sheet>
+        </section>
+      </div>
+    `;
+  },
+};
+
+export const stories = [bottomSheets, sideSheets, predictiveBack];

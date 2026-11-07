@@ -6,6 +6,7 @@
 
 import '@material/web/labs/aria/tabs/md-aria-tabpanel.js';
 import '@material/web/labs/gb/components/tabs/md-gb-tab.js';
+import '@material/web/labs/gb/components/tabs/md-gb-tab-panels.js';
 import '@material/web/labs/gb/components/tabs/md-gb-tabs.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
@@ -22,6 +23,7 @@ import {css, html} from 'lit';
 export interface StoryKnobs {
   variant?: 'primary' | 'secondary';
   selectedIndex: number;
+  density?: string;
 }
 
 adoptStyles(document, [
@@ -50,13 +52,15 @@ const styles = [
 const playground: MaterialStoryInit<StoryKnobs> = {
   name: 'Playground',
   styles,
-  render({variant, selectedIndex}) {
+  render({variant, selectedIndex, density}) {
     const labels = ['Flights', 'Trips', 'Explore', 'Buy'];
     return html`
       <div class="container">
         <md-gb-tabs
           variant="${variant ?? 'primary'}"
-          .selectedTabIndex="${selectedIndex}">
+          density="${density ?? '0'}"
+          .selectedTabIndex="${selectedIndex}"
+        >
           ${labels.map(
             (label) => html`
               <md-gb-tab><span slot="label">${label}</span></md-gb-tab>
@@ -71,7 +75,7 @@ const playground: MaterialStoryInit<StoryKnobs> = {
 const withIcons: MaterialStoryInit<StoryKnobs> = {
   name: 'Icons',
   styles,
-  render({variant, selectedIndex}) {
+  render({variant, selectedIndex, density}) {
     const items = [
       {icon: 'flight', label: 'Flights'},
       {icon: 'luggage', label: 'Trips'},
@@ -81,7 +85,9 @@ const withIcons: MaterialStoryInit<StoryKnobs> = {
       <div class="container">
         <md-gb-tabs
           variant="${variant ?? 'primary'}"
-          .selectedTabIndex="${selectedIndex}">
+          density="${density ?? '0'}"
+          .selectedTabIndex="${selectedIndex}"
+        >
           ${items.map(
             ({icon, label}) => html`
               <md-gb-tab>
@@ -105,7 +111,8 @@ const iconOnly: MaterialStoryInit<StoryKnobs> = {
       <div class="container">
         <md-gb-tabs
           variant="${variant ?? 'primary'}"
-          .selectedTabIndex="${selectedIndex}">
+          .selectedTabIndex="${selectedIndex}"
+        >
           ${icons.map(
             (icon) => html`
               <md-gb-tab>
@@ -132,16 +139,21 @@ const iconOnlyWithBadge: MaterialStoryInit<StoryKnobs> = {
       <div class="container">
         <md-gb-tabs
           variant="${variant ?? 'primary'}"
-          .selectedTabIndex="${selectedIndex}">
+          .selectedTabIndex="${selectedIndex}"
+        >
           ${items.map(
             ({icon, badge: count}) => html`
               <md-gb-tab>
                 <md-gb-icon>${icon}</md-gb-icon>
-                ${count
-                  ? html`<span class="badge badge-large tab-badge" slot="badge"
-                      >${count}</span
-                    >`
-                  : ''}
+                ${
+                  count
+                    ? html`<span
+                        class="badge badge-large tab-badge"
+                        slot="badge"
+                        >${count}</span
+                      >`
+                    : ''
+                }
               </md-gb-tab>
             `,
           )}
@@ -164,16 +176,21 @@ const withBadges: MaterialStoryInit<StoryKnobs> = {
       <div class="container">
         <md-gb-tabs
           variant="${variant ?? 'primary'}"
-          .selectedTabIndex="${selectedIndex}">
+          .selectedTabIndex="${selectedIndex}"
+        >
           ${items.map(
             ({label, badge: count}) => html`
               <md-gb-tab>
                 <span slot="label">${label}</span>
-                ${count
-                  ? html`<span class="badge badge-large tab-badge" slot="badge"
-                      >${count}</span
-                    >`
-                  : ''}
+                ${
+                  count
+                    ? html`<span
+                        class="badge badge-large tab-badge"
+                        slot="badge"
+                        >${count}</span
+                      >`
+                    : ''
+                }
               </md-gb-tab>
             `,
           )}
@@ -196,17 +213,22 @@ const iconsWithBadges: MaterialStoryInit<StoryKnobs> = {
       <div class="container">
         <md-gb-tabs
           variant="${variant ?? 'primary'}"
-          .selectedTabIndex="${selectedIndex}">
+          .selectedTabIndex="${selectedIndex}"
+        >
           ${items.map(
             ({icon, label, badge: count}) => html`
               <md-gb-tab>
                 <md-gb-icon>${icon}</md-gb-icon>
                 <span slot="label">${label}</span>
-                ${count
-                  ? html`<span class="badge badge-large tab-badge" slot="badge"
-                      >${count}</span
-                    >`
-                  : ''}
+                ${
+                  count
+                    ? html`<span
+                        class="badge badge-large tab-badge"
+                        slot="badge"
+                        >${count}</span
+                      >`
+                    : ''
+                }
               </md-gb-tab>
             `,
           )}
@@ -234,7 +256,8 @@ const overflow: MaterialStoryInit<StoryKnobs> = {
       <div class="container" style="inline-size: 320px;">
         <md-gb-tabs
           variant="${variant ?? 'primary'}"
-          .selectedTabIndex="${selectedIndex}">
+          .selectedTabIndex="${selectedIndex}"
+        >
           ${labels.map(
             (label) => html`
               <md-gb-tab><span slot="label">${label}</span></md-gb-tab>
@@ -267,6 +290,129 @@ const withPanels: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const swipeablePanels: MaterialStoryInit<StoryKnobs> = {
+  name: 'Swipeable panels',
+  styles: [
+    ...styles,
+    css`
+      md-gb-tab-panels {
+        border-radius: var(--md-sys-shape-corner-md);
+        background: var(--md-sys-color-surface-container);
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .panel {
+        box-sizing: border-box;
+        min-block-size: 200px;
+        padding: 24px;
+        font: var(--md-sys-typescale-body-lg);
+      }
+
+      .panel h3 {
+        margin: 0 0 8px;
+        font: var(--md-sys-typescale-title-lg);
+      }
+    `,
+  ],
+  render({variant, selectedIndex}) {
+    const items = [
+      {
+        icon: 'flight',
+        label: 'Flights',
+        text: 'Search one-way and round-trip fares.',
+      },
+      {
+        icon: 'luggage',
+        label: 'Trips',
+        text: 'Your upcoming and past bookings.',
+      },
+      {
+        icon: 'explore',
+        label: 'Explore',
+        text: 'Ideas for your next destination.',
+      },
+      {
+        icon: 'sell',
+        label: 'Deals',
+        text: 'Price drops on routes you follow.',
+      },
+    ];
+    return html`
+      <div class="container">
+        <md-gb-tabs
+          variant="${variant ?? 'primary'}"
+          .selectedTabIndex="${selectedIndex}"
+          aria-label="Travel"
+        >
+          ${items.map(
+            ({icon, label}) => html`
+              <md-gb-tab>
+                <md-gb-icon>${icon}</md-gb-icon>
+                <span slot="label">${label}</span>
+              </md-gb-tab>
+            `,
+          )}
+        </md-gb-tabs>
+        <md-gb-tab-panels>
+          ${items.map(
+            ({label, text}) => html`
+              <div class="panel" role="tabpanel" tabindex="0">
+                <h3>${label}</h3>
+                <p>${text}</p>
+                <p>Swipe left or right here to change tabs.</p>
+              </div>
+            `,
+          )}
+        </md-gb-tab-panels>
+      </div>
+    `;
+  },
+};
+
+// tabs.md "Avoid applying density by default": density is opt-in (a denser
+// layout or theme). Each step removes 4px from the tabs' height.
+const densities: MaterialStoryInit<StoryKnobs> = {
+  name: 'Density',
+  styles,
+  render({variant}) {
+    return html`
+      <div class="container">
+        ${[0, -1, -2, -3].map(
+          (d) => html`
+            <md-gb-tabs
+              variant="${variant ?? 'primary'}"
+              density="${d}"
+              aria-label="Density ${d}"
+            >
+              <md-gb-tab>
+                <md-gb-icon>flight</md-gb-icon>
+                <span slot="label">Flights</span>
+              </md-gb-tab>
+              <md-gb-tab>
+                <md-gb-icon>luggage</md-gb-icon>
+                <span slot="label">Trips</span>
+              </md-gb-tab>
+              <md-gb-tab>
+                <md-gb-icon>explore</md-gb-icon>
+                <span slot="label">Explore</span>
+              </md-gb-tab>
+            </md-gb-tabs>
+            <md-gb-tabs
+              variant="${variant ?? 'primary'}"
+              density="${d}"
+              aria-label="Density ${d}, labels"
+            >
+              <md-gb-tab><span slot="label">Flights</span></md-gb-tab>
+              <md-gb-tab><span slot="label">Trips</span></md-gb-tab>
+              <md-gb-tab><span slot="label">Explore</span></md-gb-tab>
+            </md-gb-tabs>
+          `,
+        )}
+      </div>
+    `;
+  },
+};
+
 /** Tabs stories. */
 export const stories = [
   playground,
@@ -277,4 +423,6 @@ export const stories = [
   iconsWithBadges,
   overflow,
   withPanels,
+  swipeablePanels,
+  densities,
 ];

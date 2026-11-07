@@ -6,6 +6,11 @@
 
 import {LitElement, type PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
+import {
+  BACK_REASON,
+  closeRequestSource,
+  type PredictiveBackAnimation,
+} from './predictive-back.js';
 import {CLOSE_REASONS, deepActiveElement} from './sheet.js';
 
 /**
@@ -19,6 +24,11 @@ import {CLOSE_REASONS, deepActiveElement} from './sheet.js';
  *
  * Closing animates the panel out first and closes the `<dialog>` after, then
  * returns focus to the element focused when the sheet opened.
+ *
+ * Predictive back: the modal `<dialog>` receives the platform's close
+ * requests (its close watcher) as `cancel` events. Escape closes with reason
+ * `escape`; the Android back gesture or button plays the predictive back
+ * motion and closes with reason `back` (see `handleBack()`).
  */
 export abstract class SheetBase extends LitElement {
   private isOpenInternal = false;
@@ -161,6 +171,61 @@ export abstract class SheetBase extends LitElement {
   /** Called when the sheet starts opening, before it renders open. */
   protected willShow() {}
 
+  /**
+   * Handles a back request (the Android back gesture or button, which a
+   * modal sheet receives through its dialog): plays the predictive back
+   * motion and closes the sheet with reason `back`. If the `close` event is
+   * canceled, the sheet settles back. Resolves after the closing motion.
+   *
+   * Call it for an in-app back control that should behave like the system
+   * back.
+   */
+  async handleBack(): Promise<void> {
+    if (!this.isOpenInternal || this.isClosing) {
+      return;
+    }
+    const motion = this.shouldAnimate() ? this.playPredictiveBack() : null;
+    await motion?.finished;
+    if (!this.isOpenInternal) {
+      motion?.cancel();
+      return;
+    }
+    if (!this.backCloses()) {
+      // The sheet stays open at another height.
+      await motion?.settle();
+      return;
+    }
+    // Hold the back progress through the closing motion.
+    await this.close(BACK_REASON);
+    if (this.isOpenInternal) {
+      await motion?.settle();
+    } else {
+      motion?.cancel();
+    }
+  }
+
+  /**
+   * Called by `handleBack()` after the back progress: returns whether back
+   * closes the sheet. A subclass can move the sheet instead (Compose's
+   * bottom sheet goes from expanded to partially expanded) and return false.
+   */
+  protected backCloses(): boolean {
+    return true;
+  }
+
+  /** Plays the predictive back transform. Overridden by each sheet. */
+  protected playPredictiveBack(): PredictiveBackAnimation | null {
+    return null;
+  }
+
+  /** Whether the sheet animates (not `quick`, no reduced motion). */
+  protected shouldAnimate(): boolean {
+    const reducedMotion = globalThis.matchMedia?.(
+      '(prefers-reduced-motion: reduce)',
+    )?.matches;
+    return !this.quick && !reducedMotion;
+  }
+
   protected override updated(changed: PropertyValues<this>) {
     super.updated(changed);
     this.syncDialog(changed.has('modal'));
@@ -196,10 +261,7 @@ export abstract class SheetBase extends LitElement {
 
   /** Waits for the panel's and host's CSS transitions to finish. */
   private async waitForMotion(): Promise<void> {
-    const reducedMotion = globalThis.matchMedia?.(
-      '(prefers-reduced-motion: reduce)',
-    )?.matches;
-    if (this.quick || reducedMotion) {
+    if (!this.shouldAnimate()) {
       return;
     }
     // `getAnimations()` flushes style, so transitions that the last render
@@ -227,10 +289,19 @@ export abstract class SheetBase extends LitElement {
 
   // The listeners below are bound on the rendered `<dialog>`.
 
-  /** Escape on a modal dialog: animate closed instead of closing at once. */
+  /**
+   * A close request on a modal dialog: animate closed instead of closing at
+   * once. Escape closes with reason `escape`; the back gesture or button
+   * runs `handleBack()`.
+   */
   protected readonly handleDialogCancel = (event: Event) => {
     event.preventDefault();
-    if (this.modal) {
+    if (!this.modal) {
+      return;
+    }
+    if (closeRequestSource(event) === BACK_REASON) {
+      this.handleBack();
+    } else {
       this.close(CLOSE_REASONS.ESCAPE);
     }
   };

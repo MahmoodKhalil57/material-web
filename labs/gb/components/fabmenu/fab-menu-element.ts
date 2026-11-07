@@ -39,6 +39,12 @@ const baseClass = mixinDelegatesAria(LitElement);
  *
  * Set `aria-label` to describe the menu that the FAB opens.
  *
+ * Focus not obscured (WCAG 2.4.11, fab-menu.md): place the FAB menu where
+ * its FAB and open list don't completely hide a focused element or its
+ * focus indicator; partly covering an element is fine. When it floats over
+ * scrolling content, register it with `setupScrollPadding()`
+ * (`appbar/scroll-padding.js`, as an `end` bar), and anchor snackbars to it.
+ *
  * @slot - The menu's items, typically `<md-gb-fab-menu-item>`s.
  * @slot icon - The FAB's icon. Defaults to an "add" icon.
  * @slot close-icon - The close button's icon. Defaults to a "close" icon.

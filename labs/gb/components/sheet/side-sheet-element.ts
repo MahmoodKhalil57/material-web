@@ -4,14 +4,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {css, type CSSResultOrNative, html, nothing} from 'lit';
-import {property} from 'lit/decorators.js';
+import {
+  css,
+  type CSSResultOrNative,
+  html,
+  nothing,
+  type PropertyValues,
+} from 'lit';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {styleMap} from 'lit/directives/style-map.js';
 import {iconButton} from '../iconbutton/icon-button.js';
+import {DragGesture, settleAnchor} from '../shared/drag-gesture.js';
 import {hasSlotted} from '../shared/has-slotted.js';
+import {
+  playPredictiveBack,
+  type PredictiveBackAnimation,
+} from './predictive-back.js';
 import {CLOSE_REASONS} from './sheet.js';
 import {SheetBase} from './sheet-base.js';
-import {sideSheetClasses} from './side-sheet.js';
+import {
+  SIDE_SHEET_CLASSES,
+  SIDE_SHEET_POSITIONAL_THRESHOLD,
+  SIDE_SHEET_VELOCITY_THRESHOLD_PX_PER_S,
+  sideSheetClasses,
+} from './side-sheet.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
@@ -34,6 +51,23 @@ import sideSheetStyles from './side-sheet.css' with {type: 'css'}; // github-onl
  *
  * The header has an optional back icon button (`has-back-button`, fires
  * `back`), the headline and a close icon button that closes the sheet.
+ *
+ * A modal sheet follows a horizontal drag toward its edge (on the sheet or
+ * the scrim) and, released past half its width or flung faster than
+ * 400px/s, closes with reason `swipe`; otherwise it springs back open
+ * (Compose anchored-draggable thresholds, as in the modal navigation
+ * drawer). The close button and the scrim are the single-pointer
+ * alternatives (WCAG 2.5.7); keep the close button (`hide-close-button` only
+ * when the sheet has another close control). Set `gestures-disabled` to turn
+ * swiping off.
+ *
+ * Predictive back (Android back gesture or button, through the modal
+ * dialog's close watcher; or `handleBack()`): the sheet scales toward its
+ * edge, detaching from the window's top and bottom edges, then closes with
+ * reason `back`.
+ *
+ * A modal sheet is in the top layer, so nothing on the page covers it or its
+ * focused controls; while it is open the rest of the page is inert.
  *
  * @fires {Event} open - Fired when the sheet begins opening. Cancelable.
  * @fires {Event} opened - Fired after the opening motion.
@@ -122,6 +156,113 @@ export class SideSheetElement extends SheetBase {
    */
   @property() label = '';
 
+  /** Whether to turn off swipe to dismiss on a modal sheet. */
+  @property({type: Boolean, attribute: 'gestures-disabled'})
+  gesturesDisabled = false;
+
+  /**
+   * While a modal sheet is dragged: how far it is dragged toward its edge,
+   * in px (0 is open, the sheet width is closed). Null when not dragging.
+   */
+  @state() private dragOffset: number | null = null;
+  private dragWidth = 0;
+  /** 1 when the sheet closes toward +x (LTR), -1 in RTL. */
+  private dragDirection = 1;
+  private dragGesture: DragGesture | null = null;
+  private dragTarget: HTMLElement | null = null;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.syncDragGesture();
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.dragGesture?.disconnect();
+    this.dragGesture = null;
+    this.dragTarget = null;
+    this.dragOffset = null;
+  }
+
+  protected override updated(changed: PropertyValues<this>) {
+    super.updated(changed);
+    this.syncDragGesture();
+  }
+
+  /** Swipe to dismiss: tracks horizontal drags on the modal `<dialog>`. */
+  private syncDragGesture() {
+    const target = this.isConnected && this.modal ? this.dialog : null;
+    if (target === this.dragTarget) {
+      return;
+    }
+    this.dragGesture?.disconnect();
+    this.dragTarget = target;
+    this.dragGesture = target
+      ? new DragGesture(target, {
+          axis: 'x',
+          canStart: () =>
+            this.modal && this.open && !this.isClosing && !this.gesturesDisabled,
+          onStart: () => {
+            const panel = this.panel;
+            this.dragWidth = panel?.offsetWidth ?? 0;
+            this.dragDirection =
+              panel && getComputedStyle(panel).direction === 'rtl' ? -1 : 1;
+            this.dragOffset = 0;
+          },
+          onMove: (delta) => {
+            this.dragOffset = this.closingOffset(delta);
+          },
+          onEnd: (delta, velocity) => this.settleDrag(delta, velocity),
+          onCancel: () => {
+            this.dragOffset = null;
+          },
+        })
+      : null;
+  }
+
+  /** How far a drag of `delta` px moved the sheet toward its edge. */
+  private closingOffset(delta: number) {
+    return Math.min(this.dragWidth, Math.max(0, delta * this.dragDirection));
+  }
+
+  /**
+   * Settles a released drag open or closed (Compose `AnchoredDraggableState`
+   * thresholds). Clearing the drag offset in the same render as the close
+   * lets the panel spring from where it was released.
+   */
+  private settleDrag(delta: number, velocity: number) {
+    const offset = this.closingOffset(delta);
+    const target = settleAnchor(
+      [0, this.dragWidth],
+      0,
+      offset,
+      velocity * this.dragDirection,
+      {
+        positionalThreshold: (distance) =>
+          distance * SIDE_SHEET_POSITIONAL_THRESHOLD,
+        velocityThreshold: SIDE_SHEET_VELOCITY_THRESHOLD_PX_PER_S,
+      },
+    );
+    this.dragOffset = null;
+    if (this.dragWidth > 0 && target === this.dragWidth) {
+      this.close(CLOSE_REASONS.SWIPE);
+    }
+  }
+
+  protected override playPredictiveBack(): PredictiveBackAnimation | null {
+    const dialog = this.dialog;
+    if (!dialog) {
+      return null;
+    }
+    return playPredictiveBack(dialog, {
+      kind: 'side',
+      edge: 'end',
+      measure: this.panel,
+    });
+  }
+
   private readonly handleBackClick = () => {
     this.dispatchEvent(new Event('back', {bubbles: true}));
   };
@@ -139,11 +280,18 @@ export class SideSheetElement extends SheetBase {
       open: this.open,
       closing: this.isClosing,
     });
+    const dragging = this.modal && this.dragOffset !== null;
+    const panelStyle = dragging
+      ? {transform: `translateX(${this.dragDirection * this.dragOffset!}px)`}
+      : {};
     const hasHeadline = !!this.headline || this.hasSlottedHeadline();
 
     return html`
       <dialog
-        class="sheet-dialog side-sheet-dialog ${classMap(classes)}"
+        class="sheet-dialog side-sheet-dialog ${classMap({
+          ...classes,
+          [SIDE_SHEET_CLASSES.dragging]: dragging,
+        })}"
         part="dialog"
         aria-labelledby=${hasHeadline ? 'headline' : nothing}
         aria-label=${!hasHeadline && this.label ? this.label : nothing}
@@ -152,7 +300,10 @@ export class SideSheetElement extends SheetBase {
         @pointerdown=${this.handleDialogPointerDown}
         @click=${this.handleDialogClick}
       >
-        <div class="sheet-panel side-sheet-panel" part="container">
+        <div
+          class="sheet-panel side-sheet-panel"
+          part="container"
+          style=${styleMap(panelStyle)}>
           <div class="side-sheet-header" part="header">
             ${
               this.hasBackButton

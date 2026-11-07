@@ -101,14 +101,24 @@ describe('time picker helpers', () => {
 
   it('returns container classes', () => {
     expect(
-      timePickerClasses({mode: 'input', orientation: 'horizontal', hour24: true}),
+      timePickerClasses({
+        mode: 'input',
+        orientation: 'horizontal',
+        hour24: true,
+      }),
     ).toEqual({
       [TIME_PICKER_CLASSES.timePicker]: true,
       [TIME_PICKER_CLASSES.input]: true,
       [TIME_PICKER_CLASSES.horizontal]: true,
       [TIME_PICKER_CLASSES.hour24]: true,
       [TIME_PICKER_CLASSES.closing]: false,
+      [TIME_PICKER_CLASSES.density1]: false,
+      [TIME_PICKER_CLASSES.density2]: false,
+      [TIME_PICKER_CLASSES.density3]: false,
     });
+    expect(
+      timePickerClasses({density: -3})[TIME_PICKER_CLASSES.density3],
+    ).toBeTrue();
   });
 });
 
@@ -119,7 +129,8 @@ describe('<md-gb-time-picker>', () => {
     template = html`<md-gb-time-picker
       value="14:30"
       hour-cycle="12"
-      quick></md-gb-time-picker>`,
+      quick
+    ></md-gb-time-picker>`,
   ) {
     const root = env.render(template);
     await env.waitForStability();
@@ -159,22 +170,34 @@ describe('<md-gb-time-picker>', () => {
 
     it('follows the locale clock by default', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker value="14:30" locale="en-GB" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          value="14:30"
+          locale="en-GB"
+          quick
+        ></md-gb-time-picker>`,
       );
       expect(picker.is24Hour).toBeTrue();
-      expect(picker.shadowRoot!.querySelector('.time-picker-period')).toBeNull();
+      expect(
+        picker.shadowRoot!.querySelector('.time-picker-period'),
+      ).toBeNull();
       expect(q(picker, '[data-selection="hour"]').textContent?.trim()).toBe(
         '14',
       );
       picker.locale = 'en-US';
       await env.waitForStability();
       expect(picker.is24Hour).toBeFalse();
-      expect(picker.shadowRoot!.querySelector('.time-picker-period')).not.toBeNull();
+      expect(
+        picker.shadowRoot!.querySelector('.time-picker-period'),
+      ).not.toBeNull();
     });
 
     it('shows the 24-hour inner ring', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker value="14:30" hour-cycle="24" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          value="14:30"
+          hour-cycle="24"
+          quick
+        ></md-gb-time-picker>`,
       );
       const inner = picker.shadowRoot!.querySelectorAll(
         '.time-picker-dial-face-hour .time-picker-dial-label-inner',
@@ -186,7 +209,10 @@ describe('<md-gb-time-picker>', () => {
 
     it('lays out horizontally', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker orientation="horizontal" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          orientation="horizontal"
+          quick
+        ></md-gb-time-picker>`,
       );
       expect(picker.effectiveOrientation).toBe('horizontal');
       expect(q(picker, '.time-picker').classList).toContain(
@@ -194,6 +220,80 @@ describe('<md-gb-time-picker>', () => {
       );
       const body = q(picker, '.time-picker-body');
       expect(getComputedStyle(body).flexDirection).toBe('row');
+    });
+  });
+
+  describe('density', () => {
+    it('defaults to 0, clamps to 0..-3 and reflects', async () => {
+      const {picker} = await setupTest();
+      expect(picker.density).toBe(0);
+      picker.density = -4;
+      expect(picker.density).toBe(-3);
+      picker.density = 1;
+      expect(picker.density).toBe(0);
+      picker.density = -2;
+      await picker.updateComplete;
+      expect(picker.getAttribute('density')).toBe('-2');
+    });
+
+    it('removes 4px per step from the selectors, period and dial', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-time-picker
+          value="14:30"
+          hour-cycle="12"
+          orientation="vertical"
+        ></md-gb-time-picker>`,
+      );
+      const height = (selector: string) =>
+        q(picker, selector).getBoundingClientRect().height;
+      for (const [density, selector, dial] of [
+        [0, 80, 256],
+        [-1, 76, 252],
+        [-3, 68, 244],
+      ]) {
+        picker.density = density;
+        await picker.updateComplete;
+        expect(height('[data-selection="hour"]'))
+          .withContext(`density ${density} selector`)
+          .toBe(selector);
+        expect(height('.time-picker-period'))
+          .withContext(`density ${density} period`)
+          .toBe(selector);
+        expect(height('.time-picker-dial'))
+          .withContext(`density ${density} dial`)
+          .toBe(dial);
+      }
+    });
+
+    it('keeps the full-size dial in the horizontal layout', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-time-picker
+          value="14:30"
+          hour-cycle="12"
+          orientation="horizontal"
+          density="-3"
+        ></md-gb-time-picker>`,
+      );
+      expect(
+        q(picker, '.time-picker-dial').getBoundingClientRect().height,
+      ).toBe(256);
+    });
+
+    it('removes 4px per step from the input fields', async () => {
+      const {picker} = await setupTest(
+        html`<md-gb-time-picker
+          mode="input"
+          value="14:30"
+          hour-cycle="12"
+          density="-3"
+        ></md-gb-time-picker>`,
+      );
+      expect(
+        q(picker, '.time-picker-field-input').getBoundingClientRect().height,
+      ).toBe(60);
+      expect(
+        q(picker, '.time-picker-period').getBoundingClientRect().height,
+      ).toBe(60);
     });
   });
 
@@ -232,7 +332,11 @@ describe('<md-gb-time-picker>', () => {
 
     it('keeps the period when wrapping 12-hour hours', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker value="11:00" hour-cycle="12" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          value="11:00"
+          hour-cycle="12"
+          quick
+        ></md-gb-time-picker>`,
       );
       const dial = q(picker, '.time-picker-dial');
       key(dial, 'ArrowUp');
@@ -320,7 +424,11 @@ describe('<md-gb-time-picker>', () => {
 
     it('picks inner ring hours on a 24-hour dial', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker value="03:00" hour-cycle="24" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          value="03:00"
+          hour-cycle="24"
+          quick
+        ></md-gb-time-picker>`,
       );
       const dial = q(picker, '.time-picker-dial');
       pointerAt(dial, 'pointerdown', 180, 69 / 256);
@@ -340,7 +448,8 @@ describe('<md-gb-time-picker>', () => {
           value="14:30"
           hour-cycle="12"
           locale="en-US"
-          quick></md-gb-time-picker>`,
+          quick
+        ></md-gb-time-picker>`,
       );
       const group = q(picker, '.time-picker-period');
       expect(group.getAttribute('role')).toBe('radiogroup');
@@ -416,7 +525,8 @@ describe('<md-gb-time-picker>', () => {
           mode="input"
           value="14:30"
           hour-cycle="12"
-          quick></md-gb-time-picker>`,
+          quick
+        ></md-gb-time-picker>`,
       );
       const hour = q<HTMLInputElement>(picker, 'input[data-selection="hour"]');
       const minute = q<HTMLInputElement>(
@@ -437,7 +547,8 @@ describe('<md-gb-time-picker>', () => {
           mode="input"
           value="14:30"
           hour-cycle="12"
-          quick></md-gb-time-picker>`,
+          quick
+        ></md-gb-time-picker>`,
       );
       const input = jasmine.createSpy('input');
       picker.addEventListener('input', input);
@@ -468,7 +579,8 @@ describe('<md-gb-time-picker>', () => {
           mode="input"
           value="14:30"
           hour-cycle="12"
-          quick></md-gb-time-picker>`,
+          quick
+        ></md-gb-time-picker>`,
       );
       const hour = q<HTMLInputElement>(picker, 'input[data-selection="hour"]');
       hour.value = '13';
@@ -511,9 +623,12 @@ describe('<md-gb-time-picker>', () => {
           value="14:30"
           hour-cycle="12"
           hide-actions
-          quick></md-gb-time-picker>`,
+          quick
+        ></md-gb-time-picker>`,
       );
-      expect(picker.shadowRoot!.querySelector('.time-picker-confirm')).toBeNull();
+      expect(
+        picker.shadowRoot!.querySelector('.time-picker-confirm'),
+      ).toBeNull();
       const change = jasmine.createSpy('change');
       picker.addEventListener('change', change);
       key(q(picker, '.time-picker-dial'), 'ArrowUp');
@@ -524,13 +639,16 @@ describe('<md-gb-time-picker>', () => {
 
   describe('form association', () => {
     it('submits and resets the value', async () => {
-      const root = env.render(html`<form>
-        <md-gb-time-picker
-          name="alarm"
-          value="07:15"
-          hour-cycle="24"
-          quick></md-gb-time-picker>
-      </form>`);
+      const root = env.render(
+        html`<form>
+          <md-gb-time-picker
+            name="alarm"
+            value="07:15"
+            hour-cycle="24"
+            quick
+          ></md-gb-time-picker>
+        </form>`,
+      );
       await env.waitForStability();
       const form = root.querySelector('form')!;
       const picker = root.querySelector('md-gb-time-picker')!;
@@ -558,7 +676,12 @@ describe('<md-gb-time-picker>', () => {
   describe('modal', () => {
     it('opens a modal dialog and focuses the hour', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker modal value="14:30" hour-cycle="12" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          modal
+          value="14:30"
+          hour-cycle="12"
+          quick
+        ></md-gb-time-picker>`,
       );
       const dialog = q<HTMLDialogElement>(picker, 'dialog');
       expect(dialog.open).toBeFalse();
@@ -577,7 +700,12 @@ describe('<md-gb-time-picker>', () => {
 
     it('cancels on Escape', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker modal value="14:30" hour-cycle="12" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          modal
+          value="14:30"
+          hour-cycle="12"
+          quick
+        ></md-gb-time-picker>`,
       );
       await picker.show();
       const cancel = jasmine.createSpy('cancel');
@@ -597,7 +725,12 @@ describe('<md-gb-time-picker>', () => {
 
     it('confirms and closes with OK', async () => {
       const {picker} = await setupTest(
-        html`<md-gb-time-picker modal value="14:30" hour-cycle="12" quick></md-gb-time-picker>`,
+        html`<md-gb-time-picker
+          modal
+          value="14:30"
+          hour-cycle="12"
+          quick
+        ></md-gb-time-picker>`,
       );
       await picker.show();
       const change = jasmine.createSpy('change');

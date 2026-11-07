@@ -17,6 +17,7 @@ import {css, html, nothing} from 'lit';
 export interface StoryKnobs {
   icon: string;
   label: string;
+  expanded: boolean;
   color?: FabColor;
   size?: FabSize;
 }
@@ -36,23 +37,11 @@ const playground: MaterialStoryInit<StoryKnobs> = {
     return html`
       <md-gb-fab
         color="${knobs.color || nothing}"
-        size="${knobs.size || nothing}">
+        size="${knobs.size || nothing}"
+        label="${knobs.label || nothing}"
+        aria-label="${knobs.label ? nothing : knobs.icon}"
+        .expanded=${knobs.expanded}>
         <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-    `;
-  },
-};
-
-const extendedFab: MaterialStoryInit<StoryKnobs> = {
-  name: 'Extended FAB',
-  render(knobs) {
-    return html`
-      <md-gb-fab
-        color="${knobs.color || nothing}"
-        size="${knobs.size || nothing}">
-        <md-gb-icon>${knobs.icon || 'add'}</md-gb-icon>
-        ${knobs.label || 'Add'}
       </md-gb-fab>
     `;
   },
@@ -61,32 +50,25 @@ const extendedFab: MaterialStoryInit<StoryKnobs> = {
 const colors: MaterialStoryInit<StoryKnobs> = {
   name: 'Colors',
   render(knobs) {
-    return html`
-      <md-gb-fab color="primary-container" size="${knobs.size || nothing}">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-      <md-gb-fab color="secondary-container" size="${knobs.size || nothing}">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-      <md-gb-fab color="tertiary-container" size="${knobs.size || nothing}">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-      <md-gb-fab color="primary" size="${knobs.size || nothing}">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-      <md-gb-fab color="secondary" size="${knobs.size || nothing}">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-      <md-gb-fab color="tertiary" size="${knobs.size || nothing}">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-    `;
+    const colors: FabColor[] = [
+      'primary-container',
+      'secondary-container',
+      'tertiary-container',
+      'primary',
+      'secondary',
+      'tertiary',
+    ];
+    return html`${colors.map(
+      (color) => html`
+        <md-gb-fab
+          color="${color}"
+          size="${knobs.size || nothing}"
+          label="${knobs.label || nothing}"
+          aria-label="${knobs.label ? nothing : knobs.icon}">
+          <md-gb-icon>${knobs.icon}</md-gb-icon>
+        </md-gb-fab>
+      `,
+    )}`;
   },
 };
 
@@ -94,21 +76,118 @@ const sizes: MaterialStoryInit<StoryKnobs> = {
   name: 'Sizes',
   render(knobs) {
     return html`
-      <md-gb-fab color="${knobs.color || nothing}">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-      <md-gb-fab color="${knobs.color || nothing}" size="md">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
-      </md-gb-fab>
-      <md-gb-fab color="${knobs.color || nothing}" size="lg">
-        <md-gb-icon>${knobs.icon}</md-gb-icon>
-        ${knobs.label}
+      ${(['sm', 'default', 'md', 'lg'] as FabSize[]).map(
+        (size) => html`
+          <md-gb-fab
+            color="${knobs.color || nothing}"
+            size="${size}"
+            aria-label="${knobs.icon}">
+            <md-gb-icon>${knobs.icon}</md-gb-icon>
+          </md-gb-fab>
+        `,
+      )}
+    `;
+  },
+};
+
+const extendedSizes: MaterialStoryInit<StoryKnobs> = {
+  name: 'Extended FAB sizes',
+  render(knobs) {
+    const sizes: Array<[FabSize, string]> = [
+      ['default', 'Small'],
+      ['md', 'Medium'],
+      ['lg', 'Large'],
+    ];
+    return html`
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+        ${sizes.map(
+          ([size, name]) => html`
+            <md-gb-fab
+              color="${knobs.color || nothing}"
+              size="${size}"
+              label="${knobs.label || name}"
+              .expanded=${knobs.expanded}>
+              <md-gb-icon>${knobs.icon || 'edit'}</md-gb-icon>
+            </md-gb-fab>
+          `,
+        )}
+      </div>
+    `;
+  },
+};
+
+const expandCollapse: MaterialStoryInit<StoryKnobs> = {
+  name: 'Expand and collapse',
+  render(knobs) {
+    const toggle = (event: Event) => {
+      const fab = event.currentTarget as HTMLElement & {expanded: boolean};
+      fab.expanded = !fab.expanded;
+    };
+    return html`
+      <md-gb-fab
+        color="${knobs.color || nothing}"
+        size="${knobs.size || nothing}"
+        label="${knobs.label || 'Compose'}"
+        @click=${toggle}>
+        <md-gb-icon>${knobs.icon || 'edit'}</md-gb-icon>
       </md-gb-fab>
     `;
   },
 };
 
+const collapseOnScroll: MaterialStoryInit<StoryKnobs> = {
+  name: 'Collapse on scroll',
+  styles: css`
+    .scroll-demo {
+      block-size: 320px;
+      inline-size: min(360px, 100%);
+      position: relative;
+      border-radius: var(--md-sys-shape-corner-lg);
+      background: var(--md-sys-color-surface-container);
+      overflow: hidden;
+    }
+    .scroll-demo-list {
+      block-size: 100%;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px 16px;
+      box-sizing: border-box;
+      color: var(--md-sys-color-on-surface);
+      font: var(--md-sys-typescale-body-lg);
+    }
+    .scroll-demo-list li {
+      padding-block: 12px;
+    }
+    .scroll-demo md-gb-fab {
+      position: absolute;
+      inset-block-end: 16px;
+      inset-inline-end: 16px;
+    }
+  `,
+  render(knobs) {
+    return html`
+      <div class="scroll-demo">
+        <ul id="fab-scroll-demo-list" class="scroll-demo-list">
+          ${Array.from({length: 40}, (_, i) => html`<li>Message ${i + 1}</li>`)}
+        </ul>
+        <md-gb-fab
+          color="${knobs.color || nothing}"
+          size="${knobs.size || nothing}"
+          label="${knobs.label || 'Compose'}"
+          scroll-target="fab-scroll-demo-list">
+          <md-gb-icon>${knobs.icon || 'edit'}</md-gb-icon>
+        </md-gb-fab>
+      </div>
+    `;
+  },
+};
+
 /** Fab stories. */
-export const stories = [playground, extendedFab, colors, sizes];
+export const stories = [
+  playground,
+  extendedSizes,
+  expandCollapse,
+  collapseOnScroll,
+  colors,
+  sizes,
+];

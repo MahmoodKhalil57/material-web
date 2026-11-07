@@ -1,0 +1,62 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// Component density (foundations/layout/grids-spacing.md, Component scaling):
+// 0 is a component's default density and -1, -2, -3 are denser. "Higher
+// density is typically applied by decreasing the top and bottom padding or
+// overall height by 4dp" per step (`--density-step`).
+//
+// The current density is the inherited private property `--_density`, so a
+// container (button group, chip set) sets it for the components inside it.
+// A component's own density class (or `density` attribute) wins.
+//
+// Targets (grids-spacing.md, Targets): "Accessible targets should retain a
+// minimum of 48x48dp, even if the visual element ... is smaller". Dense
+// components keep a `--target-size` (48px, Compose
+// LocalMinimumInteractiveComponentSize) target that extends beyond the
+// smaller container when needed.
+
+/// Sets `--_density` for the `density` attribute of the host and for the
+/// density classes (`<prefix>-density-1` .. `-3`) of an element.
+/// @param {String} $prefix - The component's root class, e.g. `checkbox`.
+/// @param {Boolean} $host - Whether to also match `:host([density])`.
+@mixin levels($prefix, $host: true) {
+  @for $i from 1 through 3 {
+    @if $host {
+      :host([density='-#{$i}']),
+      .#{$prefix}-density-#{$i} {
+        --_density: -#{$i};
+      }
+    } @else {
+      .#{$prefix}-density-#{$i} {
+        --_density: -#{$i};
+      }
+    }
+  }
+}
+
+/// Sets `--_density` on the current element for its density classes. Use
+/// inside the component's root selector.
+/// @param {String} $prefix - The component's root class, e.g. `checkbox`.
+@mixin classes($prefix) {
+  @for $i from 1 through 3 {
+    &.#{$prefix}-density-#{$i} {
+      --_density: -#{$i};
+    }
+  }
+}
+
+/// A size reduced by one `--density-step` per density step.
+/// @param {Length} $size - The size at density 0.
+/// @param {Length} $step - The size removed per step.
+@function size($size, $step: var(--density-step)) {
+  @return calc(#{$size} + var(--_density, 0) * #{$step});
+}
+
+/// A target size: at least `--target-size`, or the size itself if larger.
+/// @param {Length} $size - The container size.
+@function target($size: 100%) {
+  @return max(#{$size}, var(--target-size));
+}

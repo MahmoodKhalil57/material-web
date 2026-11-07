@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/fab/md-gb-fab.js';
 import '@material/web/labs/gb/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/labs/gb/components/navrail/md-gb-nav-rail.js';
@@ -12,8 +13,10 @@ import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type NavRailAlignment} from '@material/web/labs/gb/components/navrail/nav-rail.js';
+import {type NavRailElement} from '@material/web/labs/gb/components/navrail/nav-rail-element.js';
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
 import {css, html, nothing} from 'lit';
+import {createRef, ref} from 'lit/directives/ref.js';
 
 import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 
@@ -22,6 +25,7 @@ export interface StoryKnobs {
   alignment?: NavRailAlignment;
   expanded?: boolean;
   modal?: boolean;
+  narrow?: boolean;
   showBadges?: boolean;
   showHeader?: boolean;
 }
@@ -72,6 +76,7 @@ const playground: MaterialStoryInit<StoryKnobs> = {
     const alignment = knobs.alignment || 'top';
     const expanded = Boolean(knobs.expanded);
     const modal = Boolean(knobs.modal);
+    const narrow = Boolean(knobs.narrow);
     const showBadges = Boolean(knobs.showBadges);
     const showHeader = Boolean(knobs.showHeader);
 
@@ -82,6 +87,7 @@ const playground: MaterialStoryInit<StoryKnobs> = {
           ?collapsible=${showHeader}
           ?expanded=${expanded}
           ?modal=${modal}
+          ?narrow=${narrow}
           aria-label="Primary navigation rail">
           ${showHeader
             ? html`
@@ -93,9 +99,8 @@ const playground: MaterialStoryInit<StoryKnobs> = {
                 <md-gb-fab
                   slot="header"
                   color="tertiary-container"
-                  aria-label="Compose">
+                  label="Compose">
                   <md-gb-icon>edit</md-gb-icon>
-                  <span>Compose</span>
                 </md-gb-fab>
               `
             : nothing}
@@ -138,9 +143,8 @@ const allVariants: MaterialStoryInit<StoryKnobs> = {
             <md-gb-fab
               slot="header"
               color="tertiary-container"
-              aria-label="Create">
+              label="Create">
               <md-gb-icon>add</md-gb-icon>
-              <span>Create</span>
             </md-gb-fab>
             <md-gb-nav-rail-item selected>
               <md-gb-icon slot="icon">home</md-gb-icon>
@@ -163,18 +167,12 @@ const allVariants: MaterialStoryInit<StoryKnobs> = {
         </div>
 
         <div class="demo-shell">
-          <md-gb-nav-rail expanded modal aria-label="Expanded navigation rail">
-            <md-gb-icon-button
-              slot="header"
-              aria-label="Toggle navigation rail">
-              <md-gb-icon>menu_open</md-gb-icon>
-            </md-gb-icon-button>
+          <md-gb-nav-rail modal collapsible aria-label="Modal navigation rail">
             <md-gb-fab
               slot="header"
               color="tertiary-container"
-              aria-label="Compose">
+              label="Compose">
               <md-gb-icon>edit</md-gb-icon>
-              <span>Compose</span>
             </md-gb-fab>
             <md-gb-nav-rail-item selected>
               <md-gb-icon slot="icon">inbox</md-gb-icon>
@@ -193,7 +191,11 @@ const allVariants: MaterialStoryInit<StoryKnobs> = {
               Trash
             </md-gb-nav-rail-item>
           </md-gb-nav-rail>
-          <div class="demo-content">Expanded Modal Rail</div>
+          <div class="demo-content">
+            Modal rail: expand it with the menu button; it opens over the
+            content with a scrim. Click the scrim, press Escape or swipe it
+            toward its edge to collapse.
+          </div>
         </div>
 
         <div class="demo-shell">
@@ -221,5 +223,56 @@ const allVariants: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const modalBack: MaterialStoryInit<StoryKnobs> = {
+  name: 'Modal rail and predictive back',
+  styles,
+  render() {
+    const railRef = createRef<NavRailElement>();
+    return html`
+      <div class="demo-shell" style="position: relative">
+        <md-gb-nav-rail
+          ${ref(railRef)}
+          modal
+          collapsible
+          aria-label="Modal navigation rail">
+          <md-gb-nav-rail-item selected>
+            <md-gb-icon slot="icon">mail</md-gb-icon>
+            Inbox
+          </md-gb-nav-rail-item>
+          <md-gb-nav-rail-item>
+            <md-gb-icon slot="icon">chat_bubble</md-gb-icon>
+            Chat
+          </md-gb-nav-rail-item>
+          <md-gb-nav-rail-item>
+            <md-gb-icon slot="icon">groups</md-gb-icon>
+            Spaces
+          </md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+        <div class="demo-content" style="flex-direction: column; gap: 16px">
+          <p style="max-width: 360px; margin: 0">
+            Expand the modal rail with the menu button. The Android back
+            gesture or button (or Escape) collapses it; back first plays the
+            predictive back motion, popping the rail off its edge. The scrim
+            and the menu button are the single-pointer alternatives to
+            swiping it closed.
+          </p>
+          <md-gb-button
+            color="tonal"
+            @click=${() => {
+              const rail = railRef.value;
+              if (!rail) return;
+              rail.expand();
+              globalThis.setTimeout(() => {
+                rail.handleBack();
+              }, 600);
+            }}>
+            Expand, then simulate back
+          </md-gb-button>
+        </div>
+      </div>
+    `;
+  },
+};
+
 /** Navigation Rail stories. */
-export const stories = [playground, allVariants];
+export const stories = [playground, allVariants, modalBack];

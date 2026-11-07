@@ -37,6 +37,14 @@ const CASES: SpecCase[] = [
   },
   {
     "mixin": "root",
+    "prop": "container-shape",
+    "token": "md.comp.outlined-segmented-button.shape",
+    "spec": "var(--md-sys-shape-corner-full)",
+    "property": "border-top-left-radius",
+    "markup": "<span></span><div class=\"segmented-button-set\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
     "prop": "icon-size",
     "token": "md.comp.outlined-segmented-button.with-icon.icon.size",
     "spec": "18px",
@@ -45,8 +53,24 @@ const CASES: SpecCase[] = [
   },
   {
     "mixin": "root",
+    "prop": "label-text",
+    "token": "md.comp.outlined-segmented-button.label-text.font",
+    "spec": "var(--md-sys-typescale-label-lg)",
+    "property": "font",
+    "markup": "<span></span><div class=\"segmented-button-set\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
+    "prop": "label-text-axes",
+    "token": "md.comp.outlined-segmented-button.label-text.font",
+    "spec": "var(--md-sys-typescale-label-lg-axes)",
+    "property": "font-variation-settings",
+    "markup": "<span></span><div class=\"segmented-button-set\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
     "prop": "label-text-tracking",
-    "token": "md.comp.outlined-segmented-button.label-text.tracking",
+    "token": "md.comp.outlined-segmented-button.label-text.font",
     "spec": "var(--md-sys-typescale-label-lg-tracking)",
     "property": "letter-spacing",
     "markup": "<span></span><div class=\"segmented-button-set\" data-spec-target></div><span></span>"

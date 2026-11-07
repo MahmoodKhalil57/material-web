@@ -26,6 +26,7 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
         options: [
           {value: 'vertical', label: 'Vertical (Stacked)'},
           {value: 'horizontal', label: 'Horizontal (Inline)'},
+          {value: 'auto', label: 'Auto (by window size)'},
         ],
       }),
     }),

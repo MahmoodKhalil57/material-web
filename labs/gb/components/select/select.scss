@@ -1,0 +1,188 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'select-tokens';
+// go/keep-sorted end
+
+// The select reuses the `md-gb-text-field` structure and styles
+// (`text-field.css`) for its anchor field and the `md-gb-menu` styles
+// (`menu.css`) for its dropdown. This file layers the select token sets over
+// the text field tokens and adds the dropdown parts.
+
+// State conditions, as in `text-field.scss`.
+$hover: '.hover, :has(> .text-field-container:hover)';
+$focus: '.focus, :has(.text-field-input:focus)';
+$error: '.text-field-error';
+$disabled: '.disabled, :has(.text-field-input:disabled)';
+
+// Motion: the arrow rotation and menu scale use the fast spatial spring, the
+// menu fade the fast effects spring (Compose `DropdownMenuContent`:
+// `MotionSchemeKeyTokens.FastSpatial` / `FastEffects`).
+$spatial: var(--md-sys-motion-spring-fast-spatial-duration)
+  var(--md-sys-motion-spring-fast-spatial);
+$effects: var(--md-sys-motion-spring-fast-effects-duration)
+  var(--md-sys-motion-spring-fast-effects);
+
+@layer md.sys, md.comp.text-field, md.comp.ripple, md.comp.focus-ring;
+@layer md.comp.menu;
+@layer md.comp.select {
+  // The token root: the element host, or a `.select` used in Light DOM.
+  :host,
+  .select {
+    @include select-tokens.root;
+  }
+
+  :host([variant='outlined']),
+  .select.text-field-outlined {
+    @include select-tokens.outlined;
+  }
+
+  // Inside the element the inner `.select` inherits the host's tokens.
+  :host > .select {
+    @include select-tokens.inherit;
+  }
+
+  // States, in the same order as the text field's: error beats hover and
+  // focus, and disabled beats everything.
+  .select.text-field-filled {
+    &:where(#{$hover}) {
+      @include select-tokens.hover;
+    }
+
+    &:where(#{$focus}) {
+      @include select-tokens.focus;
+    }
+
+    &:where(#{$error}) {
+      @include select-tokens.error;
+    }
+
+    &:where(#{$error}):where(#{$hover}) {
+      @include select-tokens.error-hover;
+    }
+
+    &:where(#{$error}):where(#{$focus}) {
+      @include select-tokens.error-focus;
+    }
+
+    &:where(#{$disabled}) {
+      @include select-tokens.disabled;
+    }
+  }
+
+  .select.text-field-outlined {
+    &:where(#{$hover}) {
+      @include select-tokens.outlined-hover;
+    }
+
+    &:where(#{$focus}) {
+      @include select-tokens.outlined-focus;
+    }
+
+    &:where(#{$error}) {
+      @include select-tokens.outlined-error;
+    }
+
+    &:where(#{$error}):where(#{$hover}) {
+      @include select-tokens.outlined-error-hover;
+    }
+
+    &:where(#{$error}):where(#{$focus}) {
+      @include select-tokens.outlined-error-focus;
+    }
+
+    &:where(#{$disabled}) {
+      @include select-tokens.outlined-disabled;
+    }
+  }
+
+  // The field is the menu's anchor (Compose `menuAnchor`).
+  .select {
+    anchor-scope: --md-select-field;
+  }
+
+  .select .text-field-container {
+    anchor-name: --md-select-field;
+  }
+
+  .select:not(.autocomplete, #{$disabled}) .text-field-container {
+    cursor: pointer;
+  }
+
+  // The selected option's text, shown in place of the input.
+  .select-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: inherit;
+    user-select: none;
+  }
+
+  // The trailing dropdown arrow rotates while the menu is open (Compose
+  // `ExposedDropdownMenuDefaults.TrailingIcon`).
+  .select-arrow {
+    transition: rotate $spatial;
+  }
+
+  .select-open .select-arrow {
+    rotate: var(--trailing-icon-expanded-rotation);
+  }
+
+  .select-arrow svg {
+    inline-size: 1em;
+    block-size: 1em;
+    fill: currentColor;
+  }
+
+  // The dropdown: a `.menu` popover anchored below the field (above it when
+  // there is more room there), as wide as the field (Compose
+  // `exposedDropdownSize(matchAnchorWidth = true)`).
+  .select-menu {
+    position: fixed;
+    position-anchor: --md-select-field;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block;
+    position-try-order: most-block-size;
+    inset: auto;
+    margin: 0;
+    border: none;
+    padding-inline: 0;
+    box-sizing: border-box;
+    inline-size: anchor-size(inline);
+    min-inline-size: var(--menu-min-width);
+    // Matches the field even when it is wider than a menu's 280dp maximum.
+    max-inline-size: none;
+    max-block-size: calc(100% - var(--menu-window-margin));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    color: inherit;
+    transform-origin: top center;
+    transition:
+      scale $spatial,
+      opacity $effects,
+      display $effects allow-discrete,
+      overlay $effects allow-discrete;
+  }
+
+  .select-menu:not(:popover-open) {
+    scale: var(--menu-closed-scale);
+    opacity: 0;
+  }
+
+  @starting-style {
+    .select-menu:popover-open {
+      scale: var(--menu-closed-scale);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .select {
+      --md-sys-motion-spring-fast-spatial-duration: 0.001ms;
+      --md-sys-motion-spring-fast-effects-duration: 0.001ms;
+    }
+  }
+}

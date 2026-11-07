@@ -7,16 +7,21 @@
 @use 'fab-tokens';
 // go/keep-sorted end
 
-// TODO: add any md.comp dependencies (e.g. md.comp.ripple)
 @layer md.sys, md.comp.dependencies;
 @layer md.comp.fab {
   .fab {
+    // The FAB and the small extended FAB (the default size).
     & {
       @include fab-tokens.root;
+      @include fab-tokens.extended-sm;
     }
 
     &:is(:hover, .hover) {
       @include fab-tokens.hovered;
+    }
+
+    &:is(:focus-visible, .focus-visible) {
+      @include fab-tokens.focused;
     }
 
     &:is(:active, .active) {
@@ -47,19 +52,30 @@
       @include fab-tokens.tertiary;
     }
 
+    // The FAB size sets the square container; the extended FAB size of the
+    // same name sets the label, padding and icon-label space.
+    // The small FAB (40dp) is icon-only: no extended FAB size of its own.
+    &.fab-sm {
+      @include fab-tokens.sm;
+    }
+
     &.fab-md {
       @include fab-tokens.md;
+      @include fab-tokens.extended-md;
     }
 
     &.fab-lg {
       @include fab-tokens.lg;
+      @include fab-tokens.extended-lg;
     }
 
     & {
       appearance: none;
       border: none;
+      box-sizing: border-box;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: var(--icon-label-space);
       height: var(--container-height);
       background-color: var(--container-color);
@@ -71,9 +87,70 @@
       font-variation-settings: var(--label-text-axes);
       -webkit-font-smoothing: antialiased;
       padding-inline: var(--leading-space) var(--trailing-space);
+      white-space: nowrap;
       animation: var(--ripple-animation), var(--focus-ring-animation);
+      // Keeps the ripple's transition (ripple.scss) with the collapse.
+      transition:
+        var(--ripple-transition, all 0s),
+        padding-inline var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial);
       --md-icon-color: var(--icon-color);
       --md-icon-size: var(--icon-size);
+    }
+
+    // Accessibility: a 48x48dp minimum target for the 40dp small FAB,
+    // centered on the container (the same in LTR and RTL).
+    &.fab-sm {
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        width: max(100%, 48px);
+        height: max(100%, 48px);
+      }
+    }
+
+    // An icon-only (or collapsed extended) FAB is a square
+    // md.comp.fab.container.width wide with the icon centered.
+    &:not(:has(.fab-label)),
+    &.fab-collapsed {
+      padding-inline: calc((var(--container-width) - var(--icon-size)) / 2);
+    }
+  }
+
+  // The label of an extended FAB. `.fab-collapsed` collapses it so the FAB
+  // becomes an icon-only FAB (Compose `expanded = false`): the width animates
+  // with the fast spatial spring and the label fades with the fast effects
+  // spring (FloatingActionButton.kt, ExtendedFloatingActionButton).
+  .fab-label {
+    display: inline-block;
+    flex: none;
+    inline-size: max-content;
+    interpolate-size: allow-keywords;
+    overflow-x: clip;
+    transition:
+      inline-size var(--md-sys-motion-spring-fast-spatial-duration)
+        var(--md-sys-motion-spring-fast-spatial),
+      margin-inline-start var(--md-sys-motion-spring-fast-spatial-duration)
+        var(--md-sys-motion-spring-fast-spatial),
+      opacity var(--md-sys-motion-spring-fast-effects-duration)
+        var(--md-sys-motion-spring-fast-effects);
+  }
+
+  .fab-collapsed .fab-label {
+    inline-size: 0;
+    // Removes the icon-label space with the label.
+    margin-inline-start: calc(-1 * var(--icon-label-space));
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fab {
+      --md-sys-motion-spring-fast-spatial-duration: 0s;
+      --md-sys-motion-spring-fast-effects-duration: 0s;
     }
   }
 }

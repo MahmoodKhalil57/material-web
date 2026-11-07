@@ -31,6 +31,7 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
     }),
     new Knob('disabled', {ui: boolInput()}),
     new Knob('interactive', {ui: boolInput()}),
+    new Knob('dragged', {ui: boolInput()}),
   ],
 );
 

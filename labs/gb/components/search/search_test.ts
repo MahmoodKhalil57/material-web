@@ -15,6 +15,7 @@ import './md-gb-search-view.js';
 import {
   getResultOptions,
   SEARCH_BAR_CLASSES,
+  SEARCH_CLOSE_REASONS,
   SEARCH_VIEW_CLASSES,
   searchBarClasses,
   searchViewClasses,
@@ -263,6 +264,83 @@ describe('search', () => {
       await closed;
       expect(cancel.defaultPrevented).toBeTrue();
       expect(dialog.open).toBeFalse();
+    });
+
+    describe('close reasons and predictive back', () => {
+      function reasonOf(event: Event) {
+        return (event as CustomEvent<{reason: string}>).detail.reason;
+      }
+
+      async function closedReason(bar: SearchBarElement, act: () => void) {
+        const closed = new Promise<string>((resolve) => {
+          bar.addEventListener('closed', (e) => resolve(reasonOf(e)), {
+            once: true,
+          });
+        });
+        act();
+        return closed;
+      }
+
+      it('reports escape for Escape and a synthetic cancel', async () => {
+        const {bar, viewInput, dialog} = await setupBar();
+        await bar.show();
+        expect(await closedReason(bar, () => key(viewInput, 'Escape'))).toBe(
+          SEARCH_CLOSE_REASONS.ESCAPE,
+        );
+        await bar.show();
+        expect(
+          await closedReason(bar, () =>
+            dialog.dispatchEvent(new Event('cancel', {cancelable: true})),
+          ),
+        ).toBe(SEARCH_CLOSE_REASONS.ESCAPE);
+      });
+
+      it('reports back-button for the back icon button', async () => {
+        const {bar, view} = await setupBar();
+        await bar.show();
+        const back =
+          view.shadowRoot!.querySelector<HTMLButtonElement>(
+            '.search-view-back',
+          )!;
+        expect(await closedReason(bar, () => back.click())).toBe(
+          SEARCH_CLOSE_REASONS.BACK_BUTTON,
+        );
+      });
+
+      it('closes with reason back from handleBack()', async () => {
+        const {bar, view} = await setupBar();
+        await bar.show();
+        let closeReason = '';
+        bar.addEventListener('close', (e) => {
+          closeReason = reasonOf(e);
+        });
+        await view.handleBack();
+        expect(closeReason).toBe(SEARCH_CLOSE_REASONS.BACK);
+        expect(view.open).toBeFalse();
+      });
+
+      it('scales a full-screen view to 90% on back', async () => {
+        const {bar, view} = await setupBar();
+        await bar.show();
+        view.quick = false;
+        const container = view.shadowRoot!.querySelector<HTMLElement>(
+          '.search-view-container',
+        )!;
+        const done = view.handleBack();
+        const motion = container
+          .getAnimations()
+          .find((a) =>
+            (a.effect as KeyframeEffect)
+              .getKeyframes()
+              .some((frame) => frame['scale'] === '0.9'),
+          );
+        expect(motion).withContext('predictive back scale').toBeDefined();
+        view.quick = true;
+        motion!.finish();
+        await done;
+        expect(view.open).toBeFalse();
+        expect(container.getAnimations().length).toBe(0);
+      });
     });
 
     it('closes from the back button and returns focus to the bar', async () => {

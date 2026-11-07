@@ -19,11 +19,11 @@
   }
 
   :host(md-gb-nav-bar[item-layout='horizontal']) {
-    @include nav-bar-tokens.item-horizontal;
+    @include nav-bar-tokens.horizontal;
   }
 
   :host(md-gb-nav-bar[item-layout='vertical']) {
-    @include nav-bar-tokens.item-vertical;
+    @include nav-bar-tokens.vertical;
   }
 
   :host(md-gb-nav-bar-item) {
@@ -36,11 +36,11 @@
   }
 
   :host(md-gb-nav-bar-item[item-layout='horizontal']) {
-    @include nav-bar-tokens.item-horizontal;
+    @include nav-bar-tokens.horizontal;
   }
 
   :host(md-gb-nav-bar-item[item-layout='vertical']) {
-    @include nav-bar-tokens.item-vertical;
+    @include nav-bar-tokens.vertical;
   }
 
   md-gb-nav-bar {
@@ -51,11 +51,11 @@
     width: 100%;
 
     &[item-layout='horizontal'] {
-      @include nav-bar-tokens.item-horizontal;
+      @include nav-bar-tokens.horizontal;
     }
 
     &[item-layout='vertical'] {
-      @include nav-bar-tokens.item-vertical;
+      @include nav-bar-tokens.vertical;
     }
   }
 
@@ -89,11 +89,11 @@
     }
 
     &.nav-bar-horizontal {
-      @include nav-bar-tokens.item-horizontal;
+      @include nav-bar-tokens.horizontal;
     }
 
     &.nav-bar-vertical {
-      @include nav-bar-tokens.item-vertical;
+      @include nav-bar-tokens.vertical;
     }
   }
 
@@ -252,7 +252,7 @@
   }
 
   .nav-bar-item-horizontal {
-    @include nav-bar-tokens.item-horizontal;
+    @include nav-bar-tokens.horizontal;
 
     .nav-bar-item-content {
       display: inline-flex;
@@ -291,6 +291,38 @@
         opacity: 1;
         transform: scaleX(1);
       }
+    }
+  }
+
+  // Horizontal items (medium windows) are centered with outer margins
+  // (navigation-bar.md, Measurements). Compose
+  // CenteredContentMeasurePolicy: n items share 10% * (n + 3) of the bar
+  // width evenly, and an item grows past its share to fit its content.
+  // `md-gb-nav-bar` sets `--_nav-bar-items`; Light DOM bars count children.
+  @for $n from 1 through 7 {
+    .nav-bar:has(> :nth-child(#{$n}):last-child) {
+      --_nav-bar-items: #{$n};
+    }
+  }
+
+  .nav-bar.nav-bar-horizontal {
+    justify-content: center;
+  }
+
+  :host(md-gb-nav-bar-item[item-layout='horizontal']),
+  .nav-bar-horizontal > .nav-bar-item {
+    flex: 0 1
+      calc(10% * (var(--_nav-bar-items, 4) + 3) / var(--_nav-bar-items, 4));
+    min-width: max-content;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :host(md-gb-nav-bar),
+    :host(md-gb-nav-bar-item),
+    md-gb-nav-bar,
+    .nav-bar,
+    .nav-bar-item {
+      --motion-duration: 0s;
     }
   }
 }

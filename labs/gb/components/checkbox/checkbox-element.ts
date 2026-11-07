@@ -29,6 +29,7 @@ import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-on
 import checkboxStyles from './checkbox.css' with {type: 'css'}; // github-only
 // import checkboxStyles from './checkbox.cssresult.js'; // google3-only
 
+import {clampDensity, type Density} from '../shared/density.js';
 import {checkbox} from './checkbox.js';
 
 // Separate variable needed for closure.
@@ -53,7 +54,9 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --outline-width
  * @cssprop --state-layer-color
  * @cssprop --state-layer-shape
- * @cssprop --state-layer-size
+ * @cssprop --state-layer-size - State layer size at density 0.
+ * @cssprop --density-step - Size removed per density step.
+ * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
 export class CheckboxElement extends baseClass {
   /** @nocollapse */
@@ -119,6 +122,25 @@ export class CheckboxElement extends baseClass {
    */
   @property() value = 'on';
 
+  /**
+   * The density, from 0 (default) to -3. Each step down removes 4px from the
+   * checkbox's layout box (48px) and state layer (40px); the touch target
+   * stays 48px. Values are clamped to that range.
+   *
+   * checkbox.md: don't apply density by default; let people opt in to a
+   * denser layout.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
+
   @query('input', true)
   private readonly input!: HTMLInputElement | null;
   /**
@@ -136,7 +158,7 @@ export class CheckboxElement extends baseClass {
     return html`
       <input
         part="checkbox"
-        class="${checkbox({invalid: this.error})}"
+        class="${checkbox({invalid: this.error, density: this.density})}"
         type="checkbox"
         aria-checked=${this.indeterminate ? 'mixed' : nothing}
         aria-label=${ariaLabel || nothing}

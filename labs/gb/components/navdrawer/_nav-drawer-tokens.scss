@@ -46,7 +46,7 @@
   --large-badge-label-axes: var(--md-sys-typescale-label-lg-axes);
   --large-badge-label-color: var(--md-sys-color-on-surface-variant);
   --large-badge-label-tracking: var(--md-sys-typescale-label-lg-tracking);
-  // EDIT: md.comp.navigation-drawer.container.shape is corner-large-end; gb has no `-end` shape property, so nav-drawer.scss applies this radius to the end corners only (RTL aware).
+  // EDIT: md.comp.navigation-drawer.container.shape is corner-large-end. --md-sys-shape-corner-lg-end is a physical (LTR) 4-value radius, so nav-drawer.scss applies the large corner to the logical end corners instead (flips in RTL).
   --container-shape: var(--md-sys-shape-corner-lg);
   // EDIT: md.comp.navigation-drawer.active.label-text.weight is label-large weight-prominent; the gb equivalent is the emphasized label style.
   --active-label-text: var(--md-sys-typescale-emphasized-label-lg);

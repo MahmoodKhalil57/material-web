@@ -5,6 +5,7 @@
  */
 
 import '../textfield/md-gb-text-field.js';
+import '../tooltip/md-gb-tooltip.js';
 
 import {
   css,
@@ -19,7 +20,14 @@ import {
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {keyed} from 'lit/directives/keyed.js';
+import {repeat} from 'lit/directives/repeat.js';
 import {live} from 'lit/directives/live.js';
+import {styleMap} from 'lit/directives/style-map.js';
+import {
+  createValidator,
+  getValidityAnchor,
+  mixinConstraintValidation,
+} from '../../../behaviors/constraint-validation.js';
 import {mixinElementInternals} from '../../../behaviors/element-internals.js';
 import {
   getFormValue,
@@ -29,6 +37,7 @@ import {button} from '../button/button.js';
 import {divider} from '../divider/divider.js';
 import {iconButton} from '../iconbutton/icon-button.js';
 import {ripple} from '../ripple/ripple.js';
+import {clampDensity, type Density} from '../shared/density.js';
 import {
   addMonths,
   type CalendarDate,
@@ -60,6 +69,7 @@ import {
   type DatePickerVariant,
   getKeyboardTargetDate,
 } from './date-picker.js';
+import {DatePickerValidator} from './date-picker-validator.js';
 
 import buttonStyles from '../button/button.css' with {type: 'css'}; // github-only
 // import buttonStyles from '../button/button.cssresult.js'; // google3-only
@@ -98,6 +108,10 @@ export interface DatePickerStrings {
   confirm: string;
   cancel: string;
   clear: string;
+  /** Full-screen close icon button label. */
+  close: string;
+  /** Full-screen confirm button. */
+  save: string;
   today: string;
   inRange: string;
   previousMonth: string;
@@ -123,6 +137,15 @@ export interface DatePickerStrings {
   /** `{0}`: the date. */
   notAllowed: string;
   invalidRange: string;
+  /** Keyboard shortcut hints, shown in the arrow and menu button tooltips. */
+  previousMonthShortcut: string;
+  nextMonthShortcut: string;
+  previousYearShortcut: string;
+  nextYearShortcut: string;
+  monthMenuShortcut: string;
+  yearMenuShortcut: string;
+  /** A button tooltip: `{0}` is the button's label, `{1}` its shortcut. */
+  shortcutTooltip: string;
 }
 
 /** Default (English) strings, from Compose Material 3. */
@@ -139,6 +162,8 @@ export const DEFAULT_DATE_PICKER_STRINGS: DatePickerStrings = {
   confirm: 'OK',
   cancel: 'Cancel',
   clear: 'Clear',
+  close: 'Close',
+  save: 'Save',
   today: 'Today',
   inRange: 'In range',
   previousMonth: 'Change to previous month',
@@ -158,6 +183,15 @@ export const DEFAULT_DATE_PICKER_STRINGS: DatePickerStrings = {
   yearOutOfRange: 'Date out of expected year range {0} - {1}',
   notAllowed: 'Date not allowed: {0}',
   invalidRange: 'Invalid date range input',
+  // Spec accessibility: "providing the shortcut key in the tooltip"
+  // (keyboard navigation table).
+  previousMonthShortcut: 'Page Up',
+  nextMonthShortcut: 'Page Down',
+  previousYearShortcut: 'Shift + Page Up',
+  nextYearShortcut: 'Shift + Page Down',
+  monthMenuShortcut: 'Shift + M',
+  yearMenuShortcut: 'Shift + Y',
+  shortcutTooltip: '{0} ({1})',
 };
 
 /** The value detail of `input` and `change` events. */
@@ -183,13 +217,16 @@ const ICONS = {
   calendar:
     'M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z',
   check: 'M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
+  close:
+    'M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
 };
 
 function icon(path: string, classes = '') {
   return html`<svg
     class="date-picker-icon ${classes}"
     viewBox="0 0 24 24"
-    aria-hidden="true">
+    aria-hidden="true"
+  >
     <path d="${path}" />
   </svg>`;
 }
@@ -207,7 +244,37 @@ function getDeepActiveElement(): HTMLElement | null {
   return active as HTMLElement | null;
 }
 
-const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
+const baseClass = mixinConstraintValidation(
+  mixinFormAssociated(mixinElementInternals(LitElement)),
+);
+
+/**
+ * Pointer travel (px) before a drag on the calendar becomes a month swipe
+ * (Android ViewConfiguration touch slop, 8.dp).
+ */
+const SWIPE_SLOP_PX = 8;
+
+/**
+ * Release velocity (px/s) above which a swipe moves to the next month in its
+ * direction even if it covered less than half the width (Compose
+ * PagerDefaults / snap fling minimum velocity, 400.dp/s).
+ */
+const SWIPE_FLING_VELOCITY = 400;
+
+/**
+ * The release velocity is measured over the last 100 ms of the drag (Compose
+ * VelocityTracker horizon).
+ */
+const SWIPE_VELOCITY_HORIZON_MS = 100;
+
+/** Months rendered beyond the visible ones in the scrolling month list. */
+const MONTH_LIST_OVERSCAN = 1;
+
+/**
+ * The scrolling month list's month height before it is measured: the
+ * subhead (20 + 20 + 8) and six 48dp weeks (Compose Month, MaxCalendarRows).
+ */
+const DEFAULT_MONTH_HEIGHT = 48 + 6 * 48;
 
 /**
  * A Material Design date picker: lets people select a date or a range of
@@ -221,8 +288,13 @@ const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
  *   headline showing the selection, a calendar with a year grid, and an
  *   edit icon that switches to the modal date input (`mode="input"`).
  *
- * Set `range` to select a start and end date. Set `inline` to render the
- * calendar surface in the page flow instead of a popup or dialog.
+ * Set `range` to select a start and end date. The modal range picker shows a
+ * vertically scrolling list of months with month subheads (spec: "To
+ * navigate across months, scroll vertically"); the other calendars show one
+ * month, changed with the arrows, Page Up / Page Down or a horizontal swipe.
+ * Set `fullscreen` on a modal picker for the full-screen layout recommended
+ * on compact windows (a close icon button and **Save**). Set `inline` to
+ * render the calendar surface in the page flow instead of a popup or dialog.
  *
  * Selections in the calendar are pending until confirmed with **OK** (or
  * Enter on a date); **Cancel**, Escape or a click outside discards them. With
@@ -230,7 +302,8 @@ const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
  *
  * The value is an ISO 8601 date (`2025-08-17`), or an ISO 8601 interval
  * (`2025-08-17/2025-08-23`) for a range. It is form associated: the value
- * is submitted under `name`.
+ * is submitted under `name`, and `required` makes an empty value (or a range
+ * without an end date) invalid.
  *
  * Month and weekday names, the first day of the week, digits and the date
  * input format follow `locale` (default: the document's `lang`) through
@@ -279,6 +352,11 @@ const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
  * @cssprop --scrim-color - Modal scrim color.
  * @cssprop --scrim-opacity - Modal scrim opacity.
  * @cssprop --anchor-spacing - Docked: distance between the field and the calendar.
+ * @cssprop --range-selection-month-subhead - Modal range: month subhead typography.
+ * @cssprop --range-selection-month-subhead-color - Modal range: month subhead color.
+ * @cssprop --range-selection-header-container-height - Full-screen header height.
+ * @cssprop --range-selection-container-shape - Full-screen surface corner radius.
+ * @cssprop --range-selection-container-elevation - Full-screen surface shadow.
  */
 export class DatePickerElement extends baseClass {
   // Layer order is pinned by the `@layer` statement at the top of
@@ -314,6 +392,41 @@ export class DatePickerElement extends baseClass {
    * of a docked popup (without the text field) or a modal dialog.
    */
   @property({type: Boolean, reflect: true}) inline = false;
+
+  /**
+   * Modal: the full-screen layout the spec recommends on compact windows.
+   * The dialog covers the window and has a close (x) icon button and a
+   * **Save** button in place of Cancel and OK.
+   */
+  @property({type: Boolean, reflect: true}) fullscreen = false;
+
+  /**
+   * The density of the picker's text fields (the docked field and the modal
+   * input mode's fields), from 0 (default) to -3, as `md-gb-text-field`
+   * `density`. Values are clamped to that range.
+   *
+   * The calendar itself never gets denser (date-pickers.md, Accessibility:
+   * "Interactive targets for all elements meet Material's 48x48dp minimum
+   * touch target requirement. Increasing density would negatively impact
+   * accessibility by limiting tappable/clickable targets"): its dates, menus
+   * and buttons keep their size, including inside a dense container.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
+
+  /**
+   * A value is required: with no date (or a range without an end date) the
+   * picker is invalid (`valueMissing`).
+   */
+  @property({type: Boolean, reflect: true}) required = false;
 
   /** Modal: shows the calendar (`picker`) or the date input (`input`). */
   @property({reflect: true}) mode: DatePickerMode = 'picker';
@@ -359,8 +472,8 @@ export class DatePickerElement extends baseClass {
    * Returns true for dates that can't be selected (in addition to dates
    * outside `min` / `max`). Receives an ISO date.
    */
-  @property({attribute: false}) isDateDisabled: ((date: string) => boolean) | null =
-    null;
+  @property({attribute: false}) isDateDisabled:
+    ((date: string) => boolean) | null = null;
 
   /** Overrides for the user-facing strings. */
   @property({attribute: false}) strings: Partial<DatePickerStrings> = {};
@@ -421,6 +534,13 @@ export class DatePickerElement extends baseClass {
   @state() private fieldError = '';
   @state() private inputTexts: [string, string] = ['', ''];
   @state() private inputErrors: [string, string] = ['', ''];
+  /** Horizontal drag of the month (px) during a swipe, else null. */
+  @state() private dragOffset: number | null = null;
+  /** The swipe was released and the month is springing into place. */
+  @state() private swipeSettling = false;
+  @state() private listScrollTop = 0;
+  @state() private listHeight = 0;
+  @state() private monthHeight = DEFAULT_MONTH_HEIGHT;
 
   @query('.date-picker') private readonly surface!: HTMLElement | null;
   @query('dialog') private readonly dialogElement!: HTMLDialogElement | null;
@@ -433,13 +553,24 @@ export class DatePickerElement extends baseClass {
   private transitionCounter = 0;
   private previouslyFocused: HTMLElement | null = null;
   private openAbort: AbortController | null = null;
-  private cachedFormat: {locale: string; format: DateInputFormat} | null =
-    null;
+  private cachedFormat: {locale: string; format: DateInputFormat} | null = null;
+  private swipe: {
+    pointerId: number;
+    startX: number;
+    startY: number;
+    /** Recent pointer positions, for the release velocity. */
+    samples: Array<{x: number; time: number}>;
+    active: boolean;
+  } | null = null;
+  private suppressClick = false;
+  /** Scroll the month list to the displayed month on the next layout. */
+  private pendingListScroll = true;
 
   constructor() {
     super();
     if (!isServer) {
       this.addEventListener('keydown', this.handleHostKeydown);
+      this.addEventListener('invalid', this.handleInvalid);
     }
   }
 
@@ -502,7 +633,8 @@ export class DatePickerElement extends baseClass {
       this.positionPopup();
       this.listenWhileOpen();
     }
-    this.focusAfterUpdate = this.mode === 'input' && this.variant === 'modal' ? 'input' : 'date';
+    this.focusAfterUpdate =
+      this.mode === 'input' && this.variant === 'modal' ? 'input' : 'date';
     this.requestUpdate();
     this.dispatchEvent(new Event('open'));
   }
@@ -513,7 +645,9 @@ export class DatePickerElement extends baseClass {
    *
    * @param reason Passed in the `close` event's detail.
    */
-  async close(reason: string = DATE_PICKER_CLOSE_REASONS.CANCEL): Promise<void> {
+  async close(
+    reason: string = DATE_PICKER_CLOSE_REASONS.CANCEL,
+  ): Promise<void> {
     if (!this.isOpenInternal) {
       return;
     }
@@ -550,7 +684,11 @@ export class DatePickerElement extends baseClass {
    * @return Whether the selection was committed.
    */
   confirm(): boolean {
-    if (this.variant === 'modal' && this.mode === 'input' && !this.validateInputs()) {
+    if (
+      this.variant === 'modal' &&
+      this.mode === 'input' &&
+      !this.validateInputs()
+    ) {
       this.focusAfterUpdate = 'input';
       this.requestUpdate();
       return false;
@@ -585,6 +723,7 @@ export class DatePickerElement extends baseClass {
   /** Shows the given month (`year`, `month` 1-12) in the calendar. */
   showMonth(year: number, month: number) {
     this.goToMonth({year, month, day: this.focusedDate.day});
+    this.pendingListScroll = true;
   }
 
   override [getFormValue]() {
@@ -598,6 +737,31 @@ export class DatePickerElement extends baseClass {
   override formStateRestoreCallback(state: string) {
     this.value = state;
   }
+
+  override [createValidator]() {
+    return new DatePickerValidator(() => ({
+      required: this.required,
+      complete: this.isValueComplete,
+    }));
+  }
+
+  override [getValidityAnchor]() {
+    return this.variant === 'docked' && !this.inline ? this.textField : null;
+  }
+
+  /** The committed value is a date, or a range with a start and an end. */
+  private get isValueComplete() {
+    const [start, end] = this.parseValue(this.value ?? '');
+    return this.range ? !!(start && end) : !!start;
+  }
+
+  /** Docked: an invalid picker shows its validation message on the field. */
+  private readonly handleInvalid = (event: Event) => {
+    if (event.defaultPrevented || this.variant !== 'docked' || this.inline) {
+      return;
+    }
+    this.fieldError = this.validationMessage;
+  };
 
   // ---------------------------------------------------------------------
   // Model helpers.
@@ -655,6 +819,22 @@ export class DatePickerElement extends baseClass {
     return this.variant === 'modal';
   }
 
+  /** The modal range calendar: a vertically scrolling list of months. */
+  private get isScrolling() {
+    return this.isModal && this.range && this.mode !== 'input';
+  }
+
+  /** The number of months in the scrolling month list (whole years). */
+  private get monthCount() {
+    const [first, last] = this.yearRange;
+    return (last - first + 1) * 12;
+  }
+
+  /** The month's position in the scrolling month list. */
+  private monthIndex(year: number, month: number) {
+    return (year - this.yearRange[0]) * 12 + month - 1;
+  }
+
   private isRtl() {
     try {
       return this.matches(':dir(rtl)');
@@ -663,7 +843,9 @@ export class DatePickerElement extends baseClass {
     }
   }
 
-  private parseValue(value: string): [CalendarDate | null, CalendarDate | null] {
+  private parseValue(
+    value: string,
+  ): [CalendarDate | null, CalendarDate | null] {
     if (!this.range) {
       return [parseIsoDate(value), null];
     }
@@ -711,7 +893,9 @@ export class DatePickerElement extends baseClass {
   }
 
   private get isSelectionComplete() {
-    return this.range ? !!(this.pendingStart && this.pendingEnd) : !!this.pendingStart;
+    return this.range
+      ? !!(this.pendingStart && this.pendingEnd)
+      : !!this.pendingStart;
   }
 
   private resetPending() {
@@ -725,6 +909,10 @@ export class DatePickerElement extends baseClass {
     this.slide = '';
     this.inputTexts = [this.formatForInput(start), this.formatForInput(end)];
     this.inputErrors = ['', ''];
+    this.swipe = null;
+    this.dragOffset = null;
+    this.swipeSettling = false;
+    this.pendingListScroll = true;
   }
 
   private formatForInput(date: CalendarDate | null) {
@@ -808,7 +996,10 @@ export class DatePickerElement extends baseClass {
       this.pendingStart = date;
     }
     this.focusedDate = date;
-    if (date.year !== this.displayYear || date.month !== this.displayMonth) {
+    if (
+      !this.isScrolling &&
+      (date.year !== this.displayYear || date.month !== this.displayMonth)
+    ) {
       this.goToMonth(date);
     }
     this.dispatchInput();
@@ -832,7 +1023,9 @@ export class DatePickerElement extends baseClass {
       day: Math.min(date.day, daysInMonth(date.year, date.month)),
     };
     const direction =
-      target.year * 12 + target.month - (this.displayYear * 12 + this.displayMonth);
+      target.year * 12 +
+      target.month -
+      (this.displayYear * 12 + this.displayMonth);
     if (direction !== 0) {
       this.slide = direction > 0 ? 'next' : 'prev';
       this.slideKey++;
@@ -854,7 +1047,10 @@ export class DatePickerElement extends baseClass {
     const first = this.firstSelectable;
     const last = this.lastSelectable;
     const index = target.year * 12 + target.month;
-    return index >= first.year * 12 + first.month && index <= last.year * 12 + last.month;
+    return (
+      index >= first.year * 12 + first.month &&
+      index <= last.year * 12 + last.month
+    );
   }
 
   private navigate(offset: number) {
@@ -878,9 +1074,19 @@ export class DatePickerElement extends baseClass {
     if (this.displayYear === 0) {
       this.resetPending();
     }
+    if (
+      changed.has('range') ||
+      changed.has('variant') ||
+      changed.has('mode') ||
+      changed.has('min') ||
+      changed.has('max')
+    ) {
+      this.pendingListScroll = true;
+    }
   }
 
   protected override updated() {
+    this.syncMonthList();
     const focus = this.focusAfterUpdate;
     if (!focus) {
       return;
@@ -893,6 +1099,12 @@ export class DatePickerElement extends baseClass {
       return;
     }
     const target = this.getFocusTarget();
+    if (this.isScrolling && focus === 'date') {
+      // Keep the month list still unless the date is out of view.
+      target?.focus({preventScroll: true});
+      target?.scrollIntoView?.({block: 'nearest'});
+      return;
+    }
     target?.focus();
     if (focus === 'list') {
       target?.scrollIntoView?.({block: 'center'});
@@ -906,8 +1118,39 @@ export class DatePickerElement extends baseClass {
       );
     }
     return this.renderRoot.querySelector<HTMLElement>(
-      '.date-picker-grid [tabindex="0"]',
+      '.date-picker-grid [tabindex="0"], .date-picker-months [tabindex="0"]',
     );
+  }
+
+  /**
+   * Measures the scrolling month list (month height, viewport) and scrolls
+   * it to the displayed month when asked to. The list is laid out only once
+   * the dialog is open, so this retries on later updates until it is.
+   */
+  private syncMonthList() {
+    const list = this.renderRoot.querySelector<HTMLElement>(
+      '.date-picker-months',
+    );
+    if (!list || list.clientHeight === 0) {
+      return;
+    }
+    const height =
+      list.querySelector<HTMLElement>('.date-picker-month')?.offsetHeight ?? 0;
+    if (height > 0 && height !== this.monthHeight) {
+      // Re-render at the measured height first; scroll on the next update.
+      this.monthHeight = height;
+      return;
+    }
+    if (list.clientHeight !== this.listHeight) {
+      this.listHeight = list.clientHeight;
+    }
+    if (this.pendingListScroll) {
+      this.pendingListScroll = false;
+      // Compose DateRangePickerContent: scrollToItem(displayed month).
+      list.scrollTop =
+        this.monthIndex(this.displayYear, this.displayMonth) * this.monthHeight;
+      this.listScrollTop = list.scrollTop;
+    }
   }
 
   private restoreFocus() {
@@ -983,12 +1226,16 @@ export class DatePickerElement extends baseClass {
   /** Places the docked popup below the field (above it if it doesn't fit). */
   private positionPopup() {
     const surface = this.surface;
-    const anchor = this.renderRoot.querySelector<HTMLElement>('.date-picker-field');
+    const anchor =
+      this.renderRoot.querySelector<HTMLElement>('.date-picker-field');
     if (!surface || !anchor || this.inline || this.isModal) {
       return;
     }
     const rect = anchor.getBoundingClientRect();
-    const spacing = parseFloat(getComputedStyle(surface).getPropertyValue('--anchor-spacing')) || 0;
+    const spacing =
+      parseFloat(
+        getComputedStyle(surface).getPropertyValue('--anchor-spacing'),
+      ) || 0;
     const height = surface.offsetHeight;
     const width = surface.offsetWidth;
     const below = rect.bottom + spacing;
@@ -1012,8 +1259,13 @@ export class DatePickerElement extends baseClass {
     }
     const target = event.composedPath()[0];
     const inTextInput =
-      target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
-    if (event.key === 'Escape' && this.variant === 'docked' && this.isOpenInternal) {
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement;
+    if (
+      event.key === 'Escape' &&
+      this.variant === 'docked' &&
+      this.isOpenInternal
+    ) {
       event.preventDefault();
       if (this.view !== 'days') {
         this.closeList();
@@ -1028,16 +1280,26 @@ export class DatePickerElement extends baseClass {
       this.closeList();
       return;
     }
-    if (!event.shiftKey || inTextInput || event.ctrlKey || event.metaKey || event.altKey) {
+    if (
+      !event.shiftKey ||
+      inTextInput ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey
+    ) {
       return;
     }
     const key = event.key.toLowerCase();
     if (key === 'm' && !this.isModal) {
       event.preventDefault();
-      this.renderRoot.querySelector<HTMLElement>('.date-picker-month-menu')?.focus();
+      this.renderRoot
+        .querySelector<HTMLElement>('.date-picker-month-menu')
+        ?.focus();
     } else if (key === 'y') {
       event.preventDefault();
-      this.renderRoot.querySelector<HTMLElement>('.date-picker-year-menu')?.focus();
+      this.renderRoot
+        .querySelector<HTMLElement>('.date-picker-year-menu')
+        ?.focus();
     }
   };
 
@@ -1052,7 +1314,9 @@ export class DatePickerElement extends baseClass {
   }
 
   private readonly handleGridClick = (event: MouseEvent) => {
-    const cell = (event.target as HTMLElement).closest<HTMLElement>('[data-date]');
+    const cell = (event.target as HTMLElement).closest<HTMLElement>(
+      '[data-date]',
+    );
     const date = parseIsoDate(cell?.dataset['date']);
     if (date) {
       this.selectDate(date);
@@ -1060,7 +1324,9 @@ export class DatePickerElement extends baseClass {
   };
 
   private readonly handleGridKeydown = (event: KeyboardEvent) => {
-    const cell = (event.target as HTMLElement).closest<HTMLElement>('[data-date]');
+    const cell = (event.target as HTMLElement).closest<HTMLElement>(
+      '[data-date]',
+    );
     const date = parseIsoDate(cell?.dataset['date']);
     if (!date) {
       return;
@@ -1079,10 +1345,7 @@ export class DatePickerElement extends baseClass {
       }
       return;
     }
-    const target = getKeyboardTargetDate(event, date, {
-      rtl: this.isRtl(),
-      firstDayOfWeek: this.firstDay,
-    });
+    const target = getKeyboardTargetDate(event, date, {rtl: this.isRtl()});
     if (!target) {
       return;
     }
@@ -1098,17 +1361,22 @@ export class DatePickerElement extends baseClass {
     }
     this.view = view;
     this.focusedIndex =
-      view === 'months' ? this.displayMonth - 1 : this.displayYear - this.yearRange[0];
+      view === 'months'
+        ? this.displayMonth - 1
+        : this.displayYear - this.yearRange[0];
     this.focusAfterUpdate = 'list';
   }
 
   private readonly handleListKeydown = (event: KeyboardEvent) => {
-    const option = (event.target as HTMLElement).closest<HTMLElement>('[data-index]');
+    const option = (event.target as HTMLElement).closest<HTMLElement>(
+      '[data-index]',
+    );
     if (!option) {
       return;
     }
     const index = Number(option.dataset['index']);
-    const count = this.view === 'months' ? 12 : this.yearRange[1] - this.yearRange[0] + 1;
+    const count =
+      this.view === 'months' ? 12 : this.yearRange[1] - this.yearRange[0] + 1;
     const columns = this.isModal && this.view === 'years' ? 3 : 1;
     const forward = this.isRtl() ? -1 : 1;
     let next: number | null = null;
@@ -1154,7 +1422,9 @@ export class DatePickerElement extends baseClass {
   };
 
   private readonly handleListClick = (event: MouseEvent) => {
-    const option = (event.target as HTMLElement).closest<HTMLElement>('[data-index]');
+    const option = (event.target as HTMLElement).closest<HTMLElement>(
+      '[data-index]',
+    );
     if (option && option.getAttribute('aria-disabled') !== 'true') {
       this.selectListItem(Number(option.dataset['index']));
     }
@@ -1182,7 +1452,10 @@ export class DatePickerElement extends baseClass {
     const last = this.lastSelectable;
     if (view === 'months') {
       const value = this.displayYear * 12 + index + 1;
-      return value < first.year * 12 + first.month || value > last.year * 12 + last.month;
+      return (
+        value < first.year * 12 + first.month ||
+        value > last.year * 12 + last.month
+      );
     }
     const year = this.yearRange[0] + index;
     return year < first.year || year > last.year;
@@ -1271,13 +1544,19 @@ export class DatePickerElement extends baseClass {
       if (!valid) this.pendingEnd = null;
       else if (this.range) {
         this.pendingEnd = parseInputDate(this.inputTexts[1], this.inputFormat);
-        if (this.pendingEnd && (this.validateDate(this.pendingEnd) || compareDates(this.pendingEnd, valid) < 0)) {
+        if (
+          this.pendingEnd &&
+          (this.validateDate(this.pendingEnd) ||
+            compareDates(this.pendingEnd, valid) < 0)
+        ) {
           this.pendingEnd = null;
         }
       }
     } else {
       this.pendingEnd =
-        valid && this.pendingStart && compareDates(valid, this.pendingStart) >= 0
+        valid &&
+        this.pendingStart &&
+        compareDates(valid, this.pendingStart) >= 0
           ? valid
           : null;
     }
@@ -1352,6 +1631,7 @@ export class DatePickerElement extends baseClass {
       this.displayMonth = anchor.month;
       this.focusedDate = anchor;
       this.slide = '';
+      this.pendingListScroll = true;
       this.focusAfterUpdate = 'date';
     }
   };
@@ -1379,7 +1659,9 @@ export class DatePickerElement extends baseClass {
       this.isClosing = false;
       this.setOpenInternal(false);
       this.dispatchEvent(
-        new CustomEvent('close', {detail: {reason: DATE_PICKER_CLOSE_REASONS.CANCEL}}),
+        new CustomEvent('close', {
+          detail: {reason: DATE_PICKER_CLOSE_REASONS.CANCEL},
+        }),
       );
     }
   };
@@ -1413,6 +1695,206 @@ export class DatePickerElement extends baseClass {
   };
 
   // ---------------------------------------------------------------------
+  // Month swipe (one-month calendars) and the scrolling month list.
+
+  /** The month offset that a drag toward `dx` (physical px) reveals. */
+  private swipeMonths(dx: number) {
+    if (dx === 0) {
+      return 0;
+    }
+    // Dragging right reveals the previous month (the next one in RTL).
+    const forward = this.isRtl() ? -1 : 1;
+    return dx > 0 ? -forward : forward;
+  }
+
+  private readonly handleSwipeStart = (event: PointerEvent) => {
+    this.suppressClick = false;
+    if (!event.isPrimary || event.button !== 0 || this.swipeSettling) {
+      return;
+    }
+    this.swipe = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      samples: [{x: event.clientX, time: event.timeStamp}],
+      active: false,
+    };
+  };
+
+  private readonly handleSwipeMove = (event: PointerEvent) => {
+    const swipe = this.swipe;
+    if (!swipe || event.pointerId !== swipe.pointerId) {
+      return;
+    }
+    const dx = event.clientX - swipe.startX;
+    const dy = event.clientY - swipe.startY;
+    if (!swipe.active) {
+      if (Math.abs(dx) < SWIPE_SLOP_PX && Math.abs(dy) < SWIPE_SLOP_PX) {
+        return;
+      }
+      if (Math.abs(dy) >= Math.abs(dx)) {
+        // A vertical gesture: leave it to the page.
+        this.swipe = null;
+        return;
+      }
+      swipe.active = true;
+      try {
+        (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+      } catch {
+        // The pointer is already gone.
+      }
+    }
+    this.addSwipeSample(swipe, event);
+    const width = (event.currentTarget as HTMLElement).clientWidth;
+    // The calendar doesn't move past the first or last selectable month.
+    const months = this.swipeMonths(dx);
+    this.dragOffset =
+      months && !this.canGoToMonth(months)
+        ? 0
+        : Math.max(-width, Math.min(width, dx));
+    event.preventDefault();
+  };
+
+  private readonly handleSwipeEnd = (event: PointerEvent) => {
+    const swipe = this.swipe;
+    if (!swipe || event.pointerId !== swipe.pointerId) {
+      return;
+    }
+    this.swipe = null;
+    if (!swipe.active) {
+      return;
+    }
+    this.suppressClick = true;
+    this.addSwipeSample(swipe, event);
+    const velocity = this.swipeVelocity(swipe);
+    const width = (event.currentTarget as HTMLElement).clientWidth || 1;
+    const offset = this.dragOffset ?? 0;
+    // Compose snap fling: a fling moves to the next month in its direction;
+    // otherwise the month snaps to the closest position.
+    let pages = 0;
+    if (
+      Math.abs(velocity) > SWIPE_FLING_VELOCITY &&
+      Math.sign(velocity) === Math.sign(offset)
+    ) {
+      pages = Math.sign(offset);
+    } else if (Math.abs(offset) > width / 2) {
+      pages = Math.sign(offset);
+    }
+    let months = this.swipeMonths(pages);
+    if (months && !this.canGoToMonth(months)) {
+      pages = 0;
+      months = 0;
+    }
+    this.settleSwipe(pages * width, months);
+  };
+
+  private addSwipeSample(
+    swipe: NonNullable<DatePickerElement['swipe']>,
+    event: PointerEvent,
+  ) {
+    swipe.samples.push({x: event.clientX, time: event.timeStamp});
+    const oldest = event.timeStamp - SWIPE_VELOCITY_HORIZON_MS;
+    while (swipe.samples.length > 2 && swipe.samples[0].time < oldest) {
+      swipe.samples.shift();
+    }
+  }
+
+  /** Horizontal velocity (px/s) over the last samples; 0 after a pause. */
+  private swipeVelocity(swipe: NonNullable<DatePickerElement['swipe']>) {
+    const last = swipe.samples[swipe.samples.length - 1];
+    const first = swipe.samples.find(
+      (sample) => sample.time >= last.time - SWIPE_VELOCITY_HORIZON_MS,
+    );
+    if (!first || first === last || last.time <= first.time) {
+      return 0;
+    }
+    return ((last.x - first.x) / (last.time - first.time)) * 1000;
+  }
+
+  private readonly handleSwipeCancel = (event: PointerEvent) => {
+    if (this.swipe?.pointerId !== event.pointerId) {
+      return;
+    }
+    const active = this.swipe.active;
+    this.swipe = null;
+    if (active) {
+      this.settleSwipe(0, 0);
+    }
+  };
+
+  /** A swipe ends with a click on the calendar; it must not pick a date. */
+  private readonly handleSwipeClick = {
+    handleEvent: (event: MouseEvent) => {
+      if (!this.suppressClick) {
+        return;
+      }
+      this.suppressClick = false;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    capture: true,
+  };
+
+  /**
+   * Springs the dragged month to `target` (px; the default effects spring,
+   * like Compose's month snap), then shows the month `months` away.
+   */
+  private async settleSwipe(target: number, months: number) {
+    const finish = () => {
+      const hadFocus = !!this.renderRoot
+        .querySelector('.date-picker-pager')
+        ?.contains(this.shadowRoot?.activeElement ?? null);
+      this.swipeSettling = false;
+      this.dragOffset = null;
+      if (months) {
+        this.navigate(months);
+        // The swipe already moved the month in.
+        this.slide = '';
+        if (hadFocus) {
+          this.focusAfterUpdate = 'date';
+        }
+      }
+    };
+    const reduceMotion =
+      typeof matchMedia === 'function' &&
+      matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (this.quick || reduceMotion || this.dragOffset === target) {
+      finish();
+      return;
+    }
+    this.swipeSettling = true;
+    this.dragOffset = target;
+    await this.updateComplete;
+    const track = this.renderRoot.querySelector('.date-picker-pager-track');
+    await Promise.all(
+      (track?.getAnimations() ?? []).map((animation) =>
+        animation.finished.catch(() => {
+          // Canceled: finish anyway.
+        }),
+      ),
+    );
+    if (this.swipeSettling && this.dragOffset === target) {
+      finish();
+    }
+  }
+
+  private readonly handleListScroll = (event: Event) => {
+    const list = event.currentTarget as HTMLElement;
+    this.listScrollTop = list.scrollTop;
+    this.listHeight = list.clientHeight;
+    // Compose updateDisplayedMonth: the first visible month is displayed.
+    const index = Math.max(
+      0,
+      Math.min(
+        this.monthCount - 1,
+        Math.floor((list.scrollTop + 1) / this.monthHeight),
+      ),
+    );
+    this.displayYear = this.yearRange[0] + Math.floor(index / 12);
+    this.displayMonth = (index % 12) + 1;
+  };
+
+  // ---------------------------------------------------------------------
   // Rendering.
 
   protected override render() {
@@ -1422,13 +1904,18 @@ export class DatePickerElement extends baseClass {
     if (this.isModal) {
       const titleId = 'title';
       return html`<dialog
-        class="date-picker-dialog ${this.isClosing ? 'date-picker-dialog-closing' : ''}"
+        class="${classMap({
+          'date-picker-dialog': true,
+          'date-picker-dialog-closing': this.isClosing,
+          'date-picker-dialog-fullscreen': this.fullscreen,
+        })}"
         aria-labelledby="${titleId}"
         aria-describedby="headline"
         @cancel=${this.handleNativeCancel}
         @close=${this.handleNativeClose}
         @pointerdown=${this.handleDialogPointerDown}
-        @click=${this.handleDialogClick}>
+        @click=${this.handleDialogClick}
+      >
         ${this.isOpenInternal || this.isClosing ? this.renderSurface() : nothing}
       </dialog>`;
     }
@@ -1445,6 +1932,7 @@ export class DatePickerElement extends baseClass {
         class="date-picker-text-field"
         part="field"
         variant="outlined"
+        density="${this.density}"
         label="${this.label || (this.range ? strings.rangeLabel : strings.dateLabel)}"
         placeholder="${pattern}"
         supporting-text="${this.supportingText || pattern}"
@@ -1456,7 +1944,8 @@ export class DatePickerElement extends baseClass {
         has-trailing-icon
         @input=${this.handleFieldInput}
         @change=${this.handleFieldChange}
-        @keydown=${this.handleFieldKeydown}>
+        @keydown=${this.handleFieldKeydown}
+      >
         <button
           slot="trailing-icon"
           type="button"
@@ -1470,7 +1959,8 @@ export class DatePickerElement extends baseClass {
           aria-expanded="${this.isOpenInternal ? 'true' : 'false'}"
           aria-controls="surface"
           ?disabled=${this.disabled}
-          @click=${this.handleCalendarButtonClick}>
+          @click=${this.handleCalendarButtonClick}
+        >
           ${icon(ICONS.calendar)}
         </button>
       </md-gb-text-field>
@@ -1486,6 +1976,8 @@ export class DatePickerElement extends baseClass {
       open: this.isOpenInternal,
       closing: this.isClosing,
       inline: this.inline,
+      scrolling: this.isScrolling,
+      fullscreen: this.isModal && this.fullscreen,
     });
     const popup = !this.inline && !this.isModal;
     const title = this.range ? strings.rangeTitle : strings.title;
@@ -1496,7 +1988,8 @@ export class DatePickerElement extends baseClass {
       popover=${popup ? 'manual' : nothing}
       role=${this.isModal ? nothing : popup ? 'dialog' : 'group'}
       aria-label=${this.isModal ? nothing : title}
-      @keydown=${this.handleSurfaceKeydown}>
+      @keydown=${this.handleSurfaceKeydown}
+    >
       ${this.isModal ? this.renderModalHeader() : nothing}
       ${input ? this.renderInputs() : this.renderCalendar()}
       ${this.renderActions()}
@@ -1509,12 +2002,20 @@ export class DatePickerElement extends baseClass {
   private readonly handleSurfaceKeydown = (event: KeyboardEvent) => {
     // Keep Tab inside the docked popup's natural order; nothing to do here
     // yet besides stopping text field shortcuts from reaching the host.
-    if (event.key === 'Tab' && this.variant === 'docked' && this.isOpenInternal) {
+    if (
+      event.key === 'Tab' &&
+      this.variant === 'docked' &&
+      this.isOpenInternal
+    ) {
       const surface = this.surface;
       const focusable = surface
-        ? [...surface.querySelectorAll<HTMLElement>(
-            'button:not([disabled]), [tabindex="0"]',
-          )].filter((el) => el.offsetParent !== null || el.getClientRects().length)
+        ? [
+            ...surface.querySelectorAll<HTMLElement>(
+              'button:not([disabled]), [tabindex="0"]',
+            ),
+          ].filter(
+            (el) => el.offsetParent !== null || el.getClientRects().length,
+          )
         : [];
       if (!focusable.length) return;
       const first = focusable[0];
@@ -1547,17 +2048,22 @@ export class DatePickerElement extends baseClass {
       day: 'numeric',
     };
     if (this.range) {
-      const short: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'};
+      const short: Intl.DateTimeFormatOptions = {
+        month: 'short',
+        day: 'numeric',
+      };
       const startText = this.pendingStart
         ? formatDate(this.pendingStart, locale, short)
         : strings.startDate;
       const endText = this.pendingEnd
         ? formatDate(this.pendingEnd, locale, short)
         : strings.endDate;
-      headline = html`<span>${startText}</span><span aria-hidden="true"> – </span
-        ><span>${endText}</span>`;
+      headline = html`<span>${startText}</span
+        ><span aria-hidden="true"> – </span><span>${endText}</span>`;
       headlineLabel = `${strings.startDate}: ${
-        this.pendingStart ? formatDate(this.pendingStart, locale, longFormat) : '-'
+        this.pendingStart
+          ? formatDate(this.pendingStart, locale, longFormat)
+          : '-'
       }, ${strings.endDate}: ${
         this.pendingEnd ? formatDate(this.pendingEnd, locale, longFormat) : '-'
       }`;
@@ -1575,14 +2081,20 @@ export class DatePickerElement extends baseClass {
         ? formatDate(this.pendingStart, locale, longFormat)
         : String(headline);
     }
-    return html`<div class="date-picker-header date-picker-modal-header" part="header">
+    const fullscreen = this.fullscreen;
+    return html`<div
+        class="date-picker-header date-picker-modal-header"
+        part="header"
+      >
+        ${fullscreen ? this.renderFullscreenBar() : nothing}
         <div class="date-picker-supporting-text" id="title">${title}</div>
         <div class="date-picker-headline-row">
           <div
             class="date-picker-headline"
             id="headline"
             aria-live="polite"
-            aria-label="${headlineLabel}">
+            aria-label="${headlineLabel}"
+          >
             ${headline}
           </div>
           <button
@@ -1593,23 +2105,76 @@ export class DatePickerElement extends baseClass {
               classes: {'date-picker-mode-toggle': true},
             })}"
             aria-label="${input ? strings.switchToCalendar : strings.switchToInput}"
-            @click=${this.handleModeToggle}>
+            @click=${this.handleModeToggle}
+          >
             ${icon(input ? ICONS.calendar : ICONS.edit)}
           </button>
         </div>
       </div>
-      <hr class="${divider({classes: {'date-picker-divider': true}})}" aria-hidden="true" />`;
+      <hr
+        class="${divider({classes: {'date-picker-divider': true}})}"
+        aria-hidden="true"
+      />`;
+  }
+
+  /**
+   * The full-screen row: a close (x) icon button that cancels and a Save
+   * text button that confirms (spec: "Mobile full-screen pickers also have
+   * an additional close affordance (x) icon button and Save confirmation").
+   */
+  private renderFullscreenBar() {
+    const strings = this.resolvedStrings;
+    return html`<div class="date-picker-fullscreen-bar">
+      <button
+        type="button"
+        class="${iconButton({
+          color: 'standard',
+          size: 'sm',
+          classes: {'date-picker-close': true},
+        })}"
+        aria-label="${strings.close}"
+        @click=${() => {
+          this.cancel();
+        }}
+      >
+        ${icon(ICONS.close)}
+      </button>
+      ${
+        this.hideActions
+          ? nothing
+          : html`<button
+              type="button"
+              class="${button({
+                color: 'text',
+                size: 'sm',
+                classes: {'date-picker-save': true},
+              })}"
+              @click=${() => {
+                this.confirm();
+              }}
+            >
+              ${strings.save}
+            </button>`
+      }
+    </div>`;
   }
 
   private renderCalendar() {
+    if (this.isScrolling) {
+      return html`<div class="date-picker-calendar">
+        ${this.renderScrollingMonths()}
+      </div>`;
+    }
     return html`<div class="date-picker-calendar">
       ${this.isModal ? this.renderModalNav() : this.renderDockedHeader()}
       <div class="date-picker-body">
-        ${this.view === 'days'
-          ? this.renderDays()
-          : this.view === 'months'
-            ? this.renderMonthList()
-            : this.renderYearList()}
+        ${
+          this.view === 'days'
+            ? this.renderDays()
+            : this.view === 'months'
+              ? this.renderMonthList()
+              : this.renderYearList()
+        }
       </div>
     </div>`;
   }
@@ -1617,24 +2182,48 @@ export class DatePickerElement extends baseClass {
   private renderNavButton(
     path: string,
     label: string,
-    offset: number,
+    offset: -12 | -1 | 1 | 12,
     extraClass: string,
   ) {
+    const strings = this.resolvedStrings;
+    const id = extraClass.replace('date-picker-', '');
+    const shortcut = {
+      [-12]: [strings.previousYearShortcut, 'Shift+PageUp'],
+      [-1]: [strings.previousMonthShortcut, 'PageUp'],
+      [1]: [strings.nextMonthShortcut, 'PageDown'],
+      [12]: [strings.nextYearShortcut, 'Shift+PageDown'],
+    }[offset];
     return html`<button
-      type="button"
-      class="${iconButton({
-        color: 'standard',
-        size: 'sm',
-        classes: {'date-picker-nav-button': true, [extraClass]: true},
-      })}"
-      aria-label="${label}"
-      title="${label}"
-      ?disabled=${!this.canGoToMonth(offset)}
-      @click=${() => {
-        this.navigate(offset);
-      }}>
-      ${icon(path, 'date-picker-icon-flip')}
-    </button>`;
+        type="button"
+        id="${id}"
+        class="${iconButton({
+          color: 'standard',
+          size: 'sm',
+          classes: {'date-picker-nav-button': true, [extraClass]: true},
+        })}"
+        aria-label="${label}"
+        aria-keyshortcuts="${shortcut[1]}"
+        ?disabled=${!this.canGoToMonth(offset)}
+        @click=${() => {
+          this.navigate(offset);
+        }}
+      >
+        ${icon(path, 'date-picker-icon-flip')}
+      </button>
+      ${this.renderTooltip(id, formatString(strings.shortcutTooltip, label, shortcut[0]))}`;
+  }
+
+  /**
+   * A plain tooltip for an element of the calendar (spec accessibility:
+   * "providing the shortcut key in the tooltip"; truncated weekday labels).
+   */
+  private renderTooltip(anchorId: string, text: string) {
+    return html`<md-gb-tooltip
+      class="date-picker-tooltip"
+      for="${anchorId}"
+      ?quick=${this.quick}
+      >${text}</md-gb-tooltip
+    >`;
   }
 
   private renderMenuButton(
@@ -1645,40 +2234,61 @@ export class DatePickerElement extends baseClass {
     menuClass: string,
     onClick: () => void,
   ) {
+    const strings = this.resolvedStrings;
+    const id = menuClass.replace('date-picker-', '');
+    const months = menuClass === 'date-picker-month-menu';
+    const tooltip = formatString(
+      strings.shortcutTooltip,
+      months
+        ? strings.selectMonth
+        : this.isModal
+          ? strings.switchToYearSelection
+          : strings.selectYear,
+      months ? strings.monthMenuShortcut : strings.yearMenuShortcut,
+    );
     return html`<button
-      type="button"
-      class="${button({
-        color: 'text',
-        size: 'sm',
-        classes: {'date-picker-menu-button': true, [menuClass]: true},
-      })}"
-      aria-label="${label}"
-      aria-haspopup="listbox"
-      aria-expanded="${expanded ? 'true' : 'false'}"
-      ?disabled=${disabled}
-      @click=${onClick}>
-      <span class="date-picker-menu-button-label">${text}</span>
-      ${icon(
-        ICONS.dropDown,
-        `date-picker-menu-button-icon ${expanded ? 'date-picker-menu-button-icon-expanded' : ''}`,
-      )}
-    </button>`;
+        type="button"
+        id="${id}"
+        aria-keyshortcuts="${months ? 'Shift+M' : 'Shift+Y'}"
+        class="${button({
+          color: 'text',
+          size: 'sm',
+          classes: {'date-picker-menu-button': true, [menuClass]: true},
+        })}"
+        aria-label="${label}"
+        aria-haspopup="listbox"
+        aria-expanded="${expanded ? 'true' : 'false'}"
+        ?disabled=${disabled}
+        @click=${onClick}
+      >
+        <span class="date-picker-menu-button-label">${text}</span>
+        ${icon(
+          ICONS.dropDown,
+          `date-picker-menu-button-icon ${expanded ? 'date-picker-menu-button-icon-expanded' : ''}`,
+        )}
+      </button>
+      ${this.renderTooltip(id, tooltip)}`;
   }
 
   private renderDockedHeader() {
     const strings = this.resolvedStrings;
     const locale = this.resolvedLocale;
-    const displayed = {year: this.displayYear, month: this.displayMonth, day: 1};
+    const displayed = {
+      year: this.displayYear,
+      month: this.displayMonth,
+      day: 1,
+    };
     const monthsOpen = this.view === 'months';
     const yearsOpen = this.view === 'years';
     const shortMonth = formatDate(displayed, locale, {month: 'short'});
     const longMonth = formatDate(displayed, locale, {month: 'long'});
     const year = formatNumber(this.displayYear, locale);
     return html`<div
-        class="date-picker-header date-picker-docked-header ${this.view !== 'days'
-          ? 'date-picker-header-list-open'
-          : ''}"
-        part="header">
+        class="date-picker-header date-picker-docked-header ${
+          this.view !== 'days' ? 'date-picker-header-list-open' : ''
+        }"
+        part="header"
+      >
         <div class="date-picker-menu-group">
           ${this.renderNavButton(ICONS.previous, strings.previousMonth, -1, 'date-picker-previous-month')}
           ${this.renderMenuButton(
@@ -1708,16 +2318,23 @@ export class DatePickerElement extends baseClass {
           ${this.renderNavButton(ICONS.next, strings.nextYear, 12, 'date-picker-next-year')}
         </div>
       </div>
-      ${this.view !== 'days'
-        ? html`<hr
-            class="${divider({classes: {'date-picker-divider': true}})}"
-            aria-hidden="true" />`
-        : nothing}`;
+      ${
+        this.view !== 'days'
+          ? html`<hr
+              class="${divider({classes: {'date-picker-divider': true}})}"
+              aria-hidden="true"
+            />`
+          : nothing
+      }`;
   }
 
   private renderModalNav() {
     const strings = this.resolvedStrings;
-    const displayed = {year: this.displayYear, month: this.displayMonth, day: 1};
+    const displayed = {
+      year: this.displayYear,
+      month: this.displayMonth,
+      day: 1,
+    };
     const monthYear = formatDate(displayed, this.resolvedLocale, {
       year: 'numeric',
       month: 'long',
@@ -1734,57 +2351,223 @@ export class DatePickerElement extends baseClass {
           this.openList('years');
         },
       )}
-      ${yearsOpen
-        ? nothing
-        : html`<div class="date-picker-nav-arrows">
-            ${this.renderNavButton(ICONS.previous, strings.previousMonth, -1, 'date-picker-previous-month')}
-            ${this.renderNavButton(ICONS.next, strings.nextMonth, 1, 'date-picker-next-month')}
-          </div>`}
+      ${
+        yearsOpen
+          ? nothing
+          : html`<div class="date-picker-nav-arrows">
+              ${this.renderNavButton(ICONS.previous, strings.previousMonth, -1, 'date-picker-previous-month')}
+              ${this.renderNavButton(ICONS.next, strings.nextMonth, 1, 'date-picker-next-month')}
+            </div>`
+      }
     </div>`;
   }
 
   private renderDays() {
     const locale = this.resolvedLocale;
-    const firstDay = this.firstDay;
-    const weekdays = getWeekdayNames(locale);
-    const ordered = [...weekdays.slice(firstDay), ...weekdays.slice(0, firstDay)];
-    const grid = getMonthGrid(this.displayYear, this.displayMonth, firstDay, this.isModal);
     const monthYear = formatDate(
       {year: this.displayYear, month: this.displayMonth, day: 1},
       locale,
       {year: 'numeric', month: 'long'},
     );
     const slideClass = this.slide ? `date-picker-weeks-${this.slide}` : '';
+    const dragging = this.dragOffset !== null;
+    const displayed = {
+      year: this.displayYear,
+      month: this.displayMonth,
+      day: 1,
+    };
+    // While swiping, the previous and next months sit beside the displayed
+    // one (Compose's horizontal month pager).
+    const adjacent = (offset: -1 | 1) => {
+      if (!this.canGoToMonth(offset)) {
+        return nothing;
+      }
+      const month = addMonths(displayed, offset);
+      return this.renderWeeks(
+        month.year,
+        month.month,
+        `date-picker-weeks-adjacent date-picker-weeks-adjacent-${offset < 0 ? 'prev' : 'next'}`,
+        true,
+      );
+    };
     return html`<div
       class="date-picker-grid"
       part="grid"
       role="grid"
       aria-label="${monthYear}"
       @click=${this.handleGridClick}
-      @keydown=${this.handleGridKeydown}>
-      <div class="date-picker-weekdays" role="row">
+      @keydown=${this.handleGridKeydown}
+    >
+      ${this.renderWeekdays(true)}
+      <div
+        class="${classMap({
+          'date-picker-pager': true,
+          'date-picker-pager-dragging': dragging,
+        })}"
+        @pointerdown=${this.handleSwipeStart}
+        @pointermove=${this.handleSwipeMove}
+        @pointerup=${this.handleSwipeEnd}
+        @pointercancel=${this.handleSwipeCancel}
+        @click=${this.handleSwipeClick}
+      >
+        <div
+          class="${classMap({
+            'date-picker-pager-track': true,
+            'date-picker-pager-settling': this.swipeSettling,
+          })}"
+          style=${styleMap({translate: dragging ? `${this.dragOffset}px 0` : undefined})}
+        >
+          ${keyed(
+            this.slideKey,
+            this.renderWeeks(this.displayYear, this.displayMonth, slideClass),
+          )}
+          ${dragging ? html`${adjacent(-1)}${adjacent(1)}` : nothing}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  /**
+   * The weekday labels. Narrow names are shown; the full name is the label
+   * and, on pointer hover, a tooltip (spec: "Days of the week are not
+   * interactive ... yet the tooltip is available on hover").
+   */
+  private renderWeekdays(inGrid: boolean) {
+    const locale = this.resolvedLocale;
+    const firstDay = this.firstDay;
+    const weekdays = getWeekdayNames(locale);
+    const ordered = [
+      ...weekdays.slice(firstDay),
+      ...weekdays.slice(0, firstDay),
+    ];
+    return html`<div
+        class="date-picker-weekdays"
+        role=${inGrid ? 'row' : nothing}
+        aria-hidden=${inGrid ? nothing : 'true'}
+      >
         ${ordered.map(
-          (name) =>
+          (name, index) =>
             html`<div
               class="date-picker-weekday"
-              role="columnheader"
+              id="weekday-${index}"
+              role=${inGrid ? 'columnheader' : nothing}
               aria-label="${name.long}"
-              title="${name.long}">
+            >
               <span aria-hidden="true">${name.narrow}</span>
             </div>`,
         )}
       </div>
-      ${keyed(
-        this.slideKey,
-        html`<div class="date-picker-weeks ${slideClass}" role="rowgroup">
-          ${grid.weeks.map(
-            (week) =>
-              html`<div class="date-picker-week" role="row">
-                ${week.map(({date, outside}) => this.renderDay(date, outside))}
-              </div>`,
-          )}
-        </div>`,
+      <div class="date-picker-weekday-tooltips">
+        ${ordered.map((name, index) =>
+          this.renderTooltip(`weekday-${index}`, name.long),
+        )}
+      </div>`;
+  }
+
+  /** A month's weeks (`role="rowgroup"`). */
+  private renderWeeks(
+    year: number,
+    month: number,
+    classes = '',
+    hidden = false,
+  ) {
+    const grid = getMonthGrid(year, month, this.firstDay, this.isModal);
+    return html`<div
+      class="date-picker-weeks ${classes}"
+      role="rowgroup"
+      aria-hidden=${hidden ? 'true' : nothing}
+      ?inert=${hidden}
+    >
+      ${grid.weeks.map(
+        (week) =>
+          html`<div class="date-picker-week" role="row">
+            ${week.map(({date, outside}) => this.renderDay(date, outside))}
+          </div>`,
       )}
+    </div>`;
+  }
+
+  /**
+   * The modal range calendar: the weekdays, then a vertically scrolling list
+   * of every month in the year range, each with a month subhead (Compose
+   * VerticalMonthsList). Months have one height, so only the months in view
+   * (and the one holding the focused date) are rendered.
+   */
+  private renderScrollingMonths() {
+    const count = this.monthCount;
+    const height = this.monthHeight;
+    const viewport = Math.min(
+      this.listHeight || height * 2,
+      typeof window === 'undefined' ? Infinity : window.innerHeight || Infinity,
+    );
+    const first = Math.max(
+      0,
+      Math.floor(this.listScrollTop / height) - MONTH_LIST_OVERSCAN,
+    );
+    const last = Math.min(
+      count - 1,
+      Math.ceil((this.listScrollTop + viewport) / height) -
+        1 +
+        MONTH_LIST_OVERSCAN,
+    );
+    const indices: number[] = [];
+    for (let index = first; index <= last; index++) {
+      indices.push(index);
+    }
+    const focused = this.monthIndex(
+      this.focusedDate.year,
+      this.focusedDate.month,
+    );
+    if (
+      focused >= 0 &&
+      focused < count &&
+      (focused < first || focused > last)
+    ) {
+      indices.push(focused);
+    }
+    return html`<div class="date-picker-scrolling-weekdays">
+        ${this.renderWeekdays(false)}
+      </div>
+      <div
+        class="date-picker-months"
+        @scroll=${this.handleListScroll}
+        @click=${this.handleGridClick}
+        @keydown=${this.handleGridKeydown}
+      >
+        <div
+          class="date-picker-months-content"
+          style=${styleMap({blockSize: `${count * height}px`})}
+        >
+          ${repeat(
+            indices,
+            (index) => index,
+            (index) => this.renderListMonth(index, height),
+          )}
+        </div>
+      </div>`;
+  }
+
+  private renderListMonth(index: number, height: number) {
+    const year = this.yearRange[0] + Math.floor(index / 12);
+    const month = (index % 12) + 1;
+    const label = formatDate({year, month, day: 1}, this.resolvedLocale, {
+      year: 'numeric',
+      month: 'long',
+    });
+    return html`<div
+      class="date-picker-month"
+      data-month="${toIsoDate({year, month, day: 1}).slice(0, 7)}"
+      style=${styleMap({insetBlockStart: `${index * height}px`})}
+    >
+      <div class="date-picker-month-subhead" id="month-${index}">${label}</div>
+      <div
+        class="date-picker-month-grid"
+        part="grid"
+        role="grid"
+        aria-labelledby="month-${index}"
+      >
+        ${this.renderWeeks(year, month)}
+      </div>
     </div>`;
   }
 
@@ -1839,7 +2622,8 @@ export class DatePickerElement extends baseClass {
       aria-current="${isToday ? 'date' : nothing}"
       aria-label="${descriptions.join(', ')}"
       data-date="${toIsoDate(date)}"
-      ${ripple()}>
+      ${ripple()}
+    >
       <span
         class="${classMap({
           ...datePickerDayClasses({
@@ -1867,9 +2651,15 @@ export class DatePickerElement extends baseClass {
       role="listbox"
       aria-label="${strings.monthList}"
       @click=${this.handleListClick}
-      @keydown=${this.handleListKeydown}>
+      @keydown=${this.handleListKeydown}
+    >
       ${names.map((name, index) =>
-        this.renderListItem(name, index, index === this.displayMonth - 1, 'months'),
+        this.renderListItem(
+          name,
+          index,
+          index === this.displayMonth - 1,
+          'months',
+        ),
       )}
     </div>`;
   }
@@ -1891,13 +2681,14 @@ export class DatePickerElement extends baseClass {
       );
     }
     return html`<div
-      class="date-picker-list date-picker-year-list ${this.isModal
-        ? 'date-picker-year-grid'
-        : ''}"
+      class="date-picker-list date-picker-year-list ${
+        this.isModal ? 'date-picker-year-grid' : ''
+      }"
       role="listbox"
       aria-label="${strings.yearList}"
       @click=${this.handleListClick}
-      @keydown=${this.handleListKeydown}>
+      @keydown=${this.handleListKeydown}
+    >
       ${items}
     </div>`;
   }
@@ -1925,7 +2716,8 @@ export class DatePickerElement extends baseClass {
       aria-selected="${selected ? 'true' : 'false'}"
       aria-disabled="${disabled ? 'true' : nothing}"
       data-index="${index}"
-      ${ripple()}>
+      ${ripple()}
+    >
       <span
         class="${classMap({
           'date-picker-list-item-content': true,
@@ -1934,11 +2726,13 @@ export class DatePickerElement extends baseClass {
           'focus-ring-outer': yearGrid,
           'focus-ring-inner': !yearGrid,
         })}"
-        >${yearGrid
-          ? nothing
-          : html`<span class="date-picker-list-item-icon"
-              >${selected ? icon(ICONS.check) : nothing}</span
-            >`}<span class="date-picker-list-item-label">${label}</span></span
+        >${
+          yearGrid
+            ? nothing
+            : html`<span class="date-picker-list-item-icon"
+                >${selected ? icon(ICONS.check) : nothing}</span
+              >`
+        }<span class="date-picker-list-item-label">${label}</span></span
       >
     </div>`;
   }
@@ -1949,6 +2743,7 @@ export class DatePickerElement extends baseClass {
     const field = (index: 0 | 1, label: string) =>
       html`<md-gb-text-field
         variant="outlined"
+        density="${this.density}"
         class="date-picker-input-field"
         label="${label}"
         placeholder="${pattern}"
@@ -1966,39 +2761,51 @@ export class DatePickerElement extends baseClass {
         }}
         @keydown=${(event: KeyboardEvent) => {
           this.handleInputKeydown(index, event);
-        }}></md-gb-text-field>`;
+        }}
+      ></md-gb-text-field>`;
     return html`<div class="date-picker-inputs">
-      ${this.range
-        ? html`${field(0, strings.startDate)}${field(1, strings.endDate)}`
-        : field(0, strings.dateLabel)}
+      ${
+        this.range
+          ? html`${field(0, strings.startDate)}${field(1, strings.endDate)}`
+          : field(0, strings.dateLabel)
+      }
     </div>`;
   }
 
   private renderActions() {
     // The docked menus replace the calendar and its actions; the modal
     // dialog keeps its actions below the year grid (Compose DatePickerDialog).
-    if (this.hideActions || (this.view !== 'days' && !this.isModal)) {
+    if (
+      this.hideActions ||
+      (this.view !== 'days' && !this.isModal) ||
+      // Full screen: the close icon button and Save replace the actions.
+      (this.isModal && this.fullscreen)
+    ) {
       return nothing;
     }
     const strings = this.resolvedStrings;
     const textButton = (extra: string) =>
       button({color: 'text', size: 'sm', classes: {[extra]: true}});
     return html`<div class="date-picker-actions" part="actions">
-      ${this.clearable
-        ? html`<button
-            type="button"
-            class="${textButton('date-picker-clear')}"
-            @click=${this.handleClear}>
-            ${strings.clear}
-          </button>`
-        : nothing}
+      ${
+        this.clearable
+          ? html`<button
+              type="button"
+              class="${textButton('date-picker-clear')}"
+              @click=${this.handleClear}
+            >
+              ${strings.clear}
+            </button>`
+          : nothing
+      }
       <span class="date-picker-actions-spacer"></span>
       <button
         type="button"
         class="${textButton('date-picker-cancel')}"
         @click=${() => {
           this.cancel();
-        }}>
+        }}
+      >
         ${strings.cancel}
       </button>
       <button
@@ -2006,7 +2813,8 @@ export class DatePickerElement extends baseClass {
         class="${textButton('date-picker-confirm')}"
         @click=${() => {
           this.confirm();
-        }}>
+        }}
+      >
         ${strings.confirm}
       </button>
     </div>`;

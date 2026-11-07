@@ -7,6 +7,7 @@
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {focusRingClasses} from '../focus/focus-ring.js';
 import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
 
@@ -18,6 +19,7 @@ export const RADIO_CLASSES = {
   active: PSEUDO_CLASSES.active,
   checked: PSEUDO_CLASSES.checked,
   disabled: PSEUDO_CLASSES.disabled,
+  ...densityClassNames('radio'),
 } as const;
 
 /** The state provided to the `radioClasses()` function. */
@@ -32,6 +34,8 @@ export interface RadioClassesState {
   checked?: boolean;
   /** Emulates `:disabled`. */
   disabled?: boolean;
+  /** The density, 0 (default) to -3. */
+  density?: number;
 }
 
 /**
@@ -46,6 +50,7 @@ export function radioClasses({
   active = false,
   checked = false,
   disabled = false,
+  density = 0,
 }: RadioClassesState = {}): ClassInfo {
   return {
     ...rippleClasses(),
@@ -56,6 +61,7 @@ export function radioClasses({
     [RADIO_CLASSES.active]: active,
     [RADIO_CLASSES.checked]: checked,
     [RADIO_CLASSES.disabled]: disabled,
+    ...densityClasses(RADIO_CLASSES.radio, density),
   };
 }
 

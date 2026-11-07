@@ -56,4 +56,29 @@
     --md-sys-motion-spring-slow-effects: linear(0, 0.005 1.25%, 0.02 2.5%, 0.046 4%, 0.08 5.5%, 0.163 8.5%, 0.364 15%, 0.458 18.25%, 0.551 21.75%, 0.626 25%, 0.696 28.5%, 0.754 32%, 0.806 35.75%, 0.848 39.5%, 0.887 44%, 0.919 49%, 0.945 54.5%, 0.964 60.75%, 0.978 67.5%, 0.988 75.5%, 1);
     --md-sys-motion-spring-slow-effects-duration: 300ms;
   }
+
+  // Reduced motion (spec: transitions follow the platform setting and use
+  // fades instead of sliding, scaling or shape morphing). Spatial springs end
+  // instantly; effects springs (fades, color) are unchanged.
+  @media (prefers-reduced-motion: reduce) {
+    :root,
+    :where(.md-motion-standard) {
+      --md-sys-motion-spring-fast-spatial: linear;
+      --md-sys-motion-spring-fast-spatial-duration: 0ms;
+      --md-sys-motion-spring-default-spatial: linear;
+      --md-sys-motion-spring-default-spatial-duration: 0ms;
+      --md-sys-motion-spring-slow-spatial: linear;
+      --md-sys-motion-spring-slow-spatial-duration: 0ms;
+    }
+  }
+
+  // Opts a subtree into reduced motion regardless of the platform setting.
+  :where(.md-motion-reduced) {
+    --md-sys-motion-spring-fast-spatial: linear;
+    --md-sys-motion-spring-fast-spatial-duration: 0ms;
+    --md-sys-motion-spring-default-spatial: linear;
+    --md-sys-motion-spring-default-spatial-duration: 0ms;
+    --md-sys-motion-spring-slow-spatial: linear;
+    --md-sys-motion-spring-slow-spatial-duration: 0ms;
+  }
 }

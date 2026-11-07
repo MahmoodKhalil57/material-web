@@ -14,7 +14,6 @@ import {
   DAYS_IN_WEEK,
   endOfMonth,
   startOfMonth,
-  startOfWeek,
 } from './calendar.js';
 
 /** Date picker variants. */
@@ -44,6 +43,8 @@ export const DATE_PICKER_CLASSES = {
   open: 'date-picker-open',
   closing: 'date-picker-closing',
   inline: 'date-picker-inline',
+  scrolling: 'date-picker-scrolling',
+  fullscreen: 'date-picker-fullscreen',
   day: 'date-picker-day',
   daySelected: 'date-picker-day-selected',
   dayToday: 'date-picker-day-today',
@@ -68,6 +69,13 @@ export interface DatePickerClassesState {
   closing?: boolean;
   /** Rendered in the page flow instead of a popup or dialog. */
   inline?: boolean;
+  /**
+   * Modal range selection: a vertically scrolling list of months instead of
+   * one month with arrows.
+   */
+  scrolling?: boolean;
+  /** The modal full-screen layout (close icon button and Save). */
+  fullscreen?: boolean;
 }
 
 /** Returns the class map for the date picker container. */
@@ -78,6 +86,8 @@ export function datePickerClasses({
   open = false,
   closing = false,
   inline = false,
+  scrolling = false,
+  fullscreen = false,
 }: DatePickerClassesState = {}): ClassInfo {
   return {
     [DATE_PICKER_CLASSES.datePicker]: true,
@@ -87,6 +97,8 @@ export function datePickerClasses({
     [DATE_PICKER_CLASSES.open]: open,
     [DATE_PICKER_CLASSES.closing]: closing,
     [DATE_PICKER_CLASSES.inline]: inline,
+    [DATE_PICKER_CLASSES.scrolling]: scrolling,
+    [DATE_PICKER_CLASSES.fullscreen]: fullscreen,
   };
 }
 
@@ -127,20 +139,19 @@ export function datePickerDayClasses({
 
 /**
  * Returns the date a calendar grid key press moves focus to, or null if the
- * key isn't a grid navigation key. Follows the WAI-ARIA date picker dialog
- * pattern and the M3 spec's keyboard table:
+ * key isn't a grid navigation key. Follows the M3 spec's keyboard table and
+ * the WAI-ARIA date picker dialog pattern:
  *
  * - Left / Right: previous / next day (mirrored in RTL).
  * - Up / Down: same day of the previous / next week.
- * - Home / End: first / last day of the week.
- * - Ctrl (or Cmd) + Home / End: first / last day of the month (spec).
+ * - Home / End: first / last day of the month (spec).
  * - Page Up / Page Down: same day of the previous / next month.
  * - Shift + Page Up / Page Down: same day of the previous / next year.
  */
 export function getKeyboardTargetDate(
-  event: Pick<KeyboardEvent, 'key' | 'shiftKey' | 'ctrlKey' | 'metaKey'>,
+  event: Pick<KeyboardEvent, 'key' | 'shiftKey'>,
   date: CalendarDate,
-  {rtl = false, firstDayOfWeek = 0} = {},
+  {rtl = false} = {},
 ): CalendarDate | null {
   const forward = rtl ? -1 : 1;
   switch (event.key) {
@@ -153,13 +164,9 @@ export function getKeyboardTargetDate(
     case 'ArrowDown':
       return addDays(date, DAYS_IN_WEEK);
     case 'Home':
-      return event.ctrlKey || event.metaKey
-        ? startOfMonth(date)
-        : startOfWeek(date, firstDayOfWeek);
+      return startOfMonth(date);
     case 'End':
-      return event.ctrlKey || event.metaKey
-        ? endOfMonth(date)
-        : addDays(startOfWeek(date, firstDayOfWeek), DAYS_IN_WEEK - 1);
+      return endOfMonth(date);
     case 'PageUp':
       return addMonths(date, event.shiftKey ? -12 : -1);
     case 'PageDown':

@@ -9,7 +9,7 @@ import '@material/web/labs/gb/components/navbar/md-gb-nav-bar-item.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
-import {type NavBarItemLayout} from '@material/web/labs/gb/components/navbar/nav-bar.js';
+import {type NavBarLayout} from '@material/web/labs/gb/components/navbar/nav-bar.js';
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
 import {css, html} from 'lit';
 
@@ -17,7 +17,7 @@ import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 
 /** Knob types for navigation bar stories. */
 export interface StoryKnobs {
-  itemLayout?: NavBarItemLayout;
+  itemLayout?: NavBarLayout;
   showBadges: boolean;
 }
 
@@ -142,5 +142,38 @@ const allVariants: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const responsive: MaterialStoryInit<StoryKnobs> = {
+  name: 'Responsive (auto item layout)',
+  styles,
+  render() {
+    return html`
+      <p>
+        Vertical items in compact windows; horizontal items, centered with
+        outer margins, from medium windows (600px).
+      </p>
+      <div class="demo-container">
+        <md-gb-nav-bar item-layout="auto" aria-label="Responsive navigation">
+          <md-gb-nav-bar-item active>
+            <md-gb-icon slot="icon">home</md-gb-icon>
+            Home
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item>
+            <md-gb-icon slot="icon">explore</md-gb-icon>
+            Browse
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item badge="dot">
+            <md-gb-icon slot="icon">radio</md-gb-icon>
+            Radio
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item>
+            <md-gb-icon slot="icon">library_music</md-gb-icon>
+            Library
+          </md-gb-nav-bar-item>
+        </md-gb-nav-bar>
+      </div>
+    `;
+  },
+};
+
 /** Navigation Bar stories. */
-export const stories = [playground, allVariants];
+export const stories = [playground, allVariants, responsive];

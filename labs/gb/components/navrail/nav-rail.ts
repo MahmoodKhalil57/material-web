@@ -33,6 +33,8 @@ export const NAV_RAIL_CLASSES = {
   navRail: 'nav-rail',
   navRailExpanded: 'nav-rail-expanded',
   navRailModal: 'nav-rail-modal',
+  navRailNarrow: 'nav-rail-narrow',
+  navRailDragging: 'nav-rail-dragging',
   navRailAlignTop: 'nav-rail-align-top',
   navRailAlignCenter: 'nav-rail-align-center',
   navRailAlignBottom: 'nav-rail-align-bottom',
@@ -53,6 +55,10 @@ export interface NavRailClassesState {
   itemLayout?: NavRailItemLayout;
   /** Whether the navigation rail is in a modal state. */
   modal?: boolean;
+  /** Whether the collapsed rail uses the narrow (80dp) width. */
+  narrow?: boolean;
+  /** Whether a modal rail is being swiped (`.nav-rail-dragging`). */
+  dragging?: boolean;
 }
 
 /**
@@ -66,6 +72,8 @@ export function navRailClasses({
   expanded = false,
   itemLayout = NAV_RAIL_ITEM_LAYOUTS.vertical,
   modal = false,
+  narrow = false,
+  dragging = false,
 }: NavRailClassesState = {}): ClassInfo {
   const effectiveLayout = expanded
     ? NAV_RAIL_ITEM_LAYOUTS.horizontal
@@ -74,6 +82,8 @@ export function navRailClasses({
     [NAV_RAIL_CLASSES.navRail]: true,
     [NAV_RAIL_CLASSES.navRailExpanded]: Boolean(expanded),
     [NAV_RAIL_CLASSES.navRailModal]: Boolean(modal),
+    [NAV_RAIL_CLASSES.navRailNarrow]: Boolean(narrow),
+    [NAV_RAIL_CLASSES.navRailDragging]: Boolean(dragging),
     [NAV_RAIL_CLASSES.navRailAlignTop]:
       alignment === NAV_RAIL_ALIGNMENTS.top || !alignment,
     [NAV_RAIL_CLASSES.navRailAlignCenter]:

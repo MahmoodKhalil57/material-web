@@ -7,6 +7,7 @@
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
 import {RIPPLE_CLASSES} from '../ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /** The visual variant of a tabs container. */
@@ -16,12 +17,18 @@ export type TabsVariant = 'primary' | 'secondary';
 export const TABS_CLASSES = {
   tabs: 'tabs',
   tabsSecondary: 'tabs-secondary',
+  ...densityClassNames('tabs'),
 } as const;
 
 /** The state provided to the `tabsClasses()` function. */
 export interface TabsClassesState {
   /** The visual variant of the tabs. Defaults to `'primary'`. */
   variant?: TabsVariant;
+  /**
+   * The density, 0 (default) to -3. tabs.md: "Don't apply density to tabs
+   * by default"; let people opt in to a denser layout.
+   */
+  density?: number;
 }
 
 /**
@@ -32,10 +39,12 @@ export interface TabsClassesState {
  */
 export function tabsClasses({
   variant = 'primary',
+  density = 0,
 }: TabsClassesState = {}): ClassInfo {
   return {
     [TABS_CLASSES.tabs]: true,
     [TABS_CLASSES.tabsSecondary]: variant === 'secondary',
+    ...densityClasses(TABS_CLASSES.tabs, density),
   };
 }
 

@@ -1,0 +1,106 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// Skeleton loader placeholder styles, shared by the document-level utility
+// class (`md-motion-transitions.scss`) and `<md-gb-skeleton>`'s shadow root.
+//
+// Spec (styles/motion/transitions, "Skeleton loaders"): "Skeleton loaders have
+// a subtle pulsing animation to indicate indeterminate progress. It starts at
+// the top left of the screen and moves down to the bottom right." The spec has
+// no skeleton tokens, so the colors default to surface container roles and are
+// overridable.
+//
+// The highlight band is a viewport-sized gradient (`background-attachment:
+// fixed`), so every skeleton on the page shows a slice of the same band and
+// the pulse travels across the whole screen, top left to bottom right, rather
+// than repeating inside each block.
+
+@mixin styles($selector: '.md-skeleton') {
+  #{$selector} {
+    --_color: var(
+      --md-skeleton-color,
+      var(--md-sys-color-surface-container-highest)
+    );
+    --_highlight: var(
+      --md-skeleton-highlight-color,
+      var(--md-sys-color-surface-container-low)
+    );
+    // Spec (easing-and-duration, "Extra long durations"): durations above
+    // 600ms "are usually used for ambient transitions that don't involve user
+    // input". One sweep plus a rest of equal length.
+    --_duration: var(
+      --md-skeleton-pulse-duration,
+      calc(var(--md-sys-motion-duration-extra-long4) * 2)
+    );
+
+    background-attachment: fixed;
+    background-color: var(--_color);
+    background-image: linear-gradient(
+      135deg,
+      transparent 40%,
+      var(--_highlight) 50%,
+      transparent 60%
+    );
+    background-repeat: no-repeat;
+    background-size: 300vw 300vh;
+    border-radius: var(--md-skeleton-shape, var(--md-sys-shape-corner-sm));
+    animation: md-skeleton-pulse var(--_duration)
+      var(--md-sys-motion-easing-emphasized) infinite;
+  }
+
+  #{$selector}:dir(rtl) {
+    background-image: linear-gradient(
+      225deg,
+      transparent 40%,
+      var(--_highlight) 50%,
+      transparent 60%
+    );
+    animation-name: md-skeleton-pulse-rtl;
+  }
+
+  // A line of text: as tall as the font, centered in the line box.
+  #{$selector}.md-skeleton-text {
+    block-size: 1em;
+    border-radius: var(--md-skeleton-shape, var(--md-sys-shape-corner-xs));
+    margin-block: calc((1lh - 1em) / 2);
+  }
+
+  #{$selector}.md-skeleton-circle {
+    aspect-ratio: 1;
+    border-radius: var(--md-sys-shape-corner-full);
+  }
+
+  // Spec (transitions, "Follows accessibility settings"): reduced motion
+  // disables decorative effects, so the placeholder stays still.
+  @media (prefers-reduced-motion: reduce) {
+    #{$selector} {
+      animation: none;
+      background-image: none;
+    }
+  }
+
+  // The band starts off screen at the top left (position 100% puts the
+  // middle of the 300vw image at -50vw) and leaves at the bottom right, then
+  // rests off screen for the second half of the cycle.
+  @keyframes md-skeleton-pulse {
+    0% {
+      background-position: 100% 100%;
+    }
+    50%,
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+
+  @keyframes md-skeleton-pulse-rtl {
+    0% {
+      background-position: 0% 100%;
+    }
+    50%,
+    100% {
+      background-position: 100% 0%;
+    }
+  }
+}

@@ -35,6 +35,7 @@ import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-on
 import radioStyles from './radio.css' with {type: 'css'}; // github-only
 // import {styles as radioStyles} from './radio.cssresult.js'; // google3-only
 
+import {clampDensity, type Density} from '../shared/density.js';
 import {radio} from './radio.js';
 
 // Separate variable needed for closure.
@@ -52,7 +53,9 @@ const radioBaseClass = mixinConstraintValidation(
  * @cssprop --icon-size
  * @cssprop --state-layer-color
  * @cssprop --state-layer-shape
- * @cssprop --state-layer-size
+ * @cssprop --state-layer-size - State layer size at density 0.
+ * @cssprop --density-step - Size removed per density step.
+ * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
 export class RadioElement extends radioBaseClass {
   /** @nocollapse */
@@ -109,6 +112,25 @@ export class RadioElement extends radioBaseClass {
    * The element value to use in form submission when checked.
    */
   @property() value = 'on';
+
+  /**
+   * The density, from 0 (default) to -3. Each step down removes 4px from the
+   * radio's layout box (48px) and state layer (40px); the touch target stays
+   * 48px. Values are clamped to that range.
+   *
+   * radio-button.md: don't apply density by default; let people opt in to a
+   * denser layout.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
 
   @query('.radio', true) private readonly radio!: HTMLElement;
   private readonly selectionController = new SingleSelectionController(this);
@@ -170,6 +192,7 @@ export class RadioElement extends radioBaseClass {
         checked: this.checked,
         disabled: this.disabled,
         focus: this.isFocused,
+        density: this.density,
       })}"></div>`;
   }
 

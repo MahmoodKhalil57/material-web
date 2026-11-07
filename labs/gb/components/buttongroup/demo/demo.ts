@@ -81,6 +81,17 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
     new Knob('disabled', {
       ui: boolInput(),
     }),
+    new Knob('density', {
+      ui: selectDropdown({
+        options: [
+          {value: '0', label: '0'},
+          {value: '-1', label: '-1 (-4px)'},
+          {value: '-2', label: '-2 (-8px)'},
+          {value: '-3', label: '-3 (-12px)'},
+        ],
+      }),
+      defaultValue: '0',
+    }),
     new Knob('icon', {
       ui: textInput(),
       defaultValue: 'favorite',

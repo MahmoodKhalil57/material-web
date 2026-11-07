@@ -8,6 +8,7 @@ import {createContext} from '@lit/context';
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {FOCUS_RING_TYPES, focusRingClasses} from '../focus/focus-ring.js';
 import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
 
@@ -35,12 +36,25 @@ export const MENU_COLORS = {
   vibrant: 'vibrant',
 } as const;
 
+/**
+ * Menu layouts (menus.md "Vertical menus layout"): `standard` items in one
+ * surface, or `grouped` groups of items on separate surfaces with gaps
+ * between them.
+ */
+export type MenuLayout = 'standard' | 'grouped';
+
 /** Menu classes. */
 export const MENU_CLASSES = {
   menu: 'menu',
   menuVibrant: 'menu-vibrant',
+  menuGrouped: 'menu-grouped',
   menuActive: 'menu-active',
   menuInactive: 'menu-inactive',
+  ...densityClassNames('menu'),
+  // Parts.
+  group: 'menu-group',
+  groupInactive: 'menu-group-inactive',
+  sectionLabel: 'menu-section-label',
 } as const;
 
 /** Submenu focus states of a menu. */
@@ -50,12 +64,19 @@ export type MenuSubmenuState = 'active' | 'inactive';
 export interface MenuClassesState {
   /** The color of the menu. */
   color?: MenuColor;
+  /** The layout of the menu, `standard` by default. */
+  layout?: MenuLayout;
   /**
    * In a menu with submenus, whether this menu holds focus (`active`) or has
    * revealed a submenu that holds focus (`inactive`). The menu's corners
    * morph between the two.
    */
   submenu?: MenuSubmenuState;
+  /**
+   * The density, 0 (default) to -3 (menus.md "Density", web only). The
+   * menu's items and submenus inherit it.
+   */
+  density?: number;
 }
 
 /**
@@ -64,12 +85,19 @@ export interface MenuClassesState {
  * @param state The state of the menu.
  * @return An object of class names and truthy values if they apply.
  */
-export function menuClasses({color, submenu}: MenuClassesState = {}): ClassInfo {
+export function menuClasses({
+  color,
+  layout,
+  submenu,
+  density = 0,
+}: MenuClassesState = {}): ClassInfo {
   return {
     [MENU_CLASSES.menu]: true,
     [MENU_CLASSES.menuVibrant]: color === MENU_COLORS.vibrant,
+    [MENU_CLASSES.menuGrouped]: layout === 'grouped',
     [MENU_CLASSES.menuActive]: submenu === 'active',
     [MENU_CLASSES.menuInactive]: submenu === 'inactive',
+    ...densityClasses(MENU_CLASSES.menu, density),
   };
 }
 

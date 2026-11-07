@@ -38,15 +38,20 @@ describe('<md-gb-text-field>', () => {
     const shadow = field.shadowRoot!;
     const input = () =>
       shadow.querySelector('.text-field-input') as
-        | HTMLInputElement
-        | HTMLTextAreaElement;
+        HTMLInputElement | HTMLTextAreaElement;
     const fieldRoot = () => shadow.querySelector('.text-field') as HTMLElement;
     return {root, field, shadow, input, fieldRoot};
   }
 
-  async function type(field: TextFieldElement, input: HTMLInputElement | HTMLTextAreaElement, text: string) {
+  async function type(
+    field: TextFieldElement,
+    input: HTMLInputElement | HTMLTextAreaElement,
+    text: string,
+  ) {
     input.value = text;
-    input.dispatchEvent(new InputEvent('input', {bubbles: true, composed: true}));
+    input.dispatchEvent(
+      new InputEvent('input', {bubbles: true, composed: true}),
+    );
     await field.updateComplete;
   }
 
@@ -62,11 +67,50 @@ describe('<md-gb-text-field>', () => {
       const {fieldRoot, shadow} = await setupTest(
         html`<md-gb-text-field
           variant="outlined"
-          label="Label"></md-gb-text-field>`,
+          label="Label"
+        ></md-gb-text-field>`,
       );
       expect(fieldRoot().classList).toContain(TEXT_FIELD_CLASSES.outlined);
       const notch = shadow.querySelector('.text-field-outline-notch')!;
       expect(getComputedStyle(notch).display).toBe('block');
+    });
+
+    it('applies tokens set on the host inside the shadow root', async () => {
+      const {field, shadow} = await setupTest(
+        html`<md-gb-text-field
+          variant="outlined"
+          label="Label"
+          style="--container-color: rgb(1, 2, 3); --outline-color: rgb(4, 5, 6)"
+        ></md-gb-text-field>`,
+      );
+      const container = shadow.querySelector('.text-field-container')!;
+      const outline = shadow.querySelector('.text-field-outline-start')!;
+      expect(getComputedStyle(container).backgroundColor).toBe('rgb(1, 2, 3)');
+      expect(getComputedStyle(outline).borderTopColor).toBe('rgb(4, 5, 6)');
+      expect(field.variant).toBe('outlined');
+    });
+
+    it('uses the filled tokens in Light DOM by default', () => {
+      const root = env.render(html`
+        <div class="text-field text-field-filled">
+          <div class="text-field-container"></div>
+        </div>
+        <div class="text-field text-field-outlined">
+          <div class="text-field-container"></div>
+        </div>
+      `);
+      const [filled, outlined] = Array.from(
+        root.querySelectorAll<HTMLElement>('.text-field'),
+      );
+      expect(
+        getComputedStyle(filled).getPropertyValue('--container-shape').trim(),
+      ).not.toBe('');
+      expect(
+        getComputedStyle(outlined.firstElementChild!).backgroundColor,
+      ).toBe('rgba(0, 0, 0, 0)');
+      expect(
+        getComputedStyle(filled.firstElementChild!).backgroundColor,
+      ).not.toBe('rgba(0, 0, 0, 0)');
     });
 
     it('renders a native input labelled by the label', async () => {
@@ -89,7 +133,8 @@ describe('<md-gb-text-field>', () => {
         html`<md-gb-text-field
           type="textarea"
           rows="4"
-          label="Label"></md-gb-text-field>`,
+          label="Label"
+        ></md-gb-text-field>`,
       );
       expect(input().tagName).toBe('TEXTAREA');
       expect((input() as HTMLTextAreaElement).rows).toBe(4);
@@ -107,7 +152,8 @@ describe('<md-gb-text-field>', () => {
         html`<md-gb-text-field
           label="Amount"
           prefix-text="$"
-          suffix-text="USD"></md-gb-text-field>`,
+          suffix-text="USD"
+        ></md-gb-text-field>`,
       );
       expect(shadow.querySelector('.text-field-prefix')!.textContent).toBe('$');
       expect(shadow.querySelector('.text-field-suffix')!.textContent).toBe(
@@ -121,7 +167,8 @@ describe('<md-gb-text-field>', () => {
       const {field, input, fieldRoot} = await setupTest(
         html`<md-gb-text-field
           label="Label"
-          placeholder="Hint"></md-gb-text-field>`,
+          placeholder="Hint"
+        ></md-gb-text-field>`,
       );
       expect(input().getAttribute('placeholder')).toBe('Hint');
       expect(fieldRoot().classList).not.toContain(TEXT_FIELD_CLASSES.populated);
@@ -138,9 +185,9 @@ describe('<md-gb-text-field>', () => {
       await type(field, input(), 'value');
       const floated = parseFloat(getComputedStyle(label).fontSize);
       // Transitions may be in flight; the target size is smaller.
-      expect(field.shadowRoot!.querySelector('.text-field')!.classList).toContain(
-        TEXT_FIELD_CLASSES.populated,
-      );
+      expect(
+        field.shadowRoot!.querySelector('.text-field')!.classList,
+      ).toContain(TEXT_FIELD_CLASSES.populated);
       expect(floated).toBeLessThanOrEqual(resting);
     });
 
@@ -156,7 +203,8 @@ describe('<md-gb-text-field>', () => {
         html`<md-gb-text-field
           label="Username"
           required
-          no-asterisk></md-gb-text-field>`,
+          no-asterisk
+        ></md-gb-text-field>`,
       );
       expect(shadow.querySelector('label')!.textContent).toBe('Username');
     });
@@ -166,6 +214,82 @@ describe('<md-gb-text-field>', () => {
         html`<md-gb-text-field aria-label="Search"></md-gb-text-field>`,
       );
       expect(input().getAttribute('aria-label')).toBe('Search');
+    });
+  });
+
+  describe('density', () => {
+    it('defaults to 0, clamps to 0..-3 and reflects', async () => {
+      const {field, fieldRoot} = await setupTest();
+      expect(field.density).toBe(0);
+      field.density = -5;
+      expect(field.density).toBe(-3);
+      field.density = 2;
+      expect(field.density).toBe(0);
+      field.density = -1;
+      await field.updateComplete;
+      expect(field.getAttribute('density')).toBe('-1');
+      expect(fieldRoot().classList).toContain(TEXT_FIELD_CLASSES.density1);
+    });
+
+    for (const variant of ['filled', 'outlined'] as const) {
+      it(`removes 4px of height per step (${variant})`, async () => {
+        const {field, shadow} = await setupTest(
+          html`<md-gb-text-field
+            variant=${variant}
+            label="Label"
+            value="Value"
+          ></md-gb-text-field>`,
+        );
+        const container = shadow.querySelector('.text-field-container')!;
+        for (const [density, height] of [
+          [0, 56],
+          [-1, 52],
+          [-2, 48],
+          [-3, 44],
+        ]) {
+          field.density = density;
+          await field.updateComplete;
+          expect(container.getBoundingClientRect().height)
+            .withContext(`density ${density}`)
+            .toBe(height);
+        }
+      });
+    }
+
+    it('keeps the floated label and input inside a dense filled field', async () => {
+      const {field, shadow} = await setupTest(
+        html`<md-gb-text-field
+          label="Label"
+          value="Value"
+          density="-3"
+        ></md-gb-text-field>`,
+      );
+      await field.updateComplete;
+      const box = shadow
+        .querySelector('.text-field-container')!
+        .getBoundingClientRect();
+      const label = shadow.querySelector('.text-field-label')!;
+      const input = shadow
+        .querySelector('.text-field-input')!
+        .getBoundingClientRect();
+      // 2px top padding (8px - 3 * 2px) above the floated label.
+      expect(getComputedStyle(label).top).toBe('2px');
+      expect(input.bottom).toBeLessThanOrEqual(box.bottom);
+    });
+
+    it('does not grow a dense field for a 48px icon box', async () => {
+      const {field, shadow} = await setupTest(
+        html`<md-gb-text-field label="Label" density="-3">
+          <span
+            slot="trailing-icon"
+            style="display:inline-block;width:24px;height:24px"
+          ></span>
+        </md-gb-text-field>`,
+      );
+      await env.waitForStability();
+      await field.updateComplete;
+      const container = shadow.querySelector('.text-field-container')!;
+      expect(container.getBoundingClientRect().height).toBe(44);
     });
   });
 
@@ -181,7 +305,9 @@ describe('<md-gb-text-field>', () => {
       await field.updateComplete;
       expect(field.hasLeadingIcon).toBeTrue();
       expect(field.hasTrailingIcon).toBeTrue();
-      expect(fieldRoot().classList).toContain(TEXT_FIELD_CLASSES.hasLeadingIcon);
+      expect(fieldRoot().classList).toContain(
+        TEXT_FIELD_CLASSES.hasLeadingIcon,
+      );
       expect(fieldRoot().classList).toContain(
         TEXT_FIELD_CLASSES.hasTrailingIcon,
       );
@@ -190,7 +316,10 @@ describe('<md-gb-text-field>', () => {
     it('places the input 16px after a 24px leading icon', async () => {
       const {field, shadow} = await setupTest(
         html`<md-gb-text-field label="Label">
-          <span slot="leading-icon" style="display:inline-block;width:24px;height:24px"></span>
+          <span
+            slot="leading-icon"
+            style="display:inline-block;width:24px;height:24px"
+          ></span>
         </md-gb-text-field>`,
       );
       await env.waitForStability();
@@ -211,7 +340,8 @@ describe('<md-gb-text-field>', () => {
       const {shadow, input} = await setupTest(
         html`<md-gb-text-field
           label="Label"
-          supporting-text="Help"></md-gb-text-field>`,
+          supporting-text="Help"
+        ></md-gb-text-field>`,
       );
       const supporting = shadow.querySelector('#supporting-text')!;
       expect(supporting.textContent).toBe('Help');
@@ -223,7 +353,10 @@ describe('<md-gb-text-field>', () => {
 
     it('renders a character counter for maxLength', async () => {
       const {field, shadow, input} = await setupTest(
-        html`<md-gb-text-field label="Label" .maxLength=${10}></md-gb-text-field>`,
+        html`<md-gb-text-field
+          label="Label"
+          .maxLength=${10}
+        ></md-gb-text-field>`,
       );
       await type(field, input(), 'abc');
       const counter = shadow.querySelector('#counter')!;
@@ -241,7 +374,8 @@ describe('<md-gb-text-field>', () => {
           label="Label"
           supporting-text="Help"
           error
-          error-text="Bad"></md-gb-text-field>`,
+          error-text="Bad"
+        ></md-gb-text-field>`,
       );
       const supporting = shadow.querySelector('#supporting-text')!;
       expect(supporting.textContent).toBe('Bad');
@@ -255,7 +389,8 @@ describe('<md-gb-text-field>', () => {
         html`<md-gb-text-field
           label="Label"
           supporting-text="Help"
-          error></md-gb-text-field>`,
+          error
+        ></md-gb-text-field>`,
       );
       expect(shadow.querySelector('#supporting-text')!.textContent).toBe(
         'Help',
@@ -276,7 +411,11 @@ describe('<md-gb-text-field>', () => {
 
     it('is not shown while disabled', async () => {
       const {input, fieldRoot} = await setupTest(
-        html`<md-gb-text-field label="Label" error disabled></md-gb-text-field>`,
+        html`<md-gb-text-field
+          label="Label"
+          error
+          disabled
+        ></md-gb-text-field>`,
       );
       expect(input().getAttribute('aria-invalid')).toBe('false');
       expect(fieldRoot().classList).not.toContain(TEXT_FIELD_CLASSES.error);
@@ -343,11 +482,13 @@ describe('<md-gb-text-field>', () => {
           <md-gb-text-field
             name="first"
             label="First"
-            value="Ada"></md-gb-text-field>
+            value="Ada"
+          ></md-gb-text-field>
           <md-gb-text-field
             name="req"
             label="Required"
-            required></md-gb-text-field>
+            required
+          ></md-gb-text-field>
         </form>
       `);
       await env.waitForStability();
@@ -408,7 +549,8 @@ describe('<md-gb-text-field>', () => {
       const {field, input} = await setupTest(
         html`<md-gb-text-field
           label="ZIP"
-          pattern="[0-9]{5}"></md-gb-text-field>`,
+          pattern="[0-9]{5}"
+        ></md-gb-text-field>`,
       );
       await type(field, input(), 'abc');
       expect(field.validity.patternMismatch).toBeTrue();
@@ -454,6 +596,13 @@ describe('textFieldClasses()', () => {
     expect(classes[TEXT_FIELD_CLASSES.error]).toBeTrue();
     expect(classes[TEXT_FIELD_CLASSES.populated]).toBeTrue();
     expect(classes[TEXT_FIELD_CLASSES.disabled]).toBeTrue();
+  });
+
+  it('returns the density classes', () => {
+    expect(
+      textFieldClasses({density: -3})[TEXT_FIELD_CLASSES.density3],
+    ).toBeTrue();
+    expect(textFieldClasses()[TEXT_FIELD_CLASSES.density1]).toBeFalse();
   });
 });
 

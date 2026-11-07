@@ -17,6 +17,8 @@ export const SIDE_SHEET_CLASSES = {
   divider: 'side-sheet-divider',
   open: 'side-sheet-open',
   closing: 'side-sheet-closing',
+  /** A modal sheet follows a swipe toward its edge. */
+  dragging: 'side-sheet-dragging',
   // Parts.
   panel: 'side-sheet-panel',
   header: 'side-sheet-header',
@@ -26,6 +28,20 @@ export const SIDE_SHEET_CLASSES = {
   content: 'side-sheet-content',
   actions: 'side-sheet-actions',
 } as const;
+
+/**
+ * How far past open (as a fraction of its width) a released swipe must drag a
+ * modal side sheet to close it. Compose's anchored-draggable default, as in
+ * `ModalNavigationDrawer`.
+ */
+export const SIDE_SHEET_POSITIONAL_THRESHOLD = 0.5;
+
+/**
+ * The fling velocity (px/s) toward the edge that closes a modal side sheet
+ * however far it was dragged (Compose drawer `DrawerVelocityThreshold`,
+ * 400dp/s).
+ */
+export const SIDE_SHEET_VELOCITY_THRESHOLD_PX_PER_S = 400;
 
 /** State provided to `sideSheetClasses()`. */
 export interface SideSheetClassesState {

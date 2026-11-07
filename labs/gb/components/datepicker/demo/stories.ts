@@ -29,6 +29,7 @@ export interface StoryKnobs {
   clearable: boolean;
   rtl: boolean;
   quick: boolean;
+  density: string;
 }
 
 adoptStyles(document, [m3Styles]);
@@ -71,6 +72,17 @@ const styles = css`
 
   md-gb-date-picker[variant='docked']:not([inline]) {
     inline-size: 320px;
+  }
+
+  .demo-phone {
+    inline-size: 360px;
+    block-size: 640px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    overflow: hidden;
+  }
+
+  .demo-phone md-gb-date-picker {
+    block-size: 100%;
   }
 `;
 
@@ -120,7 +132,9 @@ const docked: MaterialStoryInit<StoryKnobs> = {
               ?hide-actions=${knobs.hideActions}
               ?clearable=${knobs.clearable}
               ?quick=${knobs.quick}
-              @change=${report(single)}></md-gb-date-picker>
+              density=${knobs.density}
+              @change=${report(single)}
+            ></md-gb-date-picker>
             <md-gb-date-picker
               range
               label="Trip dates"
@@ -133,13 +147,35 @@ const docked: MaterialStoryInit<StoryKnobs> = {
               ?hide-actions=${knobs.hideActions}
               ?clearable=${knobs.clearable}
               ?quick=${knobs.quick}
-              @change=${report(range)}></md-gb-date-picker>
+              density=${knobs.density}
+              @change=${report(range)}
+            ></md-gb-date-picker>
           </div>
           <p class="demo-output" aria-live="polite" ${ref(single)}></p>
           <p class="demo-output" aria-live="polite" ${ref(range)}></p>
         </section>
         <section class="demo-section">
-          <h2>Docked calendar (inline)</h2>
+          <h2>Required (form validation)</h2>
+          <form
+            class="demo-row"
+            @submit=${(event: SubmitEvent) => {
+              event.preventDefault();
+            }}
+          >
+            <md-gb-date-picker
+              name="date"
+              required
+              label="Event date"
+              locale=${opts.locale}
+              min=${opts.min}
+              max=${opts.max}
+              ?quick=${knobs.quick}
+            ></md-gb-date-picker>
+            <md-gb-button type="submit" color="tonal">Submit</md-gb-button>
+          </form>
+        </section>
+        <section class="demo-section">
+          <h2>Docked calendar (inline, swipe between months)</h2>
           <div class="demo-row">
             <md-gb-date-picker
               inline
@@ -151,7 +187,8 @@ const docked: MaterialStoryInit<StoryKnobs> = {
               .isDateDisabled=${opts.isDateDisabled}
               ?hide-actions=${knobs.hideActions}
               ?clearable=${knobs.clearable}
-              ?quick=${knobs.quick}></md-gb-date-picker>
+              ?quick=${knobs.quick}
+            ></md-gb-date-picker>
             <md-gb-date-picker
               inline
               range
@@ -163,7 +200,8 @@ const docked: MaterialStoryInit<StoryKnobs> = {
               .isDateDisabled=${opts.isDateDisabled}
               ?hide-actions=${knobs.hideActions}
               ?clearable=${knobs.clearable}
-              ?quick=${knobs.quick}></md-gb-date-picker>
+              ?quick=${knobs.quick}
+            ></md-gb-date-picker>
           </div>
         </section>
       </div>
@@ -179,6 +217,7 @@ const modal: MaterialStoryInit<StoryKnobs> = {
     const single = createRef<DatePickerElement>();
     const input = createRef<DatePickerElement>();
     const range = createRef<DatePickerElement>();
+    const fullscreen = createRef<DatePickerElement>();
     const output = createRef<HTMLParagraphElement>();
     const open = (picker: Ref<DatePickerElement>) => () => {
       picker.value?.show();
@@ -188,21 +227,26 @@ const modal: MaterialStoryInit<StoryKnobs> = {
       value: string,
       isRange: boolean,
       mode: 'picker' | 'input',
-    ) => html`<md-gb-date-picker
-      ${ref(pickerRef)}
-      variant="modal"
-      mode=${mode}
-      ?range=${isRange}
-      value=${value}
-      locale=${opts.locale}
-      first-day-of-week=${opts.firstDayOfWeek}
-      min=${opts.min}
-      max=${opts.max}
-      .isDateDisabled=${opts.isDateDisabled}
-      ?hide-actions=${knobs.hideActions}
-      ?clearable=${knobs.clearable}
-      ?quick=${knobs.quick}
-      @change=${report(output)}></md-gb-date-picker>`;
+      isFullscreen = false,
+    ) =>
+      html`<md-gb-date-picker
+        ${ref(pickerRef)}
+        variant="modal"
+        ?fullscreen=${isFullscreen}
+        mode=${mode}
+        ?range=${isRange}
+        value=${value}
+        locale=${opts.locale}
+        first-day-of-week=${opts.firstDayOfWeek}
+        min=${opts.min}
+        max=${opts.max}
+        .isDateDisabled=${opts.isDateDisabled}
+        ?hide-actions=${knobs.hideActions}
+        ?clearable=${knobs.clearable}
+        ?quick=${knobs.quick}
+        density=${knobs.density}
+        @change=${report(output)}
+      ></md-gb-date-picker>`;
     return html`
       <div class="demo-container" dir=${opts.dir}>
         <section class="demo-section">
@@ -217,12 +261,16 @@ const modal: MaterialStoryInit<StoryKnobs> = {
             <md-gb-button color="outlined" @click=${open(range)}>
               Pick a date range
             </md-gb-button>
+            <md-gb-button color="text" @click=${open(fullscreen)}>
+              Full-screen date range
+            </md-gb-button>
           </div>
           <p class="demo-output" aria-live="polite" ${ref(output)}></p>
         </section>
         ${picker(single, '2025-08-17', false, 'picker')}
         ${picker(input, '2025-08-17', false, 'input')}
         ${picker(range, '2025-08-17/2025-08-23', true, 'picker')}
+        ${picker(fullscreen, '2025-08-17/2025-08-23', true, 'picker', true)}
         <section class="demo-section">
           <h2>Modal surfaces (inline)</h2>
           <div class="demo-row">
@@ -236,7 +284,8 @@ const modal: MaterialStoryInit<StoryKnobs> = {
               max=${opts.max}
               .isDateDisabled=${opts.isDateDisabled}
               ?hide-actions=${knobs.hideActions}
-              ?clearable=${knobs.clearable}></md-gb-date-picker>
+              ?clearable=${knobs.clearable}
+            ></md-gb-date-picker>
             <md-gb-date-picker
               inline
               variant="modal"
@@ -245,7 +294,8 @@ const modal: MaterialStoryInit<StoryKnobs> = {
               locale=${opts.locale}
               min=${opts.min}
               max=${opts.max}
-              ?hide-actions=${knobs.hideActions}></md-gb-date-picker>
+              ?hide-actions=${knobs.hideActions}
+            ></md-gb-date-picker>
             <md-gb-date-picker
               inline
               variant="modal"
@@ -256,7 +306,28 @@ const modal: MaterialStoryInit<StoryKnobs> = {
               min=${opts.min}
               max=${opts.max}
               .isDateDisabled=${opts.isDateDisabled}
-              ?hide-actions=${knobs.hideActions}></md-gb-date-picker>
+              ?hide-actions=${knobs.hideActions}
+            ></md-gb-date-picker>
+          </div>
+        </section>
+        <section class="demo-section">
+          <h2>Full-screen date range (inline)</h2>
+          <div class="demo-row">
+            <div class="demo-phone">
+              <md-gb-date-picker
+                inline
+                fullscreen
+                variant="modal"
+                range
+                value="2025-08-17/2025-08-23"
+                locale=${opts.locale}
+                first-day-of-week=${opts.firstDayOfWeek}
+                min=${opts.min}
+                max=${opts.max}
+                .isDateDisabled=${opts.isDateDisabled}
+                ?hide-actions=${knobs.hideActions}
+              ></md-gb-date-picker>
+            </div>
           </div>
         </section>
       </div>

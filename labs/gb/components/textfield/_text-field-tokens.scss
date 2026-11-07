@@ -10,35 +10,10 @@
 // Token sets: 'md.comp.filled-text-field', 'md.comp.outlined-text-field'
 
 @mixin root {
-  --active-indicator-color: var(--md-sys-color-on-surface-variant);
-  --active-indicator-height: 1px;
-  --caret-color: var(--md-sys-color-primary);
-  --container-color: var(--md-sys-color-surface-container-highest);
-  --input-text: var(--md-sys-typescale-body-lg);
-  --input-text-axes: var(--md-sys-typescale-body-lg-axes);
-  --input-text-color: var(--md-sys-color-on-surface);
-  --input-text-placeholder-color: var(--md-sys-color-on-surface-variant);
-  --input-text-prefix-color: var(--md-sys-color-on-surface-variant);
-  --input-text-suffix-color: var(--md-sys-color-on-surface-variant);
-  --input-text-tracking: var(--md-sys-typescale-body-lg-tracking);
-  --label-text: var(--md-sys-typescale-body-lg);
-  --label-text-axes: var(--md-sys-typescale-body-lg-axes);
-  --label-text-color: var(--md-sys-color-on-surface-variant);
-  --label-text-tracking: var(--md-sys-typescale-body-lg-tracking);
-  --leading-icon-color: var(--md-sys-color-on-surface-variant);
-  --leading-icon-size: 24px;
-  --supporting-text: var(--md-sys-typescale-body-sm);
-  --supporting-text-axes: var(--md-sys-typescale-body-sm-axes);
-  --supporting-text-color: var(--md-sys-color-on-surface-variant);
-  --supporting-text-tracking: var(--md-sys-typescale-body-sm-tracking);
-  --trailing-icon-color: var(--md-sys-color-on-surface-variant);
-  --trailing-icon-size: 24px;
-  // EDIT: md.sys.shape.corner.xs-top is not defined in labs/gb styles; falls back to its value (4px 4px 0 0).
-  --container-shape: var(--md-sys-shape-corner-xs-top, var(--md-sys-shape-corner-xs) var(--md-sys-shape-corner-xs) 0 0);
   // EDIT: md.sys.typescale.body-sm.size is not defined in labs/gb styles; falls back to its value.
   --label-text-populated-size: var(--md-sys-typescale-body-sm-size, 0.75rem);
   // EDIT: md.sys.typescale.body-sm.line-height is not defined in labs/gb styles; falls back to its value.
-  --label-text-populated-line-height: var(--md-sys-typescale-body-sm-line-height, 1rem);
+  --label-text-populated-line-height: var( --md-sys-typescale-body-sm-line-height, 1rem );
   // EDIT: No state layer at rest; the hover mixins set it.
   --state-layer-color: transparent;
   // EDIT: Spec measurements: default container height 56dp (TextFieldDefaults.MinHeight).
@@ -63,9 +38,38 @@
   --counter-space: 16px;
   // EDIT: Compose TextFieldImpl PrefixSuffixTextPadding.
   --affix-space: 2px;
+  // EDIT: text-fields.md "Density" ("Avoid applying density by default": opt in); foundations/layout/grids-spacing.md, Component scaling: each step (0 to -3) removes 4dp of height, from the top and bottom padding.
+  --density-step: 4px;
 }
 
-@mixin hover {
+@mixin filled {
+  --active-indicator-color: var(--md-sys-color-on-surface-variant);
+  --active-indicator-height: 1px;
+  --caret-color: var(--md-sys-color-primary);
+  --container-color: var(--md-sys-color-surface-container-highest);
+  --container-shape: var(--md-sys-shape-corner-xs-top);
+  --input-text: var(--md-sys-typescale-body-lg);
+  --input-text-axes: var(--md-sys-typescale-body-lg-axes);
+  --input-text-color: var(--md-sys-color-on-surface);
+  --input-text-placeholder-color: var(--md-sys-color-on-surface-variant);
+  --input-text-prefix-color: var(--md-sys-color-on-surface-variant);
+  --input-text-suffix-color: var(--md-sys-color-on-surface-variant);
+  --input-text-tracking: var(--md-sys-typescale-body-lg-tracking);
+  --label-text: var(--md-sys-typescale-body-lg);
+  --label-text-axes: var(--md-sys-typescale-body-lg-axes);
+  --label-text-color: var(--md-sys-color-on-surface-variant);
+  --label-text-tracking: var(--md-sys-typescale-body-lg-tracking);
+  --leading-icon-color: var(--md-sys-color-on-surface-variant);
+  --leading-icon-size: 24px;
+  --supporting-text: var(--md-sys-typescale-body-sm);
+  --supporting-text-axes: var(--md-sys-typescale-body-sm-axes);
+  --supporting-text-color: var(--md-sys-color-on-surface-variant);
+  --supporting-text-tracking: var(--md-sys-typescale-body-sm-tracking);
+  --trailing-icon-color: var(--md-sys-color-on-surface-variant);
+  --trailing-icon-size: 24px;
+}
+
+@mixin filled-hover {
   --active-indicator-color: var(--md-sys-color-on-surface);
   --active-indicator-height: 1px;
   --input-text-color: var(--md-sys-color-on-surface);
@@ -76,7 +80,7 @@
   --trailing-icon-color: var(--md-sys-color-on-surface-variant);
 }
 
-@mixin focus {
+@mixin filled-focus {
   --active-indicator-color: var(--md-sys-color-primary);
   --active-indicator-height: 2px;
   --input-text-color: var(--md-sys-color-on-surface);
@@ -86,7 +90,7 @@
   --trailing-icon-color: var(--md-sys-color-on-surface-variant);
 }
 
-@mixin error {
+@mixin filled-error {
   --active-indicator-color: var(--md-sys-color-error);
   --input-text-color: var(--md-sys-color-on-surface);
   --label-text-color: var(--md-sys-color-error);
@@ -95,7 +99,7 @@
   --trailing-icon-color: var(--md-sys-color-error);
 }
 
-@mixin error-hover {
+@mixin filled-error-hover {
   --active-indicator-color: var(--md-sys-color-on-error-container);
   --input-text-color: var(--md-sys-color-on-surface);
   --label-text-color: var(--md-sys-color-on-error-container);
@@ -105,7 +109,7 @@
   --trailing-icon-color: var(--md-sys-color-on-error-container);
 }
 
-@mixin error-focus {
+@mixin filled-error-focus {
   --active-indicator-color: var(--md-sys-color-error);
   --caret-color: var(--md-sys-color-error);
   --input-text-color: var(--md-sys-color-on-surface);
@@ -115,7 +119,7 @@
   --trailing-icon-color: var(--md-sys-color-error);
 }
 
-@mixin disabled {
+@mixin filled-disabled {
   --active-indicator-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --active-indicator-height: 1px;
   --container-color: hsl(from var(--md-sys-color-on-surface) h s l / 4%);
@@ -160,10 +164,6 @@
   --bottom-space: 16px;
   // EDIT: Spec measurements: left/right padding populated label text 4dp (OutlinedTextFieldInnerPadding).
   --outline-label-padding: 4px;
-  // EDIT: md.sys.typescale.body-sm.size is not defined in labs/gb styles; falls back to its value.
-  --label-text-populated-size: var(--md-sys-typescale-body-sm-size, 0.75rem);
-  // EDIT: md.sys.typescale.body-sm.line-height is not defined in labs/gb styles; falls back to its value.
-  --label-text-populated-line-height: var(--md-sys-typescale-body-sm-line-height, 1rem);
 }
 
 @mixin outlined-hover {
@@ -227,42 +227,19 @@
 // Inherits every `root` token from the parent, so values set on the
 // `md-gb-*` host still apply inside its shadow root.
 @mixin inherit {
-  --active-indicator-color: inherit;
-  --active-indicator-height: inherit;
   --affix-space: inherit;
   --bottom-space: inherit;
-  --caret-color: inherit;
-  --container-color: inherit;
   --container-height: inherit;
-  --container-shape: inherit;
   --counter-space: inherit;
+  --density-step: inherit;
   --icon-input-space: inherit;
   --icon-leading-space: inherit;
   --icon-trailing-space: inherit;
-  --input-text: inherit;
-  --input-text-axes: inherit;
-  --input-text-color: inherit;
-  --input-text-placeholder-color: inherit;
-  --input-text-prefix-color: inherit;
-  --input-text-suffix-color: inherit;
-  --input-text-tracking: inherit;
-  --label-text: inherit;
-  --label-text-axes: inherit;
-  --label-text-color: inherit;
   --label-text-populated-line-height: inherit;
   --label-text-populated-size: inherit;
-  --label-text-tracking: inherit;
-  --leading-icon-color: inherit;
-  --leading-icon-size: inherit;
   --leading-space: inherit;
   --state-layer-color: inherit;
-  --supporting-text: inherit;
-  --supporting-text-axes: inherit;
-  --supporting-text-color: inherit;
   --supporting-text-top-space: inherit;
-  --supporting-text-tracking: inherit;
   --top-space: inherit;
-  --trailing-icon-color: inherit;
-  --trailing-icon-size: inherit;
   --trailing-space: inherit;
 }

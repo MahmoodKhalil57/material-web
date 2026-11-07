@@ -13,7 +13,7 @@ import {
   materialInitsToStoryInits,
   setUpDemo,
 } from './material-collection.js';
-import {Knob, selectDropdown, textInput} from './index.js';
+import {boolInput, Knob, selectDropdown, textInput} from './index.js';
 
 import {type FabColor, type FabSize} from '../fab.js';
 import {stories, StoryKnobs} from './stories.js';
@@ -25,6 +25,10 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>('Fab', [
   }),
   new Knob('label', {
     ui: textInput(),
+  }),
+  new Knob('expanded', {
+    ui: boolInput(),
+    defaultValue: true,
   }),
   new Knob('color', {
     ui: selectDropdown<FabColor>({
@@ -41,7 +45,8 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>('Fab', [
   new Knob('size', {
     ui: selectDropdown<FabSize>({
       options: [
-        {value: 'default', label: 'Default'},
+        {value: 'sm', label: 'Small FAB (not recommended)'},
+        {value: 'default', label: 'Default (small)'},
         {value: 'md', label: 'Medium'},
         {value: 'lg', label: 'Large'},
       ],

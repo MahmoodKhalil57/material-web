@@ -18,6 +18,7 @@ export interface StoryKnobs {
   disabled: boolean;
   onIcon: string;
   offIcon: string;
+  density: string;
 }
 
 adoptStyles(document, [
@@ -33,7 +34,10 @@ const playground: MaterialStoryInit<StoryKnobs> = {
   name: 'Playground',
   render(knobs) {
     return html`
-      <md-gb-switch .selected=${knobs.selected} ?disabled=${knobs.disabled}>
+      <md-gb-switch
+        density=${knobs.density}
+        .selected=${knobs.selected}
+        ?disabled=${knobs.disabled}>
         ${knobs.offIcon
           ? html`<md-gb-icon slot="off-icon">${knobs.offIcon}</md-gb-icon>`
           : nothing}
@@ -59,6 +63,7 @@ const withIcons: MaterialStoryInit<StoryKnobs> = {
     return html`
       <md-gb-switch
         class="css-icons"
+        density=${knobs.density}
         .selected=${knobs.selected}
         ?disabled=${knobs.disabled}>
       </md-gb-switch>

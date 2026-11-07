@@ -139,7 +139,7 @@ const playground: MaterialStoryInit<StoryKnobs> = {
           </md-gb-icon-button>
           <p>
             ${modal
-              ? 'The modal drawer opens over a scrim. Press Escape, click the scrim or select an item to close it.'
+              ? 'The modal drawer opens over a scrim. Swipe it toward its edge, press Escape, click the scrim or select an item to close it.'
               : 'The standard drawer sits next to the content. The menu button opens and closes it.'}
           </p>
         </div>
@@ -187,7 +187,37 @@ const modal: MaterialStoryInit<StoryKnobs> = {
             @click=${() => drawer.value?.show()}>
             <md-gb-icon>menu</md-gb-icon>
           </md-gb-icon-button>
-          <p>Open the modal drawer with the menu button.</p>
+          <p>
+            Open the modal drawer with the menu button, then drag it (or the
+            scrim) toward the start edge to close it. Released past half its
+            width, or flung, it settles closed; otherwise it springs back.
+          </p>
+        </div>
+      </div>
+    `;
+  },
+};
+
+const noGestures: MaterialStoryInit<StoryKnobs> = {
+  name: 'Modal drawer without swipe',
+  styles,
+  render() {
+    const drawer = createRef<NavDrawerElement>();
+    return html`
+      <div class="demo-shell">
+        <md-gb-nav-drawer ${ref(drawer)} modal gestures-disabled aria-label="Mail">
+          ${renderDrawerContent({})}
+        </md-gb-nav-drawer>
+        <div class="demo-content">
+          <md-gb-icon-button
+            aria-label="Open navigation drawer"
+            @click=${() => drawer.value?.show()}>
+            <md-gb-icon>menu</md-gb-icon>
+          </md-gb-icon-button>
+          <p>
+            With gestures-disabled, dragging does not close the drawer; Escape,
+            the scrim and item selection still do.
+          </p>
         </div>
       </div>
     `;
@@ -220,4 +250,4 @@ const textOnly: MaterialStoryInit<StoryKnobs> = {
 };
 
 /** Navigation drawer stories. */
-export const stories = [playground, standard, modal, textOnly];
+export const stories = [playground, standard, modal, noGestures, textOnly];

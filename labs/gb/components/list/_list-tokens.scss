@@ -11,14 +11,30 @@
 }
 
 @mixin segmented {
-  --gap: 2px;
+  // md.comp.list.segmented.gap
+  --gap: var(--md-sys-space-25);
 }
 
 @mixin item {
   // LINT.IfChange
-  --container-height: 56px;
+  // md.comp.list.list-item.one-line, two-line and three-line container.height: the
+  // minimum height by line count (Compose ListItem calculateHeight). Items
+  // with an overline or supporting text are two-line; with both,
+  // three-line.
+  --one-line-container-height: 56px;
+  --two-line-container-height: 72px;
+  --three-line-container-height: 88px;
+  --container-height: var(--one-line-container-height);
+  // gb draws list items on the list's surface (no token): the spec
+  // md.comp.list.list-item.container.color (surface) applies to segmented
+  // items.
   --container-color: transparent;
-  --container-shape: var(--md-sys-shape-corner-xs);
+  // md.comp.list.list-item.container.elevation
+  --container-elevation: var(--md-sys-elevation-shadow-0);
+  // md.comp.list.list-item.container.expressive.shape (and the state
+  // mixins' *.container.expressive.shape)
+  --container-expressive-shape: var(--md-sys-shape-corner-xs);
+  --container-shape: var(--container-expressive-shape);
   --label-text-color: var(--md-sys-color-on-surface);
   --label-text: var(--md-sys-typescale-body-lg);
   --label-text-axes: var(--md-sys-typescale-body-lg-axes);
@@ -28,6 +44,10 @@
   --between-space: 12px;
   --top-space: 10px;
   --bottom-space: 10px;
+  // No token: foundations Layout > Spacing > Density, "Higher density is
+  // typically applied by decreasing the top and bottom padding or overall
+  // height by 4dp" per density step (`md-gb-list` `density`, 0 to -3).
+  --density-step: 4px;
   --avatar-size: 40px;
   --avatar-shape: var(--md-sys-shape-corner-full);
   --avatar-color: var(--md-sys-color-primary-container);
@@ -36,9 +56,13 @@
   --avatar-label-tracking: var(--md-sys-typescale-title-md-tracking);
   --avatar-label-color: var(--md-sys-color-on-primary-container);
   --leading-icon-color: var(--md-sys-color-on-surface-variant);
-  --leading-icon-size: 20px;
+  // md.comp.list.list-item.leading-icon.expressive.size
+  --leading-icon-expressive-size: 20px;
+  --leading-icon-size: var(--leading-icon-expressive-size);
   --trailing-icon-color: var(--md-sys-color-on-surface-variant);
-  --trailing-icon-size: 20px;
+  // md.comp.list.list-item.trailing-icon.expressive.size
+  --trailing-icon-expressive-size: 20px;
+  --trailing-icon-size: var(--trailing-icon-expressive-size);
   --overline: var(--md-sys-typescale-label-sm);
   --overline-axes: var(--md-sys-typescale-label-sm-axes);
   --overline-tracking: var(--md-sys-typescale-label-sm-tracking);
@@ -61,25 +85,28 @@
 }
 
 @mixin item-hovered {
-  --container-shape: var(--md-sys-shape-corner-md);
-  --leading-icon-color: var(--md-sys-color-on-surface);
-  --trailing-icon-color: var(--md-sys-color-on-surface);
+  --container-expressive-shape: var(--md-sys-shape-corner-md);
+  --label-text-color: var(--md-sys-color-on-surface);
+  --leading-icon-color: var(--md-sys-color-on-surface-variant);
+  --trailing-icon-color: var(--md-sys-color-on-surface-variant);
 }
 
 @mixin item-focused {
-  --container-shape: var(--md-sys-shape-corner-lg);
-  --leading-icon-color: var(--md-sys-color-on-surface);
-  --trailing-icon-color: var(--md-sys-color-on-surface);
+  --container-expressive-shape: var(--md-sys-shape-corner-lg);
+  --label-text-color: var(--md-sys-color-on-surface);
+  --leading-icon-color: var(--md-sys-color-on-surface-variant);
+  --trailing-icon-color: var(--md-sys-color-on-surface-variant);
 }
 
 @mixin item-pressed {
-  --container-shape: var(--md-sys-shape-corner-lg);
-  --leading-icon-color: var(--md-sys-color-on-surface);
-  --trailing-icon-color: var(--md-sys-color-on-surface);
+  --container-expressive-shape: var(--md-sys-shape-corner-lg);
+  --label-text-color: var(--md-sys-color-on-surface);
+  --leading-icon-color: var(--md-sys-color-on-surface-variant);
+  --trailing-icon-color: var(--md-sys-color-on-surface-variant);
 }
 
 @mixin item-selected {
-  --container-shape: var(--md-sys-shape-corner-lg);
+  --container-expressive-shape: var(--md-sys-shape-corner-lg);
   --container-color: var(--md-sys-color-secondary-container);
   --label-text-color: var(--md-sys-color-on-secondary-container);
   --leading-icon-color: var(--md-sys-color-on-secondary-container);
@@ -89,8 +116,16 @@
   --trailing-supporting-text-color: var(--md-sys-color-on-secondary-container);
 }
 
+// Selected items while hovered, focused or pressed: the icons switch to
+// on-surface (md.comp.list.list-item.selected.hover, focus and pressed tokens).
+@mixin item-selected-interactive {
+  --label-text-color: var(--md-sys-color-on-secondary-container);
+  --leading-icon-color: var(--md-sys-color-on-surface);
+  --trailing-icon-color: var(--md-sys-color-on-surface);
+}
+
 @mixin item-disabled {
-  --container-shape: var(--md-sys-shape-corner-xs);
+  --container-expressive-shape: var(--md-sys-shape-corner-xs);
   --container-color: hsl(from var(--md-sys-color-on-surface) h s l / 10%);
   --label-text-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --leading-icon-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);

@@ -11,12 +11,21 @@ import {createClassMapDirective} from '../shared/directives.js';
 export const DIVIDER_CLASSES = {
   divider: 'divider',
   dividerVertical: 'divider-vertical',
+  dividerInset: 'divider-inset',
+  dividerInsetStart: 'divider-inset-start',
+  dividerInsetEnd: 'divider-inset-end',
 } as const;
 
 /** The state provided to the `dividerClasses()` function. */
 export interface DividerClassesState {
   /** Whether the divider is vertical. */
   vertical?: boolean;
+  /** Indents both ends (spec: middle-inset divider). */
+  inset?: boolean;
+  /** Indents the leading end (spec: inset divider). */
+  insetStart?: boolean;
+  /** Indents the trailing end. */
+  insetEnd?: boolean;
 }
 
 /**
@@ -27,10 +36,16 @@ export interface DividerClassesState {
  */
 export function dividerClasses({
   vertical = false,
+  inset = false,
+  insetStart = false,
+  insetEnd = false,
 }: DividerClassesState = {}): ClassInfo {
   return {
     [DIVIDER_CLASSES.divider]: true,
     [DIVIDER_CLASSES.dividerVertical]: vertical,
+    [DIVIDER_CLASSES.dividerInset]: inset,
+    [DIVIDER_CLASSES.dividerInsetStart]: insetStart,
+    [DIVIDER_CLASSES.dividerInsetEnd]: insetEnd,
   };
 }
 

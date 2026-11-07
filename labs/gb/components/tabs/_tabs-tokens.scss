@@ -18,10 +18,9 @@
   --active-indicator-color: var(--md-sys-color-primary);
   // md.comp.primary-navigation-tab.active-indicator.height
   --active-indicator-height: 3px;
-  // md.comp.primary-navigation-tab.active-indicator.shape
-  // EDIT: Rounded top corners, square bottom corners.
-  // --active-indicator-shape: 3px 3px 0 0;
-  --active-indicator-shape: 50cqmin 50cqmin 0 0;
+  // md.comp.primary-navigation-tab.active-indicator.shape (Compose
+  // PrimaryIndicator: RoundedCornerShape(3.dp) on every corner)
+  --active-indicator-shape: 3px;
   // EDIT: No upstream Spec token. Minimum width of the indicator container.
   --active-indicator-min-length: 24px;
   // EDIT: No upstream Spec token. Horizontal inset per side from design spec.
@@ -38,6 +37,10 @@
   --container-color: var(--md-sys-color-surface);
   // md.comp.primary-navigation-tab.container.height
   --container-height: 48px;
+  // EDIT: No upstream Spec token. tabs.md "Avoid applying density by default"
+  // (opt-in density); foundations/layout/grids-spacing.md, Component scaling:
+  // each density step (0 to -3) removes 4dp from the container height.
+  --density-step: 4px;
   // md.comp.primary-navigation-tab.container.shape
   --container-shape: var(--md-sys-shape-corner-none);
   // EDIT: No upstream Spec token. Bottom divider color from Figma.

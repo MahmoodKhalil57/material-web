@@ -73,5 +73,26 @@ const directive: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const insets: MaterialStoryInit<StoryKnobs> = {
+  name: 'Insets',
+  styles,
+  render() {
+    // Spec Measurements: inset (leading 16dp) and middle-inset (both 16dp).
+    return html`
+      <div class="column">
+        <div>Full width</div>
+        <md-gb-divider></md-gb-divider>
+        <div>Inset start</div>
+        <md-gb-divider inset-start></md-gb-divider>
+        <div>Inset end</div>
+        <md-gb-divider inset-end></md-gb-divider>
+        <div>Middle inset</div>
+        <md-gb-divider inset></md-gb-divider>
+        <div>Items</div>
+      </div>
+    `;
+  },
+};
+
 /** Divider stories. */
-export const stories = [playground, directive];
+export const stories = [playground, directive, insets];

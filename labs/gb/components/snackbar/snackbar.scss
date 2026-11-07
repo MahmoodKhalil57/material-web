@@ -51,7 +51,10 @@ $pressed-opacity: math.percentage(md-sys-state.$pressed-state-layer-opacity);
     --_close-icon-color: var(--icon-color);
     --_close-icon-size: var(--icon-size);
     position: var(--position);
-    inset-block-end: var(--bottom-offset);
+    // Above the `anchor` (a FAB or docked toolbar) when it has one:
+    // `--_anchor-offset` is the distance from the containing block's bottom
+    // to the anchor's top (snackbar.md: snackbars appear above FABs).
+    inset-block-end: calc(var(--_anchor-offset, 0px) + var(--bottom-offset));
     inset-inline: 0;
     inline-size: 100%;
     box-sizing: border-box;

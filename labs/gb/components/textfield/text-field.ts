@@ -6,6 +6,7 @@
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {createClassMapDirective} from '../shared/directives.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
 
 /** Text field variants. */
@@ -26,6 +27,7 @@ export const TEXT_FIELD_CLASSES = {
   hover: PSEUDO_CLASSES.hover,
   focus: PSEUDO_CLASSES.focus,
   disabled: PSEUDO_CLASSES.disabled,
+  ...densityClassNames('text-field'),
   // Parts.
   container: 'text-field-container',
   content: 'text-field-content',
@@ -66,6 +68,11 @@ export interface TextFieldClassesState {
   focus?: boolean;
   /** Emulates `:disabled`. */
   disabled?: boolean;
+  /**
+   * The density, 0 (default) to -3. text-fields.md: "Don't apply density to
+   * text fields by default"; let people opt in to a denser layout.
+   */
+  density?: number;
 }
 
 /**
@@ -86,6 +93,7 @@ export function textFieldClasses({
   hover = false,
   focus = false,
   disabled = false,
+  density = 0,
 }: TextFieldClassesState = {}): ClassInfo {
   return {
     [TEXT_FIELD_CLASSES.textField]: true,
@@ -101,6 +109,7 @@ export function textFieldClasses({
     [TEXT_FIELD_CLASSES.hover]: hover,
     [TEXT_FIELD_CLASSES.focus]: focus,
     [TEXT_FIELD_CLASSES.disabled]: disabled,
+    ...densityClasses(TEXT_FIELD_CLASSES.textField, density),
   };
 }
 

@@ -4,91 +4,338 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'chip-tokens';
 // go/keep-sorted end
 
+// Assist, filter, input and suggestion chips. Each spec token subtree is a
+// mixin (scripts/m3/bindings/chip.mjs) included below under the selector for
+// its chip type, style, selection, content and state. Every rule is
+// `.chip:where(...)` (one class of specificity), so later rules win: types,
+// selection, styles, content, interaction states, dragged, then disabled.
 @layer md.sys, md.comp.ripple, md.comp.focus-ring;
 @layer md.comp.chip {
+  // Note: `md-gb-chip` is customized with `::part(chip)`. The generated
+  // `inherit` mixin is not used: the chip type mixins override root tokens,
+  // so inheriting the root tokens from the host would undo them.
+
   .chip {
-    @include chip-tokens.root;
-    &.chip-elevated {
-      @include chip-tokens.elevated;
+    & {
+      @include chip-tokens.root;
     }
-    &.chip-filled {
-      @include chip-tokens.filled;
+    @include density.classes('chip');
+
+    // Chip types.
+    &:where(.chip-assist) {
+      @include chip-tokens.assist;
     }
-    &.chip-tonal {
-      @include chip-tokens.tonal;
+    &:where(.chip-suggestion) {
+      @include chip-tokens.suggestion;
     }
-    &.chip-outlined {
-      @include chip-tokens.outlined;
-    }
-    &:is(.chip-selected, [aria-pressed='true']) {
-      @include chip-tokens.selected;
-    }
-    &.chip-filter {
+    &:where(.chip-filter) {
       @include chip-tokens.filter;
     }
-    &.chip-input {
+    &:where(.chip-input) {
       @include chip-tokens.input;
     }
-    &.chip-with-leading-icon {
-      @include chip-tokens.with-leading-icon;
+
+    // Selection.
+    &:where(.chip-filter):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.filter-unselected;
     }
-    &.chip-with-trailing-icon {
-      @include chip-tokens.with-trailing-icon;
+    &:where(.chip-filter):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.filter-selected;
     }
-    &.chip-with-avatar {
-      @include chip-tokens.with-avatar;
+    &:where(.chip-input):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.input-unselected;
     }
-    &:is(:active, .active):where(
-        :not(:disabled, .disabled, [aria-disabled='true'])
-      ) {
-      @include chip-tokens.pressed;
+    &:where(.chip-input):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.input-selected;
     }
-    &:is(.dragged, [aria-grabbed='true']) {
-      @include chip-tokens.dragged;
+
+    // Elevated and flat styles.
+    &:where(.chip-assist):where(.chip-elevated) {
+      @include chip-tokens.assist-elevated;
     }
-    &:is(:disabled, .disabled, [aria-disabled='true']) {
-      @include chip-tokens.disabled;
-      --disabled: true;
-      &:where(.chip-selected, [aria-pressed='true']) {
-        @include chip-tokens.disabled-selected;
-      }
+    &:where(.chip-assist):where(:not(.chip-elevated)) {
+      @include chip-tokens.assist-flat;
+    }
+    &:where(.chip-suggestion):where(.chip-elevated) {
+      @include chip-tokens.suggestion-elevated;
+    }
+    &:where(.chip-suggestion):where(:not(.chip-elevated)) {
+      @include chip-tokens.suggestion-flat;
+    }
+    &:where(.chip-filter):where(.chip-elevated) {
+      @include chip-tokens.filter-elevated;
+    }
+    &:where(.chip-filter):where(.chip-elevated):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.filter-elevated-unselected;
+    }
+    &:where(.chip-filter):where(.chip-elevated):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.filter-elevated-selected;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)) {
+      @include chip-tokens.filter-flat;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.filter-flat-unselected;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.filter-flat-selected;
+    }
+
+    // Leading icon, avatar and trailing icon.
+    &:where(.chip-assist):where(.chip-with-leading-icon, .chip-with-trailing-icon) {
+      @include chip-tokens.assist-with-icon;
+    }
+    &:where(.chip-suggestion):where(.chip-with-leading-icon) {
+      @include chip-tokens.suggestion-with-leading-icon;
+    }
+    &:where(.chip-filter):where(.chip-with-leading-icon, .chip-with-trailing-icon) {
+      @include chip-tokens.filter-with-icon;
+    }
+    &:where(.chip-filter):where(.chip-with-leading-icon):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.filter-with-leading-icon-unselected;
+    }
+    &:where(.chip-filter):where(.chip-with-leading-icon):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.filter-with-leading-icon-selected;
+    }
+    &:where(.chip-filter):where(.chip-with-trailing-icon):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.filter-with-trailing-icon-unselected;
+    }
+    &:where(.chip-filter):where(.chip-with-trailing-icon):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.filter-with-trailing-icon-selected;
+    }
+    &:where(.chip-input):where(.chip-with-leading-icon) {
+      @include chip-tokens.input-with-leading-icon;
+    }
+    &:where(.chip-input):where(.chip-with-leading-icon):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.input-with-leading-icon-unselected;
+    }
+    &:where(.chip-input):where(.chip-with-leading-icon):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.input-with-leading-icon-selected;
+    }
+    &:where(.chip-input):where(.chip-with-trailing-icon) {
+      @include chip-tokens.input-with-trailing-icon;
+    }
+    &:where(.chip-input):where(.chip-with-trailing-icon):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.input-with-trailing-icon-unselected;
+    }
+    &:where(.chip-input):where(.chip-with-trailing-icon):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.input-with-trailing-icon-selected;
+    }
+    &:where(.chip-input):where(.chip-with-avatar) {
+      @include chip-tokens.input-with-avatar;
+    }
+
+    // Interaction states.
+    &:where(.chip-assist):where(.chip-elevated):where(:hover, .hover) {
+      @include chip-tokens.assist-elevated-hovered;
+    }
+    &:where(.chip-assist):where(.chip-elevated):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.assist-elevated-focused;
+    }
+    &:where(.chip-assist):where(.chip-elevated):where(:active, .active) {
+      @include chip-tokens.assist-elevated-pressed;
+    }
+    &:where(.chip-assist):where(:not(.chip-elevated)):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.assist-flat-focused;
+    }
+    &:where(.chip-suggestion):where(.chip-elevated):where(:hover, .hover) {
+      @include chip-tokens.suggestion-elevated-hovered;
+    }
+    &:where(.chip-suggestion):where(.chip-elevated):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.suggestion-elevated-focused;
+    }
+    &:where(.chip-suggestion):where(.chip-elevated):where(:active, .active) {
+      @include chip-tokens.suggestion-elevated-pressed;
+    }
+    &:where(.chip-suggestion):where(:not(.chip-elevated)):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.suggestion-flat-focused;
+    }
+    &:where(.chip-filter):where(.chip-elevated):where(:hover, .hover) {
+      @include chip-tokens.filter-elevated-hovered;
+    }
+    &:where(.chip-filter):where(.chip-elevated):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.filter-elevated-focused;
+    }
+    &:where(.chip-filter):where(.chip-elevated):where(:active, .active) {
+      @include chip-tokens.filter-elevated-pressed;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:hover, .hover) {
+      @include chip-tokens.filter-flat-unselected-hovered;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.filter-flat-unselected-focused;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:active, .active) {
+      @include chip-tokens.filter-flat-unselected-pressed;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])):where(:hover, .hover) {
+      @include chip-tokens.filter-flat-selected-hovered;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.filter-flat-selected-focused;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])):where(:active, .active) {
+      @include chip-tokens.filter-flat-selected-pressed;
+    }
+    &:where(.chip-input):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))):where(:focus-visible, :has(:focus-visible), .focus) {
+      @include chip-tokens.input-unselected-focused;
+    }
+
+    // Dragged.
+    &:where(.chip-assist):where(.dragged, [aria-grabbed='true']) {
+      @include chip-tokens.assist-dragged;
+    }
+    &:where(.chip-suggestion):where(.dragged, [aria-grabbed='true']) {
+      @include chip-tokens.suggestion-dragged;
+    }
+    &:where(.chip-filter):where(.dragged, [aria-grabbed='true']) {
+      @include chip-tokens.filter-dragged;
+    }
+    &:where(.chip-input):where(.dragged, [aria-grabbed='true']) {
+      @include chip-tokens.input-dragged;
+    }
+
+    // Disabled (last, so it overrides the other states).
+    &:where(.chip-assist):where(.chip-elevated):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.assist-elevated-disabled;
+    }
+    &:where(.chip-assist):where(:not(.chip-elevated)):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.assist-flat-disabled;
+    }
+    &:where(.chip-assist):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.assist-disabled;
+    }
+    &:where(.chip-assist):where(.chip-with-leading-icon, .chip-with-trailing-icon):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.assist-with-icon-disabled;
+    }
+    &:where(.chip-suggestion):where(.chip-elevated):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.suggestion-elevated-disabled;
+    }
+    &:where(.chip-suggestion):where(:not(.chip-elevated)):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.suggestion-flat-disabled;
+    }
+    &:where(.chip-suggestion):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.suggestion-disabled;
+    }
+    &:where(.chip-suggestion):where(.chip-with-leading-icon):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.suggestion-with-leading-icon-disabled;
+    }
+    &:where(.chip-filter):where(.chip-elevated):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.filter-elevated-disabled;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(:disabled, .disabled, [aria-disabled='true']):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.filter-flat-disabled-unselected;
+    }
+    &:where(.chip-filter):where(:not(.chip-elevated)):where(:disabled, .disabled, [aria-disabled='true']):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.filter-flat-disabled-selected;
+    }
+    &:where(.chip-filter):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.filter-disabled;
+    }
+    &:where(.chip-filter):where(.chip-with-leading-icon):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.filter-with-leading-icon-disabled;
+    }
+    &:where(.chip-filter):where(.chip-with-trailing-icon):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.filter-with-trailing-icon-disabled;
+    }
+    &:where(.chip-input):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.input-disabled;
+    }
+    &:where(.chip-input):where(:disabled, .disabled, [aria-disabled='true']):where(:not(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true']))) {
+      @include chip-tokens.input-disabled-unselected;
+    }
+    &:where(.chip-input):where(:disabled, .disabled, [aria-disabled='true']):where(.chip-selected, [aria-pressed='true'], :has(> .chip-action[aria-pressed='true'])) {
+      @include chip-tokens.input-disabled-selected;
+    }
+    &:where(.chip-input):where(.chip-with-leading-icon):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.input-with-leading-icon-disabled;
+    }
+    &:where(.chip-input):where(.chip-with-trailing-icon):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.input-with-trailing-icon-disabled;
+    }
+    &:where(.chip-input):where(.chip-with-avatar):where(:disabled, .disabled, [aria-disabled='true']) {
+      @include chip-tokens.input-with-avatar-disabled;
     }
 
     & {
+      // Icons fall back to the shared `with-icon` tokens of assist and filter
+      // chips (md.comp.assist-chip.with-icon.icon.*).
+      --_leading-icon-color: var(
+        --leading-icon-color,
+        var(--icon-color, currentColor)
+      );
+      --_leading-icon-size: var(--leading-icon-size, var(--icon-size, 18px));
+      --_trailing-icon-color: var(
+        --trailing-icon-color,
+        var(--icon-color, currentColor)
+      );
+      --_trailing-icon-size: var(--trailing-icon-size, var(--icon-size, 18px));
+
+      position: relative;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      height: var(--height);
-      gap: var(--gap-horizontal);
-      padding-inline: var(--padding-leading) var(--padding-trailing);
-      padding-block: var(--padding-top) var(--padding-bottom);
-      border: var(--outline-width) solid var(--outline-color);
-      border-radius: var(--shape);
+      gap: var(--icon-label-space);
+      box-sizing: border-box;
+      // Density removes `--density-step` from the height per step; the label
+      // and icons keep their size.
+      --_height: #{density.size(var(--container-height))};
+      height: var(--_height);
+      padding-block: 0;
+      padding-inline: var(--leading-space) var(--trailing-space);
+      margin: 0;
+      border: var(--outline-width) solid var(--outline-color, transparent);
+      border-radius: var(--container-shape);
       box-shadow: var(--container-elevation);
       background-color: var(--container-color);
       color: var(--label-text-color);
       font: var(--label-text);
       letter-spacing: var(--label-text-tracking);
       font-variation-settings: var(--label-text-axes);
+      text-decoration: none;
       -webkit-font-smoothing: antialiased;
-      box-sizing: border-box;
       user-select: none;
       white-space: nowrap;
-      // The pressed shape morph and drag elevation use the M3 fast spatial
-      // spring (scripts/m3/gen-motion.mjs).
-      transition:
-        border-radius var(--md-sys-motion-spring-fast-spatial-duration)
-          var(--md-sys-motion-spring-fast-spatial),
-        box-shadow var(--md-sys-motion-spring-fast-spatial-duration)
-          var(--md-sys-motion-spring-fast-spatial);
-      --md-icon-color: var(--leading-icon-color);
-      --md-icon-size: var(--leading-icon-size);
+      vertical-align: middle;
+      // Elevation changes use the fast effects spring (Compose
+      // animateElevation; scripts/m3/gen-motion.mjs).
+      transition: box-shadow var(--md-sys-motion-spring-fast-effects-duration)
+        var(--md-sys-motion-spring-fast-effects);
+      --md-icon-color: var(--_leading-icon-color);
+      --md-icon-size: var(--_leading-icon-size);
     }
+
+    // Padding: 8dp beside an icon, 4dp beside an avatar (spec measurements).
+    &:where(.chip-with-leading-icon) {
+      padding-inline-start: var(--with-leading-icon-leading-space);
+    }
+    &:where(.chip-with-avatar) {
+      padding-inline-start: var(--with-avatar-leading-space);
+    }
+    &:where(.chip-with-trailing-icon) {
+      padding-inline-end: var(--with-trailing-icon-trailing-space);
+    }
+
     &:not(:disabled, .disabled, [aria-disabled='true']) {
       cursor: pointer;
+    }
+
+    // 48dp minimum touch target around the 32dp (or denser) container, at
+    // any density (chips.md). A removable chip has two targets: the primary
+    // action and the remove button.
+    &:not(:has(.chip-action))::before,
+    .chip-action::before {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      // Offsets are from the padding box, inside the outline.
+      inset-block: min(
+        0px,
+        (var(--_height) - var(--target-size)) / 2 - var(--outline-width)
+      );
     }
 
     .chip-action,
@@ -96,24 +343,87 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: var(--gap-horizontal);
+      gap: var(--icon-label-space);
       background: transparent;
       border: none;
       outline: none;
       color: inherit;
       font: inherit;
+      letter-spacing: inherit;
       padding: 0;
       margin: 0;
       height: 100%;
       cursor: inherit;
+      -webkit-tap-highlight-color: transparent;
     }
+
+    .chip-icon,
+    .chip-trailing-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    // Built-in Material Symbols glyphs (filter checkmark, remove "close").
+    .chip-glyph {
+      font: var(--md-icon-size) / 1 var(--md-icon-font);
+      font-variation-settings: 'FILL' 0, 'opsz' 20;
+      color: var(--md-icon-color);
+      inline-size: var(--md-icon-size);
+      block-size: var(--md-icon-size);
+      overflow: hidden;
+    }
+
+    .chip-trailing-icon,
     .chip-remove {
-      border-radius: 50%;
-      aspect-ratio: 1;
-      margin-inline-start: 4px;
+      --md-icon-color: var(--_trailing-icon-color);
+      --md-icon-size: var(--_trailing-icon-size);
+    }
+
+    // Remove button: its icon is 18dp; the touch target is at least 48dp.
+    .chip-remove {
+      position: relative;
+      inline-size: var(--_trailing-icon-size);
+      border-radius: var(--md-sys-shape-corner-full);
       outline: var(--focus-ring-outline);
-      --md-icon-color: var(--trailing-icon-color);
-      --md-icon-size: var(--trailing-icon-size);
+      outline-offset: var(--focus-ring-offset);
+
+      &::before {
+        content: '';
+        position: absolute;
+        // Physical offsets: centered in both directions.
+        left: 50%;
+        top: 50%;
+        inline-size: var(--target-size);
+        block-size: var(--target-size);
+        translate: -50% -50%;
+      }
+    }
+
+    // Avatar (input chips): a 24dp image or element in the `icon` slot. It
+    // shrinks with dense containers to keep 2px above and below.
+    .chip-avatar,
+    ::slotted(.chip-avatar),
+    ::slotted(img[slot='icon']) {
+      --_avatar-size: min(var(--avatar-size, 24px), var(--_height) - 4px);
+      inline-size: var(--_avatar-size);
+      block-size: var(--_avatar-size);
+      border-radius: var(--avatar-shape, var(--md-sys-shape-corner-full));
+      opacity: var(--avatar-opacity, 1);
+      object-fit: cover;
+      overflow: hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      & {
+        transition: none;
+      }
+    }
+
+    @media (forced-colors: active) {
+      & {
+        border-color: ButtonBorder;
+      }
     }
   }
 }

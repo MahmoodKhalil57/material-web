@@ -14,6 +14,10 @@ import {
   bottomSheetClasses,
   type BottomSheetState,
 } from './bottom-sheet.js';
+import {
+  playPredictiveBack,
+  type PredictiveBackAnimation,
+} from './predictive-back.js';
 import {CLOSE_REASONS} from './sheet.js';
 import {SheetBase} from './sheet-base.js';
 
@@ -58,7 +62,14 @@ interface DragState {
  *
  * The drag handle is a button: activating it (click, Enter or Space) toggles
  * between expanded and partially expanded, or closes the sheet when it has no
- * lower height. Dragging it moves the sheet between its heights.
+ * lower height. Dragging it moves the sheet between its heights; the button
+ * is the single-pointer alternative to dragging (WCAG 2.5.7).
+ *
+ * Predictive back (Android back gesture or button, through the modal
+ * dialog's close watcher; or `handleBack()`): the sheet shrinks toward the
+ * bottom center, detaching from the window's side edges (Compose
+ * `ModalBottomSheet`), then an expanded sheet with a partial height settles
+ * partially expanded; otherwise it closes with reason `back`.
  *
  * @fires {Event} open - Fired when the sheet begins opening. Cancelable.
  * @fires {Event} opened - Fired after the opening motion.
@@ -73,7 +84,6 @@ interface DragState {
  * @cssprop --container-color - Container color.
  * @cssprop --container-elevation - Container box shadow.
  * @cssprop --container-shape - Top corner radius.
- * @cssprop --minimized-container-shape - Top corner radius while hidden.
  * @cssprop --drag-handle-color - Drag handle color.
  * @cssprop --drag-handle-height - Drag handle height.
  * @cssprop --drag-handle-width - Drag handle width.
@@ -161,6 +171,34 @@ export class BottomSheetElement extends SheetBase {
     if (this.skipPartiallyExpanded) {
       this.state = BOTTOM_SHEET_STATES.expanded;
     }
+  }
+
+  protected override backCloses(): boolean {
+    // Compose `ModalBottomSheet` settleToDismiss: back from expanded goes to
+    // the partially expanded height when there is one.
+    this.measurePartialHeight();
+    if (
+      this.effectiveState === BOTTOM_SHEET_STATES.expanded &&
+      this.hasPartialHeight
+    ) {
+      this.setState(BOTTOM_SHEET_STATES.partiallyExpanded, true);
+      return false;
+    }
+    return true;
+  }
+
+  protected override playPredictiveBack(): PredictiveBackAnimation | null {
+    const dialog = this.dialog;
+    if (!dialog) {
+      return null;
+    }
+    return playPredictiveBack(dialog, {
+      kind: 'bottom-sheet',
+      measure: this.panel,
+      content: this.renderRoot.querySelector<HTMLElement>(
+        '.bottom-sheet-content',
+      ),
+    });
   }
 
   /** Expands the sheet to its full height. */

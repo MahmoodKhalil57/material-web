@@ -23,7 +23,8 @@
   --inactive-track-shape-trailing: 8px;
   --value-indicator-color: var(--md-sys-color-inverse-surface);
   --value-indicator-label-text-color: var(--md-sys-color-inverse-on-surface);
-  --value-indicator-bottom-space: 4px;
+  // md.comp.slider.value-indicator.active.bottom-space
+  --value-indicator-bottom-space: var(--md-sys-space-150);
   --value-indicator-width: 48px;
   // Hit-slop size used for input pointer bounds checking.
   // Note: inherit is intentional here. It allows
@@ -75,6 +76,7 @@
   --inactive-track-shape-trailing: 28px;
 }
 
+// Disabled colors fold md.comp.slider.disabled.{handle,active.track,inactive.track}.opacity.
 @mixin disabled {
   --handle-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --active-track-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);

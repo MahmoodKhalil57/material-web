@@ -32,10 +32,12 @@
 
     // Large badge (with text)
     &.badge-large {
-      @include badge-tokens.large;
+      @include badge-tokens.lg;
       width: auto;
       min-width: var(--size);
-      padding: 0 4px;
+      padding-block: 0;
+      padding-inline: var(--padding-inline);
+      white-space: nowrap;
 
       color: var(--label-text-color);
       font: var(--label-text);
@@ -45,6 +47,17 @@
       slot {
         display: contents;
       }
+    }
+
+    // Spec (badges, accessibility): a non-counting badge announces
+    // "New notification". The text is for screen readers only.
+    .badge-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
   }
 }

@@ -5,6 +5,7 @@
  */
 
 import '@material/web/labs/gb/components/button/md-gb-button.js';
+import '@material/web/labs/gb/components/fab/md-gb-fab.js';
 import '@material/web/labs/gb/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/labs/gb/components/toolbar/md-gb-toolbar.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
@@ -14,8 +15,13 @@ import {
   type ToolbarColor,
   type ToolbarOrientation,
 } from '@material/web/labs/gb/components/toolbar/toolbar.js';
+import {
+  type ScrollPaddingController,
+  setupScrollPadding,
+} from '@material/web/labs/gb/components/appbar/scroll-padding.js';
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
 import {css, html} from 'lit';
+import {ref} from 'lit/directives/ref.js';
 
 import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 
@@ -153,5 +159,134 @@ const allVariants: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const withFab: MaterialStoryInit<StoryKnobs> = {
+  name: 'Floating toolbar with FAB',
+  styles,
+  render() {
+    const bar = (color: 'standard' | 'vibrant', vertical = false) => html`
+      <md-gb-toolbar
+        color=${color}
+        orientation=${vertical ? 'vertical' : 'horizontal'}
+        aria-label="${color} toolbar with FAB">
+        <md-gb-icon-button aria-label="Bold"
+          ><md-gb-icon>format_bold</md-gb-icon></md-gb-icon-button
+        >
+        <md-gb-icon-button aria-label="Italic"
+          ><md-gb-icon>format_italic</md-gb-icon></md-gb-icon-button
+        >
+        <md-gb-icon-button aria-label="Underline"
+          ><md-gb-icon>format_underlined</md-gb-icon></md-gb-icon-button
+        >
+        <md-gb-fab slot="fab" aria-label="Add"
+          ><md-gb-icon>add</md-gb-icon></md-gb-fab
+        >
+      </md-gb-toolbar>
+    `;
+    const toggle = (event: Event) => {
+      const button = event.currentTarget as HTMLElement;
+      for (const toolbar of Array.from(
+        button.parentElement!.querySelectorAll('md-gb-toolbar'),
+      )) {
+        toolbar.expanded = !toolbar.expanded;
+      }
+    };
+    return html`
+      <div style="display: flex; flex-direction: column; gap: 24px; align-items: flex-start;">
+        <md-gb-button @click=${toggle}>Expand / collapse</md-gb-button>
+        ${bar('standard')} ${bar('vibrant')}
+        <div style="display: flex; gap: 24px;">
+          ${bar('standard', true)} ${bar('vibrant', true)}
+        </div>
+      </div>
+    `;
+  },
+};
+
+const paddings = new WeakMap<Element, ScrollPaddingController>();
+
+/** Sets up `setupScrollPadding()` for the floating toolbar and the FAB. */
+const scrollPaddingRef = ref((scroller?: Element) => {
+  if (!(scroller instanceof HTMLElement) || paddings.has(scroller)) return;
+  const end = Array.from(
+    scroller.querySelectorAll('.scroll-demo-toolbar, .scroll-demo-fab'),
+  );
+  paddings.set(scroller, setupScrollPadding(scroller, {end}));
+});
+
+const focusNotObscured: MaterialStoryInit<StoryKnobs> = {
+  name: 'Floating toolbar and FAB: focus not obscured',
+  styles: [
+    styles,
+    css`
+      .scroll-demo {
+        border: 1px solid var(--md-sys-color-outline-variant);
+        border-radius: 16px;
+        block-size: 360px;
+        overflow: auto;
+        position: relative;
+      }
+
+      .scroll-demo-list {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .scroll-demo p {
+        color: var(--md-sys-color-on-surface-variant);
+        font: var(--md-sys-typescale-body-md);
+        margin: 0;
+        padding: 16px 16px 0;
+      }
+
+      .scroll-demo-footer {
+        align-items: end;
+        display: flex;
+        gap: 16px;
+        inset-block-end: 16px;
+        justify-content: center;
+        pointer-events: none;
+        position: sticky;
+      }
+
+      .scroll-demo-footer > * {
+        pointer-events: auto;
+      }
+    `,
+  ],
+  render() {
+    return html`
+      <div class="scroll-demo" ${scrollPaddingRef}>
+        <p>
+          setupScrollPadding() sets scroll-padding-block-end (and
+          --md-gb-obscured-block-end) on this scroller to the space the
+          floating toolbar and the FAB cover, so tabbing down the list never
+          leaves a focused button or its focus ring behind them.
+        </p>
+        <div class="scroll-demo-list">
+          ${Array.from(
+            {length: 16},
+            (_, i) =>
+              html`<md-gb-button color="outlined">Item ${i + 1}</md-gb-button>`,
+          )}
+        </div>
+        <div class="scroll-demo-footer scroll-demo-toolbar">
+          <md-gb-toolbar aria-label="Formatting">
+            <md-gb-icon-button aria-label="Bold"
+              ><md-gb-icon>format_bold</md-gb-icon></md-gb-icon-button
+            >
+            <md-gb-icon-button aria-label="Italic"
+              ><md-gb-icon>format_italic</md-gb-icon></md-gb-icon-button
+            >
+          </md-gb-toolbar>
+          <md-gb-fab class="scroll-demo-fab" aria-label="Add"
+            ><md-gb-icon>add</md-gb-icon></md-gb-fab
+          >
+        </div>
+      </div>
+    `;
+  },
+};
+
 /** Toolbar stories. */
-export const stories = [playground, allVariants];
+export const stories = [playground, allVariants, withFab, focusNotObscured];

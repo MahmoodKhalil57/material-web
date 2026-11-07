@@ -15,6 +15,11 @@ export const CLOSE_REASONS = {
   SCRIM: 'scrim',
   /** Escape was pressed in a modal sheet. */
   ESCAPE: 'escape',
+  /**
+   * The platform back gesture or button (predictive back) closed a modal
+   * sheet, or `handleBack()` was called.
+   */
+  BACK: 'back',
   /** A bottom sheet was swiped or dragged down past its lowest height. */
   SWIPE: 'swipe',
   /** The drag handle was activated on a sheet with no lower height. */

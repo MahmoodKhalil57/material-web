@@ -699,6 +699,112 @@ describe('<md-gb-side-sheet>', () => {
     });
   });
 
+  describe('swipe to dismiss', () => {
+    /** A touch pointer event at `x` with a given `timeStamp` (ms). */
+    function swipePointer(type: string, target: Element, x: number, time: number) {
+      const event = new PointerEvent(type, {
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+        pointerId: 1,
+        pointerType: 'touch',
+        isPrimary: true,
+        clientX: x,
+        clientY: 100,
+      });
+      Object.defineProperty(event, 'timeStamp', {value: time});
+      target.dispatchEvent(event);
+    }
+
+    async function drag(
+      target: Element,
+      points: Array<[x: number, time: number]>,
+      release = true,
+    ) {
+      const [[x0, t0], ...moves] = points;
+      swipePointer('pointerdown', target, x0, t0);
+      for (const [x, t] of release ? moves.slice(0, -1) : moves) {
+        swipePointer('pointermove', target, x, t);
+      }
+      await env.waitForStability();
+      if (release) {
+        const [x, t] = moves[moves.length - 1];
+        swipePointer('pointerup', target, x, t);
+        await env.waitForStability();
+      }
+    }
+
+    async function setupModal(attrs = '', dir = 'ltr') {
+      const {sheet} = await setupTest(
+        html`<md-gb-side-sheet modal quick headline="Title"></md-gb-side-sheet>`,
+        dir,
+      );
+      if (attrs) sheet.setAttribute(attrs, '');
+      await sheet.show();
+      await env.waitForStability();
+      return {sheet, panel: panelOf(sheet), width: panelOf(sheet).offsetWidth};
+    }
+
+    function translateX(panel: HTMLElement) {
+      const match = panel.style.transform.match(/translateX\((-?[\d.]+)px\)/);
+      return match ? Number(match[1]) : null;
+    }
+
+    it('makes the sheet follow a drag toward its edge', async () => {
+      const {sheet, panel} = await setupModal();
+      await drag(panel, [[600, 0], [650, 100], [700, 200]], false);
+      expect(dialogOf(sheet).classList).toContain(SIDE_SHEET_CLASSES.dragging);
+      expect(translateX(panel)).toBe(100);
+      // Dragging away from the edge does not move the sheet past open.
+      swipePointer('pointermove', panel, 400, 300);
+      await env.waitForStability();
+      expect(translateX(panel)).toBe(0);
+      swipePointer('pointercancel', panel, 400, 400);
+      await env.waitForStability();
+      expect(translateX(panel)).toBeNull();
+      expect(sheet.open).toBeTrue();
+    });
+
+    it('closes with reason swipe when released past half its width', async () => {
+      const {sheet, panel, width} = await setupModal();
+      const reasons: string[] = [];
+      sheet.addEventListener('close', (e) => reasons.push(reasonOf(e)));
+      const end = 500 + width / 2 + 10;
+      await drag(panel, [[500, 0], [550, 500], [end, 1000], [end, 2000]]);
+      expect(sheet.open).toBeFalse();
+      expect(reasons).toEqual([CLOSE_REASONS.SWIPE]);
+      expect(translateX(panel)).toBeNull();
+    });
+
+    it('springs back open when released before half its width', async () => {
+      const {sheet, panel} = await setupModal();
+      await drag(panel, [[500, 0], [530, 500], [540, 1000], [540, 2000]]);
+      expect(sheet.open).toBeTrue();
+      expect(translateX(panel)).toBeNull();
+    });
+
+    it('closes on a fast fling', async () => {
+      const {sheet, panel} = await setupModal();
+      await drag(panel, [[500, 0], [520, 10], [540, 20], [560, 30]]);
+      expect(sheet.open).toBeFalse();
+    });
+
+    it('swipes toward the left edge in RTL', async () => {
+      const {sheet, panel, width} = await setupModal('', 'rtl');
+      const end = 300 - width / 2 - 10;
+      await drag(panel, [[300, 0], [250, 500], [end, 1000], [end, 2000]]);
+      expect(sheet.open).toBeFalse();
+    });
+
+    it('does not swipe with gestures-disabled', async () => {
+      const {sheet, panel, width} = await setupModal('gestures-disabled');
+      await sheet.updateComplete;
+      const end = 500 + width;
+      await drag(panel, [[500, 0], [550, 500], [end, 1000], [end, 2000]]);
+      expect(sheet.open).toBeTrue();
+    });
+  });
+
   describe('accessibility', () => {
     it('is a dialog labelled by its headline', async () => {
       const {sheet} = await setupTest();

@@ -5,14 +5,19 @@
  */
 
 import {css, CSSResultOrNative, html, type PropertyValues} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 
 import navBarStyles from './nav-bar.css' with {type: 'css'}; // github-only
 // import {styles as navBarStyles} from './nav-bar.cssresult.js'; // google3-only
 
-import {navBar, type NavBarItemLayout} from './nav-bar.js';
+import {
+  MEDIUM_WINDOW_QUERY,
+  navBar,
+  type NavBarItemLayout,
+  type NavBarLayout,
+} from './nav-bar.js';
 import {NavBarItemElement} from './nav-bar-item-element.js';
 
 /**
@@ -60,9 +65,27 @@ export class NavBarElement extends AriaTablistElement {
     `,
   ];
 
-  /** The layout orientation of items ('vertical' or 'horizontal'). */
+  /**
+   * The layout orientation of items: `vertical`, `horizontal`, or `auto`
+   * (vertical in compact windows, horizontal from medium windows, 600px).
+   */
   @property({attribute: 'item-layout', reflect: true})
-  itemLayout: NavBarItemLayout = 'vertical';
+  itemLayout: NavBarLayout = 'vertical';
+
+  @state() private mediumWindow = false;
+  @state() private itemCount = 0;
+  private mediaQuery?: MediaQueryList;
+  private readonly onMediaChange = () => {
+    this.mediumWindow = Boolean(this.mediaQuery?.matches);
+  };
+
+  /** The item layout in use (`auto` resolved for the window width). */
+  get resolvedItemLayout(): NavBarItemLayout {
+    if (this.itemLayout === 'auto') {
+      return this.mediumWindow ? 'horizontal' : 'vertical';
+    }
+    return this.itemLayout === 'horizontal' ? 'horizontal' : 'vertical';
+  }
 
   /**
    * The 0-based index of the currently active navigation bar item.
@@ -79,11 +102,22 @@ export class NavBarElement extends AriaTablistElement {
   override connectedCallback() {
     super.connectedCallback();
     adoptStyles(this, navBarStyles);
+    this.mediaQuery = window.matchMedia?.(MEDIUM_WINDOW_QUERY);
+    this.mediaQuery?.addEventListener('change', this.onMediaChange);
+    this.onMediaChange();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.mediaQuery?.removeEventListener('change', this.onMediaChange);
   }
 
   protected override updated(changedProperties: PropertyValues<this>) {
     super.updated(changedProperties);
-    if (changedProperties.has('itemLayout')) {
+    if (
+      changedProperties.has('itemLayout') ||
+      changedProperties.has('mediumWindow' as keyof NavBarElement)
+    ) {
       this.syncItemsLayout();
     }
   }
@@ -93,8 +127,9 @@ export class NavBarElement extends AriaTablistElement {
       <div
         part="nav-bar"
         class="${navBar({
-          itemLayout: this.itemLayout,
-        })}">
+          itemLayout: this.resolvedItemLayout,
+        })}"
+        style="--_nav-bar-items: ${this.itemCount || 1}">
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
     `;
@@ -102,15 +137,17 @@ export class NavBarElement extends AriaTablistElement {
 
   protected override handleSlotChange() {
     super.handleSlotChange();
+    this.itemCount = this.tabs.length;
     this.syncItemsLayout();
   }
 
   private syncItemsLayout() {
+    const layout = this.resolvedItemLayout;
     for (const tab of this.tabs) {
       if (tab instanceof NavBarItemElement) {
-        tab.itemLayout = this.itemLayout;
+        tab.itemLayout = layout;
       } else {
-        tab.setAttribute('item-layout', this.itemLayout);
+        tab.setAttribute('item-layout', layout);
       }
     }
   }

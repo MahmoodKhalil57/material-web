@@ -142,3 +142,42 @@ implementation of the tabs contract.
 | `--stacked-icon-label-space` | Space between stacked icon and label. |
 | `--tab-scroll-margin` | Scroll margin for focus-driven scroll-into-view. |
 | `--trailing-space` | Inline padding at the end of the tab. |
+
+### `<md-gb-tab-panels>`
+
+Swipeable content for a set of tabs (spec: "swipe left or right within the
+content area"). Panel `i` belongs to tab `i`. The panels show the selected
+tab's panel, slide between panels when the selection changes, and follow a
+horizontal swipe: released past half the width or flung faster than 400px/s,
+the swipe selects the next or previous tab (Compose `HorizontalPager`
+snapping, critically damped `StiffnessMediumLow` settle spring). Mirrors in
+RTL; changes instantly with `prefers-reduced-motion`.
+
+```html
+<md-gb-tabs>
+  <md-gb-tab><span slot="label">Flights</span></md-gb-tab>
+  <md-gb-tab><span slot="label">Trips</span></md-gb-tab>
+</md-gb-tabs>
+<md-gb-tab-panels>
+  <div role="tabpanel">Flights content</div>
+  <div role="tabpanel">Trips content</div>
+</md-gb-tab-panels>
+```
+
+| API | Type | Description |
+|---|---|---|
+| `for` / `.htmlFor` | `string` | ID of the `<md-gb-tabs>`. Without it, the previous sibling tablist is used. |
+| `.tabs` | `AriaTablistElement \| null` | The linked tabs; setting it overrides `for`. |
+| `.selectedIndex` | `number` | Active panel index. Setting it selects the linked tab. |
+| `.panels` / `.activePanel` | `HTMLElement[]` / `HTMLElement \| null` | Read-only. The `role="tabpanel"` children / the shown one. |
+| `gestures-disabled` / `.gesturesDisabled` | `boolean` | Default `false`. Turns swiping off. |
+| `@change` | `Event` | A swipe fires `change` on the linked tabs (on the panels without tabs). |
+| `[default]` | Slot | `role="tabpanel"` elements (`<md-aria-tabpanel>` or `<div role="tabpanel">`). |
+
+Each tab gets `aria-controls` and each panel `aria-labelledby`. Inactive panels
+are `hidden`; mid-slide the outgoing panel is `inert`.
+
+| Custom property | Description |
+|---|---|
+| `--transition-duration` | Slide duration (default 430ms; `0s` with reduced motion). |
+| `--transition-easing` | Slide easing (default: the pager settle spring as `linear()`). |

@@ -10,8 +10,15 @@ import {classMap} from 'lit/directives/class-map.js';
 import {live} from 'lit/directives/live.js';
 import {iconButton} from '../iconbutton/icon-button.js';
 import {
+  BACK_REASON,
+  closeRequestSource,
+  playPredictiveBack,
+  type PredictiveBackAnimation,
+} from '../sheet/predictive-back.js';
+import {
   getResultOptions,
   moveResultFocus,
+  SEARCH_CLOSE_REASONS,
   SEARCH_VIEW_CLASSES,
   searchViewClasses,
 } from './search.js';
@@ -51,10 +58,16 @@ const CLEAR_ICON = html`<svg viewBox="0 0 24 24" aria-hidden="true">
  * Slotted elements without a `role` get `role="option"`. The arrow keys move
  * focus from the input through the options.
  *
+ * Predictive back (search.md): the modal dialog receives the platform's
+ * close requests (its close watcher). The Android back gesture or button
+ * shrinks a full-screen view (Compose `SearchBar`, to 90%) before it
+ * collapses into its bar, and closes with reason `back`; Escape closes with
+ * reason `escape`.
+ *
  * @fires {Event} open - Fired when the view begins opening. Cancelable.
  * @fires {Event} opened - Fired when the view has opened and animations finished.
- * @fires {Event} close - Fired when the view begins closing. Cancelable.
- * @fires {Event} closed - Fired when the view has closed.
+ * @fires {CustomEvent<{reason: string}>} close - Fired when the view begins closing. Cancelable. See `SEARCH_CLOSE_REASONS`.
+ * @fires {CustomEvent<{reason: string}>} closed - Fired when the view has closed.
  * @fires {InputEvent} input - Fired when the input text changes.
  * @fires {Event} change - Fired when the input text is committed.
  * @fires {CustomEvent<{value: string}>} search - Fired when a search is executed with Enter.
@@ -142,7 +155,7 @@ export class SearchViewElement extends LitElement {
     if (value) {
       this.show();
     } else {
-      this.close();
+      this.close(SEARCH_CLOSE_REASONS.DISMISS);
     }
   }
 
@@ -206,6 +219,7 @@ export class SearchViewElement extends LitElement {
   private animations: Animation[] = [];
   private optionCount = 0;
   private trackingAbort: AbortController | null = null;
+  private backMotion: PredictiveBackAnimation | null = null;
 
   override disconnectedCallback() {
     super.disconnectedCallback();
@@ -286,15 +300,55 @@ export class SearchViewElement extends LitElement {
   }
 
   /**
-   * Closes the view.
+   * Handles a back request (the Android back gesture or button, which the
+   * view receives through its dialog): a full-screen view plays the
+   * predictive back motion, then the view closes with reason `back`. Call it
+   * for an in-app back control that should behave like the system back.
    */
-  async close(): Promise<void> {
+  async handleBack(): Promise<void> {
+    if (!this.isOpenInternal || this.isClosing) {
+      return;
+    }
+    // Compose's DockedSearchBar has no predictive back motion.
+    const container = this.container;
+    const motion =
+      this.shouldAnimate() && !this.docked && container
+        ? playPredictiveBack(container, {kind: 'search'})
+        : null;
+    await motion?.finished;
+    if (!this.isOpenInternal) {
+      motion?.cancel();
+      return;
+    }
+    this.backMotion = motion;
+    const closing = this.close(BACK_REASON);
+    // Scale back up while the view collapses into its bar; `animateView`
+    // measures the boxes at rest.
+    const settling = motion?.settle();
+    await closing;
+    await settling;
+    if (this.backMotion === motion) {
+      this.backMotion = null;
+    }
+  }
+
+  /**
+   * Closes the view.
+   *
+   * @param reason The reason for closing, passed in the `close` and `closed`
+   *     event details (see `SEARCH_CLOSE_REASONS`).
+   */
+  async close(reason: string = SEARCH_CLOSE_REASONS.DISMISS): Promise<void> {
     if (!this.isOpenInternal && !this.isOpening) {
       return;
     }
 
     const preventClose = !this.dispatchEvent(
-      new Event('close', {bubbles: true, cancelable: true}),
+      new CustomEvent('close', {
+        bubbles: true,
+        cancelable: true,
+        detail: {reason},
+      }),
     );
     if (preventClose) {
       return;
@@ -321,7 +375,9 @@ export class SearchViewElement extends LitElement {
     this.dialog?.close();
     this.cancelAnimations();
     this.isClosing = false;
-    this.dispatchEvent(new Event('closed', {bubbles: true}));
+    this.dispatchEvent(
+      new CustomEvent('closed', {bubbles: true, detail: {reason}}),
+    );
   }
 
   private focusInputEnd() {
@@ -412,9 +468,15 @@ export class SearchViewElement extends LitElement {
       FALLBACK_DURATION_MS,
     );
 
-    const box = container.getBoundingClientRect();
-    const headerBox = header.getBoundingClientRect();
-    const bar = this.docked ? null : this.bar?.getBoundingClientRect();
+    // Measure at rest: a back request may have scaled the container.
+    const measure = () => ({
+      box: container.getBoundingClientRect(),
+      headerBox: header.getBoundingClientRect(),
+      bar: this.docked ? null : this.bar?.getBoundingClientRect(),
+    });
+    const {box, headerBox, bar} = this.backMotion
+      ? this.backMotion.atRest(measure)
+      : measure();
     let collapsed: string;
     let headerShift = 0;
     if (bar && bar.width && bar.height) {
@@ -521,7 +583,7 @@ export class SearchViewElement extends LitElement {
     if (event.defaultPrevented) return;
     if (event.key === 'Escape') {
       event.preventDefault();
-      this.close();
+      this.close(SEARCH_CLOSE_REASONS.ESCAPE);
       return;
     }
     const input = this.input;
@@ -557,7 +619,11 @@ export class SearchViewElement extends LitElement {
   private readonly handleCancel = (event: Event) => {
     // Escape and the platform back gesture animate closed.
     event.preventDefault();
-    this.close();
+    if (closeRequestSource(event) === BACK_REASON) {
+      this.handleBack();
+    } else {
+      this.close(SEARCH_CLOSE_REASONS.ESCAPE);
+    }
   };
 
   private readonly handleDialogClose = () => {
@@ -570,14 +636,19 @@ export class SearchViewElement extends LitElement {
       this.isOpening = false;
       this.isClosing = false;
       this.requestUpdate('open', true);
-      this.dispatchEvent(new Event('closed', {bubbles: true}));
+      this.dispatchEvent(
+        new CustomEvent('closed', {
+          bubbles: true,
+          detail: {reason: SEARCH_CLOSE_REASONS.DISMISS},
+        }),
+      );
     }
   };
 
   private readonly handleDialogClick = (event: MouseEvent) => {
     // A click on the docked scrim, outside the container.
     if (event.target === this.dialog) {
-      this.close();
+      this.close(SEARCH_CLOSE_REASONS.SCRIM);
     }
   };
 
@@ -617,7 +688,7 @@ export class SearchViewElement extends LitElement {
                   },
                 })}"
                 aria-label=${this.backLabel}
-                @click=${() => this.close()}>
+                @click=${() => this.close(SEARCH_CLOSE_REASONS.BACK_BUTTON)}>
                 ${BACK_ICON}
               </button>
             </slot>

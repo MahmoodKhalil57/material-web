@@ -6,6 +6,7 @@
 
 import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/buttongroup/md-gb-button-group.js';
+import '@material/web/labs/gb/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
 import {MaterialStoryInit} from './material-collection.js';
@@ -34,6 +35,7 @@ export interface StoryKnobs {
   showIcon2?: boolean;
   showIcon3?: boolean;
   showIcon4?: boolean;
+  density?: string;
 }
 
 adoptStyles(document, [
@@ -83,6 +85,7 @@ const playground: MaterialStoryInit<StoryKnobs> = {
           aria-label="Playground button group"
           variant=${knobs.variant ?? 'standard'}
           selection=${knobs.selection ?? 'none'}
+          density=${knobs.density ?? '0'}
           ?disabled=${knobs.disabled ?? false}>
           <md-gb-button
             value="btn1"
@@ -184,4 +187,44 @@ const icons: MaterialStoryInit<StoryKnobs> = {
 };
 
 /** Button Group stories. */
-export const stories = [playground, icons];
+// button-groups.md, Density: "Button groups adapt to the height of the
+// buttons inside, including when density is applied" (0, -1, -2, -3).
+const density: MaterialStoryInit<StoryKnobs> = {
+  name: 'Density',
+  styles,
+  render(knobs) {
+    const size = knobs.size ?? 'sm';
+    return html`
+      <div class="story-column">
+        ${['0', '-1', '-2', '-3'].map(
+          (d) => html`
+            <md-gb-button-group
+              aria-label="Density ${d}"
+              variant="connected"
+              selection="single"
+              density=${d}>
+              <md-gb-button value="day" size=${size} selected>Day</md-gb-button>
+              <md-gb-button value="week" size=${size}>Week</md-gb-button>
+              <md-gb-button value="month" size=${size}>Month</md-gb-button>
+            </md-gb-button-group>
+            <md-gb-button-group
+              aria-label="Icon buttons, density ${d}"
+              density=${d}>
+              <md-gb-icon-button aria-label="Bold" color="tonal">
+                <md-gb-icon>format_bold</md-gb-icon>
+              </md-gb-icon-button>
+              <md-gb-icon-button aria-label="Italic" color="tonal">
+                <md-gb-icon>format_italic</md-gb-icon>
+              </md-gb-icon-button>
+              <md-gb-icon-button aria-label="Underline" color="tonal">
+                <md-gb-icon>format_underlined</md-gb-icon>
+              </md-gb-icon-button>
+            </md-gb-button-group>
+          `,
+        )}
+      </div>
+    `;
+  },
+};
+
+export const stories = [playground, icons, density];

@@ -26,6 +26,8 @@ const playground: MaterialStoryInit<StoryKnobs> = {
         <md-gb-badge></md-gb-badge>
         <md-gb-badge>3</md-gb-badge>
         <md-gb-badge>99+</md-gb-badge>
+        <!-- Spec: at most four characters, including the "+". -->
+        <md-gb-badge value="1200"></md-gb-badge>
       </div>
     `;
   },

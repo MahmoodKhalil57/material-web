@@ -27,6 +27,11 @@ $effects-duration: var(--md-sys-motion-spring-fast-effects-duration, 140ms);
     @include tooltip-tokens.root;
   }
 
+  :host(:not([variant='rich'])),
+  .tooltip:not(.tooltip-host, .tooltip-rich) {
+    @include tooltip-tokens.plain;
+  }
+
   :host([variant='rich']),
   .tooltip.tooltip-rich:not(.tooltip-host) {
     @include tooltip-tokens.rich;

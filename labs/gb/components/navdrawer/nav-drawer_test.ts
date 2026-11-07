@@ -80,6 +80,28 @@ function press(target: Element, key: string) {
   );
 }
 
+/** Dispatches a touch pointer event with a given `timeStamp` (ms). */
+function pointer(
+  type: string,
+  target: EventTarget,
+  x: number,
+  time: number,
+  y = 100,
+) {
+  const event = new PointerEvent(type, {
+    bubbles: true,
+    composed: true,
+    cancelable: true,
+    pointerId: 1,
+    pointerType: 'touch',
+    isPrimary: true,
+    clientX: x,
+    clientY: y,
+  });
+  Object.defineProperty(event, 'timeStamp', {value: time});
+  target.dispatchEvent(event);
+}
+
 describe('nav-drawer classes', () => {
   it('returns sheet classes', () => {
     expect(navDrawerClasses()).toEqual({
@@ -565,6 +587,212 @@ describe('<md-gb-nav-drawer>', () => {
       await env.waitForStability();
       expect(drawer.open).toBeFalse();
       expect(closedSpy).toHaveBeenCalledTimes(1);
+    });
+
+    describe('swipe to dismiss', () => {
+      async function setupOpen(attribute = '') {
+        const result = await setupModal();
+        if (attribute) {
+          result.drawer.setAttribute(attribute, '');
+        }
+        await result.drawer.show();
+        const scrim = result.drawer.shadowRoot!.querySelector<HTMLElement>(
+          '.nav-drawer-scrim',
+        )!;
+        return {...result, scrim, width: sheet(result.drawer).offsetWidth};
+      }
+
+      /** Presses at the first point, moves through the rest, releases. */
+      async function drag(
+        target: Element,
+        points: Array<[x: number, time: number]>,
+        release = true,
+      ) {
+        const [[x0, t0], ...moves] = points;
+        pointer('pointerdown', target, x0, t0);
+        for (const [x, t] of release ? moves.slice(0, -1) : moves) {
+          pointer('pointermove', target, x, t);
+        }
+        await env.waitForStability();
+        if (release) {
+          const [x, t] = moves[moves.length - 1];
+          pointer('pointerup', target, x, t);
+          await env.waitForStability();
+          await nextTask();
+        }
+      }
+
+      function translateX(drawer: NavDrawerElement) {
+        const value = sheet(drawer).style.translate;
+        return value ? parseFloat(value) : null;
+      }
+
+      it('makes the sheet follow a horizontal drag and fades the scrim', async () => {
+        const {drawer, scrim, width} = await setupOpen();
+        expect(width).toBeGreaterThan(0);
+        await drag(sheet(drawer), [[300, 0], [250, 100], [200, 200]], false);
+        expect(sheet(drawer).classList.contains('nav-drawer-dragging')).toBeTrue();
+        expect(scrim.classList.contains('nav-drawer-dragging')).toBeTrue();
+        expect(translateX(drawer)).toBe(-100);
+        expect(Number(scrim.style.opacity)).toBeCloseTo(1 - 100 / width, 3);
+        // Dragging away from the edge does not move the sheet past open.
+        pointer('pointermove', sheet(drawer), 400, 300);
+        await env.waitForStability();
+        expect(translateX(drawer)).toBe(0);
+        pointer('pointercancel', sheet(drawer), 400, 400);
+        await env.waitForStability();
+        expect(translateX(drawer)).toBeNull();
+        expect(drawer.open).toBeTrue();
+      });
+
+      it('closes when released past half its width', async () => {
+        const {drawer, width} = await setupOpen();
+        let reason = '';
+        drawer.addEventListener('closed', (event) => {
+          reason = (event as CustomEvent).detail.reason;
+        });
+        const end = 350 - width / 2 - 10;
+        await drag(sheet(drawer), [
+          [350, 0],
+          [300, 500],
+          [end, 1000],
+          [end, 2000],
+        ]);
+        expect(drawer.open).toBeFalse();
+        expect(reason).toBe(NAV_DRAWER_CLOSE_REASONS.swipe);
+        expect(translateX(drawer)).toBeNull();
+      });
+
+      it('settles back open when released before half its width', async () => {
+        const {drawer, width} = await setupOpen();
+        const closeSpy = jasmine.createSpy('close');
+        drawer.addEventListener('close', closeSpy);
+        const end = 350 - width / 2 + 20;
+        await drag(sheet(drawer), [
+          [350, 0],
+          [300, 500],
+          [end, 1000],
+          [end, 2000],
+        ]);
+        expect(drawer.open).toBeTrue();
+        expect(closeSpy).not.toHaveBeenCalled();
+        expect(sheet(drawer).classList.contains('nav-drawer-dragging')).toBeFalse();
+        expect(translateX(drawer)).toBeNull();
+      });
+
+      it('closes on a fling toward its edge faster than 400px/s', async () => {
+        const {drawer} = await setupOpen();
+        // 40px in 60ms: about 670px/s.
+        await drag(sheet(drawer), [
+          [300, 0],
+          [290, 10],
+          [270, 40],
+          [260, 60],
+        ]);
+        expect(drawer.open).toBeFalse();
+      });
+
+      it('does not close on a slow short drag', async () => {
+        const {drawer} = await setupOpen();
+        // Released at 100px/s, 40px from open.
+        await drag(sheet(drawer), [
+          [300, 0],
+          [290, 100],
+          [270, 300],
+          [260, 400],
+        ]);
+        expect(drawer.open).toBeTrue();
+      });
+
+      it('swipes from the scrim too', async () => {
+        const {drawer, scrim, width} = await setupOpen();
+        await drag(scrim, [
+          [700, 0],
+          [600, 500],
+          [700 - width, 1000],
+          [700 - width, 2000],
+        ]);
+        expect(drawer.open).toBeFalse();
+      });
+
+      it('does not select an item or close via the scrim after a drag', async () => {
+        const {drawer, items, scrim} = await setupOpen();
+        let changes = 0;
+        drawer.addEventListener('change', () => {
+          changes++;
+        });
+        const control = innerControl(items[0]);
+        // The click follows the release in the same task.
+        pointer('pointerdown', control, 300, 0);
+        pointer('pointermove', control, 280, 500);
+        pointer('pointerup', control, 280, 1000);
+        control.click();
+        await env.waitForStability();
+        await nextTask();
+        expect(changes).toBe(0);
+        expect(items[0].selected).toBeFalse();
+        expect(drawer.open).toBeTrue();
+
+        pointer('pointerdown', scrim, 700, 0);
+        pointer('pointermove', scrim, 690, 500);
+        pointer('pointerup', scrim, 690, 1000);
+        scrim.click();
+        await env.waitForStability();
+        await nextTask();
+        expect(drawer.open).toBeTrue();
+
+        // A tap still selects.
+        control.click();
+        await env.waitForStability();
+        expect(changes).toBe(1);
+      });
+
+      it('swipes toward the right edge in RTL', async () => {
+        const {drawer, width} = await setupOpen();
+        drawer.setAttribute('dir', 'rtl');
+        await env.waitForStability();
+        await drag(sheet(drawer), [[300, 0], [350, 100], [400, 200]], false);
+        expect(translateX(drawer)).toBe(100);
+        pointer('pointerup', sheet(drawer), 300 + width, 1000);
+        await env.waitForStability();
+        await nextTask();
+        expect(drawer.open).toBeFalse();
+      });
+
+      it('settles open when the swipe close is cancelled', async () => {
+        const {drawer, width} = await setupOpen();
+        drawer.addEventListener('close', (event) => {
+          event.preventDefault();
+        });
+        await drag(sheet(drawer), [
+          [350, 0],
+          [300, 500],
+          [350 - width, 1000],
+          [350 - width, 2000],
+        ]);
+        expect(drawer.open).toBeTrue();
+        expect(translateX(drawer)).toBeNull();
+        expect(sheet(drawer).classList.contains('nav-drawer-swipe-settle')).toBeFalse();
+      });
+
+      it('does not swipe with gestures-disabled', async () => {
+        const {drawer} = await setupOpen('gestures-disabled');
+        expect(drawer.gesturesDisabled).toBeTrue();
+        await drag(sheet(drawer), [[300, 0], [200, 100], [100, 200]], false);
+        expect(translateX(drawer)).toBeNull();
+        pointer('pointerup', sheet(drawer), 0, 300);
+        await env.waitForStability();
+        await nextTask();
+        expect(drawer.open).toBeTrue();
+      });
+
+      it('does not swipe a standard drawer', async () => {
+        const {drawer} = await setupTest();
+        await drawer.show();
+        await drag(sheet(drawer), [[300, 0], [200, 100], [0, 200], [0, 300]]);
+        expect(drawer.open).toBeTrue();
+        expect(translateX(drawer)).toBeNull();
+      });
     });
   });
 });

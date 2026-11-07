@@ -8,6 +8,28 @@ import {type ClassInfo} from 'lit/directives/class-map.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /**
+ * Reasons for closing a search view, passed in the `close` and `closed`
+ * event details.
+ */
+export const SEARCH_CLOSE_REASONS = {
+  /** `close()` was called without a reason, or `open` was set to false. */
+  DISMISS: 'dismiss',
+  /** Escape was pressed in the view. */
+  ESCAPE: 'escape',
+  /** The Android back gesture or button (predictive back), or `handleBack()`. */
+  BACK: 'back',
+  /** The view's back icon button was activated. */
+  BACK_BUTTON: 'back-button',
+  /** The scrim of a docked view was clicked. */
+  SCRIM: 'scrim',
+} as const;
+
+/** Search view close reason type. */
+export type SearchCloseReason =
+  | (typeof SEARCH_CLOSE_REASONS)[keyof typeof SEARCH_CLOSE_REASONS]
+  | string;
+
+/**
  * Search bar CSS classes.
  */
 export const SEARCH_BAR_CLASSES = {

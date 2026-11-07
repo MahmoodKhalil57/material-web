@@ -50,6 +50,19 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
     new Knob('error', {ui: boolInput(), defaultValue: false}),
     new Knob('leadingIcon', {ui: boolInput(), defaultValue: false}),
     new Knob('trailingIcon', {ui: boolInput(), defaultValue: false}),
+    // text-fields.md "Avoid applying density by default": opt-in, 4px less
+    // height per step.
+    new Knob('density', {
+      ui: selectDropdown({
+        options: [
+          {value: '0', label: '0 (56px)'},
+          {value: '-1', label: '-1 (52px)'},
+          {value: '-2', label: '-2 (48px)'},
+          {value: '-3', label: '-3 (44px)'},
+        ],
+      }),
+      defaultValue: '0',
+    }),
   ],
 );
 

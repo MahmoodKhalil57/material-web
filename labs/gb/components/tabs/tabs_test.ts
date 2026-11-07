@@ -9,6 +9,7 @@
 import '../../../aria/tabs/md-aria-tabpanel.js';
 import './md-gb-tab.js';
 import './md-gb-tabs.js';
+import '../../styles/icon/md-gb-icon.js';
 
 import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
@@ -18,6 +19,7 @@ import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {styles as badgeStyles} from '../badge/badge.cssresult.js';
 import focusRingStyles from '../focus/focus-ring.cssresult.js';
 import rippleStyles from '../ripple/ripple.cssresult.js';
+import {type TabsElement} from './tabs-element.js';
 import {setupTabs} from './tabs.js';
 import {styles as tabsStyles} from './tabs.cssresult.js';
 
@@ -302,9 +304,9 @@ describe('md-gb-tabs', () => {
           <div id="raw" class="tabs" role="tablist">
             ${labels.map(
               (l) => html`
-                <button class="tab" role="tab"
-                  ><span class="tab-label"> ${l} tab </span></button
-                >
+                <button class="tab" role="tab">
+                  <span class="tab-label"> ${l} tab </span>
+                </button>
               `,
             )}
           </div>
@@ -325,9 +327,9 @@ describe('md-gb-tabs', () => {
           <div class="tabs" role="tablist">
             ${labels.map(
               (l) => html`
-                <button class="tab" role="tab"
-                  ><span class="tab-label">${l} tab</span></button
-                >
+                <button class="tab" role="tab">
+                  <span class="tab-label">${l} tab</span>
+                </button>
               `,
             )}
           </div>
@@ -368,9 +370,9 @@ describe('md-gb-tabs', () => {
           <div class="tabs" role="tablist">
             ${labels.map(
               (l) => html`
-                <button class="tab" role="tab"
-                  ><span class="tab-label">${l} tab</span></button
-                >
+                <button class="tab" role="tab">
+                  <span class="tab-label">${l} tab</span>
+                </button>
               `,
             )}
           </div>
@@ -416,7 +418,8 @@ describe('md-gb-tabs', () => {
         <div
           class="tabs"
           role="tablist"
-          style="position: relative; width: 400px;">
+          style="position: relative; width: 400px;"
+        >
           <button class="tab selected" role="tab" aria-selected="true">
             <span class="tab-label">Flights</span>
           </button>
@@ -485,7 +488,8 @@ describe('md-gb-tabs', () => {
           id="bar1"
           class="tabs"
           role="tablist"
-          style="display: flex; width: 400px;">
+          style="display: flex; width: 400px;"
+        >
           <button class="tab selected" role="tab" aria-selected="true">
             <span class="tab-label">First</span>
           </button>
@@ -497,7 +501,8 @@ describe('md-gb-tabs', () => {
           id="bar2"
           class="tabs"
           role="tablist"
-          style="display: flex; width: 400px;">
+          style="display: flex; width: 400px;"
+        >
           <button class="tab" role="tab" aria-selected="false">
             <span class="tab-label">First</span>
           </button>
@@ -595,7 +600,8 @@ describe('md-gb-tabs', () => {
           <button
             class="tab focus-ring-inner ripple selected"
             role="tab"
-            aria-selected="true">
+            aria-selected="true"
+          >
             <span class="tab-label">Flights</span>
             <span class="badge tab-badge">3</span>
           </button>
@@ -760,9 +766,9 @@ describe('md-gb-tabs', () => {
           <div id="scroll-test-bar" class="tabs" role="tablist">
             ${labels.map(
               (l) => html`
-                <button class="tab" role="tab"
-                  ><span class="tab-label">${l} tab</span></button
-                >
+                <button class="tab" role="tab">
+                  <span class="tab-label">${l} tab</span>
+                </button>
               `,
             )}
           </div>
@@ -853,7 +859,8 @@ describe('md-gb-tabs', () => {
             id="test"
             class="tab selected"
             role="tab"
-            aria-selected="true">
+            aria-selected="true"
+          >
             <span class="md-icon">flight</span>
             <span class="tab-label">Flights</span>
             <span class="badge tab-badge">3</span>
@@ -948,6 +955,75 @@ describe('md-gb-tabs', () => {
 
       // In secondary tabs, badge remains in-flow after the label with 4px gap
       expect(badgeRect.left - labelRect.right).toBeCloseTo(4, 0);
+    });
+  });
+
+  describe('density', () => {
+    it('defaults to 0, clamps to 0..-3 and reflects', async () => {
+      const root = env.render(html`<md-gb-tabs></md-gb-tabs>`);
+      await env.waitForStability();
+      const tabs = root.querySelector('md-gb-tabs')!;
+      expect(tabs.density).toBe(0);
+      tabs.density = -9;
+      expect(tabs.density).toBe(-3);
+      tabs.density = 3;
+      expect(tabs.density).toBe(0);
+      tabs.density = -2;
+      await tabs.updateComplete;
+      expect(tabs.getAttribute('density')).toBe('-2');
+      expect(tabs.classList.contains('tabs-density-2')).toBeTrue();
+    });
+
+    it('removes 4px of height per step, stacked tabs included', async () => {
+      const root = env.render(html`
+        <div>
+          <md-gb-tabs id="labels">
+            <md-gb-tab><span slot="label">Flights</span></md-gb-tab>
+            <md-gb-tab><span slot="label">Trips</span></md-gb-tab>
+          </md-gb-tabs>
+        </div>
+        <div>
+          <md-gb-tabs id="stacked">
+            <md-gb-tab>
+              <md-gb-icon>flight</md-gb-icon>
+              <span slot="label">Flights</span>
+            </md-gb-tab>
+          </md-gb-tabs>
+        </div>
+      `);
+      await env.waitForStability();
+      const labels = root.querySelector<TabsElement>('#labels')!;
+      const stacked = root.querySelector<TabsElement>('#stacked')!;
+      for (const [density, height, stackedHeight] of [
+        [0, 48, 64],
+        [-1, 44, 60],
+        [-2, 40, 56],
+        [-3, 36, 52],
+      ]) {
+        labels.density = density;
+        stacked.density = density;
+        await labels.updateComplete;
+        await stacked.updateComplete;
+        expect(labels.getBoundingClientRect().height)
+          .withContext(`density ${density}`)
+          .toBe(height);
+        expect(stacked.getBoundingClientRect().height)
+          .withContext(`density ${density} stacked`)
+          .toBe(stackedHeight);
+      }
+    });
+
+    it('applies the density classes in raw HTML mode', async () => {
+      const root = env.render(html`
+        <div class="tabs tabs-density-3" role="tablist">
+          <button class="tab" role="tab">
+            <span class="tab-label">Flights</span>
+          </button>
+        </div>
+      `);
+      await env.waitForStability();
+      const bar = root.querySelector<HTMLElement>('.tabs')!;
+      expect(bar.getBoundingClientRect().height).toBe(36);
     });
   });
 });

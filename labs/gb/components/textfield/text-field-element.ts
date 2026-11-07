@@ -37,6 +37,7 @@ import {
 } from '../../../behaviors/on-report-validity.js';
 import {TextFieldValidator} from '../../../behaviors/validators/text-field-validator.js';
 import {type Validator} from '../../../behaviors/validators/validator.js';
+import {clampDensity, type Density} from '../shared/density.js';
 import {textFieldClasses, type TextFieldVariant} from './text-field.js';
 
 import textFieldStyles from './text-field.css' with {type: 'css'}; // github-only
@@ -55,13 +56,7 @@ export type TextFieldType =
 
 /** Input types that render a value or mask while empty. */
 export type UnsupportedTextFieldType =
-  | 'color'
-  | 'date'
-  | 'datetime-local'
-  | 'file'
-  | 'month'
-  | 'time'
-  | 'week';
+  'color' | 'date' | 'datetime-local' | 'file' | 'month' | 'time' | 'week';
 
 // Types whose native control always shows content, so the label stays
 // floated.
@@ -146,6 +141,7 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --supporting-text-top-space - Space above the supporting text.
  * @cssprop --counter-space - Space between the supporting text and counter.
  * @cssprop --affix-space - Space between the prefix/suffix and the input.
+ * @cssprop --density-step - Container height removed per density step.
  */
 export class TextFieldElement extends baseClass {
   /** @nocollapse */
@@ -174,6 +170,26 @@ export class TextFieldElement extends baseClass {
 
   /** The variant: `filled` (default) or `outlined`. */
   @property({reflect: true}) variant: TextFieldVariant = 'filled';
+
+  /**
+   * The density, from 0 (default) to -3. Each step down removes 4px from the
+   * container height (56px), half above and half below the content; text
+   * keeps its size. Values are clamped to that range.
+   *
+   * text-fields.md "Avoid applying density by default": dense fields are
+   * below the 48x48 CSS pixel target, so let people opt in (a denser layout
+   * or theme) and keep the controls that change it at 48x48.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
 
   /**
    * Whether the field is in a visually invalid state. Overrides the error
@@ -295,9 +311,7 @@ export class TextFieldElement extends baseClass {
 
   @query('.text-field-input')
   private readonly inputOrTextarea!:
-    | HTMLInputElement
-    | HTMLTextAreaElement
-    | null;
+    HTMLInputElement | HTMLTextAreaElement | null;
 
   private get hasError() {
     return this.error || this.nativeError;
@@ -458,6 +472,7 @@ export class TextFieldElement extends baseClass {
       textarea,
       noSpinner: this.noSpinner,
       disabled: this.disabled,
+      density: this.density,
     });
     const labelText = this.getLabelText();
 
@@ -466,21 +481,25 @@ export class TextFieldElement extends baseClass {
         <div
           class="text-field-container"
           part="container"
-          @click=${this.handleContainerClick}>
+          @click=${this.handleContainerClick}
+        >
           <span class="text-field-leading-icon">
             <slot
               name="leading-icon"
-              @slotchange=${this.handleIconChange}></slot>
+              @slotchange=${this.handleIconChange}
+            ></slot>
           </span>
-          ${labelText
-            ? html`<label
-                id="label"
-                class="text-field-label"
-                part="label"
-                for="input"
-                >${labelText}</label
-              >`
-            : nothing}
+          ${
+            labelText
+              ? html`<label
+                  id="label"
+                  class="text-field-label"
+                  part="label"
+                  for="input"
+                  >${labelText}</label
+                >`
+              : nothing
+          }
           <div class="text-field-content">
             <div class="text-field-input-row">
               ${this.renderAffix('prefix', this.prefixText, textarea)}
@@ -491,7 +510,8 @@ export class TextFieldElement extends baseClass {
           <span class="text-field-trailing-icon">
             <slot
               name="trailing-icon"
-              @slotchange=${this.handleIconChange}></slot>
+              @slotchange=${this.handleIconChange}
+            ></slot>
           </span>
           <div class="text-field-outline" aria-hidden="true">
             <div class="text-field-outline-start"></div>
@@ -501,30 +521,35 @@ export class TextFieldElement extends baseClass {
             <div class="text-field-outline-end"></div>
           </div>
         </div>
-        ${supporting || hasCounter
-          ? html`<div class="text-field-supporting">
-              ${keyed(
-                this.errorAnnouncement,
-                html`<span
-                  id="supporting-text"
-                  class="text-field-supporting-text"
-                  part="supporting-text"
-                  role=${showError && errorText ? 'alert' : nothing}
-                  >${supporting}</span
-                >`,
-              )}
-              ${hasCounter
-                ? html`<span
-                    id="counter"
-                    class="text-field-counter"
-                    part="counter"
-                    aria-label="Character count, ${this.value.length}/${this
-                      .maxLength}"
-                    >${this.value.length}/${this.maxLength}</span
-                  >`
-                : nothing}
-            </div>`
-          : nothing}
+        ${
+          supporting || hasCounter
+            ? html`<div class="text-field-supporting">
+                ${keyed(
+                  this.errorAnnouncement,
+                  html`<span
+                    id="supporting-text"
+                    class="text-field-supporting-text"
+                    part="supporting-text"
+                    role=${showError && errorText ? 'alert' : nothing}
+                    >${supporting}</span
+                  >`,
+                )}
+                ${
+                  hasCounter
+                    ? html`<span
+                        id="counter"
+                        class="text-field-counter"
+                        part="counter"
+                        aria-label="Character count, ${this.value.length}/${
+                          this.maxLength
+                        }"
+                        >${this.value.length}/${this.maxLength}</span
+                      >`
+                    : nothing
+                }
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -565,7 +590,8 @@ export class TextFieldElement extends baseClass {
         .value=${live(this.value)}
         @change=${this.redispatchEvent}
         @input=${this.handleInput}
-        @select=${this.redispatchEvent}></textarea>`;
+        @select=${this.redispatchEvent}
+      ></textarea>`;
     }
 
     // tslint:disable-next-line:no-any
@@ -596,10 +622,15 @@ export class TextFieldElement extends baseClass {
       .value=${live(this.value)}
       @change=${this.redispatchEvent}
       @input=${this.handleInput}
-      @select=${this.redispatchEvent} />`;
+      @select=${this.redispatchEvent}
+    />`;
   }
 
-  private renderAffix(id: 'prefix' | 'suffix', text: string, textarea: boolean) {
+  private renderAffix(
+    id: 'prefix' | 'suffix',
+    text: string,
+    textarea: boolean,
+  ) {
     if (!text || textarea) {
       return nothing;
     }

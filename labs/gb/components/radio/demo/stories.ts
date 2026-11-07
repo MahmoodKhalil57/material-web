@@ -15,6 +15,7 @@ import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 /** Knob types for radio stories. */
 export interface StoryKnobs {
   disabled: boolean;
+  density: string;
 }
 
 adoptStyles(document, [
@@ -30,12 +31,44 @@ const playground: MaterialStoryInit<StoryKnobs> = {
   name: 'Playground',
   render(knobs) {
     return html`
-      <md-gb-radio name="group" ?disabled=${knobs.disabled}></md-gb-radio>
-      <md-gb-radio name="group" ?disabled=${knobs.disabled}></md-gb-radio>
-      <md-gb-radio name="group" ?disabled=${knobs.disabled}></md-gb-radio>
+      <md-gb-radio
+        name="group"
+        density=${knobs.density}
+        ?disabled=${knobs.disabled}></md-gb-radio>
+      <md-gb-radio
+        name="group"
+        density=${knobs.density}
+        ?disabled=${knobs.disabled}></md-gb-radio>
+      <md-gb-radio
+        name="group"
+        density=${knobs.density}
+        ?disabled=${knobs.disabled}></md-gb-radio>
     `;
   },
 };
 
+// radio-button.md: "Avoid applying density by default". Each step removes
+// 4px from the layout box; the touch target stays 48px.
+const density: MaterialStoryInit<StoryKnobs> = {
+  name: 'Density',
+  render() {
+    return html`${['0', '-1', '-2', '-3'].map(
+      (d) =>
+        html`<div style="display: flex; align-items: center">
+          <md-gb-radio
+            name="density${d}"
+            aria-label="Density ${d}, first"
+            checked
+            density=${d}></md-gb-radio>
+          <md-gb-radio
+            name="density${d}"
+            aria-label="Density ${d}, second"
+            density=${d}></md-gb-radio>
+          <span>Density ${d}</span>
+        </div>`,
+    )}`;
+  },
+};
+
 /** Radio stories. */
-export const stories = [playground];
+export const stories = [playground, density];

@@ -44,8 +44,8 @@ const SEARCH_ICON = html`<svg
  *
  * @fires {Event} open - Fired when the view begins opening. Cancelable.
  * @fires {Event} opened - Fired when the view has opened and animations finished.
- * @fires {Event} close - Fired when the view begins closing. Cancelable.
- * @fires {Event} closed - Fired when the view has closed.
+ * @fires {CustomEvent<{reason: string}>} close - Fired when the view begins closing. Cancelable.
+ * @fires {CustomEvent<{reason: string}>} closed - Fired when the view has closed.
  * @fires {InputEvent} input - Fired when the search text changes.
  * @fires {Event} change - Fired when the search text is committed.
  * @fires {CustomEvent<{value: string}>} search - Fired when a search is executed with Enter in the view.
@@ -180,10 +180,14 @@ export class SearchBarElement extends LitElement {
     await this.view?.show();
   }
 
-  /** Closes the search view. */
-  async close(): Promise<void> {
+  /**
+   * Closes the search view.
+   *
+   * @param reason The reason for closing (see `SEARCH_CLOSE_REASONS`).
+   */
+  async close(reason?: string): Promise<void> {
     await this.updateComplete;
-    await this.view?.close();
+    await this.view?.close(reason);
   }
 
   private readonly handleBarClick = (event: MouseEvent) => {

@@ -17,108 +17,108 @@
     }
 
     .btn-xs {
-      @include split-button-tokens.button-xs;
+      @include split-button-tokens.xs;
 
       &:where(:nth-child(1 of .btn)) {
-        @include split-button-tokens.button-xs-leading;
+        @include split-button-tokens.xs-leading-button;
       }
 
       &:where(:nth-last-child(1 of .btn)) {
-        @include split-button-tokens.button-xs-trailing;
+        @include split-button-tokens.xs-trailing-button;
       }
 
       &:where(:hover, .hover) {
-        @include split-button-tokens.button-xs-hovered;
+        @include split-button-tokens.xs-hovered;
       }
 
       &:where(:active, .active) {
-        @include split-button-tokens.button-xs-pressed;
+        @include split-button-tokens.xs-pressed;
       }
     }
 
     .btn-sm {
-      @include split-button-tokens.button-sm;
+      @include split-button-tokens.sm;
 
       &:where(:nth-child(1 of .btn)) {
-        @include split-button-tokens.button-sm-leading;
+        @include split-button-tokens.sm-leading-button;
       }
 
       &:where(:nth-last-child(1 of .btn)) {
-        @include split-button-tokens.button-sm-trailing;
+        @include split-button-tokens.sm-trailing-button;
       }
 
       &:where(:hover, .hover) {
-        @include split-button-tokens.button-sm-hovered;
+        @include split-button-tokens.sm-hovered;
       }
 
       &:where(:active, .active) {
-        @include split-button-tokens.button-sm-pressed;
+        @include split-button-tokens.sm-pressed;
       }
     }
 
     .btn-md {
-      @include split-button-tokens.button-md;
+      @include split-button-tokens.md;
 
       &:where(:nth-child(1 of .btn)) {
-        @include split-button-tokens.button-md-leading;
+        @include split-button-tokens.md-leading-button;
       }
 
       &:where(:nth-last-child(1 of .btn)) {
-        @include split-button-tokens.button-md-trailing;
+        @include split-button-tokens.md-trailing-button;
       }
 
       &:where(:hover, .hover) {
-        @include split-button-tokens.button-md-hovered;
+        @include split-button-tokens.md-hovered;
       }
 
       &:where(:active, .active) {
-        @include split-button-tokens.button-md-pressed;
+        @include split-button-tokens.md-pressed;
       }
     }
 
     .btn-lg {
-      @include split-button-tokens.button-lg;
+      @include split-button-tokens.lg;
 
       &:where(:nth-child(1 of .btn)) {
-        @include split-button-tokens.button-lg-leading;
+        @include split-button-tokens.lg-leading-button;
       }
 
       &:where(:nth-last-child(1 of .btn)) {
-        @include split-button-tokens.button-lg-trailing;
+        @include split-button-tokens.lg-trailing-button;
       }
 
       &:where(:hover, .hover) {
-        @include split-button-tokens.button-lg-hovered;
+        @include split-button-tokens.lg-hovered;
       }
 
       &:where(:active, .active) {
-        @include split-button-tokens.button-lg-pressed;
+        @include split-button-tokens.lg-pressed;
       }
     }
 
     .btn-xl {
-      @include split-button-tokens.button-xl;
+      @include split-button-tokens.xl;
 
       &:where(:nth-child(1 of .btn)) {
-        @include split-button-tokens.button-xl-leading;
+        @include split-button-tokens.xl-leading-button;
       }
 
       &:where(:nth-last-child(1 of .btn)) {
-        @include split-button-tokens.button-xl-trailing;
+        @include split-button-tokens.xl-trailing-button;
       }
 
       &:where(:hover, .hover) {
-        @include split-button-tokens.button-xl-hovered;
+        @include split-button-tokens.xl-hovered;
       }
 
       &:where(:active, .active) {
-        @include split-button-tokens.button-xl-pressed;
+        @include split-button-tokens.xl-pressed;
       }
     }
 
     &:is(.split-btn-selected, :has(:popover-open)) {
       :nth-last-child(1 of .btn) {
-        @include split-button-tokens.button-trailing-selected;
+        @include split-button-tokens.trailing-button-selected;
       }
     }
   }
@@ -143,7 +143,8 @@
       border-start-end-radius: var(--outer-corner-size);
       border-end-end-radius: var(--outer-corner-size);
 
-      &::before {
+      // The menu icon. `::before` is the button's 48dp touch target.
+      &::after {
         content: 'arrow_drop_down';
         font: var(--md-icon-size) var(--md-icon-font);
         display: flex;
@@ -151,14 +152,20 @@
         aspect-ratio: 1;
         width: var(--md-icon-size);
         overflow: hidden;
+        transition: transform var(--md-sys-motion-duration-short4)
+          var(--md-sys-motion-easing-standard);
       }
     }
 
     &:is(.split-btn-selected, :has(:popover-open))
-      :nth-last-child(1 of .btn)::before {
+      :nth-last-child(1 of .btn)::after {
       transform: rotate(180deg);
-      transition: transform var(--md-sys-motion-duration-short4)
-        var(--md-sys-motion-easing-standard);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .split-btn :nth-last-child(1 of .btn)::after {
+      transition: none;
     }
   }
 }

@@ -23,6 +23,7 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
   [
     new Knob('expanded', {ui: boolInput()}),
     new Knob('modal', {ui: boolInput()}),
+    new Knob('narrow', {ui: boolInput()}),
     new Knob('alignment', {
       ui: selectDropdown<NavRailAlignment>({
         options: [

@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {css, CSSResultOrNative, html, LitElement} from 'lit';
+import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ARIAMixinStrict} from '../../../../internal/aria/aria.js';
+import {mixinDelegatesAria} from '../../../../internal/aria/delegate.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
@@ -14,17 +16,39 @@ import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-on
 import fabStyles from './fab.css' with {type: 'css'}; // github-only
 // import {styles as fabStyles} from './fab.cssresult.js'; // google3-only
 
-import {fab, type FabColor, type FabSize} from './fab.js';
+import {
+  fab,
+  FAB_CLASSES,
+  setupCollapseOnScroll,
+  type FabColor,
+  type FabSize,
+} from './fab.js';
+
+// Separate variable needed for closure.
+const baseClass = mixinDelegatesAria(LitElement);
 
 /**
- * A Material Design fab component.
+ * A Material Design FAB, or an extended FAB when it has a `label`.
  *
- * @slot - Used to display an icon and optional label.
+ * An icon-only FAB needs an `aria-label`. An extended FAB's label is its
+ * accessible name, also while it is collapsed.
+ *
+ * Focus not obscured (WCAG 2.4.11; FAB, FAB menu and snackbar spec pages):
+ * a FAB fixed over scrolling content must not completely hide a focused
+ * element or its focus indicator. Register it with `setupScrollPadding()`
+ * (`appbar/scroll-padding.js`, as an `end` bar) so focused elements scroll
+ * clear of it, and set a snackbar's `anchor` to the FAB so the snackbar
+ * appears above it instead of covering it.
+ *
+ * @slot - The icon. Text placed here is shown but does not collapse; use
+ *     `label` for an extended FAB.
  * @csspart fab - The FAB's root element.
+ * @csspart label - The extended FAB's label.
  * @cssprop --container-color
  * @cssprop --container-elevation
  * @cssprop --container-height
  * @cssprop --container-shape
+ * @cssprop --container-width
  * @cssprop --icon-color
  * @cssprop --icon-label-space
  * @cssprop --icon-size
@@ -35,7 +59,13 @@ import {fab, type FabColor, type FabSize} from './fab.js';
  * @cssprop --leading-space
  * @cssprop --trailing-space
  */
-export class FabElement extends LitElement {
+export class FabElement extends baseClass {
+  /** @nocollapse */
+  static override shadowRootOptions: ShadowRootInit = {
+    mode: 'open',
+    delegatesFocus: true,
+  };
+
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [
     focusRingStyles,
@@ -44,6 +74,7 @@ export class FabElement extends LitElement {
     css`
       :host {
         display: inline-flex;
+        vertical-align: middle;
       }
       .fab {
         flex: 1;
@@ -52,13 +83,91 @@ export class FabElement extends LitElement {
   ];
 
   @property() color: FabColor = 'primary-container';
+
+  /**
+   * The size. With a `label`, `default`, `md` and `lg` are the small, medium
+   * and large extended FABs. `sm` is the small (40dp) icon-only FAB, which
+   * the spec no longer recommends.
+   */
   @property() size: FabSize = 'default';
 
+  /** The extended FAB's label. Without one, the FAB is icon-only. */
+  @property() label = '';
+
+  /**
+   * Whether the extended FAB shows its label. When `false`, the label
+   * collapses and the FAB becomes an icon-only FAB. Set the attribute to
+   * `expanded="false"` to collapse it from markup.
+   */
+  @property({
+    type: Boolean,
+    converter: {fromAttribute: (value: string | null) => value !== 'false'},
+  })
+  expanded = true;
+
+  /**
+   * Opt-in: the `id` of a scroll container (in the same root), or `window`.
+   * The FAB collapses while it scrolls down and expands while it scrolls up.
+   */
+  @property({attribute: 'scroll-target'}) scrollTarget = '';
+
+  private scrollCleanup?: AbortController;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) this.listenToScroll();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.scrollCleanup?.abort();
+    this.scrollCleanup = undefined;
+  }
+
   protected override render() {
+    // Needed for closure conformance
+    const {ariaLabel} = this as ARIAMixinStrict;
+    const label = this.label
+      ? html`<span part="label" class="${FAB_CLASSES.fabLabel}"
+          >${this.label}</span
+        >`
+      : nothing;
     return html`<button
       part="fab"
-      class="${fab({color: this.color, size: this.size})}">
-      <slot></slot>
+      class="${fab({
+        color: this.color,
+        size: this.size,
+        expanded: this.expanded,
+      })}"
+      aria-label=${ariaLabel || nothing}>
+      <slot></slot>${label}
     </button>`;
+  }
+
+  protected override updated(changed: Map<PropertyKey, unknown>) {
+    if (changed.has('scrollTarget')) this.listenToScroll();
+  }
+
+  private listenToScroll() {
+    this.scrollCleanup?.abort();
+    this.scrollCleanup = undefined;
+    const target = this.resolveScrollTarget();
+    if (!target) return;
+    this.scrollCleanup = new AbortController();
+    setupCollapseOnScroll(
+      target,
+      (expanded) => {
+        this.expanded = expanded;
+      },
+      {signal: this.scrollCleanup.signal},
+    );
+  }
+
+  private resolveScrollTarget(): Element | Window | null {
+    const id = this.scrollTarget;
+    if (!id) return null;
+    if (id === 'window') return window;
+    const root = this.getRootNode() as Document | ShadowRoot;
+    return root.getElementById?.(id) ?? document.getElementById(id);
   }
 }

@@ -558,8 +558,16 @@ describe('<md-gb-dialog>', () => {
         </md-gb-dialog>`,
       );
       await el.show();
-      await nextFrame();
-      await nextFrame();
+      // IntersectionObserver delivers on a later frame; how many frames that
+      // takes depends on load, so wait for it (up to ~2s) instead of a fixed
+      // number of frames.
+      for (
+        let frames = 0;
+        frames < 120 && !dialog.classList.contains(DIALOG_CLASSES.scrollable);
+        frames++
+      ) {
+        await nextFrame();
+      }
       await el.updateComplete;
       expect(dialog.classList).toContain(DIALOG_CLASSES.scrollable);
       expect(dialog.classList).toContain(DIALOG_CLASSES.scrolledFromBottom);

@@ -1,0 +1,93 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'select-tokens';
+// go/keep-sorted end
+
+// The autocomplete text field: the select structure (`select.css`) with an
+// editable input, using the autocomplete token sets.
+
+// State conditions, as in `text-field.scss`.
+$hover: '.hover, :has(> .text-field-container:hover)';
+$focus: '.focus, :has(.text-field-input:focus)';
+$error: '.text-field-error';
+$disabled: '.disabled, :has(.text-field-input:disabled)';
+
+@layer md.sys, md.comp.text-field, md.comp.ripple, md.comp.focus-ring;
+@layer md.comp.menu, md.comp.select;
+@layer md.comp.autocomplete {
+  :host,
+  .autocomplete {
+    @include select-tokens.autocomplete;
+  }
+
+  :host([variant='outlined']),
+  .autocomplete.text-field-outlined {
+    @include select-tokens.outlined-autocomplete;
+  }
+
+  :host > .autocomplete {
+    @include select-tokens.inherit;
+    --caret-color: inherit;
+  }
+
+  .autocomplete.text-field-filled {
+    &:where(#{$hover}) {
+      @include select-tokens.autocomplete-hover;
+    }
+
+    &:where(#{$focus}) {
+      @include select-tokens.autocomplete-focus;
+    }
+
+    &:where(#{$error}) {
+      @include select-tokens.autocomplete-error;
+    }
+
+    &:where(#{$error}):where(#{$hover}) {
+      @include select-tokens.autocomplete-error-hover;
+    }
+
+    &:where(#{$error}):where(#{$focus}) {
+      @include select-tokens.autocomplete-error-focus;
+    }
+
+    &:where(#{$disabled}) {
+      @include select-tokens.autocomplete-disabled;
+    }
+  }
+
+  .autocomplete.text-field-outlined {
+    &:where(#{$hover}) {
+      @include select-tokens.outlined-autocomplete-hover;
+    }
+
+    &:where(#{$focus}) {
+      @include select-tokens.outlined-autocomplete-focus;
+    }
+
+    &:where(#{$error}) {
+      @include select-tokens.outlined-autocomplete-error;
+    }
+
+    &:where(#{$error}):where(#{$hover}) {
+      @include select-tokens.outlined-autocomplete-error-hover;
+    }
+
+    &:where(#{$error}):where(#{$focus}) {
+      @include select-tokens.outlined-autocomplete-error-focus;
+    }
+
+    &:where(#{$disabled}) {
+      @include select-tokens.outlined-autocomplete-disabled;
+    }
+  }
+
+  // The arrow is a separate toggle; the rest of the field is a text input.
+  .autocomplete:not(#{$disabled}) .select-arrow {
+    cursor: pointer;
+  }
+}

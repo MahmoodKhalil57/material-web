@@ -163,6 +163,17 @@ $actions-gap: 8px;
       var(--md-sys-motion-spring-fast-effects);
   }
 
+  // Swipe to dismiss: the panel follows the pointer through an inline
+  // transform. On release it springs open (default spatial) or closed.
+  .side-sheet-modal.side-sheet-dragging .side-sheet-panel {
+    transition: none;
+  }
+
+  // Horizontal touch drags swipe the sheet; vertical ones still scroll.
+  .side-sheet-modal {
+    touch-action: pan-y;
+  }
+
   .side-sheet-header {
     flex: none;
     display: flex;

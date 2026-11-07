@@ -4,22 +4,50 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'switch-tokens';
 // go/keep-sorted end
 
 @layer md.sys, md.comp.ripple, md.comp.focus-ring;
 @layer md.comp.switch {
+  // Inside `md-gb-switch`, the host holds the root tokens and the inner
+  // `.switch` inherits them, so values set on the host element still apply.
+  :host {
+    @include switch-tokens.root;
+  }
+  :host > .switch {
+    @include switch-tokens.inherit;
+  }
+
   .switch {
     & {
       @include switch-tokens.root;
     }
-    &:is(:hover, .hover) {
-      @include switch-tokens.hovered;
+    @include density.classes('switch');
+    &:not(:checked, .checked, [aria-checked='true']) {
+      @include switch-tokens.unselected;
+
+      &:where(:hover, .hover) {
+        @include switch-tokens.unselected-hovered;
+      }
+      &:where(:focus-visible, .focus) {
+        @include switch-tokens.unselected-focused;
+      }
+      &:where(:active, .active) {
+        @include switch-tokens.unselected-pressed;
+      }
     }
     &:is(:checked, .checked, [aria-checked='true']) {
       @include switch-tokens.selected;
+
       &:where(:hover, .hover) {
         @include switch-tokens.selected-hovered;
+      }
+      &:where(:focus-visible, .focus) {
+        @include switch-tokens.selected-focused;
+      }
+      &:where(:active, .active) {
+        @include switch-tokens.selected-pressed;
       }
     }
     &:is(:active, .active):where(:not(:disabled, .disabled)) {
@@ -29,6 +57,9 @@
       @include switch-tokens.disabled;
       --disabled: true;
 
+      &:where(:not(:checked, .checked, [aria-checked='true'])) {
+        @include switch-tokens.disabled-unselected;
+      }
       &:where(:checked, .checked, [aria-checked='true']) {
         @include switch-tokens.disabled-selected;
       }
@@ -39,14 +70,25 @@
       grid-template: '. handle .' 1fr / 0fr min-content 1fr;
       place-items: center;
       appearance: none;
+      // Compose applies md.comp.switch.disabled.track.opacity to the track
+      // outline (`--track-opacity`; the disabled track colors fold it in). A
+      // selected track has no outline: the track color shows through.
       background: var(--track-color);
-      border: var(--track-outline-width) solid var(--track-outline-color);
-      border-radius: calc(var(--track-height) / 2);
+      border: var(--track-outline-width) solid
+        hsl(
+          from var(--track-outline-color, transparent) h s l /
+            calc(alpha * var(--track-opacity))
+        );
+      border-radius: var(--track-shape);
       width: var(--track-width);
       height: var(--track-height);
       margin: 0;
       padding: 0;
-      transition: grid-template-columns 75ms cubic-bezier(0.4, 0, 0.2, 1);
+      // Compose animates the handle position and size with the fast spatial
+      // spring (MotionSchemeKeyTokens.FastSpatial).
+      transition: grid-template-columns
+        var(--md-sys-motion-spring-fast-spatial-duration)
+        var(--md-sys-motion-spring-fast-spatial);
       isolation: isolate;
       position: relative;
       color: var(--icon-color);
@@ -59,20 +101,24 @@
 
       &::before {
         --_handle-size: if(
-          style(--icon: ''): var(--handle-size) ;
-            else: max(var(--handle-size), var(--with-icon-handle-size)) ;
+          style(--icon: ''): var(--handle-width) ;
+            else: max(var(--handle-width), var(--with-icon-handle-width)) ;
         );
         content: var(--icon);
         font: var(--md-icon-size) var(--md-icon-font);
+        // Material Symbols axes at the smallest optical size (16px icon).
+        font-variation-settings: 'FILL' 1, 'opsz' 20;
         display: grid;
         place-items: center;
         z-index: -1;
         grid-area: handle;
         aspect-ratio: 1;
         height: 100%;
-        clip-path: circle(calc(var(--_handle-size) / 2));
-        transition: clip-path 75ms cubic-bezier(0.4, 0, 0.2, 1);
-        border-radius: 50%;
+        clip-path: inset(
+          calc(50% - var(--_handle-size) / 2) round var(--handle-shape)
+        );
+        transition: clip-path var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial);
         background: var(--handle-color);
       }
 
@@ -83,11 +129,38 @@
         grid-area: handle;
         background-image: var(--ripple);
         aspect-ratio: 1;
-        width: var(--state-layer-size);
-        border-radius: 50%;
+        // Density (switch.md: "Avoid applying density by default"): each step
+        // removes `--density-step` from the state layer. The track keeps its
+        // spec size and the touch target stays `--target-size`.
+        width: #{density.size(var(--state-layer-size))};
+        border-radius: var(--state-layer-shape);
         color: var(--state-layer-color);
         transition: var(--ripple-transition);
         animation: var(--ripple-animation);
+      }
+    }
+
+    // Pressing snaps the handle to its pressed size (Compose SnapSpec).
+    &:is(:active, .active)::before {
+      transition: none;
+    }
+
+    // 48px (`--target-size`) minimum touch target around the 32px track.
+    // Offsets are from the padding box, inside the track outline.
+    .switch-touch {
+      position: absolute;
+      inset-inline: 0;
+      inset-block: min(
+        0px,
+        (var(--track-height) - var(--target-size)) / 2 -
+          var(--track-outline-width)
+      );
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &,
+      &::before {
+        transition: none;
       }
     }
 

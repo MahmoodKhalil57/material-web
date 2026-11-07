@@ -4,52 +4,89 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
-import {property, state} from 'lit/decorators.js';
-import {safeHref} from '../../../../internal/directives/safe-href.js';
-import {redispatchEvent} from '../../../../internal/events/redispatch-event.js';
-import focusRingStyles from '../focus/focus-ring.cssresult.js';
-import rippleStyles from '../ripple/ripple.cssresult.js';
-import {chip, type ChipColor, type ChipType} from './chip.js';
-import {styles as chipStyles} from './chip.cssresult.js';
+import {
+  css,
+  CSSResultOrNative,
+  html,
+  isServer,
+  LitElement,
+  nothing,
+  PropertyValues,
+} from "lit";
+import { property, query, state } from "lit/decorators.js";
+import { safeHref } from "../../../../internal/directives/safe-href.js";
+import { redispatchEvent } from "../../../../internal/events/redispatch-event.js";
+import { clampDensity, type Density } from "../shared/density.js";
+import focusRingStyles from "../focus/focus-ring.cssresult.js";
+import rippleStyles from "../ripple/ripple.cssresult.js";
+import {
+  CHIP_CLASSES,
+  chip,
+  type ChipColor,
+  type ChipType,
+  specChipType,
+} from "./chip.js";
+import { styles as chipStyles } from "./chip.cssresult.js";
 
 /**
- * A Material Design Expressive Chip component (`md-gb-chip`).
+ * A Material Design chip (`md-gb-chip`): an assist, filter, input or
+ * suggestion chip.
  *
- * @slot - Used to display the chip label text.
- * @slot icon - Used to display an optional leading icon, checkmark, or avatar.
- * @slot remove-icon - Used to display the trailing remove button icon when `removable="true"`.
- * @fires {Event} remove - Fired when the remove action is triggered on a removable chip. --bubbles --composed
- * @fires {Event} change - Fired when a filter/toggle chip's selection state changes. --bubbles
- * @fires {InputEvent} input - Fired when a filter/toggle chip's selection state changes. --bubbles --composed
+ * - Assist chips (`type="assist"`, the default) perform an action; with
+ *   `href` they are links.
+ * - Filter chips (`type="filter"`) toggle `selected` and show a checkmark
+ *   when selected.
+ * - Input chips (`type="input"`) represent user input; add `removable` for a
+ *   remove button, and an avatar in the `icon` slot (`class="chip-avatar"`
+ *   or an `<img>`).
+ * - Suggestion chips (`type="suggestion"`) offer dynamic suggestions.
+ *
+ * Assist, filter and suggestion chips are flat (outlined) unless `elevated`.
+ *
+ * @slot - The chip label text.
+ * @slot icon - An optional leading icon, or an avatar (`class="chip-avatar"`
+ *     or an `<img>`; input chips).
+ * @slot trailing-icon - An optional trailing icon (filter chips, e.g. a
+ *     drop-down arrow).
+ * @slot remove-icon - The remove button icon when `removable` (default: the
+ *     `close` symbol).
+ * @fires {Event} remove - Fired when the remove button is activated, or
+ *     Backspace / Delete is pressed on a removable chip. --bubbles --composed
+ * @fires {Event} change - Fired when a filter chip's selection changes.
+ *     --bubbles
+ * @fires {InputEvent} input - Fired when a filter chip's selection changes.
+ *     --bubbles --composed
+ * @fires {Event} update-focus - Fired when `disabled` changes, so a chip set
+ *     can update its tab stop. --bubbles
  * @csspart chip - The root container element.
+ * @cssprop --container-color
+ * @cssprop --container-elevation
+ * @cssprop --container-height - Container height at density 0.
+ * @cssprop --container-shape
+ * @cssprop --label-text
+ * @cssprop --label-text-color
+ * @cssprop --leading-icon-color
+ * @cssprop --leading-icon-size
+ * @cssprop --trailing-icon-color
+ * @cssprop --trailing-icon-size
  * @cssprop --avatar-opacity
  * @cssprop --avatar-shape
  * @cssprop --avatar-size
- * @cssprop --container-color
- * @cssprop --container-elevation
- * @cssprop --container-opacity
- * @cssprop --gap-horizontal
- * @cssprop --height
- * @cssprop --label-text
- * @cssprop --label-text-color
- * @cssprop --label-text-opacity
- * @cssprop --leading-icon-color
- * @cssprop --leading-icon-opacity
- * @cssprop --leading-icon-size
  * @cssprop --outline-color
- * @cssprop --outline-opacity
  * @cssprop --outline-width
- * @cssprop --padding-bottom
- * @cssprop --padding-leading
- * @cssprop --padding-top
- * @cssprop --padding-trailing
- * @cssprop --shape
- * @cssprop --trailing-icon-color
- * @cssprop --trailing-icon-opacity
- * @cssprop --trailing-icon-size
+ * @cssprop --leading-space
+ * @cssprop --trailing-space
+ * @cssprop --icon-label-space
+ * @cssprop --density-step - Container height removed per density step.
+ * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
 export class ChipElement extends LitElement {
+  /** @nocollapse */
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
+
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [
     focusRingStyles,
@@ -60,106 +97,194 @@ export class ChipElement extends LitElement {
         display: inline-flex;
         vertical-align: middle;
       }
+      :host([hidden]) {
+        display: none;
+      }
       .chip {
         flex: 1;
       }
-      .chip-icon {
-        display: inline-flex;
-        align-items: center;
+      [hidden] {
+        display: none !important;
       }
     `,
   ];
 
-  /** The color emphasis of the chip. Defaults to `outlined`. */
-  @property() color: ChipColor = 'outlined';
+  /** The chip type: `assist` (default), `filter`, `input` or `suggestion`. */
+  @property() type: ChipType = "assist";
 
-  /** The functional behavior type of the chip (`action`, `filter`, `toggle`, `link`). */
-  @property() type: ChipType = 'action';
+  /**
+   * Elevated container, for chips on images or complex backgrounds. Input
+   * chips have no elevated style.
+   */
+  @property({ type: Boolean, reflect: true }) elevated = false;
 
-  /** Whether the filter or toggle chip is selected. */
-  @property({type: Boolean, reflect: true}) selected = false;
+  /** @deprecated Use `elevated`. `color="elevated"` sets the elevated style. */
+  @property() color: ChipColor = "flat";
 
-  /** Whether the chip is removable. */
-  @property({type: Boolean, reflect: true}) removable = false;
+  /** Whether the filter (or input) chip is selected. */
+  @property({ type: Boolean, reflect: true }) selected = false;
+
+  /** Whether the chip has a remove button (input chips). */
+  @property({ type: Boolean, reflect: true }) removable = false;
+
+  /** Whether the chip is being dragged (spec dragged state elevation). */
+  @property({ type: Boolean, reflect: true }) dragged = false;
 
   /** Whether the chip is disabled. */
-  @property({type: Boolean, reflect: true}) disabled = false;
+  @property({ type: Boolean, reflect: true }) disabled = false;
 
   /** Whether the chip is soft-disabled (`aria-disabled="true"` while preserving focusability). */
-  @property({type: Boolean, attribute: 'soft-disabled', reflect: true})
+  @property({ type: Boolean, attribute: "soft-disabled", reflect: true })
   softDisabled = false;
 
-  /** The URL destination if `type="link"` or if `href` is set. */
-  @property() href = '';
+  /**
+   * The remove button's accessible label. Defaults to "Remove {chip label}"
+   * (spec: the remove action is labeled separately).
+   */
+  @property({ attribute: "remove-label" }) removeLabel = "";
+
+  /** The URL destination; makes an assist chip a link. */
+  @property() href = "";
 
   /** Where to display the linked `href` URL for a link chip. */
-  @property() target: '_blank' | '_parent' | '_self' | '_top' | '' = '';
+  @property() target: "_blank" | "_parent" | "_self" | "_top" | "" = "";
 
   /**
    * Sets the underlying `HTMLAnchorElement`'s `rel` attribute when `href` is
    * set.
    */
-  @property() rel = '';
+  @property() rel = "";
 
   /**
    * Sets the underlying `HTMLAnchorElement`'s `referrerpolicy` attribute when
    * `href` is set.
    */
-  @property() referrerPolicy = '';
+  @property() referrerPolicy = "";
+
+  /**
+   * The density, from 0 (default) to -3. Each step down removes 4px from the
+   * container height (32px); the label and icons keep their size and the
+   * touch target stays 48px (chips.md: "regardless of placement or
+   * density"). Values are clamped to that range. Density 0 inherits the
+   * density of an enclosing `md-gb-chip-set`.
+   *
+   * chips.md: don't apply density by default; let people opt in to a denser
+   * layout.
+   */
+  @property({ type: Number, reflect: true })
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate("density", old);
+  }
+  private densityValue: Density = 0;
 
   @state() private hasLeadingIcon = false;
   @state() private hasAvatar = false;
-  @state() private hasRemoveIcon = false;
+  @state() private hasTrailingIcon = false;
+  @state() private label = "";
+  /** Whether the remove button has focus (takes the primary action out of
+   * the tab order, so Shift+Tab leaves the chip). */
+  @state() private removeFocused = false;
+
+  @query(".chip-action, .chip:not(div)")
+  private readonly primaryAction!: HTMLElement | null;
+  @query(".chip-remove") private readonly removeAction!: HTMLElement | null;
+
+  constructor() {
+    super();
+    if (!isServer) {
+      this.addEventListener("keydown", this.handleActionNavigation);
+    }
+  }
+
+  /**
+   * Focuses the chip's primary action, or its remove button with
+   * `{trailing: true}` (chip set navigation backwards into a chip).
+   */
+  override focus(options?: FocusOptions & { trailing?: boolean }) {
+    if (this.disabled) return;
+    if (options?.trailing && this.removeAction) {
+      this.removeAction.focus(options);
+      return;
+    }
+    if (this.primaryAction) {
+      this.primaryAction.focus(options);
+      return;
+    }
+    super.focus(options);
+  }
+
+  protected override updated(changed: PropertyValues<this>) {
+    if (changed.has("disabled") && changed.get("disabled") !== undefined) {
+      this.dispatchEvent(new Event("update-focus", { bubbles: true }));
+    }
+  }
+
+  private get isFilter() {
+    return specChipType(this.type) === "filter";
+  }
 
   protected override render() {
-    const isFilterSelected =
-      (this.type === 'filter' || this.type === 'toggle') && this.selected;
+    const isFilterSelected = this.isFilter && this.selected;
+    const withAvatar = this.hasAvatar && !isFilterSelected;
     const withLeadingIcon = this.hasLeadingIcon || isFilterSelected;
-    const withAvatar = this.hasAvatar;
+    const pressed = this.isFilter ? String(this.selected) : nothing;
 
     const chipClasses = chip({
-      color: this.color,
-      type: this.href ? 'link' : this.type,
+      type: this.href ? "link" : this.type,
+      elevated: this.elevated || this.color === "elevated",
       selected: this.selected,
       removable: this.removable,
+      dragged: this.dragged,
       disabled: this.softDisabled || this.disabled,
-      withLeadingIcon: withLeadingIcon && !withAvatar,
+      withLeadingIcon,
       withAvatar,
-      withTrailingIcon: this.removable || this.hasRemoveIcon,
+      withTrailingIcon: this.removable || this.hasTrailingIcon,
+      density: this.density,
     });
 
-    if (this.href || this.type === 'link') {
+    const content = this.renderContent(isFilterSelected);
+
+    if (this.href || this.type === "link") {
       return html`<a
         part="chip"
         class="${chipClasses}"
         href=${safeHref(this.href)}
-        target=${(this.target as '_blank' | '_parent' | '_self' | '_top') ||
-        nothing}
+        target=${
+          (this.target as "_blank" | "_parent" | "_self" | "_top") || nothing
+        }
         rel=${this.rel || nothing}
         referrerpolicy=${this.referrerPolicy || nothing}
-        aria-disabled=${this.disabled || this.softDisabled ? 'true' : nothing}
-        tabindex=${this.disabled && !this.softDisabled ? -1 : nothing}>
-        ${this.renderContent(withLeadingIcon, isFilterSelected)}
+        aria-disabled=${this.disabled || this.softDisabled ? "true" : nothing}
+        tabindex=${this.disabled && !this.softDisabled ? -1 : nothing}
+        @keydown=${this.handleKeydown}
+      >
+        ${content}
       </a>`;
     }
 
     if (this.removable) {
+      // Two actions: the chip content and the remove button are separate
+      // focusable elements (spec: input chip remove action).
       return html`<div
         part="chip"
         class="${chipClasses}"
-        role="row"
-        aria-pressed=${this.type === 'filter' || this.type === 'toggle'
-          ? this.selected
-            ? 'true'
-            : 'false'
-          : nothing}
-        @change=${this.handleChange}>
+        @change=${this.handleChange}
+      >
         <button
-          class="chip-action focus-ring-target"
+          class="${CHIP_CLASSES.action} focus-ring-target ripple-target"
           type="button"
+          tabindex=${this.removeFocused ? -1 : nothing}
           ?disabled=${this.disabled}
-          aria-disabled=${this.softDisabled ? 'true' : nothing}>
-          ${this.renderContent(withLeadingIcon, isFilterSelected)}
+          aria-disabled=${this.softDisabled ? "true" : nothing}
+          aria-pressed=${pressed}
+          @keydown=${this.handleKeydown}
+        >
+          ${content}
         </button>
         ${this.renderRemoveButton()}
       </div>`;
@@ -170,73 +295,157 @@ export class ChipElement extends LitElement {
       class="${chipClasses}"
       type="button"
       ?disabled=${this.disabled}
-      aria-disabled=${this.softDisabled ? 'true' : nothing}
-      aria-pressed=${this.type === 'filter' || this.type === 'toggle'
-        ? this.selected
-          ? 'true'
-          : 'false'
-        : nothing}
-      @change=${this.handleChange}>
-      ${this.renderContent(withLeadingIcon, isFilterSelected)}
+      aria-disabled=${this.softDisabled ? "true" : nothing}
+      aria-pressed=${pressed}
+      @keydown=${this.handleKeydown}
+      @change=${this.handleChange}
+    >
+      ${content}
     </button>`;
   }
 
-  private renderContent(withLeadingIcon: boolean, isFilterSelected: boolean) {
+  private renderContent(isFilterSelected: boolean) {
+    const showLeading = this.hasLeadingIcon || isFilterSelected;
+    // Icons and images are decorative (spec: hide image); the label names
+    // the chip.
     return html`
-      ${this.renderLeadingIcon(withLeadingIcon, isFilterSelected)}
-      <slot></slot>
+      <span class="chip-icon" aria-hidden="true" ?hidden=${!showLeading}>
+        ${
+          isFilterSelected
+            ? html`<span class="chip-glyph chip-checkmark">check</span>`
+            : nothing
+        }
+        <slot
+          name="icon"
+          ?hidden=${isFilterSelected}
+          @slotchange=${this.handleIconSlotChange}
+        ></slot>
+      </span>
+      <span class="chip-label"
+        ><slot @slotchange=${this.handleLabelSlotChange}></slot
+      ></span>
+      <span
+        class="chip-trailing-icon"
+        aria-hidden="true"
+        ?hidden=${!this.hasTrailingIcon}
+      >
+        <slot
+          name="trailing-icon"
+          @slotchange=${this.handleTrailingIconSlotChange}
+        ></slot>
+      </span>
     `;
   }
 
-  private renderLeadingIcon(
-    withLeadingIcon: boolean,
-    isFilterSelected: boolean,
-  ) {
-    return html`<span
-      class="chip-icon"
-      style="${withLeadingIcon ? '' : 'display: none;'}">
-      <slot name="icon" @slotchange=${this.handleIconSlotChange}>
-        ${isFilterSelected ? html`✓` : nothing}
-      </slot>
-    </span>`;
-  }
-
   private renderRemoveButton() {
+    const label =
+      this.removeLabel || (this.label ? `Remove ${this.label}` : "Remove");
     return html`<button
-      class="chip-remove focus-ring-outer"
+      class="${CHIP_CLASSES.remove} focus-ring-outer"
       type="button"
-      aria-label="Remove"
+      aria-label=${label}
+      tabindex="-1"
       ?disabled=${this.disabled}
-      aria-disabled=${this.softDisabled ? 'true' : nothing}
-      @click=${this.handleRemove}>
-      <slot name="remove-icon" @slotchange=${this.handleRemoveIconSlotChange}
-        >✕</slot
+      aria-disabled=${this.softDisabled ? "true" : nothing}
+      @focus=${this.handleRemoveFocus}
+      @blur=${this.handleRemoveBlur}
+      @click=${this.handleRemove}
+    >
+      <slot name="remove-icon" aria-hidden="true"
+        ><span class="chip-glyph">close</span></slot
       >
     </button>`;
   }
 
   private handleIconSlotChange(event: Event) {
     const slot = event.target as HTMLSlotElement;
-    const elements = slot.assignedElements({flatten: true});
+    const elements = slot.assignedElements({ flatten: true });
     this.hasLeadingIcon = elements.length > 0;
-    this.hasAvatar = elements.some((el) =>
-      el.classList.contains('chip-avatar'),
+    this.hasAvatar = elements.some(
+      (el) =>
+        el.classList.contains("chip-avatar") ||
+        el.hasAttribute("avatar") ||
+        el.localName === "img",
     );
   }
 
-  private handleRemoveIconSlotChange(event: Event) {
+  private handleTrailingIconSlotChange(event: Event) {
     const slot = event.target as HTMLSlotElement;
-    this.hasRemoveIcon = slot.assignedNodes({flatten: true}).length > 0;
+    this.hasTrailingIcon = slot.assignedElements({ flatten: true }).length > 0;
+  }
+
+  private handleLabelSlotChange(event: Event) {
+    const slot = event.target as HTMLSlotElement;
+    this.label = slot
+      .assignedNodes({ flatten: true })
+      .map((node) => node.textContent ?? "")
+      .join("")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   private handleChange(event: Event) {
-    this.selected = (event.target as HTMLElement).ariaPressed === 'true';
+    const root = event.target as HTMLElement;
+    const toggle =
+      root.querySelector<HTMLElement>(`:scope > .${CHIP_CLASSES.action}`) ??
+      root;
+    this.selected = toggle.ariaPressed === "true";
     redispatchEvent(this, event);
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    // Spec keyboard navigation: Backspace or Delete removes the focused
+    // input chip.
+    if (
+      this.removable &&
+      (event.key === "Backspace" || event.key === "Delete")
+    ) {
+      event.preventDefault();
+      this.remove_();
+    }
+  }
+
+  /**
+   * Left / Right (mirrored in RTL) move focus between the primary action and
+   * the remove button, like the legacy multi-action chip. Moving past either
+   * end is left to the chip set.
+   */
+  private readonly handleActionNavigation = (event: KeyboardEvent) => {
+    const isLeft = event.key === "ArrowLeft";
+    const isRight = event.key === "ArrowRight";
+    const { primaryAction, removeAction } = this;
+    if ((!isLeft && !isRight) || !primaryAction || !removeAction) return;
+
+    const isRtl = getComputedStyle(this).direction === "rtl";
+    const forwards = isRtl ? isLeft : isRight;
+    const active = this.shadowRoot!.activeElement;
+    if (
+      (forwards && active === removeAction) ||
+      (!forwards && active === primaryAction)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    (forwards ? removeAction : primaryAction).focus();
+  };
+
+  private handleRemoveFocus() {
+    this.removeFocused = true;
+  }
+
+  private handleRemoveBlur() {
+    this.removeFocused = false;
   }
 
   private handleRemove(event: Event) {
     event.stopPropagation();
+    this.remove_();
+  }
+
+  private remove_() {
     if (this.disabled || this.softDisabled) return;
-    this.dispatchEvent(new Event('remove', {bubbles: true, composed: true}));
+    this.dispatchEvent(new Event("remove", { bubbles: true, composed: true }));
   }
 }

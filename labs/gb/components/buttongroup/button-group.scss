@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@use '../shared/density';
 @use 'button-group-tokens';
 
 @layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.button;
@@ -15,6 +16,19 @@
     gap: var(--between-space);
     overflow: visible;
     interpolate-size: allow-keywords;
+  }
+
+  // Density (button-groups.md: "Button groups adapt to the height of the
+  // buttons inside, including when density is applied"). The group's
+  // `--_density` is inherited by the buttons inside: icon buttons read it,
+  // and buttons get their dense height here. Each step removes
+  // `--density-step`; touch targets stay 48px (the buttons' own targets).
+  .btn-group {
+    @include density.classes('btn-group');
+  }
+  .btn-group > .btn,
+  .btn-group > *::part(btn) {
+    min-height: #{density.size(var(--container-height))};
   }
 
   // Prevent button labels from wrapping when transitions undershoot
@@ -83,7 +97,7 @@
   // Default corners for all buttons in connected group:
   .btn-group-connected > .btn,
   .btn-group-connected > *::part(btn) {
-    --outer-corner-size: calc(var(--container-height) / 2);
+    --outer-corner-size: calc(#{density.size(var(--container-height))} / 2);
     border-radius: var(--inner-corner-size);
     transition:
       border-radius var(--motion-spring-fast-spatial-duration)
@@ -163,8 +177,8 @@
   // Selected button in connected group blooms all corners to full pill in any position
   .btn-group-connected > .btn:is(.btn-selected, [aria-pressed='true']),
   .btn-group-connected > :is([selected], [aria-pressed='true'])::part(btn) {
-    --inner-corner-size: calc(var(--container-height) / 2);
-    --outer-corner-size: calc(var(--container-height) / 2);
+    --inner-corner-size: calc(#{density.size(var(--container-height))} / 2);
+    --outer-corner-size: calc(#{density.size(var(--container-height))} / 2);
   }
 
   // Pressed button in connected group tightens inner corners to pressed token (declared last so it wins over selected)
@@ -252,23 +266,11 @@
     }
   }
 
-  // Button positioning for touch target anchoring
+  // The 48dp touch target of xs / sm buttons is the button's own `::before`
+  // (button.scss, icon-button.scss), positioned on the button.
   .btn-group > .btn:is(.btn-xs, .btn-sm),
   .btn-group > :is([size='xs'], [size='sm']) {
     position: relative;
-
-    &::before,
-    &::part(btn)::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%;
-      height: 48px;
-      min-height: 48px;
-      z-index: 0;
-    }
   }
 
   // Reduced motion

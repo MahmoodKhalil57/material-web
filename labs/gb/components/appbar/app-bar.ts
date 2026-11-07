@@ -36,6 +36,8 @@ export const APP_BAR_CLASSES = {
   appBarWithSubtitle: 'app-bar-with-subtitle',
   appBarSearch: 'app-bar-search',
   appBarScrolled: 'app-bar-scrolled',
+  appBarCentered: 'app-bar-centered',
+  appBarHasLeading: 'app-bar-has-leading',
 } as const;
 
 /** The state provided to the `appBarClasses()` function. */
@@ -48,6 +50,13 @@ export interface AppBarClassesState {
   variant?: AppBarVariant;
   /** Whether the app bar is in a scrolled or docked state (`.app-bar-scrolled`). */
   scrolled?: boolean;
+  /** Whether the title and subtitle are centered (`.app-bar-centered`). */
+  centered?: boolean;
+  /**
+   * Whether the app bar has a leading element (`.app-bar-has-leading`).
+   * Without one, the small app bar title starts at the title inset.
+   */
+  hasLeading?: boolean;
 }
 
 /**
@@ -61,6 +70,8 @@ export function appBarClasses({
   withSubtitle = false,
   variant = 'standard',
   scrolled = false,
+  centered = false,
+  hasLeading = true,
 }: AppBarClassesState = {}): ClassInfo {
   return {
     [APP_BAR_CLASSES.appBar]: true,
@@ -70,6 +81,8 @@ export function appBarClasses({
     [APP_BAR_CLASSES.appBarWithSubtitle]: withSubtitle,
     [APP_BAR_CLASSES.appBarSearch]: variant === APP_BAR_VARIANTS.search,
     [APP_BAR_CLASSES.appBarScrolled]: scrolled,
+    [APP_BAR_CLASSES.appBarCentered]: centered,
+    [APP_BAR_CLASSES.appBarHasLeading]: hasLeading,
   };
 }
 

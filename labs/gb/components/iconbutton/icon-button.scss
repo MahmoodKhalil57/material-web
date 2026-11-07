@@ -4,6 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'icon-button-tokens';
 // go/keep-sorted end
 
@@ -13,6 +14,7 @@
     & {
       @include icon-button-tokens.root;
     }
+    @include density.classes('icon-btn');
     &:where(.icon-btn-unselected, [aria-pressed='false']) {
       @include icon-button-tokens.unselected;
     }
@@ -30,42 +32,60 @@
     }
     &.icon-btn-tonal {
       @include icon-button-tokens.tonal;
+      &:where(.icon-btn-unselected, [aria-pressed='false']) {
+        @include icon-button-tokens.tonal-unselected;
+      }
       &:where(.icon-btn-selected, [aria-pressed='true']) {
         @include icon-button-tokens.tonal-selected;
       }
     }
     &.icon-btn-outlined {
       @include icon-button-tokens.outlined;
+      &:where(.icon-btn-unselected, [aria-pressed='false']) {
+        @include icon-button-tokens.outlined-unselected;
+      }
       &:where(.icon-btn-selected, [aria-pressed='true']) {
         @include icon-button-tokens.outlined-selected;
       }
     }
     &.icon-btn-standard {
       @include icon-button-tokens.standard;
+      &:where(.icon-btn-unselected, [aria-pressed='false']) {
+        @include icon-button-tokens.standard-unselected;
+      }
       &:where(.icon-btn-selected, [aria-pressed='true']) {
         @include icon-button-tokens.standard-selected;
       }
     }
     &.icon-btn-xs {
       @include icon-button-tokens.xs;
+      @include icon-button-tokens.xs-default;
       &:where(.icon-btn-narrow) {
         @include icon-button-tokens.xs-narrow;
       }
       &:where(.icon-btn-wide) {
         @include icon-button-tokens.xs-wide;
       }
+      &:where(.icon-btn-selected, [aria-pressed='true']) {
+        @include icon-button-tokens.xs-selected;
+      }
     }
     &.icon-btn-sm {
       @include icon-button-tokens.sm;
+      @include icon-button-tokens.sm-default;
       &:where(.icon-btn-narrow) {
         @include icon-button-tokens.sm-narrow;
       }
       &:where(.icon-btn-wide) {
         @include icon-button-tokens.sm-wide;
       }
+      &:where(.icon-btn-selected, [aria-pressed='true']) {
+        @include icon-button-tokens.sm-selected;
+      }
     }
     &.icon-btn-md {
       @include icon-button-tokens.md;
+      @include icon-button-tokens.md-default;
       &:where(.icon-btn-narrow) {
         @include icon-button-tokens.md-narrow;
       }
@@ -78,6 +98,7 @@
     }
     &.icon-btn-lg {
       @include icon-button-tokens.lg;
+      @include icon-button-tokens.lg-default;
       &:where(.icon-btn-narrow) {
         @include icon-button-tokens.lg-narrow;
       }
@@ -90,6 +111,7 @@
     }
     &.icon-btn-xl {
       @include icon-button-tokens.xl;
+      @include icon-button-tokens.xl-default;
       &:where(.icon-btn-narrow) {
         @include icon-button-tokens.xl-narrow;
       }
@@ -100,47 +122,65 @@
         @include icon-button-tokens.xl-selected;
       }
     }
+    // Square icon buttons use the square shape; selected toggles swap the
+    // round and square values (`-selected` mixins), so a selected square
+    // icon button is round.
     &.icon-btn-square {
-      @include icon-button-tokens.square;
-      &:where(.icon-btn-md) {
-        @include icon-button-tokens.square-md;
-      }
-      &:where(.icon-btn-lg) {
-        @include icon-button-tokens.square-lg;
-      }
-      &:where(.icon-btn-xl) {
-        @include icon-button-tokens.square-xl;
-      }
-      &:where(.icon-btn-selected, [aria-pressed='true']) {
-        @include icon-button-tokens.square-selected;
-      }
+      --container-shape: var(--container-shape-square);
     }
-    &:is(:active, .active):where(
-        :not(:disabled, .disabled, [aria-disabled='true'])
-      ) {
+    // Round and square icon buttons have the same pressed shape.
+    &:is(:active, .active):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
       @include icon-button-tokens.pressed;
+      &:where(.icon-btn-xs) {
+        @include icon-button-tokens.xs-pressed;
+      }
+      &:where(.icon-btn-sm) {
+        @include icon-button-tokens.sm-pressed;
+      }
       &:where(.icon-btn-md) {
-        @include icon-button-tokens.pressed-md;
+        @include icon-button-tokens.md-pressed;
       }
       &:where(.icon-btn-lg) {
-        @include icon-button-tokens.pressed-lg;
+        @include icon-button-tokens.lg-pressed;
       }
       &:where(.icon-btn-xl) {
-        @include icon-button-tokens.pressed-xl;
+        @include icon-button-tokens.xl-pressed;
       }
     }
     &:is(:disabled, .disabled, [aria-disabled='true']) {
       @include icon-button-tokens.disabled;
       --disabled: true;
+      &:where(.icon-btn-filled) {
+        @include icon-button-tokens.filled-disabled;
+      }
+      &:where(.icon-btn-tonal) {
+        @include icon-button-tokens.tonal-disabled;
+      }
+      &:where(.icon-btn-outlined) {
+        @include icon-button-tokens.outlined-disabled;
+        &:where(.icon-btn-selected, [aria-pressed='true']) {
+          @include icon-button-tokens.outlined-selected-disabled;
+        }
+      }
+      &:where(.icon-btn-standard) {
+        @include icon-button-tokens.standard-disabled;
+      }
     }
 
     & {
       display: inline-grid;
+      position: relative;
       place-items: center;
       background-color: var(--container-color);
       border: var(--outline-width) solid var(--outline-color);
       border-radius: var(--container-shape);
-      height: var(--container-height);
+      // Density removes `--density-step` from the container per step; the
+      // default width follows (aspect-ratio). The icon keeps its size, so
+      // the container never gets smaller than the icon and its outline.
+      height: max(
+        var(--icon-size) + 2 * var(--outline-width),
+        #{density.size(var(--container-height))}
+      );
       color: var(--icon-color);
       // md.comp.icon-button.*.pressed.container.corner-size.motion.spring is
       // the fast spatial spring (scripts/m3/gen-motion.mjs).
@@ -152,8 +192,23 @@
       --md-icon-size: var(--icon-size);
     }
 
+    // Accessibility: a 48x48dp (`--target-size`) minimum target (Compose
+    // minimumInteractiveComponentSize) for the 32dp and 40dp sizes and dense
+    // containers, centered on the container (the same in LTR and RTL).
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      width: #{density.target()};
+      height: #{density.target()};
+    }
+
+    // Default width: as wide as the container is high (no UA padding).
     &:not(.icon-btn-narrow, .icon-btn-wide) {
       aspect-ratio: 1;
+      padding: 0;
     }
 
     &:is(.icon-btn-narrow, .icon-btn-wide) {
@@ -162,6 +217,12 @@
 
     &:not(:disabled, .disabled, [aria-disabled='true']) {
       cursor: pointer;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .icon-btn {
+      --md-sys-motion-spring-fast-spatial-duration: 0s;
     }
   }
 }

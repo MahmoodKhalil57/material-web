@@ -16,6 +16,10 @@
   --pressed-inner-corner-size: var(--md-sys-shape-corner-xs);
   --outer-corner-size: calc(var(--container-height) / 2);
   --outer-corner-square-size: var(--md-sys-shape-corner-sm);
+  // Not a spec token. button-groups.md, Density: "Button groups adapt to the
+  // height of the buttons inside, including when density is applied";
+  // foundations/layout/grids-spacing.md: each step removes 4dp of height.
+  --density-step: 4px;
   // LINT.ThenChange(button-group-element.ts) keep in sync with `@cssprop` jsdoc tags
 }
 

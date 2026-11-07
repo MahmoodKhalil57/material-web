@@ -18,6 +18,7 @@ import focusRingStyles from '../focus/focus-ring.cssresult.js';
 import rippleStyles from '../ripple/ripple.cssresult.js';
 import iconButtonStyles from './icon-button.cssresult.js';
 
+import {clampDensity, type Density} from '../shared/density.js';
 import type {
   IconButtonColor,
   IconButtonSize,
@@ -37,8 +38,10 @@ const baseClass = mixinDelegatesAria(
  * @fires {Event} change - Fired when a toggle button is selected or unselected. --bubbles
  * @csspart icon-btn - The icon button's root element.
  * @cssprop --container-color
- * @cssprop --container-height
- * @cssprop --container-shape
+ * @cssprop --container-height - Container height at density 0.
+ * @cssprop --container-shape - The resolved shape; defaults to the round or square shape.
+ * @cssprop --container-shape-round
+ * @cssprop --container-shape-square
  * @cssprop --icon-color
  * @cssprop --icon-size
  * @cssprop --leading-space
@@ -46,6 +49,8 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --outline-color
  * @cssprop --outline-width
  * @cssprop --trailing-space
+ * @cssprop --density-step - Container height removed per density step.
+ * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
 export class IconButtonElement extends baseClass {
   /** @nocollapse */
@@ -98,6 +103,27 @@ export class IconButtonElement extends baseClass {
    * Changes the width of the button.
    */
   @property() width: IconButtonWidth = '';
+
+  /**
+   * The density, from 0 (default) to -3. Each step down removes 4px from the
+   * container height (and the width of a default-width button); the icon
+   * keeps its size and the touch target stays at least 48px. Values are
+   * clamped to that range. Density 0 inherits the density of an enclosing
+   * `md-gb-button-group`.
+   *
+   * icon-buttons.md: don't apply density by default; let people opt in to a
+   * denser layout.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
 
   /**
    * A string indicating the behavior of the button.
@@ -166,6 +192,7 @@ export class IconButtonElement extends baseClass {
       size: this.size,
       width: this.width,
       square: this.square,
+      density: this.density,
       selected: this.type === 'toggle' ? this.selected : undefined,
       disabled: this.disabled || this.softDisabled,
     });

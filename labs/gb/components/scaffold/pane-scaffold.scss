@@ -1,0 +1,368 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sass:math';
+@use '../../styles/layout/md-layout';
+@use 'drag-handle-tokens';
+@use 'levitated-pane-tokens';
+// go/keep-sorted end
+
+// Feed columns: the feed grid uses half of the layout grid's columns (one
+// card per 2 grid columns: 4 at medium and expanded, 6 at large and
+// extra-large), or a quarter of them beside a supporting pane. Compact
+// stacks the feed vertically (spec: canonical-examples, feed).
+@function _feed-columns($class, $divisor) {
+  @if $class == compact {
+    @return 1;
+  }
+  @return math.max(1, math.floor(math.div(md-layout.value($class, columns), $divisor)));
+}
+
+$_spatial: var(--md-sys-motion-spring-default-spatial-duration)
+  var(--md-sys-motion-spring-default-spatial);
+$_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
+  var(--md-sys-motion-spring-fast-spatial);
+
+@layer md.sys, md.comp.focus-ring;
+@layer md.comp.pane-scaffold {
+  :host {
+    @include md-layout.constants;
+  }
+
+  // The scaffold's window size class (set by the element) drives the layout
+  // tokens. Slotted content inherits them.
+  @each $class in md-layout.$window-classes {
+    :host([window-class='#{$class}']) {
+      @include md-layout.tokens($class);
+      --_feed-columns: #{_feed-columns($class, 2)};
+      --_feed-columns-beside: #{_feed-columns($class, 4)};
+    }
+  }
+
+  .pane-scaffold {
+    // Secondary pane width: the drag handle width when resized, else the
+    // fixed pane width of the window size class.
+    --_secondary-width: min(
+      var(--_pane-width, var(--md-sys-layout-fixed-pane-width)),
+      100%
+    );
+    block-size: 100%;
+    box-sizing: border-box;
+    display: flex;
+    padding-inline: var(--md-sys-layout-margin);
+    position: relative;
+  }
+
+  // Split-pane layout: the spacer is visually centered in the window. A
+  // navigation rail beside the scaffold (`--md-gb-scaffold-nav-inline-size`,
+  // set by md-gb-app-scaffold) only shrinks the leading pane.
+  .pane-scaffold-split {
+    --_secondary-width: min(
+      var(
+        --_pane-width,
+        calc(
+          50% - var(--md-gb-scaffold-nav-inline-size, 0px) / 2 -
+            var(--md-sys-layout-spacer) / 2
+        )
+      ),
+      100%
+    );
+  }
+
+  .pane-scaffold-split.pane-scaffold-secondary-end {
+    --_secondary-width: min(
+      var(
+        --_pane-width,
+        calc(
+          50% + var(--md-gb-scaffold-nav-inline-size, 0px) / 2 -
+            var(--md-sys-layout-spacer) / 2
+        )
+      ),
+      100%
+    );
+  }
+
+  .pane {
+    background-color: var(--pane-container-color, transparent);
+    border-radius: var(--pane-container-shape, 0);
+    box-sizing: border-box;
+    min-block-size: 0;
+    min-inline-size: 0;
+    outline: none;
+    overflow: auto;
+    transition:
+      flex-basis #{$_spatial},
+      flex-grow #{$_spatial},
+      visibility 0s;
+  }
+
+  .pane-primary {
+    flex: 1 1 0;
+  }
+
+  .pane-secondary {
+    flex: 0 0 var(--_secondary-width);
+  }
+
+  .pane-scaffold-split.pane-scaffold-tertiary .pane-secondary {
+    flex: 1 1 0;
+  }
+
+  .pane-tertiary {
+    flex: 0 1 var(--md-sys-layout-third-pane-max-width);
+  }
+
+  .pane-scaffold-single .pane:not(.pane-tertiary),
+  .pane.pane-fill {
+    flex: 1 1 0;
+  }
+
+  .pane.pane-hidden {
+    display: none;
+  }
+
+  // Collapsed with the drag handle: the pane shrinks to 0 and hides once
+  // the transition ends, so it can't be focused.
+  .pane.pane-collapsed {
+    flex: 0 0 0;
+    overflow: hidden;
+    transition:
+      flex-basis #{$_spatial},
+      flex-grow #{$_spatial},
+      visibility 0s linear var(--md-sys-motion-spring-default-spatial-duration);
+    visibility: hidden;
+  }
+
+  // Reflow: panes stack vertically and the scaffold scrolls as a whole.
+  .pane-scaffold-stacked {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .pane-scaffold-stacked .pane {
+    flex: none;
+    overflow: visible;
+  }
+
+  .pane-spacer {
+    align-items: center;
+    display: flex;
+    flex: 0 0 var(--md-sys-layout-spacer);
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pane-spacer.pane-spacer-hidden {
+    display: none;
+  }
+
+  // Feed: the primary pane's children are laid out on a grid.
+  .pane-scaffold-feed .pane-primary {
+    align-content: start;
+    display: grid;
+    gap: var(--md-sys-layout-spacer);
+    grid-template-columns: repeat(
+      var(--feed-columns, var(--_feed-columns)),
+      minmax(0, 1fr)
+    );
+  }
+
+  .pane-scaffold-feed.pane-scaffold-two-pane .pane-primary:not(.pane-fill) {
+    grid-template-columns: repeat(
+      var(--feed-columns, var(--_feed-columns-beside)),
+      minmax(0, 1fr)
+    );
+  }
+
+  // Foldables: panes keep off the fold. The spacer sits on the fold and is
+  // at least the layout spacer wide (a seamless fold reports 0px), centered
+  // on it. `--_fold-start` / `--_fold-size` are set by the element, from
+  // the scaffold's inline-start (vertical fold) or top (horizontal fold).
+  .pane-scaffold-fold-vertical,
+  .pane-scaffold-fold-horizontal {
+    --_fold-spacer: max(var(--_fold-size), var(--md-sys-layout-spacer));
+    --_fold-before: max(
+      0px,
+      var(--_fold-start) + var(--_fold-size) / 2 - var(--_fold-spacer) / 2
+    );
+  }
+
+  .pane-scaffold-fold-vertical > .pane.pane-first {
+    flex: 0 0 max(0px, var(--_fold-before) - var(--md-sys-layout-margin));
+  }
+
+  .pane-scaffold-fold-horizontal > .pane.pane-first {
+    flex: 0 0 var(--_fold-before);
+  }
+
+  .pane-scaffold-fold-vertical > .pane:not(.pane-first, .pane-tertiary),
+  .pane-scaffold-fold-horizontal > .pane:not(.pane-first, .pane-tertiary) {
+    flex: 1 1 0;
+  }
+
+  .pane-scaffold-fold-vertical > .pane-spacer-main,
+  .pane-scaffold-fold-horizontal > .pane-spacer-main {
+    flex-basis: var(--_fold-spacer);
+  }
+
+  // A tabletop fold: the panes scroll on their own half of the screen.
+  .pane-scaffold-fold-horizontal {
+    overflow: hidden;
+  }
+
+  .pane-scaffold-fold-horizontal > .pane {
+    min-block-size: 0;
+    overflow: auto;
+  }
+
+  // Levitate: the secondary pane is elevated above the primary pane, as a
+  // floating pane (inset from the window edges) or a docked pane (pinned to
+  // the bottom edge, which extends beyond the window like a bottom sheet).
+  .pane-scaffold-levitated {
+    overflow: hidden;
+  }
+
+  .pane-scaffold-levitated .pane-secondary {
+    background-color: var(--container-color);
+    border-radius: var(--container-shape);
+    box-shadow: var(--container-elevation);
+    position: absolute;
+    z-index: 2;
+  }
+
+  .pane-scaffold-floating .pane-secondary {
+    @include levitated-pane-tokens.floating;
+    animation: pane-float-in #{$_spatial};
+    inline-size: min(
+      var(--md-sys-layout-fixed-pane-width),
+      100% - 2 * var(--md-sys-layout-margin)
+    );
+    inset-block-end: var(--md-sys-layout-margin);
+    inset-inline-start: var(--md-sys-layout-margin);
+    max-block-size: calc(100% - 2 * var(--md-sys-layout-margin));
+  }
+
+  .pane-scaffold-floating.pane-scaffold-secondary-end .pane-secondary {
+    inset-inline-end: var(--md-sys-layout-margin);
+    inset-inline-start: auto;
+  }
+
+  .pane-scaffold-docked .pane-secondary {
+    @include levitated-pane-tokens.docked;
+    animation: pane-dock-in #{$_spatial};
+    inset-block-end: 0;
+    inset-inline: 0;
+    max-block-size: calc(100% - var(--md-sys-layout-margin));
+  }
+
+  :host([levitate-modal]) .pane-scaffold-docked .pane-secondary {
+    box-shadow: var(--modal-container-elevation);
+  }
+
+  .pane-scrim {
+    @include levitated-pane-tokens.scrim;
+    animation: pane-scrim-in #{$_spatial};
+    background-color: var(--scrim-color);
+    inset: 0;
+    opacity: var(--scrim-opacity);
+    position: absolute;
+    z-index: 2;
+  }
+
+  @keyframes pane-float-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+
+  @keyframes pane-dock-in {
+    from {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes pane-scrim-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  // Drag handle (Compose VerticalDragHandle). The touch target is at least
+  // 48x48 and overflows the 24dp spacer into the panes.
+  .drag-handle {
+    @include drag-handle-tokens.root;
+    align-items: center;
+    block-size: max(var(--pressed-height), 48px);
+    border-radius: var(--md-sys-shape-corner-full);
+    cursor: col-resize;
+    display: flex;
+    flex: none;
+    inline-size: max(var(--container-width), 48px);
+    justify-content: center;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .drag-handle-indicator {
+    background-color: var(--color);
+    block-size: var(--height);
+    border-radius: var(--shape);
+    box-shadow: var(--elevation);
+    inline-size: var(--width);
+    transition:
+      inline-size #{$_fast-spatial},
+      block-size #{$_fast-spatial},
+      border-radius #{$_fast-spatial};
+  }
+
+  .drag-handle-pressed .drag-handle-indicator {
+    background-color: var(--pressed-color);
+    block-size: var(--pressed-height);
+    border-radius: var(--pressed-shape);
+    inline-size: var(--pressed-width);
+  }
+
+  .drag-handle-dragged .drag-handle-indicator {
+    background-color: var(--dragged-color);
+    block-size: var(--dragged-height);
+    border-radius: var(--dragged-shape);
+    inline-size: var(--dragged-width);
+  }
+
+  .pane-scaffold-dragging {
+    cursor: col-resize;
+    user-select: none;
+  }
+
+  .pane-scaffold-dragging .pane {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pane,
+    .pane.pane-collapsed,
+    .drag-handle-indicator {
+      transition: none;
+    }
+
+    .pane-scaffold-levitated .pane-secondary,
+    .pane-scrim {
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .drag-handle-indicator {
+      background-color: CanvasText;
+    }
+
+    .pane-scaffold-levitated .pane-secondary {
+      border: 1px solid CanvasText;
+    }
+  }
+}

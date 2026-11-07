@@ -44,7 +44,6 @@
   --menu-list-item-label-text-axes: var(--md-sys-typescale-body-lg-axes);
   --menu-list-item-label-text-color: var(--md-sys-color-on-surface);
   --menu-list-item-label-text-tracking: var(--md-sys-typescale-body-lg-tracking);
-  --menu-list-item-selected-container-color: var(--md-sys-color-surface-variant);
   --menu-list-item-selected-leading-icon-color: var(--md-sys-color-on-surface);
   --menu-list-item-selected-leading-icon-size: 24px;
   --weekdays-label-text: var(--md-sys-typescale-body-lg);
@@ -52,7 +51,7 @@
   --weekdays-label-text-color: var(--md-sys-color-on-surface);
   --weekdays-label-text-tracking: var(--md-sys-typescale-body-lg-tracking);
   // EDIT: Spec element states: disabled dates use on-surface at 38% (no docked token).
-  --date-disabled-label-text-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
+  --date-disabled-label-text-color: hsl( from var(--md-sys-color-on-surface) h s l / 38% );
   // EDIT: Compose RecommendedSizeForAccessibility (48.dp): each grid cell is a 48dp touch target.
   --date-cell-size: 48px;
   // EDIT: Compose DatePickerHorizontalPadding (12.dp).
@@ -78,11 +77,13 @@
   // EDIT: Spec docked measurements: the menus replace the calendar (weekdays + six 48dp rows).
   --menu-list-height: 336px;
   // EDIT: Docked range selection reuses the modal range tokens (md.comp.date-picker.modal.range-selection.active-indicator.container.color).
-  --range-selection-active-indicator-container-color: var(--md-sys-color-secondary-container);
+  --range-selection-active-indicator-container-color: var( --md-sys-color-secondary-container );
   // EDIT: Docked range selection reuses the modal range tokens (active-indicator.container.height 40dp).
   --range-selection-active-indicator-container-height: 40px;
   // EDIT: Docked range selection reuses the modal range tokens (date.in-range.label-text.color).
-  --range-selection-date-in-range-label-text-color: var(--md-sys-color-on-secondary-container);
+  --range-selection-date-in-range-label-text-color: var( --md-sys-color-on-secondary-container );
+  // EDIT: The spec token (md.comp.date-picker.docked.menu.list-item.selected.container.color) is the legacy surface-variant role, which M3 replaced with surface-container-highest; gb defines only the current roles.
+  --menu-list-item-selected-container-color: var( --md-sys-color-surface-container-highest );
 }
 
 @mixin modal {
@@ -157,6 +158,18 @@
   --year-selection-row-gap: 16px;
   // EDIT: Compose SelectionYearStateLayerShape (corner full).
   --year-selection-year-container-shape: var(--md-sys-shape-corner-full);
+  // EDIT: Compose DateRangePicker HeaderHeightOffset (60.dp): the full-screen row with the close icon button and Save, part of range-selection.header.container.height.
+  --range-selection-header-bar-height: 60px;
+  // EDIT: Compose DateRangePickerTitlePadding / DateRangePickerHeadlinePadding (start 64.dp).
+  --range-selection-header-padding-inline-start: 64px;
+  // EDIT: Compose CalendarMonthSubheadPadding (start 24.dp).
+  --range-selection-month-subhead-padding-inline-start: 24px;
+  // EDIT: Compose CalendarMonthSubheadPadding (top 20.dp).
+  --range-selection-month-subhead-padding-block-start: 20px;
+  // EDIT: Compose CalendarMonthSubheadPadding (bottom 8.dp).
+  --range-selection-month-subhead-padding-block-end: 8px;
+  // EDIT: Compose TopAppBarHorizontalPadding (4.dp): the full-screen row's close icon button and Save inset.
+  --range-selection-header-bar-padding-inline: 4px;
 }
 
 @mixin input {

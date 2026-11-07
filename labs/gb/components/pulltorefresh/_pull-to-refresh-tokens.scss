@@ -1,0 +1,52 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// The M3 spec has no pull-to-refresh token set (SpecDb has no
+// `md.comp.pull-to-refresh*`); the values come from Jetpack Compose
+// `pulltorefresh/PullToRefresh.kt` (`PullToRefreshDefaults`) and the loading
+// indicator spec page ("Behavior > Pull-to-refresh").
+
+// The M3 Expressive indicator: a contained loading indicator.
+@mixin root {
+  // LINT.IfChange
+  // EDIT: Compose PullToRefreshDefaults.loadingIndicatorContainerColor (LoadingIndicatorDefaults.containedContainerColor).
+  --indicator-container-color: var(--md-sys-color-primary-container);
+  // EDIT: Compose PullToRefreshDefaults.loadingIndicatorColor (LoadingIndicatorDefaults.containedIndicatorColor).
+  --indicator-color: var(--md-sys-color-on-primary-container);
+  // EDIT: Compose LoaderIndicatorHeight (LoadingIndicatorDefaults.ContainerHeight, 48dp).
+  --indicator-container-height: 48px;
+  // EDIT: Compose LoaderIndicatorWidth (LoadingIndicatorDefaults.ContainerWidth, 48dp).
+  --indicator-container-width: 48px;
+  // EDIT: Compose PullToRefreshDefaults.indicatorShape (CircleShape).
+  --indicator-container-shape: var(--md-sys-shape-corner-full);
+  // EDIT: Compose PullToRefreshDefaults.LoadingIndicatorElevation (ElevationTokens.Level0).
+  --indicator-elevation: var(--md-sys-elevation-shadow-0);
+  // EDIT: Compose PullToRefreshDefaults.IndicatorMaxDistance (= PositionalThreshold, 80dp): how far the indicator travels below the top edge.
+  --indicator-max-distance: 80px;
+  // EDIT: Compose PullToRefreshState animateToThreshold/animateToHidden: Animatable's default spring (critically damped), closest to the default effects spring.
+  --motion-settle-duration: var(--md-sys-motion-spring-default-effects-duration);
+  // EDIT: Compose PullToRefreshState animateToThreshold/animateToHidden (see --motion-settle-duration).
+  --motion-settle-easing: var(--md-sys-motion-spring-default-effects);
+  // EDIT: Compose Indicator Crossfade and arrow alpha (MotionSchemeKeyTokens.DefaultEffects).
+  --motion-effects-duration: var(--md-sys-motion-spring-default-effects-duration);
+  // EDIT: Compose Indicator Crossfade and arrow alpha (MotionSchemeKeyTokens.DefaultEffects).
+  --motion-effects-easing: var(--md-sys-motion-spring-default-effects);
+  // LINT.ThenChange(pull-to-refresh-element.ts) keep in sync with `@cssprop` jsdoc tags
+}
+
+// The baseline indicator: a circular arrow that turns into a circular
+// progress indicator (Compose `PullToRefreshDefaults.Indicator`).
+@mixin circular {
+  // EDIT: Compose PullToRefreshDefaults.indicatorContainerColor.
+  --indicator-container-color: var(--md-sys-color-surface-container-high);
+  // EDIT: Compose PullToRefreshDefaults.indicatorColor.
+  --indicator-color: var(--md-sys-color-on-surface-variant);
+  // EDIT: Compose SpinnerContainerSize (40dp).
+  --indicator-container-height: 40px;
+  // EDIT: Compose SpinnerContainerSize (40dp).
+  --indicator-container-width: 40px;
+  // EDIT: Compose PullToRefreshDefaults.Elevation (ElevationTokens.Level2).
+  --indicator-elevation: var(--md-sys-elevation-shadow-2);
+}

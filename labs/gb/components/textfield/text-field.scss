@@ -4,6 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'text-field-tokens';
 // go/keep-sorted end
 
@@ -28,52 +29,53 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
 @layer md.sys;
 @layer md.comp.text-field {
   // The token root: the `md-gb-text-field` host, or a `.text-field` used in
-  // Light DOM without the element.
+  // Light DOM without the element. Text fields are filled by default; the
+  // outlined tokens layer over the filled ones. A `.text-field` rendered
+  // directly in a shadow root (`md-gb-text-field`, `md-gb-select`) is not a
+  // token root: it inherits the host's tokens, so values set on the host
+  // still apply.
   :host,
-  .text-field {
+  .text-field:not(:host > *) {
     @include text-field-tokens.root;
+    @include text-field-tokens.filled;
   }
 
   :host([variant='outlined']),
-  .text-field-outlined {
+  .text-field-outlined:not(:host > *) {
     @include text-field-tokens.outlined;
   }
 
-  // Inside the element the host is the token root; the inner `.text-field`
-  // inherits the host's tokens so values set on the host still apply.
-  :host > .text-field {
-    @include text-field-tokens.inherit;
-    --outline-color: inherit;
-    --outline-width: inherit;
-    --outline-label-padding: inherit;
-  }
+  // Density (text-fields.md "Density": dense text fields help people scan
+  // large amounts of information; "Avoid applying density by default").
+  // The `density` attribute of the host or a `.text-field-density-N` class.
+  @include density.levels('text-field');
 
-  // States. Every rule has the same specificity as `:host > .text-field`
-  // (two classes) and follows it, so source order decides: error beats hover
-  // and focus, and disabled beats everything.
+  // States. Every rule has the same specificity as the token roots above
+  // (two classes) and follows them, so source order decides: error beats
+  // hover and focus, and disabled beats everything.
   .text-field.text-field-filled {
     &:where(#{$hover}) {
-      @include text-field-tokens.hover;
+      @include text-field-tokens.filled-hover;
     }
 
     &:where(#{$focus}) {
-      @include text-field-tokens.focus;
+      @include text-field-tokens.filled-focus;
     }
 
     &:where(#{$error}) {
-      @include text-field-tokens.error;
+      @include text-field-tokens.filled-error;
     }
 
     &:where(#{$error}):where(#{$hover}) {
-      @include text-field-tokens.error-hover;
+      @include text-field-tokens.filled-error-hover;
     }
 
     &:where(#{$error}):where(#{$focus}) {
-      @include text-field-tokens.error-focus;
+      @include text-field-tokens.filled-error-focus;
     }
 
     &:where(#{$disabled}) {
-      @include text-field-tokens.disabled;
+      @include text-field-tokens.filled-disabled;
     }
   }
 
@@ -119,6 +121,21 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     // Where the floated label sits: aligned with the input in filled fields,
     // in the outline's notch in outlined fields.
     --_floated-label-start: var(--_input-start);
+    // Density removes `--density-step` per step from the container height
+    // (56dp at 0; 52, 48, 44 at -1 to -3), half from the top padding and
+    // half from the bottom padding; text keeps its size (grids-spacing.md,
+    // Component scaling). A dense field is shorter than the 48dp target
+    // (text-fields.md), so density is opt-in; slotted icon buttons keep
+    // their own 48dp targets.
+    --_container-height: #{density.size(var(--container-height))};
+    --_top-space: #{density.size(
+        var(--top-space),
+        calc(var(--density-step) / 2)
+      )};
+    --_bottom-space: #{density.size(
+        var(--bottom-space),
+        calc(var(--density-step) / 2)
+      )};
     display: inline-flex;
     flex-direction: column;
     vertical-align: top;
@@ -129,15 +146,15 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
 
   .text-field.text-field-has-leading-icon {
     --_input-start: calc(
-      var(--_leading-icon-box) + var(--icon-input-space) -
-        var(--icon-leading-space)
+      var(--_leading-icon-box) +
+        var(--icon-input-space) - var(--icon-leading-space)
     );
   }
 
   .text-field.text-field-has-trailing-icon {
     --_input-end: calc(
-      var(--_trailing-icon-box) + var(--icon-input-space) -
-        var(--icon-trailing-space)
+      var(--_trailing-icon-box) +
+        var(--icon-input-space) - var(--icon-trailing-space)
     );
   }
 
@@ -149,7 +166,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     position: relative;
     display: flex;
     align-items: center;
-    min-block-size: var(--container-height);
+    min-block-size: var(--_container-height);
     border-radius: var(--container-shape);
     background-color: var(--container-color);
     box-sizing: border-box;
@@ -201,7 +218,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     --md-icon-color: var(--leading-icon-color);
     --md-icon-size: var(--leading-icon-size);
     min-inline-size: var(--_leading-icon-box);
-    min-block-size: var(--_leading-icon-box);
+    min-block-size: min(var(--_leading-icon-box), var(--_container-height));
     color: var(--leading-icon-color);
     font-size: var(--leading-icon-size);
   }
@@ -210,7 +227,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     --md-icon-color: var(--trailing-icon-color);
     --md-icon-size: var(--trailing-icon-size);
     min-inline-size: var(--_trailing-icon-box);
-    min-block-size: var(--_trailing-icon-box);
+    min-block-size: min(var(--_trailing-icon-box), var(--_container-height));
     color: var(--trailing-icon-color);
     font-size: var(--trailing-icon-size);
   }
@@ -239,7 +256,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     justify-content: center;
     align-self: stretch;
     min-inline-size: 0;
-    padding-block: var(--top-space) var(--bottom-space);
+    padding-block: var(--_top-space) var(--_bottom-space);
     padding-inline-start: var(--_input-start);
     padding-inline-end: var(--_input-end);
     box-sizing: border-box;
@@ -260,7 +277,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   // Filled: the floated label takes a line above the input.
   .text-field-filled.text-field-has-label .text-field-content {
     padding-block-start: calc(
-      var(--top-space) + var(--label-text-populated-line-height)
+      var(--_top-space) + var(--label-text-populated-line-height)
     );
   }
 
@@ -351,7 +368,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   // floats above the input (filled) or onto the outline (outlined).
   .text-field-label {
     position: absolute;
-    inset-block-start: calc((var(--container-height) - 1lh) / 2);
+    inset-block-start: calc((var(--_container-height) - 1lh) / 2);
     inset-inline-start: var(--_input-start);
     max-inline-size: calc(100% - var(--_input-start) - var(--_input-end));
     overflow: hidden;
@@ -383,7 +400,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   }
 
   .text-field-filled:is(#{$floated}) .text-field-label {
-    inset-block-start: var(--top-space);
+    inset-block-start: var(--_top-space);
   }
 
   .text-field-outlined:is(#{$floated}) .text-field-label {

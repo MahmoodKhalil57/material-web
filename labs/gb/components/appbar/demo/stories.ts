@@ -5,6 +5,7 @@
  */
 
 import '@material/web/labs/gb/components/appbar/md-gb-app-bar.js';
+import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
@@ -13,15 +14,22 @@ import {
   type AppBarSize,
   type AppBarVariant,
 } from '@material/web/labs/gb/components/appbar/app-bar.js';
+import {
+  type ScrollPaddingController,
+  setupScrollPadding,
+} from '@material/web/labs/gb/components/appbar/scroll-padding.js';
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
 import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 import {css, html, nothing} from 'lit';
+import {ref} from 'lit/directives/ref.js';
 
 /** Knob types for app bar stories. */
 export interface StoryKnobs {
   size?: AppBarSize;
   variant?: AppBarVariant;
   scrolled: boolean;
+  centered: boolean;
+  subtitle: boolean;
 }
 
 adoptStyles(document, [
@@ -51,19 +59,24 @@ const playground: MaterialStoryInit<StoryKnobs> = {
     const size = knobs.size || 'sm';
     const variant = knobs.variant || 'standard';
     const scrolled = Boolean(knobs.scrolled);
+    const centered = Boolean(knobs.centered);
 
     if (variant === 'search') {
       return html`
         <div class="demo-container">
-          <md-gb-app-bar variant="search" ?scrolled=${scrolled}>
+          <md-gb-app-bar
+            variant="search"
+            ?scrolled=${scrolled}
+            ?centered=${centered}>
             <md-gb-icon-button slot="leading" color="standard">
               <md-gb-icon>menu</md-gb-icon>
             </md-gb-icon-button>
             <input
               slot="search"
               type="text"
-              placeholder="Search Expressive App Bar..."
-              style="width: 100%; border: none; background: transparent; font: inherit; color: var(--md-sys-color-on-surface); outline: none; padding: 8px;" />
+              placeholder="Search"
+              aria-label="Search"
+              style="width: 100%; border: none; background: transparent; font: inherit; color: inherit; outline: none; padding-inline: 16px;" />
             <md-gb-icon-button slot="trailing" color="standard">
               <md-gb-icon>account_circle</md-gb-icon>
             </md-gb-icon-button>
@@ -72,11 +85,14 @@ const playground: MaterialStoryInit<StoryKnobs> = {
       `;
     }
 
-    const showSubtitle = size === 'md' || size === 'lg';
+    const showSubtitle = Boolean(knobs.subtitle);
 
     return html`
       <div class="demo-container">
-        <md-gb-app-bar size=${size} ?scrolled=${scrolled}>
+        <md-gb-app-bar
+          size=${size}
+          ?scrolled=${scrolled}
+          ?centered=${centered}>
           <md-gb-icon-button slot="leading" color="standard">
             <md-gb-icon>menu</md-gb-icon>
           </md-gb-icon-button>
@@ -178,7 +194,7 @@ const allSizes: MaterialStoryInit<StoryKnobs> = {
               slot="search"
               type="text"
               placeholder="Search variant..."
-              style="width:100%; border:none; background:transparent; font:inherit; color: var(--md-sys-color-on-surface); outline:none;" />
+              style="width:100%; border:none; background:transparent; font:inherit; color: inherit; outline:none; padding-inline: 16px;" />
             <md-gb-icon-button slot="trailing" color="standard">
               <md-gb-icon>close</md-gb-icon>
             </md-gb-icon-button>
@@ -202,5 +218,145 @@ const allSizes: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+const centeredText: MaterialStoryInit<StoryKnobs> = {
+  name: 'Centered text',
+  styles,
+  render() {
+    const bar = (size: AppBarSize, title: string, subtitle?: string) => html`
+      <div class="demo-container">
+        <md-gb-app-bar size=${size} centered>
+          <md-gb-icon-button
+            slot="leading"
+            color="standard"
+            aria-label="Back">
+            <md-gb-icon>arrow_back</md-gb-icon>
+          </md-gb-icon-button>
+          ${title}
+          ${subtitle
+            ? html`<span slot="subtitle">${subtitle}</span>`
+            : nothing}
+          <md-gb-icon-button
+            slot="trailing"
+            color="standard"
+            aria-label="Attach">
+            <md-gb-icon>attach_file</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button
+            slot="trailing"
+            color="standard"
+            aria-label="More">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+        </md-gb-app-bar>
+      </div>
+    `;
+    return html`
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        ${bar('sm', 'Small centered')}
+        ${bar('sm', 'Small centered', 'With a subtitle')}
+        ${bar('md', 'Medium flexible centered', 'Subtitle')}
+        ${bar('lg', 'Large flexible centered headline that wraps', 'Subtitle')}
+      </div>
+    `;
+  },
+};
+
+const smallSubtitle: MaterialStoryInit<StoryKnobs> = {
+  name: 'Small with subtitle, no leading icon',
+  styles,
+  render() {
+    return html`
+      <div class="demo-container">
+        <md-gb-app-bar>
+          Inbox
+          <span slot="subtitle">24 unread</span>
+          <md-gb-icon-button
+            slot="trailing"
+            color="standard"
+            aria-label="Search">
+            <md-gb-icon>search</md-gb-icon>
+          </md-gb-icon-button>
+        </md-gb-app-bar>
+      </div>
+    `;
+  },
+};
+
+const paddings = new WeakMap<Element, ScrollPaddingController>();
+
+/** Sets up `setupScrollPadding()` on the scroller once it renders. */
+const scrollPaddingRef = ref((scroller?: Element) => {
+  if (!(scroller instanceof HTMLElement) || paddings.has(scroller)) return;
+  const bar = scroller.querySelector('md-gb-app-bar');
+  paddings.set(
+    scroller,
+    setupScrollPadding(scroller, {start: bar ? [bar] : []}),
+  );
+});
+
+const focusNotObscured: MaterialStoryInit<StoryKnobs> = {
+  name: 'Sticky app bar: focus not obscured',
+  styles: [
+    styles,
+    css`
+      .scroll-demo {
+        block-size: 360px;
+        overflow: auto;
+        position: relative;
+      }
+
+      .scroll-demo md-gb-app-bar {
+        inset-block-start: 0;
+        position: sticky;
+        z-index: 1;
+      }
+
+      .scroll-demo-list {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .scroll-demo p {
+        color: var(--md-sys-color-on-surface-variant);
+        font: var(--md-sys-typescale-body-md);
+        margin: 0;
+        padding: 16px 16px 0;
+      }
+    `,
+  ],
+  render() {
+    return html`
+      <div class="demo-container scroll-demo" ${scrollPaddingRef}>
+        <md-gb-app-bar scrolled>
+          <md-gb-icon-button slot="leading" color="standard" aria-label="Menu">
+            <md-gb-icon>menu</md-gb-icon>
+          </md-gb-icon-button>
+          Inbox
+        </md-gb-app-bar>
+        <p>
+          setupScrollPadding() sets scroll-padding-block-start (and
+          --md-gb-obscured-block-start) on this scroller to the sticky app
+          bar's height plus the focus indicator, so tabbing backwards up the
+          list never leaves a focused button or its focus ring under the bar.
+        </p>
+        <div class="scroll-demo-list">
+          ${Array.from(
+            {length: 16},
+            (_, i) =>
+              html`<md-gb-button color="outlined">Message ${i + 1}</md-gb-button>`,
+          )}
+        </div>
+      </div>
+    `;
+  },
+};
+
 /** App Bar stories. */
-export const stories = [playground, allSizes];
+export const stories = [
+  playground,
+  allSizes,
+  centeredText,
+  smallSubtitle,
+  focusNotObscured,
+];

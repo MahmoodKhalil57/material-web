@@ -4,6 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'checkbox-tokens';
 // go/keep-sorted end
 
@@ -13,17 +14,22 @@
     & {
       @include checkbox-tokens.root;
     }
+    @include density.classes('checkbox');
 
-    &:is(:hover, .hover) {
-      @include checkbox-tokens.hovered;
-    }
+    &:not(:checked, .checked, :indeterminate, .indeterminate) {
+      @include checkbox-tokens.unselected;
 
-    &:is(:focus-within, .focus) {
-      @include checkbox-tokens.focused;
-    }
+      &:where(:hover, .hover) {
+        @include checkbox-tokens.unselected-hovered;
+      }
 
-    &:is(:active, .active) {
-      @include checkbox-tokens.pressed;
+      &:where(:focus-within, .focus) {
+        @include checkbox-tokens.unselected-focused;
+      }
+
+      &:where(:active, .active) {
+        @include checkbox-tokens.unselected-pressed;
+      }
     }
 
     &:is(:checked, .checked, :indeterminate, .indeterminate) {
@@ -33,39 +39,79 @@
         @include checkbox-tokens.selected-hovered;
       }
 
+      &:where(:focus-within, .focus) {
+        @include checkbox-tokens.selected-focused;
+      }
+
       &:where(:active, .active) {
         @include checkbox-tokens.selected-pressed;
       }
     }
 
     &:is(:invalid, .invalid) {
-      @include checkbox-tokens.error;
+      &:where(:not(:checked, .checked, :indeterminate, .indeterminate)) {
+        @include checkbox-tokens.unselected-error;
+
+        &:where(:hover, .hover) {
+          @include checkbox-tokens.unselected-error-hovered;
+        }
+
+        &:where(:focus-within, .focus) {
+          @include checkbox-tokens.unselected-error-focused;
+        }
+
+        &:where(:active, .active) {
+          @include checkbox-tokens.unselected-error-pressed;
+        }
+      }
 
       &:where(:checked, .checked, :indeterminate, .indeterminate) {
-        @include checkbox-tokens.error-selected;
+        @include checkbox-tokens.selected-error;
+      }
+
+      &:where(:hover, .hover) {
+        @include checkbox-tokens.error-hovered;
+      }
+
+      &:where(:focus-within, .focus) {
+        @include checkbox-tokens.error-focused;
+      }
+
+      &:where(:active, .active) {
+        @include checkbox-tokens.error-pressed;
       }
     }
 
     &:is(:disabled, .disabled) {
-      @include checkbox-tokens.disabled;
       --disabled: true;
 
+      &:where(:not(:checked, .checked, :indeterminate, .indeterminate)) {
+        @include checkbox-tokens.unselected-disabled;
+      }
+
       &:where(:checked, .checked, :indeterminate, .indeterminate) {
-        @include checkbox-tokens.disabled-selected;
+        @include checkbox-tokens.selected-disabled;
       }
     }
 
     & {
+      // Density (checkbox.md: "Avoid applying density by default"): each step
+      // removes `--density-step` from the layout box (48px at density 0) and
+      // the state layer. The input stays a `--target-size` target, centered
+      // on the smaller box with negative margins.
+      --_box: #{density.size(max(var(--state-layer-size), var(--target-size)))};
+      --_target: #{density.target(var(--_box))};
       appearance: none;
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
+      flex: none;
+      width: var(--_target);
+      height: var(--_target);
       background-image: none;
       outline: none;
-      margin: 0;
+      margin: calc((var(--_box) - var(--_target)) / 2);
       --icon: 'check';
 
       &:is(:indeterminate, .indeterminate)::before {
@@ -83,9 +129,13 @@
         width: var(--container-size);
         background: var(--container-color);
         border-radius: var(--container-shape);
-        border: var(--outline-width) solid var(--outline-color);
+        border: var(--outline-width) solid
+          hsl(from var(--outline-color) h s l / calc(alpha * var(--container-opacity)));
         color: var(--icon-color);
         font: var(--icon-size) / 1 var(--md-icon-font);
+        // Material Symbols axes: filled glyph at its smallest optical size
+        // (the icon is 18px; `opsz` starts at 20).
+        font-variation-settings: 'FILL' 1, 'opsz' 20;
       }
 
       &::after {
@@ -94,7 +144,7 @@
         aspect-ratio: 1;
         background-image: var(--ripple);
         color: var(--state-layer-color);
-        width: var(--state-layer-size);
+        width: #{density.size(var(--state-layer-size))};
         border-radius: var(--state-layer-shape);
         outline: var(--focus-ring-outline);
         outline-offset: var(--focus-ring-offset);

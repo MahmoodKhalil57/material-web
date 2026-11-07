@@ -5,10 +5,13 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @import 'color/md-color-tokens';
+@import 'color/md-color-tokens-contrast';
 @import 'elevation/md-elevation-tokens';
 @import 'icon/md-icon';
+@import 'layout/md-layout-tokens';
 @import 'motion/md-motion-tokens-easing';
 @import 'motion/md-motion-tokens-spring';
+@import 'motion/transitions/md-motion-transitions';
 @import 'shape/md-shape-tokens';
 @import 'space/md-space-tokens';
 @import 'typography/md-typography-tokens';

@@ -26,6 +26,7 @@ import {
   mixinFormAssociated,
 } from '../../../behaviors/form-associated.js';
 import {CheckboxValidator} from '../../../behaviors/validators/checkbox-validator.js';
+import {clampDensity, type Density} from '../shared/density.js';
 import {hasSlotted} from '../shared/has-slotted.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
@@ -53,17 +54,25 @@ const baseClass = mixinDelegatesAria(
  * @fires {Event} change - Fired when the switch is selected or unselected. --bubbles
  * @csspart switch - The switch's root element.
  * @cssprop --handle-color
- * @cssprop --handle-size
- * @cssprop --with-icon-handle-size
+ * @cssprop --handle-height
+ * @cssprop --handle-shape
+ * @cssprop --handle-width
+ * @cssprop --with-icon-handle-height
+ * @cssprop --with-icon-handle-width
  * @cssprop --icon-color
  * @cssprop --icon-size
  * @cssprop --state-layer-color
- * @cssprop --state-layer-size
+ * @cssprop --state-layer-shape
+ * @cssprop --state-layer-size - State layer size at density 0.
  * @cssprop --track-color
  * @cssprop --track-height
+ * @cssprop --track-opacity
  * @cssprop --track-outline-color
  * @cssprop --track-outline-width
+ * @cssprop --track-shape
  * @cssprop --track-width
+ * @cssprop --density-step - State layer size removed per density step.
+ * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
 export class SwitchElement extends baseClass {
   /** @nocollapse */
@@ -126,6 +135,25 @@ export class SwitchElement extends baseClass {
    */
   @property() value = 'on';
 
+  /**
+   * The density, from 0 (default) to -3. Each step down removes 4px from the
+   * state layer (40px); the track keeps its size and the touch target stays
+   * 48px. Values are clamped to that range.
+   *
+   * switch.md: don't apply density by default; let people opt in to a
+   * denser layout.
+   */
+  @property({type: Number, reflect: true})
+  get density(): Density {
+    return this.densityValue;
+  }
+  set density(density: number) {
+    const old = this.densityValue;
+    this.densityValue = clampDensity(Number(density));
+    this.requestUpdate('density', old);
+  }
+  private densityValue: Density = 0;
+
   @query('button', true)
   private readonly button!: HTMLButtonElement | null;
 
@@ -144,11 +172,12 @@ export class SwitchElement extends baseClass {
       <button
         role="switch"
         part="switch"
-        class="${switchToggle()}"
+        class="${switchToggle({density: this.density})}"
         aria-checked="${this.selected ? 'true' : 'false'}"
         aria-label=${ariaLabel || nothing}
         ?disabled=${this.disabled}
         @change=${this.handleChange}>
+        <span class="switch-touch" aria-hidden="true"></span>
         <slot name="off-icon" class="switch-icon-off" ${hasSlotted()}></slot>
         <slot name="on-icon" class="switch-icon-on"></slot>
       </button>

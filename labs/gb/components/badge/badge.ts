@@ -45,3 +45,16 @@ export function badgeClasses({
 export const badge = createClassMapDirective<BadgeClassesState>({
   getClasses: badgeClasses,
 });
+
+/**
+ * Formats a large badge count. Spec (badges): limit content to four
+ * characters, including a `+`, so counts above `max` (default 999) show as
+ * `999+`.
+ *
+ * @param value The count.
+ * @param max The largest count shown in full.
+ * @return The badge label.
+ */
+export function formatBadgeValue(value: number, max = 999): string {
+  return value > max ? `${max}+` : String(value);
+}

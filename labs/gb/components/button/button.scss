@@ -17,41 +17,67 @@
     &:is(.btn-selected, [aria-pressed='true']) {
       @include button-tokens.selected;
     }
+
     &.btn-filled {
       @include button-tokens.filled;
-      &:where(.btn-unselected, [aria-pressed='false']) {
-        @include button-tokens.filled-unselected;
-      }
-      &:where(.btn-selected, [aria-pressed='true']) {
-        @include button-tokens.filled-selected;
-      }
     }
     &.btn-elevated {
       @include button-tokens.elevated;
-      &:where(.btn-selected, [aria-pressed='true']) {
-        @include button-tokens.elevated-selected;
-      }
     }
     &.btn-tonal {
       @include button-tokens.tonal;
-      &:where(.btn-selected, [aria-pressed='true']) {
-        @include button-tokens.tonal-selected;
-      }
     }
     &.btn-outlined {
       @include button-tokens.outlined;
-      &:where(.btn-selected, [aria-pressed='true']) {
-        @include button-tokens.outlined-selected;
-      }
     }
     &.btn-text {
       @include button-tokens.text;
     }
+    &.btn-filled:where(.btn-unselected, [aria-pressed='false']) {
+      @include button-tokens.filled-unselected;
+    }
+    &.btn-filled:where(.btn-selected, [aria-pressed='true']) {
+      @include button-tokens.filled-selected;
+    }
+    &.btn-elevated:where(.btn-unselected, [aria-pressed='false']) {
+      @include button-tokens.elevated-unselected;
+    }
+    &.btn-elevated:where(.btn-selected, [aria-pressed='true']) {
+      @include button-tokens.elevated-selected;
+    }
+    &.btn-tonal:where(.btn-unselected, [aria-pressed='false']) {
+      @include button-tokens.tonal-unselected;
+    }
+    &.btn-tonal:where(.btn-selected, [aria-pressed='true']) {
+      @include button-tokens.tonal-selected;
+    }
+    &.btn-outlined:where(.btn-unselected, [aria-pressed='false']) {
+      @include button-tokens.outlined-unselected;
+    }
+    &.btn-outlined:where(.btn-selected, [aria-pressed='true']) {
+      @include button-tokens.outlined-selected;
+    }
+    &.btn-filled:where(:focus-visible, .focus-visible) {
+      @include button-tokens.filled-focused;
+    }
+    &.btn-elevated:where(:focus-visible, .focus-visible) {
+      @include button-tokens.elevated-focused;
+    }
+    &.btn-tonal:where(:focus-visible, .focus-visible) {
+      @include button-tokens.tonal-focused;
+    }
+
     &.btn-xs {
       @include button-tokens.xs;
+      &:where(.btn-selected, [aria-pressed='true']) {
+        @include button-tokens.xs-selected;
+      }
     }
     &.btn-sm {
       @include button-tokens.sm;
+      &:where(.btn-selected, [aria-pressed='true']) {
+        @include button-tokens.sm-selected;
+      }
     }
     &.btn-md {
       @include button-tokens.md;
@@ -71,42 +97,69 @@
         @include button-tokens.xl-selected;
       }
     }
+    // Square buttons use the square shape; selected toggles swap the round
+    // and square values (`-selected` mixins), so a selected square button is
+    // round (buttons.md: "If the resting unselected shape is square, the
+    // selected shape should be round").
     &.btn-square {
-      @include button-tokens.square;
-      &:where(.btn-md) {
-        @include button-tokens.square-md;
-      }
-      &:where(.btn-lg) {
-        @include button-tokens.square-lg;
-      }
-      &:where(.btn-xl) {
-        @include button-tokens.square-xl;
-      }
-      &:where(.btn-selected, [aria-pressed='true']) {
-        @include button-tokens.square-selected;
-      }
+      --container-shape: var(--container-shape-square);
     }
-    &:is(:active, .active):where(
-        :not(:disabled, .disabled, [aria-disabled='true'])
-      ) {
+
+    // Round and square buttons have the same pressed shape (buttons.md).
+    &:is(:active, .active):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
       @include button-tokens.pressed;
+      &:where(.btn-xs) {
+        @include button-tokens.xs-pressed;
+      }
+      &:where(.btn-sm) {
+        @include button-tokens.sm-pressed;
+      }
       &:where(.btn-md) {
-        @include button-tokens.pressed-md;
+        @include button-tokens.md-pressed;
       }
       &:where(.btn-lg) {
-        @include button-tokens.pressed-lg;
+        @include button-tokens.lg-pressed;
       }
       &:where(.btn-xl) {
-        @include button-tokens.pressed-xl;
+        @include button-tokens.xl-pressed;
+      }
+      &:where(.btn-filled) {
+        @include button-tokens.filled-pressed;
+      }
+      &:where(.btn-elevated) {
+        @include button-tokens.elevated-pressed;
+      }
+      &:where(.btn-tonal) {
+        @include button-tokens.tonal-pressed;
       }
     }
+
     &:is(:disabled, .disabled, [aria-disabled='true']) {
       @include button-tokens.disabled;
       --disabled: true;
+      &:where(.btn-filled) {
+        @include button-tokens.filled-disabled;
+      }
+      &:where(.btn-elevated) {
+        @include button-tokens.elevated-disabled;
+      }
+      &:where(.btn-tonal) {
+        @include button-tokens.tonal-disabled;
+      }
+      &:where(.btn-outlined) {
+        @include button-tokens.outlined-disabled;
+        &:where(.btn-selected, [aria-pressed='true']) {
+          @include button-tokens.outlined-selected-disabled;
+        }
+      }
+      &:where(.btn-text) {
+        @include button-tokens.text-disabled;
+      }
     }
 
     & {
       display: inline-flex;
+      position: relative;
       align-items: center;
       justify-content: center;
       min-height: var(--container-height);
@@ -130,12 +183,30 @@
       --md-icon-color: var(--icon-color);
       --md-icon-size: var(--icon-size);
     }
+    // buttons.md accessibility: extra small and small buttons must have a
+    // 48x48dp target. The target is centered on the container (centering is
+    // the same in LTR and RTL).
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      width: max(100%, 48px);
+      height: max(100%, 48px);
+    }
     &:not(:disabled, .disabled, [aria-disabled='true']) {
       cursor: pointer;
     }
     &:has(.fx-playing) {
       --outline-color: transparent;
       --container-elevation: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn {
+      --md-sys-motion-spring-fast-spatial-duration: 0s;
     }
   }
 }

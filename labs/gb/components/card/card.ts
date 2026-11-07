@@ -27,6 +27,8 @@ export const CARD_CLASSES = {
   cardOutlined: 'card-outlined',
   hover: PSEUDO_CLASSES.hover,
   focus: PSEUDO_CLASSES.focus,
+  active: PSEUDO_CLASSES.active,
+  dragged: 'dragged',
   disabled: PSEUDO_CLASSES.disabled,
 } as const;
 
@@ -40,6 +42,10 @@ export interface CardClassesState {
   hover?: boolean;
   /** Emulates `:focus`. */
   focus?: boolean;
+  /** Emulates `:active` (pressed). */
+  active?: boolean;
+  /** Whether the card is picked up and being dragged (raised elevation). */
+  dragged?: boolean;
   /** Emulates `:disabled`. */
   disabled?: boolean;
 }
@@ -55,6 +61,8 @@ export function cardClasses({
   interactive = false,
   hover = false,
   focus = false,
+  active = false,
+  dragged = false,
   disabled = false,
 }: CardClassesState = {}): ClassInfo {
   return {
@@ -65,6 +73,8 @@ export function cardClasses({
     [CARD_CLASSES.cardOutlined]: color === CARD_COLORS.outlined || !color,
     [CARD_CLASSES.hover]: hover,
     [CARD_CLASSES.focus]: focus,
+    [CARD_CLASSES.active]: active,
+    [CARD_CLASSES.dragged]: dragged,
     [CARD_CLASSES.disabled]: disabled,
   };
 }

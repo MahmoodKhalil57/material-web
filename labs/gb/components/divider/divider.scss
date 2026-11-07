@@ -27,5 +27,37 @@
       border-inline-end: var(--thickness) solid var(--color);
       min-height: 100%;
     }
+
+    // Spec Measurements: an inset divider indents its leading end 16dp
+    // (`inset-start`), a middle-inset divider both ends (`inset`). The
+    // margins are logical, so they follow RTL; a vertical divider indents
+    // its top and bottom.
+    &:not(.divider-vertical) {
+      &:is(.divider-inset, .divider-inset-start) {
+        margin-inline-start: var(--inset-leading-space);
+      }
+
+      &:is(.divider-inset, .divider-inset-end) {
+        margin-inline-end: var(--inset-trailing-space);
+      }
+
+      &:is(.divider-inset, .divider-inset-start, .divider-inset-end) {
+        width: auto;
+      }
+    }
+
+    &.divider-vertical {
+      &:is(.divider-inset, .divider-inset-start) {
+        margin-block-start: var(--inset-leading-space);
+      }
+
+      &:is(.divider-inset, .divider-inset-end) {
+        margin-block-end: var(--inset-trailing-space);
+      }
+
+      &:is(.divider-inset, .divider-inset-start, .divider-inset-end) {
+        min-height: auto;
+      }
+    }
   }
 }

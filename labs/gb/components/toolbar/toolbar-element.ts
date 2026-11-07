@@ -11,7 +11,7 @@ import {
   LitElement,
   type PropertyValues,
 } from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import toolbarStyles from './toolbar.css' with {type: 'css'}; // github-only
 // import {styles as toolbarStyles} from './toolbar.cssresult.js'; // google3-only
@@ -21,11 +21,23 @@ import {toolbar, type ToolbarColor, type ToolbarOrientation} from './toolbar.js'
 /**
  * A Material Design gBreeze toolbar component.
  *
+ * Focus not obscured (WCAG 2.4.11): a docked or floating toolbar that stays
+ * over scrolling content (sticky or fixed) must not hide focused elements.
+ * Register it with `setupScrollPadding()` (`appbar/scroll-padding.js`, as an
+ * `end` bar): it sets `scroll-padding-block-end` and
+ * `--md-gb-obscured-block-end` on the scroll container so focused elements
+ * and their focus indicators scroll clear of the toolbar. Snackbars should
+ * appear above the toolbar: set their `anchor` to it.
+ *
  * @slot - Used to display toolbar items (buttons, icon buttons, or custom
  *   content).
  * @slot leading - Used to display leading toolbar items.
  * @slot trailing - Used to display trailing toolbar items.
+ * @slot fab - An optional FAB (`md-gb-fab`) shown next to a floating
+ *     toolbar, colored by the toolbar's `color` (standard: secondary
+ *     container, vibrant: tertiary container).
  * @csspart toolbar - The toolbar's root container.
+ * @csspart toolbar-with-fab - The toolbar and FAB layout, with a FAB.
  * @cssprop --button-container-color
  * @cssprop --container-color
  * @cssprop --container-elevation
@@ -87,6 +99,27 @@ export class ToolbarElement extends LitElement {
   /** Whether the toolbar is docked across full width. */
   @property({type: Boolean, reflect: true}) docked = false;
 
+  /**
+   * Whether a floating toolbar with a FAB shows its items. When `false`,
+   * the toolbar collapses and its FAB grows to the medium size (Compose
+   * floating toolbar `expanded`). Set `expanded="false"` from markup.
+   */
+  @property({
+    type: Boolean,
+    reflect: true,
+    converter: {
+      fromAttribute: (value) => value !== null && value !== 'false',
+      toAttribute: (value) => (value ? '' : null),
+    },
+  })
+  expanded = true;
+
+  /** Which side of a floating toolbar the FAB is on (`end` or `start`). */
+  @property({attribute: 'fab-position', reflect: true})
+  fabPosition: 'start' | 'end' = 'end';
+
+  @state() private hasFab = false;
+
   override connectedCallback() {
     super.connectedCallback();
     adoptStyles(this, toolbarStyles);
@@ -115,18 +148,42 @@ export class ToolbarElement extends LitElement {
   }
 
   protected override render() {
-    return html`
+    const withFab = this.hasFab && !this.docked;
+    const bar = html`
       <div
         part="toolbar"
         class="${toolbar({
           color: this.color,
           orientation: this.docked ? 'horizontal' : this.orientation,
           docked: this.docked,
-        })}">
+        })}"
+        ?inert=${withFab && !this.expanded}>
         <slot name="leading"></slot>
         <slot></slot>
         <slot name="trailing"></slot>
       </div>
     `;
+    const fabSlot = html`<slot
+      name="fab"
+      @slotchange=${this.handleFabSlotChange}></slot>`;
+    if (!withFab) {
+      return html`${bar}${fabSlot}`;
+    }
+    const vertical = this.orientation === 'vertical';
+    const classes = [
+      'toolbar-with-fab',
+      `toolbar-with-fab-${this.color}`,
+      vertical ? 'toolbar-with-fab-vertical' : '',
+      this.fabPosition === 'start' ? 'toolbar-with-fab-start' : '',
+      this.expanded ? '' : 'toolbar-with-fab-collapsed',
+    ].join(' ');
+    return html`<div part="toolbar-with-fab" class=${classes}>
+      ${bar}${fabSlot}
+    </div>`;
+  }
+
+  private handleFabSlotChange(event: Event) {
+    const slot = event.target as HTMLSlotElement;
+    this.hasFab = slot.assignedElements({flatten: true}).length > 0;
   }
 }

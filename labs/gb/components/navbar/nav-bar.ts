@@ -12,6 +12,17 @@ import {createClassMapDirective} from '../shared/directives.js';
 /** Navigation bar item layout configuration types. */
 export type NavBarItemLayout = 'vertical' | 'horizontal';
 
+/**
+ * The navigation bar's item layout: a fixed layout, or `auto` for vertical
+ * items in compact windows and horizontal items from medium windows
+ * (navigation-bar.md: "In compact windows, navigation bars use vertical
+ * items. In medium windows, navigation bars should use horizontal items.").
+ */
+export type NavBarLayout = NavBarItemLayout | 'auto';
+
+/** The smallest medium window width (M3 window size classes). */
+export const MEDIUM_WINDOW_QUERY = '(min-width: 600px)';
+
 /** Navigation bar item layout configurations. */
 export const NAV_BAR_ITEM_LAYOUTS = {
   vertical: 'vertical',

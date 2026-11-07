@@ -44,8 +44,16 @@ const CASES: SpecCase[] = [
   },
   {
     "mixin": "root",
+    "prop": "active-indicator-shape",
+    "token": "md.comp.primary-navigation-tab.active-indicator.shape",
+    "spec": "3px",
+    "property": "border-top-left-radius",
+    "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
     "prop": "container-color",
-    "token": "md.comp.secondary-navigation-tab.container.color",
+    "token": "md.comp.primary-navigation-tab.container.color",
     "spec": "var(--md-sys-color-surface)",
     "property": "color",
     "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
@@ -61,7 +69,7 @@ const CASES: SpecCase[] = [
   {
     "mixin": "root",
     "prop": "container-shape",
-    "token": "md.comp.secondary-navigation-tab.container.shape",
+    "token": "md.comp.primary-navigation-tab.container.shape",
     "spec": "var(--md-sys-shape-corner-none)",
     "property": "border-top-left-radius",
     "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
@@ -69,7 +77,7 @@ const CASES: SpecCase[] = [
   {
     "mixin": "root",
     "prop": "icon-color",
-    "token": "md.comp.secondary-navigation-tab.with-icon.inactive.icon.color",
+    "token": "md.comp.primary-navigation-tab.with-icon.inactive.icon.color",
     "spec": "var(--md-sys-color-on-surface-variant)",
     "property": "color",
     "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
@@ -77,15 +85,39 @@ const CASES: SpecCase[] = [
   {
     "mixin": "root",
     "prop": "icon-size",
-    "token": "md.comp.secondary-navigation-tab.with-icon.icon.size",
+    "token": "md.comp.primary-navigation-tab.with-icon.icon.size",
     "spec": "24px",
     "property": "width",
     "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
   },
   {
     "mixin": "root",
+    "prop": "label-text",
+    "token": "md.comp.primary-navigation-tab.with-label-text.label-text.font",
+    "spec": "var(--md-sys-typescale-title-sm)",
+    "property": "font",
+    "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
+    "prop": "label-text-axes",
+    "token": "md.comp.primary-navigation-tab.with-label-text.label-text.font",
+    "spec": "var(--md-sys-typescale-title-sm-axes)",
+    "property": "font-variation-settings",
+    "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
+    "prop": "label-text-color",
+    "token": "md.comp.primary-navigation-tab.with-label-text.inactive.label-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
     "prop": "label-text-tracking",
-    "token": "md.comp.secondary-navigation-tab.label-text.tracking",
+    "token": "md.comp.primary-navigation-tab.with-label-text.label-text.tracking",
     "spec": "var(--md-sys-typescale-title-sm-tracking)",
     "property": "letter-spacing",
     "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
@@ -144,6 +176,30 @@ const CASES: SpecCase[] = [
     "token": "md.comp.secondary-navigation-tab.with-icon.icon.size",
     "spec": "24px",
     "property": "width",
+    "markup": "<span></span><div class=\"tabs tabs-secondary\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "secondary",
+    "prop": "label-text",
+    "token": "md.comp.secondary-navigation-tab.label-text.font",
+    "spec": "var(--md-sys-typescale-title-sm)",
+    "property": "font",
+    "markup": "<span></span><div class=\"tabs tabs-secondary\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "secondary",
+    "prop": "label-text-axes",
+    "token": "md.comp.secondary-navigation-tab.label-text.font",
+    "spec": "var(--md-sys-typescale-title-sm-axes)",
+    "property": "font-variation-settings",
+    "markup": "<span></span><div class=\"tabs tabs-secondary\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "secondary",
+    "prop": "label-text-color",
+    "token": "md.comp.secondary-navigation-tab.inactive.label-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
     "markup": "<span></span><div class=\"tabs tabs-secondary\" data-spec-target></div><span></span>"
   },
   {

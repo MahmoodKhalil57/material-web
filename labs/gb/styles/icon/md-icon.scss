@@ -3,6 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// Material Symbols variable font axes (styles/icons.md "Variable font
+// axes"): weight (`wght`, 100-700, regular 400), fill (`FILL`, 0-1), grade
+// (`GRAD`, -25 for light icons on dark backgrounds, 0 by default, positive
+// for emphasis) and optical size (`opsz`, 20-48dp).
+//
+// Components set `--md-icon-fill: 1` for selected / active states (filled
+// symbol) and `0` for unselected ones (outlined symbol). The fill animates.
+
 @property --md-icon-font {
   syntax: '<string>#';
   inherits: true;
@@ -18,11 +26,10 @@
   inherits: true;
   initial-value: 24px;
 }
-@property --md-icon-opsz {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 24;
-}
+// `--md-icon-opsz` is intentionally not registered: unset, the optical size
+// follows the icon size (icons.md: "Optical size offers a way to
+// automatically adjust the stroke weight when you increase or decrease the
+// symbol size"), clamped to the 20-48dp range of the font.
 @property --md-icon-wght {
   syntax: '<number>';
   inherits: true;
@@ -40,6 +47,16 @@
 }
 
 @layer md.sys.icon {
+  // icons.md: "the default grade for a dark icon on a light background is
+  // 0, and -25 for a light icon on a dark background". gb follows the system
+  // color scheme (`color-scheme: light dark`), where icons are light on dark
+  // surfaces.
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --md-icon-grad: -25;
+    }
+  }
+
   .md-icon,
   :host(.md-icon) {
     display: inline-flex;
@@ -54,10 +71,28 @@
     font-size: var(--md-icon-size);
     font-family: var(--md-icon-font);
     font-variation-settings:
-      'opsz' var(--md-icon-opsz),
+      // The size in px as a number (tan(atan2()) divides two lengths).
+      'opsz'
+        var(
+          --md-icon-opsz,
+          clamp(20, tan(atan2(var(--md-icon-size), 1px)), 48)
+        ),
       'wght' var(--md-icon-wght),
       'FILL' var(--md-icon-fill),
       'GRAD' var(--md-icon-grad);
     -webkit-font-smoothing: antialiased;
+    // icons.md Fill: "A fill attribute can be used to convey a state of
+    // transition, such as unfilled and filled states." The fast effects
+    // spring (scripts/m3/gen-motion.mjs).
+    transition: --md-icon-fill
+      var(--md-sys-motion-spring-fast-effects-duration, 150ms)
+      var(--md-sys-motion-spring-fast-effects, ease);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .md-icon,
+    :host(.md-icon) {
+      transition: none;
+    }
   }
 }

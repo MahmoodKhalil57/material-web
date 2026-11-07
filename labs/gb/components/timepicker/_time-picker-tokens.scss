@@ -67,6 +67,8 @@
   --scrim-color: var(--md-sys-color-scrim);
   // EDIT: Compose scrim alpha (Dialog window dim amount).
   --scrim-opacity: 0.32;
+  // EDIT: time-pickers.md "Density" ("High-density time picker displayed on mobile"; "Don't apply density to the time picker dial when the viewport is constrained"); foundations/layout/grids-spacing.md, Component scaling: 4dp per step (density 0 to -3).
+  --density-step: 4px;
 }
 
 @mixin input {
@@ -110,7 +112,7 @@
   // EDIT: Compose TimeSelector invalid input (errorContainer); no time input token.
   --time-input-field-error-container-color: var(--md-sys-color-error-container);
   // EDIT: Compose TimeSelector invalid input (onErrorContainer); no time input token.
-  --time-input-field-error-label-text-color: var(--md-sys-color-on-error-container);
+  --time-input-field-error-label-text-color: var( --md-sys-color-on-error-container );
   // EDIT: Compose TimeInput error indicator (error); no time input token.
   --time-input-field-error-outline-color: var(--md-sys-color-error);
 }
@@ -138,6 +140,7 @@
   --container-elevation: inherit;
   --container-padding: inherit;
   --container-shape: inherit;
+  --density-step: inherit;
   --headline: inherit;
   --headline-axes: inherit;
   --headline-color: inherit;

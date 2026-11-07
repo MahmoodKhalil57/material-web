@@ -4,8 +4,10 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../../../../tokens/versions/latest/sass/md-sys-state-focus-indicator';
 @use '../checkbox/checkbox-tokens';
 @use '../radio/radio-tokens';
+@use 'list-behaviors-tokens';
 @use 'list-tokens';
 // go/keep-sorted end
 
@@ -14,6 +16,7 @@
   .list {
     & {
       @include list-tokens.root;
+      @include list-behaviors-tokens.root;
     }
 
     &.list-segmented {
@@ -47,6 +50,41 @@
 
     slot {
       border-radius: inherit;
+    }
+  }
+
+  // Density (foundations Layout > Spacing > Density): 0 to -3. The items
+  // inherit `--_density` and shrink by `--density-step` per step.
+  .list.list-density-1 {
+    --_density: -1;
+  }
+
+  .list.list-density-2 {
+    --_density: -2;
+  }
+
+  .list.list-density-3 {
+    --_density: -3;
+  }
+
+  // Reorder: neighbors shift out of the way of the dragged item.
+  .list.list-reorderable {
+    > *,
+    ::slotted(*) {
+      transition: translate var(--md-sys-motion-spring-fast-spatial-duration)
+        var(--md-sys-motion-spring-fast-spatial);
+    }
+
+    > [dragging],
+    ::slotted([dragging]) {
+      transition: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      > *,
+      ::slotted(*) {
+        transition: none;
+      }
     }
   }
 
@@ -88,6 +126,36 @@
 
     &:is(:checked, .checked) {
       @include list-tokens.item-selected;
+
+      &:where(:not(.list-item-static)):is(
+          :hover,
+          .hover,
+          :focus-within,
+          .focus,
+          :active,
+          .active
+        ) {
+        @include list-tokens.item-selected-interactive;
+      }
+    }
+
+    // Two- and three-line items (Compose ListItem: an overline or supporting
+    // text makes a two-line item; both make a three-line item).
+    &:has(
+        .list-item-content
+          > :is(.list-item-overline, .list-item-supporting-text):is(
+            :not(slot),
+            .has-slotted
+          )
+      ) {
+      --container-height: var(--two-line-container-height);
+    }
+
+    &:has(.list-item-content > .list-item-overline:is(:not(slot), .has-slotted)):has(
+        .list-item-content
+          > .list-item-supporting-text:is(:not(slot), .has-slotted)
+      ) {
+      --container-height: var(--three-line-container-height);
     }
 
     &:is(:disabled, .disabled) {
@@ -100,11 +168,22 @@
       align-items: center;
       gap: var(--between-space);
       box-sizing: border-box;
-      min-height: var(--container-height);
+      // Density: "Higher density is typically applied by decreasing the top
+      // and bottom padding or overall height by 4dp" per step (foundations
+      // Layout > Spacing > Density); the padding loses half a step on each
+      // side so content-sized items shrink by a step too.
+      min-height: calc(
+        var(--container-height) + var(--_density, 0) * var(--density-step)
+      );
       border-radius: var(--container-shape);
       background-color: var(--container-color);
       padding-inline: var(--leading-space) var(--trailing-space);
-      padding-block: var(--top-space) var(--bottom-space);
+      padding-block: calc(
+          var(--top-space) + var(--_density, 0) * var(--density-step) / 2
+        )
+        calc(
+          var(--bottom-space) + var(--_density, 0) * var(--density-step) / 2
+        );
       color: var(--label-text-color);
       font: var(--label-text);
       letter-spacing: var(--label-text-tracking);
@@ -115,6 +194,20 @@
       text-align: unset;
       text-decoration: unset;
       width: stretch;
+      box-shadow: var(--container-elevation, none);
+      // Compose ListItem animates shape and elevation with the fast spatial
+      // spring and colors with the default effects spring. The swipe offset
+      // settles with the default spatial spring.
+      transition:
+        var(--ripple-transition, opacity 0s),
+        border-radius var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial),
+        box-shadow var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial),
+        background-color var(--md-sys-motion-spring-default-effects-duration)
+          var(--md-sys-motion-spring-default-effects),
+        translate var(--md-sys-motion-spring-default-spatial-duration)
+          var(--md-sys-motion-spring-default-spatial);
     }
 
     @container style(--first-child: true) {
@@ -214,6 +307,311 @@
 
     &:is(:checked, .checked) .list-item-checkbox {
       @include checkbox-tokens.selected;
+    }
+  }
+  // M3 Expressive list interactions: expand, reorder and reveal.
+  // Tokens: `_list-behaviors-tokens.scss` (md.comp.list.expand, .reorder,
+  // .reveal).
+
+  .list-item {
+    // Expand (md.comp.list.expand).
+    &.list-item-expandable {
+      @include list-behaviors-tokens.expand;
+    }
+
+    &.list-item-expanded {
+      @include list-behaviors-tokens.expand-expanded;
+
+      @container style(--list-segmented: true) {
+        @include list-behaviors-tokens.expand-expanded-segmented;
+      }
+    }
+
+    .list-item-expand-icon {
+      display: grid;
+      place-items: center;
+      flex: none;
+      inline-size: var(--expand-icon-container-size);
+      block-size: var(--expand-icon-container-size);
+      border-radius: var(--expand-icon-shape);
+      background-color: var(--expand-icon-container-color);
+      color: var(--expand-icon-color);
+      transition: background-color
+        var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects);
+
+      &::before {
+        content: 'expand_more' / '';
+        font: var(--trailing-icon-size) var(--md-icon-font);
+        transition: rotate var(--md-sys-motion-spring-fast-spatial-duration)
+          var(--md-sys-motion-spring-fast-spatial);
+      }
+    }
+
+    &.list-item-expanded .list-item-expand-icon::before {
+      rotate: 180deg;
+    }
+
+    // Reveal (md.comp.list.reveal): the item content while swiped away.
+    &.list-item-swiped {
+      @include list-behaviors-tokens.reveal;
+
+      @container style(--list-segmented: true) {
+        @include list-behaviors-tokens.reveal-segmented;
+      }
+
+      & {
+        border-radius: var(--container-shape);
+      }
+    }
+
+    &.list-item-swiping {
+      transition-property: border-radius, box-shadow, background-color;
+    }
+
+    // Room for the controls that overlay the trailing edge: the drag handle,
+    // the move up / move down buttons of a grabbed item and the reveal
+    // ("more") button. Each extra control takes a 48px target.
+    &.list-item-reorderable {
+      --_reorder-controls: 1;
+    }
+
+    &.list-item-grabbed {
+      --_move-controls: 2;
+    }
+
+    &.list-item-has-reveal-button {
+      --_reveal-controls: 1;
+    }
+
+    &:is(.list-item-reorderable, .list-item-has-reveal-button) {
+      padding-inline-end: calc(
+        var(--trailing-space) + var(--trailing-icon-size) +
+          var(--between-space) +
+          (
+            var(--_reorder-controls, 0) + var(--_move-controls, 0) +
+              var(--_reveal-controls, 0) - 1
+          ) *
+          var(--reorder-handle-size, 48px)
+      );
+    }
+
+    // Reorder (md.comp.list.reorder): the lifted item.
+    &.list-item-dragged {
+      @include list-behaviors-tokens.reorder-dragged;
+      @include list-behaviors-tokens.reorder-dragged-elevation;
+
+      & {
+        border-radius: var(--container-shape);
+        background-image: linear-gradient(var(--state-layer-color) 0 0),
+          var(--ripple, none);
+      }
+    }
+  }
+
+  // The drag handle and the single-pointer alternatives to dragging and
+  // swiping (WCAG 2.5.7): move up / move down and the reveal ("more") button.
+  .list-item-drag-handle,
+  .list-item-move-button,
+  .list-item-reveal-button {
+    @include list-tokens.item;
+
+    & {
+      display: grid;
+      place-items: center;
+      box-sizing: border-box;
+      inline-size: var(--reorder-handle-size, 48px);
+      block-size: var(--reorder-handle-size, 48px);
+      // Aligns the icon glyph with the item's trailing space; later controls
+      // sit `--_control-offset` further from the end.
+      margin-inline-end: calc(
+        var(--trailing-space) -
+          (var(--reorder-handle-size, 48px) - var(--trailing-icon-size)) / 2 +
+          var(--_control-offset, 0px)
+      );
+      padding: 0;
+      border: none;
+      border-radius: var(--md-sys-shape-corner-full);
+      background-color: transparent;
+      color: var(--trailing-icon-color);
+      cursor: grab;
+      touch-action: none;
+      appearance: none;
+    }
+
+    &::before {
+      content: 'drag_handle' / '';
+      font: var(--trailing-icon-size) var(--md-icon-font);
+    }
+
+    .list-item-dragged ~ & {
+      @include list-behaviors-tokens.reorder-dragged;
+    }
+
+    .list-item-dragged ~ &.list-item-drag-handle {
+      cursor: grabbing;
+    }
+
+    .list-item:is(:disabled, .disabled) ~ & {
+      @include list-tokens.item-disabled;
+      cursor: default;
+    }
+  }
+
+  .list-item-move-button,
+  .list-item-reveal-button {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .list-item-move-up::before {
+    content: 'arrow_upward' / '';
+  }
+
+  .list-item-move-down::before {
+    content: 'arrow_downward' / '';
+  }
+
+  .list-item-reveal-button::before {
+    content: 'more_vert' / '';
+  }
+
+  .list-drop-zone {
+    // A sibling of `.list` in `md-gb-list`, so it sets the list tokens too.
+    @include list-behaviors-tokens.root;
+
+    & {
+      position: absolute;
+      pointer-events: none;
+      box-sizing: border-box;
+      border-radius: var(--reorder-drop-zone-shape);
+      background-color: var(--reorder-drop-zone-color);
+      transition: translate var(--md-sys-motion-spring-fast-spatial-duration)
+        var(--md-sys-motion-spring-fast-spatial);
+    }
+  }
+
+  .list-live-region {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .list-item-expand-region {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial),
+      visibility 0s linear var(--md-sys-motion-spring-default-spatial-duration);
+
+    .list-item-expanded ~ & {
+      grid-template-rows: 1fr;
+      visibility: visible;
+      transition: grid-template-rows
+        var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial);
+    }
+  }
+
+  .list-item-expand-content {
+    min-block-size: 0;
+    overflow: clip;
+    padding-block-start: var(--gap, 0);
+  }
+
+  // Revealed actions sit behind the item content.
+  .list-item-actions {
+    @include list-behaviors-tokens.reveal-actions;
+
+    & {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: var(--reveal-action-gap);
+    }
+  }
+
+  .list-item-actions-leading,
+  .list-item-actions-trailing {
+    display: flex;
+    align-items: stretch;
+    gap: var(--reveal-action-gap);
+  }
+
+  .list-item-actions-trailing {
+    margin-inline-start: auto;
+  }
+
+  .list-item-actions-leading > *,
+  .list-item-actions-trailing > *,
+  .list-item-actions-leading::slotted(*),
+  .list-item-actions-trailing::slotted(*) {
+    --state-layer-color: var(--reveal-action-hover-state-layer-color);
+    --md-icon-color: var(--reveal-action-icon-color);
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    min-inline-size: var(--reveal-action-min-width);
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--reveal-action-shape);
+    background-color: var(--reveal-action-color);
+    color: var(--reveal-action-icon-color);
+    cursor: pointer;
+  }
+
+  // The primary action is the final end-aligned action (spec: Swipe).
+  .list-item-actions-trailing > :last-child,
+  .list-item-actions-trailing::slotted(:last-child) {
+    --state-layer-color: var(--reveal-primary-action-hover-state-layer-color);
+    --md-icon-color: var(--reveal-primary-action-icon-color);
+    border-radius: var(--reveal-primary-action-shape);
+    background-color: var(--reveal-primary-action-color);
+    color: var(--reveal-primary-action-icon-color);
+  }
+
+  // State layers (8% hover, 10% focus and pressed, like the ripple).
+  .list-item-actions-leading > :hover,
+  .list-item-actions-trailing > :hover,
+  .list-item-actions-leading::slotted(:hover),
+  .list-item-actions-trailing::slotted(:hover) {
+    background-image: linear-gradient(
+      hsl(from var(--state-layer-color) h s l / 8%) 0 0
+    );
+  }
+
+  .list-item-actions-leading > :is(:focus-visible, :active),
+  .list-item-actions-trailing > :is(:focus-visible, :active),
+  .list-item-actions-leading::slotted(:is(:focus-visible, :active)),
+  .list-item-actions-trailing::slotted(:is(:focus-visible, :active)) {
+    background-image: linear-gradient(
+      hsl(from var(--state-layer-color) h s l / 10%) 0 0
+    );
+  }
+
+  .list-item-actions-leading > :focus-visible,
+  .list-item-actions-trailing > :focus-visible,
+  .list-item-actions-leading::slotted(:focus-visible),
+  .list-item-actions-trailing::slotted(:focus-visible) {
+    outline: md-sys-state-focus-indicator.$thickness solid
+      var(--md-sys-color-secondary);
+    outline-offset: calc(-1 * md-sys-state-focus-indicator.$thickness);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .list-item,
+    .list-item .list-item-expand-icon,
+    .list-item .list-item-expand-icon::before,
+    .list-item-expand-region,
+    .list-drop-zone {
+      transition-duration: 0s;
+      transition-delay: 0s;
     }
   }
 }

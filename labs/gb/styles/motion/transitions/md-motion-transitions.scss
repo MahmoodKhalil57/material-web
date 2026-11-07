@@ -1,0 +1,322 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'skeleton-styles';
+// go/keep-sorted end
+
+// M3 transition patterns (m3.material.io/styles/motion/transitions).
+//
+// Spec: "M3 transitions use the legacy easing and duration system", so every
+// timing here is an `--md-sys-motion-easing-*` / `--md-sys-motion-duration-*`
+// token, not a spring. Adopt this sheet in the document: the View Transition
+// pseudo-elements (`::view-transition-*`) only exist there.
+//
+// `transitions.ts` drives the patterns. It reads the custom properties below
+// for its timings, so overriding one changes both the View Transition and the
+// Web Animations fallback.
+
+@layer md.sys.motion {
+  :root {
+    // Container transform. Spec (easing-and-duration, "Long durations"): "A
+    // Card expanding to full screen uses a long 500ms duration with Emphasized
+    // easing".
+    --md-transition-container-transform-duration: var(
+      --md-sys-motion-duration-long2
+    );
+    --md-transition-container-transform-easing: var(
+      --md-sys-motion-easing-emphasized
+    );
+
+    // Forward and backward (shared axis) and top level (fade through). The
+    // spec's "Android implementation" links point to MDC-Android
+    // MaterialSharedAxis / MaterialFadeThrough, which use motionDurationLong1
+    // with motionEasingEmphasizedInterpolator.
+    --md-transition-shared-axis-duration: var(--md-sys-motion-duration-long1);
+    --md-transition-shared-axis-easing: var(--md-sys-motion-easing-emphasized);
+    // MDC-Android SlideDistanceProvider default slide distance: 30dp.
+    --md-transition-shared-axis-distance: 30px;
+    --md-transition-fade-through-duration: var(--md-sys-motion-duration-long1);
+    --md-transition-fade-through-easing: var(--md-sys-motion-easing-emphasized);
+
+    // Lateral: content slides the full width, beginning and ending on screen.
+    // Spec (easing-and-duration, "Suggested easing and duration pairs"):
+    // Emphasized, 500ms, "Begin and end on screen".
+    --md-transition-lateral-duration: var(--md-sys-motion-duration-long2);
+    --md-transition-lateral-easing: var(--md-sys-motion-easing-emphasized);
+
+    // Enter and exit. Spec (suggested pairs): Emphasized decelerate 400ms to
+    // "Enter the screen", Emphasized accelerate 200ms to "Exit the screen"
+    // ("Exit the screen permanently"); Emphasized when the component exits
+    // temporarily, like a drawer ("Exit the screen temporarily").
+    --md-transition-enter-duration: var(--md-sys-motion-duration-medium4);
+    --md-transition-enter-easing: var(
+      --md-sys-motion-easing-emphasized-decelerate
+    );
+    --md-transition-exit-duration: var(--md-sys-motion-duration-short4);
+    --md-transition-exit-easing: var(
+      --md-sys-motion-easing-emphasized-accelerate
+    );
+    --md-transition-exit-temporary-easing: var(
+      --md-sys-motion-easing-emphasized
+    );
+    // Spec (transitions, "Clean fades"): "If a fade is needed, like with a
+    // Dialog entering in the middle of the screen, the fade should use a short
+    // duration".
+    --md-transition-enter-fade-duration: var(--md-sys-motion-duration-short2);
+
+    // Reduced motion. Spec (transitions, "Follows accessibility settings"):
+    // "Use subtle fades instead of intense sliding or scaling animations".
+    // Spec (easing-and-duration): the Standard set is for "small utility
+    // focused transitions that need to be quick".
+    --md-transition-reduced-duration: var(--md-sys-motion-duration-short4);
+    --md-transition-reduced-easing: var(--md-sys-motion-easing-standard);
+
+    // Skeleton content. Spec (transitions, "Skeleton loaders"): "Once content
+    // is loaded, it quickly fades in on top of the skeleton loader."
+    --md-transition-skeleton-fade-duration: var(
+      --md-sys-motion-duration-short4
+    );
+    --md-transition-skeleton-fade-easing: var(--md-sys-motion-easing-standard);
+  }
+
+  // View Transitions. `transitions.ts` names the participating elements and
+  // animates the old/new snapshots with the Web Animations API, so the UA
+  // cross-fade is turned off for them.
+
+  // Container transform: the group carries the bounds; JS morphs its corner
+  // radius and container color while the snapshots fade through.
+  ::view-transition-group(md-container-transform) {
+    animation-duration: var(--md-transition-container-transform-duration);
+    animation-timing-function: var(--md-transition-container-transform-easing);
+    overflow: clip;
+  }
+
+  ::view-transition-old(md-container-transform),
+  ::view-transition-new(md-container-transform) {
+    animation: none;
+  }
+
+  // Shared axis, lateral and fade through animate one scope: an element named
+  // `md-transition-scope`, or the whole page (`root`).
+  ::view-transition-group(md-transition-scope) {
+    animation-duration: var(--md-transition-shared-axis-duration);
+    animation-timing-function: var(--md-transition-shared-axis-easing);
+    // Sliding content stays inside the scope's bounds.
+    overflow: clip;
+  }
+
+  ::view-transition-old(md-transition-scope),
+  ::view-transition-new(md-transition-scope),
+  :root:is(
+      [data-md-transition='shared-axis'],
+      [data-md-transition='lateral'],
+      [data-md-transition='fade-through']
+    )::view-transition-old(root),
+  :root:is(
+      [data-md-transition='shared-axis'],
+      [data-md-transition='lateral'],
+      [data-md-transition='fade-through']
+    )::view-transition-new(root) {
+    animation: none;
+    // Fade through never overlaps the two; lateral slides them side by side.
+    mix-blend-mode: normal;
+  }
+
+  // Reduced motion: no bounds or shape morph, only the fade.
+  :root[data-md-transition-reduced]::view-transition-group(
+      md-container-transform
+    ),
+  :root[data-md-transition-reduced]::view-transition-group(
+      md-transition-scope
+    ) {
+    animation: none;
+  }
+
+  // Enter and exit (`enter()` / `exit()` in transitions.ts, or set the
+  // classes directly).
+  //
+  // Within screen bounds, spec: "Android components expand and collapse
+  // along the x or y axis as they enter and exit. Scale and z-axis motion is
+  // avoided" and "The direction a component enters is informed by their
+  // location on screen, expanding away from the device edge." The expand is a
+  // clip that grows away from the origin edge; the clip extends
+  // `--md-transition-clip-outset` past the box so shadows are not cut.
+  .md-transition-enter,
+  .md-transition-exit {
+    --_outset: calc(-1 * var(--md-transition-clip-outset, 24px));
+    --_clip: inset(var(--_outset) var(--_outset) 100% var(--_outset));
+    --_scale: 1;
+    --_translate: 0 0;
+  }
+
+  // Expands downward from the top edge (a menu at the top of the screen).
+  .md-transition-from-top {
+    --_clip: inset(var(--_outset) var(--_outset) 100% var(--_outset));
+    --_translate: 0 -100%;
+  }
+
+  // Expands upward from the bottom edge (a snackbar, a bottom sheet).
+  .md-transition-from-bottom {
+    --_clip: inset(100% var(--_outset) var(--_outset) var(--_outset));
+    --_translate: 0 100%;
+  }
+
+  .md-transition-from-start {
+    --_clip: inset(var(--_outset) 100% var(--_outset) var(--_outset));
+    --_translate: -100% 0;
+  }
+
+  .md-transition-from-end {
+    --_clip: inset(var(--_outset) var(--_outset) var(--_outset) 100%);
+    --_translate: 100% 0;
+  }
+
+  .md-transition-from-start:dir(rtl) {
+    --_clip: inset(var(--_outset) var(--_outset) var(--_outset) 100%);
+    --_translate: 100% 0;
+  }
+
+  .md-transition-from-end:dir(rtl) {
+    --_clip: inset(var(--_outset) 100% var(--_outset) var(--_outset));
+    --_translate: -100% 0;
+  }
+
+  // Expands from its middle along the y axis (a dialog).
+  .md-transition-from-center {
+    --_clip: inset(50% var(--_outset) 50% var(--_outset));
+    --_translate: 0 0;
+  }
+
+  .md-transition-enter {
+    animation:
+      md-transition-clip-in var(--md-transition-enter-duration)
+        var(--md-transition-enter-easing) both,
+      md-transition-fade-in var(--md-transition-enter-fade-duration)
+        var(--md-sys-motion-easing-standard) both;
+  }
+
+  .md-transition-exit {
+    animation:
+      md-transition-clip-out var(--md-transition-exit-duration)
+        var(--md-transition-exit-easing) forwards,
+      md-transition-fade-out var(--md-transition-exit-duration)
+        var(--md-transition-exit-easing) forwards;
+  }
+
+  .md-transition-exit.md-transition-temporary {
+    animation-timing-function: var(--md-transition-exit-temporary-easing);
+  }
+
+  // Uniform scale in, fade out (spec: "iOS components uniformly scale as
+  // they enter and fade out to exit").
+  .md-transition-enter.md-transition-scale {
+    // MDC-Android MaterialFade: DEFAULT_START_SCALE 0.8.
+    --_scale: 0.8;
+    animation:
+      md-transition-scale-in var(--md-transition-enter-duration)
+        var(--md-transition-enter-easing) both,
+      md-transition-fade-in var(--md-transition-enter-fade-duration)
+        var(--md-sys-motion-easing-standard) both;
+  }
+
+  .md-transition-exit.md-transition-scale {
+    animation: md-transition-fade-out var(--md-transition-exit-duration)
+      var(--md-transition-exit-easing) forwards;
+  }
+
+  // Beyond screen bounds: slides on and off from its edge. Spec: "Don't fade
+  // a bottom sheet as it enters and exits".
+  .md-transition-enter.md-transition-slide {
+    animation: md-transition-slide-in var(--md-transition-enter-duration)
+      var(--md-transition-enter-easing) both;
+  }
+
+  .md-transition-exit.md-transition-slide {
+    animation: md-transition-slide-out var(--md-transition-exit-duration)
+      var(--md-transition-exit-easing) forwards;
+  }
+
+  .md-transition-exit.md-transition-slide.md-transition-temporary {
+    animation-timing-function: var(--md-transition-exit-temporary-easing);
+  }
+
+  // Reduced motion: a quick fade only.
+  .md-transition-enter.md-transition-reduced,
+  .md-transition-exit.md-transition-reduced {
+    animation-duration: var(--md-transition-reduced-duration);
+    animation-name: md-transition-fade-in;
+    animation-timing-function: var(--md-transition-reduced-easing);
+  }
+
+  .md-transition-exit.md-transition-reduced {
+    animation-name: md-transition-fade-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .md-transition-enter,
+    .md-transition-exit {
+      animation-duration: var(--md-transition-reduced-duration);
+      animation-name: md-transition-fade-in;
+      animation-timing-function: var(--md-transition-reduced-easing);
+    }
+
+    .md-transition-exit {
+      animation-name: md-transition-fade-out;
+    }
+  }
+
+  @keyframes md-transition-clip-in {
+    from {
+      clip-path: var(--_clip);
+    }
+    to {
+      clip-path: inset(var(--_outset));
+    }
+  }
+
+  @keyframes md-transition-clip-out {
+    from {
+      clip-path: inset(var(--_outset));
+    }
+    to {
+      clip-path: var(--_clip);
+    }
+  }
+
+  @keyframes md-transition-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes md-transition-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes md-transition-scale-in {
+    from {
+      scale: var(--_scale);
+    }
+  }
+
+  @keyframes md-transition-slide-in {
+    from {
+      translate: var(--_translate);
+    }
+  }
+
+  @keyframes md-transition-slide-out {
+    to {
+      translate: var(--_translate);
+    }
+  }
+
+  // Skeleton loaders as a utility class: `<div class="md-skeleton">`, with
+  // `md-skeleton-text` or `md-skeleton-circle` for those shapes.
+  @include skeleton-styles.styles;
+}

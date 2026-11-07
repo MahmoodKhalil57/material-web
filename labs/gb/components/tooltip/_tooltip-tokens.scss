@@ -10,14 +10,6 @@
 // Token sets: 'md.comp.plain-tooltip', 'md.comp.rich-tooltip'
 
 @mixin root {
-  --container-color: var(--md-sys-color-inverse-surface);
-  --container-shape: var(--md-sys-shape-corner-xs);
-  --supporting-text: var(--md-sys-typescale-body-sm);
-  --supporting-text-axes: var(--md-sys-typescale-body-sm-axes);
-  --supporting-text-color: var(--md-sys-color-inverse-on-surface);
-  --supporting-text-tracking: var(--md-sys-typescale-body-sm-tracking);
-  // EDIT: Plain tooltips have no elevation token (Compose PlainTooltip shadowElevation = 0.dp).
-  --container-elevation: none;
   // EDIT: Compose TooltipMinWidth (40.dp).
   --min-width: 40px;
   // EDIT: Spec plain tooltip container height 24dp; Compose TooltipMinHeight.
@@ -36,6 +28,17 @@
   --caret-height: 8px;
   // EDIT: Spec dynamic positioning adjusts in 8dp increments to stay on screen.
   --viewport-margin: 8px;
+}
+
+@mixin plain {
+  --container-color: var(--md-sys-color-inverse-surface);
+  --container-shape: var(--md-sys-shape-corner-xs);
+  --supporting-text: var(--md-sys-typescale-body-sm);
+  --supporting-text-axes: var(--md-sys-typescale-body-sm-axes);
+  --supporting-text-color: var(--md-sys-color-inverse-on-surface);
+  --supporting-text-tracking: var(--md-sys-typescale-body-sm-tracking);
+  // EDIT: Plain tooltips have no elevation token (Compose PlainTooltip shadowElevation = 0.dp).
+  --container-elevation: none;
 }
 
 @mixin rich {
@@ -79,17 +82,10 @@
   --anchor-spacing: inherit;
   --caret-height: inherit;
   --caret-width: inherit;
-  --container-color: inherit;
-  --container-elevation: inherit;
-  --container-shape: inherit;
   --max-width: inherit;
   --min-height: inherit;
   --min-width: inherit;
   --padding-block: inherit;
   --padding-inline: inherit;
-  --supporting-text: inherit;
-  --supporting-text-axes: inherit;
-  --supporting-text-color: inherit;
-  --supporting-text-tracking: inherit;
   --viewport-margin: inherit;
 }

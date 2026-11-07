@@ -41,7 +41,9 @@ const baseClass = mixinDelegatesAria(LitElement);
  * A Material Design dialog: a modal window in front of app content that
  * provides critical information or asks for a decision. Built on a native
  * modal `<dialog>` (`showModal()`), so the rest of the page is inert while it
- * is open.
+ * is open. The dialog is in the top layer, so no other element (app bars,
+ * FABs, snackbars) can cover it or its focused controls (dialogs.md: dialogs
+ * shouldn't be obscured by other elements).
  *
  * Two variants: basic (default) and `full-screen`. Close it with `close()`,
  * a `<form method="dialog">` submit (the submitter's `value` becomes the

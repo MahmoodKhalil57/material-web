@@ -20,30 +20,29 @@ import {stories, StoryKnobs} from './stories.js';
 const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
   'Chip',
   [
-    new Knob('color', {
-      ui: selectDropdown({
-        options: [
-          {value: 'elevated', label: 'Elevated'},
-          {value: 'filled', label: 'Filled'},
-          {value: 'tonal', label: 'Tonal'},
-          {value: 'outlined', label: 'Outlined'},
-        ],
-      }),
-    }),
     new Knob('type', {
       ui: selectDropdown({
         options: [
-          {value: 'action', label: 'Action'},
+          {value: 'assist', label: 'Assist'},
           {value: 'filter', label: 'Filter'},
-          {value: 'toggle', label: 'Toggle'},
+          {value: 'input', label: 'Input'},
+          {value: 'suggestion', label: 'Suggestion'},
         ],
       }),
+    }),
+    new Knob('elevated', {
+      ui: boolInput(),
+      defaultValue: false,
     }),
     new Knob('selected', {
       ui: boolInput(),
       defaultValue: false,
     }),
     new Knob('removable', {
+      ui: boolInput(),
+      defaultValue: false,
+    }),
+    new Knob('dragged', {
       ui: boolInput(),
       defaultValue: false,
     }),
@@ -54,6 +53,17 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
     new Knob('softDisabled', {
       ui: boolInput(),
       defaultValue: false,
+    }),
+    new Knob('density', {
+      ui: selectDropdown({
+        options: [
+          {value: '0', label: '0 (32px)'},
+          {value: '-1', label: '-1 (28px)'},
+          {value: '-2', label: '-2 (24px)'},
+          {value: '-3', label: '-3 (20px)'},
+        ],
+      }),
+      defaultValue: '0',
     }),
   ],
 );

@@ -4,6 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../shared/density';
 @use 'tabs-tokens';
 // go/keep-sorted end
 
@@ -35,6 +36,10 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
       --tabs-secondary: true;
     }
 
+    // Density (tabs.md "Avoid applying density by default": opt in only).
+    // The tabs inherit `--_density` and shrink by `--density-step` per step.
+    @include density.classes('tabs');
+
     display: flex;
     // Horizontal only, always. `orientation="vertical"` on md-gb-tabs is an
     // anti-pattern; the API is not blocked, but it must produce no visual
@@ -53,7 +58,7 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     // stacked bar reaches 64dp by growing to fit its tabs. The container
     // cannot detect a stacked tab itself: `:has()` may not be nested inside
     // `:has()`, so `.tabs:has(> .tab:has(…))` is not a valid selector.
-    min-block-size: var(--container-height);
+    min-block-size: #{density.size(var(--container-height))};
     border-block-end: var(--divider-thickness) solid var(--divider-color);
 
     // Every bar scrolls once it overflows; there is no `.tabs-scrollable`.
@@ -84,7 +89,13 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     justify-content: center;
     gap: var(--icon-label-space);
     box-sizing: border-box;
-    min-block-size: calc(var(--container-height) - var(--divider-thickness));
+    // Density removes `--density-step` per step from the tab (48dp, or 64dp
+    // stacked); icons and labels keep their size (grids-spacing.md: "Text
+    // size shouldn't change as the container size scales"). tabs.md: dense
+    // tabs are below the 48dp target, so density is opt-in.
+    min-block-size: calc(
+      #{density.size(var(--container-height))} - var(--divider-thickness)
+    );
     padding-inline: var(--leading-space) var(--trailing-space);
     padding-block: 0;
     border: none;
@@ -287,8 +298,10 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
       )
       calc(anchor(--tab-content-end end) + var(--active-indicator-inset));
 
-    transition: inset var(--md-sys-motion-duration-medium1)
-      var(--md-sys-motion-easing-emphasized);
+    // Compose TabRow animates the indicator with
+    // MotionSchemeKeyTokens.DefaultSpatial.
+    transition: inset var(--md-sys-motion-spring-default-spatial-duration)
+      var(--md-sys-motion-spring-default-spatial);
   }
 
   // Secondary spans the whole tab (image A rows 3-4: x=121..300 is the entire

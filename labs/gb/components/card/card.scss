@@ -14,20 +14,58 @@
       @include card-tokens.root;
     }
 
-    &:is(:hover, .hover):where(
-        :has(.card-btn:not(:disabled, .disabled, [aria-disabled='true']))
-      ) {
-      @include card-tokens.hover;
+    &:is(:disabled, .disabled, [aria-disabled="true"]) {
+      --disabled: true;
     }
 
-    &:is(:disabled, .disabled, [aria-disabled='true']) {
-      --disabled: true;
+    // States (spec): hover and pressed apply to interactive cards only;
+    // `.dragged` / `aria-grabbed` raise a card being picked up and moved.
+    // Each style: resting tokens, then hover < focus < pressed < dragged
+    // (later states win), then disabled.
+    &.card-elevated {
+      @include card-tokens.elevated;
+
+      &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+        @include card-tokens.elevated-hover;
+      }
+
+      &:where(:focus-within, .focus) {
+        @include card-tokens.elevated-focus;
+      }
+
+      &:where(.active, :has(.card-btn:active)):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+        @include card-tokens.elevated-pressed;
+      }
+
+      &:where(.dragged, [aria-grabbed="true"]) {
+        @include card-tokens.elevated-dragged;
+      }
+
+      &:where(:disabled, .disabled, [aria-disabled="true"]) {
+        @include card-tokens.elevated-disabled;
+      }
     }
 
     &.card-filled {
       @include card-tokens.filled;
 
-      &:where(:disabled, .disabled, [aria-disabled='true']) {
+      &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+        @include card-tokens.filled-hover;
+      }
+
+      &:where(:focus-within, .focus) {
+        @include card-tokens.filled-focus;
+      }
+
+      &:where(.active, :has(.card-btn:active)):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+        @include card-tokens.filled-pressed;
+      }
+
+      &:where(.dragged, [aria-grabbed="true"]) {
+        @include card-tokens.filled-dragged;
+      }
+
+      &:where(:disabled, .disabled, [aria-disabled="true"]) {
         @include card-tokens.filled-disabled;
       }
     }
@@ -35,26 +73,24 @@
     &.card-outlined {
       @include card-tokens.outlined;
 
+      &:where(:hover, .hover):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+        @include card-tokens.outlined-hover;
+      }
+
       &:where(:focus-within, .focus) {
         @include card-tokens.outlined-focus;
       }
 
-      &:where(:disabled, .disabled, [aria-disabled='true']) {
+      &:where(.active, :has(.card-btn:active)):where(:has(.card-btn:not(:disabled, .disabled, [aria-disabled="true"]))) {
+        @include card-tokens.outlined-pressed;
+      }
+
+      &:where(.dragged, [aria-grabbed="true"]) {
+        @include card-tokens.outlined-dragged;
+      }
+
+      &:where(:disabled, .disabled, [aria-disabled="true"]) {
         @include card-tokens.outlined-disabled;
-      }
-    }
-
-    &.card-elevated {
-      @include card-tokens.elevated;
-
-      &:where(:hover, .hover):where(
-          :has(.card-btn:not(:disabled, .disabled, [aria-disabled='true']))
-        ) {
-        @include card-tokens.elevated-hover;
-      }
-
-      &:where(:disabled, .disabled, [aria-disabled='true']) {
-        @include card-tokens.elevated-disabled;
       }
     }
 
@@ -66,7 +102,18 @@
       background-color: var(--container-color);
       border-radius: var(--container-shape);
       box-shadow: var(--container-elevation);
-      border: var(--outline-width) solid var(--outline-color);
+      // Elevated and filled cards have no outline.
+      border: var(--outline-width, 0) solid var(--outline-color, transparent);
+      // Elevation and outline changes are effects (not movement), so they keep
+      // animating with reduced motion.
+      transition-property: box-shadow, border-color;
+      transition-duration: var(--md-sys-motion-spring-fast-effects-duration);
+      transition-timing-function: var(--md-sys-motion-spring-fast-effects);
+    }
+
+    // Compose CardDefaults: disabled content uses 38% of the content color.
+    &:is(:disabled, .disabled, [aria-disabled="true"]) > :not(.card-btn, slot) {
+      opacity: var(--disabled-content-opacity);
     }
 
     &:has(> .fx-playing) {
@@ -82,6 +129,13 @@
       position: absolute;
       inset: 0;
       color: var(--state-layer-color);
+      // A link card (`<a class="card-btn">`) is a block covering the card.
+      display: block;
+      cursor: pointer;
+    }
+
+    .card-btn:is(:disabled, .disabled, [aria-disabled="true"]) {
+      cursor: default;
     }
   }
 }

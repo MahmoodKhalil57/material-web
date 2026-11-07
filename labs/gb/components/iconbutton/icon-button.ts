@@ -11,6 +11,7 @@ import {
 } from '../../../../internal/events/dispatch-hooks.js';
 import {focusRingClasses} from '../focus/focus-ring.js';
 import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES, isDisabled} from '../shared/pseudo-classes.js';
 
@@ -65,6 +66,7 @@ export const ICON_BUTTON_CLASSES = {
   iconBtnSelected: 'icon-btn-selected',
   active: PSEUDO_CLASSES.active,
   disabled: PSEUDO_CLASSES.disabled,
+  ...densityClassNames('icon-btn'),
 };
 
 /** The state provided to the `iconButtonClasses()` function. */
@@ -83,6 +85,11 @@ export interface IconButtonClassesState {
   active?: boolean;
   /** Emulates `:disabled`. */
   disabled?: boolean;
+  /**
+   * The density, 0 (default) to -3. Density 0 inherits the density of an
+   * enclosing button group.
+   */
+  density?: number;
 }
 
 /**
@@ -100,6 +107,7 @@ export function iconButtonClasses({
   selected,
   active = false,
   disabled = false,
+  density = 0,
 }: IconButtonClassesState = {}): ClassInfo {
   return {
     ...rippleClasses(),
@@ -123,6 +131,7 @@ export function iconButtonClasses({
     [ICON_BUTTON_CLASSES.iconBtnSelected]: selected === true,
     [ICON_BUTTON_CLASSES.active]: active,
     [ICON_BUTTON_CLASSES.disabled]: disabled,
+    ...densityClasses(ICON_BUTTON_CLASSES.iconBtn, density),
   };
 }
 

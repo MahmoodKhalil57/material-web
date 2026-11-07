@@ -43,7 +43,9 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --container-color
  * @cssprop --container-elevation
  * @cssprop --container-height
- * @cssprop --container-shape
+ * @cssprop --container-shape - The resolved shape; defaults to the round or square shape.
+ * @cssprop --container-shape-round
+ * @cssprop --container-shape-square
  * @cssprop --icon-color
  * @cssprop --icon-label-space
  * @cssprop --icon-size

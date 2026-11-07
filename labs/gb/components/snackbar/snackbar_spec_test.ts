@@ -36,6 +36,22 @@ const CASES: SpecCase[] = [
   },
   {
     "mixin": "root",
+    "prop": "action-label-text",
+    "token": "md.comp.snackbar.action.label-text.font",
+    "spec": "var(--md-sys-typescale-label-lg)",
+    "property": "font",
+    "markup": "<span></span><div class=\"snackbar\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
+    "prop": "action-label-text-axes",
+    "token": "md.comp.snackbar.action.label-text.font",
+    "spec": "var(--md-sys-typescale-label-lg-axes)",
+    "property": "font-variation-settings",
+    "markup": "<span></span><div class=\"snackbar\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
     "prop": "action-label-text-tracking",
     "token": "md.comp.snackbar.action.label-text.tracking",
     "spec": "var(--md-sys-typescale-label-lg-tracking)",
@@ -84,6 +100,22 @@ const CASES: SpecCase[] = [
   },
   {
     "mixin": "root",
+    "prop": "supporting-text",
+    "token": "md.comp.snackbar.supporting-text.font",
+    "spec": "var(--md-sys-typescale-body-md)",
+    "property": "font",
+    "markup": "<span></span><div class=\"snackbar\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
+    "prop": "supporting-text-axes",
+    "token": "md.comp.snackbar.supporting-text.font",
+    "spec": "var(--md-sys-typescale-body-md-axes)",
+    "property": "font-variation-settings",
+    "markup": "<span></span><div class=\"snackbar\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
     "prop": "supporting-text-color",
     "token": "md.comp.snackbar.supporting-text.color",
     "spec": "var(--md-sys-color-inverse-on-surface)",
@@ -96,6 +128,22 @@ const CASES: SpecCase[] = [
     "token": "md.comp.snackbar.supporting-text.tracking",
     "spec": "var(--md-sys-typescale-body-md-tracking)",
     "property": "letter-spacing",
+    "markup": "<span></span><div class=\"snackbar\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
+    "prop": "with-single-line-container-height",
+    "token": "md.comp.snackbar.with-single-line.container.height",
+    "spec": "48px",
+    "property": "width",
+    "markup": "<span></span><div class=\"snackbar\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "root",
+    "prop": "with-two-lines-container-height",
+    "token": "md.comp.snackbar.with-two-lines.container.height",
+    "spec": "68px",
+    "property": "width",
     "markup": "<span></span><div class=\"snackbar\" data-spec-target></div><span></span>"
   }
 ];

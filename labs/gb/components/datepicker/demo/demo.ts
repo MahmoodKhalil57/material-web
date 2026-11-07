@@ -53,6 +53,19 @@ const collection = new MaterialCollection<KnobTypesToKnobs<StoryKnobs>>(
     new Knob('clearable', {ui: boolInput(), defaultValue: false}),
     new Knob('rtl', {ui: boolInput(), defaultValue: false}),
     new Knob('quick', {ui: boolInput(), defaultValue: false}),
+    // The text fields' density; the calendar keeps 48dp targets
+    // (date-pickers.md, Accessibility).
+    new Knob('density', {
+      ui: selectDropdown({
+        options: [
+          {value: '0', label: '0'},
+          {value: '-1', label: '-1'},
+          {value: '-2', label: '-2'},
+          {value: '-3', label: '-3'},
+        ],
+      }),
+      defaultValue: '0',
+    }),
   ],
 );
 

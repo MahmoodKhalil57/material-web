@@ -31,6 +31,7 @@ export interface StoryKnobs {
   error: boolean;
   leadingIcon: boolean;
   trailingIcon: boolean;
+  density: string;
 }
 
 adoptStyles(document, [
@@ -96,6 +97,7 @@ const playground: MaterialStoryInit<StoryKnobs> = {
       <div class="demo">
         <md-gb-text-field
           variant=${knobs.variant}
+          density=${knobs.density}
           label=${knobs.label}
           placeholder=${knobs.placeholder}
           supporting-text=${knobs.supportingText}
@@ -105,15 +107,20 @@ const playground: MaterialStoryInit<StoryKnobs> = {
           .maxLength=${Number(knobs.maxLength)}
           ?disabled=${knobs.disabled}
           ?required=${knobs.required}
-          ?error=${knobs.error}>
-          ${knobs.leadingIcon
-            ? html`<md-gb-icon slot="leading-icon">search</md-gb-icon>`
-            : ''}
-          ${knobs.trailingIcon
-            ? html`<md-gb-icon slot="trailing-icon">${knobs.error
-                ? 'error'
-                : 'mic'}</md-gb-icon>`
-            : ''}
+          ?error=${knobs.error}
+        >
+          ${
+            knobs.leadingIcon
+              ? html`<md-gb-icon slot="leading-icon">search</md-gb-icon>`
+              : ''
+          }
+          ${
+            knobs.trailingIcon
+              ? html`<md-gb-icon slot="trailing-icon"
+                  >${knobs.error ? 'error' : 'mic'}</md-gb-icon
+                >`
+              : ''
+          }
         </md-gb-text-field>
       </div>
     `;
@@ -127,23 +134,23 @@ function variantGrid(variant: TextFieldVariant) {
       <md-gb-text-field
         variant=${variant}
         label="Label"
-        value="Input text"></md-gb-text-field>
+        value="Input text"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         label="Label"
         placeholder="Placeholder"
-        supporting-text="Supporting text"></md-gb-text-field>
-      <md-gb-text-field
-        variant=${variant}
-        label="Label"
-        value="Input text">
+        supporting-text="Supporting text"
+      ></md-gb-text-field>
+      <md-gb-text-field variant=${variant} label="Label" value="Input text">
         <md-gb-icon slot="leading-icon">search</md-gb-icon>
       </md-gb-text-field>
       <md-gb-text-field variant=${variant} label="Label" value="Input text">
         <md-gb-icon-button
           slot="trailing-icon"
           color="standard"
-          aria-label="Clear">
+          aria-label="Clear"
+        >
           <md-gb-icon>cancel</md-gb-icon>
         </md-gb-icon-button>
       </md-gb-text-field>
@@ -155,61 +162,69 @@ function variantGrid(variant: TextFieldVariant) {
         variant=${variant}
         label="Amount"
         prefix-text="$"
-        value="100"></md-gb-text-field>
+        value="100"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         label="Email"
         suffix-text="@gmail.com"
-        value="name"></md-gb-text-field>
+        value="name"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         label="Username"
         required
-        supporting-text="*required"></md-gb-text-field>
+        supporting-text="*required"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         label="Bio"
         maxlength="20"
         .maxLength=${20}
         value="Hello"
-        supporting-text="Supporting text"></md-gb-text-field>
+        supporting-text="Supporting text"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         label="ZIP code"
         value="1234"
         error
-        error-text="Not a valid ZIP code">
-        <md-gb-icon slot="trailing-icon" aria-label="Error"
-          >error</md-gb-icon
-        >
+        error-text="Not a valid ZIP code"
+      >
+        <md-gb-icon slot="trailing-icon" aria-label="Error">error</md-gb-icon>
       </md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         label="Disabled"
         value="Input text"
         supporting-text="Supporting text"
-        disabled></md-gb-text-field>
+        disabled
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         label="Read-only"
         value="Input text"
         readonly
-        supporting-text="Read-only"></md-gb-text-field>
+        supporting-text="Read-only"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         type="textarea"
         label="Text area"
         rows="3"
-        supporting-text="Multi-line text area"></md-gb-text-field>
+        supporting-text="Multi-line text area"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         type="password"
         label="Password"
-        value="secret"></md-gb-text-field>
+        value="secret"
+      ></md-gb-text-field>
       <md-gb-text-field
         variant=${variant}
         type="date"
-        label="Date"></md-gb-text-field>
+        label="Date"
+      ></md-gb-text-field>
     </div>
   `;
 }
@@ -259,17 +274,20 @@ const forms: MaterialStoryInit<StoryKnobs> = {
             name="name"
             label="Name"
             required
-            supporting-text="*required"></md-gb-text-field>
+            supporting-text="*required"
+          ></md-gb-text-field>
           <md-gb-text-field
             name="email"
             type="email"
             label="Email"
-            required></md-gb-text-field>
+            required
+          ></md-gb-text-field>
           <md-gb-text-field
             name="zip"
             label="ZIP code"
             pattern="[0-9]{5}"
-            supporting-text="5 digits"></md-gb-text-field>
+            supporting-text="5 digits"
+          ></md-gb-text-field>
           <div class="actions">
             <md-gb-button color="filled" type="submit">Submit</md-gb-button>
             <md-gb-button color="outlined" type="button" @click=${report}
@@ -284,5 +302,39 @@ const forms: MaterialStoryInit<StoryKnobs> = {
   },
 };
 
+// text-fields.md "Density": "Dense text fields enable people to scan and take
+// action on large amounts of information"; "Avoid applying density by
+// default". Each step removes 4px from the container height.
+const density: MaterialStoryInit<StoryKnobs> = {
+  name: 'Density',
+  styles,
+  render({variant}) {
+    return html`
+      <div class="demo">
+        <div class="grid">
+          ${[0, -1, -2, -3].map(
+            (d) => html`
+              <md-gb-text-field
+                variant=${variant}
+                density=${d}
+                label="Density ${d}"
+                value="Input text"
+              ></md-gb-text-field>
+              <md-gb-text-field
+                variant=${variant}
+                density=${d}
+                label="Density ${d}"
+                has-leading-icon
+              >
+                <md-gb-icon slot="leading-icon">search</md-gb-icon>
+              </md-gb-text-field>
+            `,
+          )}
+        </div>
+      </div>
+    `;
+  },
+};
+
 /** Text field demo stories. */
-export const stories = [playground, filled, outlined, forms];
+export const stories = [playground, filled, outlined, forms, density];

@@ -1,0 +1,101 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../../styles/layout/md-layout';
+// go/keep-sorted end
+
+// Compose Scaffold: the FAB sits 16dp from the end edge and above the bottom
+// bar (FabSpacing); the snackbar sits above the FAB.
+$_fab-spacing: 16px;
+
+@layer md.sys;
+@layer md.comp.app-scaffold {
+  :host {
+    @include md-layout.constants;
+  }
+
+  @each $class in md-layout.$window-classes {
+    :host([window-class='#{$class}']) {
+      @include md-layout.tokens($class);
+    }
+  }
+
+  // Scaffold regions (spec: foundations/layout/scaffold): the leading rail
+  // region spans the full height; the top bar and content sit beside it;
+  // the bottom bar spans the full width.
+  .app-scaffold {
+    background-color: var(--container-color, var(--md-sys-color-surface));
+    block-size: 100%;
+    box-sizing: border-box;
+    color: var(--content-color, var(--md-sys-color-on-surface));
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .app-scaffold-rail {
+    display: flex;
+    grid-column: 1;
+    grid-row: 1 / -1;
+    min-block-size: 0;
+  }
+
+  .app-scaffold-top {
+    grid-column: 2;
+    grid-row: 1;
+    min-inline-size: 0;
+  }
+
+  .app-scaffold-body {
+    display: flex;
+    flex-direction: column;
+    grid-column: 2;
+    grid-row: 2;
+    min-block-size: 0;
+    min-inline-size: 0;
+    position: relative;
+  }
+
+  .app-scaffold-content {
+    flex: 1;
+    min-block-size: 0;
+    overflow: auto;
+  }
+
+  .app-scaffold-bar {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    min-inline-size: 0;
+  }
+
+  // FAB and snackbar float above the content, at the bottom of the body
+  // region (so above the navigation bar).
+  .app-scaffold-overlay {
+    display: flex;
+    flex-direction: column;
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+  }
+
+  // The snackbar positions itself at the bottom of this region.
+  .app-scaffold-snackbar {
+    flex: 1;
+    position: relative;
+  }
+
+  .app-scaffold-fab {
+    align-self: flex-end;
+    margin-block-end: $_fab-spacing;
+    margin-inline-end: $_fab-spacing;
+    pointer-events: auto;
+  }
+
+  .app-scaffold [hidden] {
+    display: none;
+  }
+}

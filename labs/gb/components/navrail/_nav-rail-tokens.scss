@@ -10,11 +10,22 @@
   --container-shape: var(--md-sys-shape-corner-none);
   --container-vertical-padding: var(--md-sys-space-500);
   --container-width: 96px;
+  // md.comp.nav-rail.collapsed.narrow.container.width (Compose
+  // NavigationRail minimum width)
+  --collapsed-narrow-container-width: 80px;
+  // md.comp.nav-rail.collapsed.top-space / expanded.top-space (Compose
+  // WNRTopPadding)
+  --collapsed-top-space: 44px;
+  --expanded-top-space: 44px;
+  // md.comp.nav-rail.collapsed.item.vertical-space: the gap between items
+  // in the collapsed rail; Compose uses 0 when expanded.
+  --collapsed-item-vertical-space: var(--md-sys-space-50);
   --expanded-container-color: var(--md-sys-color-surface);
   --expanded-container-width-maximum: 360px;
   --expanded-container-width-minimum: 220px;
   --expanded-modal-container-color: var(--md-sys-color-surface-container);
-  --header-space-minimum: 40px;
+  // md.comp.nav-rail.item.header-space-minimum
+  --header-space-minimum: var(--md-sys-space-500);
   --item-active-focused-icon-color: var(--md-sys-color-on-secondary-container);
   --item-active-focused-label-text-color: var(--md-sys-color-secondary);
   --item-active-hovered-icon-color: var(--md-sys-color-on-secondary-container);
@@ -30,10 +41,17 @@
   --item-active-state-layer-color: var(--md-sys-color-on-secondary-container);
   --item-container-height: 64px;
   --item-container-vertical-space: 6px;
-  --item-full-width-leading-space: 20px;
-  --item-full-width-trailing-space: 20px;
+  // md.comp.nav-rail.item.horizontal.full-width.leading-space and .trailing-space:
+  // the expanded (horizontal) item's indicator padding (Compose
+  // WideNavigationRailItemDefaults.IndicatorExpandedPadding).
+  --item-full-width-leading-space: var(--md-sys-space-200);
+  --item-full-width-trailing-space: var(--md-sys-space-200);
+  // Compose WNRItemHorizontalPadding (no token): items and header inset
+  // from the expanded rail edges.
+  --item-outer-space: 20px;
   --item-horizontal-active-indicator-height: 56px;
-  --item-horizontal-icon-label-space: 8px;
+  // md.comp.nav-rail.item.horizontal.icon-label-space
+  --item-horizontal-icon-label-space: var(--md-sys-space-100);
   --item-icon-size: 24px;
   --item-inactive-focused-icon-color: var(--md-sys-color-on-surface);
   --item-inactive-focused-label-text-color: var(--md-sys-color-on-surface);
@@ -44,16 +62,22 @@
   --item-inactive-pressed-icon-color: var(--md-sys-color-on-surface);
   --item-inactive-pressed-label-text-color: var(--md-sys-color-on-surface);
   --item-inactive-state-layer-color: var(--md-sys-color-on-secondary-container);
-  --item-label-text: var(--md-sys-typescale-label-md);
-  --item-label-text-axes: var(--md-sys-typescale-label-md-axes);
-  --item-label-text-tracking: var(--md-sys-typescale-label-md-tracking);
-  --item-vertical-icon-label-space: 4px;
-  --item-vertical-leading-space: 16px;
-  --item-vertical-trailing-space: 16px;
+  --item-label-text-font: var(--md-sys-typescale-label-md);
+  --item-label-text-font-axes: var(--md-sys-typescale-label-md-axes);
+  --item-label-text-font-tracking: var(--md-sys-typescale-label-md-tracking);
+  // md.comp.nav-rail.item.vertical.icon-label-space, .leading-space and .trailing-space
+  --item-vertical-icon-label-space: var(--md-sys-space-50);
+  --item-vertical-leading-space: var(--md-sys-space-200);
+  --item-vertical-trailing-space: var(--md-sys-space-200);
   --modal-container-elevation: var(--md-sys-elevation-shadow-2);
   --modal-container-shape: var(--md-sys-shape-corner-lg);
-  --motion-duration: var(--md-sys-motion-duration-short4);
-  --motion-easing: var(--md-sys-motion-easing-emphasized);
+  // Compose WideNavigationRailDefaults modalScrimColor (ScrimTokens: scrim
+  // at 32%).
+  --modal-scrim-color: hsl(from var(--md-sys-color-scrim) h s l / 32%);
+  // Compose NavigationItem / WideNavigationRail animate the indicator and
+  // the expanded width with MotionSchemeKeyTokens.DefaultSpatial.
+  --motion-duration: var(--md-sys-motion-spring-default-spatial-duration);
+  --motion-easing: var(--md-sys-motion-spring-default-spatial);
   // LINT.ThenChange(nav-rail-element.ts) keep in sync with `@cssprop` jsdoc tags
 }
 
@@ -75,9 +99,9 @@
   );
   --item-container-height: var(--item-horizontal-active-indicator-height);
   --item-container-vertical-space: 0px;
-  --item-label-text: var(--md-sys-typescale-label-lg);
-  --item-label-text-axes: var(--md-sys-typescale-label-lg-axes);
-  --item-label-text-tracking: var(--md-sys-typescale-label-lg-tracking);
+  --item-label-text-font: var(--md-sys-typescale-label-lg);
+  --item-label-text-font-axes: var(--md-sys-typescale-label-lg-axes);
+  --item-label-text-font-tracking: var(--md-sys-typescale-label-lg-tracking);
 }
 
 @mixin modal {
@@ -86,7 +110,7 @@
   --container-shape: var(--modal-container-shape);
 }
 
-@mixin vertical-item {
+@mixin vertical {
   --item-active-focused-label-text-color: var(--md-sys-color-secondary);
   --item-active-hovered-label-text-color: var(--md-sys-color-secondary);
   --item-active-indicator-height: 32px;
@@ -95,12 +119,12 @@
   --item-active-pressed-label-text-color: var(--md-sys-color-secondary);
   --item-container-height: 64px;
   --item-container-vertical-space: 6px;
-  --item-label-text: var(--md-sys-typescale-label-md);
-  --item-label-text-axes: var(--md-sys-typescale-label-md-axes);
-  --item-label-text-tracking: var(--md-sys-typescale-label-md-tracking);
+  --item-label-text-font: var(--md-sys-typescale-label-md);
+  --item-label-text-font-axes: var(--md-sys-typescale-label-md-axes);
+  --item-label-text-font-tracking: var(--md-sys-typescale-label-md-tracking);
 }
 
-@mixin horizontal-item {
+@mixin horizontal {
   --item-active-focused-label-text-color: var(
     --md-sys-color-on-secondary-container
   );
@@ -117,7 +141,7 @@
   );
   --item-container-height: var(--item-horizontal-active-indicator-height);
   --item-container-vertical-space: 0px;
-  --item-label-text: var(--md-sys-typescale-label-lg);
-  --item-label-text-axes: var(--md-sys-typescale-label-lg-axes);
-  --item-label-text-tracking: var(--md-sys-typescale-label-lg-tracking);
+  --item-label-text-font: var(--md-sys-typescale-label-lg);
+  --item-label-text-font-axes: var(--md-sys-typescale-label-lg-axes);
+  --item-label-text-font-tracking: var(--md-sys-typescale-label-lg-tracking);
 }

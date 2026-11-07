@@ -30,6 +30,11 @@ $slide-distance: 20%;
   :host,
   .date-picker {
     @include date-picker-tokens.root;
+    // date-pickers.md, Accessibility: "Increasing density would negatively
+    // impact accessibility by limiting tappable/clickable targets." The
+    // calendar ignores the density of an enclosing container; only the text
+    // fields take the picker's `density` (`md-gb-text-field` `density`).
+    --_density: 0;
   }
 
   // The element marks its variants on the host only, so variant token values
@@ -52,6 +57,11 @@ $slide-distance: 20%;
 
   :host([variant='modal']:not([inline])) {
     display: contents;
+  }
+
+  // An inline full-screen surface fills the host; give the host a height.
+  :host([variant='modal'][fullscreen][inline]) {
+    display: block;
   }
 
   // Inside the element, the host is the token root. The surface inherits the
@@ -160,6 +170,26 @@ $slide-distance: 20%;
         var(--md-sys-motion-spring-fast-effects);
   }
 
+  // Full screen (spec: "It can cover the entire screen"): the dialog fills
+  // the window and the surface uses the range selection container tokens
+  // (no corner radius, no shadow).
+  .date-picker-dialog.date-picker-dialog-fullscreen {
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    max-block-size: none;
+    margin: 0;
+  }
+
+  .date-picker.date-picker-fullscreen {
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    max-block-size: none;
+    border-radius: var(--range-selection-container-shape);
+    box-shadow: var(--range-selection-container-elevation);
+  }
+
   .date-picker-dialog::backdrop {
     background-color: var(--scrim-color);
     opacity: var(--scrim-opacity);
@@ -258,6 +288,55 @@ $slide-distance: 20%;
     font-variation-settings: var(--header-headline-axes);
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Range: Compose DateRangePicker's header (title and headline inset to
+  // line up after the full-screen close button; the header is the range
+  // selection header height minus the full-screen row).
+  .date-picker-range .date-picker-modal-header {
+    min-block-size: calc(
+      var(--range-selection-header-container-height) - var(
+          --range-selection-header-bar-height
+        )
+    );
+    padding-inline-start: var(--range-selection-header-padding-inline-start);
+  }
+
+  .date-picker-fullscreen .date-picker-modal-header {
+    min-block-size: var(--range-selection-header-container-height);
+    padding-block-start: 0;
+    padding-inline-start: var(--range-selection-header-padding-inline-start);
+  }
+
+  // The close icon button and Save, above the title.
+  .date-picker-fullscreen-bar {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    block-size: var(--range-selection-header-bar-height);
+    margin-inline-start: calc(
+      var(--range-selection-header-bar-padding-inline) - var(
+          --range-selection-header-padding-inline-start
+        )
+    );
+    margin-inline-end: calc(
+      var(--range-selection-header-bar-padding-inline) - var(
+          --header-padding-inline-end
+        )
+    );
+  }
+
+  .date-picker-close {
+    --icon-color: var(--header-headline-color);
+    --outline-width: 0;
+  }
+
+  .date-picker-save {
+    --leading-space: #{$action-padding-inline};
+    --trailing-space: #{$action-padding-inline};
+    --outline-width: 0;
     white-space: nowrap;
   }
 
@@ -384,6 +463,100 @@ $slide-distance: 20%;
     letter-spacing: var(--weekdays-label-text-tracking);
     font-variation-settings: var(--weekdays-label-text-axes);
     cursor: default;
+  }
+
+  // Month swipe: the weeks follow the pointer, with the previous and next
+  // months beside them, then spring into place (Compose month pager snap:
+  // the default effects spring).
+  .date-picker-pager {
+    position: relative;
+    touch-action: pan-y;
+  }
+
+  .date-picker-pager-dragging {
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .date-picker-pager-track {
+    position: relative;
+  }
+
+  .date-picker-pager-settling {
+    transition: translate var(--md-sys-motion-spring-default-effects-duration)
+      var(--md-sys-motion-spring-default-effects);
+  }
+
+  .date-picker-weeks-adjacent {
+    position: absolute;
+    inset-block-start: 0;
+    inline-size: 100%;
+  }
+
+  .date-picker-weeks-adjacent-prev {
+    inset-inline-start: -100%;
+  }
+
+  .date-picker-weeks-adjacent-next {
+    inset-inline-start: 100%;
+  }
+
+  // ---------------------------------------------------------------------
+  // Modal range: a vertically scrolling list of months.
+
+  .date-picker-scrolling {
+    block-size: var(--container-height);
+  }
+
+  .date-picker-scrolling .date-picker-calendar {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-block-size: 0;
+  }
+
+  // The weekdays reserve the list's scrollbar gutter so their columns line
+  // up with the dates.
+  .date-picker-scrolling-weekdays,
+  .date-picker-months {
+    padding-inline: var(--padding-inline);
+    scrollbar-gutter: stable;
+  }
+
+  .date-picker-scrolling-weekdays {
+    flex: none;
+    overflow: hidden;
+  }
+
+  .date-picker-months {
+    position: relative;
+    flex: 1;
+    min-block-size: 0;
+    max-block-size: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .date-picker-months-content {
+    position: relative;
+  }
+
+  .date-picker-month {
+    position: absolute;
+    inset-inline: 0;
+  }
+
+  .date-picker-month-subhead {
+    padding-block: var(--range-selection-month-subhead-padding-block-start)
+      var(--range-selection-month-subhead-padding-block-end);
+    padding-inline-start: var(
+      --range-selection-month-subhead-padding-inline-start
+    );
+    color: var(--range-selection-month-subhead-color);
+    font: var(--range-selection-month-subhead);
+    letter-spacing: var(--range-selection-month-subhead-tracking);
+    font-variation-settings: var(--range-selection-month-subhead-axes);
   }
 
   // The new month slides in from the side it comes from (mirrored in RTL),
@@ -583,7 +756,8 @@ $slide-distance: 20%;
     font-variation-settings: var(--year-selection-year-label-text-axes);
   }
 
-  .date-picker-year.date-picker-list-item-current .date-picker-list-item-content {
+  .date-picker-year.date-picker-list-item-current
+    .date-picker-list-item-content {
     border-color: var(--date-today-container-outline-color);
     color: var(--date-today-label-text-color);
   }
@@ -654,7 +828,8 @@ $slide-distance: 20%;
     .date-picker,
     .date-picker-dialog,
     .date-picker-dialog::backdrop,
-    .date-picker-menu-button-icon {
+    .date-picker-menu-button-icon,
+    .date-picker-pager-settling {
       transition-duration: 0.001ms;
     }
 

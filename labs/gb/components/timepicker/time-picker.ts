@@ -5,6 +5,7 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /** Time picker display modes: a clock dial or hour and minute text fields. */
@@ -37,6 +38,7 @@ export const TIME_PICKER_CLASSES = {
   horizontal: 'time-picker-horizontal',
   hour24: 'time-picker-24h',
   closing: 'time-picker-closing',
+  ...densityClassNames('time-picker'),
 } as const;
 
 /** State provided to `timePickerClasses()`. */
@@ -49,6 +51,8 @@ export interface TimePickerClassesState {
   hour24?: boolean;
   /** Whether a modal picker is playing its exit transition. */
   closing?: boolean;
+  /** The density, 0 (default) to -3 (time-pickers.md "Density"). */
+  density?: number;
 }
 
 /**
@@ -59,6 +63,7 @@ export function timePickerClasses({
   orientation = TIME_PICKER_ORIENTATIONS.vertical,
   hour24 = false,
   closing = false,
+  density = 0,
 }: TimePickerClassesState = {}): ClassInfo {
   return {
     [TIME_PICKER_CLASSES.timePicker]: true,
@@ -67,6 +72,7 @@ export function timePickerClasses({
       orientation === TIME_PICKER_ORIENTATIONS.horizontal,
     [TIME_PICKER_CLASSES.hour24]: hour24,
     [TIME_PICKER_CLASSES.closing]: closing,
+    ...densityClasses(TIME_PICKER_CLASSES.timePicker, density),
   };
 }
 

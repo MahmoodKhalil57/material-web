@@ -7,6 +7,7 @@
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {focusRingClasses} from '../focus/focus-ring.js';
 import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
 
@@ -20,6 +21,7 @@ export const CHECKBOX_CLASSES = {
   checked: PSEUDO_CLASSES.checked,
   indeterminate: PSEUDO_CLASSES.indeterminate,
   disabled: PSEUDO_CLASSES.disabled,
+  ...densityClassNames('checkbox'),
 } as const;
 
 /** The state provided to the `checkboxClasses()` function. */
@@ -38,6 +40,8 @@ export interface CheckboxClassesState {
   indeterminate?: boolean;
   /** Emulates `:disabled`. */
   disabled?: boolean;
+  /** The density, 0 (default) to -3. */
+  density?: number;
 }
 
 /**
@@ -54,6 +58,7 @@ export function checkboxClasses({
   checked = false,
   indeterminate = false,
   disabled = false,
+  density = 0,
 }: CheckboxClassesState = {}): ClassInfo {
   return {
     ...rippleClasses(),
@@ -66,6 +71,7 @@ export function checkboxClasses({
     [CHECKBOX_CLASSES.hover]: hover,
     [CHECKBOX_CLASSES.focus]: focus,
     [CHECKBOX_CLASSES.active]: active,
+    ...densityClasses(CHECKBOX_CLASSES.checkbox, density),
   };
 }
 

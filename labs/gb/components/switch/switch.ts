@@ -11,6 +11,7 @@ import {
 } from '../../../../internal/events/dispatch-hooks.js';
 import {focusRingClasses} from '../focus/focus-ring.js';
 import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../shared/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES, isDisabled} from '../shared/pseudo-classes.js';
 
@@ -21,6 +22,7 @@ export const SWITCH_CLASSES = {
   hover: PSEUDO_CLASSES.hover,
   active: PSEUDO_CLASSES.active,
   disabled: PSEUDO_CLASSES.disabled,
+  ...densityClassNames('switch'),
 } as const;
 
 /** The state provided to the `switchClasses()` function. */
@@ -33,6 +35,8 @@ export interface SwitchClassesState {
   active?: boolean;
   /** Emulates `:disabled`. */
   disabled?: boolean;
+  /** The density, 0 (default) to -3. */
+  density?: number;
 }
 
 /**
@@ -46,6 +50,7 @@ export function switchClasses({
   hover = false,
   active = false,
   disabled = false,
+  density = 0,
 }: SwitchClassesState = {}): ClassInfo {
   return {
     ...rippleClasses(),
@@ -55,6 +60,7 @@ export function switchClasses({
     [SWITCH_CLASSES.hover]: hover,
     [SWITCH_CLASSES.active]: active,
     [SWITCH_CLASSES.disabled]: disabled,
+    ...densityClasses(SWITCH_CLASSES.switch, density),
   };
 }
 
