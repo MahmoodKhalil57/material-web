@@ -2,96 +2,77 @@
 title: Progress indicators
 section: components
 order: 21
-description: Progress indicators inform users about the status of ongoing processes, such as loading an app or submitting a form.
+description: Progress indicators inform people about the status of ongoing processes, such as loading an app or submitting a form.
 ---
-There are two types of progress indicators: linear and circular.
-
-<img
-    src="/components/images/progress/hero.webp"
-    alt="Circular and linear progress indicators showing indetermine and determinate examples"
-    title="Progress indicators can be used to show indeterminate or determinate progress.">
-
-*   [Design article](https://m3.material.io/components/progress-indicators)
-
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/progress)
-
-## Types
-
-1.  [Circular progress](#circular-progress)
-1.  [Linear progress](#linear-progress)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-progress", id="project-gb" %}
-
-## Usage
-
-Progress indicators may be determinate to show progress, or indeterminate for an
-unspecified amount of progress.
-
-{% demo "Two circular and linear progress indicator examples, one with three quarters of the track full
-and the other
-indeterminate." %}
-<md-gb-progress value="0.75" circular></md-gb-progress>
-<md-gb-progress circular></md-gb-progress>
-
-<md-gb-progress></md-gb-progress>
-<md-gb-progress value="0.5"></md-gb-progress>
+{% demo "A linear progress indicator at 50 percent and an indeterminate circular one" %}
+<md-gb-progress value="0.5" aria-label="Upload progress"></md-gb-progress>
+<md-gb-progress circular aria-label="Loading"></md-gb-progress>
 {% enddemo %}
 
-### Four colors
+## Usage guidelines
 
-Indeterminate progress indicators may cycle between four colors (primary,
-primary container, tertiary, and tertiary container by default).
+*   **Pick the variant.** Use [linear](#linear) for progress across a page or container and [circular](#circular) for a compact spot such as a button or a card.
+*   **Use the same style for the same process.** Keep one configuration for all the instances of a process, like loading.
+*   **Show real progress when you know it.** Set a [value](#determinate) for determinate progress, and leave it off when the length of the process is unknown.
+*   **Use wavy sparingly.** A [wavy](#wavy) active indicator is more expressive; use it where that fits your product.
+*   **For short waits, use a loading indicator.** The [loading indicator](/3.0/components/loading-indicator/) replaces most indeterminate circular progress indicators.
 
-{% demo "Indeterminate progress indicators that cycles between four colors." %}
-<md-gb-progress circular></md-gb-progress>
+## Anatomy
+
+A progress indicator is one element: an active indicator over a track. It is linear unless `circular` is set.
+
+```html
 <md-gb-progress></md-gb-progress>
+```
+
+## Examples
+
+### Linear
+
+The default indicator animates along a horizontal track.
+
+{% demo "An indeterminate and a determinate linear progress indicator" %}
+<md-gb-progress aria-label="Loading"></md-gb-progress>
+<md-gb-progress value="0.6" aria-label="Download progress"></md-gb-progress>
+{% enddemo %}
+
+### Circular
+
+Add `circular` to animate clockwise along a circular track.
+
+{% demo "An indeterminate and a determinate circular progress indicator" %}
+<md-gb-progress circular aria-label="Loading"></md-gb-progress>
+<md-gb-progress circular value="0.6" aria-label="Download progress"></md-gb-progress>
+{% enddemo %}
+
+### Determinate
+
+Set `value` from 0 to 1 when you know how far along the process is. Without a `value`, the indicator is indeterminate.
+
+{% demo "Linear progress indicators at 25, 50 and 75 percent" %}
+<md-gb-progress value="0.25" aria-label="Step 1 of 4"></md-gb-progress>
+<md-gb-progress value="0.5" aria-label="Step 2 of 4"></md-gb-progress>
+<md-gb-progress value="0.75" aria-label="Step 3 of 4"></md-gb-progress>
+{% enddemo %}
+
+### Wavy
+
+Add `wavy` to give the active indicator a wave. It works on linear and circular indicators, determinate or not.
+
+{% demo "A wavy linear indicator and a wavy circular indicator" %}
+<md-gb-progress wavy value="0.5" aria-label="Upload progress"></md-gb-progress>
+<md-gb-progress circular wavy aria-label="Loading"></md-gb-progress>
 {% enddemo %}
 
 ## Accessibility
 
-Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to progress indicators to give them a descriptive name.
+*   A progress indicator is a `progressbar`. Give it an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) that says what is in progress, such as "Download progress".
+*   A determinate indicator exposes its value from 0 to 100 to assistive technology. An indeterminate one has no value.
 
 ```html
-<md-gb-progress value="0.5" aria-label="Page refresh progress" circular></md-gb-progress>
-
 <md-gb-progress value="0.5" aria-label="Download progress"></md-gb-progress>
 ```
 
-## Circular progress
-
-Circular progress indicators display progress by animating along an invisible
-circular track in a clockwise direction.
-
-{% demo "An indeterminate and determinate circular progress indicator." %}
-<md-gb-progress circular></md-gb-progress>
-<md-gb-progress value="0.6" circular></md-gb-progress>
-{% enddemo %}
-
-## Linear progress
-
-Linear progress indicators display progress by animating along the length of a
-fixed, visible track.
-
-{% demo "An indeterminate and determinate linear progress indicator." %}
-<md-gb-progress></md-gb-progress>
-<md-gb-progress value="0.6"></md-gb-progress>
-{% enddemo %}
-
-### Buffer
-
-Linear progress indicators may show a buffer to communicate both determinate and
-indeterminate progress. The progress bar and track represent known progress
-while the buffer dots represent unknown progress.
-
-{% demo "A linear progress indicator with partial progress and an indeterminate buffer." %}
-<md-gb-progress value="0.5"></md-gb-progress>
-{% enddemo %}
-
-## API
+## API reference
 
 {% gbapi "progress" %}

@@ -2,115 +2,212 @@
 title: Lists
 section: components
 order: 15
-description: Lists are continuous, vertical indexes of text and images
+description: Lists are continuous, vertical indexes of text and images, with optional selection, reordering, expanding and swipe actions.
 ---
-<img class="hero" src="/components/images/list/hero.webp" alt="CImage of a mobile phone screen with a Recipies page and a list recipies in a material list. The first item is Fresh baked breads with an image of someone holding bread on the left and a horizontal three dot menu on the right. Then Tacos with an image of tacos and the same three dot menu">
-
-*   [Design article](https://m3.material.io/components/lists)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/list)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-list", id="project-gb", previewHeight=600, editorHeight=600 %}
-
-## Usage
-
-`<md-gb-list>` is a container composed of `<md-gb-list-item>`s of different types.
-
-{% demo "Three items in a list. The first item says Apple as its headline. The second one says Banana in its headline as well as Banana is a yellow fruit as its sub header. The third list item says Cucumber in its headline and Cucumbers are long green fruits that are just as long as this multi-line description as its sub header which is on two lines." %}
-<md-gb-list style="max-width: 300px;">
+{% demo "A segmented list of three items with supporting and trailing text" %}
+<md-gb-list segmented>
   <md-gb-list-item>
-    Fruits
-  </md-gb-list-item>
-  <md-gb-divider></md-gb-divider>
-  <md-gb-list-item>
-    Apple
-</md-gb-list-item>
-  <md-gb-list-item>
-    Banana
+    <md-gb-icon slot="leading">celebration</md-gb-icon>
+    Festivals
+    <span slot="supporting-text">Food, music, arts, community</span>
+    <span slot="trailing-text">May 8</span>
   </md-gb-list-item>
   <md-gb-list-item>
-    Cucumber
-    <div slot="supporting-text">Cucumbers are long green fruits that are just as long as this multi-line description</div>
+    <md-gb-icon slot="leading">palette</md-gb-icon>
+    Arts
+    <span slot="supporting-text">Literature, games, music</span>
+    <span slot="trailing-text">May 12</span>
   </md-gb-list-item>
-  <md-gb-list-item type="link" href="https://google.com/search?q=buy+kiwis&amp;tbm=shop" target="_blank">
-    Shop for Kiwis
-    <div slot="supporting-text">This will link you out in a new tab</div>
-    <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
+  <md-gb-list-item>
+    <md-gb-icon slot="leading">groups</md-gb-icon>
+    Family and friends
+    <span slot="supporting-text">The relationships that bring and bind</span>
+    <span slot="trailing-text">May 20</span>
   </md-gb-list-item>
 </md-gb-list>
 {% enddemo %}
 
-## Icon Items
+## Usage guidelines
 
-Icons can be slotted into list-items' `start` or `end` slot.
+*   **Make items easy to scan.** Keep labels short, order items in a logical way such as alphabetical or numerical, and show icons, text and actions in a consistent format.
+*   **Choose a style.** A standard list is flat; a [segmented](#segmented) list separates each item into its own container.
+*   **Match the item to its content.** Add [supporting text](#slots), an overline, an avatar or a leading icon to describe what an item is.
+*   **Add behavior when it helps.** Lists can [select](#selection), [reorder](#reordering), [expand](#expandable-items) and reveal [swipe actions](#swipe-actions).
 
-{% demo "A list with three items and dividers separating each item. The first item has the Lit logo and the text Lit. The second item has the Polymer logo and the text Polymer. The third item has the Angular logo and the text Angular." %}
-<md-gb-list style="max-width: 300px">
+## Anatomy
+
+A list holds list items. Each item has a label and slots around it.
+
+```html
+<md-gb-list>
   <md-gb-list-item>
-    Lit
-    <svg slot="leading" style="height: 24px" viewBox="0 0 160 200">
-      <path fill="currentColor" d="m160 80v80l-40-40zm-40 40v80l40-40zm0-80v80l-40-40zm-40 40v80l40-40zm-40-40v80l40-40zm40-40v80l-40-40zm-40 120v80l-40-40zm-40-40v80l40-40z"></path>
-    </svg>
+    <div slot="avatar"></div>
+    <md-gb-icon slot="leading"></md-gb-icon>
+    <span slot="overline"></span>
+    Label
+    <span slot="supporting-text"></span>
+    <span slot="trailing-text"></span>
+    <md-gb-icon slot="trailing"></md-gb-icon>
   </md-gb-list-item>
-  <md-gb-divider></md-gb-divider>
+  …
+</md-gb-list>
+```
+
+## Examples
+
+### Slots
+
+An item's label is its default slot. Put an `md-gb-icon` in `leading`, a circular image or initial in `avatar`, a small line above the label in `overline`, and more detail in `supporting-text`.
+
+{% demo "Items with a leading icon, an overline and trailing text" %}
+<md-gb-list>
   <md-gb-list-item>
-    Polymer
-    <md-gb-icon slot="leading">polymer</md-gb-icon>
+    <md-gb-icon slot="leading">mail</md-gb-icon>
+    <span slot="overline">Inbox</span>
+    Weekly digest
+    <span slot="supporting-text">Your summary for the last seven days</span>
+    <span slot="trailing-text">9:41 AM</span>
   </md-gb-list-item>
-  <md-gb-divider></md-gb-divider>
   <md-gb-list-item>
-    Angular
-    <svg slot="leading" style="height: 24px" viewBox="0 0 250 250">
-      <polygon points="108,135.4 125,135.4 125,135.4 125,135.4 142,135.4 125,94.5   "></polygon>
-      <path d="M125,30L125,30L125,30L31.9,63.2l14.2,123.1L125,230l0,0l0,0l78.9-43.7l14.2-123.1L125,30z M183.1,182.6h-21.7h0
-          l-11.7-29.2H125h0h0h-24.7l-11.7,29.2h0H66.9h0L125,52.1l0,0l0,0l0,0l0,0L183.1,182.6L183.1,182.6z"></path>
-    </svg>
+    <md-gb-icon slot="leading">mail</md-gb-icon>
+    <span slot="overline">Inbox</span>
+    Trip itinerary
+    <span slot="supporting-text">Flights, hotel and reservations</span>
+    <span slot="trailing-text">Yesterday</span>
   </md-gb-list-item>
 </md-gb-list>
 {% enddemo %}
 
-## Image Items
+### Segmented
 
-Images should be slotted into list-items' `start` slot.
+Add `segmented` to show each item in its own container, separated by a small gap.
 
-{% demo "A list with three image items. The first item is a square picture of a cat and the text Cat. The second is a picture of a kitten with the text Kitty Cat. The third item is a square image of an older kitten with the text Cate." %}
-<md-gb-list style="max-width: 300px;">
-  <md-gb-list-item>
-    Cat
-    <img slot="leading" alt="" style="width: 56px" src="https://placekitten.com/112/112">
+{% demo "A segmented list of three items" %}
+<md-gb-list segmented>
+  <md-gb-list-item>Apples</md-gb-list-item>
+  <md-gb-list-item>Bananas</md-gb-list-item>
+  <md-gb-list-item>Cucumbers</md-gb-list-item>
+</md-gb-list>
+{% enddemo %}
+
+### Non-interactive items
+
+Add `static` to an item that only displays information, so it has no hover, focus or press states.
+
+{% demo "A list of static items with dates" %}
+<md-gb-list segmented>
+  <md-gb-list-item static>
+    The first computer (ENIAC)
+    <span slot="trailing-text">1946</span>
   </md-gb-list-item>
-  <md-gb-divider></md-gb-divider>
-  <md-gb-list-item>
-    Kitty Cat
-    <img slot="leading" alt="" style="width: 56px" src="https://placekitten.com/114/114">
+  <md-gb-list-item static>
+    Sputnik launched into space
+    <span slot="trailing-text">1957</span>
   </md-gb-list-item>
-  <md-gb-divider></md-gb-divider>
+</md-gb-list>
+{% enddemo %}
+
+### Selection
+
+Add `selectable` to let people select several items with a long press, and by tapping while in selection mode. The list fires `itemselectionchange`, and selected items have `checked`. Add `selection-primary` when selecting is the main task, to always show the checkboxes.
+
+{% demo "A selectable list of photos" %}
+<md-gb-list selectable segmented>
   <md-gb-list-item>
-    Cate
-    <img slot="leading" alt="" style="width: 56px" src="https://placekitten.com/116/116">
+    <md-gb-icon slot="leading">image</md-gb-icon>
+    Beach
   </md-gb-list-item>
+  <md-gb-list-item>
+    <md-gb-icon slot="leading">image</md-gb-icon>
+    Forest
+  </md-gb-list-item>
+  <md-gb-list-item>
+    <md-gb-icon slot="leading">image</md-gb-icon>
+    Mountains
+  </md-gb-list-item>
+</md-gb-list>
+{% enddemo %}
+
+### Reordering
+
+Add `reorderable` to show a drag handle on every item. People can drag it, or tap it and use the move up and move down buttons. The list fires a cancelable `reorder` event.
+
+{% demo "A reorderable list of recipe steps" %}
+<md-gb-list reorderable segmented>
+  <md-gb-list-item>Preheat the oven</md-gb-list-item>
+  <md-gb-list-item>Mix the dough</md-gb-list-item>
+  <md-gb-list-item>Let it rise</md-gb-list-item>
+  <md-gb-list-item>Bake for 40 minutes</md-gb-list-item>
+</md-gb-list>
+{% enddemo %}
+
+### Expandable items
+
+Add `expandable` to an item and put a nested `md-gb-list` in its `nested` slot. Add `expanded` to start open.
+
+{% demo "An expandable item with three nested items" %}
+<md-gb-list segmented>
+  <md-gb-list-item expandable expanded>
+    <md-gb-icon slot="leading">checklist</md-gb-icon>
+    Groceries
+    <span slot="supporting-text">3 items</span>
+    <md-gb-list slot="nested" segmented>
+      <md-gb-list-item>Bread</md-gb-list-item>
+      <md-gb-list-item>Milk</md-gb-list-item>
+      <md-gb-list-item>Eggs</md-gb-list-item>
+    </md-gb-list>
+  </md-gb-list-item>
+</md-gb-list>
+{% enddemo %}
+
+### Swipe actions
+
+Put buttons in the `leading-actions` and `trailing-actions` slots to reveal them when people swipe an item. A "more" button and the arrow keys offer the same actions without swiping.
+
+{% demo "A list item with a pin action and share and archive actions" %}
+<md-gb-list segmented>
+  <md-gb-list-item>
+    <md-gb-icon slot="leading">restaurant</md-gb-icon>
+    Fresh baked breads
+    <button slot="leading-actions" aria-label="Pin Fresh baked breads">
+      <md-gb-icon>keep</md-gb-icon>
+    </button>
+    <button slot="trailing-actions" aria-label="Share Fresh baked breads">
+      <md-gb-icon>share</md-gb-icon>
+    </button>
+    <button slot="trailing-actions" aria-label="Archive Fresh baked breads">
+      <md-gb-icon>archive</md-gb-icon>
+    </button>
+  </md-gb-list-item>
+</md-gb-list>
+{% enddemo %}
+
+### Density
+
+Set `density` on the list from `0` (default) down to `-3` to remove 4px of height per step. Keep it off by default and let people opt in.
+
+{% demo "A list at density -2" %}
+<md-gb-list density="-2" segmented>
+  <md-gb-list-item>Apples</md-gb-list-item>
+  <md-gb-list-item>Bananas</md-gb-list-item>
+  <md-gb-list-item>Cucumbers</md-gb-list-item>
 </md-gb-list>
 {% enddemo %}
 
 ## Accessibility
 
-List can have its `role` and `tabindex` set via the `role` and `tabindex`
-attributes, and list items can have their `role` and `tabindex` set via the
-`type` and `tabindex` attributes respectively.
+*   A list has `role="list"`, and `role="listbox"` when it is `selectable`. Items have `role="listitem"`. Label a list with `aria-label` or `aria-labelledby` when its purpose isn't clear from the page.
+*   Arrow keys move between items.
+*   In a reorderable list, the drag handle and the move up and move down buttons have labels built from the item's text, and moves are announced to screen readers. Change them with `drag-handle-label`, `move-up-label` and `move-down-label` when you translate the page.
+*   Give swipe action buttons an `aria-label` that names the item, such as "Share Fresh baked breads".
+*   Selecting and reordering must not need a gesture only: the checkboxes, the move buttons and the "more" button are the single-pointer alternatives.
 
-> NOTE: List item has a limited set of `type`s that can be set on it. This is to
-> ensure that your list remains accessible with all other properties and options
-> presented to it. See the `ListItemType` TypeScript type exported by list item
-> for the current accepted values.
+```html
+<md-gb-list aria-label="Shopping list">
+  <md-gb-list-item>Bread</md-gb-list-item>
+</md-gb-list>
+```
 
-By default these values are set to
-[`role="list"`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/list_role)
-and `tabindex="-1"` for list, and
-[`role="listitem"`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listitem_role)
-and `tabindex="0"` for list items.
-
-## API
+## API reference
 
 {% gbapi "list" %}

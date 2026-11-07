@@ -4,83 +4,121 @@ section: components
 order: 23
 description: Radio buttons let people select one option from a set of options.
 ---
-<img
-    class="hero"
-    src="/components/images/radio/hero.webp"
-    alt="A list of items with radio buttons and one selected."
-    title="Radio buttons">
+{% demo "A radio group for choosing a delivery address" %}
+<div role="radiogroup" aria-label="Delivery address">
+  <div>
+    <md-gb-radio id="home" name="address" value="home" checked></md-gb-radio>
+    <label for="home">Home</label>
+  </div>
+  <div>
+    <md-gb-radio id="office" name="address" value="office"></md-gb-radio>
+    <label for="office">Office</label>
+  </div>
+</div>
+{% enddemo %}
 
-*   [Design article](https://m3.material.io/components/radio-button)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/radio)
+## Usage guidelines
 
-## Interactive Demo
+*   **Use radios for a single choice.** Pick radio buttons, not switches, when only one option can be selected from a list; use checkboxes when several can.
+*   **Show every option.** Radios expose all the choices, so use them for five or fewer; consider a menu when space is tight.
+*   **Always add a label.** Each radio needs its own scannable label, and a person can select either the radio or its label.
+*   **Preselect one and stack them.** List radios vertically with one option already selected, and avoid nesting them.
 
-{% playgroundexample dirname="gb-radio", id="project-gb" %}
+## Anatomy
 
-## Usage
-
-Radios behave like
-[`<input type="radio">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio)
-elements and form a group with the same `name` attribute. Only one radio can be
-selected in a group.
-
-Radios can be pre-selected by adding a `checked` attribute.
-
-Add a `value` to identify which radio is selected in a form.
+A radio is one element, paired with an adjacent label.
 
 ```html
+<md-gb-radio></md-gb-radio>
+<label></label>
+```
+
+## Examples
+
+### Group
+
+Radios with the same `name` form a group, and only one can be selected. Add `checked` to the one selected at the start, and `value` to identify the selection in a form.
+
+{% demo "A group of three radios in a form" %}
 <form>
-  <md-gb-radio name="animals" value="cats"></md-gb-radio>
-  <md-gb-radio name="animals" value="dogs"></md-gb-radio>
-  <md-gb-radio name="animals" value="birds" checked></md-gb-radio>
+  <div role="radiogroup" aria-label="Pet">
+    <div>
+      <md-gb-radio id="cats" name="pet" value="cats"></md-gb-radio>
+      <label for="cats">Cats</label>
+    </div>
+    <div>
+      <md-gb-radio id="dogs" name="pet" value="dogs" checked></md-gb-radio>
+      <label for="dogs">Dogs</label>
+    </div>
+    <div>
+      <md-gb-radio id="birds" name="pet" value="birds"></md-gb-radio>
+      <label for="birds">Birds</label>
+    </div>
+  </div>
 </form>
-```
+{% enddemo %}
 
-### Label
+### Required
 
-Associate a label with a radio using the `<label>` element.
+Add `required` to any radio in the group to require a selection before the form submits.
 
-```html
-<md-gb-radio id="cats-radio" name="animals" value="cats"></md-gb-radio>
-<label for="cats-radio">Cats</label>
+{% demo "A required radio group" %}
+<form>
+  <div role="radiogroup" aria-label="Plan">
+    <div>
+      <md-gb-radio id="monthly" name="plan" value="monthly" required></md-gb-radio>
+      <label for="monthly">Monthly</label>
+    </div>
+    <div>
+      <md-gb-radio id="yearly" name="plan" value="yearly"></md-gb-radio>
+      <label for="yearly">Yearly</label>
+    </div>
+  </div>
+</form>
+{% enddemo %}
 
-<md-gb-radio id="dogs-radio" name="animals" value="dogs"></md-gb-radio>
-<label for="dogs-radio">Dogs</label>
-```
+### Disabled
 
-> Note: do not wrap radios inside of a `<label>`, which stops screen readers
-> from correctly announcing the number of radios in a group.
+Add `disabled` to a radio that can't be selected right now.
+
+{% demo "A radio group with a disabled option" %}
+<div role="radiogroup" aria-label="Shipping">
+  <div>
+    <md-gb-radio id="standard" name="shipping" checked></md-gb-radio>
+    <label for="standard">Standard</label>
+  </div>
+  <div>
+    <md-gb-radio id="express" name="shipping" disabled></md-gb-radio>
+    <label for="express">Express</label>
+  </div>
+</div>
+{% enddemo %}
+
+### Density
+
+Set `density` from `0` (default) down to `-3` to shrink the radio by 4px per step. The touch target stays 48px. Keep it off by default and let people opt in.
+
+{% demo "A radio group at density -2" %}
+<div role="radiogroup" aria-label="Size">
+  <div>
+    <md-gb-radio id="small" name="size" density="-2" checked></md-gb-radio>
+    <label for="small">Small</label>
+  </div>
+  <div>
+    <md-gb-radio id="large" name="size" density="-2"></md-gb-radio>
+    <label for="large">Large</label>
+  </div>
+</div>
+{% enddemo %}
 
 ## Accessibility
 
-Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to radios without labels or radios whose labels need to be more
-descriptive.
+*   Place radios in a [`role="radiogroup"`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/radiogroup_role) and label the group with `aria-label` or `aria-labelledby`.
+*   Name each radio with a `<label for>` that points at its `id`. Use an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) only for a radio with no visible label.
+*   Don't wrap a radio in its `<label>`; screen readers then can't announce the number of radios in the group.
+*   Tab moves focus to the selected radio of a group, and the arrow keys move the selection between radios. Space selects the focused radio.
+*   Once a radio is selected the group can't be cleared, so add a "None" option or a "Clear selection" control if people may opt out.
 
-Place radios inside a
-[`role="radiogroup"`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/radiogroup_role).
-Radio groups must display a label, either with `aria-label` or
-`aria-labelledby`.
-
-```html
-<div role="radiogroup" aria-labelledby="group-title">
-  <h3 id="group-title">Starting position</h3>
-  <div>
-    <md-gb-radio id="first-radio" name="group" value="1" aria-label="First"></md-gb-radio>
-    <label for="first-radio">1st</label>
-  </div>
-  <div>
-    <md-gb-radio id="second-radio" name="group" value="2" aria-label="Second"></md-gb-radio>
-    <label for="second-radio">2nd</label>
-  </div>
-</div>
-```
-
-> Note: radios are not automatically labelled by `<label>` elements and always
-> need an `aria-label`. See b/294081528.
-
-## API
+## API reference
 
 {% gbapi "radio" %}

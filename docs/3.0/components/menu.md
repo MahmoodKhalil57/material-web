@@ -2,304 +2,190 @@
 title: Menus
 section: components
 order: 17
-description: Menus display a list of choices on a temporary surface.
+description: Menus show a temporary set of actions or choices, opened from a button, a text field or a context.
 ---
-![A phone showing a vertical threedot, pressed, icon button and a menu floating below it with the following visible items: Revert, Settings, and Send Feedback](/components/images/menu/hero.webp)
+{% demo "A button that opens a menu of file actions" %}
+<button popovertarget="file-menu">File</button>
+<md-gb-menu id="file-menu">
+  <md-gb-menu-item>New</md-gb-menu-item>
+  <md-gb-menu-item>Open</md-gb-menu-item>
+  <md-gb-menu-item disabled>Save</md-gb-menu-item>
+</md-gb-menu>
+{% enddemo %}
 
-*   [Design article](https://m3.material.io/components/menus)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/menu)
+## Usage guidelines
 
-## Interactive Demo
+*   **Use it for temporary actions.** A menu shows a short set of actions on demand. To show actions on screen at all times, use a [toolbar](/3.0/components/toolbar/).
+*   **Open it from many places.** A menu can open from a button, an icon button, a split button or a text field, or as a [context menu](#context-menu).
+*   **Organize long menus.** Use [groups](#groups) with labels and dividers to separate related choices.
+*   **Choose a color.** The `standard` color suits most menus; `vibrant` makes the selected items stand out.
 
-{% playgroundexample dirname="gb-menu", id="project-gb", previewHeight=1000,editorHeight=700 %}
+## Anatomy
 
-## Usage
-
-When opened, menus position themselves to an anchor. Thus, either `anchor` or
-`anchorElement` must be supplied to `md-menu` before opening. Additionally, a
-shared parent of `position:relative` should be present around the menu and it's
-anchor, because the default menu is positioned relative to the anchor element.
-
-Menus also render menu items such as `md-menu-item` and handle keyboard
-navigation between `md-menu-item`s as well as typeahead functionality.
-Additionally, `md-menu` interacts with `md-menu-item`s to help you determine how
-a menu was closed. Listen for and inspect the `close-menu` custom event's
-`details` to determine what action and items closed the menu.
-
-<div class="figure-wrapper">
-  <style>
-    main > .figure-wrapper {
-      /* prevent scrolling bars on menu open */
-      overflow: visible;
-      /* unset page styles */
-    }
-  </style>
-  <figure style="justify-content: center" aria-label="Two filled buttons next to each other. The first one says set with idref and the other says set with element ref. Interact with them to open their respective menus.">
-    <span style="position: relative; margin-inline-end: 8px">
-      <md-gb-button id="usage-anchor" color="filled">Set with idref</md-gb-button>
-      <md-gb-menu id="usage-menu" anchor="usage-anchor">
-        <md-gb-menu-item>
-          Apple
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Banana
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Cucumber
-        </md-gb-menu-item>
-      </md-gb-menu>
-    </span>
-    <script type="module">
-      const anchorEl = document.body.querySelector("#usage-anchor");
-      const menuEl = document.body.querySelector("#usage-menu");
-      anchorEl.addEventListener("click", () => {
-        menuEl.open = !menuEl.open;
-      });
-    </script>
-    <span style="position: relative">
-      <md-gb-button id="usage-anchor-2" color="filled">Set with element ref</md-gb-button>
-      <md-gb-menu id="usage-menu-2">
-        <md-gb-menu-item>
-          Apple
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Banana
-        </md-gb-menu-item>
-        <md-gb-menu-item>
-          Cucumber
-        </md-gb-menu-item>
-      </md-gb-menu>
-    </span>
-    <script type="module">
-      const anchorEl = document.body.querySelector("#usage-anchor-2");
-      const menuEl = document.body.querySelector("#usage-menu-2");
-      menuEl.anchorElement = anchorEl;
-      anchorEl.addEventListener("click", () => {
-        menuEl.open = !menuEl.open;
-      });
-    </script>
-  </figure>
-</div>
+A menu holds items, groups and dividers. An item holds a label and optional slots, including a submenu.
 
 ```html
-<!-- Note the position: relative style -->
-<span style="position: relative">
-  <md-gb-button id="usage-anchor" color="filled">Set with idref</md-gb-button>
-  <md-gb-menu id="usage-menu" anchor="usage-anchor">
+<md-gb-menu>
+  <md-gb-menu-group>
     <md-gb-menu-item>
-      Apple
+      <md-gb-icon slot="leading"></md-gb-icon>
+      Label
+      <span slot="supporting-text"></span>
+      <span slot="trailing-text"></span>
+      <md-gb-icon slot="trailing"></md-gb-icon>
+      <md-gb-menu slot="submenu"></md-gb-menu>
     </md-gb-menu-item>
-    <md-gb-menu-item>
-      Banana
-    </md-gb-menu-item>
-    <md-gb-menu-item>
-      Cucumber
-    </md-gb-menu-item>
-  </md-gb-menu>
-</span>
-
-<script type="module">
-  // This example uses anchor as an ID reference
-  const anchorEl = document.body.querySelector('#usage-anchor');
-  const menuEl = document.body.querySelector('#usage-menu');
-
-  anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
-</script>
-
-<span style="position: relative">
-  <md-gb-button id="usage-anchor-2" color="filled">Set with element ref</md-gb-button>
-  <md-gb-menu id="usage-menu-2">
-    <md-gb-menu-item>
-      Apple
-    </md-gb-menu-item>
-    <md-gb-menu-item>
-      Banana
-    </md-gb-menu-item>
-    <md-gb-menu-item>
-      Cucumber
-    </md-gb-menu-item>
-  </md-gb-menu>
-</span>
-
-<script type="module">
-  // This example uses MdMenu.prototype.anchorElement to set the anchor as an
-  // HTMLElement reference.
-  const anchorEl = document.body.querySelector('#usage-anchor-2');
-  const menuEl = document.body.querySelector('#usage-menu-2');
-  menuEl.anchorElement = anchorEl;
-
-  anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
-</script>
+    …
+  </md-gb-menu-group>
+  <md-gb-divider></md-gb-divider>
+</md-gb-menu>
 ```
 
-### Popover-positioned menus
+## Examples
 
-Internally menu uses `position: absolute` by default. Though there are cases
-when the anchor and the node cannot share a common ancestor that is `position:
-relative`, or sometimes, menu will render below another item due to limitations
-with `position: absolute`.
+### Opening a menu
 
-Popover-positioned menus use the native
-[Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API)
-to render above all other content. This may fix most issues where the default
-menu positioning (`positioning="absolute"`) is not positioning as expected by
-rendering into the
-[top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer).
+A menu is a popover. Point a native button at it with `popovertarget`, or call `showPopover()` from script. The menu positions itself next to the button and closes on Escape, when focus leaves, or when an item is chosen.
 
-> Warning: Popover API support was added in Chrome 114 and Safari 17. At the
-> time of writing, Firefox does not support the Popover API
-> ([see latest browser compatibility](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API#browser_compatibility)).
->
-> For browsers that do not support the Popover API, `md-menu` will fall back to
-> using [fixed-positioned menus](#fixed-positioned-menus).
-
-{% demo "A filled button that says open popover menu. Interact with the button to open a popover menu." %}
-<!-- Note the lack of position: relative parent. -->
-<div style="margin: 16px;">
-  <md-gb-button id="usage-popover-anchor" color="filled">Open popover menu</md-gb-button>
-</div>
-
-<!-- popover menus do not require a common ancestor with the anchor. -->
-<md-gb-menu id="usage-popover" anchor="usage-popover-anchor">
-  <md-gb-menu-item>
-    Apple
-  </md-gb-menu-item>
-  <md-gb-menu-item>
-    Banana
-  </md-gb-menu-item>
-  <md-gb-menu-item>
-    Cucumber
-  </md-gb-menu-item>
+{% demo "A button that opens a menu of sort options" %}
+<button popovertarget="sort-menu">Sort</button>
+<md-gb-menu id="sort-menu">
+  <md-gb-menu-item>Name</md-gb-menu-item>
+  <md-gb-menu-item>Date modified</md-gb-menu-item>
+  <md-gb-menu-item>Size</md-gb-menu-item>
 </md-gb-menu>
-
-<script type="module">
-  const anchorEl = document.body.querySelector('#usage-popover-anchor');
-  const menuEl = document.body.querySelector('#usage-popover');
-
-  anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
-</script>
 {% enddemo %}
 
-### Fixed-positioned menus
+### Icons and supporting text
 
-This is the fallback implementation of
-[popover-positioned menus](#popover-positioned-menus) and uses `position: fixed`
-rather than the default `position: absolute` which calculates its position
-relative to the window rather than the element.
+Fill the `leading`, `supporting-text`, `trailing-text` and `trailing` slots to add detail to an item.
 
-> Note: Fixed menu positions are positioned relative to the window and not the
-> document. This means that the menu will not scroll with the anchor as the page
-> is scrolled.
-
-{% demo "A filled button that says open fixed menu. Interact with the button to open a fixed menu." %}
-<!-- Note the lack of position: relative parent. -->
-<div style="margin: 16px;">
-  <md-gb-button id="usage-fixed-anchor" color="filled">Open fixed menu</md-gb-button>
-</div>
-
-<!-- Fixed menus do not require a common ancestor with the anchor. -->
-<md-gb-menu id="usage-fixed" anchor="usage-fixed-anchor">
+{% demo "Menu items with leading icons and keyboard shortcuts" %}
+<button popovertarget="edit-menu">Edit</button>
+<md-gb-menu id="edit-menu">
   <md-gb-menu-item>
-    Apple
+    <md-gb-icon slot="leading">content_cut</md-gb-icon>
+    Cut
+    <span slot="trailing-text">Ctrl+X</span>
   </md-gb-menu-item>
   <md-gb-menu-item>
-    Banana
+    <md-gb-icon slot="leading">content_copy</md-gb-icon>
+    Copy
+    <span slot="trailing-text">Ctrl+C</span>
   </md-gb-menu-item>
   <md-gb-menu-item>
-    Cucumber
+    <md-gb-icon slot="leading">content_paste</md-gb-icon>
+    Paste
+    <span slot="trailing-text">Ctrl+V</span>
   </md-gb-menu-item>
 </md-gb-menu>
-
-<script type="module">
-  const anchorEl = document.body.querySelector('#usage-fixed-anchor');
-  const menuEl = document.body.querySelector('#usage-fixed');
-
-  anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
-</script>
 {% enddemo %}
 
-### Document-positioned menus
+### Groups
 
-When set to `positioning="document"`, `md-menu` will position itself relative to
-the document as opposed to the element or the window from `"absolute"` and
-`"fixed"` values respectively.
+Wrap related items in an `md-gb-menu-group`. Set `label` for a heading, and `checkable` to `single` or `multiple` to make the items selectable like radio buttons or checkboxes. Use `checked` on the selected items.
 
-Document level positioning is useful for the following cases:
+{% demo "A menu with a single-select group and a multi-select group" %}
+<button popovertarget="view-menu">View</button>
+<md-gb-menu id="view-menu">
+  <md-gb-menu-group label="Sort by" checkable="single">
+    <md-gb-menu-item checked>Name</md-gb-menu-item>
+    <md-gb-menu-item>Date modified</md-gb-menu-item>
+  </md-gb-menu-group>
+  <md-gb-divider></md-gb-divider>
+  <md-gb-menu-group label="Show" checkable="multiple">
+    <md-gb-menu-item checked>Hidden files</md-gb-menu-item>
+    <md-gb-menu-item>File extensions</md-gb-menu-item>
+  </md-gb-menu-group>
+</md-gb-menu>
+{% enddemo %}
 
--   There are no ancestor elements that produce a `relative` positioning
-    context.
-    -   `position: relative`
-    -   `position: absolute`
-    -   `position: fixed`
-    -   `transform: translate(x, y)`
-    -   etc.
--   The menu is hoisted to the top of the DOM
-    -   The last child of `<body>`
-    -   [Top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer)
+### Grouped layout
 
--   The same `md-menu` is being reused and the contents and anchors are being
-    dynamically changed
+Set `layout="grouped"` to show each group on its own surface with a gap between them, instead of one surface with dividers.
 
-{% demo "A filled button that says open document menu. Interact with the button to open a document menu." %}
-<!-- Note the lack of position: relative parent. -->
-<div style="margin: 16px;">
-  <md-gb-button id="usage-document-anchor" color="filled">Open document menu</md-gb-button>
-</div>
+{% demo "A menu with two groups on separate surfaces" %}
+<button popovertarget="actions-menu">Actions</button>
+<md-gb-menu id="actions-menu" layout="grouped">
+  <md-gb-menu-group>
+    <md-gb-menu-item>Undo</md-gb-menu-item>
+    <md-gb-menu-item>Redo</md-gb-menu-item>
+  </md-gb-menu-group>
+  <md-gb-menu-group>
+    <md-gb-menu-item>Cut</md-gb-menu-item>
+    <md-gb-menu-item>Copy</md-gb-menu-item>
+    <md-gb-menu-item>Paste</md-gb-menu-item>
+  </md-gb-menu-group>
+</md-gb-menu>
+{% enddemo %}
 
-<!-- document menus do not require a common ancestor with the anchor. -->
-<md-gb-menu id="usage-document" anchor="usage-document-anchor">
+### Vibrant color
+
+Set `color="vibrant"` to use the tertiary color roles instead of the surface-based `standard` style.
+
+{% demo "A vibrant menu with a checked item" %}
+<button popovertarget="theme-menu">Theme</button>
+<md-gb-menu id="theme-menu" color="vibrant">
+  <md-gb-menu-group checkable="single">
+    <md-gb-menu-item checked>System</md-gb-menu-item>
+    <md-gb-menu-item>Light</md-gb-menu-item>
+    <md-gb-menu-item>Dark</md-gb-menu-item>
+  </md-gb-menu-group>
+</md-gb-menu>
+{% enddemo %}
+
+### Submenus
+
+Put an `md-gb-menu` in an item's `submenu` slot. It opens beside the item on click, Enter, Space or the Right arrow key (Left in right-to-left layouts).
+
+{% demo "A menu item that opens a submenu" %}
+<button popovertarget="share-menu">Share</button>
+<md-gb-menu id="share-menu">
+  <md-gb-menu-item>Copy link</md-gb-menu-item>
   <md-gb-menu-item>
-    Apple
-  </md-gb-menu-item>
-  <md-gb-menu-item>
-    Banana
-  </md-gb-menu-item>
-  <md-gb-menu-item>
-    Cucumber
+    Send to
+    <md-gb-menu slot="submenu">
+      <md-gb-menu-item>Email</md-gb-menu-item>
+      <md-gb-menu-item>Message</md-gb-menu-item>
+    </md-gb-menu>
   </md-gb-menu-item>
 </md-gb-menu>
+{% enddemo %}
 
-<script type="module">
-  const anchorEl = document.body.querySelector('#usage-document-anchor');
-  const menuEl = document.body.querySelector('#usage-document');
+### Context menu
 
-  anchorEl.addEventListener('click', () => { menuEl.open = !menuEl.open; });
-</script>
+Set `context-for` to the id of an element to open the menu on a secondary click, the context menu key or a long press.
+
+{% demo "A menu that opens on right-click" %}
+<div id="photo" tabindex="0">Right-click or long press this photo</div>
+<md-gb-menu context-for="photo">
+  <md-gb-menu-item>Open in new window</md-gb-menu-item>
+  <md-gb-menu-item>Save as</md-gb-menu-item>
+  <md-gb-menu-item>Copy link</md-gb-menu-item>
+</md-gb-menu>
+{% enddemo %}
+
+### Density
+
+Set `density` from `0` (default) down to `-3` to remove 4px of height per item for each step. Submenus inherit it. Keep it off by default and let people opt in.
+
+{% demo "A menu at density -2" %}
+<button popovertarget="dense-menu">Open</button>
+<md-gb-menu id="dense-menu" density="-2">
+  <md-gb-menu-item>Rename</md-gb-menu-item>
+  <md-gb-menu-item>Duplicate</md-gb-menu-item>
+  <md-gb-menu-item>Delete</md-gb-menu-item>
+</md-gb-menu>
 {% enddemo %}
 
 ## Accessibility
 
-By default Menu is set up to function as a `role="menu"` with children as
-`role="menuitem"`. A common use case for this is the menu button example, where
-you would need to add keyboard interactions to the button to open the menu
-([see W3C example](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/examples/menu-button-actions/)).
+*   The menu has `role="menu"`, and items have `role="menuitem"`, or `menuitemradio` and `menuitemcheckbox` in checkable groups.
+*   On the button that opens the menu, Up and Down open it and focus the first item; Enter and Space open it natively.
+*   In an open menu, Up and Down move between items (disabled items included), Home and End go to the first and last item, and typing a letter jumps to the next item that starts with it.
+*   Escape and Tab close the menu and return focus to the button. Left (Right in right-to-left layouts) closes a submenu.
+*   Give a menu that has no clear visible title an `aria-label`.
 
-Menu can also be adapted for other use cases.
-
-The role of the `md-list` inside the menu can be set with the `type` attribute.
-The role of each individual `md-menu-item` can also be set with the `type`
-attribute. Anything else slotted into the menu that is not a list item in most
-cases should be set to `role="none"`, and `md-divider` should have
-`role="separator"` and `tabindex="-1"`.
-
-```html
-<!--
-  A simplified example of an autocomplete component – missing javascript logic for interaction.
--->
-<md-gb-text-field id="textfield" type="combobox" aria-controls="menu" aria-autocomplete="list" aria-expanded="true" aria-activedescendant="1" value="Ala">
-</md-gb-text-field>
-<md-gb-menu id="menu" anchor="textfield" role="listbox" aria-label="states" open>
-  <md-gb-menu-item type="option" id="0">
-    Alabama
-  </md-gb-menu-item>
-  <md-gb-divider role="separator" tabindex="-1"></md-gb-divider>
-  <md-gb-menu-item type="option" id="1" selected aria-selected="true">
-    Alabama
-  </md-gb-menu-item>
-</md-gb-menu>
-```
-
-## API
+## API reference
 
 {% gbapi "menu" %}

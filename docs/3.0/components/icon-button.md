@@ -4,327 +4,176 @@ section: components
 order: 14
 description: Icon buttons help people take supplementary actions with a single tap.
 ---
-
-**This documentation is fully rendered on the
-[Material Web catalog](https://material-web.dev/components/icon-button/).**
-
-[Icon buttons](https://m3.material.io/components/icon-buttons) help
-people take supplementary actions with a single tap.
-
-![The top half of a phone application with a back icon button at the top left and three icon buttons on the top right, heart, share, and three dot.](/components/images/iconbutton/hero.webp)
-
-*   [Design article](https://m3.material.io/components/icon-buttons)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/iconbutton)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-iconbutton", id="project-gb", previewHeight=700 %}
-
-## Types
-
-<figure class="types-image gb-demo-figure" style="justify-content:center;" title="1 - Standard Icon Button. 2 - Contained Icon Button (including filled, filled tonal, and outlined styles)" aria-label="Side by side view of standard and contained icon buttons">
-    <style>
-      .types-image .wrapper,
-      .types-image .wrapper > * {
-        display: flex;
-        padding: 8px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .types-image .wrapper > * {
-        flex-direction: column;
-        align-items: center;
-        padding-inline: 16px;
-      }
-      .types-image span {
-        display: inline-flex;
-        background-color: var(--md-sys-color-inverse-surface);
-        color: var(--md-sys-color-inverse-on-surface);
-        padding: 8px;
-        margin-block-start: 8px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        justify-content: center;
-        align-items: center;
-      }
-      .types-image .wrapper > div > div {
-        display: flex;
-        gap: 8px;
-      }
-    </style>
-    <div class="wrapper">
-      <div>
-        <div>
-          <md-gb-icon-button color="standard" aria-label="Favorite">
-            <md-gb-icon>favorite</md-gb-icon>
-          </md-gb-icon-button>
-          <md-gb-icon-button selected color="standard" aria-label="Bookmark">
-            <md-gb-icon class="filled">bookmark</md-gb-icon>
-          </md-gb-icon-button>
-        </div>
-        <span>1</span>
-      </div>
-      <div>
-        <div>
-          <md-gb-icon-button color="filled" aria-label="Video call">
-            <md-gb-icon>videocam</md-gb-icon>
-          </md-gb-icon-button>
-          <md-gb-icon-button color="tonal" aria-label="Settings">
-            <md-gb-icon>settings</md-gb-icon>
-          </md-gb-icon-button>
-          <md-gb-icon-button color="outlined" aria-label="More options">
-            <md-gb-icon>more_vert</md-gb-icon>
-          </md-gb-icon-button>
-        </div>
-        <span>2</span>
-      </div>
-    </div>
-  </figure>
-
-1.  [Icon Button](#icon-button)
-2.  [Filled Icon Button](#filled-icon-button)
-3.  [Filled Tonal Icon Button](#filled-tonal-icon-button)
-4.  [Outlined Icon Button](#outlined-icon-button)
-
-## Usage
-
-Use icon buttons to display actions in a compact layout. Icon buttons can
-represent opening actions such as opening an overflow menu or search, or
-represent binary actions that can be toggled on and off, such as favorite or
-bookmark.
-
-Icon buttons can be grouped together or they can stand alone.
-
-To use icons by name, see the [Icon](icon.md#usage) documentation for loading
-the icon font.
-
-{% demo "A row of icon buttons" %}
-<md-gb-icon-button color="standard" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
+{% demo "A row of icon buttons, one for each color" %}
+<md-gb-icon-button color="filled" aria-label="Favorite">
+  <md-gb-icon>favorite</md-gb-icon>
 </md-gb-icon-button>
-<md-gb-icon-button color="filled" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
+<md-gb-icon-button color="tonal" aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
 </md-gb-icon-button>
-<md-gb-icon-button color="tonal" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
+<md-gb-icon-button color="outlined" aria-label="Settings">
+  <md-gb-icon>settings</md-gb-icon>
 </md-gb-icon-button>
-<md-gb-icon-button color="outlined" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
+<md-gb-icon-button aria-label="More options">
+  <md-gb-icon>more_vert</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+## Usage guidelines
+
+*   **Use a clear icon.** Pick a system icon whose meaning people already know, and give the button an accessible name that describes the action.
+*   **Describe the action on hover.** On the web, add a [tooltip](#tooltip) so the action is named while hovering or focusing the button.
+*   **Pick the color by emphasis.** [Filled](#colors) is the most prominent, [tonal](#colors) and [outlined](#colors) are medium, and the standard color suits the lowest priority.
+*   **Show state with a toggle.** A [toggle](#toggle) button uses the outlined icon when unselected and the filled icon when selected.
+
+## Anatomy
+
+An icon button is one element that holds an icon (default slot). It renders a native `<button>` or, with `href`, a link.
+
+```html
+<md-gb-icon-button>
+  <md-gb-icon></md-gb-icon>
+</md-gb-icon-button>
+```
+
+## Examples
+
+### Colors
+
+Choose one of four colors with the `color` attribute: filled, tonal, outlined, or standard (the default).
+
+{% demo "Filled, tonal, outlined and standard icon buttons" %}
+<md-gb-icon-button color="filled" aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="outlined" aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+### Sizes
+
+Set `size` to `xs`, `sm` (default), `md`, `lg`, or `xl`.
+
+{% demo "Filled icon buttons from extra small to extra large" %}
+<md-gb-icon-button color="filled" size="xs" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" size="md" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" size="lg" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" size="xl" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+### Widths
+
+Set `width` to `narrow` or `wide`. The default width sits in between.
+
+{% demo "Narrow, default and wide icon buttons" %}
+<md-gb-icon-button color="tonal" width="narrow" aria-label="Edit">
+  <md-gb-icon>edit</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" aria-label="Edit">
+  <md-gb-icon>edit</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" width="wide" aria-label="Edit">
+  <md-gb-icon>edit</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+### Square shape
+
+Add `square` to change the shape of the button from round to square.
+
+{% demo "A filled icon button with a square shape" %}
+<md-gb-icon-button color="filled" square aria-label="Delete">
+  <md-gb-icon>delete</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+### Toggle
+
+Set `type="toggle"` to make a button that stays selected after it is pressed. Add `selected` for the initial state. The selected button shows the filled icon; if an icon has no filled version, add `unfilled-icon` and it gets a heavier weight instead.
+
+{% demo "An unselected and a selected toggle icon button" %}
+<md-gb-icon-button type="toggle" color="outlined" aria-label="Favorite">
+  <md-gb-icon>favorite</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button type="toggle" color="outlined" selected aria-label="Bookmark">
+  <md-gb-icon>bookmark</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+### Tooltip
+
+Add `tooltip` to show the button's `aria-label` on hover and keyboard focus. Write the label as the action, not the icon's name.
+
+{% demo "An icon button with a tooltip" %}
+<md-gb-icon-button tooltip aria-label="Add to favorites">
+  <md-gb-icon>favorite</md-gb-icon>
 </md-gb-icon-button>
 {% enddemo %}
 
 ### Links
 
-Add an
-[`href`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href)
-and optionally a
-[`target`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target)
-attribute to turn the icon button into a link.
+Set `href` to render the button as a link. Use `target` and `rel` as you would on an anchor.
 
-```html
-<md-gb-icon-button href="https://google.com" color="standard" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
-</md-gb-icon-button>
-```
-
-### Toggle
-
-<figure class="gb-demo-figure" style="gap:8px;flex-direction:column;padding-block:8px;" aria-label="Two rows of toggling icon buttons, the top row is unselected and the bottom row is selected">
-    <div style="display:flex;gap:8px;">
-      <md-gb-icon-button color="standard" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-      <md-gb-icon-button color="filled" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-      <md-gb-icon-button color="tonal" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-      <md-gb-icon-button color="outlined" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <md-gb-icon-button selected color="standard" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-      <md-gb-icon-button selected color="filled" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-      <md-gb-icon-button selected color="tonal" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-      <md-gb-icon-button selected color="outlined" aria-label="Close">
-        <md-gb-icon>close</md-gb-icon>
-      </md-gb-icon-button>
-    </div>
-  </figure>
-
-Toggle icon buttons allow a single choice to be selected or deselected, such as
-adding or removing something from favorites.
-
-Add a second icon in the `slot="selected"` slot to change the icon when
-selected. Toggle icon buttons can be pre-selected by adding the `selected`
-attribute.
-
-```html
-<div>
-  <md-gb-icon-button color="standard" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-  <md-gb-icon-button color="filled" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-  <md-gb-icon-button color="tonal" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-  <md-gb-icon-button color="outlined" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-</div>
-<div>
-  <md-gb-icon-button selected color="standard" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-  <md-gb-icon-button selected color="filled" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-  <md-gb-icon-button selected color="tonal" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-  <md-gb-icon-button selected color="outlined" aria-label="Close">
-    <md-gb-icon>close</md-gb-icon>
-
-  </md-gb-icon-button>
-</div>
-```
-
-## Accessibility
-
-Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to icon buttons whose labels need a more descriptive label.
-
-```html
-<md-gb-icon-button aria-label="Search for Contact" color="standard">
-  <md-gb-icon>search</md-gb-icon>
-</md-gb-icon-button>
-```
-
-### Toggle
-
-Add an `aria-label-selected` attribute to toggle buttons whose labels need a
-more descriptive label when selected.
-
-```html
-<md-gb-icon-button aria-label="Unselected" aria-label-selected="Selected" color="standard">
-  <md-gb-icon>close</md-gb-icon>
-
-</md-gb-icon-button>
-```
-
-### Focusable and disabled
-
-By default, disabled icon buttons are not focusable with the keyboard, while
-"soft-disabled" icon buttons are. Some use cases encourage focusability of
-disabled toolbar items to increase their discoverability.
-
-See the
-[ARIA guidelines on focusability of disabled controls](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls)
-for guidance on when this is recommended.
-
-```html
-<div role="toolbar">
-  <md-gb-icon-button aria-label="Copy" color="standard">
-    <md-gb-icon>copy</md-gb-icon>
-  </md-gb-icon-button>
-  <md-gb-icon-button aria-label="Cut" color="standard">
-    <md-gb-icon>cut</md-gb-icon>
-  </md-gb-icon-button>
-  <!--
-    This icon button is disabled but kept focusable to improve its
-    discoverability in the toolbar.
-  -->
-  <md-gb-icon-button aria-label="Paste" soft-disabled color="standard">
-    <md-gb-icon>paste</md-gb-icon>
-  </md-gb-icon-button>
-</div>
-```
-
-## Icon Button
-
-Standard icon buttons do not have a background or outline, and have the lowest
-emphasis of the icon buttons.
-
-{% demo "A check icon" %}
-<md-gb-icon-button color="standard" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
+{% demo "An icon button that links to another page" %}
+<md-gb-icon-button href="https://m3.material.io/components/icon-buttons" target="_blank" aria-label="Open the guidelines">
+  <md-gb-icon>open_in_new</md-gb-icon>
 </md-gb-icon-button>
 {% enddemo %}
 
-## Filled Icon Button
+### Density
 
-<figure class="gb-demo-figure" style="justify-content:center;gap: 8px;" title="Filled Icon Button" aria-label="A circular button with a check icon">
-    <md-gb-icon-button color="filled" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-  </figure>
+Set `density` from `0` (default) down to `-3` to remove 4px of height per step. The touch target stays at least 48px. Keep it off by default and let people opt in.
 
-Filled icon buttons have higher visual impact and are best for high emphasis
-actions.
+{% demo "A filled icon button at density -2" %}
+<md-gb-icon-button color="filled" density="-2" aria-label="Search">
+  <md-gb-icon>search</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+### Disabled and soft-disabled
+
+A disabled button can't be focused with the keyboard. A `soft-disabled` button stays focusable, which helps discoverability in toolbars.
+
+{% demo "A disabled icon button and a soft-disabled icon button" %}
+<md-gb-icon-button color="filled" disabled aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" soft-disabled aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
+</md-gb-icon-button>
+{% enddemo %}
+
+## Accessibility
+
+*   An icon button has no visible text, so always give it an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) that describes the action.
+*   Icon buttons activate with Enter and Space and are reachable with Tab.
+*   Disabled buttons leave the tab order. Use `soft-disabled` to keep one focusable, as the [ARIA guidance on disabled controls](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls) allows.
+*   Toggle buttons expose their state with `aria-pressed`.
 
 ```html
-<md-gb-icon-button color="filled" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
+<md-gb-icon-button type="toggle" aria-label="Add to favorites">
+  <md-gb-icon>favorite</md-gb-icon>
 </md-gb-icon-button>
 ```
 
-## Filled Tonal Icon Button
-
-<figure class="gb-demo-figure" style="justify-content:center;gap: 8px;" title="Filled Tonal Icon Button" aria-label="A filled tonal icon button with a check icon">
-    <md-gb-icon-button color="tonal" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-  </figure>
-
-Filled tonal icon buttons are a middle ground between filled and outlined icon
-buttons. They're useful in contexts where the button requires slightly more
-emphasis than an outline would give, such as a secondary action paired with a
-high emphasis action.
-
-```html
-<md-gb-icon-button color="tonal" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
-</md-gb-icon-button>
-```
-
-## Outlined Icon Button
-
-<figure class="gb-demo-figure" style="justify-content:center;gap: 8px;" title="Outlined Icon button" aria-label="An outlined circular icon button with a check icon">
-    <md-gb-icon-button color="outlined" aria-label="Check">
-      <md-gb-icon>check</md-gb-icon>
-    </md-gb-icon-button>
-  </figure>
-
-Outlined icon buttons are medium-emphasis buttons. They're useful when an icon
-button needs more emphasis than a standard icon button but less than a filled or
-filled tonal icon button.
-
-```html
-<md-gb-icon-button color="outlined" aria-label="Check">
-  <md-gb-icon>check</md-gb-icon>
-</md-gb-icon-button>
-```
-
-## API
+## API reference
 
 {% gbapi "iconbutton" %}
