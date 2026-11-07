@@ -222,7 +222,11 @@ the Compose sources in `.m3-specs/compose`.
       asks Escape to remove visible focus indicators and reset the focus
       order; Escape a component handles is left alone.
 
-# Next: every spec unit proven by a test (waves 6-8)
+# Next: every spec unit proven by a test (waves 6-8, deferred)
+
+Deferred by the user on 2026-11-07. Until they run, code edits keep
+knocking units that only the LLM review covers back to "tracked": 24 are
+tracked now (23 date-pickers, 1 menus) after the ARIA fixes edited that code.
 
 Goal: the tests are the checklist. A unit counts as done only when a
 passing `*_test.ts` cites it, or when it is excluded with a reason a reviewer
@@ -259,12 +263,14 @@ can check. Today (2026-11-07) 4,270 of 15,129 units are tested. The rest:
 - [ ] Final gate and commit.
 
 ## CHECKLIST items left (not spec units)
-- [ ] Hover gating for the text field and select (`$hover` applies on touch;
-      states.md Hover). Spec behavior, small: wave 7.
-- [ ] Modernization (`:user-invalid`, scroll-state container query, `@scope`
-      corners, CSS scroll lock): optional, same behavior, new mechanism.
-- [ ] Tooling (Lightning CSS, size budgets, agent skill, performance marks,
-      axe-core): optional; axe-core would add a check every page gets.
+- [x] Hover gating for the text field and select (`$hover` applies on touch;
+      states.md Hover).
+- [x] Modernization (`:user-invalid`, scroll-state container query, `@scope`
+      corners, CSS scroll lock): done, `@scope` evaluated and not adopted
+      (details in CHECKLIST.md).
+- [x] Tooling (Lightning CSS, size budgets, agent skill, performance marks,
+      axe-core), plus Baseline checks from web-features (`npm run gb:baseline`,
+      0 unguarded uses).
 
 ## WAI-ARIA 1.3 (`.m3-specs/Accessible Rich Internet Applications (WAI-ARIA) 1.3.html`)
 
@@ -278,9 +284,10 @@ problems are fixed only in ways the M3 accessibility sections allow.
       renamed (`label-start`, `label-end`, `valuetext-start`, `valuetext-end`),
       empty dialog and side sheet headlines, disabled list options, deprecated
       `aria-grabbed` selectors.
-- [ ] Menu check icon in the name, select `aria-activedescendant=""`, date
-      picker headline name, picker controls exposing disabled, menu item role
-      timing (Sonnet agent running).
+- [x] Menu check icon in the name, select `aria-activedescendant` (the
+      checker now follows the combobox/aria-controls rule), date picker
+      headline role, picker controls exposing disabled, menu item role from
+      first render.
 - [x] Disagreements, kept as M3 says: navigation bar and rail use
       `tablist`/`tab` (navigation-drawer.md, navigation-bar.md); basic dialogs
       use `alertdialog` (dialogs.md); the carousel is a `region` with a
@@ -288,3 +295,21 @@ problems are fixed only in ways the M3 accessibility sections allow.
       bar headline is app content (app-bars.md "Title"). The badge already
       announces "New notification" as hidden text (badges.md), which ARIA
       allows.
+
+## Known follow-ups (small, not spec units)
+
+- [ ] Tabs without anchor positioning: the primary indicator fallback spans
+      the whole tab, a little wider than the spec's indicator.
+- [ ] Submenus in the JS positioning fallback lose the offset that lines
+      their first item up with the parent item.
+- [ ] Without `light-dark()`, only `prefers-color-scheme` selects dark; a
+      `color-scheme: dark` subtree needs a class hook (e.g. `.md-dark`), which
+      is new API.
+- [ ] The Custom Elements Manifest analyzer crashes on labs/gb ("Could not
+      find type reference 'Intl'"); the agent skill reads the TypeScript
+      sources instead.
+- [ ] `progress.ts` (the directive API) still renders flat `d` paths; only
+      the element picks the wavy ones.
+- [ ] Coverage tests for the list, switch, ripple and pull-to-refresh
+      Baseline fallbacks (progress, menu, select, split button, tabs and color
+      have them).
