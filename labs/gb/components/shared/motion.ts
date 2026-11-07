@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {perfEnd, perfStart} from './perf.js';
+
 /**
  * Shared motion plumbing for components that script their motion: reading
  * spring durations from the motion tokens, following the reduced motion
@@ -199,9 +201,11 @@ export function waitForMotion(
   if (animations.length === 0 && idle <= 0) {
     return Promise.resolve('none');
   }
+  const perf = perfStart();
   return new Promise((resolve) => {
     const onAbort = () => done('aborted');
     const done = (result: MotionWaitResult) => {
+      perfEnd('waitForMotion', perf, {result});
       clearTimeout(timer);
       signal?.removeEventListener('abort', onAbort);
       resolve(result);
@@ -226,12 +230,14 @@ export function waitForMotion(
  * motion that has no animation object to wait for.
  */
 export function waitForDuration(duration: number, signal?: AbortSignal) {
+  const perf = perfStart();
   return new Promise<void>((resolve) => {
     if (duration <= 0 || signal?.aborted) {
       resolve();
       return;
     }
     const done = () => {
+      perfEnd('waitForDuration', perf, {duration});
       clearTimeout(timer);
       signal?.removeEventListener('abort', done);
       resolve();

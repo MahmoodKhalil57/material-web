@@ -17,6 +17,10 @@
  *   npm run gb:check -- --fast slider     # skip the type check while iterating
  *   npm run gb:check -- --emit slider     # also write tsc's .js output
  *   npm run gb:check -- --watch slider    # keep running; rerun affected tests on save
+ *   npm run gb:check -- --size slider     # also check labs/gb Brotli size budgets (implies --emit)
+ *                                         # and validate the compiled CSS with Lightning CSS
+                                         # (Baseline widely-available targets) and run gb:baseline
+ *   npm run gb:check -- --baseline slider # only the Baseline check (fails on unguarded, non-allowed CSS uses)
  *
  * Steps, each limited to what was asked for:
  *   1. Sass for the named directories (labs/gb/styles too with --styles/--all).
@@ -41,7 +45,9 @@ const watch = argv.includes('--watch');
 // `--watch` skips it too: the editor type checks as you go.
 const typecheck = !argv.includes('--fast') && !watch;
 // Compiled .js is only needed by the catalog and by `npm test`'s file glob.
-const emit = argv.includes('--emit') || all;
+const baseline = argv.includes('--baseline');
+const size = argv.includes('--size');
+const emit = argv.includes('--emit') || all || size;
 const dirs = argv.filter((a) => !a.startsWith('--'));
 
 const GB = join('labs', 'gb');
@@ -134,6 +140,20 @@ if (emit) {
   step('emit', () => {
     node(BIN.tsc, ['-p', join(GB, 'tsconfig.json'), '--incremental', '--tsBuildInfoFile', join('.m3-specs', 'gb.tsbuildinfo')]);
   });
+}
+
+if (size) {
+  // Budgets are for every component, whatever directories were named.
+  step('css-validate', () => node(join('scripts', 'gb-css-validate.mjs'), []));
+  step('baseline', () => node(join('scripts', 'gb-baseline.mjs'), []));
+  step('size', () => {
+    node(BIN.tsc, ['-p', join('scripts', 'tsconfig.json')]);
+    node(join('scripts', 'size', 'gb-size.js'), ['--check']);
+  });
+}
+
+if (baseline && !size) {
+  step('baseline', () => node(join('scripts', 'gb-baseline.mjs'), []));
 }
 
 if (test) {

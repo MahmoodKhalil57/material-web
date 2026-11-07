@@ -13,6 +13,8 @@ import {
   type TemplateResult,
 } from 'lit';
 
+import {perfEnd, perfStart} from './perf.js';
+
 /**
  * Shared overflow menu: the trailing items of a row (button group, toolbar)
  * that do not fit move into a menu opened by a trailing overflow button, and
@@ -264,6 +266,7 @@ export class OverflowController implements ReactiveController {
   private measure() {
     if (this.measuring) return;
     this.measuring = true;
+    const perf = perfStart();
     try {
       const {options} = this;
       const container = options.container();
@@ -331,6 +334,7 @@ export class OverflowController implements ReactiveController {
       if (changed) this.host.requestUpdate();
     } finally {
       this.measuring = false;
+      perfEnd('overflow.measure', perf, {hidden: this.overflowedItems.length});
     }
   }
 

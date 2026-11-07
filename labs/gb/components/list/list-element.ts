@@ -303,7 +303,13 @@ export class ListElement extends baseClass {
 
   @query("slot") private readonly slotElement!: HTMLSlotElement | null;
   @query(".list-drop-zone") private readonly dropZone!: HTMLElement | null;
-  @query(".list-live-region") private readonly liveRegion!: HTMLElement | null;
+  /**
+   * The live region for selection and reorder announcements. It lives in the
+   * document, outside the list: inside the list it would be a child of the
+   * `list`/`listbox` role, which only allows items (axe
+   * aria-required-children).
+   */
+  private liveRegion: HTMLElement | null = null;
 
   private pointerDrag: PointerDrag | null = null;
   private longPress: LongPress | null = null;
@@ -354,9 +360,26 @@ export class ListElement extends baseClass {
     );
   }
 
+  override connectedCallback() {
+    super.connectedCallback();
+    if (!this.liveRegion && typeof document !== "undefined") {
+      const region = document.createElement("div");
+      region.className = "md-gb-list-live-region";
+      region.setAttribute("aria-live", "assertive");
+      region.setAttribute("aria-atomic", "true");
+      // Visually hidden; still read by assistive technology.
+      region.style.cssText =
+        "position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap";
+      this.liveRegion = region;
+    }
+    // Created before anything is announced, so the first message is read.
+    if (this.liveRegion) document.body.append(this.liveRegion);
+  }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.reorderGesture.cancel();
+    this.liveRegion?.remove();
   }
 
   protected override updated(changed: PropertyValues<this>) {
@@ -385,11 +408,7 @@ export class ListElement extends baseClass {
       <div part="list" class="${list(this)}">
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
-      <div
-        class="list-live-region"
-        aria-live="assertive"
-        aria-atomic="true"
-      ></div>`;
+`;
   }
 
   /**

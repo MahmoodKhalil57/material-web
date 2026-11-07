@@ -9,6 +9,7 @@
 import {html, render} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {until} from '../shared/test-dom.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 
 import {
@@ -674,7 +675,10 @@ describe('<md-gb-side-sheet>', () => {
       trigger.focus();
       expect(document.activeElement).not.toBe(trigger);
       await sheet.close();
-      expect(document.activeElement).toBe(trigger);
+      // Focus returns as the dialog closes, which can land a frame later.
+      expect(await until(() => document.activeElement === trigger))
+        .withContext('focus back on the trigger')
+        .toBeTrue();
     });
   });
 

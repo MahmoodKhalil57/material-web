@@ -140,31 +140,31 @@
       border-radius var(--motion-spring-fast-spatial-duration)
         var(--motion-spring-fast-spatial),
       var(--ripple-transition);
+  }
 
-    &.btn-xs,
-    &:is([size='xs'], .btn-xs)::part(btn) {
-      @include button-group-tokens.inner-corner-xs;
-    }
-
-    &.btn-sm,
-    &:is([size='sm'], .btn-sm)::part(btn) {
-      @include button-group-tokens.inner-corner-sm;
-    }
-
-    &.btn-md,
-    &:is([size='md'], .btn-md)::part(btn) {
-      @include button-group-tokens.inner-corner-md;
-    }
-
-    &.btn-lg,
-    &:is([size='lg'], .btn-lg)::part(btn) {
-      @include button-group-tokens.inner-corner-lg;
-    }
-
-    &.btn-xl,
-    &:is([size='xl'], .btn-xl)::part(btn) {
-      @include button-group-tokens.inner-corner-xl;
-    }
+  // Inner corners per size, on md-gb-button children's `btn` part and on
+  // plain `.btn` children. Nothing can follow `::part()` in a selector, so
+  // these are top-level rules (nested under `::part(btn)` they were invalid,
+  // and the browser dropped them).
+  .btn-group-connected > [size='xs']::part(btn),
+  .btn-group-connected > .btn-xs {
+    @include button-group-tokens.inner-corner-xs;
+  }
+  .btn-group-connected > [size='sm']::part(btn),
+  .btn-group-connected > .btn-sm {
+    @include button-group-tokens.inner-corner-sm;
+  }
+  .btn-group-connected > [size='md']::part(btn),
+  .btn-group-connected > .btn-md {
+    @include button-group-tokens.inner-corner-md;
+  }
+  .btn-group-connected > [size='lg']::part(btn),
+  .btn-group-connected > .btn-lg {
+    @include button-group-tokens.inner-corner-lg;
+  }
+  .btn-group-connected > [size='xl']::part(btn),
+  .btn-group-connected > .btn-xl {
+    @include button-group-tokens.inner-corner-xl;
   }
 
   // Square outer corner override for unselected buttons in connected group

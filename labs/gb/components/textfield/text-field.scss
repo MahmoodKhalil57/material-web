@@ -4,19 +4,32 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
-@use '../shared/density';
-@use 'text-field-tokens';
+@use "../shared/density";
+@use "text-field-tokens";
 // go/keep-sorted end
 
 // State conditions. Each matches a real pseudo-class on the field's parts or
 // a class that emulates it (see `TEXT_FIELD_CLASSES`).
-$hover: '.hover, :has(> .text-field-container:hover)';
-$focus: '.focus, :has(.text-field-input:focus)';
-$error: '.text-field-error';
-$disabled: '.disabled, :has(.text-field-input:disabled)';
+// Hover applies only to pointers that can hover ("initiated by the user
+// pausing over an interactive element using a cursor"), so a tap does not
+// leave it on; the `.hover` class emulates it everywhere.
+@mixin on-hover {
+  &:where(.hover) {
+    @content;
+  }
+
+  @media (hover: hover) {
+    &:where(:has(> .text-field-container:hover)) {
+      @content;
+    }
+  }
+}
+$focus: ".focus, :has(.text-field-input:focus)";
+$error: ".text-field-error";
+$disabled: ".disabled, :has(.text-field-input:disabled)";
 // The label floats above the input when the field is focused or has a value
 // (Compose `TextFieldImpl` `labelProgress`).
-$floated: '.text-field-populated, #{$focus}';
+$floated: ".text-field-populated, #{$focus}";
 
 // Motion: the label position and indicator thickness use the fast spatial
 // spring; colors and opacities use the fast effects spring (Compose
@@ -40,7 +53,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     @include text-field-tokens.filled;
   }
 
-  :host([variant='outlined']),
+  :host([variant="outlined"]),
   .text-field-outlined:not(:host > *) {
     @include text-field-tokens.outlined;
   }
@@ -48,14 +61,14 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   // Density (text-fields.md "Density": dense text fields help people scan
   // large amounts of information; "Avoid applying density by default").
   // The `density` attribute of the host or a `.text-field-density-N` class.
-  @include density.levels('text-field');
+  @include density.levels("text-field");
 
   // States. Every rule has the same specificity as the token roots above
   // (two classes) and follows them, so source order decides: error beats
   // hover and focus, and disabled beats everything.
   // spec-labels: text-fields/specs/filled-text-field/filled-text-field-states, text-fields/specs/filled-text-field/filled-text-field-error-states
   .text-field.text-field-filled {
-    &:where(#{$hover}) {
+    @include on-hover {
       @include text-field-tokens.filled-hover;
     }
 
@@ -67,8 +80,10 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
       @include text-field-tokens.filled-error;
     }
 
-    &:where(#{$error}):where(#{$hover}) {
-      @include text-field-tokens.filled-error-hover;
+    &:where(#{$error}) {
+      @include on-hover {
+        @include text-field-tokens.filled-error-hover;
+      }
     }
 
     &:where(#{$error}):where(#{$focus}) {
@@ -82,7 +97,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
 
   // spec-labels: text-fields/specs/outlined-text-field/outlined-text-field-states, text-fields/specs/outlined-text-field/outlined-text-field-error-states
   .text-field.text-field-outlined {
-    &:where(#{$hover}) {
+    @include on-hover {
       @include text-field-tokens.outlined-hover;
     }
 
@@ -94,8 +109,10 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
       @include text-field-tokens.outlined-error;
     }
 
-    &:where(#{$error}):where(#{$hover}) {
-      @include text-field-tokens.outlined-error-hover;
+    &:where(#{$error}) {
+      @include on-hover {
+        @include text-field-tokens.outlined-error-hover;
+      }
     }
 
     &:where(#{$error}):where(#{$focus}) {
@@ -183,7 +200,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
 
   // Hover state layer.
   .text-field-container::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -194,7 +211,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
 
   // Filled: the active indicator along the bottom edge.
   .text-field-filled .text-field-container::after {
-    content: '';
+    content: "";
     position: absolute;
     inset-inline: 0;
     inset-block-end: 0;
@@ -366,7 +383,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     margin: 0;
   }
 
-  .text-field-no-spinner .text-field-input[type='number'] {
+  .text-field-no-spinner .text-field-input[type="number"] {
     appearance: textfield;
   }
 

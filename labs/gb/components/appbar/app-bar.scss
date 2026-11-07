@@ -59,6 +59,21 @@ $search-bar-max-width: 720px;
     background-color: var(--on-scroll-container-color);
   }
 
+  // The same color without JS where scroll-state container queries exist: a
+  // sticky app bar (the host is a `container-type: scroll-state` container,
+  // see app-bar-element.ts) is `stuck` to the top edge of its scroller once
+  // the content has scrolled under it. The `scrolled` attribute and
+  // `.app-bar-scrolled` stay the fallback for other browsers and for the
+  // hide / compress behaviors.
+  @container scroll-state(stuck: top) {
+    .app-bar {
+      background-color: var(--on-scroll-container-color);
+    }
+    .app-bar-search-bar {
+      background-color: var(--search-on-scroll-container-color);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .app-bar,
     .app-bar-search-bar {

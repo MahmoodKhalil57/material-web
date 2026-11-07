@@ -6,6 +6,7 @@
 
 import {type ReactiveController, type ReactiveControllerHost} from 'lit';
 import {isReducedMotion} from './motion.js';
+import {perfEnd, perfStart} from './perf.js';
 
 /**
  * Shared scroll behavior of bars: a bar watches a scroll target and hides,
@@ -278,6 +279,15 @@ export class ScrollBehaviorController implements ReactiveController {
   };
 
   private readonly onScroll = () => {
+    const perf = perfStart();
+    try {
+      this.scrollStep();
+    } finally {
+      perfEnd('scroll.step', perf, {hidden: this.step.hidden});
+    }
+  };
+
+  private scrollStep() {
     const y = this.position();
     this.reportScrolled(y);
     if (this.options.behavior() !== 'hide') {
@@ -290,7 +300,7 @@ export class ScrollBehaviorController implements ReactiveController {
     if (changed) {
       this.setHidden(next.hidden);
     }
-  };
+  }
 
   private reportScrolled(y = this.position()) {
     const scrolled = y > 0;

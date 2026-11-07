@@ -1,0 +1,154 @@
+{
+  "unit": "bytes, brotli",
+  "headroom": 0.1,
+  "components": {
+    "appbar": {
+      "js": 4381,
+      "css": 1565
+    },
+    "badge": {
+      "js": 959,
+      "css": 468
+    },
+    "button": {
+      "js": 4641,
+      "css": 1492
+    },
+    "buttongroup": {
+      "js": 18737,
+      "css": 1442
+    },
+    "card": {
+      "js": 3118,
+      "css": 964
+    },
+    "carousel": {
+      "js": 11945,
+      "css": 1715
+    },
+    "checkbox": {
+      "js": 4648,
+      "css": 987
+    },
+    "chip": {
+      "js": 9336,
+      "css": 2385
+    },
+    "datepicker": {
+      "js": 28946,
+      "css": 3851
+    },
+    "dialog": {
+      "js": 8951,
+      "css": 2020
+    },
+    "divider": {
+      "js": 706,
+      "css": 341
+    },
+    "fab": {
+      "js": 9343,
+      "css": 1097
+    },
+    "fabmenu": {
+      "js": 4974,
+      "css": 2161
+    },
+    "iconbutton": {
+      "js": 9975,
+      "css": 1301
+    },
+    "list": {
+      "js": 13011,
+      "css": 3425
+    },
+    "loadingindicator": {
+      "js": 3116,
+      "css": 7681
+    },
+    "menu": {
+      "js": 9662,
+      "css": 2185
+    },
+    "navbar": {
+      "js": 7124,
+      "css": 1763
+    },
+    "navdrawer": {
+      "js": 10358,
+      "css": 2254
+    },
+    "navrail": {
+      "js": 12109,
+      "css": 2469
+    },
+    "progress": {
+      "js": 2514,
+      "css": 3309
+    },
+    "pulltorefresh": {
+      "js": 6695,
+      "css": 1058
+    },
+    "radio": {
+      "js": 4909,
+      "css": 763
+    },
+    "scaffold": {
+      "js": 11599,
+      "css": 2368
+    },
+    "search": {
+      "js": 11861,
+      "css": 2431
+    },
+    "segmentedbutton": {
+      "js": 7581,
+      "css": 1548
+    },
+    "select": {
+      "js": 12596,
+      "css": 1729
+    },
+    "sheet": {
+      "js": 11375,
+      "css": 2118
+    },
+    "slider": {
+      "js": 8181,
+      "css": 3101
+    },
+    "snackbar": {
+      "js": 7307,
+      "css": 1817
+    },
+    "splitbutton": {
+      "js": 2712,
+      "css": 945
+    },
+    "switch": {
+      "js": 5471,
+      "css": 1348
+    },
+    "tabs": {
+      "js": 13122,
+      "css": 1950
+    },
+    "textfield": {
+      "js": 7527,
+      "css": 2715
+    },
+    "timepicker": {
+      "js": 12985,
+      "css": 3070
+    },
+    "toolbar": {
+      "js": 19302,
+      "css": 1754
+    },
+    "tooltip": {
+      "js": 6140,
+      "css": 1442
+    }
+  }
+}

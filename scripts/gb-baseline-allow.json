@@ -1,0 +1,18 @@
+[
+  {"feature":"cursor","reason":"Ignored where unsupported (touch screens have no pointer cursor, and iOS reports no support); no layout or behavior change."},
+  {"feature":"starting-style","reason":"An unsupported @starting-style rule is dropped: the element appears without its enter transition, final styles unchanged."},
+  {"feature":"overscroll-behavior","reason":"Ignored where unsupported: scroll chaining at the edge of the scroller is not contained; nothing else changes."},
+  {"feature":"scrollbar-width","reason":"Ignored where unsupported: the platform scrollbar stays visible/regular; content size is unaffected inside overlay or reserved gutters."},
+  {"feature":"scrollbar-gutter","reason":"Ignored where unsupported: no reserved gutter, a small layout shift when a scrollbar appears; content stays reachable."},
+  {"feature":"interpolate-size","reason":"Ignored where unsupported: size changes to/from intrinsic keywords jump instead of animating; end states unchanged."},
+  {"feature":"field-sizing","reason":"Ignored where unsupported: the textarea keeps its fixed rows height and scrolls; it stays usable."},
+  {"feature":"transition-behavior","reason":"Ignored where unsupported: discrete properties (display, overlay) change at once instead of transitioning; end states unchanged."},
+  {"feature":"resize","reason":"Ignored where unsupported: the textarea resize handle keeps the browser default."},
+  {"feature":"forced-colors","key":"css.properties.forced-color-adjust","reason":"Ignored in browsers without forced-colors mode (Safari); there is nothing to opt out of there."},
+  {"key":"css.properties.line-clamp","reason":"Declared next to the -webkit-line-clamp/-webkit-box fallback, which browsers without unprefixed line-clamp still honor."},
+  {"feature":"state","reason":"Only used inside :is() (forgiving selector list), so a browser without :state() drops that one alternative; the .selected / [aria-selected] alternatives still match."},
+  {"feature":"viewport-segments","reason":"Unknown media feature evaluates to false, so the foldable-only block is skipped; nothing else depends on it."},
+  {"feature":"container-scroll-state-queries","reason":"An unsupported @container scroll-state() condition is false: the app bar just never switches to its stuck/scrolled look."},
+  {"feature":"view-transitions","reason":"These rules only style ::view-transition-* pseudo-elements, which exist only while a view transition runs; a browser without the API never matches them (an unknown pseudo-element drops just that rule)."},
+  {"key":"css.types.calc-size","files":["fabmenu/fab-menu.css"],"reason":"The declaration is dropped where calc-size() is unsupported and the adjacent @supports not (inline-size: calc-size(...)) branch supplies the clip-path fallback (fab-menu.scss)."}
+]

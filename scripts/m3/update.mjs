@@ -136,6 +136,9 @@ report.push(fence(node('scripts/m3/gen-contract-tests.mjs', [], {capture: true, 
 report.push(fence(node('scripts/m3/gen-measurement-tests.mjs', [], {capture: true, allowFail: true})));
 report.push(fence(node('scripts/m3/gen-anatomy-tests.mjs', [], {capture: true, allowFail: true})));
 report.push('Run `npm test` to check every component against the spec in a browser.');
+// Agent skill (labs/gb/skill) from the component sources, CHECKLIST.md and the
+// exclusions; `--check` fails when it is stale.
+report.push(fence(node('scripts/m3/gen-agent-skill.mjs', [], {capture: true, allowFail: true})));
 
 // 5. Upstream Compose files changed since last review.
 section('Upstream Compose changes to review');

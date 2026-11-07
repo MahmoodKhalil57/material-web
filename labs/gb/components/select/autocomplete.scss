@@ -4,17 +4,30 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
-@use 'select-tokens';
+@use "select-tokens";
 // go/keep-sorted end
 
 // The autocomplete text field: the select structure (`select.css`) with an
 // editable input, using the autocomplete token sets.
 
 // State conditions, as in `text-field.scss`.
-$hover: '.hover, :has(> .text-field-container:hover)';
-$focus: '.focus, :has(.text-field-input:focus)';
-$error: '.text-field-error';
-$disabled: '.disabled, :has(.text-field-input:disabled)';
+// Hover applies only to pointers that can hover ("initiated by the user
+// pausing over an interactive element using a cursor"), so a tap does not
+// leave it on; the `.hover` class emulates it everywhere.
+@mixin on-hover {
+  &:where(.hover) {
+    @content;
+  }
+
+  @media (hover: hover) {
+    &:where(:has(> .text-field-container:hover)) {
+      @content;
+    }
+  }
+}
+$focus: ".focus, :has(.text-field-input:focus)";
+$error: ".text-field-error";
+$disabled: ".disabled, :has(.text-field-input:disabled)";
 
 @layer md.sys, md.comp.text-field, md.comp.ripple, md.comp.focus-ring;
 @layer md.comp.menu, md.comp.select;
@@ -24,7 +37,7 @@ $disabled: '.disabled, :has(.text-field-input:disabled)';
     @include select-tokens.autocomplete;
   }
 
-  :host([variant='outlined']),
+  :host([variant="outlined"]),
   .autocomplete.text-field-outlined {
     @include select-tokens.outlined-autocomplete;
   }
@@ -35,7 +48,7 @@ $disabled: '.disabled, :has(.text-field-input:disabled)';
   }
 
   .autocomplete.text-field-filled {
-    &:where(#{$hover}) {
+    @include on-hover {
       @include select-tokens.autocomplete-hover;
     }
 
@@ -47,8 +60,10 @@ $disabled: '.disabled, :has(.text-field-input:disabled)';
       @include select-tokens.autocomplete-error;
     }
 
-    &:where(#{$error}):where(#{$hover}) {
-      @include select-tokens.autocomplete-error-hover;
+    &:where(#{$error}) {
+      @include on-hover {
+        @include select-tokens.autocomplete-error-hover;
+      }
     }
 
     &:where(#{$error}):where(#{$focus}) {
@@ -61,7 +76,7 @@ $disabled: '.disabled, :has(.text-field-input:disabled)';
   }
 
   .autocomplete.text-field-outlined {
-    &:where(#{$hover}) {
+    @include on-hover {
       @include select-tokens.outlined-autocomplete-hover;
     }
 
@@ -73,8 +88,10 @@ $disabled: '.disabled, :has(.text-field-input:disabled)';
       @include select-tokens.outlined-autocomplete-error;
     }
 
-    &:where(#{$error}):where(#{$hover}) {
-      @include select-tokens.outlined-autocomplete-error-hover;
+    &:where(#{$error}) {
+      @include on-hover {
+        @include select-tokens.outlined-autocomplete-error-hover;
+      }
     }
 
     &:where(#{$error}):where(#{$focus}) {

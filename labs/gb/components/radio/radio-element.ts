@@ -160,6 +160,8 @@ export class RadioElement extends radioBaseClass {
     super();
     if (isServer) return;
     this[internals].role = 'radio';
+    // aria-checked is required on the radio role (axe: aria-required-attr).
+    this[internals].ariaChecked = 'false';
     this.addController(this.selectionController);
     setupDispatchHooks(this, 'click', 'keydown');
     this.addEventListener('click', (event) => {

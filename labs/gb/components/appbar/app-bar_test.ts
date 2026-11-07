@@ -16,6 +16,16 @@ import {AppBarElement} from './app-bar-element.js';
 
 adoptStyles(document, [m3Styles]);
 
+// `Environment` replaces `requestAnimationFrame` with a fake-clock timeout;
+// scroll-state queries only update in real frames.
+const realRaf = window.requestAnimationFrame.bind(window);
+async function untilFrame(check: () => boolean) {
+  for (let i = 0; i < 30 && !check(); i++) {
+    await new Promise((resolve) => realRaf(resolve));
+  }
+  return check();
+}
+
 function inner(appBar: AppBarElement) {
   return appBar.shadowRoot!.querySelector<HTMLElement>('.app-bar')!;
 }
@@ -171,6 +181,50 @@ describe('md-gb-app-bar', () => {
       appBar.scrolled = true;
       await appBar.updateComplete;
       expect(getComputedStyle(search).backgroundColor).not.toBe(flat);
+    });
+  });
+
+  describe('scrolled color via a scroll-state container query', () => {
+    const supported = CSS.supports('container-type', 'scroll-state');
+
+    async function renderInScroller() {
+      const root = env.render(html`<div
+        style="height: 200px; overflow: auto; position: relative"
+        ><md-gb-app-bar style="position: sticky; top: 0">Title</md-gb-app-bar>
+        <div style="height: 1000px"></div
+      ></div>`);
+      await env.waitForStability();
+      const scroller = root.querySelector('div')!;
+      const appBar = root.querySelector('md-gb-app-bar') as AppBarElement;
+      await appBar.updateComplete;
+      inner(appBar).style.transition = 'none';
+      return {scroller, appBar};
+    }
+
+    // spec: app-bars-99d94f
+    it('colors a stuck app bar without the scrolled attribute', async () => {
+      if (!supported) {
+        pending('scroll-state container queries are not supported');
+      }
+      const {scroller, appBar} = await renderInScroller();
+      const flat = getComputedStyle(inner(appBar)).backgroundColor;
+      const flatShadow = getComputedStyle(inner(appBar)).boxShadow;
+      scroller.scrollTop = 100;
+      expect(await untilFrame(() => getComputedStyle(inner(appBar)).backgroundColor !== flat)).withContext('stuck color').toBeTrue();
+      expect(appBar.scrolled).toBeFalse();
+      expect(getComputedStyle(inner(appBar)).boxShadow)
+        .withContext('no drop shadow')
+        .toBe(flatShadow);
+      scroller.scrollTop = 0;
+      expect(await untilFrame(() => getComputedStyle(inner(appBar)).backgroundColor === flat)).withContext('back to flat').toBeTrue();
+    });
+
+    it('falls back to the scrolled attribute', async () => {
+      const {appBar} = await renderInScroller();
+      const flat = getComputedStyle(inner(appBar)).backgroundColor;
+      appBar.scrolled = true;
+      await appBar.updateComplete;
+      expect(getComputedStyle(inner(appBar)).backgroundColor).not.toBe(flat);
     });
   });
 

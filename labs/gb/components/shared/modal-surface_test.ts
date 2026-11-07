@@ -703,8 +703,12 @@ describe('page scroll lock', () => {
     await el.controller.show();
     expect(isLocked()).toBeTrue();
     expect(document.documentElement.hasAttribute(SCROLL_LOCK_ATTRIBUTE)).toBeTrue();
+    expect(getComputedStyle(document.documentElement).overflow)
+      .withContext('the lock is a CSS rule')
+      .toBe('hidden');
     await el.controller.close();
     expect(isLocked()).toBeFalse();
+    expect(getComputedStyle(document.documentElement).overflow).not.toBe('hidden');
   });
 
   it('never locks for a standard surface', async () => {

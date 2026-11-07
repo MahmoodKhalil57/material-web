@@ -314,8 +314,8 @@ describe('scroll behavior controller', () => {
       const {nav, scroller} = await navBar();
       scroller.focus();
       await sendKeys({press: 'PageDown'});
-      await until(() => scroller.scrollTop > 0);
-      expect(scroller.scrollTop).toBeGreaterThan(SCROLL_THRESHOLD);
+      // PageDown scrolls smoothly: wait until it has gone past the threshold.
+      expect(await until(() => scroller.scrollTop > SCROLL_THRESHOLD, {timeout: 3000})).toBeTrue();
       await frame();
       await frame();
       expect(isHidden(nav)).toBeFalse();

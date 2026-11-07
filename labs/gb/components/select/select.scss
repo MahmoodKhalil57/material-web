@@ -4,7 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
-@use 'select-tokens';
+@use "select-tokens";
 // go/keep-sorted end
 
 // The select reuses the `md-gb-text-field` structure and styles
@@ -13,10 +13,23 @@
 // the text field tokens and adds the dropdown parts.
 
 // State conditions, as in `text-field.scss`.
-$hover: '.hover, :has(> .text-field-container:hover)';
-$focus: '.focus, :has(.text-field-input:focus)';
-$error: '.text-field-error';
-$disabled: '.disabled, :has(.text-field-input:disabled)';
+// Hover applies only to pointers that can hover ("initiated by the user
+// pausing over an interactive element using a cursor"), so a tap does not
+// leave it on; the `.hover` class emulates it everywhere.
+@mixin on-hover {
+  &:where(.hover) {
+    @content;
+  }
+
+  @media (hover: hover) {
+    &:where(:has(> .text-field-container:hover)) {
+      @content;
+    }
+  }
+}
+$focus: ".focus, :has(.text-field-input:focus)";
+$error: ".text-field-error";
+$disabled: ".disabled, :has(.text-field-input:disabled)";
 
 // Motion: the arrow rotation and menu scale use the fast spatial spring, the
 // menu fade the fast effects spring (Compose `DropdownMenuContent`:
@@ -35,7 +48,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     @include select-tokens.root;
   }
 
-  :host([variant='outlined']),
+  :host([variant="outlined"]),
   .select.text-field-outlined {
     @include select-tokens.outlined;
   }
@@ -48,7 +61,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   // States, in the same order as the text field's: error beats hover and
   // focus, and disabled beats everything.
   .select.text-field-filled {
-    &:where(#{$hover}) {
+    @include on-hover {
       @include select-tokens.hover;
     }
 
@@ -60,8 +73,10 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
       @include select-tokens.error;
     }
 
-    &:where(#{$error}):where(#{$hover}) {
-      @include select-tokens.error-hover;
+    &:where(#{$error}) {
+      @include on-hover {
+        @include select-tokens.error-hover;
+      }
     }
 
     &:where(#{$error}):where(#{$focus}) {
@@ -74,7 +89,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   }
 
   .select.text-field-outlined {
-    &:where(#{$hover}) {
+    @include on-hover {
       @include select-tokens.outlined-hover;
     }
 
@@ -86,8 +101,10 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
       @include select-tokens.outlined-error;
     }
 
-    &:where(#{$error}):where(#{$hover}) {
-      @include select-tokens.outlined-error-hover;
+    &:where(#{$error}) {
+      @include on-hover {
+        @include select-tokens.outlined-error-hover;
+      }
     }
 
     &:where(#{$error}):where(#{$focus}) {

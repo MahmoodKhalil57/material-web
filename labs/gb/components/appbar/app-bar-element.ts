@@ -122,6 +122,12 @@ export class AppBarElement extends LitElement {
         width: 100%;
         position: relative;
       }
+      /* Lets the inner bar read its stuck state (scrolled color) in CSS. */
+      @supports (container-type: scroll-state) {
+        :host {
+          container-type: scroll-state;
+        }
+      }
     `,
   ];
 

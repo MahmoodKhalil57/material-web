@@ -237,7 +237,7 @@ describe("<md-gb-list> reorder", () => {
     const labels = () =>
       Array.from(list.children).map((el) => el.textContent!.trim());
     const items = () => Array.from(list.children) as ListItemElement[];
-    const live = list.shadowRoot!.querySelector(".list-live-region")!;
+    const live = (list as unknown as {liveRegion: HTMLElement}).liveRegion;
     return { list, reorder, labels, items, live };
   }
 
@@ -702,7 +702,7 @@ describe("<md-gb-list> selection", () => {
   it("announces the selection count", async () => {
     const { list, items } = await setupTest();
     longPress(items()[0]);
-    const live = list.shadowRoot!.querySelector(".list-live-region")!;
+    const live = (list as unknown as {liveRegion: HTMLElement}).liveRegion;
     expect(live.textContent).toBe("1 selected");
   });
 });
@@ -922,7 +922,7 @@ describe("<md-gb-list> reorder without dragging", () => {
     const labels = () =>
       Array.from(list.children).map((el) => el.textContent!.trim());
     const items = () => Array.from(list.children) as ListItemElement[];
-    const live = list.shadowRoot!.querySelector(".list-live-region")!;
+    const live = (list as unknown as {liveRegion: HTMLElement}).liveRegion;
     return { list, reorder, labels, items, live };
   }
 

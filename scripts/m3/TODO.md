@@ -221,3 +221,47 @@ the Compose sources in `.m3-specs/compose`.
 - [x] Escape clears focus page-wide: kept, because interaction-inputs-0d5dc6
       asks Escape to remove visible focus indicators and reset the focus
       order; Escape a component handles is left alone.
+
+# Next: every spec unit proven by a test (waves 6-8)
+
+Goal: the tests are the checklist. A unit counts as done only when a
+passing `*_test.ts` cites it, or when it is excluded with a reason a reviewer
+can check. Today (2026-11-07) 4,270 of 15,129 units are tested. The rest:
+
+| Bucket | Units | Proof today | Target |
+|---|---:|---|---|
+| auto-review | 1,102 | LLM found a quote in the code | a test that cites it |
+| cited via a duplicate | 791 | the same sentence is tested on another page | a test for this page's component, or a note that the shared test covers it |
+| review-not-applicable | 1,029 | LLM verdict, no written reason | `spec-exclude:` with a reason, or a test |
+| below the classifier threshold | 4,276 | classifier score < 0.3 | screened: buildable ones get tests, the rest stay |
+| not-a-requirement | 2,748 | named rules | spot-check a sample per rule |
+| excluded | 896 | written reasons | done |
+
+## Wave 6: Haiku 5.5 (parallel, one page group each)
+- [ ] auto-review -> tests. Each unit already names the file:line and quote
+      that covers it (`scripts/m3/spec-autocite.json`): write a test that
+      checks the behavior and cites the unit; if it fails, report it as a
+      gap instead of weakening the test. ~10 agents by page group.
+- [ ] review-not-applicable -> written exclusions or tests (Haiku sorts;
+      anything it thinks is buildable goes to wave 7).
+- [ ] Duplicate-cited units: confirm the shared test covers this page's
+      component; otherwise add the component to that test.
+- [ ] Screen the 3,097 units scored below 0.2: flag any that state a
+      buildable rule (expected few).
+
+## Wave 7: Sonnet 5.5
+- [ ] Screen the 1,179 units scored 0.2-0.3 (closest to the threshold).
+- [ ] Implement what waves 6 and the screens turn up (red tests first).
+- [ ] Audit wave 6's new tests for checks that cannot fail (as before).
+
+## Wave 8: Opus 5.5 (lead)
+- [ ] Spot-check the not-a-requirement rules and the exclusions.
+- [ ] Final gate and commit.
+
+## CHECKLIST items left (not spec units)
+- [ ] Hover gating for the text field and select (`$hover` applies on touch;
+      states.md Hover). Spec behavior, small: wave 7.
+- [ ] Modernization (`:user-invalid`, scroll-state container query, `@scope`
+      corners, CSS scroll lock): optional, same behavior, new mechanism.
+- [ ] Tooling (Lightning CSS, size budgets, agent skill, performance marks,
+      axe-core): optional; axe-core would add a check every page gets.

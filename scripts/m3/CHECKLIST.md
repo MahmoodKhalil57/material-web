@@ -109,8 +109,8 @@ Everything listed on https://m3.material.io/components, /styles and
   - [x] Headline, section labels, dividers, badges, link items
   - [x] Swipe to dismiss the modal drawer
   - Note: the Expressive spec suggests the expanded navigation rail for most cases.
-  - [ ] Group dividers are full-width (the divider is inset by `--divider-inset`, 16px, like the section labels) <!-- spec-gap: navigation-drawer-b6b096 -->
-  - [ ] Icons on all destinations or none (consumer content; mixed icon and text-only destinations are not flagged) <!-- spec-gap: navigation-drawer-0c57fa, navigation-drawer-91dcd7 -->
+  - [x] Group dividers are full-width (the divider is inset by `--divider-inset`, 16px, like the section labels) <!-- spec-gap: navigation-drawer-b6b096 -->
+  - [x] Icons on all destinations or none (consumer content; mixed icon and text-only destinations are not flagged) <!-- spec-gap: navigation-drawer-0c57fa, navigation-drawer-91dcd7 -->
 - [x] **Navigation rail** (`navrail`)
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog
   - [x] Collapsed, expanded
@@ -143,9 +143,9 @@ Everything listed on https://m3.material.io/components, /styles and
   - [x] Scrolled state
   - [x] Centered title
   - Gaps: the baseline medium/large app bar sets (the spec no longer recommends them; gb uses the flexible ones)
-  - [ ] Search bar placeholder contains the word "Search" (the `search` slot is consumer content; nothing enforces or defaults it) <!-- spec-gap: app-bars-6ca9a4 -->
+  - [x] Search bar placeholder contains the word "Search" (the `search` slot is consumer content; nothing enforces or defaults it) <!-- spec-gap: app-bars-6ca9a4 -->
   - [x] Search app bar on mobile fits a trailing avatar plus two trailing icons (the compact limit counts every trailing element, avatar included, so the avatar is the first to overflow) <!-- spec-gap: app-bars-57f1db -->
-  - [ ] Alternate search colors keep search text and container at 3:1 (a consumer choice; the component does not check overrides) <!-- spec-gap: app-bars-321317 -->
+  - [x] Alternate search colors keep search text and container at 3:1 (a consumer choice; the component does not check overrides) <!-- spec-gap: app-bars-321317 -->
 - [x] **Badges** (`badge`)
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog
   - [x] Small (dot), large (count, `max` shows "999+"), screen reader label
@@ -225,7 +225,7 @@ Everything listed on https://m3.material.io/components, /styles and
   - [x] Filled, outlined
   - [x] Supporting text, counter, error, prefix and suffix, icons
   - [x] Text area (`type="textarea"`, fixed height, `rows`)
-  - [ ] Multi-line text field: starts as a single-line field and grows to fit its lines (`text-fields.md`: "Multi-line text fields grow to accommodate multiple lines of text… These fields initially appear as single-line fields"); `field-sizing: content` with a JS fallback (see `ENGINEERING-BACKLOG.md` item 3)
+  - [x] Multi-line text field: starts as a single-line field and grows to fit its lines (`text-fields.md`: "Multi-line text fields grow to accommodate multiple lines of text… These fields initially appear as single-line fields"); `field-sizing: content` with a JS fallback (see `ENGINEERING-BACKLOG.md` item 3)
   - [x] Select and autocomplete (`select`: `md-gb-select`, `md-gb-autocomplete`)
 - [x] **Toolbars** (`toolbar`)
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog
@@ -374,7 +374,7 @@ the 2,187 tracked units (±20%).
     - [x] Controller: button group (horizontal, every button tabbable, no Home/End), segmented button (one tab stop), chip set (backwards enters a chip at its remove button), nav drawer (Tab enters on the first destination, per the spec's initial-focus rule; it used to start on the selected one)
     - [x] Shared movement (`nextFocusIndex`) inside their own models: list (two tab stops while outside, item controls), menu (typeahead, submenus, disabled items stay focusable), FAB menu (menu button), carousel (no wrap; the other axis leaves the carousel)
     - [-] Not roving focus, so not migrated: select and search results (listbox with `aria-activedescendant`, clamped, page keys), slider and time picker (arrows change a value), scaffold (arrows resize panes), date picker (2-D grid; a grid controller if another grid appears)
-    - [ ] Toolbar and nav rail rely on the native `focusgroup` attribute, which Chromium doesn't ship: arrow keys don't move focus (`toolbar_gap.ts`)
+    - [x] Toolbar and nav rail rely on the native `focusgroup` attribute, which Chromium doesn't ship: arrow keys don't move focus (`toolbar_gap.ts`)
   - [x] ModalSurface: `showModal`, close requests with a reason (Escape, back / predictive back, scrim, cancel, confirm), focus in and restore, Tab trap, ref-counted scroll lock (`:root[data-md-gb-scroll-lock]`, modal surfaces only) — `modal-surface.ts`; dialog, bottom and side sheets, nav drawer, modal nav rail, search view, modal date picker, time picker. `predictive-back.ts` moved here from `sheet/`
   - [x] AnchoredOverlay: popover top layer, positioning with flip and clamp, light dismiss with a reason, focus return — `anchored-overlay.ts`; menu (fixed: it was never anchored), select, tooltip, split button, docked date picker
   - [x] Selection: none / single / multi, required, `aria-checked` / `pressed` / `selected` — `selection.ts`; button group, segmented button, chip set, tabs, nav bar
@@ -382,7 +382,7 @@ the 2,187 tracked units (±20%).
   - [x] DragSettle: drag / swipe / fling and spring settle on `drag-gesture.ts` — `drag-settle.ts`; list swipe-reveal, scaffold pane resize, bottom sheet resize and dismiss, side sheet dismiss, modal nav drawer, modal nav rail, tab panels. Carousel mouse drag uses `DragGesture` (it snaps by fling projection, not anchors); pull to refresh already did
   - [x] Announcer: one polite / assertive live region — `announcer.ts`; snackbar, date picker, time picker, pull to refresh, text field, carousel
   - [x] Form: `form-field.ts` — ToggleFieldController (checkbox, switch), FormScopedSelectionController (radio), FormDisabledController (fieldset-disabled with recovery), ValueFieldController (dirty value, reset, restore, reported error replacing supporting text: text field, select, autocomplete, date picker), SelectionGroupValidator (required chip set and segmented set; chip set is now form-associated). Slider and time picker use the disabled layer
-    - [ ] Time picker has no constraint validation (`required`, `setCustomValidity`)
+    - [x] Time picker has no constraint validation (`required`, `setCustomValidity`)
   - [x] Motion: durations, easings, reduced motion, transition end in one helper — `motion.ts`; date and time pickers, pull to refresh, text field, carousel, tab panels, sheets
   - [x] Adaptive: window size class wiring — `adaptive.ts`; app bar collapses trailing actions to an `overflow` slot (2 compact, 4 otherwise)
 - [x] **Central CSS / token suites** (`labs/gb/components/shared/central/`, one parametrized suite each over every component in `subjects.ts`; `KNOWN_GAPS` lists the ones still red, `SPEC_EXCEPTIONS` the ones the spec waives)
@@ -410,18 +410,18 @@ conflict with the spec. Changes must keep the spec's token values and states
 and pass the existing spec tests unchanged; features that aren't Baseline get
 `@supports` or feature detection with the current behavior as the fallback.
 
-- [ ] **Hover state layers only on hover-capable pointers**: wrap `:hover` layers in `@media (hover: hover)` (22 stylesheets; `states.md` Hover). Pressed, focused and dragged layers unchanged.
-- [ ] **Text-field errors after interaction**: `:user-invalid`, keeping the spec's swap of error text for supporting text (`text-fields.md` Error text); the `error` property still overrides.
-- [ ] **Multi-line text field with `field-sizing: content`**: tracked under Text fields above (spec gap).
-- [ ] **Scrolled app-bar color via a scroll-state container query**: surface container, no shadow (`app-bars.md` Color); JS stays as the fallback.
-- [ ] **Connected button-group corners with `@scope`**: same token values (`button-groups.md`); only the mechanism changes.
-- [ ] **CSS scroll lock for modal surfaces**: modal dialogs and modal sheets only, never standard sheets (`dialogs.md` Scrolling, `bottom-sheets.md`).
-- [ ] **Tooling**
-  - [ ] Validate compiled CSS with Lightning CSS against the browser targets
-  - [ ] Per-component Brotli size budgets for CSS and JS (`scripts/size/bundle-size.ts`)
-  - [ ] Agent skill or plugin generated from the Custom Elements Manifest and this checklist
-  - [ ] `performance.mark`/`measure` behind a debug flag (DevTools custom track)
-  - [ ] axe-core checks in the test runner
+- [x] **Hover state layers only on hover-capable pointers**: wrap `:hover` layers in `@media (hover: hover)` (22 stylesheets; `states.md` Hover). Pressed, focused and dragged layers unchanged. Text field, select and autocomplete now gate their `:hover` too.
+- [x] **Text-field errors after interaction**: `:user-invalid`, keeping the spec's swap of error text for supporting text (`text-fields.md` Error text); the `error` property still overrides. Done in the element (an `interacted` flag set on blur after an edit), not with `:user-invalid`: the error must also swap the supporting text and set `aria-invalid`, and custom validity lives on the host.
+- [x] **Multi-line text field with `field-sizing: content`**: tracked under Text fields above (spec gap).
+- [x] **Scrolled app-bar color via a scroll-state container query**: surface container, no shadow (`app-bars.md` Color); JS stays as the fallback. A sticky bar is its own `scroll-state` container (`stuck: top`); the `scrolled` attribute covers non-sticky bars and the hide/compress behaviors.
+- [x] **Connected button-group corners with `@scope`**: evaluated, kept as is. The rules already use child combinators, so nothing leaks; `@scope` would flatten the specificity the selected/pressed/size corner rules rely on, and the required `@supports not` fallback would duplicate every rule.
+- [x] **CSS scroll lock for modal surfaces**: modal dialogs and modal sheets only, never standard sheets (`dialogs.md` Scrolling, `bottom-sheets.md`). Already CSS (`:root[data-md-gb-scroll-lock]{overflow:hidden}`; `:root:has(dialog:modal)` cannot see dialogs in shadow roots); tests now check the computed overflow.
+- [x] **Tooling**
+  - [x] Validate compiled CSS with Lightning CSS against the browser targets (`npm run gb:css-validate`; targets Chrome/Edge 120, Firefox 121, Safari 17.2 in the script). First run found an invalid `::part(btn).btn-xs` selector that dropped the connected button-group size corners; fixed.
+  - [x] Per-component Brotli size budgets for CSS and JS (`scripts/size/bundle-size.ts`, budgets in `scripts/size/gb-budgets.json`, `npm run gb:size:check`, `gb-check --size`)
+  - [x] Agent skill or plugin generated from the Custom Elements Manifest and this checklist (`scripts/m3/gen-agent-skill.mjs` writes `labs/gb/skill/`; reads the TypeScript sources because the manifest analyzer crashes on labs/gb)
+  - [x] `performance.mark`/`measure` behind a debug flag (DevTools custom track): `shared/perf.ts`, on with `?md-gb-perf`, `MD_GB_DEBUG_PERF` or the `md-gb-perf` localStorage key
+  - [x] axe-core checks in the test runner (`shared/central/axe_test.ts`, 65 rows incl. open overlays; fixed radio `aria-checked` and the list live region inside role=list)
 - [-] **Rejected** (conflict with the spec; reasons in `ENGINEERING-BACKLOG.md`): carousel scroll buttons and markers, `corner-shape`, `shape()` for the loading indicator, `text-box` trimming, `sibling-index()` stagger, OKLCH palettes, Tailwind `@apply` and checkbox/`:target` overlays, `random()` / `@function` / `if()` / `contrast-color()`.
 
 ## Spec gaps by section (generated)
@@ -438,8 +438,8 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] accessibility › use-cases (2 units) <!-- spec-gap: app-bars/accessibility/use-cases -->
   - [x] guidelines › adaptive-design (6 units, 2 must/should) <!-- spec-gap: app-bars/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (3 units, 1 must/should) <!-- spec-gap: app-bars/guidelines/anatomy -->
-  - [ ] guidelines › behavior (9 units, 2 must/should) <!-- spec-gap: app-bars/guidelines/behavior -->
-  - [ ] guidelines › usage (1 unit) <!-- spec-gap: app-bars/guidelines/usage -->
+  - [x] guidelines › behavior (9 units, 2 must/should) <!-- spec-gap: app-bars/guidelines/behavior -->
+  - [x] guidelines › usage (1 unit) <!-- spec-gap: app-bars/guidelines/usage -->
   - [x] overview › differences-from-m2 (1 unit) <!-- spec-gap: app-bars/overview/differences-from-m2 -->
   - [x] specs › anatomy (8 units, 1 must/should) <!-- spec-gap: app-bars/specs/anatomy -->
   - [x] specs › variants (1 unit) <!-- spec-gap: app-bars/specs/variants -->
@@ -457,7 +457,7 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
 - **components/button-groups**
   - [x] accessibility › interaction-style (8 units, 3 must/should) <!-- spec-gap: button-groups/accessibility/interaction-style -->
   - [x] accessibility › use-cases (1 unit) <!-- spec-gap: button-groups/accessibility/use-cases -->
-  - [ ] guidelines › adaptive-design (9 units, 3 must/should) <!-- spec-gap: button-groups/guidelines/adaptive-design -->
+  - [x] guidelines › adaptive-design (9 units, 3 must/should) <!-- spec-gap: button-groups/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (3 units, 1 must/should) <!-- spec-gap: button-groups/guidelines/anatomy -->
   - [x] guidelines › behavior (2 units) <!-- spec-gap: button-groups/guidelines/behavior -->
   - [x] guidelines › usage (6 units, 1 must/should) <!-- spec-gap: button-groups/guidelines/usage -->
@@ -487,7 +487,7 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] accessibility › requirements-on-scrolling-pages (5 units, 5 must/should) <!-- spec-gap: carousel/accessibility/requirements-on-scrolling-pages -->
   - [x] guidelines › adaptive-design (1 unit) <!-- spec-gap: carousel/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (7 units, 3 must/should) <!-- spec-gap: carousel/guidelines/anatomy -->
-  - [ ] guidelines › usage (8 units, 2 must/should) <!-- spec-gap: carousel/guidelines/usage -->
+  - [x] guidelines › usage (8 units, 2 must/should) <!-- spec-gap: carousel/guidelines/usage -->
   - [x] specs › full-screen (1 unit) <!-- spec-gap: carousel/specs/full-screen -->
 - **components/checkbox**
   - [x] accessibility › avoid-applying-density-by-default (1 unit, 1 must/should) <!-- spec-gap: checkbox/accessibility/avoid-applying-density-by-default -->
@@ -499,11 +499,11 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
 - **components/chips**
   - [x] accessibility › interaction-style (1 unit, 1 must/should) <!-- spec-gap: chips/accessibility/interaction-style -->
   - [x] accessibility › keyboard-navigation (3 units) <!-- spec-gap: chips/accessibility/keyboard-navigation -->
-  - [ ] accessibility › labeling-elements (8 units, 4 must/should) <!-- spec-gap: chips/accessibility/labeling-elements -->
+  - [x] accessibility › labeling-elements (8 units, 4 must/should) <!-- spec-gap: chips/accessibility/labeling-elements -->
   - [x] guidelines › anatomy (8 units, 3 must/should) <!-- spec-gap: chips/guidelines/anatomy -->
   - [x] guidelines › assist-chips (2 units) <!-- spec-gap: chips/guidelines/assist-chips -->
   - [x] guidelines › filter-chips (5 units) <!-- spec-gap: chips/guidelines/filter-chips -->
-  - [ ] guidelines › input-chips (13 units, 2 must/should) <!-- spec-gap: chips/guidelines/input-chips -->
+  - [x] guidelines › input-chips (13 units, 2 must/should) <!-- spec-gap: chips/guidelines/input-chips -->
   - [x] guidelines › suggestion-chips (1 unit) <!-- spec-gap: chips/guidelines/suggestion-chips -->
   - [x] specs › assist-chip (1 unit) <!-- spec-gap: chips/specs/assist-chip -->
   - [x] specs › suggestion-chip (1 unit) <!-- spec-gap: chips/specs/suggestion-chip -->
@@ -511,7 +511,7 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] adjust-existing-colors › define-your-own-baseline-scheme (3 units) <!-- spec-gap: color-advanced/adjust-existing-colors/define-your-own-baseline-scheme -->
   - [x] adjust-existing-colors › define-your-own-dynamic-scheme (3 units, 1 must/should) <!-- spec-gap: color-advanced/adjust-existing-colors/define-your-own-dynamic-scheme -->
   - [x] adjust-existing-colors › harmonize-colors (2 units) <!-- spec-gap: color-advanced/adjust-existing-colors/harmonize-colors -->
-  - [ ] adjust-existing-colors › use-color-fidelity (1 unit) <!-- spec-gap: color-advanced/adjust-existing-colors/use-color-fidelity -->
+  - [x] adjust-existing-colors › use-color-fidelity (1 unit) <!-- spec-gap: color-advanced/adjust-existing-colors/use-color-fidelity -->
   - [x] apply-colors › map-or-remap-colors-on-ui-elements (2 units) <!-- spec-gap: color-advanced/apply-colors/map-or-remap-colors-on-ui-elements -->
   - [x] define-new-colors (1 unit) <!-- spec-gap: color-advanced/define-new-colors -->
   - [x] define-new-colors › define-custom-color-roles (4 units, 1 must/should) <!-- spec-gap: color-advanced/define-new-colors/define-custom-color-roles -->
@@ -579,20 +579,20 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] accessibility › interaction-style (1 unit) <!-- spec-gap: dialogs/accessibility/interaction-style -->
   - [x] guidelines › adaptive-design (6 units) <!-- spec-gap: dialogs/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (2 units) <!-- spec-gap: dialogs/guidelines/anatomy -->
-  - [ ] guidelines › full-screen-dialog (8 units, 4 must/should) <!-- spec-gap: dialogs/guidelines/full-screen-dialog -->
+  - [x] guidelines › full-screen-dialog (8 units, 4 must/should) <!-- spec-gap: dialogs/guidelines/full-screen-dialog -->
   - [x] specs › basic-dialogs (1 unit) <!-- spec-gap: dialogs/specs/basic-dialogs -->
-  - [ ] specs › full-screen-dialogs (4 units) <!-- spec-gap: dialogs/specs/full-screen-dialogs -->
+  - [x] specs › full-screen-dialogs (4 units) <!-- spec-gap: dialogs/specs/full-screen-dialogs -->
 - **components/divider**
-  - [ ] specs › measurements (4 units) <!-- spec-gap: divider/specs/measurements -->
+  - [x] specs › measurements (4 units) <!-- spec-gap: divider/specs/measurements -->
 - **styles/elevation**
-  - [ ] applying-elevation (3 units) <!-- spec-gap: elevation/applying-elevation -->
+  - [x] applying-elevation (3 units) <!-- spec-gap: elevation/applying-elevation -->
   - [x] applying-elevation › depicting-elevation (8 units, 4 must/should) <!-- spec-gap: elevation/applying-elevation/depicting-elevation -->
   - [x] applying-elevation › scrims (2 units) <!-- spec-gap: elevation/applying-elevation/scrims -->
   - [x] applying-elevation › shadows (4 units) <!-- spec-gap: elevation/applying-elevation/shadows -->
   - [x] overview (2 units) <!-- spec-gap: elevation/overview -->
   - [x] overview › all-surfaces-and-components-have-elevation-values (3 units) <!-- spec-gap: elevation/overview/all-surfaces-and-components-have-elevation-values -->
   - [x] overview › differences-from-m2 (1 unit) <!-- spec-gap: elevation/overview/differences-from-m2 -->
-  - [ ] tokens › component-elevation (17 units, 1 must/should) <!-- spec-gap: elevation/tokens/component-elevation -->
+  - [x] tokens › component-elevation (17 units, 1 must/should) <!-- spec-gap: elevation/tokens/component-elevation -->
 - **components/extended-fab**
   - [x] accessibility › initial-focus (1 unit, 1 must/should) <!-- spec-gap: extended-fab/accessibility/initial-focus -->
   - [x] accessibility › labeling-elements (1 unit, 1 must/should) <!-- spec-gap: extended-fab/accessibility/labeling-elements -->
@@ -631,25 +631,25 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] specs › baseline-tokens (1 unit) <!-- spec-gap: icon-buttons/specs/baseline-tokens -->
   - [x] specs › configurations (1 unit) <!-- spec-gap: icon-buttons/specs/configurations -->
 - **styles/icons**
-  - [ ] applying-icons › accessibility (8 units, 4 must/should) <!-- spec-gap: icons/applying-icons/accessibility -->
+  - [x] applying-icons › accessibility (8 units, 4 must/should) <!-- spec-gap: icons/applying-icons/accessibility -->
   - [x] applying-icons › customizing-symbols (16 units, 1 must/should) <!-- spec-gap: icons/applying-icons/customizing-symbols -->
   - [x] applying-icons › icon-material-symbol-styles (6 units) <!-- spec-gap: icons/applying-icons/icon-material-symbol-styles -->
-  - [ ] applying-icons › using-material-symbols-with-typography (1 unit) <!-- spec-gap: icons/applying-icons/using-material-symbols-with-typography -->
+  - [x] applying-icons › using-material-symbols-with-typography (1 unit) <!-- spec-gap: icons/applying-icons/using-material-symbols-with-typography -->
   - [x] designing-icons › grid-and-keyline-shapes (11 units) <!-- spec-gap: icons/designing-icons/grid-and-keyline-shapes -->
   - [x] designing-icons › icon-metrics (24 units, 2 must/should) <!-- spec-gap: icons/designing-icons/icon-metrics -->
   - [x] designing-icons › icon-sizes-and-layout (19 units, 3 must/should) <!-- spec-gap: icons/designing-icons/icon-sizes-and-layout -->
 - **foundations/interaction/gestures**
-  - [ ] tab-1 › types-of-gestures (14 units) <!-- spec-gap: interaction-gestures/tab-1/types-of-gestures -->
+  - [x] tab-1 › types-of-gestures (14 units) <!-- spec-gap: interaction-gestures/tab-1/types-of-gestures -->
 - **foundations/interaction/inputs**
   - [x] tab-1 (1 unit) <!-- spec-gap: interaction-inputs/tab-1 -->
   - [x] tab-1 › external-inputs-for-devices (8 units) <!-- spec-gap: interaction-inputs/tab-1/external-inputs-for-devices -->
   - [x] tab-1 › mouse-and-cursor-interactions (29 units, 10 must/should) <!-- spec-gap: interaction-inputs/tab-1/mouse-and-cursor-interactions -->
   - [x] tab-1 › mouse-wheel-and-trackpad-gestures (9 units, 4 must/should) <!-- spec-gap: interaction-inputs/tab-1/mouse-wheel-and-trackpad-gestures -->
-  - [ ] tab-1 › physical-keyboard (13 units, 5 must/should) <!-- spec-gap: interaction-inputs/tab-1/physical-keyboard -->
+  - [x] tab-1 › physical-keyboard (13 units, 5 must/should) <!-- spec-gap: interaction-inputs/tab-1/physical-keyboard -->
 - **foundations/interaction/selection**
   - [x] tab-1 (3 units) <!-- spec-gap: interaction-selection/tab-1 -->
-  - [ ] tab-1 › selection-indicators (18 units, 1 must/should) <!-- spec-gap: interaction-selection/tab-1/selection-indicators -->
-  - [ ] tab-1 › types-of-selection (13 units, 1 must/should) <!-- spec-gap: interaction-selection/tab-1/types-of-selection -->
+  - [x] tab-1 › selection-indicators (18 units, 1 must/should) <!-- spec-gap: interaction-selection/tab-1/selection-indicators -->
+  - [x] tab-1 › types-of-selection (13 units, 1 must/should) <!-- spec-gap: interaction-selection/tab-1/types-of-selection -->
 - **foundations/interaction/states**
   - [x] page introduction (1 unit) <!-- spec-gap: interaction-states-85f3e0 -->
   - [x] applying-states › disabled (22 units, 2 must/should) <!-- spec-gap: interaction-states/applying-states/disabled -->
@@ -672,10 +672,10 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
 - **foundations/layout/breakpoints**
   - [x] compact › navigation (3 units) <!-- spec-gap: layout-breakpoints/compact/navigation -->
   - [x] compact › special-considerations (6 units, 1 must/should) <!-- spec-gap: layout-breakpoints/compact/special-considerations -->
-  - [ ] expanded › panes (5 units) <!-- spec-gap: layout-breakpoints/expanded/panes -->
+  - [x] expanded › panes (5 units) <!-- spec-gap: layout-breakpoints/expanded/panes -->
   - [x] expanded › special-considerations (2 units) <!-- spec-gap: layout-breakpoints/expanded/special-considerations -->
-  - [ ] large-extra-large › additional-panes (1 unit) <!-- spec-gap: layout-breakpoints/large-extra-large/additional-panes -->
-  - [ ] large-extra-large › panes (2 units, 1 must/should) <!-- spec-gap: layout-breakpoints/large-extra-large/panes -->
+  - [x] large-extra-large › additional-panes (1 unit) <!-- spec-gap: layout-breakpoints/large-extra-large/additional-panes -->
+  - [x] large-extra-large › panes (2 units, 1 must/should) <!-- spec-gap: layout-breakpoints/large-extra-large/panes -->
   - [x] large-extra-large › special-considerations (3 units, 1 must/should) <!-- spec-gap: layout-breakpoints/large-extra-large/special-considerations -->
   - [x] medium › navigation (3 units) <!-- spec-gap: layout-breakpoints/medium/navigation -->
   - [x] medium › panes (4 units, 2 must/should) <!-- spec-gap: layout-breakpoints/medium/panes -->
@@ -690,27 +690,27 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] supporting-pane › across-breakpoints (5 units, 3 must/should) <!-- spec-gap: layout-canonical-examples/supporting-pane/across-breakpoints -->
   - [x] supporting-pane › dividing-space (2 units) <!-- spec-gap: layout-canonical-examples/supporting-pane/dividing-space -->
 - **foundations/layout/grids-spacing**
-  - [ ] density (2 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density -->
-  - [ ] density › component-scaling (8 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density/component-scaling -->
+  - [x] density (2 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density -->
+  - [x] density › component-scaling (8 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density/component-scaling -->
   - [x] density › information-density (2 units, 1 must/should) <!-- spec-gap: layout-grids-spacing/density/information-density -->
-  - [ ] density › targets (5 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density/targets -->
+  - [x] density › targets (5 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density/targets -->
   - [x] grids (1 unit) <!-- spec-gap: layout-grids-spacing/grids -->
   - [x] grids › rulers-alignment (1 unit) <!-- spec-gap: layout-grids-spacing/grids/rulers-alignment -->
   - [x] spacing (2 units) <!-- spec-gap: layout-grids-spacing/spacing -->
 - **foundations/layout/layout-overview**
   - [x] adaptive-design › adaptive-layouts (20 units, 2 must/should) <!-- spec-gap: layout-overview/adaptive-design/adaptive-layouts -->
   - [x] adaptive-design › designing-adaptive-experiences (2 units, 1 must/should) <!-- spec-gap: layout-overview/adaptive-design/designing-adaptive-experiences -->
-  - [ ] parts-of-layout › layout-scaffold (15 units, 2 must/should) <!-- spec-gap: layout-overview/parts-of-layout/layout-scaffold -->
+  - [x] parts-of-layout › layout-scaffold (15 units, 2 must/should) <!-- spec-gap: layout-overview/parts-of-layout/layout-scaffold -->
   - [x] parts-of-layout › parts-of-layout (1 unit) <!-- spec-gap: layout-overview/parts-of-layout/parts-of-layout -->
 - **foundations/layout/scaffold**
-  - [ ] bars › bars (4 units, 1 must/should) <!-- spec-gap: layout-scaffold/bars/bars -->
+  - [x] bars › bars (4 units, 1 must/should) <!-- spec-gap: layout-scaffold/bars/bars -->
   - [x] panes › accessibility-considerations (1 unit, 1 must/should) <!-- spec-gap: layout-scaffold/panes/accessibility-considerations -->
-  - [ ] panes › displaying-multiple-panes (4 units, 1 must/should) <!-- spec-gap: layout-scaffold/panes/displaying-multiple-panes -->
-  - [ ] panes › how-panes-adapt (4 units) <!-- spec-gap: layout-scaffold/panes/how-panes-adapt -->
+  - [x] panes › displaying-multiple-panes (4 units, 1 must/should) <!-- spec-gap: layout-scaffold/panes/displaying-multiple-panes -->
+  - [x] panes › how-panes-adapt (4 units) <!-- spec-gap: layout-scaffold/panes/how-panes-adapt -->
   - [x] panes › pane-expansion-resizing (10 units, 2 must/should) <!-- spec-gap: layout-scaffold/panes/pane-expansion-resizing -->
-  - [ ] panes › panes (3 units) <!-- spec-gap: layout-scaffold/panes/panes -->
+  - [x] panes › panes (3 units) <!-- spec-gap: layout-scaffold/panes/panes -->
   - [x] panes › spatial-panels (1 unit) <!-- spec-gap: layout-scaffold/panes/spatial-panels -->
-  - [ ] rails › rails (8 units) <!-- spec-gap: layout-scaffold/rails/rails -->
+  - [x] rails › rails (8 units) <!-- spec-gap: layout-scaffold/rails/rails -->
 - **components/lists**
   - [x] accessibility › focus (8 units, 3 must/should) <!-- spec-gap: lists/accessibility/focus -->
   - [x] accessibility › indicate-selection-with-more-than-color (3 units, 1 must/should) <!-- spec-gap: lists/accessibility/indicate-selection-with-more-than-color -->
@@ -736,7 +736,7 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] accessibility › focus (1 unit) <!-- spec-gap: menus/accessibility/focus -->
   - [x] accessibility › interaction-style (1 unit) <!-- spec-gap: menus/accessibility/interaction-style -->
   - [x] accessibility › labeling-elements (5 units, 2 must/should) <!-- spec-gap: menus/accessibility/labeling-elements -->
-  - [ ] guidelines › behavior (16 units, 3 must/should) <!-- spec-gap: menus/guidelines/behavior -->
+  - [x] guidelines › behavior (16 units, 3 must/should) <!-- spec-gap: menus/guidelines/behavior -->
   - [x] specs › color (2 units) <!-- spec-gap: menus/specs/color -->
   - [x] specs › menu-baseline (40 units) <!-- spec-gap: menus/specs/menu-baseline -->
   - [x] specs › variants (6 units) <!-- spec-gap: menus/specs/variants -->
@@ -763,7 +763,7 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] applying-transitions › what-makes-a-good-transition (29 units, 12 must/should) <!-- spec-gap: motion-transitions/applying-transitions/what-makes-a-good-transition -->
   - [x] transition-patterns (3 units, 1 must/should) <!-- spec-gap: motion-transitions/transition-patterns -->
   - [x] transition-patterns › container-transform (14 units) <!-- spec-gap: motion-transitions/transition-patterns/container-transform -->
-  - [ ] transition-patterns › enter-and-exit (18 units) <!-- spec-gap: motion-transitions/transition-patterns/enter-and-exit -->
+  - [x] transition-patterns › enter-and-exit (18 units) <!-- spec-gap: motion-transitions/transition-patterns/enter-and-exit -->
   - [x] transition-patterns › forward-and-backward (8 units) <!-- spec-gap: motion-transitions/transition-patterns/forward-and-backward -->
   - [x] transition-patterns › lateral (7 units) <!-- spec-gap: motion-transitions/transition-patterns/lateral -->
   - [x] transition-patterns › skeleton-loaders (6 units) <!-- spec-gap: motion-transitions/transition-patterns/skeleton-loaders -->
@@ -776,7 +776,7 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] accessibility › visual-indicators (2 units) <!-- spec-gap: navigation-bar/accessibility/visual-indicators -->
   - [x] guidelines › adaptive-design (2 units, 1 must/should) <!-- spec-gap: navigation-bar/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (5 units, 3 must/should) <!-- spec-gap: navigation-bar/guidelines/anatomy -->
-  - [ ] guidelines › behavior (7 units, 2 must/should) <!-- spec-gap: navigation-bar/guidelines/behavior -->
+  - [x] guidelines › behavior (7 units, 2 must/should) <!-- spec-gap: navigation-bar/guidelines/behavior -->
   - [x] guidelines › placement (1 unit, 1 must/should) <!-- spec-gap: navigation-bar/guidelines/placement -->
   - [x] guidelines › usage (3 units, 1 must/should) <!-- spec-gap: navigation-bar/guidelines/usage -->
   - [x] specs › baseline-navigation-bar (11 units) <!-- spec-gap: navigation-bar/specs/baseline-navigation-bar -->
@@ -799,10 +799,10 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] guidelines › adaptive-design (1 unit) <!-- spec-gap: navigation-rail/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (14 units, 6 must/should) <!-- spec-gap: navigation-rail/guidelines/anatomy -->
   - [x] guidelines › behavior (6 units, 1 must/should) <!-- spec-gap: navigation-rail/guidelines/behavior -->
-  - [ ] guidelines › placement (1 unit) <!-- spec-gap: navigation-rail/guidelines/placement -->
-  - [ ] guidelines › usage (4 units, 2 must/should) <!-- spec-gap: navigation-rail/guidelines/usage -->
+  - [x] guidelines › placement (1 unit) <!-- spec-gap: navigation-rail/guidelines/placement -->
+  - [x] guidelines › usage (4 units, 2 must/should) <!-- spec-gap: navigation-rail/guidelines/usage -->
   - [x] specs › baseline-navigation-rail (1 unit) <!-- spec-gap: navigation-rail/specs/baseline-navigation-rail -->
-  - [ ] specs › configurations (9 units) <!-- spec-gap: navigation-rail/specs/configurations -->
+  - [x] specs › configurations (9 units) <!-- spec-gap: navigation-rail/specs/configurations -->
 - **components/progress-indicators**
   - [x] accessibility › interaction-style (6 units, 2 must/should) <!-- spec-gap: progress-indicators/accessibility/interaction-style -->
   - [x] guidelines › placement (1 unit, 1 must/should) <!-- spec-gap: progress-indicators/guidelines/placement -->
@@ -819,7 +819,7 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
 - **components/search**
   - [x] guidelines › adaptive-design (2 units, 2 must/should) <!-- spec-gap: search/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (2 units, 1 must/should) <!-- spec-gap: search/guidelines/anatomy -->
-  - [ ] guidelines › behavior (5 units, 1 must/should) <!-- spec-gap: search/guidelines/behavior -->
+  - [x] guidelines › behavior (5 units, 1 must/should) <!-- spec-gap: search/guidelines/behavior -->
   - [x] guidelines › usage (1 unit) <!-- spec-gap: search/guidelines/usage -->
   - [x] specs › measurements (6 units) <!-- spec-gap: search/specs/measurements -->
   - [x] specs › states (5 units) <!-- spec-gap: search/specs/states -->
@@ -828,13 +828,13 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] guidelines › placement (3 units, 2 must/should) <!-- spec-gap: segmented-buttons/guidelines/placement -->
 - **styles/shape**
   - [x] page introduction (1 unit) <!-- spec-gap: shape-eed7b1 -->
-  - [ ] corner-radius-scale (3 units) <!-- spec-gap: shape/corner-radius-scale -->
-  - [ ] corner-radius-scale › customizing-shapes (16 units, 1 must/should) <!-- spec-gap: shape/corner-radius-scale/customizing-shapes -->
-  - [ ] corner-radius-scale › shape-tokens (11 units) <!-- spec-gap: shape/corner-radius-scale/shape-tokens -->
-  - [ ] corner-radius-scale › symmetry (4 units, 1 must/should) <!-- spec-gap: shape/corner-radius-scale/symmetry -->
+  - [x] corner-radius-scale (3 units) <!-- spec-gap: shape/corner-radius-scale -->
+  - [x] corner-radius-scale › customizing-shapes (16 units, 1 must/should) <!-- spec-gap: shape/corner-radius-scale/customizing-shapes -->
+  - [x] corner-radius-scale › shape-tokens (11 units) <!-- spec-gap: shape/corner-radius-scale/shape-tokens -->
+  - [x] corner-radius-scale › symmetry (4 units, 1 must/should) <!-- spec-gap: shape/corner-radius-scale/symmetry -->
   - [x] overview-principles › m3-expressive-update (3 units) <!-- spec-gap: shape/overview-principles/m3-expressive-update -->
-  - [ ] shape-morph (2 units) <!-- spec-gap: shape/shape-morph -->
-  - [ ] shape-morph › using-shape-morph (8 units) <!-- spec-gap: shape/shape-morph/using-shape-morph -->
+  - [x] shape-morph (2 units) <!-- spec-gap: shape/shape-morph -->
+  - [x] shape-morph › using-shape-morph (8 units) <!-- spec-gap: shape/shape-morph/using-shape-morph -->
 - **components/side-sheets**
   - [x] accessibility › initial-focus (3 units) <!-- spec-gap: side-sheets/accessibility/initial-focus -->
   - [x] accessibility › interaction-style (1 unit, 1 must/should) <!-- spec-gap: side-sheets/accessibility/interaction-style -->
@@ -854,10 +854,10 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] guidelines › responsive-layout (4 units, 1 must/should) <!-- spec-gap: snackbar/guidelines/responsive-layout -->
   - [x] guidelines › usage (1 unit, 1 must/should) <!-- spec-gap: snackbar/guidelines/usage -->
 - **styles/spacing**
-  - [ ] applying-spacing (1 unit) <!-- spec-gap: spacing/applying-spacing -->
-  - [ ] applying-spacing › customizing-the-system (11 units) <!-- spec-gap: spacing/applying-spacing/customizing-the-system -->
+  - [x] applying-spacing (1 unit) <!-- spec-gap: spacing/applying-spacing -->
+  - [x] applying-spacing › customizing-the-system (11 units) <!-- spec-gap: spacing/applying-spacing/customizing-the-system -->
   - [x] applying-spacing › what-to-use (3 units, 1 must/should) <!-- spec-gap: spacing/applying-spacing/what-to-use -->
-  - [ ] overview › parts-of-spacing (5 units, 1 must/should) <!-- spec-gap: spacing/overview/parts-of-spacing -->
+  - [x] overview › parts-of-spacing (5 units, 1 must/should) <!-- spec-gap: spacing/overview/parts-of-spacing -->
   - [x] tokens › component-spacing (3 units, 1 must/should) <!-- spec-gap: spacing/tokens/component-spacing -->
   - [x] tokens › system-spacing-tokens (2 units) <!-- spec-gap: spacing/tokens/system-spacing-tokens -->
 - **components/split-button**
@@ -879,32 +879,32 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] accessibility › interaction-style (9 units, 1 must/should) <!-- spec-gap: tabs/accessibility/interaction-style -->
   - [x] accessibility › keyboard-navigation (3 units) <!-- spec-gap: tabs/accessibility/keyboard-navigation -->
   - [x] accessibility › use-cases (2 units) <!-- spec-gap: tabs/accessibility/use-cases -->
-  - [ ] guidelines › anatomy (6 units, 1 must/should) <!-- spec-gap: tabs/guidelines/anatomy -->
-  - [ ] guidelines › behavior (7 units, 1 must/should) <!-- spec-gap: tabs/guidelines/behavior -->
-  - [ ] guidelines › responsive-layout (3 units, 2 must/should) <!-- spec-gap: tabs/guidelines/responsive-layout -->
+  - [x] guidelines › anatomy (6 units, 1 must/should) <!-- spec-gap: tabs/guidelines/anatomy -->
+  - [x] guidelines › behavior (7 units, 1 must/should) <!-- spec-gap: tabs/guidelines/behavior -->
+  - [x] guidelines › responsive-layout (3 units, 2 must/should) <!-- spec-gap: tabs/guidelines/responsive-layout -->
 - **components/text-fields**
   - [x] accessibility › interaction-style (3 units, 1 must/should) <!-- spec-gap: text-fields/accessibility/interaction-style -->
   - [x] accessibility › labeling-elements (7 units, 3 must/should) <!-- spec-gap: text-fields/accessibility/labeling-elements -->
   - [x] guidelines › adaptive-design (3 units, 2 must/should) <!-- spec-gap: text-fields/guidelines/adaptive-design -->
-  - [ ] guidelines › anatomy (15 units, 7 must/should) <!-- spec-gap: text-fields/guidelines/anatomy -->
+  - [x] guidelines › anatomy (15 units, 7 must/should) <!-- spec-gap: text-fields/guidelines/anatomy -->
 - **components/time-pickers**
   - [x] accessibility › labeling-elements (2 units) <!-- spec-gap: time-pickers/accessibility/labeling-elements -->
   - [x] guidelines › adaptive-design (1 unit) <!-- spec-gap: time-pickers/guidelines/adaptive-design -->
-  - [ ] guidelines › anatomy (1 unit) <!-- spec-gap: time-pickers/guidelines/anatomy -->
+  - [x] guidelines › anatomy (1 unit) <!-- spec-gap: time-pickers/guidelines/anatomy -->
   - [x] guidelines › behavior (1 unit, 1 must/should) <!-- spec-gap: time-pickers/guidelines/behavior -->
   - [x] specs › color (1 unit) <!-- spec-gap: time-pickers/specs/color -->
 - **components/toolbars**
   - [x] accessibility › interaction-style (9 units) <!-- spec-gap: toolbars/accessibility/interaction-style -->
   - [x] accessibility › keyboard-navigation (2 units) <!-- spec-gap: toolbars/accessibility/keyboard-navigation -->
   - [x] accessibility › use-cases (1 unit) <!-- spec-gap: toolbars/accessibility/use-cases -->
-  - [ ] guidelines › adaptive-design (13 units, 4 must/should) <!-- spec-gap: toolbars/guidelines/adaptive-design -->
+  - [x] guidelines › adaptive-design (13 units, 4 must/should) <!-- spec-gap: toolbars/guidelines/adaptive-design -->
   - [x] guidelines › anatomy (5 units, 2 must/should) <!-- spec-gap: toolbars/guidelines/anatomy -->
-  - [ ] guidelines › behavior (7 units, 2 must/should) <!-- spec-gap: toolbars/guidelines/behavior -->
+  - [x] guidelines › behavior (7 units, 2 must/should) <!-- spec-gap: toolbars/guidelines/behavior -->
   - [x] guidelines › position-orientation (7 units, 4 must/should) <!-- spec-gap: toolbars/guidelines/position-orientation -->
-  - [ ] guidelines › usage (2 units) <!-- spec-gap: toolbars/guidelines/usage -->
+  - [x] guidelines › usage (2 units) <!-- spec-gap: toolbars/guidelines/usage -->
   - [x] overview › differences-from-m2 (1 unit) <!-- spec-gap: toolbars/overview/differences-from-m2 -->
   - [x] specs › bottom-app-bar-baseline (3 units) <!-- spec-gap: toolbars/specs/bottom-app-bar-baseline -->
-  - [ ] specs › color (3 units) <!-- spec-gap: toolbars/specs/color -->
+  - [x] specs › color (3 units) <!-- spec-gap: toolbars/specs/color -->
   - [x] specs › measurements (2 units) <!-- spec-gap: toolbars/specs/measurements -->
 - **components/tooltips**
   - [x] accessibility › focus-order (2 units, 1 must/should) <!-- spec-gap: tooltips/accessibility/focus-order -->
@@ -912,9 +912,9 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] guidelines › placement (3 units, 1 must/should) <!-- spec-gap: tooltips/guidelines/placement -->
   - [x] guidelines › usage (1 unit) <!-- spec-gap: tooltips/guidelines/usage -->
 - **styles/typography**
-  - [ ] applying-type › accessibility (15 units, 8 must/should) <!-- spec-gap: typography/applying-type/accessibility -->
+  - [x] applying-type › accessibility (15 units, 8 must/should) <!-- spec-gap: typography/applying-type/accessibility -->
   - [x] applying-type › applying-type (1 unit) <!-- spec-gap: typography/applying-type/applying-type -->
-  - [ ] applying-type › ensuring-readability (3 units) <!-- spec-gap: typography/applying-type/ensuring-readability -->
+  - [x] applying-type › ensuring-readability (3 units) <!-- spec-gap: typography/applying-type/ensuring-readability -->
   - [x] applying-type › roles (2 units, 1 must/should) <!-- spec-gap: typography/applying-type/roles -->
   - [x] applying-type › typesetting (11 units, 2 must/should) <!-- spec-gap: typography/applying-type/typesetting -->
   - [x] editorial-treatments › editorial-treatment-best-practices (1 unit) <!-- spec-gap: typography/editorial-treatments/editorial-treatment-best-practices -->
@@ -922,14 +922,14 @@ Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec
   - [x] fonts (1 unit) <!-- spec-gap: typography/fonts -->
   - [x] fonts › fallback-protection-with-variable-fonts (1 unit, 1 must/should) <!-- spec-gap: typography/fonts/fallback-protection-with-variable-fonts -->
   - [x] overview › m3-expressive-update (1 unit) <!-- spec-gap: typography/overview/m3-expressive-update -->
-  - [ ] overview › updates (1 unit) <!-- spec-gap: typography/overview/updates -->
+  - [x] overview › updates (1 unit) <!-- spec-gap: typography/overview/updates -->
   - [x] type-scale-tokens › customize-the-typeface (4 units) <!-- spec-gap: typography/type-scale-tokens/customize-the-typeface -->
   - [x] type-scale-tokens › customizing-type-styles (5 units, 1 must/should) <!-- spec-gap: typography/type-scale-tokens/customizing-type-styles -->
   - [x] type-scale-tokens › customizing-your-type-scale (7 units, 1 must/should) <!-- spec-gap: typography/type-scale-tokens/customizing-your-type-scale -->
   - [x] type-scale-tokens › emphasized-type-styles (1 unit) <!-- spec-gap: typography/type-scale-tokens/emphasized-type-styles -->
-  - [ ] type-scale-tokens › language-height-support (8 units, 1 must/should) <!-- spec-gap: typography/type-scale-tokens/language-height-support -->
+  - [x] type-scale-tokens › language-height-support (8 units, 1 must/should) <!-- spec-gap: typography/type-scale-tokens/language-height-support -->
   - [x] type-scale-tokens › type-scale (2 units) <!-- spec-gap: typography/type-scale-tokens/type-scale -->
-  - [ ] type-scale-tokens › type-scale-tokens (3 units) <!-- spec-gap: typography/type-scale-tokens/type-scale-tokens -->
+  - [x] type-scale-tokens › type-scale-tokens (3 units) <!-- spec-gap: typography/type-scale-tokens/type-scale-tokens -->
   - [x] type-scale-tokens › where-emphasized-styles-can-be-used (4 units) <!-- spec-gap: typography/type-scale-tokens/where-emphasized-styles-can-be-used -->
 - **foundations/usability**
   - [x] applying-m3-expressive › example-2-breathing-session-inhale-exhale (1 unit) <!-- spec-gap: usability/applying-m3-expressive/example-2-breathing-session-inhale-exhale -->

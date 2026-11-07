@@ -480,6 +480,7 @@ export class TextFieldElement extends baseClass {
   /** Resets the value to the `value` attribute and clears native errors. */
   reset() {
     this.field.reset();
+    this.interacted = false;
     this.value = this.defaultValue;
   }
 
@@ -510,10 +511,26 @@ export class TextFieldElement extends baseClass {
     }
   }
 
+  /** Whether the person edited the value and then left the field. */
+  private interacted = false;
+
+  private handleFocusOut() {
+    if (!this.field.isDirty || this.interacted) return;
+    this.interacted = true;
+    this.requestUpdate();
+  }
+
   protected override render() {
     const textarea = this.type === 'textarea';
-    const showError = !this.disabled && this.field.hasError;
-    const errorText = this.field.message;
+    // Like `:user-invalid`: once the person edited the value and left the
+    // field, an invalid value shows the error until it is valid again.
+    const userInvalid = this.interacted && !this.validity.valid;
+    const showError = !this.disabled && (this.field.hasError || userInvalid);
+    const errorText = this.field.hasError
+      ? this.field.message
+      : userInvalid
+        ? this.validationMessage
+        : '';
     const supporting = showError && errorText ? errorText : this.supportingText;
     const hasCounter = (this.maxLength ?? -1) > -1;
     const describedBy = [
@@ -593,7 +610,8 @@ export class TextFieldElement extends baseClass {
                   class=${classMap({
                     'text-field-supporting-text': true,
                     [TEXT_FIELD_CLASSES.supportingTextFocus]:
-                      this.supportingTextVisibility === 'focus' && !(showError && errorText),
+                      this.supportingTextVisibility === 'focus' &&
+                      !(showError && errorText),
                   })}
                   part="supporting-text"
                   role=${showError && errorText ? 'alert' : nothing}
@@ -658,6 +676,7 @@ export class TextFieldElement extends baseClass {
         .value=${live(this.value)}
         @change=${this.redispatchEvent}
         @input=${this.handleInput}
+        @focusout=${this.handleFocusOut}
         @select=${this.redispatchEvent}
       ></textarea>`;
     }
@@ -690,6 +709,7 @@ export class TextFieldElement extends baseClass {
       .value=${live(this.value)}
       @change=${this.redispatchEvent}
       @input=${this.handleInput}
+      @focusout=${this.handleFocusOut}
       @select=${this.redispatchEvent}
     />`;
   }
@@ -711,9 +731,11 @@ export class TextFieldElement extends baseClass {
       role=${showError ? 'img' : nothing}
       aria-label=${showError ? 'Error' : nothing}
       aria-hidden=${showError ? nothing : 'true'}
-      focusable="false">
+      focusable="false"
+    >
       <path
-        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+      />
     </svg>`;
   }
 
