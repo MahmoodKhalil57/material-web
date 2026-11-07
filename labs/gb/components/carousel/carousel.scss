@@ -1,0 +1,166 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'carousel-tokens';
+// go/keep-sorted end
+
+// Styles for the carousel container (`md-gb-carousel` or `.carousel`). Items
+// are styled by `carousel-item.scss`.
+
+// The items: Light DOM children of `.carousel-scroller`, or the elements
+// slotted into it.
+@mixin items {
+  .carousel-scroller > * {
+    @content;
+  }
+}
+
+@mixin slotted-items {
+  ::slotted(*) {
+    @content;
+  }
+}
+
+@mixin item-layout {
+  // Items are laid out end-to-end at the strategy's large item size, like
+  // Compose's `Pager`, then masked and translated onto the keylines.
+  flex: 0 0 var(--_carousel-item-main-size, 100%);
+  min-inline-size: 0;
+  min-block-size: 0;
+  scroll-snap-align: start;
+  position: relative;
+}
+
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.carousel-item;
+@layer md.comp.carousel {
+  :host,
+  .carousel {
+    @include carousel-tokens.root;
+  }
+
+  :host {
+    display: block;
+    block-size: var(--height);
+  }
+
+  // The inner container inherits the host's tokens so values set on the
+  // `md-gb-carousel` element still apply.
+  :host > .carousel {
+    @include carousel-tokens.inherit;
+    block-size: 100%;
+  }
+
+  .carousel {
+    // Private values the controller reads (`CarouselController.measure()`).
+    --_item-spacing: var(--item-spacing);
+    --_content-padding-start: 0px;
+    --_content-padding-end: 0px;
+    display: flex;
+    box-sizing: border-box;
+    // Contained layouts keep items inside the container padding.
+    padding: var(--padding-block) var(--padding-inline);
+    position: relative;
+  }
+
+  // Uncontained items scroll to the edges of the container and bleed over
+  // the leading padding (spec "Uncontained"); the padding is Compose content
+  // padding, handled by the keyline strategy.
+  .carousel.carousel-uncontained {
+    --_content-padding-start: var(--padding-inline);
+    padding-inline: 0;
+  }
+
+  .carousel.carousel-uncontained-multi-aspect {
+    padding-inline: 0;
+  }
+
+  // Spec "Full-screen": edge to edge, 16dp between items.
+  .carousel.carousel-full-screen {
+    --_item-spacing: var(--full-screen-item-spacing);
+    padding: 0;
+  }
+
+  .carousel-scroller {
+    display: flex;
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: 0;
+    gap: var(--_item-spacing);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    position: relative;
+    overflow: auto hidden;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    // The keyboard focuses items, never the container (spec "Initial focus").
+    outline: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .carousel-vertical > .carousel-scroller {
+    flex-direction: column;
+    overflow: hidden auto;
+    overscroll-behavior-inline: auto;
+    overscroll-behavior-block: contain;
+  }
+
+  .carousel-uncontained-multi-aspect > .carousel-scroller {
+    padding-inline-start: var(--padding-inline);
+    scroll-padding-inline-start: var(--padding-inline);
+  }
+
+  .carousel-snap > .carousel-scroller {
+    scroll-snap-type: x mandatory;
+  }
+
+  .carousel-snap.carousel-vertical > .carousel-scroller {
+    scroll-snap-type: y mandatory;
+  }
+
+  // Native snapping pauses while a mouse drags the carousel or a scripted
+  // snap animation runs.
+  .carousel-dragging > .carousel-scroller,
+  .carousel-animating > .carousel-scroller {
+    scroll-snap-type: none;
+  }
+
+  .carousel-dragging > .carousel-scroller {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  @include items {
+    @include item-layout;
+  }
+
+  @include slotted-items {
+    @include item-layout;
+  }
+
+  @include items {
+    .carousel-snap-single > & {
+      scroll-snap-stop: always;
+    }
+  }
+
+  .carousel-snap-single > .carousel-scroller ::slotted(*) {
+    scroll-snap-stop: always;
+  }
+
+  // Multi-aspect ratio items keep their own size (spec "Uncontained
+  // multi-aspect ratio": 9:16 to 16:9).
+  .carousel-uncontained-multi-aspect > .carousel-scroller > * {
+    flex: 0 0 auto;
+  }
+
+  .carousel-uncontained-multi-aspect > .carousel-scroller ::slotted(*) {
+    flex: 0 0 auto;
+  }
+}

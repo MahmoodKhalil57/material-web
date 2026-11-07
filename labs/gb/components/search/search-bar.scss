@@ -1,0 +1,163 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'search-tokens';
+// go/keep-sorted end
+
+// Declaring the shared layers here pins `md.comp.search` above them, whatever
+// order the element's `styles` array uses.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.icon-btn;
+@layer md.comp.search {
+  // The token root: the `md-gb-search-bar` host, or a `.search-bar` used in
+  // Light DOM without the element.
+  :host,
+  .search-bar {
+    @include search-tokens.root;
+  }
+
+  // Spec measurements: the container is 360dp to 720dp wide. It never
+  // overflows a narrower parent.
+  :host {
+    display: block;
+    inline-size: 100%;
+    min-inline-size: min(var(--min-width), 100%);
+    max-inline-size: var(--max-width);
+  }
+
+  :host([hidden]) {
+    display: none;
+  }
+
+  // Inside the element the host is the token root; the inner `.search-bar`
+  // inherits its tokens so values set on the host still apply.
+  :host > .search-bar {
+    @include search-tokens.inherit;
+  }
+
+  // Contained (M3 Expressive) search bar. Leading and trailing paddings are
+  // measured to the 48dp tap targets of the icons.
+  .search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: var(--container-height);
+    padding-inline: var(--contained-leading-space)
+      var(--contained-no-actions-trailing-space);
+    background-color: var(--container-color);
+    border-radius: var(--container-shape);
+    // The ripple's state layer color.
+    color: var(--leading-icon-color);
+    cursor: text;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  // Trailing icons or an avatar: 4dp to their tap targets instead of 16dp to
+  // the input text.
+  .search-bar:has(
+      .search-bar-trailing > slot.has-slotted,
+      .search-bar-trailing > :not(slot)
+    ) {
+    padding-inline-end: var(--contained-trailing-actions-trailing-space);
+  }
+
+  .search-bar.search-bar-disabled {
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.38;
+  }
+
+  .search-bar-leading,
+  .search-bar-trailing {
+    display: flex;
+    flex: none;
+    align-items: center;
+  }
+
+  .search-bar-leading {
+    justify-content: center;
+    min-inline-size: var(--icon-target-size);
+    block-size: var(--icon-target-size);
+    color: var(--leading-icon-color);
+  }
+
+  .search-bar-trailing {
+    gap: var(--contained-trailing-actions-gap);
+    margin-inline-start: var(--contained-trailing-actions-leading-space);
+    color: var(--trailing-icon-color);
+  }
+
+  .search-bar-trailing:not(:has(> slot.has-slotted, > :not(slot))) {
+    display: none;
+  }
+
+  // The non-functional search icon shown when nothing is slotted in
+  // `leading`.
+  .search-bar-icon {
+    inline-size: var(--icon-size);
+    block-size: var(--icon-size);
+    fill: currentColor;
+  }
+
+  // Each trailing icon or icon button is centered in a 48dp tap target.
+  .search-bar-trailing ::slotted(:not([slot='avatar'])),
+  .search-bar-trailing > :not(slot, .search-bar-avatar) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-inline-size: var(--icon-target-size);
+    min-block-size: var(--icon-target-size);
+  }
+
+  .search-bar-leading ::slotted(*) {
+    flex: none;
+  }
+
+  // Spec: a 30dp avatar in a 48dp tap target.
+  .search-bar-trailing ::slotted([slot='avatar']),
+  .search-bar-trailing > .search-bar-avatar {
+    flex: none;
+    box-sizing: border-box;
+    inline-size: var(--avatar-size);
+    block-size: var(--avatar-size);
+    margin: calc((var(--contained-avatar-target-size) - var(--avatar-size)) / 2);
+    border-radius: var(--avatar-shape);
+    object-fit: cover;
+    overflow: hidden;
+  }
+
+  .search-bar-input {
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-inline-size: 0;
+    box-sizing: border-box;
+    margin: 0;
+    margin-inline-start: var(--contained-icon-label-gap);
+    padding: 0;
+    border: none;
+    outline: none;
+    appearance: none;
+    background: transparent;
+    color: var(--input-text-color);
+    caret-color: var(--input-text-color);
+    font: var(--input-text);
+    font-variation-settings: var(--input-text-axes);
+    letter-spacing: var(--input-text-tracking);
+    text-overflow: ellipsis;
+    cursor: inherit;
+  }
+
+  .search-bar-input::placeholder {
+    color: var(--supporting-text-color);
+    font: var(--supporting-text);
+    font-variation-settings: var(--supporting-text-axes);
+    letter-spacing: var(--supporting-text-tracking);
+    opacity: 1;
+  }
+}

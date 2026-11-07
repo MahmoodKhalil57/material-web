@@ -1,0 +1,227 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sheet-tokens';
+// go/keep-sorted end
+
+// The drag handle's touch target (spec Accessibility: the top 48dp).
+$drag-target-size: 48px;
+
+// Cascade layer order follows first declaration; this pins
+// `md.comp.bottom-sheet` above the shared focus ring layer.
+@layer md.sys, md.comp.focus-ring;
+@layer md.comp.bottom-sheet {
+  // The token root: the `md-gb-bottom-sheet` host, or a Light DOM
+  // `<dialog class="bottom-sheet">`.
+  :host,
+  .bottom-sheet {
+    @include sheet-tokens.root;
+  }
+
+  :host([modal]),
+  .bottom-sheet.bottom-sheet-modal {
+    @include sheet-tokens.modal;
+  }
+
+  // A standard sheet fills its positioned container and sits at its bottom.
+  // A modal sheet is in the top layer, so its host takes no space.
+  :host {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  :host([modal]) {
+    display: contents;
+  }
+
+  // The `<dialog>`. It covers the container (standard) or the window (modal)
+  // and lays the sheet out at its bottom center.
+  .bottom-sheet-dialog,
+  .bottom-sheet {
+    --_partial-height: var(--peek-height);
+    container: bottom-sheet / inline-size;
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    max-block-size: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    // `clip`, not `hidden`: a scroll container would scroll to show focused
+    // content of a partially expanded sheet, moving it off its height.
+    overflow: clip;
+    pointer-events: none;
+
+    &:is([open], .bottom-sheet-open, .bottom-sheet-closing) {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    &.bottom-sheet-modal {
+      --_partial-height: var(--partially-expanded-height);
+      position: fixed;
+      // The dialog area outside the sheet is the scrim, which closes it.
+      pointer-events: auto;
+    }
+
+    &::backdrop {
+      background-color: var(--scrim-color);
+      opacity: 0;
+      transition: opacity var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects);
+    }
+
+    &.bottom-sheet-open::backdrop {
+      opacity: var(--scrim-opacity);
+    }
+  }
+
+  @starting-style {
+    .bottom-sheet-open::backdrop {
+      opacity: 0;
+    }
+  }
+
+  // Measures the partially expanded height in px for drag gestures.
+  .bottom-sheet-probe {
+    position: absolute;
+    inset-block-start: 0;
+    inline-size: 0;
+    block-size: var(--_partial-height);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  // The sheet. `--_offset` translates it down from its expanded position:
+  // hidden below the container, or showing only its partial height.
+  .bottom-sheet-panel {
+    --_offset: 100%;
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    max-inline-size: var(--max-width);
+    max-block-size: calc(100% - var(--top-margin));
+    background-color: var(--container-color);
+    box-shadow: var(--container-elevation);
+    border-start-start-radius: var(--container-shape);
+    border-start-end-radius: var(--container-shape);
+    pointer-events: auto;
+    transform: translateY(var(--_offset));
+    // Compose BottomSheet: defaultSpatialSpec to show and settle,
+    // fastEffectsSpec to hide.
+    transition: transform var(--md-sys-motion-spring-default-spatial-duration)
+      var(--md-sys-motion-spring-default-spatial);
+  }
+
+  .bottom-sheet-open.bottom-sheet-expanded .bottom-sheet-panel {
+    --_offset: 0px;
+  }
+
+  .bottom-sheet-open.bottom-sheet-partially-expanded .bottom-sheet-panel {
+    --_offset: max(0px, 100% - var(--_partial-height));
+  }
+
+  @starting-style {
+    .bottom-sheet-open .bottom-sheet-panel {
+      transform: translateY(100%);
+    }
+  }
+
+  .bottom-sheet-closing .bottom-sheet-panel {
+    transition: transform var(--md-sys-motion-spring-fast-effects-duration)
+      var(--md-sys-motion-spring-fast-effects);
+  }
+
+  // The sheet follows the pointer through an inline transform.
+  .bottom-sheet-dragging .bottom-sheet-panel {
+    transition: none;
+  }
+
+  // Spec Measurements: above 640dp, 56dp top and side margins.
+  @container bottom-sheet (inline-size > 640px) {
+    .bottom-sheet-panel {
+      max-inline-size: min(var(--max-width), 100% - 2 * var(--wide-margin));
+      max-block-size: calc(100% - var(--wide-margin));
+    }
+  }
+
+  // The top 48dp of the sheet, where dragging starts.
+  .bottom-sheet-drag-area {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    block-size: calc(
+      var(--drag-handle-height) + 2 * var(--drag-handle-padding-block)
+    );
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .bottom-sheet-dragging .bottom-sheet-drag-area {
+    cursor: grabbing;
+  }
+
+  // The drag handle button. It draws the handle itself, so the focus ring
+  // wraps the handle; `::after` extends its target to 48dp.
+  .bottom-sheet-drag-handle {
+    position: relative;
+    flex: none;
+    box-sizing: border-box;
+    inline-size: var(--drag-handle-width);
+    block-size: var(--drag-handle-height);
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--md-sys-shape-corner-full);
+    background-color: var(--drag-handle-color);
+    cursor: inherit;
+    -webkit-tap-highlight-color: transparent;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-block: calc((var(--drag-handle-height) - #{$drag-target-size}) / 2);
+      inset-inline: min(
+        0px,
+        (var(--drag-handle-width) - #{$drag-target-size}) / 2
+      );
+    }
+  }
+
+  .bottom-sheet-content {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bottom-sheet-panel,
+    .bottom-sheet-dialog::backdrop,
+    .bottom-sheet::backdrop {
+      transition-duration: 0s;
+    }
+  }
+
+  :host([quick]) .bottom-sheet-panel,
+  :host([quick]) .bottom-sheet-dialog::backdrop {
+    transition: none;
+  }
+}

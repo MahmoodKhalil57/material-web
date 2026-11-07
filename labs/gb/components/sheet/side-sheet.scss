@@ -1,0 +1,261 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sheet-tokens';
+// go/keep-sorted end
+
+// Space between action buttons.
+$actions-gap: 8px;
+
+// Cascade layer order follows first declaration; this pins
+// `md.comp.side-sheet` above the shared layers.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.icon-btn;
+@layer md.comp.side-sheet {
+  // The token root: the `md-gb-side-sheet` host, or a Light DOM
+  // `<dialog class="side-sheet">`.
+  :host,
+  .side-sheet {
+    @include sheet-tokens.root;
+    @include sheet-tokens.side;
+    // The inline end, as a sign for translations: 1 is right, -1 is left.
+    --_end: 1;
+  }
+
+  :host(:dir(rtl)),
+  .side-sheet:dir(rtl) {
+    --_end: -1;
+  }
+
+  :host([modal]),
+  .side-sheet.side-sheet-modal {
+    @include sheet-tokens.side-modal;
+  }
+
+  :host([detached]),
+  .side-sheet.side-sheet-detached {
+    @include sheet-tokens.side-detached;
+  }
+
+  // A standard sheet is part of the layout. It takes no inline space while
+  // closed and grows to the sheet width while open, so content beside it
+  // shrinks to make room (spec Adaptive design).
+  :host {
+    display: block;
+    flex: none;
+    box-sizing: border-box;
+    inline-size: 0;
+    block-size: var(--container-height);
+    overflow: clip;
+    transition: inline-size var(--md-sys-motion-spring-default-spatial-duration)
+      var(--md-sys-motion-spring-default-spatial);
+  }
+
+  :host([open]) {
+    inline-size: calc(
+      min(var(--container-width), var(--max-width)) + 2 *
+        var(--container-margin)
+    );
+  }
+
+  // A modal sheet is in the top layer, so its host takes no space.
+  :host([modal]) {
+    display: contents;
+  }
+
+  // The `<dialog>`. A standard sheet's fills the host; a modal sheet's covers
+  // the window. Either lays the sheet out at its inline end.
+  .side-sheet-dialog,
+  .side-sheet {
+    position: static;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    max-block-size: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    overflow: clip;
+
+    &:is([open], .side-sheet-open, .side-sheet-closing) {
+      display: flex;
+      justify-content: flex-end;
+      align-items: stretch;
+    }
+
+    &.side-sheet-modal {
+      position: fixed;
+      inset: 0;
+    }
+
+    &::backdrop {
+      background-color: var(--scrim-color);
+      opacity: 0;
+      transition: opacity var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects);
+    }
+
+    &.side-sheet-open::backdrop {
+      opacity: var(--scrim-opacity);
+    }
+  }
+
+  @starting-style {
+    .side-sheet-open::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .side-sheet-panel {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    inline-size: min(var(--container-width), var(--max-width));
+    margin: var(--container-margin);
+    background-color: var(--container-color);
+    box-shadow: var(--container-elevation);
+    border-radius: var(--container-shape);
+    overflow: hidden;
+  }
+
+  // Docked modal: only the corners facing the content are rounded.
+  .side-sheet-modal:not(.side-sheet-detached) .side-sheet-panel {
+    border-radius: 0;
+    border-start-start-radius: var(--container-shape);
+    border-end-start-radius: var(--container-shape);
+  }
+
+  .side-sheet-divider:not(.side-sheet-modal, .side-sheet-detached)
+    .side-sheet-panel {
+    border-inline-start: 1px solid var(--divider-color);
+  }
+
+  // A modal sheet slides in from the inline end of the window.
+  .side-sheet-modal .side-sheet-panel {
+    max-inline-size: calc(100% - 2 * var(--container-margin));
+    transform: translateX(
+      calc(var(--_end) * (100% + 2 * var(--container-margin)))
+    );
+    transition: transform var(--md-sys-motion-spring-default-spatial-duration)
+      var(--md-sys-motion-spring-default-spatial);
+  }
+
+  .side-sheet-modal.side-sheet-open .side-sheet-panel {
+    transform: none;
+  }
+
+  @starting-style {
+    .side-sheet-modal.side-sheet-open .side-sheet-panel {
+      transform: translateX(
+        calc(var(--_end) * (100% + 2 * var(--container-margin)))
+      );
+    }
+  }
+
+  .side-sheet-modal.side-sheet-closing .side-sheet-panel {
+    transition: transform var(--md-sys-motion-spring-fast-effects-duration)
+      var(--md-sys-motion-spring-fast-effects);
+  }
+
+  .side-sheet-header {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--header-gap);
+    min-block-size: var(--header-height);
+    padding-inline: var(--padding-inline);
+    box-sizing: border-box;
+
+    &:has(.side-sheet-back) {
+      padding-inline-start: var(--icon-padding-inline);
+    }
+
+    &:has(.side-sheet-close) {
+      padding-inline-end: var(--icon-padding-inline);
+    }
+  }
+
+  .side-sheet-headline {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    margin: 0;
+    color: var(--headline-color);
+    font: var(--headline);
+    letter-spacing: var(--headline-tracking);
+    font-variation-settings: var(--headline-axes);
+    overflow-wrap: anywhere;
+  }
+
+  .side-sheet-back,
+  .side-sheet-close {
+    // The standard icon button's outline is transparent.
+    --outline-width: 0;
+    flex: none;
+    -webkit-tap-highlight-color: transparent;
+
+    svg {
+      inline-size: var(--icon-size);
+      block-size: var(--icon-size);
+      fill: currentColor;
+    }
+  }
+
+  // The back arrow points to the inline start.
+  :host(:dir(rtl)) .side-sheet-back svg,
+  .side-sheet:dir(rtl) .side-sheet-back svg {
+    transform: scaleX(-1);
+  }
+
+  // Spec Behavior: side sheets scroll vertically, never horizontally.
+  .side-sheet-content {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-inline: var(--padding-inline);
+  }
+
+  .side-sheet-actions {
+    flex: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: $actions-gap;
+    box-sizing: border-box;
+    min-block-size: var(--actions-height);
+    padding-inline: var(--padding-inline);
+    padding-block: var(--actions-padding-block-start)
+      var(--actions-padding-block-end);
+
+    &:not(:has(> slot.has-slotted, > :not(slot))) {
+      display: none;
+    }
+  }
+
+  .side-sheet-divider .side-sheet-actions {
+    border-block-start: 1px solid var(--divider-color);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :host,
+    .side-sheet-panel,
+    .side-sheet-dialog::backdrop,
+    .side-sheet::backdrop {
+      transition-duration: 0s;
+    }
+  }
+
+  :host([quick]),
+  :host([quick]) .side-sheet-panel,
+  :host([quick]) .side-sheet-dialog::backdrop {
+    transition: none;
+  }
+}

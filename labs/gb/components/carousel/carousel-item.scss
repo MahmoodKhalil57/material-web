@@ -1,0 +1,198 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'carousel-tokens';
+// go/keep-sorted end
+
+// Styles for a carousel item (`md-gb-carousel-item` or `.carousel-item`).
+// Item tokens are inherited from the carousel.
+//
+// The carousel sets these on each item for the current scroll position
+// (`CAROUSEL_ITEM_PROPERTIES`):
+//   --_carousel-item-translate     `translate` onto the item's keyline
+//   --_carousel-item-clip-*        mask insets from each physical edge
+//   --_carousel-item-parallax      content parallax (multi-aspect layout)
+//   --carousel-item-fraction       0 (smallest) to 1 (large) masked size
+//
+// The item box stays in place (it is the snap area); its content and frame
+// are masked and translated.
+
+$clip-top: var(--_carousel-item-clip-top, 0px);
+$clip-right: var(--_carousel-item-clip-right, 0px);
+$clip-bottom: var(--_carousel-item-clip-bottom, 0px);
+$clip-left: var(--_carousel-item-clip-left, 0px);
+
+@layer md.sys, md.comp.ripple, md.comp.focus-ring;
+@layer md.comp.carousel-item {
+  :host {
+    display: block;
+    position: relative;
+    pointer-events: none;
+  }
+
+  .carousel-item {
+    display: block;
+    position: relative;
+    box-sizing: border-box;
+    block-size: 100%;
+    inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: none;
+
+    &.carousel-item-outlined {
+      @include carousel-tokens.with-outline;
+    }
+
+    &:is(:hover, .hover):not(.disabled) {
+      @include carousel-tokens.hover;
+
+      &.carousel-item-outlined {
+        @include carousel-tokens.with-outline-hover;
+      }
+    }
+
+    &:is(:focus-within, .focus):not(.disabled) {
+      @include carousel-tokens.focus;
+
+      &.carousel-item-outlined {
+        @include carousel-tokens.with-outline-focus;
+      }
+    }
+
+    &:is(:active, .active):not(.disabled) {
+      @include carousel-tokens.pressed;
+
+      &.carousel-item-outlined {
+        @include carousel-tokens.with-outline-pressed;
+      }
+    }
+
+    &.disabled {
+      @include carousel-tokens.disabled;
+
+      &.carousel-item-outlined {
+        @include carousel-tokens.with-outline-disabled;
+      }
+    }
+  }
+
+  :host(:hover) .carousel-item:not(.disabled) {
+    @include carousel-tokens.hover;
+
+    &.carousel-item-outlined {
+      @include carousel-tokens.with-outline-hover;
+    }
+  }
+
+  // The item visual, masked to the item's keyline size with the container
+  // shape (Compose `maskClip`). Centered masks keep the visual still while
+  // the item moves: the parallax effect.
+  .carousel-item-content {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background-color: var(--container-color);
+    translate: var(--_carousel-item-translate, none);
+    clip-path: inset(
+      $clip-top $clip-right $clip-bottom $clip-left round var(--container-shape)
+    );
+    pointer-events: none;
+  }
+
+  .carousel-item.disabled .carousel-item-content {
+    opacity: var(--disabled-content-opacity, 1);
+  }
+
+  .carousel-item-media {
+    position: absolute;
+    inset: 0;
+    translate: var(--_carousel-item-parallax, none);
+  }
+
+  // Media fills the item and is cropped by the mask.
+  .carousel-item-media > *,
+  .carousel-item-media > slot::slotted(*) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  // Brief item text over the visual. It stays inside the mask and fades out
+  // as the item shrinks toward medium (spec "Item text": medium items hide
+  // the title, small items show at most an abbreviated label).
+  .carousel-item-label {
+    position: absolute;
+    inset-block-end: $clip-bottom;
+    left: $clip-left;
+    right: $clip-right;
+    box-sizing: border-box;
+    padding: var(--label-padding);
+    overflow: hidden;
+    color: var(--label-text-color);
+    font: var(--label-text);
+    font-variation-settings: var(--label-text-axes);
+    letter-spacing: var(--label-text-tracking);
+    background: linear-gradient(to top, var(--label-scrim-color), transparent);
+    opacity: clamp(
+      0,
+      calc((var(--carousel-item-fraction, 1) - 0.6) * 2.5),
+      1
+    );
+    pointer-events: none;
+  }
+
+  .carousel-item-label:empty,
+  .carousel-item-label:not(:has(> .has-slotted)):has(> slot) {
+    display: none;
+  }
+
+  // The item's shape outline, elevation, state layer and focus ring, at the
+  // masked bounds.
+  .carousel-item-frame {
+    position: absolute;
+    inset: $clip-top $clip-right $clip-bottom $clip-left;
+    box-sizing: border-box;
+    border-radius: var(--container-shape);
+    border: var(--outline-width, 0px) solid var(--outline-color, transparent);
+    box-shadow: var(--container-elevation);
+    translate: var(--_carousel-item-translate, none);
+    pointer-events: auto;
+    transition: box-shadow var(--md-sys-motion-spring-fast-effects-duration)
+      var(--md-sys-motion-spring-fast-effects);
+  }
+
+  .carousel-item-action {
+    appearance: none;
+    display: block;
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    // The ripple paints the action's background, rounded to the shape.
+    border-radius: inherit;
+    outline: none;
+    background-color: transparent;
+    // md.comp.carousel-item.{hover,focus,pressed}.state-layer.color.
+    color: var(--md-sys-color-on-surface);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      cursor: default;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-item-frame {
+      transition: none;
+    }
+  }
+}

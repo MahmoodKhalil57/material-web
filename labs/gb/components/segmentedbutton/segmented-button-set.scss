@@ -1,0 +1,51 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'segmented-button-tokens';
+// go/keep-sorted end
+
+@layer md.sys;
+@layer md.comp.segmented-button-set {
+  // The token root: the `md-gb-segmented-button-set` host, or a
+  // `.segmented-button-set` used in Light DOM without the element. Segments
+  // inherit the tokens, so values set on the set apply to every segment.
+  :host,
+  .segmented-button-set {
+    @include segmented-button-tokens.root;
+    --_density: 0;
+    // Compose `SegmentedButtonRow`: a row of equal-width segments
+    // (`weight(1f)`) sized to the widest one (`width(IntrinsicSize.Min)`).
+    // Segments never wrap onto a new line (spec Guidelines > Label text).
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: center;
+    vertical-align: middle;
+    // Room for the last segment's outline overhang (segmented-button.scss).
+    padding-inline-end: var(--outline-width);
+    isolation: isolate;
+  }
+
+  :host([hidden]) {
+    display: none;
+  }
+
+  // Spec Measurements > Density: each step down removes 4dp from the height.
+  :host([density='-1']),
+  .segmented-button-set-density-1 {
+    --_density: -1;
+  }
+
+  :host([density='-2']),
+  .segmented-button-set-density-2 {
+    --_density: -2;
+  }
+
+  :host([density='-3']),
+  .segmented-button-set-density-3 {
+    --_density: -3;
+  }
+}

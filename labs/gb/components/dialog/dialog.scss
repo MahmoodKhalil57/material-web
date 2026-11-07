@@ -1,0 +1,398 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'dialog-tokens';
+// go/keep-sorted end
+
+// Spec page "Basic dialog measurements" and Compose AlertDialogContent.
+$padding: 24px; // Top/left/right/bottom padding (Compose dialogPadding).
+$icon-gap: 16px; // Padding between icon and title (Compose IconPadding).
+$headline-gap: 16px; // Padding between title and body (Compose TitlePadding).
+$actions-gap: 24px; // Padding between body and actions (Compose textPadding).
+$button-gap: 8px; // Padding between buttons (Compose ButtonsMainAxisSpacing).
+// Basic dialogs keep a margin from the window edges.
+$window-margin: 24px;
+
+// Spec page "Full-screen dialog measurements".
+$full-screen-padding: 24px; // Top/left/right padding.
+$full-screen-gap: 8px; // Padding between elements.
+// The close icon button (40px) and the trailing text button (12px padding)
+// overhang the header padding so their icon and label line up with it.
+$close-button-overhang: 8px;
+$action-overhang: 12px;
+
+// Cascade layer order follows first declaration. Declaring the shared layers
+// here pins `md.comp.dialog` above them, whatever order the element's `styles`
+// array uses.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.icon-btn,
+  md.comp.button, md.comp.divider;
+@layer md.comp.dialog {
+  // The token root: the `md-gb-dialog` host, or a `<dialog class="dialog">`
+  // used in Light DOM without the element.
+  :host,
+  .dialog {
+    @include dialog-tokens.root;
+  }
+
+  // The element marks the full-screen variant on its host only (not with the
+  // `dialog-full-screen` class on its inner `<dialog>`), so full-screen token
+  // values set on the host element still apply inside its shadow root.
+  :host([full-screen]),
+  .dialog.dialog-full-screen {
+    @include dialog-tokens.full-screen;
+  }
+
+  :host {
+    display: contents;
+  }
+
+  // Inside the element, the host is the token root. The inner `.dialog`
+  // inherits the host's tokens, so values set on the host still apply.
+  :host > .dialog {
+    @include dialog-tokens.inherit;
+  }
+
+  // The native `<dialog>` is the container. Its `::backdrop` is the scrim.
+  .dialog {
+    --_action-label-text-color: var(--action-label-text-color);
+    --_action-label-text: var(--action-label-text);
+    --_action-label-text-axes: var(--action-label-text-axes);
+    --_action-label-text-tracking: var(--action-label-text-tracking);
+    box-sizing: border-box;
+    border: none;
+    padding: 0;
+    margin: auto;
+    // Basic dialogs are centered and keep a margin from the window edges.
+    min-inline-size: min(var(--min-width), 100% - 2 * $window-margin);
+    max-inline-size: min(var(--max-width), 100% - 2 * $window-margin);
+    max-block-size: calc(100% - 2 * $window-margin);
+    inline-size: fit-content;
+    overflow: hidden;
+    color: var(--supporting-text-color);
+    background-color: var(--container-color);
+    border-radius: var(--container-shape);
+    box-shadow: var(--container-elevation);
+    outline: none;
+    // M3 enter and exit transition: the container fades in and scales up
+    // from 80% with the expressive spatial spring, and fades out quickly.
+    opacity: 1;
+    transform: none;
+    transform-origin: center top;
+    transition:
+      opacity var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects),
+      transform var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial);
+  }
+
+  .dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @starting-style {
+    .dialog[open] {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+
+  .dialog.dialog-closing {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+    transition:
+      opacity var(--md-sys-motion-spring-fast-effects-duration)
+        var(--md-sys-motion-spring-fast-effects),
+      transform var(--md-sys-motion-spring-fast-effects-duration)
+        var(--md-sys-motion-spring-fast-effects);
+  }
+
+  .dialog::backdrop {
+    background-color: var(--scrim-color);
+    opacity: var(--scrim-opacity);
+    transition: opacity var(--md-sys-motion-spring-default-effects-duration)
+      var(--md-sys-motion-spring-default-effects);
+  }
+
+  @starting-style {
+    .dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .dialog.dialog-closing::backdrop {
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-spring-fast-effects-duration)
+      var(--md-sys-motion-spring-fast-effects);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dialog,
+    .dialog::backdrop {
+      transition-duration: 0.001ms;
+    }
+  }
+
+  // Headline region: hero icon above a headline, pinned above the content.
+  .dialog-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: none;
+    padding: $padding $padding 0;
+  }
+
+  .dialog:not(.dialog-has-icon, .dialog-has-headline) .dialog-header {
+    display: none;
+  }
+
+  .dialog-header-actions,
+  .dialog-close {
+    display: none;
+  }
+
+  .dialog-icon {
+    display: none;
+    color: var(--with-icon-icon-color);
+    font-size: var(--with-icon-icon-size);
+    margin-block-end: $icon-gap;
+    align-self: center;
+  }
+
+  .dialog-icon ::slotted(*) {
+    --icon-size: var(--with-icon-icon-size);
+    inline-size: var(--with-icon-icon-size);
+    block-size: var(--with-icon-icon-size);
+    font-size: var(--with-icon-icon-size);
+    color: inherit;
+    fill: currentColor;
+  }
+
+  .dialog.dialog-has-icon .dialog-icon {
+    display: flex;
+  }
+
+  .dialog-headline {
+    display: none;
+    margin: 0;
+    color: var(--headline-color);
+    font: var(--headline);
+    letter-spacing: var(--headline-tracking);
+    font-variation-settings: var(--headline-axes);
+    padding-block-end: $headline-gap;
+    overflow-wrap: anywhere;
+  }
+
+  .dialog.dialog-has-headline .dialog-headline {
+    display: block;
+  }
+
+  // With an icon, the icon and headline are center-aligned; without, the
+  // headline is start-aligned.
+  .dialog.dialog-has-icon .dialog-headline {
+    align-self: center;
+    text-align: center;
+  }
+
+  // An icon without a headline still keeps the 16px gap to the body.
+  .dialog.dialog-has-icon:not(.dialog-has-headline) .dialog-icon {
+    margin-block-end: $headline-gap;
+  }
+
+  // Optional dividers, shown when the content scrolls and isn't at that edge.
+  .dialog-divider {
+    flex: none;
+    visibility: hidden;
+  }
+
+  .dialog.dialog-scrolled-from-top .dialog-divider-top,
+  .dialog.dialog-scrolled-from-bottom.dialog-has-actions
+    .dialog-divider-bottom {
+    visibility: visible;
+  }
+
+  // Supporting text / custom content. Scrolls between the pinned headline
+  // and actions when it overflows.
+  .dialog-scroller {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dialog-content {
+    position: relative;
+    padding-inline: $padding;
+    color: var(--supporting-text-color);
+    font: var(--supporting-text);
+    letter-spacing: var(--supporting-text-tracking);
+    font-variation-settings: var(--supporting-text-axes);
+  }
+
+  .dialog:not(.dialog-has-icon, .dialog-has-headline) .dialog-content {
+    padding-block-start: $padding;
+  }
+
+  .dialog:not(.dialog-has-actions) .dialog-content {
+    padding-block-end: $padding;
+  }
+
+  // Scroll edge sentinels observed by the element.
+  .dialog-anchor {
+    block-size: 1px;
+  }
+
+  .dialog-anchor-top {
+    margin-block-end: -1px;
+  }
+
+  .dialog-anchor-bottom {
+    margin-block-start: -1px;
+  }
+
+  // Buttons are end-aligned (start in RTL), confirm closest to the edge, and
+  // wrap (stack) when they don't fit.
+  .dialog-actions {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: $button-gap;
+    padding: $actions-gap $padding $padding;
+  }
+
+  .dialog:not(.dialog-has-actions) .dialog-actions {
+    display: none;
+  }
+
+  // Slotted text `<md-gb-button>`s take the dialog's action tokens.
+  .dialog-actions ::slotted(md-gb-button:is(:not([color]), [color='text'])),
+  .dialog-header-actions
+    ::slotted(md-gb-button:is(:not([color]), [color='text'])) {
+    --md-sys-color-primary: var(--_action-label-text-color);
+    --md-sys-typescale-label-lg: var(--_action-label-text);
+    --md-sys-typescale-label-lg-axes: var(--_action-label-text-axes);
+    --md-sys-typescale-label-lg-tracking: var(--_action-label-text-tracking);
+  }
+
+  // Full-screen dialog: fills the window, with a 56px header holding the
+  // close icon button, the headline and the confirm action. The element marks
+  // the variant on its host, Light DOM on the `<dialog>`.
+  :host([full-screen]) .dialog,
+  .dialog.dialog-full-screen {
+    inline-size: 100%;
+    block-size: 100%;
+    min-inline-size: 0;
+    max-inline-size: none;
+    max-block-size: none;
+    transform-origin: center bottom;
+    color: var(--header-headline-color);
+    --_action-label-text-color: var(--header-action-label-text-color);
+    --_action-label-text: var(--header-action-label-text);
+    --_action-label-text-axes: var(--header-action-label-text-axes);
+    --_action-label-text-tracking: var(--header-action-label-text-tracking);
+
+    // Enter slides up from below instead of scaling; the effects spring does
+    // not overshoot, so the edges never pull away from the window.
+    @starting-style {
+      &[open] {
+        opacity: 0;
+        transform: translateY(10%);
+      }
+    }
+
+    &.dialog-closing {
+      transform: translateY(10%);
+    }
+
+    .dialog-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: $full-screen-gap;
+      box-sizing: border-box;
+      block-size: var(--header-container-height);
+      padding-block: 0;
+      padding-inline: $full-screen-padding;
+      background-color: var(--header-container-color);
+      box-shadow: var(--header-container-elevation);
+      position: relative;
+      z-index: 1;
+      transition:
+        background-color var(--md-sys-motion-spring-default-effects-duration)
+          var(--md-sys-motion-spring-default-effects),
+        box-shadow var(--md-sys-motion-spring-default-effects-duration)
+          var(--md-sys-motion-spring-default-effects);
+    }
+
+    &.dialog-scrolled-from-top .dialog-header {
+      background-color: var(--header-on-scroll-container-color);
+      box-shadow: var(--header-on-scroll-container-elevation);
+    }
+
+    .dialog-icon,
+    .dialog-divider,
+    .dialog-actions {
+      display: none;
+    }
+
+    .dialog-close {
+      display: inline-flex;
+      flex: none;
+      margin-inline-start: -$close-button-overhang;
+      --icon-color: var(--header-icon-color);
+      --icon-size: var(--header-icon-size);
+    }
+
+    .dialog-headline {
+      display: block;
+      flex: 1 1 auto;
+      min-inline-size: 0;
+      padding: 0;
+      color: var(--header-headline-color);
+      font: var(--header-headline);
+      letter-spacing: var(--header-headline-tracking);
+      font-variation-settings: var(--header-headline-axes);
+      text-align: start;
+      align-self: center;
+      // Long headlines belong in the content area; truncate in the app bar.
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dialog-header-actions {
+      display: flex;
+      flex: none;
+      align-items: center;
+      gap: $full-screen-gap;
+      margin-inline-end: -$action-overhang;
+    }
+
+    // Without slotted actions, keep the close button and headline only.
+    &:not(.dialog-has-actions) .dialog-header-actions {
+      display: none;
+    }
+
+    .dialog-content {
+      padding: $full-screen-padding;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dialog-header {
+        transition-duration: 0.001ms;
+      }
+    }
+  }
+
+  .dialog-close svg {
+    inline-size: var(--icon-size);
+    block-size: var(--icon-size);
+    fill: currentColor;
+  }
+}

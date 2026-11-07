@@ -1,0 +1,325 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'nav-drawer-tokens';
+// go/keep-sorted end
+
+// How far the container paints past its start edge, so an overshooting open
+// spring never shows a gap between the sheet and the screen edge (Compose
+// scales the sheet up for the same reason).
+$overshoot: 24px;
+
+// Cascade layer order follows first declaration. Declaring the shared layers
+// here pins `md.comp.nav-drawer` above them.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring;
+
+@layer md.comp.nav-drawer {
+  // Token roots: the `md-gb-nav-drawer` / `md-gb-nav-drawer-item` hosts, or a
+  // `.nav-drawer` used in Light DOM without the element.
+  :host,
+  .nav-drawer {
+    @include nav-drawer-tokens.root;
+  }
+
+  :host([modal]),
+  .nav-drawer-modal {
+    @include nav-drawer-tokens.modal;
+  }
+
+  // Inside the element, the host is the token root: the inner sheet and the
+  // slotted items inherit its tokens, so values set on the host still apply.
+  // `:host .nav-drawer` outranks `.nav-drawer-modal` above.
+  :host .nav-drawer,
+  ::slotted(*) {
+    @include nav-drawer-tokens.inherit;
+  }
+
+  // The sheet.
+  .nav-drawer {
+    --_open-duration: var(--motion-open-duration);
+    --_open-easing: var(--motion-open-easing);
+    --_close-duration: var(--motion-close-duration);
+    --_close-easing: var(--motion-close-easing);
+    background-color: var(--container-color);
+    block-size: var(--container-height);
+    border: none;
+    border-end-end-radius: var(--container-shape);
+    border-start-end-radius: var(--container-shape);
+    box-shadow: var(--container-elevation);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    inline-size: var(--container-width);
+    margin: 0;
+    max-inline-size: 100%;
+    min-inline-size: min(var(--container-width-minimum), 100%);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-block: var(--container-padding-block);
+    padding-inline: var(--container-padding-inline);
+    position: relative;
+
+    // Standard drawer: closed, it slides out past its start edge and its
+    // negative margin collapses the space it took, so the content next to it
+    // slides along (Compose DismissibleNavigationDrawer).
+    margin-inline-start: calc(-1 * var(--container-width));
+    transition:
+      margin-inline-start var(--_close-duration) var(--_close-easing),
+      visibility 0s linear var(--_close-duration);
+    visibility: hidden;
+
+    &.nav-drawer-open {
+      margin-inline-start: 0;
+      transition:
+        margin-inline-start var(--_open-duration) var(--_open-easing),
+        visibility 0s;
+      visibility: visible;
+    }
+  }
+
+  // Modal drawer: a sheet over a scrim, sliding in from the start edge.
+  .nav-drawer-modal {
+    --_overshoot: #{-$overshoot};
+    box-shadow:
+      var(--container-elevation),
+      var(--_overshoot) 0 0 0 var(--container-color);
+    inset-block: 0;
+    inset-inline-start: 0;
+    margin-inline-start: 0;
+    position: absolute;
+    transition:
+      translate var(--_close-duration) var(--_close-easing),
+      visibility 0s linear var(--_close-duration);
+    translate: -100% 0;
+
+    &:dir(rtl) {
+      --_overshoot: #{$overshoot};
+      translate: 100% 0;
+    }
+
+    &.nav-drawer-open {
+      transition:
+        translate var(--_open-duration) var(--_open-easing),
+        visibility 0s;
+      translate: 0 0;
+    }
+  }
+
+  // The modal drawer's `<dialog>`: a transparent full-viewport layer holding
+  // the scrim and the sheet.
+  .nav-drawer-dialog {
+    background: transparent;
+    block-size: 100%;
+    border: none;
+    box-sizing: border-box;
+    color: inherit;
+    inline-size: 100%;
+    inset: 0;
+    margin: 0;
+    max-block-size: none;
+    max-inline-size: none;
+    overflow: hidden;
+    padding: 0;
+    position: fixed;
+
+    &::backdrop {
+      background: transparent;
+    }
+
+    &:not([open]) {
+      display: none;
+    }
+  }
+
+  .nav-drawer-scrim {
+    background-color: var(--scrim-color);
+    inset: 0;
+    opacity: 0;
+    position: absolute;
+    transition: opacity var(--motion-close-duration)
+      var(--motion-close-easing);
+
+    .nav-drawer-dialog-open > & {
+      opacity: 1;
+      transition: opacity var(--motion-effects-duration)
+        var(--motion-effects-easing);
+    }
+  }
+
+  .nav-drawer-nav {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+  }
+
+  // Headline and section labels (`slot="headline"`, or a heading /
+  // `.nav-drawer-section-label` between the items).
+  .nav-drawer-headline,
+  .nav-drawer-section-label,
+  ::slotted([slot='headline']),
+  ::slotted(:is(h1, h2, h3, h4, h5, h6, .nav-drawer-section-label)) {
+    align-items: center;
+    box-sizing: border-box;
+    color: var(--headline-color);
+    display: flex;
+    flex: none;
+    font: var(--headline);
+    font-variation-settings: var(--headline-axes);
+    letter-spacing: var(--headline-tracking);
+    margin: 0;
+    min-block-size: var(--section-label-height);
+    overflow: hidden;
+    padding-inline: var(--section-label-leading-space);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Full-width dividers between groups of destinations.
+  .nav-drawer-divider,
+  ::slotted(:is(hr, md-gb-divider, .nav-drawer-divider)) {
+    flex: none;
+    margin-block: 0;
+    margin-inline: var(--divider-inset);
+    width: auto;
+  }
+
+  .nav-drawer-divider,
+  ::slotted(hr) {
+    border: none;
+    border-block-end: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  // Destinations.
+  .nav-drawer-item {
+    --md-icon-color: var(--inactive-icon-color);
+    --md-icon-fill: 0;
+    --md-icon-size: var(--icon-size);
+    align-items: center;
+    appearance: none;
+    background-color: transparent;
+    background-image: var(--ripple);
+    block-size: var(--active-indicator-height);
+    border: none;
+    border-radius: var(--active-indicator-shape);
+    box-sizing: border-box;
+    color: var(--inactive-label-text-color);
+    cursor: pointer;
+    display: flex;
+    flex: none;
+    font: var(--label-text);
+    font-variation-settings: var(--label-text-axes);
+    gap: var(--item-icon-label-space);
+    inline-size: 100%;
+    letter-spacing: var(--label-text-tracking);
+    margin: 0;
+    max-inline-size: var(--active-indicator-width);
+    outline: none;
+    padding-block: 0;
+    padding-inline: var(--item-leading-space) var(--item-trailing-space);
+    position: relative;
+    text-align: start;
+    text-decoration: none;
+    transition:
+      background-color var(--motion-effects-duration)
+        var(--motion-effects-easing),
+      color var(--motion-effects-duration) var(--motion-effects-easing),
+      var(--ripple-transition);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+
+    &:is(:hover, .hover) {
+      --md-icon-color: var(--inactive-hover-icon-color);
+      color: var(--inactive-hover-label-text-color);
+    }
+
+    &:is(:focus-visible, .focus-visible) {
+      --md-icon-color: var(--inactive-focus-icon-color);
+      color: var(--inactive-focus-label-text-color);
+    }
+
+    &:is(:active, .active) {
+      --md-icon-color: var(--inactive-pressed-icon-color);
+      color: var(--inactive-pressed-label-text-color);
+    }
+
+    &:is(:disabled, [aria-disabled='true'], .disabled) {
+      cursor: default;
+      opacity: 0.38;
+      pointer-events: none;
+    }
+  }
+
+  .nav-drawer-item:is(.nav-drawer-item-active, [aria-current]:not([aria-current='false'])) {
+    --md-icon-color: var(--active-icon-color);
+    --md-icon-fill: 1;
+    background-color: var(--active-indicator-color);
+    color: var(--active-label-text-color);
+    font: var(--active-label-text);
+    font-variation-settings: var(--active-label-text-axes);
+
+    &:is(:hover, .hover) {
+      --md-icon-color: var(--active-hover-icon-color);
+      color: var(--active-hover-label-text-color);
+    }
+
+    &:is(:focus-visible, .focus-visible) {
+      --md-icon-color: var(--active-focus-icon-color);
+      color: var(--active-focus-label-text-color);
+    }
+
+    &:is(:active, .active) {
+      --md-icon-color: var(--active-pressed-icon-color);
+      color: var(--active-pressed-label-text-color);
+    }
+
+    .nav-drawer-item-badge {
+      color: inherit;
+    }
+  }
+
+  .nav-drawer-item-icon {
+    align-items: center;
+    color: var(--md-icon-color);
+    display: inline-flex;
+    flex: none;
+    font-size: var(--icon-size);
+    justify-content: center;
+    min-block-size: var(--icon-size);
+    min-inline-size: var(--icon-size);
+  }
+
+  .nav-drawer-item-label {
+    color: inherit;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-drawer-item-badge {
+    color: var(--large-badge-label-color);
+    flex: none;
+    font: var(--large-badge-label);
+    font-variation-settings: var(--large-badge-label-axes);
+    letter-spacing: var(--large-badge-label-tracking);
+  }
+
+  .nav-drawer-item-icon[hidden],
+  .nav-drawer-item-badge[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-drawer,
+    .nav-drawer-modal,
+    .nav-drawer-scrim,
+    .nav-drawer-item {
+      transition: none;
+    }
+  }
+}

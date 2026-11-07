@@ -1,0 +1,667 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'date-picker-tokens';
+// go/keep-sorted end
+
+// Compose YearPickerMenuButton is a TextButton (12dp leading padding) with a
+// trailing drop-down icon (ButtonDefaults.IconSpacing 8dp).
+$menu-button-leading-space: 12px;
+$menu-button-trailing-space: 8px;
+$menu-button-icon-space: 8px;
+// Text buttons in dialogs and pickers use 12dp horizontal padding.
+$action-padding-inline: 12px;
+// Basic dialogs keep a margin from the window edges (dialog.scss).
+$window-margin: 24px;
+// Month change: the new month slides in from the side it came from.
+$slide-distance: 20%;
+
+// Cascade layer order follows first declaration. Declaring the shared layers
+// here pins `md.comp.date-picker` above them, whatever order the element's
+// `styles` array uses.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.icon-btn,
+  md.comp.button, md.comp.divider;
+@layer md.comp.date-picker {
+  // The token root: the `md-gb-date-picker` host, or a `.date-picker` used in
+  // Light DOM without the element.
+  :host,
+  .date-picker {
+    @include date-picker-tokens.root;
+  }
+
+  // The element marks its variants on the host only, so variant token values
+  // set on the host still apply inside its shadow root.
+  :host([variant='modal']),
+  .date-picker.date-picker-modal {
+    @include date-picker-tokens.modal;
+  }
+
+  :host([variant='modal'][mode='input']),
+  .date-picker.date-picker-input {
+    @include date-picker-tokens.input;
+  }
+
+  :host {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+  }
+
+  :host([variant='modal']:not([inline])) {
+    display: contents;
+  }
+
+  // Inside the element, the host is the token root. The surface inherits the
+  // host's tokens, so values set on the host still apply.
+  :host .date-picker {
+    @include date-picker-tokens.inherit;
+  }
+
+  // ---------------------------------------------------------------------
+  // Surface.
+
+  .date-picker {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    inline-size: var(--container-width);
+    max-inline-size: 100vw;
+    background-color: var(--container-color);
+    border-radius: var(--container-shape);
+    box-shadow: var(--container-elevation);
+    color: var(--date-unselected-label-text-color);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  // Docked popup: a manual popover in the top layer, placed below the field
+  // by the element. Enters with a short grow from the field and fades out.
+  .date-picker[popover] {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    opacity: 1;
+    transform: none;
+    transform-origin: top center;
+    transition:
+      opacity var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects),
+      transform var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial);
+  }
+
+  .date-picker[popover]:not(:popover-open) {
+    display: none;
+  }
+
+  @starting-style {
+    .date-picker[popover]:popover-open {
+      opacity: 0;
+      transform: scaleY(0.9);
+    }
+  }
+
+  .date-picker.date-picker-closing {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--md-sys-motion-spring-fast-effects-duration)
+      var(--md-sys-motion-spring-fast-effects);
+  }
+
+  // Modal: a native modal `<dialog>` (its `::backdrop` is the scrim) wraps
+  // the surface. Like other dialogs, it fades in and scales up with the
+  // expressive spatial spring, and fades out quickly.
+  .date-picker-dialog {
+    box-sizing: border-box;
+    border: none;
+    padding: 0;
+    margin: auto;
+    max-inline-size: calc(100% - 2 * $window-margin);
+    max-block-size: calc(100% - 2 * $window-margin);
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+    outline: none;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects),
+      transform var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial);
+  }
+
+  .date-picker-dialog .date-picker {
+    max-block-size: calc(100dvh - 2 * $window-margin);
+    overflow-y: auto;
+  }
+
+  @starting-style {
+    .date-picker-dialog[open] {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+
+  .date-picker-dialog.date-picker-dialog-closing {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+    transition:
+      opacity var(--md-sys-motion-spring-fast-effects-duration)
+        var(--md-sys-motion-spring-fast-effects),
+      transform var(--md-sys-motion-spring-fast-effects-duration)
+        var(--md-sys-motion-spring-fast-effects);
+  }
+
+  .date-picker-dialog::backdrop {
+    background-color: var(--scrim-color);
+    opacity: var(--scrim-opacity);
+    transition: opacity var(--md-sys-motion-spring-default-effects-duration)
+      var(--md-sys-motion-spring-default-effects);
+  }
+
+  @starting-style {
+    .date-picker-dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .date-picker-dialog.date-picker-dialog-closing::backdrop {
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-spring-fast-effects-duration)
+      var(--md-sys-motion-spring-fast-effects);
+  }
+
+  .date-picker-live {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .date-picker-icon {
+    inline-size: 24px;
+    block-size: 24px;
+    fill: currentColor;
+    flex: none;
+  }
+
+  .icon-btn .date-picker-icon {
+    inline-size: var(--icon-size);
+    block-size: var(--icon-size);
+  }
+
+  // Previous / next arrows point the other way in RTL.
+  .date-picker-icon-flip:dir(rtl) {
+    transform: scaleX(-1);
+  }
+
+  .date-picker-divider {
+    --color: var(--divider-color);
+    flex: none;
+  }
+
+  // ---------------------------------------------------------------------
+  // Docked text field.
+
+  .date-picker-field {
+    display: block;
+  }
+
+  .date-picker-text-field {
+    inline-size: 100%;
+  }
+
+  // ---------------------------------------------------------------------
+  // Modal header: supporting text, headline and the mode toggle.
+
+  .date-picker-modal-header {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-block-size: var(--header-container-height);
+    padding-block: var(--header-padding-block-start)
+      var(--header-padding-block-end);
+    padding-inline: var(--header-padding-inline-start)
+      var(--header-padding-inline-end);
+  }
+
+  .date-picker-supporting-text {
+    color: var(--header-supporting-text-color);
+    font: var(--header-supporting-text);
+    letter-spacing: var(--header-supporting-text-tracking);
+    font-variation-settings: var(--header-supporting-text-axes);
+  }
+
+  .date-picker-headline-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .date-picker-headline {
+    flex: 1;
+    min-inline-size: 0;
+    color: var(--header-headline-color);
+    font: var(--header-headline);
+    letter-spacing: var(--header-headline-tracking);
+    font-variation-settings: var(--header-headline-axes);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .date-picker-range .date-picker-headline {
+    font: var(--range-selection-header-headline);
+    letter-spacing: var(--range-selection-header-headline-tracking);
+    font-variation-settings: var(--range-selection-header-headline-axes);
+  }
+
+  .date-picker-mode-toggle {
+    --icon-color: var(--header-headline-color);
+    --outline-width: 0;
+    flex: none;
+  }
+
+  // ---------------------------------------------------------------------
+  // Navigation: docked month / year menus, modal month-year menu.
+
+  .date-picker-docked-header {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    block-size: var(--header-height);
+    padding-inline: var(--padding-inline);
+  }
+
+  .date-picker-menu-group {
+    display: flex;
+    align-items: center;
+  }
+
+  // While a menu is open, the arrows are hidden (keeping the layout) and the
+  // other menu button is disabled.
+  .date-picker-header-list-open .date-picker-nav-button {
+    visibility: hidden;
+  }
+
+  .date-picker-nav {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    block-size: var(--nav-height);
+    padding-inline: var(--padding-inline);
+  }
+
+  .date-picker-nav-arrows {
+    display: flex;
+    align-items: center;
+  }
+
+  .date-picker-nav-button {
+    --outline-width: 0;
+    flex: none;
+  }
+
+  // Standard icon buttons and the menu buttons have no container, also when
+  // disabled (the shared disabled tokens add one for filled styles).
+  .date-picker-nav-button:disabled,
+  .date-picker-menu-button:disabled {
+    --container-color: transparent;
+  }
+
+  .date-picker-menu-button {
+    --container-height: var(--menu-button-container-height);
+    --container-shape: var(--menu-button-container-shape);
+    --label-text-color: var(--menu-button-label-text-color);
+    --label-text: var(--menu-button-label-text);
+    --label-text-axes: var(--menu-button-label-text-axes);
+    --label-text-tracking: var(--menu-button-label-text-tracking);
+    --icon-color: var(--menu-button-icon-color);
+    --icon-label-space: #{$menu-button-icon-space};
+    --leading-space: #{$menu-button-leading-space};
+    --trailing-space: #{$menu-button-trailing-space};
+    --outline-width: 0;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+
+    &:disabled {
+      --label-text-color: var(--menu-button-disabled-label-text-color);
+      --icon-color: var(--menu-button-disabled-icon-color);
+    }
+  }
+
+  .date-picker-menu-button-icon {
+    inline-size: var(--menu-button-icon-size);
+    block-size: var(--menu-button-icon-size);
+    color: var(--icon-color);
+    transition: rotate var(--md-sys-motion-spring-fast-spatial-duration)
+      var(--md-sys-motion-spring-fast-spatial);
+  }
+
+  .date-picker-menu-button-icon-expanded {
+    rotate: 180deg;
+  }
+
+  // ---------------------------------------------------------------------
+  // Month grid.
+
+  .date-picker-grid {
+    --_dir: 1;
+    box-sizing: border-box;
+    padding-inline: var(--padding-inline);
+    overflow: hidden;
+  }
+
+  .date-picker-grid:dir(rtl) {
+    --_dir: -1;
+  }
+
+  .date-picker-weekdays,
+  .date-picker-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .date-picker-weekday {
+    display: grid;
+    place-items: center;
+    block-size: var(--date-cell-size);
+    color: var(--weekdays-label-text-color);
+    font: var(--weekdays-label-text);
+    letter-spacing: var(--weekdays-label-text-tracking);
+    font-variation-settings: var(--weekdays-label-text-axes);
+    cursor: default;
+  }
+
+  // The new month slides in from the side it comes from (mirrored in RTL),
+  // with the default spatial spring, and fades in.
+  .date-picker-weeks-next,
+  .date-picker-weeks-prev {
+    animation:
+      date-picker-slide var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial),
+      date-picker-fade var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects);
+  }
+
+  .date-picker-weeks-next {
+    --_slide-from: calc(#{$slide-distance} * var(--_dir));
+  }
+
+  .date-picker-weeks-prev {
+    --_slide-from: calc(-#{$slide-distance} * var(--_dir));
+  }
+
+  @keyframes date-picker-slide {
+    from {
+      translate: var(--_slide-from) 0;
+    }
+  }
+
+  @keyframes date-picker-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .date-picker-cell {
+    position: relative;
+    display: grid;
+    place-items: center;
+    block-size: var(--date-cell-size);
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .date-picker-cell[data-date]:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  // Range selection: the in-range highlight runs behind the dates, from the
+  // center of the start date to the center of the end date (Compose
+  // drawRangeBackground).
+  .date-picker-cell-in-range::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    block-size: var(--range-selection-active-indicator-container-height);
+    translate: 0 -50%;
+    background-color: var(--range-selection-active-indicator-container-color);
+  }
+
+  .date-picker-cell-range-start::before {
+    inset-inline-start: 50%;
+  }
+
+  .date-picker-cell-range-end::before {
+    inset-inline-end: 50%;
+  }
+
+  .date-picker-day {
+    position: relative;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    inline-size: var(--date-container-width);
+    block-size: var(--date-container-height);
+    border: var(--date-today-container-outline-width) solid transparent;
+    border-radius: var(--date-container-shape);
+    color: var(--date-unselected-label-text-color);
+    font: var(--date-label-text);
+    letter-spacing: var(--date-label-text-tracking);
+    font-variation-settings: var(--date-label-text-axes);
+    transition:
+      background-color var(--md-sys-motion-spring-fast-effects-duration)
+        var(--md-sys-motion-spring-fast-effects),
+      var(--ripple-transition);
+  }
+
+  .date-picker-day-outside {
+    color: var(--date-unselected-outside-month-label-text-color);
+  }
+
+  .date-picker-day-in-range {
+    color: var(--range-selection-date-in-range-label-text-color);
+  }
+
+  .date-picker-day-today {
+    border-color: var(--date-today-container-outline-color);
+    color: var(--date-today-label-text-color);
+  }
+
+  .date-picker-day-selected {
+    border-color: transparent;
+    background-color: var(--date-selected-container-color);
+    color: var(--date-selected-label-text-color);
+  }
+
+  .date-picker-day-disabled {
+    color: var(--date-disabled-label-text-color);
+  }
+
+  .date-picker-day-today.date-picker-day-disabled:not(
+      .date-picker-day-selected
+    ) {
+    border-color: var(--date-disabled-label-text-color);
+  }
+
+  // ---------------------------------------------------------------------
+  // Docked month and year menus, modal year grid.
+
+  .date-picker-list {
+    box-sizing: border-box;
+    block-size: var(--menu-list-height);
+    overflow-y: auto;
+    padding-block: 8px;
+    overscroll-behavior: contain;
+  }
+
+  .date-picker-list-item {
+    display: block;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .date-picker-list-item:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  .date-picker-list-item-content {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--menu-list-item-icon-label-space);
+    block-size: var(--menu-list-item-container-height);
+    padding-inline: var(--menu-list-item-padding-inline);
+    color: var(--menu-list-item-label-text-color);
+    font: var(--menu-list-item-label-text);
+    letter-spacing: var(--menu-list-item-label-text-tracking);
+    font-variation-settings: var(--menu-list-item-label-text-axes);
+  }
+
+  .date-picker-list-item-selected .date-picker-list-item-content {
+    background-color: var(--menu-list-item-selected-container-color);
+  }
+
+  .date-picker-list-item-icon {
+    display: grid;
+    place-items: center;
+    inline-size: var(--menu-list-item-selected-leading-icon-size);
+    block-size: var(--menu-list-item-selected-leading-icon-size);
+    color: var(--menu-list-item-selected-leading-icon-color);
+  }
+
+  .date-picker-list-item-icon .date-picker-icon {
+    inline-size: var(--menu-list-item-selected-leading-icon-size);
+    block-size: var(--menu-list-item-selected-leading-icon-size);
+  }
+
+  .date-picker-list-item[aria-disabled='true'] .date-picker-list-item-content {
+    color: var(--date-disabled-label-text-color);
+  }
+
+  // Modal year grid: three years per row (Compose YearPicker), as tall as
+  // the weekdays and six weeks it replaces.
+  .date-picker-year-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-content: start;
+    row-gap: var(--year-selection-row-gap);
+    block-size: calc(var(--date-cell-size) * 7);
+    padding-inline: var(--padding-inline);
+  }
+
+  .date-picker-year {
+    display: grid;
+    place-items: center;
+  }
+
+  .date-picker-year .date-picker-list-item-content {
+    justify-content: center;
+    inline-size: var(--year-selection-year-container-width);
+    block-size: var(--year-selection-year-container-height);
+    padding: 0;
+    border: var(--date-today-container-outline-width) solid transparent;
+    border-radius: var(--year-selection-year-container-shape);
+    color: var(--year-selection-year-unselected-label-text-color);
+    font: var(--year-selection-year-label-text);
+    letter-spacing: var(--year-selection-year-label-text-tracking);
+    font-variation-settings: var(--year-selection-year-label-text-axes);
+  }
+
+  .date-picker-year.date-picker-list-item-current .date-picker-list-item-content {
+    border-color: var(--date-today-container-outline-color);
+    color: var(--date-today-label-text-color);
+  }
+
+  .date-picker-year.date-picker-list-item-selected
+    .date-picker-list-item-content {
+    border-color: transparent;
+    background-color: var(--year-selection-year-selected-container-color);
+    color: var(--year-selection-year-selected-label-text-color);
+  }
+
+  .date-picker-year[aria-disabled='true'] .date-picker-list-item-content {
+    color: var(--date-disabled-label-text-color);
+  }
+
+  // ---------------------------------------------------------------------
+  // Modal date input.
+
+  .date-picker-inputs {
+    display: flex;
+    gap: var(--input-gap);
+    padding-block: var(--input-padding-block-start)
+      var(--input-padding-block-end);
+    padding-inline: var(--input-padding-inline);
+    animation: date-picker-input-in
+      var(--md-sys-motion-spring-default-spatial-duration)
+      var(--md-sys-motion-spring-default-spatial);
+  }
+
+  // Compose SwitchableDateEntryContent: the text field slides in from below.
+  @keyframes date-picker-input-in {
+    from {
+      opacity: 0;
+      translate: 0 24px;
+    }
+  }
+
+  .date-picker-inputs md-gb-text-field {
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  // ---------------------------------------------------------------------
+  // Actions.
+
+  .date-picker-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--actions-gap);
+    padding-block: var(--actions-padding-block-start)
+      var(--actions-padding-block-end);
+    padding-inline: var(--actions-padding-inline);
+  }
+
+  .date-picker-actions-spacer {
+    flex: 1;
+  }
+
+  .date-picker-actions .btn {
+    --leading-space: #{$action-padding-inline};
+    --trailing-space: #{$action-padding-inline};
+    --outline-width: 0;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .date-picker,
+    .date-picker-dialog,
+    .date-picker-dialog::backdrop,
+    .date-picker-menu-button-icon {
+      transition-duration: 0.001ms;
+    }
+
+    .date-picker-weeks-next,
+    .date-picker-weeks-prev,
+    .date-picker-inputs {
+      animation: none;
+    }
+  }
+}

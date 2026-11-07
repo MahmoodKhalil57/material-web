@@ -1,0 +1,284 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use '../../../../tokens/versions/latest/sass/md-sys-state-focus-indicator';
+@use 'search-tokens';
+// go/keep-sorted end
+
+// The icon buttons in the header are 40dp `.icon-btn`s centered in 48dp tap
+// targets.
+$icon-btn-size: 40px;
+
+// Declaring the shared layers here pins `md.comp.search` above them, whatever
+// order the element's `styles` array uses.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.icon-btn;
+@layer md.comp.search {
+  // Token roots: the `md-gb-search-view` host, or a `.search-view` dialog
+  // used in Light DOM without the element. The element's inner dialog has no
+  // `.search-view` class, so token values set on the host still apply.
+  :host,
+  .search-view {
+    @include search-tokens.root;
+    @include search-tokens.view;
+  }
+
+  :host(:not([docked])),
+  .search-view:not(.search-view-docked) {
+    @include search-tokens.full-screen;
+  }
+
+  :host([docked]),
+  .search-view.search-view-docked {
+    @include search-tokens.docked;
+  }
+
+  :host(:not([docked], [divided])),
+  .search-view:not(.search-view-docked, .search-view-divided) {
+    @include search-tokens.contained-full-screen;
+  }
+
+  :host([docked]:not([divided])),
+  .search-view.search-view-docked:not(.search-view-divided) {
+    @include search-tokens.contained-docked;
+  }
+
+  :host {
+    display: contents;
+  }
+
+  // The view is a modal `<dialog>` in the top layer that covers the viewport.
+  // Full-screen, its container fills it; docked, the dialog is the scrim and
+  // the container drops down from the search bar.
+  .search-view-dialog {
+    // `.icon-btn` redefines `--icon-size`; forward the view's value.
+    --_icon-size: var(--icon-size);
+    position: fixed;
+    inset: 0;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    max-block-size: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    overflow: hidden;
+    background: transparent;
+    color: var(--header-input-text-color);
+  }
+
+  .search-view-dialog:not([open]) {
+    display: none;
+  }
+
+  .search-view-dialog::backdrop {
+    background: transparent;
+  }
+
+  .search-view-dialog.search-view-docked {
+    background-color: var(--scrim-color);
+  }
+
+  .search-view-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: var(--container-color);
+    border-radius: var(--container-shape);
+  }
+
+  // Contained full-screen: the header bar floats on a lower surface.
+  .search-view-dialog:not(.search-view-docked, .search-view-divided)
+    .search-view-container {
+    background-color: var(--contained-background-color);
+  }
+
+  // Docked: below a search bar when anchored to one, else centered at the
+  // top. Spec measurements: 360dp to 720dp wide, 240dp to 2/3 of the screen
+  // tall.
+  .search-view-docked .search-view-container {
+    inset: auto;
+    inset-block-start: 8px;
+    inset-inline: 0;
+    margin-inline: auto;
+    inline-size: min(
+      max(var(--_anchor-width, var(--min-width)), var(--min-width)),
+      var(--max-width),
+      100%
+    );
+    min-block-size: min(var(--min-height), var(--max-height));
+    max-block-size: var(--max-height);
+  }
+
+  .search-view-docked.search-view-anchored .search-view-container {
+    inset-block-start: var(--_anchor-top);
+    inset-inline-start: var(--_anchor-start);
+    inset-inline-end: auto;
+    margin-inline: 0;
+  }
+
+  // Contained docked: separate bar and results containers with a gap.
+  .search-view-docked:not(.search-view-divided) .search-view-container {
+    background-color: transparent;
+    border-radius: 0;
+  }
+
+  .search-view-header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    box-sizing: border-box;
+    block-size: var(--header-container-height);
+    // The spec's 16dp leading and trailing spaces are measured to the icons,
+    // which are centered in 48dp tap targets.
+    padding-inline: calc(
+        var(--leading-space) -
+          (var(--icon-target-size) - var(--icon-size)) / 2
+      )
+      calc(
+        var(--trailing-space) -
+          (var(--icon-target-size) - var(--icon-size)) / 2
+      );
+    color: var(--header-leading-icon-color);
+  }
+
+  .search-view-dialog:not(.search-view-docked, .search-view-divided)
+    .search-view-header {
+    block-size: var(--bar-container-height);
+    margin-block: calc(
+      (var(--header-container-height) - var(--bar-container-height)) / 2
+    );
+    margin-inline: var(--contained-leading-margin)
+      var(--contained-trailing-margin);
+    background-color: var(--container-color);
+    border-radius: var(--bar-shape);
+  }
+
+  .search-view-docked:not(.search-view-divided) .search-view-header {
+    background-color: var(--container-color);
+    border-radius: var(--bar-shape);
+  }
+
+  .search-view-trailing {
+    display: flex;
+    flex: none;
+    align-items: center;
+    color: var(--header-trailing-icon-color);
+  }
+
+  // Header icon buttons: 40dp `.icon-btn`s whose margins fill 48dp targets.
+  .search-view-icon-btn {
+    --icon-size: var(--_icon-size);
+    --outline-width: 0;
+    flex: none;
+    margin: calc((var(--icon-target-size) - #{$icon-btn-size}) / 2);
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .search-view-back {
+    color: var(--header-leading-icon-color);
+    --icon-color: var(--header-leading-icon-color);
+  }
+
+  .search-view-clear {
+    color: var(--header-trailing-icon-color);
+    --icon-color: var(--header-trailing-icon-color);
+  }
+
+  .search-view-icon-btn svg {
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+    fill: currentColor;
+  }
+
+  .search-view-header ::slotted(*) {
+    flex: none;
+  }
+
+  .search-view-trailing ::slotted(*) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-inline-size: var(--icon-target-size);
+    min-block-size: var(--icon-target-size);
+  }
+
+  .search-view-input {
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-inline-size: 0;
+    box-sizing: border-box;
+    margin: 0;
+    margin-inline: var(--contained-icon-label-gap);
+    padding: 0;
+    border: none;
+    outline: none;
+    appearance: none;
+    background: transparent;
+    color: var(--header-input-text-color);
+    caret-color: var(--header-input-text-color);
+    font: var(--header-input-text);
+    font-variation-settings: var(--header-input-text-axes);
+    letter-spacing: var(--header-input-text-tracking);
+    text-overflow: ellipsis;
+  }
+
+  .search-view-input::placeholder {
+    color: var(--header-supporting-text-color);
+    font: var(--header-supporting-text);
+    font-variation-settings: var(--header-supporting-text-axes);
+    letter-spacing: var(--header-supporting-text-tracking);
+    opacity: 1;
+  }
+
+  // Divided (baseline) style: a divider separates the header and results.
+  .search-view-divider {
+    display: none;
+  }
+
+  .search-view-divided .search-view-divider {
+    display: block;
+    flex: none;
+    block-size: 1px;
+    background-color: var(--divider-color);
+  }
+
+  .search-view-results {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .search-view-docked:not(.search-view-divided) .search-view-results {
+    margin-block-start: var(--bar-results-gap);
+    background-color: var(--container-color);
+    border-radius: var(--results-shape);
+  }
+
+  // Results the arrow keys focus get the shared focus indicator.
+  .search-view-results ::slotted([role='option']:focus-visible),
+  .search-view-results [role='option']:focus-visible {
+    outline: md-sys-state-focus-indicator.$thickness solid
+      var(--md-sys-color-secondary);
+    outline-offset: md-sys-state-focus-indicator.$inner-offset;
+  }
+
+  // Announces that suggestions are available.
+  .search-view-status {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

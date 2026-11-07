@@ -1,0 +1,274 @@
+/*!
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'segmented-button-tokens';
+// go/keep-sorted end
+
+$selected: ':is(.segmented-button-selected, [aria-checked="true"], [aria-pressed="true"])';
+$disabled: ':is(:disabled, .disabled, [aria-disabled="true"])';
+// The first and last visible segments draw the set's rounded outer corners.
+$first: ':nth-child(1 of :not([hidden]))';
+$last: ':nth-last-child(1 of :not([hidden]))';
+// Label-only segments with a checkmark: Compose reserves the icon slot and
+// centers the label until the checkmark appears.
+$reserve: '.segmented-button-with-checkmark.segmented-button-with-label:not(.segmented-button-with-icon)';
+
+// Cascade layer order follows first declaration. Declaring the shared layers
+// here pins `md.comp.segmented-button` above them, whatever order the
+// element's `styles` array uses.
+@layer md.sys, md.comp.ripple, md.comp.focus-ring;
+@layer md.comp.segmented-button {
+  // `md-gb-segmented-button` host: a grid cell of the set.
+  :host {
+    display: flex;
+    position: relative;
+    min-inline-size: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :host([hidden]) {
+    display: none;
+  }
+
+  // Compose `SegmentedButtonRow` overlaps adjacent segments by the outline
+  // width (`spacedBy(-BorderWidth)`) so that shared borders are drawn once.
+  // Every segment overhangs its equal grid cell by the outline width, which
+  // keeps them equally wide; the set's end padding contains the last one.
+  :host,
+  .segmented-button-set > .segmented-button {
+    margin-inline-end: calc(-1 * var(--outline-width));
+  }
+
+  // Compose `interactionZIndex`: interacting and selected segments draw above
+  // their neighbors, so their outline shows on the shared border. Focused
+  // segments are on top so the focus ring is not covered.
+  :host,
+  .segmented-button-set > .segmented-button {
+    z-index: 1;
+  }
+
+  :host(:is(:hover, :active)),
+  .segmented-button-set > .segmented-button:is(:hover, :active) {
+    z-index: 2;
+  }
+
+  :host([selected]),
+  .segmented-button-set > .segmented-button#{$selected} {
+    z-index: 3;
+  }
+
+  :host([selected]:is(:hover, :active)),
+  .segmented-button-set > .segmented-button#{$selected}:is(:hover, :active) {
+    z-index: 4;
+  }
+
+  :host(:focus-within),
+  .segmented-button-set > .segmented-button:focus-visible {
+    z-index: 5;
+  }
+
+  :host([disabled]),
+  .segmented-button-set > .segmented-button#{$disabled} {
+    z-index: 0;
+  }
+
+  .segmented-button {
+    @include segmented-button-tokens.unselected;
+
+    &#{$selected} {
+      @include segmented-button-tokens.selected;
+    }
+
+    &#{$disabled} {
+      @include segmented-button-tokens.disabled;
+    }
+
+    & {
+      --_icon-shift: calc((var(--icon-size) + var(--icon-label-space)) / 2);
+      position: relative;
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      min-inline-size: var(--min-width);
+      // Spec Measurements > Density only changes the height.
+      block-size: calc(
+        var(--container-height) + var(--_density, 0) * var(--density-step)
+      );
+      margin: 0;
+      padding-block: 0;
+      padding-inline: var(--leading-space) var(--trailing-space);
+      border: var(--outline-width) solid var(--outline-color);
+      // Inner segments are square; the first and last get the outer corners.
+      border-radius: 0;
+      background-color: var(--container-color);
+      color: var(--label-text-color);
+      font: var(--label-text);
+      letter-spacing: var(--label-text-tracking);
+      font-variation-settings: var(--label-text-axes);
+      text-transform: inherit;
+      white-space: nowrap;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      --md-icon-color: var(--icon-color);
+      --md-icon-size: var(--icon-size);
+    }
+
+    &:not(#{$disabled}) {
+      cursor: pointer;
+    }
+
+    &#{$disabled} {
+      cursor: default;
+    }
+  }
+
+  :host(#{$first}) .segmented-button,
+  .segmented-button-set > .segmented-button#{$first} {
+    border-start-start-radius: var(--container-shape);
+    border-end-start-radius: var(--container-shape);
+  }
+
+  :host(#{$last}) .segmented-button,
+  .segmented-button-set > .segmented-button#{$last} {
+    border-start-end-radius: var(--container-shape);
+    border-end-end-radius: var(--container-shape);
+  }
+
+  // Extends the touch target to the spec's 48dp, like the shared buttons.
+  .segmented-button-touch {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    block-size: max(100%, var(--target-size));
+    translate: 0 -50%;
+  }
+
+  .segmented-button-content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--icon-label-space);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  .segmented-button-graphic {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    inline-size: var(--icon-size);
+    block-size: var(--icon-size);
+  }
+
+  // Neither an icon nor a checkmark: no graphic.
+  .segmented-button:not(
+      .segmented-button-with-icon,
+      .segmented-button-with-checkmark
+    )
+    .segmented-button-graphic,
+  .segmented-button:not(.segmented-button-with-label) .segmented-button-label {
+    display: none;
+  }
+
+  .segmented-button-checkmark,
+  .segmented-button-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--icon-color);
+  }
+
+  .segmented-button-checkmark {
+    opacity: 0;
+    fill: currentColor;
+
+    svg {
+      inline-size: 100%;
+      block-size: 100%;
+    }
+  }
+
+  .segmented-button-icon > *,
+  .segmented-button-icon ::slotted(*) {
+    inline-size: var(--icon-size);
+    block-size: var(--icon-size);
+    font-size: var(--icon-size);
+    color: var(--icon-color);
+    fill: currentColor;
+  }
+
+  .segmented-button-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // Compose `SegmentedButtonContentMeasurePolicy` animates the label offset
+    // with the fast spatial motion scheme spring.
+    transition: margin-inline var(--md-sys-motion-spring-fast-spatial-duration)
+      var(--md-sys-motion-spring-fast-spatial);
+  }
+
+  // Unselected label-only segment: the label is shifted back over the
+  // reserved icon slot by half of it, so the label is centered.
+  .segmented-button#{$reserve}:not(#{$selected}) .segmented-button-label {
+    margin-inline: calc(-1 * var(--_icon-shift)) var(--_icon-shift);
+  }
+
+  .segmented-button.segmented-button-with-checkmark#{$selected}
+    .segmented-button-checkmark {
+    opacity: 1;
+  }
+
+  // Without an icon, Compose `SegmentedButtonDefaults.Icon` scales the
+  // checkmark in from its bottom start corner (fast spatial) while fading it
+  // in (default effects). It leaves with no exit transition.
+  .segmented-button.segmented-button-with-checkmark:not(
+      .segmented-button-with-icon
+    )
+    .segmented-button-checkmark {
+    scale: 0;
+    transform-origin: 0 100%;
+
+    &:dir(rtl) {
+      transform-origin: 100% 100%;
+    }
+  }
+
+  .segmented-button.segmented-button-with-checkmark:not(
+      .segmented-button-with-icon
+    )#{$selected}
+    .segmented-button-checkmark {
+    scale: 1;
+    transition:
+      opacity var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects),
+      scale var(--md-sys-motion-spring-fast-spatial-duration)
+        var(--md-sys-motion-spring-fast-spatial);
+  }
+
+  // With an icon, Compose crossfades the icon and the checkmark (default
+  // effects): "icons become checkmarks when selected".
+  .segmented-button.segmented-button-with-icon.segmented-button-with-checkmark {
+    .segmented-button-checkmark,
+    .segmented-button-icon {
+      transition: opacity var(--md-sys-motion-spring-default-effects-duration)
+        var(--md-sys-motion-spring-default-effects);
+    }
+
+    &#{$selected} .segmented-button-icon {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .segmented-button-label,
+    .segmented-button-checkmark,
+    .segmented-button-icon {
+      transition-duration: 0s !important;
+    }
+  }
+}
