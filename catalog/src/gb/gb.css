@@ -56,6 +56,8 @@ body {
 }
 
 .gb-header {
+  /* Fixed, so the app bar's upgrade doesn't move the page. */
+  block-size: var(--gb-header-height);
   position: sticky;
   inset-block-start: 0;
   z-index: 20;
@@ -95,8 +97,23 @@ body {
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
+/* Shell elements keep their space but stay invisible until defined, so
+   neither their raw text (icon names, option labels) nor their upgrade shows.
+   Below expanded the drawer is modal: out of the flow until opened. */
+.gb-header md-gb-app-bar:not(:defined) {
+  display: block;
+  block-size: var(--gb-header-height);
+  visibility: hidden;
+}
 md-gb-nav-drawer:not(:defined) {
   display: none;
+}
+@media (min-width: 840px) {
+  md-gb-nav-drawer:not(:defined) {
+    display: block;
+    inline-size: var(--gb-drawer-width);
+    visibility: hidden;
+  }
 }
 .gb-drawer {
   position: sticky;
@@ -311,7 +328,7 @@ md-gb-nav-drawer:not(:defined) {
 /* Expanded and up (840px): the drawer is standard, beside the content. */
 @media (min-width: 840px) {
   .gb-layout {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: var(--gb-drawer-width) minmax(0, 1fr);
   }
   .gb-main {
     padding-inline: var(--md-sys-space-400);
@@ -325,7 +342,7 @@ md-gb-nav-drawer:not(:defined) {
 /* Large (1200px) and up: the table of contents is a column beside the text. */
 @media (min-width: 1200px) {
   .gb-layout {
-    grid-template-columns: auto minmax(0, 1fr) var(--gb-toc-width);
+    grid-template-columns: var(--gb-drawer-width) minmax(0, 1fr) var(--gb-toc-width);
   }
   .gb-toc {
     grid-column: 3;
@@ -379,4 +396,22 @@ md-gb-nav-drawer:not(:defined) {
   .gb-skip {
     display: none;
   }
+}
+
+/* Live demos (gbexample) reserve the height measured when they were captured,
+   so the code after them doesn't move when they load: the phone column
+   height below the medium window class, the desktop one from it. */
+.gb-example {
+  min-block-size: var(--gb-example-narrow-height, 0);
+}
+@media (min-width: 600px) {
+  .gb-example {
+    min-block-size: var(--gb-example-height, 0);
+  }
+}
+
+/* Component figures in the content: invisible (space kept) until their
+   elements are defined, so icon names and labels don't flash as raw text. */
+.gb-content figure :not(:defined) {
+  visibility: hidden;
 }

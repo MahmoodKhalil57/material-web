@@ -50,7 +50,14 @@ function gb(eleventyConfig) {
     const story = list[index];
     const lib = process.env.MWC_GB_LIB;
     const live = lib
-      ? `<div class="gb-example" data-gb-dir="${dir}" data-gb-story="${index}"></div>\n` +
+      ? // The heights measured at capture (phone and desktop column widths)
+        // are reserved (catalog/src/gb/gb.css), so the code below doesn't
+        // move when the demo arrives.
+        `<div class="gb-example" data-gb-dir="${dir}" data-gb-story="${index}"${
+          story.height
+            ? ` style="--gb-example-height: ${story.height}px; --gb-example-narrow-height: ${story.narrowHeight ?? story.height}px"`
+            : ''
+        }></div>\n` +
         `<script type="module">import('${lib}catalog/_dev-gb/${dir}/demo.js');</script>`
       : '';
     // Raw HTML, then the code fence: blank lines keep markdown-it from merging.

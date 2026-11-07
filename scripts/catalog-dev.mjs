@@ -94,7 +94,11 @@ export async function setUpDemo(collection, dir) {
   const results = [];
   for (const [i, story] of collection.stories.entries()) {
     const hosts = capture
-      ? [document.body.appendChild(document.createElement('div'))]
+      ? [document.body.appendChild(Object.assign(document.createElement('div'), {
+          // The /3.0/ content column at 1280px, so the measured height is the
+          // one the page reserves (min-block-size) before the demo loads.
+          style: 'inline-size: 656px',
+        }))]
       : [...document.querySelectorAll('[data-gb-dir="' + dir + '"][data-gb-story="' + i + '"]')];
     for (const host of hosts) {
       const root = host.shadowRoot ?? host.attachShadow({mode: 'open'});
@@ -104,7 +108,14 @@ export async function setUpDemo(collection, dir) {
       container.className = 'gb-story';
       root.replaceChildren(container);
       render(await story.render({...knobs}), container);
-      if (capture) results.push({name: story.name, html: container.innerHTML});
+      if (capture) {
+        // Let the elements upgrade and lay out before measuring.
+        await Promise.all([...container.querySelectorAll('*')].map((el) => el.updateComplete));
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        // captureExamples measures it again in a 400px window (narrowHeight).
+        host.dataset.gbCaptured = String(results.length);
+        results.push({name: story.name, html: container.innerHTML, height: Math.ceil(host.getBoundingClientRect().height)});
+      }
     }
   }
   if (capture) window.__gbCapture = results;
@@ -454,7 +465,17 @@ async function captureExamples(dirs) {
       await page.waitForFunction(() => window.__gbCapture || window.__gbError, null, {timeout: 20000});
       const {stories, error} = await page.evaluate(() => ({stories: window.__gbCapture, error: window.__gbError}));
       if (error) throw new Error(error);
-      examples.set(dir, stories.map((s) => ({name: s.name, html: formatHtml(s.html)})));
+      // Heights at the phone content width, in a phone-sized window (demos
+      // can depend on the window size): 400px window, 16px gutters.
+      await page.setViewportSize({width: 400, height: 900});
+      const narrow = await page.evaluate(async () => {
+        const hosts = [...document.querySelectorAll('[data-gb-captured]')];
+        for (const h of hosts) h.style.inlineSize = '368px';
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        return hosts.map((h) => Math.ceil(h.getBoundingClientRect().height));
+      });
+      stories.forEach((s, i) => (s.narrowHeight = narrow[i]));
+      examples.set(dir, stories.map((s) => ({name: s.name, html: formatHtml(s.html), height: s.height, narrowHeight: s.narrowHeight})));
     } catch (err) {
       console.warn(`  ${dir}: could not capture examples (${err.message.split('\n')[0]})`);
     } finally {
