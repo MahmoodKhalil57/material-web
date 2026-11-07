@@ -104,7 +104,7 @@ export function setupRipple(
     // ripple effect on short clicks.
     ripple.classList.add(RIPPLE_CLASSES.active);
     clearTimeout(minimumPressTimeoutId);
-    minimumPressTimeoutId = setTimeout(() => {
+    minimumPressTimeoutId = window.setTimeout(() => {
       ripple.classList.remove(RIPPLE_CLASSES.active);
     }, MINIMUM_PRESS_MS);
   };

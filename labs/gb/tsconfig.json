@@ -6,5 +6,8 @@
   "include": [
     "../../types/css-imports.d.ts",
     "**/*"
-  ]
+  ],
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
 }
