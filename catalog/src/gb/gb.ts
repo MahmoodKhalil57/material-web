@@ -26,6 +26,7 @@ import '@material/web/labs/gb/components/tabs/md-gb-tabs.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
 import './navigation.js';
+import './search.js';
 
 import {
   themeFromSource,

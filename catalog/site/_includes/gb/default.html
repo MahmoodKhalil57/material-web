@@ -19,6 +19,9 @@
     {% if description %}<meta name="description" content="{{ description }}" />{% endif %}
     <meta name="color-scheme" content="light dark" />
     <link href="/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
+    {#- Canonical, Markdown alternate, manifest, theme-color, Open Graph,
+        Twitter Card and JSON-LD (eleventy-helpers/gb-site.cjs). -#}
+    {% gbhead title, description, section, page.url %}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;family=Material+Symbols+Outlined&amp;display=swap" />
     <link rel="stylesheet" href="/js/gb/gb.css" />
     <script>
@@ -79,6 +82,15 @@
           <md-gb-icon>menu</md-gb-icon>
         </md-gb-icon-button>
         <a class="gb-brand" href="/3.0/">Material Web</a>
+        {#- Docs search (src/gb/search.ts): a field-like button on wide windows, an icon button below. -#}
+        <button type="button" slot="trailing" class="gb-search-field" data-gb-search aria-label="Search docs">
+          <md-gb-icon aria-hidden="true">search</md-gb-icon>
+          <span class="gb-search-field-label" aria-hidden="true">Search docs</span>
+          <kbd class="gb-search-hint" aria-hidden="true">Ctrl K</kbd>
+        </button>
+        <md-gb-icon-button slot="trailing" class="gb-search-icon" data-gb-search aria-label="Search docs">
+          <md-gb-icon>search</md-gb-icon>
+        </md-gb-icon-button>
         <md-gb-select slot="trailing" class="gb-version" id="gb-version" aria-label="Material Web version" value="3.0">
           <md-gb-select-option value="2.5">v2.5.0 Current - Latest</md-gb-select-option>
           <md-gb-select-option value="3.0" selected>v3.0-Alpha</md-gb-select-option>
@@ -108,6 +120,7 @@
       <main class="gb-main" id="main" tabindex="-1">
         <h1>{{ title }}</h1>
         {% if description %}<p class="gb-lede">{{ description }}</p>{% endif %}
+        <p class="gb-md-link"><a href="{% if page.url == '/3.0/' %}/3.0/index.md{% else %}{{ page.url | replace(r/\/$/, '') }}.md{% endif %}" type="text/markdown">View as Markdown</a></p>
         <div class="gb-content">{{ content | safe }}</div>
       </main>
 

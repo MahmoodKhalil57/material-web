@@ -32,6 +32,7 @@ import {cp, mkdir, readdir, readFile, rm, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {buildLibrary, nodeScript, npx, ROOT} from './build-local.mjs';
+import {buildSiteAssets} from './gb-site-assets.mjs';
 
 const CATALOG = join(ROOT, 'catalog');
 const GB = join(ROOT, 'labs', 'gb', 'components');
@@ -232,6 +233,10 @@ async function buildSite({first = false} = {}) {
   await addStories(gbDirs);
   const pages = await copyGbDocs();
 
+  // Open Graph images and manifest icons (cached; Eleventy copies them).
+  log('Rendering Open Graph images and icons');
+  await buildSiteAssets({log: console.log});
+
   log('Bundling catalog scripts');
   nodeScript(['esbuild.config.mjs'], {cwd: CATALOG, env: DEV_ENV});
 
@@ -341,6 +346,13 @@ function watchSources() {
     // Eleventy process, so a rebuild picks up their changes).
     join(CATALOG, 'eleventy-helpers'),
     join(CATALOG, 'eleventy.config.cjs'),
+    // Site data and the generated-file templates (search index, llms.txt,
+    // sitemap, Markdown pages...). Not all of catalog/site: builds write into it.
+    join(CATALOG, 'site', '_data'),
+    ...fsSync
+      .readdirSync(join(CATALOG, 'site'))
+      .filter((n) => n.endsWith('.11ty.cjs'))
+      .map((n) => join(CATALOG, 'site', n)),
     join(ROOT, 'labs', 'gb'),
   ];
   let timer;
@@ -446,7 +458,11 @@ async function gbDemoDirs() {
  */
 async function prepareExamples(dirs) {
   const esbuild = await import('esbuild');
-  await rm(EXAMPLES, {recursive: true, force: true});
+  // Keep the generated images (scripts/gb-site-assets.mjs): they are cached.
+  const keep = new Set(['og', 'og-cache', 'icons']);
+  for (const entry of existsSync(EXAMPLES) ? await readdir(EXAMPLES) : []) {
+    if (!keep.has(entry)) await rm(join(EXAMPLES, entry), {recursive: true, force: true});
+  }
   const tsconfigRaw = {compilerOptions: {experimentalDecorators: true, useDefineForClassFields: false}};
   for (const dir of dirs) {
     const demo = join(srcDir(dir), 'demo');
@@ -652,6 +668,15 @@ async function startCatalogServer() {
       rootDir: OUT,
       port: PORT,
       open: argv.includes('--no-open') ? false : '/',
+      middleware: [
+        // The Markdown pages of /3.0/ and the manifest, with their real types.
+        async (ctx, next) => {
+          await next();
+          if (ctx.status !== 200) return;
+          if (/\.md$/.test(ctx.path)) ctx.type = 'text/markdown; charset=utf-8';
+          else if (/\.webmanifest$/.test(ctx.path)) ctx.type = 'application/manifest+json';
+        },
+      ],
     },
     readCliArgs: false,
     readFileConfig: false,

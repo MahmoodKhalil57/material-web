@@ -8,6 +8,7 @@
    Colors, type and shape come from --md-sys-* tokens only. */
 @import '../../../labs/gb/styles/m3.css';
 @import './navigation.css';
+@import './search.css';
 
 :root {
   --gb-header-height: 64px;
@@ -145,6 +146,32 @@ md-gb-nav-drawer:not(:defined) {
 .gb-lede {
   margin: 0 0 var(--md-sys-space-300);
   color: var(--md-sys-color-on-surface-variant);
+}
+
+/* "View as Markdown": a text link in the look of a text button (md-gb-button). */
+.gb-md-link {
+  margin: calc(-1 * var(--md-sys-space-150)) 0 var(--md-sys-space-300);
+}
+.gb-md-link a {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-block-size: 32px;
+  padding-inline: var(--md-sys-space-150);
+  margin-inline-start: calc(-1 * var(--md-sys-space-150));
+  border-radius: var(--md-sys-shape-corner-full, 999px);
+  color: var(--md-sys-color-primary);
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+  text-decoration: none;
+  transition: background-color 150ms;
+}
+.gb-md-link a:hover {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+}
+.gb-md-link a:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 1px;
 }
 
 /* Markdown content. */
