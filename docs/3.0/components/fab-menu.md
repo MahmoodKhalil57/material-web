@@ -34,16 +34,20 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A FAB menu holds items and a FAB that toggles it. Both icons can be replaced.
 
-```html
-<md-gb-fab-menu>
-  <md-gb-icon slot="icon"></md-gb-icon>
-  <md-gb-icon slot="close-icon"></md-gb-icon>
+{% demo "An open FAB menu with custom toggle icons and two items" height=360 frame=true %}
+<md-gb-fab-menu open aria-label="Compose actions">
+  <md-gb-icon slot="icon">add</md-gb-icon>
+  <md-gb-icon slot="close-icon">close</md-gb-icon>
   <md-gb-fab-menu-item>
-    <md-gb-icon slot="icon"></md-gb-icon>
+    <md-gb-icon slot="icon">edit</md-gb-icon>
+    Note
   </md-gb-fab-menu-item>
-  …
+  <md-gb-fab-menu-item>
+    <md-gb-icon slot="icon">checklist</md-gb-icon>
+    List
+  </md-gb-fab-menu-item>
 </md-gb-fab-menu>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -102,12 +106,30 @@ Set `align="start"` to align the items to the start edge, as for a FAB at the le
 
 Set `open` to open the menu from code. The `toggle` event fires before it opens or closes and `activate` fires before an item closes it; cancel either to keep the menu as it is.
 
-```js
+{% demo "A FAB menu that stays open when an item is activated" height=400 %}
+```html
+<md-gb-fab-menu open aria-label="Photo actions">
+  <md-gb-fab-menu-item>
+    <md-gb-icon slot="icon">edit</md-gb-icon>
+    Edit
+  </md-gb-fab-menu-item>
+  <md-gb-fab-menu-item>
+    <md-gb-icon slot="icon">delete</md-gb-icon>
+    Delete
+  </md-gb-fab-menu-item>
+</md-gb-fab-menu>
+<output id="status" role="status"></output>
+```
+```ts
+const menu = document.querySelector('md-gb-fab-menu')!;
+const status = document.querySelector('#status')!;
 menu.addEventListener('activate', (event) => {
+  status.textContent = 'Activated';
   // Cancel to keep the menu open.
   event.preventDefault();
 });
 ```
+{% enddemo %}
 
 ## Accessibility
 

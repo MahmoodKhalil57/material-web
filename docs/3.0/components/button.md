@@ -20,12 +20,12 @@ description: Buttons help people initiate actions, from sending an email, to sha
 
 A button is one element holding a label and an optional icon (default slot). It renders a native `<button>` or, with `href`, a link.
 
-```html
-<md-gb-button>
-  <md-gb-icon></md-gb-icon>
-  Label
+{% demo "A filled button with an icon and a label" %}
+<md-gb-button color="filled">
+  <md-gb-icon>send</md-gb-icon>
+  Send
 </md-gb-button>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -114,9 +114,9 @@ Like a native button, an `md-gb-button` (and `md-gb-icon-button`) takes `popover
 *   Disabled buttons leave the tab order. Use `soft-disabled` to keep one focusable, as the [ARIA guidance on disabled controls](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls) allows.
 *   Toggle buttons expose their state with `aria-pressed`.
 
-```html
+{% demo "A button whose aria-label describes the action more fully" %}
 <md-gb-button aria-label="Add a new contact" color="elevated">Add</md-gb-button>
-```
+{% enddemo %}
 
 ## API reference
 

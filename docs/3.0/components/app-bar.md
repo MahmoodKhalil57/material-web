@@ -30,15 +30,21 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 An app bar holds a leading navigation button, a title with an optional subtitle or image, and trailing actions.
 
-```html
+{% demo "An app bar with a leading button, a title, a subtitle and trailing actions" %}
 <md-gb-app-bar>
-  <md-gb-icon-button slot="leading"></md-gb-icon-button>
-  <span slot="subtitle"></span>
-  <md-gb-icon-button slot="trailing"></md-gb-icon-button>
-  …
-  <md-gb-icon-button slot="overflow"></md-gb-icon-button>
+  <md-gb-icon-button slot="leading" aria-label="Back">
+    <md-gb-icon>arrow_back</md-gb-icon>
+  </md-gb-icon-button>
+  Trip to Lisbon
+  <span slot="subtitle">3 days</span>
+  <md-gb-icon-button slot="trailing" aria-label="Share">
+    <md-gb-icon>share</md-gb-icon>
+  </md-gb-icon-button>
+  <md-gb-icon-button slot="trailing" aria-label="Favorite">
+    <md-gb-icon>favorite</md-gb-icon>
+  </md-gb-icon-button>
 </md-gb-app-bar>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -85,11 +91,38 @@ Set `variant="search"` and put a text input in the `search` slot.
 
 Set `scroll-behavior` to `hide` to hide the bar while scrolling down, or to `compress` to turn a medium or large bar into a small one. Use `scroll-target` with the id of a scrolling element, or leave it out to follow the window.
 
+{% demo "A large app bar that compresses while its list scrolls" height=340 %}
 ```html
-<md-gb-app-bar size="lg" scroll-behavior="compress" scroll-target="content">
-  …
-</md-gb-app-bar>
+<div id="content">
+  <md-gb-app-bar size="lg" scroll-behavior="compress" scroll-target="content">
+    <md-gb-icon-button slot="leading" aria-label="Back">
+      <md-gb-icon>arrow_back</md-gb-icon>
+    </md-gb-icon-button>
+    Recipes
+  </md-gb-app-bar>
+  <p>Lemon pasta</p>
+  <p>Sourdough</p>
+  <p>Pad thai</p>
+  <p>Summer salad</p>
+  <p>Tomato soup</p>
+  <p>Apple pie</p>
+  <p>Fried rice</p>
+  <p>Banana bread</p>
+</div>
 ```
+```css
+#content {
+  inline-size: 100%;
+  block-size: 280px;
+  overflow: auto;
+}
+
+md-gb-app-bar {
+  position: sticky;
+  inset-block-start: 0;
+}
+```
+{% enddemo %}
 
 ### Overflow actions
 

@@ -21,9 +21,11 @@ description: A divider is a thin line that groups content in lists and container
 
 A divider is a single element.
 
-```html
+{% demo "A divider between two list rows" %}
+<p>Inbox</p>
 <md-gb-divider></md-gb-divider>
-```
+<p>Sent</p>
+{% enddemo %}
 
 ## Examples
 
@@ -51,22 +53,41 @@ Add `vertical` for a divider between side-by-side content.
 
 ### Class API
 
-For plain HTML, the `divider()` class function styles a native `<hr>`. Pass `{vertical: true}` for a vertical divider.
+For plain HTML, the divider classes style a native `<hr>`. `divider()` is a Lit directive that adds them, and `dividerClasses()` returns them for other code. Pass `{vertical: true}` for a vertical divider.
 
-```js
-import {divider} from '@material/web/labs/gb/components/divider/divider.js';
-
-const classes = divider({vertical: true});
+{% demo "A native hr styled as a vertical divider with the divider classes" height=160 %}
+```html
+<span>Day</span>
+<hr id="rule">
+<span>Week</span>
 ```
+```css
+@import '@material/web/labs/gb/components/divider/divider.css';
+
+#rule {
+  align-self: stretch;
+}
+```
+```ts
+import {dividerClasses} from '@material/web/labs/gb/components/divider/divider.js';
+
+const classes = dividerClasses({vertical: true});
+document.querySelector('#rule')!.className = Object.keys(classes)
+  .filter((name) => classes[name])
+  .join(' ');
+```
+{% enddemo %}
 
 ## Accessibility
 
 *   A divider is decorative and not announced by assistive technology. It has no contrast minimum.
 *   Add `role="separator"` to a divider that should be announced.
 
-```html
+{% demo "A divider announced as a separator" %}
+<p>Account</p>
 <md-gb-divider role="separator"></md-gb-divider>
-```
+<p>Privacy</p>
+{% enddemo %}
 
 ## API reference
 

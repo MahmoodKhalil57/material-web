@@ -24,22 +24,32 @@ description: Menus show a temporary set of actions or choices, opened from a but
 
 A menu holds items, groups and dividers. An item holds a label and optional slots, including a submenu.
 
+{% demo "A menu with a group, an item with all of its slots, a divider and another item" height=360 %}
 ```html
-<md-gb-menu>
+<md-gb-button id="more">More</md-gb-button>
+<md-gb-menu id="more-menu">
   <md-gb-menu-group>
     <md-gb-menu-item>
-      <md-gb-icon slot="leading"></md-gb-icon>
-      Label
-      <span slot="supporting-text"></span>
-      <span slot="trailing-text"></span>
-      <md-gb-icon slot="trailing"></md-gb-icon>
-      <md-gb-menu slot="submenu"></md-gb-menu>
+      <md-gb-icon slot="leading">share</md-gb-icon>
+      Share
+      <span slot="supporting-text">Send a link</span>
+      <span slot="trailing-text">Ctrl+S</span>
+      <md-gb-icon slot="trailing">chevron_right</md-gb-icon>
+      <md-gb-menu slot="submenu">
+        <md-gb-menu-item>Email</md-gb-menu-item>
+        <md-gb-menu-item>Messages</md-gb-menu-item>
+      </md-gb-menu>
     </md-gb-menu-item>
-    …
   </md-gb-menu-group>
   <md-gb-divider></md-gb-divider>
+  <md-gb-menu-item>Delete</md-gb-menu-item>
 </md-gb-menu>
 ```
+```ts
+const menu = document.querySelector('#more-menu')!;
+menu.showPopover({source: document.querySelector('#more')!});
+```
+{% enddemo %}
 
 ## Examples
 

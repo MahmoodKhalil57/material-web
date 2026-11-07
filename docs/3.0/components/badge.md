@@ -21,9 +21,9 @@ description: A badge shows a small dot or a count to signal new or changed infor
 
 A badge is a single element. Without content it is a dot; with content it is a larger badge.
 
-```html
-<md-gb-badge>…</md-gb-badge>
-```
+{% demo "A badge with a count of 5" %}
+<md-gb-badge>5</md-gb-badge>
+{% enddemo %}
 
 ## Examples
 

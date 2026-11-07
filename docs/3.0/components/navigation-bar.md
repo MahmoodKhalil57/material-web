@@ -38,16 +38,19 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A navigation bar holds items. Each item has an icon, a label and an optional badge.
 
-```html
-<md-gb-nav-bar>
-  <md-gb-nav-bar-item>
-    <md-gb-icon slot="icon"></md-gb-icon>
-    <span slot="badge"></span>
-    Label
+{% demo "A navigation bar with one item that has an icon, a badge and a label" %}
+<md-gb-nav-bar aria-label="Chat">
+  <md-gb-nav-bar-item active>
+    <md-gb-icon slot="icon">chat_bubble</md-gb-icon>
+    <md-gb-badge slot="badge">3</md-gb-badge>
+    Chats
   </md-gb-nav-bar-item>
-  …
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">call</md-gb-icon>
+    Calls
+  </md-gb-nav-bar-item>
 </md-gb-nav-bar>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -101,22 +104,73 @@ Give an item an `href` (and optionally `target` and `rel`) to make the destinati
 
 Set `scroll-behavior="hide"` to hide the bar when the page scrolls down and show it again on scroll up. By default it follows the window; set `scroll-target` to the id of another scrolling element. Fix the bar to the bottom of the page.
 
+{% demo "A navigation bar that hides while its list scrolls down" height=300 %}
 ```html
-<md-gb-nav-bar scroll-behavior="hide" aria-label="Primary">
-  …
-</md-gb-nav-bar>
+<div id="messages">
+  <p>Message 1</p>
+  <p>Message 2</p>
+  <p>Message 3</p>
+  <p>Message 4</p>
+  <p>Message 5</p>
+  <p>Message 6</p>
+  <p>Message 7</p>
+  <p>Message 8</p>
+  <md-gb-nav-bar scroll-behavior="hide" scroll-target="messages" aria-label="Mail">
+    <md-gb-nav-bar-item active>
+      <md-gb-icon slot="icon">inbox</md-gb-icon>
+      Inbox
+    </md-gb-nav-bar-item>
+    <md-gb-nav-bar-item>
+      <md-gb-icon slot="icon">send</md-gb-icon>
+      Sent
+    </md-gb-nav-bar-item>
+  </md-gb-nav-bar>
+</div>
 ```
+```css
+#messages {
+  inline-size: 100%;
+  block-size: 240px;
+  overflow: auto;
+}
+
+md-gb-nav-bar {
+  position: sticky;
+  inset-block-end: 0;
+}
+```
+{% enddemo %}
 
 ### Selection
 
 The `active` item shows the current destination, and `selected-index` selects an item by position. The bar fires `change` when the selection changes.
 
-```js
-const bar = document.querySelector('md-gb-nav-bar');
+{% demo "A navigation bar that reports the selected index" height=240 %}
+```html
+<md-gb-nav-bar aria-label="Sections">
+  <md-gb-nav-bar-item active>
+    <md-gb-icon slot="icon">home</md-gb-icon>
+    Home
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">search</md-gb-icon>
+    Search
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">settings</md-gb-icon>
+    Settings
+  </md-gb-nav-bar-item>
+</md-gb-nav-bar>
+<output id="selection" role="status">Selected item 0</output>
+```
+```ts
+const bar = document.querySelector('md-gb-nav-bar')!;
+const selection = document.querySelector('#selection')!;
 bar.addEventListener('change', () => {
-  console.log(bar.selectedIndex);
+  selection.textContent = 'Selected item ' + bar.selectedIndex;
 });
 ```
+{% enddemo %}
 
 ## Accessibility
 

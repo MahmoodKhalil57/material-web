@@ -44,23 +44,45 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 `md-gb-app-scaffold` places bars and rails around its content. `md-gb-pane-scaffold` goes in the content and arranges the panes.
 
-```html
-<md-gb-app-scaffold>
-  <md-gb-app-bar slot="top-app-bar"></md-gb-app-bar>
-  <md-gb-nav-bar slot="navigation-bar"></md-gb-nav-bar>
-  <md-gb-nav-rail slot="navigation-rail"></md-gb-nav-rail>
-  <md-gb-nav-rail slot="companion-rail"></md-gb-nav-rail>
-  <md-gb-toolbar slot="toolbar"></md-gb-toolbar>
-  <md-gb-fab slot="fab"></md-gb-fab>
-  <md-gb-snackbar slot="snackbar"></md-gb-snackbar>
+{% demo "An app scaffold with a top app bar, navigation, a FAB and a pane scaffold" height=360 %}
+<md-gb-app-scaffold style="inline-size: 100%; block-size: 360px">
+  <md-gb-app-bar slot="top-app-bar">Notes</md-gb-app-bar>
+  <md-gb-nav-bar slot="navigation-bar" aria-label="Primary">
+    <md-gb-nav-bar-item active>
+      <md-gb-icon slot="icon">notes</md-gb-icon>
+      Notes
+    </md-gb-nav-bar-item>
+    <md-gb-nav-bar-item>
+      <md-gb-icon slot="icon">archive</md-gb-icon>
+      Archive
+    </md-gb-nav-bar-item>
+  </md-gb-nav-bar>
+  <md-gb-nav-rail slot="navigation-rail" aria-label="Primary">
+    <md-gb-nav-rail-item selected>
+      <md-gb-icon slot="icon">notes</md-gb-icon>
+      Notes
+    </md-gb-nav-rail-item>
+    <md-gb-nav-rail-item>
+      <md-gb-icon slot="icon">archive</md-gb-icon>
+      Archive
+    </md-gb-nav-rail-item>
+  </md-gb-nav-rail>
+  <md-gb-fab slot="fab" aria-label="New note">
+    <md-gb-icon>add</md-gb-icon>
+  </md-gb-fab>
   <md-gb-pane-scaffold>
-    <div slot="secondary"></div>
-    <div slot="tertiary"></div>
-    <div slot="placeholder"></div>
-    …
+    <md-gb-list slot="secondary" aria-label="Notes">
+      <md-gb-list-item>Groceries</md-gb-list-item>
+      <md-gb-list-item>Trip ideas</md-gb-list-item>
+    </md-gb-list>
+    <article>
+      <h2>Groceries</h2>
+      <p>Milk, eggs and bread.</p>
+    </article>
+    <p slot="placeholder">Select a note</p>
   </md-gb-pane-scaffold>
 </md-gb-app-scaffold>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -117,21 +139,50 @@ Set `layout="feed"` to lay the default slot's items out on a grid, with an optio
 
 Add `resizable` to a two-pane layout to show a drag handle between the panes. `pane-width` sets the width of the `secondary` pane in pixels, and `collapsed-pane` records a pane collapsed with the handle. The scaffold fires `pane-resize` when the panes change size.
 
-```html
-<md-gb-pane-scaffold resizable>
-  …
+{% demo "A two-pane layout with a drag handle between the panes" height=300 %}
+<md-gb-pane-scaffold resizable pane-width="240" style="inline-size: 100%; block-size: 240px">
+  <md-gb-list slot="secondary" aria-label="Folders">
+    <md-gb-list-item>Inbox</md-gb-list-item>
+    <md-gb-list-item>Drafts</md-gb-list-item>
+  </md-gb-list>
+  <article>
+    <h2>Inbox</h2>
+    <p>Drag the handle to resize the list.</p>
+  </article>
 </md-gb-pane-scaffold>
-```
+{% enddemo %}
 
 ### Floating and docked panes
 
 When there is no room for a supporting pane beside the content, set `levitate` to `floating` or `docked` to lift the `secondary` pane above it instead of stacking it below. A docked pane sits at the bottom edge on compact windows, like a bottom sheet. Open it with `openLevitated()` and close it with `closeLevitated()`. Add `levitate-modal` for a scrim, and `levitate-label` to name the pane.
 
+{% demo "A button that opens a floating supporting pane of comments" height=400 %}
 ```html
-<md-gb-pane-scaffold layout="supporting-pane" levitate="docked" levitate-label="Comments">
-  …
+<md-gb-button id="comments-button">Comments</md-gb-button>
+<md-gb-pane-scaffold layout="supporting-pane" levitate="floating" levitate-label="Comments">
+  <article>
+    <h2>Quarterly plan</h2>
+    <p>The goals and milestones for the next three months.</p>
+  </article>
+  <aside slot="secondary">
+    <h3>Comments</h3>
+    <p>Looks good to me.</p>
+  </aside>
 </md-gb-pane-scaffold>
 ```
+```css
+md-gb-pane-scaffold {
+  inline-size: 100%;
+  block-size: 280px;
+}
+```
+```ts
+const scaffold = document.querySelector('md-gb-pane-scaffold')!;
+document.querySelector('#comments-button')!.addEventListener('click', () => {
+  scaffold.openLevitated();
+});
+```
+{% enddemo %}
 
 ## Accessibility
 

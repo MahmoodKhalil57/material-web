@@ -26,12 +26,12 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A card is a container with 16dp of inline padding around its content. The `container` slot replaces its background.
 
-```html
+{% demo "A card with a custom container and content" %}
 <md-gb-card>
-  <div slot="container"></div>
-  …
+  <div slot="container" style="background: var(--md-sys-color-tertiary-container)"></div>
+  Lemon pasta, ready in 20 minutes
 </md-gb-card>
-```
+{% enddemo %}
 
 ## Examples
 

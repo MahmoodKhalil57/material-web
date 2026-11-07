@@ -21,9 +21,9 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A date picker is one element. A docked picker renders a text field and a calendar popup; a modal picker renders a dialog.
 
-```html
-<md-gb-date-picker></md-gb-date-picker>
-```
+{% demo "A date picker with a label" %}
+<md-gb-date-picker label="Due date"></md-gb-date-picker>
+{% enddemo %}
 
 ## Examples
 
@@ -31,22 +31,17 @@ A date picker is one element. A docked picker renders a text field and a calenda
 
 Set `variant="modal"` and call `show()` to open the picker in a dialog. Use `mode="input"` to start with the date input.
 
-{% demo "A button that opens a modal date picker" %}
+{% demo "A button that opens a modal date picker" height=480 %}
+```html
 <md-gb-button id="open-picker">Pick a date</md-gb-button>
 <md-gb-date-picker id="picker" variant="modal"></md-gb-date-picker>
-{% enddemo %}
-
-```js
-document.querySelector('#open-picker').addEventListener('click', () => {
-  document.querySelector('#picker').show();
+```
+```ts
+document.querySelector('#open-picker')!.addEventListener('click', () => {
+  document.querySelector('md-gb-date-picker')!.show();
 });
 ```
-
-<script type="module">
-  document.querySelector('#open-picker').addEventListener('click', () => {
-    document.querySelector('#picker').show();
-  });
-</script>
+{% enddemo %}
 
 ### Range
 
@@ -68,9 +63,9 @@ Set `value` to an ISO date (`YYYY-MM-DD`). Limit the choices with `min` and `max
 
 Add `fullscreen` to a modal picker for compact windows. It has a close button and a Save button.
 
-```html
-<md-gb-date-picker variant="modal" fullscreen range></md-gb-date-picker>
-```
+{% demo "A full-screen modal range picker" height=480 frame=true %}
+<md-gb-date-picker variant="modal" fullscreen range open></md-gb-date-picker>
+{% enddemo %}
 
 ## Accessibility
 

@@ -21,11 +21,11 @@ description: A FAB represents the most important action on a screen, and an exte
 
 A FAB holds an icon in its default slot. Set `label` to make it an extended FAB.
 
-```html
-<md-gb-fab>
-  <md-gb-icon></md-gb-icon>
+{% demo "A FAB with a share icon" %}
+<md-gb-fab aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
 </md-gb-fab>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -93,11 +93,35 @@ Set `expanded="false"` to collapse an extended FAB to an icon-only FAB. Set the 
 
 Set `scroll-target` to the id of a scrolling container, or `window`. The FAB collapses while it scrolls down and expands while it scrolls up. A cancelable `toggle` event fires first.
 
+{% demo "An extended FAB that collapses while its list scrolls down" height=300 %}
 ```html
-<md-gb-fab label="Compose" scroll-target="content">
-  <md-gb-icon>edit</md-gb-icon>
-</md-gb-fab>
+<div id="content">
+  <p>Message 1</p>
+  <p>Message 2</p>
+  <p>Message 3</p>
+  <p>Message 4</p>
+  <p>Message 5</p>
+  <p>Message 6</p>
+  <p>Message 7</p>
+  <p>Message 8</p>
+  <md-gb-fab label="Compose" scroll-target="content">
+    <md-gb-icon>edit</md-gb-icon>
+  </md-gb-fab>
+</div>
 ```
+```css
+#content {
+  inline-size: 100%;
+  block-size: 240px;
+  overflow: auto;
+}
+
+md-gb-fab {
+  position: sticky;
+  inset-block-end: 16px;
+}
+```
+{% enddemo %}
 
 ## Accessibility
 

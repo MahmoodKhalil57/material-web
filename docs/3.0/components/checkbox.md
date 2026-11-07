@@ -22,12 +22,12 @@ description: Checkboxes let people select one or more items from a set, or turn 
 
 A checkbox is one element. A `<label>` next to it, or around it, provides the text.
 
-```html
+{% demo "A checkbox inside a label" %}
 <label>
   <md-gb-checkbox></md-gb-checkbox>
-  …
+  Send me updates
 </label>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -83,11 +83,29 @@ Set `density` from 0 (default) to -3 to shrink the checkbox. The touch target st
 
 Call `linkParentCheckbox(parent, children)` from `checkbox-group.js`. Checking the parent checks every child, and a partial selection makes the parent indeterminate.
 
-```js
+{% demo "A parent checkbox linked to two child checkboxes" height=200 %}
+```html
+<label>
+  <md-gb-checkbox id="all"></md-gb-checkbox>
+  All notifications
+</label>
+<label>
+  <md-gb-checkbox class="channel" checked></md-gb-checkbox>
+  Email
+</label>
+<label>
+  <md-gb-checkbox class="channel"></md-gb-checkbox>
+  Push
+</label>
+```
+```ts
 import {linkParentCheckbox} from '@material/web/labs/gb/components/checkbox/checkbox-group.js';
 
-linkParentCheckbox(parent, [...children]);
+const parent = document.querySelector('md-gb-checkbox#all')!;
+const children = [...document.querySelectorAll('md-gb-checkbox.channel')];
+linkParentCheckbox(parent, children);
 ```
+{% enddemo %}
 
 ## Accessibility
 
@@ -95,9 +113,9 @@ linkParentCheckbox(parent, [...children]);
 *   Space toggles the focused checkbox, and Tab moves between checkboxes.
 *   A checkbox exposes its checked, unchecked or mixed state.
 
-```html
+{% demo "A checkbox with only an aria-label" %}
 <md-gb-checkbox aria-label="Select all messages"></md-gb-checkbox>
-```
+{% enddemo %}
 
 ## API reference
 

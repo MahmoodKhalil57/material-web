@@ -21,9 +21,9 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A loading indicator is one element: a shape, with an optional container behind it.
 
-```html
-<md-gb-loading-indicator></md-gb-loading-indicator>
-```
+{% demo "A loading indicator" %}
+<md-gb-loading-indicator aria-label="Loading"></md-gb-loading-indicator>
+{% enddemo %}
 
 ## Examples
 

@@ -23,16 +23,16 @@ description: Chips help people enter information, make selections, filter conten
 
 A chip set holds chips, and each chip holds its label and optional icons.
 
-```html
-<md-gb-chip-set>
+{% demo "A chip set with a chip that has a leading and a trailing icon" %}
+<md-gb-chip-set aria-label="Places">
   <md-gb-chip>
-    <md-gb-icon slot="icon"></md-gb-icon>
-    <md-gb-icon slot="trailing-icon"></md-gb-icon>
-    Label
+    <md-gb-icon slot="icon">place</md-gb-icon>
+    <md-gb-icon slot="trailing-icon">arrow_drop_down</md-gb-icon>
+    Nearby
   </md-gb-chip>
-  …
+  <md-gb-chip>Open late</md-gb-chip>
 </md-gb-chip-set>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -134,13 +134,13 @@ A `soft-disabled` chip stays focusable so screen reader users can discover actio
 *   The set is one tab stop; arrow keys, Home and End move between chips, and Backspace or Delete removes a removable chip.
 *   Disabled chips leave the focus order; use `soft-disabled` where discoverability matters, per the [ARIA guidance on disabled controls](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls).
 
-```html
+{% demo "A chip set labelled by a heading, with chips that have a longer aria-label" %}
 <h3 id="dates-label">Dates</h3>
 <md-gb-chip-set aria-labelledby="dates-label">
   <md-gb-chip aria-label="Monday" type="filter">Mon</md-gb-chip>
   <md-gb-chip aria-label="Tuesday" type="filter">Tue</md-gb-chip>
 </md-gb-chip-set>
-```
+{% enddemo %}
 
 ## API reference
 

@@ -25,14 +25,22 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A button group holds `md-gb-button` elements, each with an optional icon.
 
-```html
+{% demo "A button group of three buttons with an icon and a label" %}
 <md-gb-button-group>
-  <md-gb-button>
-    <md-gb-icon></md-gb-icon>
+  <md-gb-button color="tonal">
+    <md-gb-icon>content_cut</md-gb-icon>
+    Cut
   </md-gb-button>
-  …
+  <md-gb-button color="tonal">
+    <md-gb-icon>content_copy</md-gb-icon>
+    Copy
+  </md-gb-button>
+  <md-gb-button color="tonal">
+    <md-gb-icon>content_paste</md-gb-icon>
+    Paste
+  </md-gb-button>
 </md-gb-button-group>
-```
+{% enddemo %}
 
 ## Examples
 

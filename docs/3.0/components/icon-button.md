@@ -30,11 +30,11 @@ description: Icon buttons help people take supplementary actions with a single t
 
 An icon button is one element that holds an icon (default slot). It renders a native `<button>` or, with `href`, a link.
 
-```html
-<md-gb-icon-button>
-  <md-gb-icon></md-gb-icon>
+{% demo "A filled icon button with a send icon" %}
+<md-gb-icon-button color="filled" aria-label="Send">
+  <md-gb-icon>send</md-gb-icon>
 </md-gb-icon-button>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -168,11 +168,11 @@ A disabled button can't be focused with the keyboard. A `soft-disabled` button s
 *   Disabled buttons leave the tab order. Use `soft-disabled` to keep one focusable, as the [ARIA guidance on disabled controls](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls) allows.
 *   Toggle buttons expose their state with `aria-pressed`.
 
-```html
+{% demo "A toggle icon button that exposes its pressed state" %}
 <md-gb-icon-button type="toggle" aria-label="Add to favorites">
   <md-gb-icon>favorite</md-gb-icon>
 </md-gb-icon-button>
-```
+{% enddemo %}
 
 ## API reference
 

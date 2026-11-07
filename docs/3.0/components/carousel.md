@@ -33,15 +33,22 @@ This component is new in [M3 Expressive](https://m3.material.io/blog/building-wi
 
 A carousel holds `md-gb-carousel-item` elements. Each has a visual in its default slot and an optional label.
 
-```html
-<md-gb-carousel>
-  <md-gb-carousel-item>
-    <img>
-    <span slot="label"></span>
+{% demo "A carousel of three items, each with a visual and a label" %}
+<md-gb-carousel aria-label="Cities" style="--item-width: 186px">
+  <md-gb-carousel-item label="Lisbon">
+    <div style="background: var(--md-sys-color-primary-container)"></div>
+    <span slot="label">Lisbon</span>
   </md-gb-carousel-item>
-  …
+  <md-gb-carousel-item label="Kyoto">
+    <div style="background: var(--md-sys-color-secondary-container)"></div>
+    <span slot="label">Kyoto</span>
+  </md-gb-carousel-item>
+  <md-gb-carousel-item label="Oslo">
+    <div style="background: var(--md-sys-color-tertiary-container)"></div>
+    <span slot="label">Oslo</span>
+  </md-gb-carousel-item>
 </md-gb-carousel>
-```
+{% enddemo %}
 
 ## Examples
 
@@ -112,11 +119,27 @@ Give an item `href` to make it a link. Without it, the item is a button.
 
 Set `scroll-mode` to `snap` or `free`, and `orientation` to `horizontal` or `vertical`. The full-screen layout scrolls vertically by default.
 
+{% demo "A full-screen carousel that snaps to one story at a time" height=340 %}
 ```html
 <md-gb-carousel layout="full-screen" scroll-mode="snap" aria-label="Stories">
-  …
+  <md-gb-carousel-item label="Morning">
+    <div style="background: var(--md-sys-color-primary-container)"></div>
+  </md-gb-carousel-item>
+  <md-gb-carousel-item label="Noon">
+    <div style="background: var(--md-sys-color-secondary-container)"></div>
+  </md-gb-carousel-item>
+  <md-gb-carousel-item label="Evening">
+    <div style="background: var(--md-sys-color-tertiary-container)"></div>
+  </md-gb-carousel-item>
 </md-gb-carousel>
 ```
+```css
+md-gb-carousel {
+  inline-size: 100%;
+  block-size: 280px;
+}
+```
+{% enddemo %}
 
 ## Accessibility
 
