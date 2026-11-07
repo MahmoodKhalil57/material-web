@@ -220,6 +220,70 @@ const CASES: SpecCase[] = [
     "markup": "<span></span><div class=\"text-field\" data-spec-target></div><span></span>"
   },
   {
+    "mixin": "filled-hover",
+    "prop": "active-indicator-color",
+    "token": "md.comp.filled-text-field.hover.active-indicator.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "filled-hover",
+    "prop": "active-indicator-height",
+    "token": "md.comp.filled-text-field.hover.active-indicator.height",
+    "spec": "1px",
+    "property": "width",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "filled-hover",
+    "prop": "input-text-color",
+    "token": "md.comp.filled-text-field.hover.input-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "filled-hover",
+    "prop": "label-text-color",
+    "token": "md.comp.filled-text-field.hover.label-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "filled-hover",
+    "prop": "leading-icon-color",
+    "token": "md.comp.filled-text-field.hover.leading-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "filled-hover",
+    "prop": "state-layer-color",
+    "token": "md.comp.filled-text-field.hover.state-layer.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 8%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "filled-hover",
+    "prop": "supporting-text-color",
+    "token": "md.comp.filled-text-field.hover.supporting-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "filled-hover",
+    "prop": "trailing-icon-color",
+    "token": "md.comp.filled-text-field.hover.trailing-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
     "mixin": "outlined",
     "prop": "caret-color",
     "token": "md.comp.outlined-text-field.caret.color",
@@ -402,6 +466,62 @@ const CASES: SpecCase[] = [
     "spec": "24px",
     "property": "width",
     "markup": "<span></span><div class=\"text-field-outlined\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "input-text-color",
+    "token": "md.comp.outlined-text-field.hover.input-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "label-text-color",
+    "token": "md.comp.outlined-text-field.hover.label-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "leading-icon-color",
+    "token": "md.comp.outlined-text-field.hover.leading-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "outline-color",
+    "token": "md.comp.outlined-text-field.hover.outline.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "outline-width",
+    "token": "md.comp.outlined-text-field.hover.outline.width",
+    "spec": "1px",
+    "property": "width",
+    "markup": "<span></span><div class=\"text-field text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "supporting-text-color",
+    "token": "md.comp.outlined-text-field.hover.supporting-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "trailing-icon-color",
+    "token": "md.comp.outlined-text-field.hover.trailing-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"text-field text-field-outlined hover\" data-spec-target></div><span></span>"
   }
 ];
 

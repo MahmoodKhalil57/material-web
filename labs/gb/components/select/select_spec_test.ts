@@ -188,6 +188,70 @@ const CASES: SpecCase[] = [
     "markup": "<span></span><div class=\"select\" data-spec-target></div><span></span>"
   },
   {
+    "mixin": "hover",
+    "prop": "active-indicator-color",
+    "token": "md.comp.filled-select.text-field.hover.active-indicator.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "hover",
+    "prop": "active-indicator-height",
+    "token": "md.comp.filled-select.text-field.hover.active-indicator.height",
+    "spec": "1px",
+    "property": "width",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "hover",
+    "prop": "input-text-color",
+    "token": "md.comp.filled-select.text-field.hover.input-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "hover",
+    "prop": "label-text-color",
+    "token": "md.comp.filled-select.text-field.hover.label-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "hover",
+    "prop": "leading-icon-color",
+    "token": "md.comp.filled-select.text-field.hover.leading-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "hover",
+    "prop": "state-layer-color",
+    "token": "md.comp.filled-select.text-field.hover.state-layer.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 8%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "hover",
+    "prop": "supporting-text-color",
+    "token": "md.comp.filled-select.text-field.hover.supporting-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "hover",
+    "prop": "trailing-icon-color",
+    "token": "md.comp.filled-select.text-field.hover.trailing-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
     "mixin": "outlined",
     "prop": "container-shape",
     "token": "md.comp.outlined-select.text-field.container.shape",
@@ -338,6 +402,70 @@ const CASES: SpecCase[] = [
     "spec": "24px",
     "property": "width",
     "markup": "<span></span><div class=\"select text-field-outlined\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "input-text-color",
+    "token": "md.comp.outlined-select.text-field.hover.input-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "label-text-color",
+    "token": "md.comp.outlined-select.text-field.hover.label-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "leading-icon-color",
+    "token": "md.comp.outlined-select.text-field.hover.leading-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "outline-color",
+    "token": "md.comp.outlined-select.text-field.hover.outline.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "outline-width",
+    "token": "md.comp.outlined-select.text-field.hover.outline.width",
+    "spec": "1px",
+    "property": "width",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "state-layer-color",
+    "token": "md.comp.outlined-select.text-field.hover.state-layer.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 8%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "supporting-text-color",
+    "token": "md.comp.outlined-select.text-field.hover.supporting-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-hover",
+    "prop": "trailing-icon-color",
+    "token": "md.comp.outlined-select.text-field.hover.trailing-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"select text-field-outlined hover\" data-spec-target></div><span></span>"
   },
   {
     "mixin": "autocomplete",
@@ -508,6 +636,70 @@ const CASES: SpecCase[] = [
     "markup": "<span></span><div class=\"autocomplete\" data-spec-target></div><span></span>"
   },
   {
+    "mixin": "autocomplete-hover",
+    "prop": "active-indicator-color",
+    "token": "md.comp.filled-autocomplete.text-field.hover.active-indicator.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "autocomplete-hover",
+    "prop": "active-indicator-height",
+    "token": "md.comp.filled-autocomplete.text-field.hover.active-indicator.height",
+    "spec": "1px",
+    "property": "width",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "autocomplete-hover",
+    "prop": "input-text-color",
+    "token": "md.comp.filled-autocomplete.text-field.hover.input-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "autocomplete-hover",
+    "prop": "label-text-color",
+    "token": "md.comp.filled-autocomplete.text-field.hover.label-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "autocomplete-hover",
+    "prop": "leading-icon-color",
+    "token": "md.comp.filled-autocomplete.text-field.hover.leading-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "autocomplete-hover",
+    "prop": "state-layer-color",
+    "token": "md.comp.filled-autocomplete.text-field.hover.state-layer.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 8%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "autocomplete-hover",
+    "prop": "supporting-text-color",
+    "token": "md.comp.filled-autocomplete.text-field.hover.supporting-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "autocomplete-hover",
+    "prop": "trailing-icon-color",
+    "token": "md.comp.filled-autocomplete.text-field.hover.trailing-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-filled hover\" data-spec-target></div><span></span>"
+  },
+  {
     "mixin": "outlined-autocomplete",
     "prop": "caret-color",
     "token": "md.comp.outlined-autocomplete.text-field.caret.color",
@@ -666,6 +858,70 @@ const CASES: SpecCase[] = [
     "spec": "24px",
     "property": "width",
     "markup": "<span></span><div class=\"autocomplete text-field-outlined\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "input-text-color",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.input-text.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "label-text-color",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.label-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "leading-icon-color",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.leading-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "outline-color",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.outline.color",
+    "spec": "var(--md-sys-color-on-surface)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "outline-width",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.outline.width",
+    "spec": "1px",
+    "property": "width",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "state-layer-color",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.state-layer.color",
+    "spec": "hsl(from var(--md-sys-color-on-surface) h s l / 8%)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "supporting-text-color",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.supporting-text.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
+  },
+  {
+    "mixin": "outlined-autocomplete-hover",
+    "prop": "trailing-icon-color",
+    "token": "md.comp.outlined-autocomplete.text-field.hover.trailing-icon.color",
+    "spec": "var(--md-sys-color-on-surface-variant)",
+    "property": "color",
+    "markup": "<span></span><div class=\"autocomplete text-field-outlined hover\" data-spec-target></div><span></span>"
   }
 ];
 

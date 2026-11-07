@@ -390,10 +390,24 @@ $anchors: '(anchor-name: --a) and (position-anchor: --a) and (left: anchor(--a l
   }
 
   // Without anchor positioning the bar's indicator cannot find the selected
-  // tab, so the selected tab draws its own indicator along its bottom edge
-  // (the full tab width less the indicator inset on each side, like the
-  // secondary indicator; square-cornered).
+  // tab, so the selected tab draws its own.
+  //
+  // Secondary spans the whole tab, square-cornered: a background gradient
+  // along the tab's bottom edge.
+  //
+  // Primary hugs the tab's CONTENT (the label, or the icon of an icon-only
+  // tab; a stacked tab's label alone, as in the anchored form), inset 2dp
+  // per side and rounded by `--active-indicator-shape`. The content element
+  // draws it in an `::after`: its width follows the content, and it is
+  // dropped to the tab's bottom edge by the distance the centred content
+  // leaves below itself, (tab height - content height) / 2. A bare-text tab
+  // has no content element, so it keeps the full-width gradient.
   @supports not (#{$anchors}) {
+    $tab-height: calc(
+      #{density.size(var(--container-height))} - var(--divider-thickness)
+    );
+    $label: ':is(.tab-label, [slot="label"])';
+
     .tabs::after {
       display: none;
     }
@@ -411,6 +425,44 @@ $anchors: '(anchor-name: --a) and (position-anchor: --a) and (left: anchor(--a l
 
     #{$secondary-bar} .tab#{$selected} {
       background-size: 100% var(--active-indicator-height);
+    }
+
+    .tab#{$selected}#{$primary-tab}:has(> :is(.md-icon, #{$label})) {
+      background-image: none;
+    }
+
+    .tab#{$selected}#{$primary-tab} > :is(.md-icon, #{$label}) {
+      position: relative;
+    }
+
+    .tab#{$selected}#{$primary-tab} > :is(.md-icon, #{$label})::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      inset-inline: var(--active-indicator-inset);
+      block-size: var(--active-indicator-height);
+      background-color: var(--active-indicator-color);
+      border-radius: var(--active-indicator-shape);
+    }
+
+    // Label only.
+    .tab#{$selected}#{$primary-tab}:not(:has(> .md-icon)) > #{$label}::after {
+      inset-block-end: calc((1lh - #{$tab-height}) / 2);
+    }
+
+    // Icon only.
+    .tab#{$selected}#{$primary-tab}:not(#{$stacked}) > .md-icon::after {
+      inset-block-end: calc((var(--icon-size) - #{$tab-height}) / 2);
+    }
+
+    // Icon above label: the label sits under the icon and its gap.
+    .tab#{$selected}#{$primary-tab}#{$stacked} > #{$label}::after {
+      inset-block-end: calc(
+        (
+            1lh + var(--icon-size) + var(--stacked-icon-label-space) -
+              #{$tab-height}
+          ) / 2
+      );
     }
   }
 

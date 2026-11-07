@@ -11,7 +11,12 @@ import './md-gb-progress.js';
 import {ProgressElement} from './progress-element.js';
 import {
   CIRCULAR_VIEW_BOX,
+  CIRCULAR_FLAT_PATH,
+  CIRCULAR_WAVY_PATH,
+  LINEAR_FLAT_PATH,
+  LINEAR_INDETERMINATE_WAVY_PATH,
   LINEAR_PATH_LENGTH,
+  LINEAR_WAVY_PATH,
   PROGRESS_PROPERTIES,
 } from './progress-paths.js';
 import {
@@ -94,6 +99,51 @@ describe('progress', () => {
       setupProgress(el);
       expect(el.querySelectorAll('.progress-container').length).toBe(1);
       expect(el.getAttribute('role')).toBe('status');
+    });
+
+    describe('path shapes (the `d` attribute fallback)', () => {
+      const linearD = (el: Element) =>
+        Array.from(el.querySelectorAll('.progress-wave > path')).map((p) =>
+          p.getAttribute('d'),
+        );
+      const circularD = (el: Element) =>
+        part(el, '.progress-ring > path').getAttribute('d');
+      const mutated = () => new Promise((r) => setTimeout(r));
+
+      it('is flat by default', () => {
+        const el = indicator('progress');
+        expect(linearD(el)).toEqual([LINEAR_FLAT_PATH, LINEAR_FLAT_PATH]);
+        expect(circularD(el)).toBe(CIRCULAR_FLAT_PATH);
+      });
+
+      it('is the wavy linear shape when determinate and wavy', () => {
+        const el = indicator('progress progress-wavy progress-determinate');
+        expect(linearD(el)).toEqual([LINEAR_WAVY_PATH, LINEAR_WAVY_PATH]);
+        expect(circularD(el)).toBe(CIRCULAR_WAVY_PATH);
+      });
+
+      it('is the indeterminate wavy linear shape when wavy only', () => {
+        const el = indicator('progress progress-wavy');
+        expect(linearD(el)).toEqual([
+          LINEAR_INDETERMINATE_WAVY_PATH,
+          LINEAR_INDETERMINATE_WAVY_PATH,
+        ]);
+        expect(circularD(el)).toBe(CIRCULAR_WAVY_PATH);
+      });
+
+      it('follows the classes when the state changes', async () => {
+        const el = indicator('progress');
+        el.classList.add('progress-wavy');
+        await mutated();
+        expect(linearD(el)[0]).toBe(LINEAR_INDETERMINATE_WAVY_PATH);
+        el.classList.add('progress-determinate');
+        await mutated();
+        expect(linearD(el)[0]).toBe(LINEAR_WAVY_PATH);
+        el.classList.remove('progress-wavy');
+        await mutated();
+        expect(linearD(el)[0]).toBe(LINEAR_FLAT_PATH);
+        expect(circularD(el)).toBe(CIRCULAR_FLAT_PATH);
+      });
     });
 
     it('registers the animated custom properties', () => {

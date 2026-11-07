@@ -152,8 +152,67 @@ async function componentStyles(dir) {
  * the full selector (null when it uses interpolation) and `styles` the
  * enclosing `@container style()` conditions.
  */
+/**
+ * Replaces each `@include name;` of a mixin defined in the same file (no
+ * module namespace, no arguments) with the mixin's body, and drops the
+ * definitions, so token includes inside a local helper mixin resolve against
+ * the selector of every place it is used.
+ */
+function inlineLocalMixins(text) {
+  const bodies = new Map();
+  let out = '';
+  for (let i = 0; i < text.length; ) {
+    const m = text.slice(i).match(/^@mixin\s+([\w-]+)\s*\{/);
+    if (m) {
+      let depth = 1;
+      let j = i + m[0].length;
+      for (; j < text.length && depth; j++) {
+        if (text[j] === '{') depth++;
+        else if (text[j] === '}') depth--;
+      }
+      bodies.set(m[1], text.slice(i + m[0].length, j - 1));
+      i = j;
+      continue;
+    }
+    out += text[i++];
+  }
+  if (!bodies.size) return text;
+  // `@include name { block }`: the block replaces each `@content;`.
+  const expandBlocks = (src) => {
+    let res = '';
+    for (let i = 0; i < src.length; ) {
+      const m = src.slice(i).match(/^@include\s+([\w-]+)\s*\{/);
+      if (m && bodies.has(m[1])) {
+        let depth = 1;
+        let j = i + m[0].length;
+        for (; j < src.length && depth; j++) {
+          if (src[j] === '{') depth++;
+          else if (src[j] === '}') depth--;
+        }
+        const block = src.slice(i + m[0].length, j - 1);
+        res += bodies.get(m[1]).replace(/@content\s*;/g, () => block);
+        i = j;
+        continue;
+      }
+      res += src[i++];
+    }
+    return res;
+  };
+  // Expand repeatedly so helpers may include other helpers (bounded).
+  for (let pass = 0; pass < 5; pass++) {
+    const next = expandBlocks(out).replace(/@include\s+([\w-]+)\s*;/g, (all, name) =>
+      bodies.has(name) ? bodies.get(name) : all,
+    );
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
 export function includedSelectors(source) {
-  const text = source.replace(/\r\n/g, '\n').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+  const text = inlineLocalMixins(
+    source.replace(/\r\n/g, '\n').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, ''),
+  );
   // Entries: {selector} for style rules (null when unresolvable), or
   // {style} for `@container style(--x: v)` blocks, or {} for other at-rules.
   const stack = [];
@@ -256,6 +315,9 @@ export function markupFor(selector, styles = []) {
     return `<${el.tag}${attrs.length ? ' ' + attrs.join(' ') : ''}>`;
   };
   const target = elements[elements.length - 1];
+  // A selector that yields no element (e.g. only `:host(...)` parts) has no
+  // markup to build: skip it like other unbuildable selectors.
+  if (!target) return undefined;
   // Siblings keep :first-child / :last-child rules from matching unless the
   // selector asks for them.
   const before = target.position.first || target.position.only ? '' : '<span></span>';

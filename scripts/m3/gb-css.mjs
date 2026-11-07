@@ -59,8 +59,16 @@ export function literalCss(value) {
   if (value.color) return colorCss(value.color);
   if (value.elevation) return lengthCss(value.elevation);
   if (value.shape) {
-    const {family, defaultSize} = value.shape;
+    const {family, defaultSize, topLeft, topRight, bottomRight, bottomLeft} = value.shape;
     if (family === 'SHAPE_FAMILY_CIRCULAR') return 'calc(var(--container-height) / 2)';
+    // Per-corner shapes (e.g. a top-rounded indicator) keep each corner, in
+    // `border-radius` order; a corner without a value is 0. Equal corners
+    // collapse to one value.
+    const corners = [topLeft, topRight, bottomRight, bottomLeft];
+    if (corners.some(Boolean)) {
+      const values = corners.map((c) => lengthCss(c ?? defaultSize ?? {}));
+      return values.every((v) => v === values[0]) ? values[0] : values.join(' ');
+    }
     if (defaultSize) return lengthCss(defaultSize);
   }
   return undefined;

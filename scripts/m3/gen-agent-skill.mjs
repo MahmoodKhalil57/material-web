@@ -17,10 +17,14 @@
  * - The elements' API (tag, attributes and properties with types and
  *   defaults, slots, events, CSS parts and custom properties, public
  *   methods) comes from the TypeScript sources, read with the compiler API
- *   and the JSDoc of each class. This is the data a Custom Elements Manifest
- *   holds; `scripts/analyzer/generate-manifest.js` does not run for labs/gb
- *   today (@lit-labs/gen-manifest throws on the `Intl` type reference in a
- *   shared module), so the manifest is not required here.
+ *   and the JSDoc of each class. The Custom Elements Manifest
+ *   (`npm run build:manifest`, now working for labs/gb) holds most of the
+ *   same data, but not all of it: classes extending a mixin chain
+ *   (`baseClass = mixinX(mixinY(LitElement))`) lose the mixin-inherited
+ *   properties (disabled, name, value, form, ...), the analyzer does not
+ *   record `customElements.define` tag names (the build script patches them
+ *   in), and it has no flag for property-only versus attribute properties. So
+ *   the TypeScript reader stays the source for this skill.
  * - Usage rules come from the component entries of scripts/m3/CHECKLIST.md
  *   (our own summaries) and the "app owns this" lines of
  *   scripts/m3/exclusions/*.md. No spec page text is copied.

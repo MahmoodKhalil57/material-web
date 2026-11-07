@@ -46,7 +46,7 @@ const CASES: SpecCase[] = [
     "mixin": "root",
     "prop": "active-indicator-shape",
     "token": "md.comp.primary-navigation-tab.active-indicator.shape",
-    "spec": "3px",
+    "spec": "3px 3px 0 0",
     "property": "border-top-left-radius",
     "markup": "<span></span><div class=\"tabs\" data-spec-target></div><span></span>"
   },

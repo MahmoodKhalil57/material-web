@@ -82,6 +82,54 @@ describe('<md-gb-menu> without CSS anchor positioning', () => {
     expect(m.top).toBeGreaterThanOrEqual(0);
   });
 
+  async function openSubmenu() {
+    const root = env.render(html`
+      <md-gb-menu id="menu" style="position: fixed; left: 100px; top: 100px">
+        <md-gb-menu-item>Cut</md-gb-menu-item>
+        <md-gb-menu-item>
+          Share
+          <md-gb-menu slot="submenu" id="submenu">
+            <md-gb-menu-item>Email</md-gb-menu-item>
+            <md-gb-menu-item>Message</md-gb-menu-item>
+          </md-gb-menu>
+        </md-gb-menu-item>
+      </md-gb-menu>
+    `);
+    await env.waitForStability();
+    const menu = root.querySelector('#menu') as MenuElement;
+    const submenu = root.querySelector('#submenu') as MenuElement;
+    const parentItem = menu.items[1] as MenuItemElement;
+    const opened = toggled(menu);
+    menu.showPopover();
+    await opened;
+    const subOpened = toggled(submenu);
+    parentItem.click();
+    await subOpened;
+    await env.waitForStability();
+    return {submenu, parentItem};
+  }
+
+  it('lines the first item of a submenu up with its parent item', async () => {
+    const {submenu, parentItem} = await openSubmenu();
+    // The JS position, not CSS anchoring, placed it.
+    expect(submenu.style.position).toBe('fixed');
+    expect(submenu.style.marginBlockStart).not.toBe('');
+    const first = submenu.items[0].getBoundingClientRect();
+    expect(Math.round(first.top)).toBe(
+      Math.round(parentItem.getBoundingClientRect().top),
+    );
+  });
+
+  it('lines the first item up the same in CSS positioning', async () => {
+    forceAnchorPositioningSupport(null);
+    const {submenu, parentItem} = await openSubmenu();
+    expect(submenu.style.position).toBe('');
+    const first = submenu.items[0].getBoundingClientRect();
+    expect(Math.round(first.top)).toBe(
+      Math.round(parentItem.getBoundingClientRect().top),
+    );
+  });
+
   it('is placed by CSS, not by the controller, when the browser has it', async () => {
     forceAnchorPositioningSupport(null);
     const {menu} = await setup('top: 100px');

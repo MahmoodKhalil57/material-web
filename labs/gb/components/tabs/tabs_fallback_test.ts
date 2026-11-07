@@ -80,15 +80,80 @@ describe('<div class="tabs"> without CSS anchor positioning', () => {
     expect(getComputedStyle(selected).backgroundImage).toBe('none');
   });
 
-  it('underlines the selected tab itself', async () => {
+  const after = (el: Element) => getComputedStyle(el, '::after');
+
+  it('draws the primary indicator under the selected tab content', async () => {
     const {bar, selected} = await setup(withoutAnchorPositioning(tabsStyles));
     expect(indicator(bar).display).toBe('none');
-    const style = getComputedStyle(selected);
-    expect(style.backgroundImage).toContain('linear-gradient');
-    // The bar is the active indicator height, along the bottom edge.
-    const height = style.getPropertyValue('--active-indicator-height').trim();
-    expect(style.backgroundSize.endsWith(` ${height}`)).toBeTrue();
-    expect(style.backgroundPositionY).toBe('100%');
+    // The tab itself paints nothing; its label does.
+    expect(getComputedStyle(selected).backgroundImage).toBe('none');
+    const label = selected.querySelector('.tab-label')!;
+    const style = after(label);
+    const height = getComputedStyle(selected)
+      .getPropertyValue('--active-indicator-height')
+      .trim();
+    expect(style.position).toBe('absolute');
+    expect(style.height).toBe(height);
+    expect(style.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+  });
+
+  it('spans the content of a primary tab inset on each side, not the tab', async () => {
+    const {selected} = await setup(withoutAnchorPositioning(tabsStyles));
+    const label = selected.querySelector('.tab-label')!;
+    const inset = parseFloat(
+      getComputedStyle(selected).getPropertyValue('--active-indicator-inset'),
+    );
+    const content = label.getBoundingClientRect();
+    expect(parseFloat(after(label).width)).toBeCloseTo(content.width - 2 * inset, 1);
+    // Narrower than the tab, which is a third of the bar.
+    expect(parseFloat(after(label).width)).toBeLessThan(
+      selected.getBoundingClientRect().width / 2,
+    );
+  });
+
+  // md.comp.primary-navigation-tab.active-indicator.shape: 3dp top corners,
+  // square bottom corners.
+  it('rounds the top corners of the primary indicator like the anchored one', async () => {
+    const {selected} = await setup(withoutAnchorPositioning(tabsStyles));
+    const label = selected.querySelector('.tab-label')!;
+    const style = after(label);
+    expect(style.borderTopLeftRadius).toBe('3px');
+    expect(style.borderTopRightRadius).toBe('3px');
+    expect(style.borderBottomLeftRadius).toBe('0px');
+    expect(style.borderBottomRightRadius).toBe('0px');
+  });
+
+  it('puts the primary indicator on the tab bottom edge', async () => {
+    const {selected} = await setup(withoutAnchorPositioning(tabsStyles));
+    const label = selected.querySelector('.tab-label')!;
+    const style = after(label);
+    const labelBox = label.getBoundingClientRect();
+    const tabBox = selected.getBoundingClientRect();
+    const bottom = labelBox.bottom - parseFloat(style.bottom);
+    expect(bottom).toBeCloseTo(tabBox.bottom, 0);
+  });
+
+  it('puts the stacked primary indicator under the label only', async () => {
+    const root = env.render(html`
+      <div class="tabs" style="inline-size: 400px" role="tablist">
+        <button class="tab selected" role="tab" aria-selected="true">
+          <span class="md-icon" style="inline-size: 24px; block-size: 24px"></span>
+          <span class="tab-label">Two</span>
+        </button>
+        <button class="tab" role="tab">Three</button>
+      </div>
+    `);
+    document.adoptedStyleSheets = [
+      ...saved.filter((s) => s !== tabsStyles),
+      withoutAnchorPositioning(tabsStyles),
+    ];
+    await env.waitForStability();
+    const tab = root.querySelector('.tab.selected') as HTMLElement;
+    const label = tab.querySelector('.tab-label')!;
+    expect(after(label).position).toBe('absolute');
+    const bottom =
+      label.getBoundingClientRect().bottom - parseFloat(after(label).bottom);
+    expect(bottom).toBeCloseTo(tab.getBoundingClientRect().bottom, 0);
   });
 
   it('underlines only the selected tab', async () => {
@@ -100,7 +165,7 @@ describe('<div class="tabs"> without CSS anchor positioning', () => {
     }
   });
 
-  it('spans the whole tab of a secondary bar', async () => {
+  it('spans the whole tab of a secondary bar with square corners', async () => {
     const {selected} = await setup(
       withoutAnchorPositioning(tabsStyles),
       'tabs-secondary',
@@ -109,5 +174,7 @@ describe('<div class="tabs"> without CSS anchor positioning', () => {
       .getPropertyValue('--active-indicator-height')
       .trim();
     expect(getComputedStyle(selected).backgroundSize).toBe(`100% ${height}`);
+    // No content indicator: the gradient is the whole indicator.
+    expect(after(selected.querySelector('.tab-label')!).content).toBe('none');
   });
 });

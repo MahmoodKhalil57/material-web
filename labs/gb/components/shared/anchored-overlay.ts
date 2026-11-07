@@ -478,6 +478,14 @@ export class AnchoredOverlayController implements ReactiveController {
     surface.style.position = 'fixed';
     surface.style.inset = 'auto';
     surface.style.margin = '0';
+    // CSS offsets the surface with its block-start margin (a submenu lines its
+    // first item up with the item that opened it). The margin is reset above,
+    // so a surface publishes that offset as `--overlay-margin-block-start`
+    // and the JS position applies it again.
+    const offset = getComputedStyle(surface)
+      .getPropertyValue('--overlay-margin-block-start')
+      .trim();
+    if (offset) surface.style.marginBlockStart = offset;
     surface.style.setProperty('position-area', 'none');
     surface.style.setProperty('position-try-fallbacks', 'none');
     this.appliedInline = true;
@@ -568,7 +576,7 @@ export class AnchoredOverlayController implements ReactiveController {
       pending && Date.now() - pending.time < 1000 ? pending.reason : 'native';
     this.closeReason = reason;
     if (this.appliedInline && surface && (this.point || !this.usesJs)) {
-      for (const prop of ['position', 'inset', 'margin', 'left', 'top']) {
+      for (const prop of ['position', 'inset', 'margin', 'margin-block-start', 'left', 'top']) {
         surface.style.removeProperty(prop);
       }
       surface.style.removeProperty('position-area');

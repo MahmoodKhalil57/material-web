@@ -119,7 +119,8 @@ $grouped: ':where(.menu-grouped, .menu-grouped *)';
     :host([submenu]:popover-open):has(&.menu-host) {
       // Lines the submenu's first item up with the item that opened it.
       @include menu-tokens.root;
-      margin-block-start: calc(-1 * var(--group-padding));
+      --overlay-margin-block-start: calc(-1 * var(--group-padding));
+      margin-block-start: var(--overlay-margin-block-start);
     }
 
     @supports (position-area: end) and (position-try-fallbacks: flip-block) {

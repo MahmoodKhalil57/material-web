@@ -9,8 +9,11 @@ import {createClassMapDirective} from '../shared/directives.js';
 import {
   CIRCULAR_VIEW_BOX,
   CIRCULAR_FLAT_PATH,
-  LINEAR_PATH_LENGTH,
+  CIRCULAR_WAVY_PATH,
   LINEAR_FLAT_PATH,
+  LINEAR_INDETERMINATE_WAVY_PATH,
+  LINEAR_PATH_LENGTH,
+  LINEAR_WAVY_PATH,
   PROGRESS_PROPERTIES,
 } from './progress-paths.js';
 
@@ -137,6 +140,43 @@ export function createProgressContainer(): HTMLElement {
 }
 
 /**
+ * Sets the `d` attribute of the indicator's paths to the shape of its
+ * classes: the shapes for browsers without the CSS `d` property (the CSS
+ * value replaces them elsewhere), the same ones `<md-gb-progress>` renders.
+ */
+function syncPaths(element: HTMLElement) {
+  const wavy = element.classList.contains(PROGRESS_CLASSES.progressWavy);
+  const determinate = element.classList.contains(
+    PROGRESS_CLASSES.progressDeterminate,
+  );
+  const linear = !wavy
+    ? LINEAR_FLAT_PATH
+    : determinate
+      ? LINEAR_WAVY_PATH
+      : LINEAR_INDETERMINATE_WAVY_PATH;
+  const circular = wavy ? CIRCULAR_WAVY_PATH : CIRCULAR_FLAT_PATH;
+  const set = (selector: string, d: string) => {
+    for (const path of element.querySelectorAll(selector)) {
+      if (path.getAttribute('d') !== d) path.setAttribute('d', d);
+    }
+  };
+  set(`.${PROGRESS_CLASSES.progressWave} > path`, linear);
+  set(`.${PROGRESS_CLASSES.progressRing} > path`, circular);
+}
+
+const observed = new WeakSet<HTMLElement>();
+
+/** Keeps the path shapes in step with the classes the directive applies. */
+function observePaths(element: HTMLElement) {
+  if (observed.has(element)) return;
+  observed.add(element);
+  new MutationObserver(() => syncPaths(element)).observe(element, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+}
+
+/**
  * Sets up a progress indicator element: adds its parts if the element has
  * none, and a `progressbar` role if it has no role.
  *
@@ -147,10 +187,11 @@ export function setupProgress(element: HTMLElement): void {
   if (!element.hasAttribute('role')) {
     element.setAttribute('role', 'progressbar');
   }
-  if (element.querySelector(`.${PROGRESS_CLASSES.progressContainer}`)) {
-    return;
+  observePaths(element);
+  if (!element.querySelector(`.${PROGRESS_CLASSES.progressContainer}`)) {
+    element.append(createProgressContainer());
   }
-  element.append(createProgressContainer());
+  syncPaths(element);
 }
 
 /**

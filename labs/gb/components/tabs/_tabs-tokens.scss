@@ -18,9 +18,10 @@
   --active-indicator-color: var(--md-sys-color-primary);
   // md.comp.primary-navigation-tab.active-indicator.height
   --active-indicator-height: 3px;
-  // md.comp.primary-navigation-tab.active-indicator.shape (Compose
-  // PrimaryIndicator: RoundedCornerShape(3.dp) on every corner)
-  --active-indicator-shape: 3px;
+  // EDIT: md.comp.primary-navigation-tab.active-indicator.shape rounds the
+  // top corners 3dp and leaves the bottom square (the token database wins
+  // over Compose's PrimaryIndicator, which rounds every corner).
+  --active-indicator-shape: 3px 3px 0 0;
   // EDIT: No upstream Spec token. Minimum width of the indicator container.
   --active-indicator-min-length: 24px;
   // EDIT: No upstream Spec token. Horizontal inset per side from design spec.

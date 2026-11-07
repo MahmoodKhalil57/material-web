@@ -298,18 +298,29 @@ problems are fixed only in ways the M3 accessibility sections allow.
 
 ## Known follow-ups (small, not spec units)
 
-- [ ] Tabs without anchor positioning: the primary indicator fallback spans
-      the whole tab, a little wider than the spec's indicator.
-- [ ] Submenus in the JS positioning fallback lose the offset that lines
-      their first item up with the parent item.
-- [ ] Without `light-dark()`, only `prefers-color-scheme` selects dark; a
-      `color-scheme: dark` subtree needs a class hook (e.g. `.md-dark`), which
-      is new API.
-- [ ] The Custom Elements Manifest analyzer crashes on labs/gb ("Could not
-      find type reference 'Intl'"); the agent skill reads the TypeScript
-      sources instead.
-- [ ] `progress.ts` (the directive API) still renders flat `d` paths; only
-      the element picks the wavy ones.
-- [ ] Coverage tests for the list, switch, ripple and pull-to-refresh
-      Baseline fallbacks (progress, menu, select, split button, tabs and color
-      have them).
+- [x] Tabs without anchor positioning: the primary indicator fallback is
+      drawn on the tab content with the spec inset and shape. Both paths now
+      round only the top corners (the token is 3dp top, 0 bottom; the old
+      value followed Compose), and `gb-css.mjs` keeps per-corner shape tokens.
+- [x] Submenus in the JS positioning fallback keep the offset that lines
+      their first item up with the parent item (`--overlay-margin-block-start`).
+- [x] Dark sections: no `.md-dark` hook. M3 sets no requirement for a dark
+      subtree; MDN gives `color-scheme: dark` on the element as the way (which
+      `light-dark()` follows) and advises against overriding the user's
+      preference. Only browsers from before May 2024 (no `light-dark()`) fall
+      back to `prefers-color-scheme` alone.
+- [x] The Custom Elements Manifest analyzer crashed on labs/gb ("Could not
+      find type reference 'Intl'"): fixed in scripts/analyzer, which also adds
+      the md-gb tag names. The agent skill keeps reading the TypeScript sources
+      because the manifest lacks mixin-inherited members (disabled, name,
+      value, form).
+- [x] `progress.ts` (the directive API) picks the same flat and wavy paths
+      as the element.
+- [x] Coverage tests for the list, switch, ripple and pull-to-refresh
+      Baseline fallbacks (`*_fallback_test.ts`; each fails when its fallback rule
+      is removed, except the list width check: list items fill the width either
+      way).
+- [x] `gen-spec-tests.mjs` crashed on selectors with no element and lost
+      cases inside local helper mixins: it now skips such selectors and inlines
+      local mixins (also `@include x { }` blocks with `@content`); select gained
+      32 cases and the text field 15.
