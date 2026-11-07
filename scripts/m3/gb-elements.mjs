@@ -138,8 +138,21 @@ export function readGbElements() {
           const m = text.match(/^(?:(\S+)\s+-\s*|-\s*)?(.*)$/);
           slots.set(m[1] ?? '', m[2]);
         } else if (name === 'fires' || name === 'event') {
-          const m = text.match(/^(?:\{([^}]*)\}\s*)?(\S+)\s*(?:-\s*)?(.*)$/);
-          if (m) events.set(m[2], {type: m[1] ?? 'Event', description: m[3]});
+          // The type may contain braces (`{CustomEvent<{reason: string}>}`).
+          let evType = 'Event';
+          let rest = text;
+          if (rest.startsWith('{')) {
+            let depth = 0;
+            let end = 0;
+            for (; end < rest.length; end++) {
+              if (rest[end] === '{') depth++;
+              else if (rest[end] === '}' && --depth === 0) break;
+            }
+            evType = rest.slice(1, end);
+            rest = rest.slice(end + 1).trim();
+          }
+          const m = rest.match(/^(\S+)\s*(?:-\s*)?(.*)$/);
+          if (m) events.set(m[1], {type: evType, description: m[2]});
         } else if (name === 'csspart') {
           const m = text.match(/^(\S+)\s*(?:-\s*)?(.*)$/);
           if (m) parts.set(m[1], m[2]);

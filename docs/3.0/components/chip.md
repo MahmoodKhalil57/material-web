@@ -4,253 +4,144 @@ section: components
 order: 8
 description: Chips help people enter information, make selections, filter content, or trigger actions.
 ---
-While buttons are expected to appear consistently and with familiar calls to
-action, chips should appear dynamically as a group of multiple interactive
-elements.
-
-<img class="hero" src="/components/images/chips/hero.webp" alt="Two collections of filter chips, with some options selected and some unselected."
-title="Filter chips">
-
-*   [Design article](https://m3.material.io/components/chips)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/chips)
-
-## Types
-
-1.  [Assist chip](#assist-chip)
-1.  [Filter chip](#filter-chip)
-1.  [Input chip](#input-chip)
-1.  [Suggestion chip](#suggestion-chip)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-chip", id="project-gb" %}
-
-## Usage
-
-Choose the type of chip based on its purpose and author.
-
--   **Assist** chips are common actions, such as adding an event to a calendar.
--   **Filter** chips are tags used to filter content, such as shopping
-    categories.
--   **Input** chips are pieces of information entered by a user, such as event
-    attendees.
--   **Suggestion** chips represent dynamic suggestions for user input, such as
-    text message replies.
-
-{% demo "Assist, filter, input and suggestion chips" %}
-<md-gb-chip-set>
-  <md-gb-chip type="action" color="outlined">Assist</md-gb-chip>
-  <md-gb-chip type="filter" color="outlined">Filter</md-gb-chip>
-  <md-gb-chip type="action" color="outlined" removable>Input</md-gb-chip>
-  <md-gb-chip type="action" color="outlined">Suggestion</md-gb-chip>
+{% demo "Filter chips in a labeled chip set" %}
+<md-gb-chip-set aria-label="Meal filters">
+  <md-gb-chip type="filter" selected>Breakfast</md-gb-chip>
+  <md-gb-chip type="filter">Lunch</md-gb-chip>
+  <md-gb-chip type="filter">Dinner</md-gb-chip>
 </md-gb-chip-set>
 {% enddemo %}
 
-### Chip sets
+## Usage guidelines
 
-Chips should always appear in a set. Chip sets are
-[toolbars](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/toolbar_role)
-that can display any type of chip or other toolbar items.
+*   **Pick the type by purpose.** [Assist](#assist-chips) chips are smart actions, [filter](#filter-chips) chips filter content, [input](#input-chips) chips are information a person entered, and [suggestion](#suggestion-chips) chips offer dynamic replies or queries.
+*   **Show chips as a set.** Unlike buttons, chips appear dynamically as a group, so always place them in a [chip set](#chip-set).
+*   **Elevate only for protection.** Use [elevated](#assist-chips) chips when they sit on an image or a busy background.
+*   **Keep them compact.** Reduce [density](#density) when space is tight.
 
-{% demo "Chip set with a heading" %}
-<h3>New event</h3>
-<md-gb-chip-set>
-  <md-gb-chip type="filter" color="outlined">All day</md-gb-chip>
-  <md-gb-chip type="action" color="outlined">Add to calendar</md-gb-chip>
-  <md-gb-chip type="action" color="outlined">Set a reminder</md-gb-chip>
-</md-gb-chip-set>
-{% enddemo %}
+## Anatomy
 
-### Icons
-
-All chips may display an optional icon. Input chips can specify if an avatar
-picture is displayed.
-
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
+A chip set holds chips, and each chip holds its label and optional icons.
 
 ```html
 <md-gb-chip-set>
-  <md-gb-chip type="action" color="outlined">
+  <md-gb-chip>
+    <md-gb-icon slot="icon"></md-gb-icon>
+    <md-gb-icon slot="trailing-icon"></md-gb-icon>
+    Label
+  </md-gb-chip>
+  …
+</md-gb-chip-set>
+```
+
+## Examples
+
+### Assist chips
+
+Assist chips are smart or automated actions, such as adding an event to a calendar. They are the default `type`, can link with `href`, and can be elevated.
+
+{% demo "An assist chip with an icon and an assist chip that links to a page" %}
+<md-gb-chip-set aria-label="Event actions">
+  <md-gb-chip>
     <md-gb-icon slot="icon">event</md-gb-icon>
-  Add to calendar</md-gb-chip>
-
-  <md-gb-chip type="action" color="outlined" removable>
-    <img slot="icon" src="...">
-  Ping Qiang</md-gb-chip>
+    Add to calendar
+  </md-gb-chip>
+  <md-gb-chip href="https://m3.material.io/components/chips">
+    <md-gb-icon slot="icon">open_in_new</md-gb-icon>
+    Guidelines
+  </md-gb-chip>
 </md-gb-chip-set>
-```
+{% enddemo %}
 
-### Elevated
+### Filter chips
 
-Assist, filter, and suggestion chips can be elevated if the placement requires
-protection, such as on top of an image.
+Filter chips use tags or descriptive words to filter content and can replace toggle buttons or checkboxes. Set `type="filter"` and use `selected` for chosen ones.
 
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
+{% demo "Filter chips, one selected, one with a trailing icon" %}
+<md-gb-chip-set aria-label="Filters">
+  <md-gb-chip type="filter" selected>Open now</md-gb-chip>
+  <md-gb-chip type="filter">
+    Price
+    <md-gb-icon slot="trailing-icon">arrow_drop_down</md-gb-icon>
+  </md-gb-chip>
+</md-gb-chip-set>
+{% enddemo %}
 
-```html
-<div>
-  <img src="...">
-  <md-gb-chip-set>
-    <md-gb-chip type="action" color="elevated">Share</md-gb-chip>
-    <md-gb-chip type="action" color="elevated">Favorite</md-gb-chip>
-  </md-gb-chip-set>
-</div>
-```
+### Input chips
+
+Input chips are discrete pieces of information a person entered, such as contacts. Set `type="input"`; add `removable` for a remove button and `editable` to let people edit the text. Icons and avatars go in the `icon` slot.
+
+{% demo "Removable input chips, one with an icon" %}
+<md-gb-chip-set aria-label="Attendees">
+  <md-gb-chip type="input" removable>Hiking</md-gb-chip>
+  <md-gb-chip type="input" removable>
+    <md-gb-icon slot="icon">person</md-gb-icon>
+    Ada
+  </md-gb-chip>
+</md-gb-chip-set>
+{% enddemo %}
+
+### Suggestion chips
+
+Suggestion chips narrow a person's intent with dynamically generated suggestions, such as possible replies.
+
+{% demo "Suggested replies" %}
+<md-gb-chip-set aria-label="Suggested replies">
+  <md-gb-chip type="suggestion">Sounds good</md-gb-chip>
+  <md-gb-chip type="suggestion" elevated>See you then</md-gb-chip>
+</md-gb-chip-set>
+{% enddemo %}
+
+### Chip set
+
+The chip set manages selection (`selection="single"` or `"multiple"`) and arrow-key navigation, and wraps chips by default. With `selection="single"`, add `required` so the selected chip can't be unselected, or `single-line` to scroll instead of wrap.
+
+{% demo "A single-select chip set with a heading" %}
+<h3 id="size-label">Size</h3>
+<md-gb-chip-set aria-labelledby="size-label" selection="single" required>
+  <md-gb-chip type="filter" selected>Small</md-gb-chip>
+  <md-gb-chip type="filter">Medium</md-gb-chip>
+  <md-gb-chip type="filter">Large</md-gb-chip>
+</md-gb-chip-set>
+{% enddemo %}
+
+### Density
+
+Set `density` on the chip set from 0 (default) to -3 to remove 4px of height per step.
+
+{% demo "A chip set with a density of -2" %}
+<md-gb-chip-set aria-label="Compact filters" density="-2">
+  <md-gb-chip type="filter">Lunch</md-gb-chip>
+  <md-gb-chip type="filter">Dinner</md-gb-chip>
+</md-gb-chip-set>
+{% enddemo %}
+
+### Disabled and soft-disabled
+
+A `soft-disabled` chip stays focusable so screen reader users can discover actions that are not available yet, such as Copy before text is selected.
+
+{% demo "A disabled chip and a soft-disabled chip" %}
+<md-gb-chip-set aria-label="Edit actions">
+  <md-gb-chip disabled>Disabled</md-gb-chip>
+  <md-gb-chip soft-disabled>Soft-disabled</md-gb-chip>
+</md-gb-chip-set>
+{% enddemo %}
 
 ## Accessibility
 
-Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to chip sets or reference a label with
-[`aria-labelledby`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-labelledby).
-Add an `aria-label` to chips whose labels need to be more descriptive.
+*   A chip set is a grid of chips: label it with [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) or [`aria-labelledby`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-labelledby).
+*   Add an `aria-label` to chips whose text needs to be more descriptive.
+*   The set is one tab stop; arrow keys, Home and End move between chips, and Backspace or Delete removes a removable chip.
+*   Disabled chips leave the focus order; use `soft-disabled` where discoverability matters, per the [ARIA guidance on disabled controls](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls).
 
 ```html
 <h3 id="dates-label">Dates</h3>
 <md-gb-chip-set aria-labelledby="dates-label">
-  <md-gb-chip aria-label="Monday" type="filter" color="outlined">Mon</md-gb-chip>
-  <md-gb-chip aria-label="Tuesday" type="filter" color="outlined">Tue</md-gb-chip>
-  <md-gb-chip aria-label="Wednesday" type="filter" color="outlined">Wed</md-gb-chip>
+  <md-gb-chip aria-label="Monday" type="filter">Mon</md-gb-chip>
+  <md-gb-chip aria-label="Tuesday" type="filter">Tue</md-gb-chip>
 </md-gb-chip-set>
 ```
 
-### Focusable and disabled
-
-By default, disabled chips are not focusable with the keyboard, while
-"soft-disabled" chips are. Some use cases encourage focusability of disabled
-toolbar items to increase their discoverability.
-
-See the
-[ARIA guidelines on focusability of disabled controls](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls)
-for guidance on when this is recommended.
-
-```html
-<md-gb-chip-set aria-label="Actions">
-  <!--
-    Disabled until text is selected. Since both are disabled by default, keep
-    them focusable so that screen readers can discover the actions available.
-  -->
-  <md-gb-chip soft-disabled type="action" color="outlined">Copy</md-gb-chip>
-  <md-gb-chip soft-disabled type="action" color="outlined">Paste</md-gb-chip>
-</md-gb-chip-set>
-<md-gb-text-field type="textarea" variant="outlined"></md-gb-text-field>
-```
-
-## Assist chip
-
-[Assist chips](https://m3.material.io/components/chips/guidelines#5dd1928c-1476-4029-bdc5-fde66fc0dcb1)
-represent smart or automated actions that can span multiple apps, such as
-opening a calendar event from the home screen.
-
-Assist chips function as though the user asked an assistant to complete the
-action. They should appear dynamically and contextually in a UI.
-
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
-
-```html
-<h3>A restaraunt location</h3>
-<md-gb-chip-set>
-  <md-gb-chip type="action" color="outlined">
-    <md-gb-icon slot="icon">calendar</md-gb-icon>
-  Add to my itinerary</md-gb-chip>
-  <md-gb-chip type="action" color="outlined">
-    <md-gb-icon slot="icon">map</md-gb-icon>
-  12 mins from hotel</md-gb-chip>
-</md-gb-chip-set>
-```
-
-## Filter chip
-
-[Filter chips](https://m3.material.io/components/chips/guidelines#8d453d50-8d8e-43aa-9ae3-87ed134d2e64)
-use tags or descriptive words to filter content. They can be a good alternative
-to toggle buttons or checkboxes.
-
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
-
-```html
-<h3>Choose where to share</h3>
-<md-gb-chip-set>
-  <md-gb-chip type="filter" color="outlined">Docs</md-gb-chip>
-  <md-gb-chip selected type="filter" color="outlined">Slides</md-gb-chip>
-  <md-gb-chip selected type="filter" color="outlined">Sheets</md-gb-chip>
-  <md-gb-chip type="filter" color="outlined">Images</md-gb-chip>
-</md-gb-chip-set>
-```
-
-### Removable
-
-Filter chips can optionally be removable from the chip set. Removable chips have
-a trailing remove icon.
-
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
-
-```html
-<h3>Colors</h3>
-<md-gb-chip-set>
-  <md-gb-chip removable selected type="filter" color="outlined">Red</md-gb-chip>
-  <md-gb-chip removable type="filter" color="outlined">Yellow</md-gb-chip>
-  <md-gb-chip removable type="filter" color="outlined">Blue</md-gb-chip>
-  <md-gb-chip removable type="filter" color="outlined">Green</md-gb-chip>
-</md-gb-chip-set>
-```
-
-## Input chip
-
-[Input chips](https://m3.material.io/components/chips/guidelines#4d2d5ef5-3fcd-46e9-99f2-067747b2393f)
-represent discrete pieces of information entered by a user, such as Gmail
-contacts or filter options within a search field.
-
-Input chips whose icons are user images may add the `avatar` attribute to
-display the image in a larger circle.
-
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
-
-```html
-<md-gb-text-field label="Attendees" type="email" variant="outlined"></md-gb-text-field>
-
-<md-gb-chip-set>
-  <md-gb-chip type="action" color="outlined" removable>
-    <img slot="icon" src="...">
-  Ping Qiang</md-gb-chip>
-  <md-gb-chip type="action" color="outlined" removable>
-    <img slot="icon" src="...">
-  Thea Schröder</md-gb-chip>
-</md-gb-chip-set>
-```
-
-### Remove-only
-
-All input chips are removable. If an input chip does not have an action
-associated with clicking on it, it may be marked as `remove-only`.
-
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
-
-```html
-<h3>Favorite movies</h3>
-<md-gb-chip-set>
-  <md-gb-chip type="action" color="outlined" removable>Star Wars</md-gb-chip>
-  <md-gb-chip type="action" color="outlined" removable>Star Trek</md-gb-chip>
-</md-gb-chip-set>
-```
-
-## Suggestion chip
-
-[Suggestion chips](https://m3.material.io/components/chips/guidelines#36d7bb16-a9bf-4cf6-a73d-8e05510d66a7)
-help narrow a user’s intent by presenting dynamically generated suggestions,
-such as possible responses or search filters.
-
-<!-- Need to add catalog-include "figures/<component>/usage-scenario-one.html" -->
-
-```html
-<h3>Suggested reply</h3>
-<md-gb-chip-set>
-  <md-gb-chip type="action" color="outlined">I agree</md-gb-chip>
-  <md-gb-chip type="action" color="outlined">Looks good to me</md-gb-chip>
-  <md-gb-chip type="action" color="outlined">Thank you</md-gb-chip>
-</md-gb-chip-set>
-```
-
-## API
+## API reference
 
 {% gbapi "chip" %}

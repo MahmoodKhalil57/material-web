@@ -229,8 +229,45 @@ md-gb-nav-drawer:not(:defined) {
 .gb-content th,
 .gb-content td {
   text-align: start;
-  padding: var(--md-sys-space-100) var(--md-sys-space-150);
+  vertical-align: top;
+  padding: var(--md-sys-space-150) var(--md-sys-space-150);
   border-block-end: 1px solid var(--md-sys-color-outline-variant);
+}
+.gb-content th {
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+  color: var(--md-sys-color-on-surface-variant);
+  white-space: nowrap;
+}
+.gb-content td {
+  font: var(--md-sys-typescale-body-md);
+  font-variation-settings: var(--md-sys-typescale-body-md-axes);
+}
+.gb-content tbody tr:last-child td {
+  border-block-end: 0;
+}
+.gb-content td code {
+  font-size: var(--md-sys-typescale-body-sm-size, 0.8125rem);
+  background: none;
+  padding: 0;
+  /* Break a token only when it can't fit on its own line (long URLs, unions);
+     `anywhere` would split short types like "string" across lines. */
+  overflow-wrap: break-word;
+}
+.gb-content td:first-child code {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 500;
+}
+.gb-desc {
+  display: block;
+  margin-block-start: var(--md-sys-space-50);
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-sm);
+  font-variation-settings: var(--md-sys-typescale-body-sm-axes);
+  min-inline-size: 16em;
+}
+.gb-desc code {
+  font-size: inherit;
 }
 .gb-content img,
 .gb-content video {
@@ -313,12 +350,16 @@ md-gb-nav-drawer:not(:defined) {
 .gb-toc .toc > ul {
   padding-inline-start: 0;
 }
-.gb-toc a {
+.gb-toc a,
+.gb-toc-top {
   display: block;
   padding-block: var(--md-sys-space-50);
   color: var(--md-sys-color-on-surface-variant);
   font: var(--md-sys-typescale-body-sm);
   text-decoration: none;
+}
+.gb-toc-top {
+  padding-inline: 0;
 }
 .gb-toc a:hover {
   color: var(--md-sys-color-on-surface);

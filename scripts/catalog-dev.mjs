@@ -88,6 +88,28 @@ base.replaceSync(\`
   .gb-story { box-sizing: border-box; max-width: 100%; padding-block: 16px; }
 \`);
 
+/**
+ * A story's markup as written, for its code block: rendered into a document
+ * without custom element definitions, so nothing upgrades and no runtime
+ * state (reflected defaults, moved ARIA attributes, internal styles) gets
+ * in. Demo layout wrappers (story-*, demo-*, grid classes) are unwrapped and
+ * their hint paragraphs dropped: the code is what a reader copies.
+ */
+async function sourceHtml(story, knobs) {
+  const doc = document.implementation.createHTMLDocument('');
+  const box = doc.createElement('div');
+  render(await story.render({...knobs}), box, {creationScope: doc});
+  const demoOnly = /^(story|demo|grid|row|column|col)(-|$)/;
+  const isDemo = (el) => [...el.classList].some((c) => demoOnly.test(c));
+  for (const el of [...box.querySelectorAll('.demo-hint, [class*="hint"]')]) {
+    if (isDemo(el)) el.remove();
+  }
+  for (const el of [...box.querySelectorAll('div, section')].reverse()) {
+    if (isDemo(el) && !el.localName.includes('-')) el.replaceWith(...el.childNodes);
+  }
+  return box.innerHTML;
+}
+
 export async function setUpDemo(collection, dir) {
   const knobs = Object.fromEntries(collection.knobs.map((k) => [k.name, k.defaultValue]));
   const capture = document.documentElement.hasAttribute('data-gb-capture');
@@ -114,7 +136,7 @@ export async function setUpDemo(collection, dir) {
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         // captureExamples measures it again in a 400px window (narrowHeight).
         host.dataset.gbCaptured = String(results.length);
-        results.push({name: story.name, html: container.innerHTML, height: Math.ceil(host.getBoundingClientRect().height)});
+        results.push({name: story.name, html: await sourceHtml(story, knobs), height: Math.ceil(host.getBoundingClientRect().height)});
       }
     }
   }
@@ -237,6 +259,8 @@ function slugify(name) {
 async function copyGbDocs() {
   const dest = join(CATALOG, 'site', '3.0');
   await cp(join(ROOT, 'docs', '3.0'), dest, {recursive: true});
+  // docs/3.0/README.md is the page template for authors, not a page.
+  await rm(join(dest, 'README.md'), {force: true});
   await writeFile(
     join(dest, '3.0.json'),
     JSON.stringify(
@@ -254,7 +278,7 @@ async function copyGbDocs() {
     join(dest, 'index.md'),
     intro.replace(/^---\n/, '---\npermalink: /3.0/\neleventyExcludeFromCollections: true\n'),
   );
-  return (await walk(join(ROOT, 'docs', '3.0'))).filter((f) => f.endsWith('.md')).length;
+  return (await walk(join(ROOT, 'docs', '3.0'))).filter((f) => f.endsWith('.md') && !f.endsWith('README.md')).length;
 }
 
 /** catalog-dev's state for other tools: pid, status, builds, time. */
@@ -513,6 +537,8 @@ function formatHtml(html) {
   const tokens = html
     .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/\s(class|style)=""/g, '')
+    // Boolean attributes as written: `selected`, not `selected=""`.
+    .replace(/\s([a-z][\w:-]*)=""/g, ' $1')
     .match(/<[^>]+>|[^<]+/g) ?? [];
   const lines = [];
   let depth = 0;
