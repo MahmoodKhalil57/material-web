@@ -610,7 +610,7 @@ $slide-distance: 20%;
     position: absolute;
     inset-inline: 0;
     inset-block-start: 50%;
-    block-size: var(--range-selection-active-indicator-container-height);
+    block-size: var(--date-state-layer-height);
     translate: 0 -50%;
     background-color: var(--range-selection-active-indicator-container-color);
   }
@@ -751,7 +751,7 @@ $slide-distance: 20%;
     block-size: var(--year-selection-year-container-height);
     padding: 0;
     border: var(--date-today-container-outline-width) solid transparent;
-    border-radius: var(--year-selection-year-container-shape);
+    border-radius: var(--year-selection-year-state-layer-shape);
     color: var(--year-selection-year-unselected-label-text-color);
     font: var(--year-selection-year-label-text);
     letter-spacing: var(--year-selection-year-label-text-tracking);

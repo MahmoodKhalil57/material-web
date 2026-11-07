@@ -16,6 +16,8 @@
   --drag-handle-color: var(--md-sys-color-on-surface-variant);
   --drag-handle-height: 4px;
   --drag-handle-width: 32px;
+  // EDIT: md.comp.sheet.bottom.docked.minimized.container.shape (corner none): the hidden sheet shape. md-gb-bottom-sheet has no visible minimized state (a hidden sheet is off screen, visibility: hidden), so this token is exposed for theming only and is not applied.
+  --minimized-container-shape: var(--md-sys-shape-corner-none);
   // EDIT: SheetDefaults.SheetMaxWidth (640dp) and the spec Measurements table.
   --max-width: 640px;
   // EDIT: Spec Measurements, top margin (72dp).
@@ -48,7 +50,7 @@
   --headline-axes: var(--md-sys-typescale-title-lg-axes);
   --headline-color: var(--md-sys-color-on-surface-variant);
   --headline-tracking: var(--md-sys-typescale-title-lg-tracking);
-  // EDIT: The side sheet page lists the outline variant role for the standard sheet divider; the token database has outline.
+  // EDIT: md.comp.sheet.side.docked.divider.color is outline, but the side sheet color figure (standard side sheet, light and dark) draws the divider as #CAC4D0 / #49454F, which are outline-variant; the page also lists that role. The figure overrides the token.
   --divider-color: var(--md-sys-color-outline-variant);
   // EDIT: Spec Measurements, max-width (400dp).
   --max-width: 400px;

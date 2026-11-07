@@ -670,6 +670,9 @@ describe('<md-gb-side-sheet>', () => {
         ></md-gb-side-sheet>`,
       );
       trigger.focus();
+      expect(document.activeElement)
+        .withContext(`trigger focused before show; active: ${document.activeElement?.localName}, connected: ${trigger.isConnected}, inert: ${trigger.closest('[inert]') !== null}, open dialogs: ${document.querySelectorAll('dialog[open]').length}`)
+        .toBe(trigger);
       await sheet.show();
       expect(sheet.matches(':focus-within')).toBeTrue();
       trigger.focus();

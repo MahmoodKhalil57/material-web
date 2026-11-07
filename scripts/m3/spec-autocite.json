@@ -7282,6 +7282,19 @@
    ],
    "final": "claude-opus-5-5"
   },
+  "date-pickers-072f86": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/datepicker/_date-picker-tokens.scss:15"
+   ],
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "quoteHashes": [
+    "b6fdebd82e66"
+   ],
+   "final": "claude-opus-5-5"
+  },
   "date-pickers-078184": {
    "rule": "llm-review",
    "evidence": [
@@ -7323,6 +7336,22 @@
     "419dd6b16f83"
    ],
    "final": "claude-opus-5-5"
+  },
+  "date-pickers-0e3e1a": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/datepicker/_date-picker-tokens.scss:74",
+    "labs/gb/components/datepicker/_date-picker-tokens.scss:42"
+   ],
+   "models": [
+    "claude-haiku-5-5",
+    "claude-sonnet-5-5"
+   ],
+   "quoteHashes": [
+    "c462fba07c6e",
+    "61f54c089330"
+   ],
+   "final": "agreement"
   },
   "date-pickers-15075c": {
    "rule": "llm-review",
@@ -7529,6 +7558,19 @@
     "7627d30f0ec3"
    ],
    "final": "agreement"
+  },
+  "date-pickers-3e2a84": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/datepicker/_date-picker-tokens.scss:40"
+   ],
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "quoteHashes": [
+    "aeb6d89b362b"
+   ],
+   "final": "claude-opus-5-5"
   },
   "date-pickers-4a2080": {
    "rule": "llm-review",

@@ -33,6 +33,14 @@ export class Environment {
       jasmine.clock().install();
     });
 
+    // Take the test's root out of the document as soon as the test ends, not
+    // when this environment renders its next test: with several environments
+    // in one file (and Jasmine's random order), an open modal dialog left in
+    // another suite's root would keep the rest of the page inert.
+    afterEach(() => {
+      this.getCurrentRoot()?.remove();
+    });
+
     afterAll(() => {
       jasmine.clock().uninstall();
       for (const root of this.roots) {

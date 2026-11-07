@@ -198,6 +198,15 @@ describe('md-gb-bottom-sheet spec units', () => {
     await sendKeys({press: 'Space'});
     expect(sheet.state).toBe(BOTTOM_SHEET_STATES.partiallyExpanded);
   });
+
+  // md.comp.sheet.bottom.docked.minimized.container.shape (corner none)
+  it('exposes the minimized container shape token as square corners', async () => {
+    const {sheet} = await render(html`<md-gb-bottom-sheet></md-gb-bottom-sheet>`);
+    const style = getComputedStyle(panelOf(sheet));
+    expect(style.getPropertyValue('--minimized-container-shape').trim()).toBe(
+      style.getPropertyValue('--md-sys-shape-corner-none').trim(),
+    );
+  });
 });
 
 describe('md-gb-side-sheet spec units', () => {

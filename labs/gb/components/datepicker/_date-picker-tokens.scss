@@ -78,6 +78,8 @@
   --menu-list-height: 336px;
   // EDIT: Docked range selection reuses the modal range tokens (md.comp.date-picker.modal.range-selection.active-indicator.container.color).
   --range-selection-active-indicator-container-color: var( --md-sys-color-secondary-container );
+  // EDIT: Docked range selection reuses the modal date.state-layer.height (40dp) for the range band.
+  --date-state-layer-height: 40px;
   // EDIT: Docked range selection reuses the modal range tokens (active-indicator.container.height 40dp).
   --range-selection-active-indicator-container-height: 40px;
   // EDIT: Docked range selection reuses the modal range tokens (date.in-range.label-text.color).
@@ -156,10 +158,12 @@
   --nav-height: 56px;
   // EDIT: Compose YearsVerticalPadding (16.dp).
   --year-selection-row-gap: 16px;
-  // EDIT: Compose SelectionYearStateLayerShape (corner full).
-  --year-selection-year-container-shape: var(--md-sys-shape-corner-full);
+  // EDIT: md.comp.date-picker.modal.year-selection.year.state-layer.shape (corner full), Compose SelectionYearStateLayerShape.
+  --year-selection-year-state-layer-shape: var(--md-sys-shape-corner-full);
   // EDIT: Compose DateRangePicker HeaderHeightOffset (60.dp): the full-screen row with the close icon button and Save, part of range-selection.header.container.height.
   --range-selection-header-bar-height: 60px;
+  // EDIT: md.comp.date-picker.modal.date.state-layer.height (40dp), the range background band height (Compose drawRangeBackground).
+  --date-state-layer-height: 40px;
   // EDIT: Compose DateRangePickerTitlePadding / DateRangePickerHeadlinePadding (start 64.dp).
   --range-selection-header-padding-inline-start: 64px;
   // EDIT: Compose CalendarMonthSubheadPadding (start 24.dp).
@@ -252,6 +256,7 @@
   --menu-list-item-selected-leading-icon-size: inherit;
   --padding-inline: inherit;
   --range-selection-active-indicator-container-color: inherit;
+  --date-state-layer-height: inherit;
   --range-selection-active-indicator-container-height: inherit;
   --range-selection-date-in-range-label-text-color: inherit;
   --weekdays-label-text: inherit;

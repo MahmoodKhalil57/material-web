@@ -13,12 +13,17 @@
   --focus-handle-width: 2px;
   --handle-height: 44px;
   --active-handle-leading-space: 6px;
+  // md.comp.slider.active.track.inner-corner.corner-size rounds the two
+  // EDIT: trailing corners 2dp; slider.scss applies this value to those only.
   --active-track-inner-corner-size: 2px;
   --stop-indicator-color: var(--md-sys-color-on-secondary-container);
   --stop-indicator-color-selected: var(--md-sys-color-on-primary);
   --stop-indicator-size: 4px;
   --stop-indicator-min-spacing: 8px;
   --track-height: 16px;
+  // md.comp.slider.inactive.track.shape is corner-full: half the 16dp track.
+  // The size mixins use the per-size tokens
+  // EDIT: (md.comp.slider.<size>.active.track.shape.leading: 8, 8, 12, 16, 28dp).
   --track-shape: 8px;
   --inactive-track-shape-trailing: 8px;
   --value-indicator-color: var(--md-sys-color-inverse-surface);
@@ -81,6 +86,8 @@
   --handle-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --active-track-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --inactive-track-color: hsl(from var(--md-sys-color-on-surface) h s l / 12%);
+  // md.comp.slider.disabled.inactive.stop-indicator.container.color
+  // EDIT: (on-surface) at its container.opacity (0.38), folded into one color.
   --stop-indicator-color: hsl(from var(--md-sys-color-on-surface) h s l / 38%);
   --stop-indicator-color-selected: hsl(
     from var(--md-sys-color-inverse-on-surface) h s l / 38%

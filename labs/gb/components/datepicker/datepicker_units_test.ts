@@ -8,9 +8,13 @@
 
 import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
+import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 
 import {DatePickerElement} from './date-picker-element.js';
 import './md-gb-date-picker.js';
+
+adoptStyles(document, [m3Styles]);
 
 function q<T extends Element = HTMLElement>(el: DatePickerElement, selector: string) {
   return el.shadowRoot!.querySelector<T>(selector);
@@ -153,5 +157,43 @@ describe('date picker spec units', () => {
     expect(q(input, 'md-gb-text-field')).not.toBeNull();
     expect(q(input, '[role="grid"]')).toBeNull();
     await input.close();
+  });
+
+  // md.comp.date-picker.modal.date.state-layer.height (40dp)
+  it('draws the range background band at the date state layer height', async () => {
+    const root = env.render(html`<md-gb-date-picker
+      inline
+      quick
+      range
+      locale="en-US"
+    ></md-gb-date-picker>`);
+    await env.waitForStability();
+    const picker = root.querySelector('md-gb-date-picker')!;
+    await picker.updateComplete;
+    picker.showMonth(2025, 8);
+    await settle(picker);
+    q(picker, '[data-date="2025-08-10"]')!.click();
+    await settle(picker);
+    q(picker, '[data-date="2025-08-14"]')!.click();
+    await settle(picker);
+    const mid = q(picker, '[data-date="2025-08-12"]')!;
+    const band = getComputedStyle(mid, '::before');
+    expect(band.blockSize).toBe('40px');
+    expect(getComputedStyle(mid).getPropertyValue('--date-state-layer-height')).toBe('40px');
+  });
+
+  // md.comp.date-picker.modal.year-selection.year.state-layer.shape (full)
+  it('rounds the year state layer fully', async () => {
+    const picker = await setup({variant: 'modal'});
+    await picker.show();
+    await settle(picker);
+    q(picker, '.date-picker-year-menu')!.click();
+    await settle(picker);
+    const content = q(picker, '.date-picker-year-grid [role="option"] .date-picker-list-item-content')!;
+    expect(content.getBoundingClientRect().height).toBe(36);
+    const radius = parseFloat(getComputedStyle(content).borderTopLeftRadius);
+    // corner-full is a very large radius, so the 36dp tall layer is a pill.
+    expect(radius).toBeGreaterThanOrEqual(content.getBoundingClientRect().height / 2);
+    await picker.close();
   });
 });

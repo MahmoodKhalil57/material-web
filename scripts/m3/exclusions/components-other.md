@@ -15,6 +15,7 @@ Units no component code can satisfy or test. See `README.md` for the format.
 - Changelog sentence from Material 2 to 3 (typography, shadow, color mapping) <!-- spec-exclude: date-pickers-3f6010 -->
 - Share sheet examples (fully raised or collapsed), which are app content <!-- spec-exclude: bottom-sheets-58ae23, bottom-sheets-d7ac18 -->
 - Side sheet anatomy figure caption and the example of form controls for app settings <!-- spec-exclude: side-sheets-037092, side-sheets-e8813a -->
+- Docked date picker padding and size measurement captions: the sentence only names the figure, and the measurements are in the image with no text requirement of their own <!-- spec-exclude: date-pickers-072f86, date-pickers-0e3e1a -->
 - Circular progress size figure caption, and the note that the thicker variants are samples for makers to adjust <!-- spec-exclude: progress-indicators-7dbe71, progress-indicators-26bf67, progress-indicators-8fa1dc -->
 
 ## The label next to the control belongs to the app
@@ -53,3 +54,4 @@ The checkbox and switch render only the control. The adjacent text label is the 
 - Full-screen dialog color: the full-screen color list repeats the basic dialog's "Surface container high", but md.comp.full-screen-dialog.container.color is surface and the page's color figure paints the surface color (#fef7ff); the component follows surface, tested in dialog_adaptive_test.ts <!-- spec-exclude: dialogs-0f62e4 -->
 - Full-screen dialog width cap: the measurement table says "Container width; Max 560dp", but dialogs-1bb3d9 and dialogs-6777bc say a full-screen dialog fills the entire screen and the measurement figure fills the device. A full-screen dialog is for compact windows only (dialogs-daddf8) and fills the window; the width is tested in dialog_adaptive_test.ts <!-- spec-exclude: dialogs-a4d167 -->
 - Toolbar standard button color: the standard scheme list says "Standard button (Primary)", but md.comp.toolbar.standard.icon.color is on-surface-variant and the color figure draws the standard button gray; the component follows the token, tested in toolbar_overflow_test.ts <!-- spec-exclude: toolbars-9bc3d1 -->
+- Docked date picker outside-month days: the color list says on surface variant, but md.comp.date-picker.docked.date.unselected.outside-month.label-text.color is on-surface at its 0.38 opacity token, and the page's color figure draws those days faded (#aea9b3 on #ece6f0, against #49454f for on surface variant); the component follows the token and the figure <!-- spec-exclude: date-pickers-3e2a84 -->
