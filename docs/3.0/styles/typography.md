@@ -35,6 +35,11 @@ Plain    | `--md-ref-typeface-plain`
 
 *   [All tokens](https://github.com/material-components/material-web/blob/main/tokens/_md-ref-typeface.scss)
 
+{% demo "A heading in the brand typeface and text in the plain typeface" %}
+```html
+<h2 class="brand">Inbox</h2>
+<p class="plain">Three new messages.</p>
+```
 ```css
 @import url('https://fonts.googleapis.com/css2?family=Open%20Sans:wght@400;500;700&display=swap');
 
@@ -42,7 +47,18 @@ Plain    | `--md-ref-typeface-plain`
   --md-ref-typeface-brand: 'Open Sans';
   --md-ref-typeface-plain: system-ui;
 }
+
+.brand {
+  margin: 0;
+  font-family: var(--md-ref-typeface-brand);
+}
+
+.plain {
+  margin: 0;
+  font-family: var(--md-ref-typeface-plain);
+}
 ```
+{% enddemo %}
 
 ## Typescale
 
@@ -60,13 +76,19 @@ explains when to use each typescale role.
 The type scale is applied with the `font` shorthand tokens and their `-axes`
 and `-tracking` companions, which also work inside shadow roots.
 
+{% demo "A heading in the medium display style" %}
+```html
+<h1>Welcome back</h1>
+```
 ```css
 h1 {
+  margin: 0;
   font: var(--md-sys-typescale-display-md);
   font-variation-settings: var(--md-sys-typescale-display-md-axes);
   letter-spacing: var(--md-sys-typescale-display-md-tracking);
 }
 ```
+{% enddemo %}
 
 ### Tokens
 
@@ -90,9 +112,20 @@ Emphasized | `--md-sys-typescale-emphasized-<role>-<size>`
 default; text in languages such as Arabic, Thai, or Urdu picks up its height
 from `:lang()`.
 
+{% demo "Body text with a larger size and line height" %}
+```html
+<p class="body">Your draft was saved to the inbox.</p>
+```
 ```css
 :root {
-  --md-sys-typescale-body-md-size: 1rem;
-  --md-sys-typescale-body-md-line-height: 1.5rem;
+  --md-sys-typescale-body-md-size: 1.25rem;
+  --md-sys-typescale-body-md-line-height: 1.75rem;
+}
+
+.body {
+  margin: 0;
+  font-size: var(--md-sys-typescale-body-md-size);
+  line-height: var(--md-sys-typescale-body-md-line-height);
 }
 ```
+{% enddemo %}

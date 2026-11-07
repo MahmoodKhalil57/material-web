@@ -276,7 +276,14 @@ function frameDoc({id, html, css, js, lib}) {
     : '';
   const safe = (s) => s.replace(/<\/(script|style)/gi, '<\\/$1');
   const importMap = lib
-    ? `<script type="importmap">${JSON.stringify({imports: {'@material/web/labs/gb/': lib + 'labs/gb/'}})}</script>`
+    ? `<script type="importmap">${JSON.stringify({
+        imports: {
+          '@material/web/labs/gb/': lib + 'labs/gb/',
+          // The library server resolves Lit's own bare imports (nodeResolve).
+          'lit': lib + 'node_modules/lit/index.js',
+          'lit/': lib + 'node_modules/lit/',
+        },
+      })}</script>`
     : '';
   const cssWithImports = css.replace(
     /@import\s+(?:url\(\s*)?(['"])([^'"]+)\1/g,

@@ -19,19 +19,27 @@ The element's default font family is `Material Symbols`. The Google Fonts
 family for the outlined style is `Material Symbols Outlined`, so set
 `--md-icon-font` to the family you load:
 
+{% demo "An icon in the outlined Material Symbols family" %}
+```html
+<md-gb-icon>home</md-gb-icon>
+```
 ```css
 :root {
   --md-icon-font: 'Material Symbols Outlined';
 }
 ```
+{% enddemo %}
 
 Load the font once in the page head. Request only the axes you use; add `GRAD`
 to use `--md-icon-grad`.
 
+{% demo "An icon with the font loaded by a link tag" %}
 ```html
 <link rel="stylesheet"
   href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200&display=block">
+<md-gb-icon>home</md-gb-icon>
 ```
+{% enddemo %}
 
 ## Size and color
 

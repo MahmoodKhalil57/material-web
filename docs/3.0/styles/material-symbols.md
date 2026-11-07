@@ -7,9 +7,14 @@ description: "md-gb-icon axes: optical size, weight, fill and grade."
 Each variable font axis of `md-gb-icon` is a custom property. See
 [Icons](/3.0/styles/icons/) for loading the font and the defaults.
 
+{% demo "An icon imported by path" height=120 %}
+```html
+<md-gb-icon>star</md-gb-icon>
+```
 ```js
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 ```
+{% enddemo %}
 
 ## Optical sizes
 

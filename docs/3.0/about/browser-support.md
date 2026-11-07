@@ -44,6 +44,10 @@ in `scripts/gb-baseline-allow.json`. In short:
 Guard your own newer CSS the same way, so older browsers keep a usable
 fallback:
 
+{% demo "A textarea that grows with its content where supported" height=200 %}
+```html
+<textarea rows="2" aria-label="Message">Type here and add lines.</textarea>
+```
 ```css
 @supports (field-sizing: content) {
   textarea {
@@ -51,6 +55,7 @@ fallback:
   }
 }
 ```
+{% enddemo %}
 
 ## Check your own app
 

@@ -11,20 +11,27 @@ For fast prototyping, use a CDN such as [esm.run](https://esm.run/) to load
 `@material/web` without installing it. The M3 Expressive elements are under
 `@material/web/labs/gb/`.
 
+The import map resolves the bare specifiers (it is the only part of this setup
+that has no visible effect, so it is a plain block):
+
 ```html
 <script type="importmap">
   {"imports": {"@material/web/": "https://esm.run/@material/web/"}}
 </script>
-<script type="module">
-  import '@material/web/labs/gb/components/button/md-gb-button.js';
-  import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
-  import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
+```
 
-  adoptStyles(document, [m3Styles]);
-</script>
-
+{% demo "A button loaded from a module" height=120 %}
+```html
 <md-gb-button color="filled">Next</md-gb-button>
 ```
+```js
+import '@material/web/labs/gb/components/button/md-gb-button.js';
+import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
+import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
+
+adoptStyles(document, [m3Styles]);
+```
+{% enddemo %}
 
 For production, follow the [install](#install) and [build](#building) steps
 below.
@@ -43,6 +50,14 @@ Import each element from
 `@material/web/labs/gb/components/<component>/md-gb-<component>.js`, and load
 the design tokens once with `adoptStyles()`.
 
+{% demo "A button and a checkbox imported by path" height=140 %}
+```html
+<label>
+  Material 3 Expressive
+  <md-gb-checkbox checked></md-gb-checkbox>
+</label>
+<md-gb-button color="filled">Next</md-gb-button>
+```
 ```js
 import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/checkbox/md-gb-checkbox.js';
@@ -51,6 +66,7 @@ import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 
 adoptStyles(document, [m3Styles]);
 ```
+{% enddemo %}
 
 ## Usage
 

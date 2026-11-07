@@ -8,11 +8,16 @@ Dynamic color turns one source color into every color role, in light and dark.
 Pick a source and a variant, and apply the result to the document or to one
 element.
 
+{% demo "A button themed from a source color and the expressive variant" height=120 %}
+```html
+<md-gb-button color="filled">Save</md-gb-button>
+```
 ```js
 import {applyTheme} from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
 applyTheme(document, {source: '#6750a4', variant: 'expressive'});
 ```
+{% enddemo %}
 
 ## Scheme variants
 

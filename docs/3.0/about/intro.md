@@ -31,12 +31,14 @@ environments (such as Eleventy, Wordpress, and Ruby on Rails).
 Many components in this library are drop-in replacements for browser elements
 like `<button>` and `<input>`. Every element is prefixed with `md-gb-`.
 
+{% demo "A form with a text field and a button" height=200 %}
 ```html
 <form>
   <md-gb-text-field label="Email" type="email" name="email" required></md-gb-text-field>
   <md-gb-button color="filled">Subscribe</md-gb-button>
 </form>
 ```
+{% enddemo %}
 
 ## What are tokens?
 
@@ -46,9 +48,14 @@ the building blocks of all UI elements. Here they are
 that you can override to style components. Version 3.0 provides the system
 tokens for color, typography, shape, elevation, space, and motion.
 
+{% demo "A button with an olive primary color" %}
+```html
+<md-gb-button color="filled">Subscribe</md-gb-button>
+```
 ```css
 :root {
   --md-sys-color-primary: light-dark(olive, khaki);
   --md-ref-typeface-plain: 'Open Sans', system-ui;
 }
 ```
+{% enddemo %}

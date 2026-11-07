@@ -33,13 +33,29 @@ already used the Escape key, the component leaves it alone.
 A dialog fires `cancel` on Escape, a scrim click or the full-screen close
 button. Canceling keeps the dialog open if you call `preventDefault()`:
 
+{% demo "A dialog that stays open on Escape while there are unsaved changes" height=360 %}
+```html
+<md-gb-button id="open" color="filled">Edit</md-gb-button>
+<md-gb-dialog id="dialog">
+  <span slot="headline">Unsaved changes</span>
+  Press Escape: the dialog stays open until you save.
+  <md-gb-button slot="actions" id="save">Save</md-gb-button>
+</md-gb-dialog>
+```
 ```js
-const dialog = document.querySelector('md-gb-dialog');
+const dialog = document.querySelector('#dialog');
+let hasUnsavedChanges = true;
 
+document.querySelector('#open').addEventListener('click', () => dialog.show());
+document.querySelector('#save').addEventListener('click', () => {
+  hasUnsavedChanges = false;
+  dialog.close();
+});
 dialog.addEventListener('cancel', (event) => {
   if (hasUnsavedChanges) event.preventDefault();
 });
 ```
+{% enddemo %}
 
 ### Focus ring
 

@@ -14,12 +14,18 @@ changes. The 2.5.0 docs stay on the root of this site.
 
 Load the 3.0 design tokens once per document:
 
+{% demo "A 3.0 button with the design tokens loaded" height=120 %}
+```html
+<md-gb-button color="filled">Save</md-gb-button>
+```
 ```js
+import '@material/web/labs/gb/components/button/md-gb-button.js';
 import {adoptStyles} from '@material/web/labs/gb/styles/adopt-styles.js';
 import {styles as m3Styles} from '@material/web/labs/gb/styles/m3.cssresult.js';
 
 adoptStyles(document, [m3Styles]);
 ```
+{% enddemo %}
 
 Then import each `md-gb-*` element you use from
 `@material/web/labs/gb/components/`.

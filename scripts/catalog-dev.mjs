@@ -337,6 +337,10 @@ function watchSources() {
     join(CATALOG, 'src'),
     join(CATALOG, 'site', '_includes'),
     join(CATALOG, 'site', 'index.html'),
+    // Shortcodes, filters and the Eleventy config (each build runs a fresh
+    // Eleventy process, so a rebuild picks up their changes).
+    join(CATALOG, 'eleventy-helpers'),
+    join(CATALOG, 'eleventy.config.cjs'),
     join(ROOT, 'labs', 'gb'),
   ];
   let timer;
@@ -348,7 +352,7 @@ function watchSources() {
   // A source file changed (not a folder, not a file only read by the build);
   // under labs/gb only demos affect the pages.
   const relevant = (root, name) => {
-    if (!name || !/\.(md|html|njk|ts|js|mjs|json|scss|css)$/.test(name)) return false;
+    if (!name || !/\.(md|html|njk|ts|js|mjs|cjs|json|scss|css)$/.test(name)) return false;
     // Under labs/gb: demos, and compiled .js (gb-check --emit), which the
     // /3.0/ shell bundle (catalog/src/gb) includes; else the shell keeps the
     // old components and, defined first, wins over the library server's.
@@ -360,7 +364,8 @@ function watchSources() {
       return false;
     }
     try {
-      const path = root.endsWith('.html') ? root : join(root, name);
+      // A watched file (index.html, eleventy.config.cjs) is its own path.
+      const path = /\.(html|cjs)$/.test(root) ? root : join(root, name);
       return fsSync.statSync(path).mtimeMs > buildStarted;
     } catch {
       return true; // Deleted: rebuild.

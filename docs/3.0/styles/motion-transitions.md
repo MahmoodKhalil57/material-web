@@ -13,15 +13,19 @@ and classes. See [Motion](/3.0/styles/motion/#transitions) for the helpers.
 A skeleton hints at where content will appear and holds its space while it
 loads. Set `loading` and clear it when the content is ready.
 
-{% demo "A text skeleton and a skeleton that holds a paragraph" %}
+{% demo "A text skeleton and a skeleton that holds a paragraph" height=200 %}
+```html
 <md-gb-skeleton loading shape="text"></md-gb-skeleton>
-<md-gb-skeleton loading>
+<md-gb-skeleton id="card" loading>
   <p>Content that loads.</p>
 </md-gb-skeleton>
-{% enddemo %}
-
+<md-gb-button id="done" color="tonal">Finish loading</md-gb-button>
+```
 ```js
 import '@material/web/labs/gb/styles/motion/transitions/md-gb-skeleton.js';
 
-document.querySelector('md-gb-skeleton').loading = false;
+document.querySelector('#done').addEventListener('click', () => {
+  document.querySelector('#card').loading = false;
+});
 ```
+{% enddemo %}

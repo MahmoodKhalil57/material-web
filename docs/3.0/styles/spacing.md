@@ -78,14 +78,24 @@ Direct children of a `.md-window` element follow that element's width, so a
 layout can adapt to its pane rather than the screen. Other elements follow the
 viewport. The spacing unit does not change with the window.
 
+{% demo "A list with adaptive gap and padding" %}
+```html
+<div class="item-list">
+  <md-gb-button color="tonal">Inbox</md-gb-button>
+  <md-gb-button color="tonal">Drafts</md-gb-button>
+  <md-gb-button color="tonal">Sent</md-gb-button>
+</div>
+```
 ```css
 .item-list {
   display: grid;
   gap: var(--md-sys-space-adaptive-gap);
   padding-inline: var(--md-sys-space-adaptive-inline);
   padding-block: var(--md-sys-space-adaptive-block);
+  background: var(--md-sys-color-surface-container-low);
 }
 ```
+{% enddemo %}
 
 > The adaptive tokens are defined, but no labs/gb component reads them yet:
 > component spacing is the same at every window size today. Use them in your

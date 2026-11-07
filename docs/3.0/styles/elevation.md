@@ -62,8 +62,15 @@ softer shadow means more distance.
 
 ## Code sample
 
+{% demo "A note card that lifts from level 1 to level 2 on hover" %}
+```html
+<div class="note-card">Pick up milk</div>
+```
 ```css
 .note-card {
+  padding: 24px 32px;
+  border-radius: var(--md-sys-shape-corner-md);
+  color: var(--md-sys-color-on-surface);
   background: var(--md-sys-color-surface-container-low);
   box-shadow: var(--md-sys-elevation-shadow-1);
   transition: box-shadow var(--md-sys-motion-spring-fast-effects-duration)
@@ -74,6 +81,7 @@ softer shadow means more distance.
   box-shadow: var(--md-sys-elevation-shadow-2);
 }
 ```
+{% enddemo %}
 
 ## What to watch out for
 

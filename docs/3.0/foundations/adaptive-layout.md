@@ -30,21 +30,35 @@ A component gets its class from `AdaptiveController` in
 keyed by class and apply from that class up. Match the attribute in CSS and
 use `atLeast('expanded')` in code. Do not read the window width directly.
 
+In a Lit element, create the controller as a field and read `options` in
+`render()`. This sample uses a plain element as the host, so it runs without
+Lit:
+
+{% demo "The number of actions for the window size class" height=140 %}
+```html
+<div id="bar"></div>
+```
 ```ts
-import {html, LitElement} from 'lit';
 import {AdaptiveController} from '@material/web/labs/gb/components/shared/adaptive.js';
 
-class ActionBar extends LitElement {
-  // 2 actions at compact and medium, 4 from expanded up.
-  private readonly adaptive = new AdaptiveController(this, {
-    options: {compact: {actions: 2}, expanded: {actions: 4}},
-  });
+const bar = document.querySelector<HTMLElement>('#bar')!;
+const controllers: any[] = [];
+const host = Object.assign(bar, {
+  addController: (c: any) => controllers.push(c),
+  removeController: () => {},
+  requestUpdate: () => {
+    controllers.forEach((c) => c.hostUpdate?.());
+    bar.textContent = `${adaptive.options.actions} actions`;
+  },
+});
 
-  render() {
-    return html`${this.adaptive.options.actions} actions`;
-  }
-}
+// 2 actions at compact and medium, 4 from expanded up.
+const adaptive = new AdaptiveController<{actions: number}>(host as any, {
+  options: {compact: {actions: 2}, expanded: {actions: 4}},
+});
+controllers.forEach((c) => c.hostConnected?.());
 ```
+{% enddemo %}
 
 ### App scaffold
 
@@ -58,14 +72,42 @@ class ActionBar extends LitElement {
 - The FAB sits 16 px from the trailing and bottom edges of the content, and the
   snackbar sits above it.
 
-```html
-<md-gb-app-scaffold>
+{% demo "An app scaffold with an app bar, both navigation components and a pane scaffold" height=360 %}
+<md-gb-app-scaffold style="inline-size: 100%; block-size: 360px">
   <md-gb-app-bar slot="top-app-bar">Mail</md-gb-app-bar>
-  <md-gb-nav-bar slot="navigation-bar">…</md-gb-nav-bar>
-  <md-gb-nav-rail slot="navigation-rail">…</md-gb-nav-rail>
-  <md-gb-pane-scaffold>…</md-gb-pane-scaffold>
+  <md-gb-nav-bar slot="navigation-bar" aria-label="Primary">
+    <md-gb-nav-bar-item active>
+      <md-gb-icon slot="icon">inbox</md-gb-icon>
+      Inbox
+    </md-gb-nav-bar-item>
+    <md-gb-nav-bar-item>
+      <md-gb-icon slot="icon">send</md-gb-icon>
+      Sent
+    </md-gb-nav-bar-item>
+  </md-gb-nav-bar>
+  <md-gb-nav-rail slot="navigation-rail" aria-label="Primary">
+    <md-gb-nav-rail-item selected>
+      <md-gb-icon slot="icon">inbox</md-gb-icon>
+      Inbox
+    </md-gb-nav-rail-item>
+    <md-gb-nav-rail-item>
+      <md-gb-icon slot="icon">send</md-gb-icon>
+      Sent
+    </md-gb-nav-rail-item>
+  </md-gb-nav-rail>
+  <md-gb-pane-scaffold>
+    <md-gb-list slot="secondary" aria-label="Conversations">
+      <md-gb-list-item>Ali Connors</md-gb-list-item>
+      <md-gb-list-item>Sandra Adams</md-gb-list-item>
+    </md-gb-list>
+    <article>
+      <h2>Brunch this weekend?</h2>
+      <p>From Ali Connors</p>
+    </article>
+    <p slot="placeholder">Select a conversation</p>
+  </md-gb-pane-scaffold>
 </md-gb-app-scaffold>
-```
+{% enddemo %}
 
 Provide both a `md-gb-nav-bar` and a `md-gb-nav-rail` with the same
 destinations, and keep their selection in sync. The scaffold shows only one of
