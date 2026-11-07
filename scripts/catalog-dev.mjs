@@ -653,7 +653,13 @@ async function addExpressivePageSections() {
       for (const chunk of chunks) {
         const th = headings(lines);
         const matches = th.filter((h) => h.level === level && h.text === chunk.text);
-        if (!matches.length) throw new Error(`catalog-3.0/${section}/${f}: no "${chunk.line}"`);
+        if (!matches.length) {
+          // A heading the page doesn't have: a new section that only /3.0/
+          // shows, added at the end of the page.
+          if (level === 1) throw new Error(`catalog-3.0/${section}/${f}: no "${chunk.line}"`);
+          lines.push('', `<div data-variant="expressive">\n\n${chunk.body}\n\n</div>`, '');
+          continue;
+        }
         const at = matches[matches.length - 1];
         const next = th.find((h) => h.i > at.i && h.level <= level);
         const start = level === 1 ? at.i + 1 : at.i;
