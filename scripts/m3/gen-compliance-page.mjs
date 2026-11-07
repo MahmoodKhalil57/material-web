@@ -20,10 +20,10 @@
 
 import {execFileSync} from 'node:child_process';
 import {existsSync} from 'node:fs';
-import {readdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, readdir, readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
-const OUT = 'scripts/catalog-3.0/about/compliance.md';
+const OUT = 'docs/3.0/about/compliance.md';
 const UNITS = '.m3-specs/spec-checks/units.json';
 const EXCLUSIONS = 'scripts/m3/exclusions';
 const CENTRAL = 'labs/gb/components/shared/central';
@@ -165,10 +165,10 @@ const sizeRows = Object.entries(budgets.components).sort(([a], [b]) => a.localeC
 const sum = (key) => Object.values(budgets.components).reduce((s, v) => s + v[key], 0);
 
 const md = `---
-name: Spec compliance
 title: Spec compliance
-order: 1.5
-expressiveOnly: true
+section: about
+order: 2
+description: What the spec checks, ARIA and axe results, Baseline use and size budgets say about md-gb-* components.
 ---
 
 ## How compliance is measured
@@ -275,6 +275,7 @@ if (check) {
   }
   console.log(`${OUT} is up to date.`);
 } else {
+  await mkdir('docs/3.0/about', {recursive: true});
   await writeFile(OUT, md);
   console.log(`wrote ${OUT}: ${n(units.length)} units, ${total.uncovered} uncovered, ${auditRows.length} components audited.`);
 }

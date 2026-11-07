@@ -7,6 +7,7 @@
 import gzipPlugin from '@luncheon/esbuild-plugin-gzip';
 import esbuild from 'esbuild';
 import {copyFileSync} from 'fs';
+import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import {join} from 'path';
 import tinyGlob from 'tiny-glob';
@@ -127,7 +128,43 @@ const inlineBuild = esbuild
                         })
                         .catch(() => process.exit(1));
 
-await Promise.all([componentsBuild, ssrBuild, inlineBuild]);
+// The /3.0/ site shell (site/_includes/gb): src/gb/gb.ts and gb.css, built on
+// their own because the labs/gb sources import their styles as
+// `with {type: 'css'}` modules, which esbuild turns into constructed
+// stylesheets here. Outputs <js>/gb/gb.js and <js>/gb/gb.css.
+const cssModulePlugin = {
+  name: 'css-modules-as-stylesheets',
+  setup(build) {
+    build.onResolve({filter: /\.css$/}, (args) => {
+      if (args.with?.type !== 'css') return;
+      return {
+        path: join(args.resolveDir, args.path),
+        namespace: 'css-module',
+      };
+    });
+    build.onLoad({filter: /.*/, namespace: 'css-module'}, async (args) => {
+      const text = await readFile(args.path, 'utf8');
+      return {
+        contents:
+            `const sheet = new CSSStyleSheet();\n` +
+            `sheet.replaceSync(${JSON.stringify(text)});\n` +
+            `export default sheet;\n`,
+        loader: 'js',
+      };
+    });
+  },
+};
+const gbBuild = esbuild
+                    .build({
+                      ...config,
+                      splitting: false,
+                      plugins: [...(config.plugins ?? []), cssModulePlugin],
+                      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css'],
+                      outbase: 'src',
+                    })
+                    .catch(() => process.exit(1));
+
+await Promise.all([componentsBuild, ssrBuild, inlineBuild, gbBuild]);
 
 // Copy the playground-elements worker to the build folder
 const require = createRequire(import.meta.url);

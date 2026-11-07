@@ -48,48 +48,7 @@
       </style>
     </noscript>
     {% if expressive %}
-    <!-- Version (local builds with labs/gb, `npm run catalog:dev`): pages under
-         /3.0/ are v3.0-Alpha and show the M3 Expressive components; the rest
-         are v2.5.0. Applied before first paint to avoid flashing the other
-         variant. -->
-    <script>
-      (() => {
-        const prefix = '/3.0';
-        const path = location.pathname;
-        const on = path === prefix || path.startsWith(prefix + '/');
-        {% if expressiveOnly %}
-        // Components that only exist in M3 Expressive live under /3.0/ only.
-        if (!on) {
-          location.replace(prefix + path + location.search + location.hash);
-          return;
-        }
-        {% endif %}
-        {% if isComponent and not expressiveOnly and not expressiveDir %}
-        // Components without an M3 Expressive version are not part of v3.0.
-        if (on) {
-          location.replace(prefix + '/');
-          return;
-        }
-        {% endif %}
-        if (on) document.documentElement.setAttribute('data-expressive', '');
-      })();
-    </script>
     <style>
-      /* labs/gb icons default to 'Material Symbols'; use the family this site
-         loads (the standard md-icon reads the same property). */
-      :root {
-        --md-icon-font: 'Material Symbols Outlined';
-      }
-      html:not([data-expressive]) [data-variant='expressive'],
-      html[data-expressive] [data-variant='standard'],
-      html:not([data-expressive]) [data-expressive-only],
-      html[data-expressive] [data-standard-only] {
-        display: none !important;
-      }
-      /* The inline Expressive demo has no separate stories page. */
-      [data-variant='expressive'] a[href='./stories/'] {
-        display: none;
-      }
       .version-select {
         appearance: none;
         background: transparent
@@ -139,10 +98,9 @@
               slot="start"
               id="version-select"
               class="version-select"
-              aria-label="Material Web version"
-              {% if expressiveOnly %}data-locked{% endif %}>
+              aria-label="Material Web version">
             <option value="standard">v2.5.0 Current - Latest</option>
-            <option value="expressive">v3.0-Alpha</option>
+            <option value="3.0">v3.0-Alpha</option>
           </select>
           {% endif %}
           {% block topappbar %}{{ topappbar | safe }}{% endblock %}
@@ -167,75 +125,24 @@
             <md-list-item
               href="{{ file.url }}"
               role="menuitem"
-              {% if expressive and file.data.expressiveOnly %}data-expressive-only{% endif %}
               {% if file.url == page.url %}selected{% endif %}
               type="link"
               tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
             >{{ file.data.name }}</md-list-item>
           {% endfor %}
           <md-divider role="separator"></md-divider>
-          <!-- Theming section ("/" only; 3.0 splits it into Foundations and Styles,
-               like m3.material.io) -->
-          <md-item {% if expressive %}data-standard-only{% endif %}><div slot="headline">Theming</div></md-item>
+          <!-- Theming section -->
+          <md-item><div slot="headline">Theming</div></md-item>
           {% for file in collections.theming|filtersort('data.order') %}
             <md-list-item
               href="{{ file.url }}"
               role="menuitem"
-              {% if expressive %}data-standard-only{% endif %}
               {% if file.url == page.url %}selected{% endif %}
               type="link"
               tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
             >{{ file.data.name }}</md-list-item>
           {% endfor %}
-          <md-divider role="separator" {% if expressive %}data-standard-only{% endif %}></md-divider>
-          {% if expressive %}
-          <!-- Foundations (3.0 only): design tokens, then the foundations pages -->
-          <md-item data-expressive-only><div slot="headline">Foundations</div></md-item>
-          {% for file in collections.theming|filtersort('data.order') %}{% if file.url == '/theming/material-theming/' %}
-            <md-list-item
-              href="{{ file.url }}"
-              role="menuitem"
-              data-expressive-only
-              {% if file.url == page.url %}selected{% endif %}
-              type="link"
-              tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
-            >Design tokens</md-list-item>
-          {% endif %}{% endfor %}
-          {% for file in (collections.foundations or [])|filtersort('data.order') %}
-            <md-list-item
-              href="{{ file.url }}"
-              role="menuitem"
-              data-expressive-only
-              {% if file.url == page.url %}selected{% endif %}
-              type="link"
-              tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
-            >{{ file.data.name }}</md-list-item>
-          {% endfor %}
-          <md-divider role="separator" data-expressive-only></md-divider>
-          <!-- Styles (3.0 only): color, typography, shape, then the styles pages -->
-          <md-item data-expressive-only><div slot="headline">Styles</div></md-item>
-          {% for file in collections.theming|filtersort('data.order') %}{% if file.url != '/theming/material-theming/' %}
-            <md-list-item
-              href="{{ file.url }}"
-              role="menuitem"
-              data-expressive-only
-              {% if file.url == page.url %}selected{% endif %}
-              type="link"
-              tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
-            >{{ file.data.name }}</md-list-item>
-          {% endif %}{% endfor %}
-          {% for file in (collections.styles or [])|filtersort('data.order') %}
-            <md-list-item
-              href="{{ file.url }}"
-              role="menuitem"
-              data-expressive-only
-              {% if file.url == page.url %}selected{% endif %}
-              type="link"
-              tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
-            >{{ file.data.name }}</md-list-item>
-          {% endfor %}
-          <md-divider role="separator" data-expressive-only></md-divider>
-          {% endif %}
+          <md-divider role="separator"></md-divider>
           <!-- Components section -->
           <md-item><div slot="headline">Components</div></md-item>
           {% for file in collections.component|filtersort('data.name') %}
@@ -243,7 +150,6 @@
               href="{{ file.url }}"
               role="menuitem"
               {% if file.url == page.url %}selected{% endif %}
-              {% if expressive and file.data.expressiveOnly %}data-expressive-only{% elif expressive and not file.data.expressiveDir %}data-standard-only{% endif %}
               type="link"
               tabindex="{% if file.url == page.url %}0{% else %}-1{% endif %}"
             >{{ file.data.name }}</md-list-item>
@@ -253,120 +159,10 @@
     </lit-island>
     {% if expressive %}
     <script>
-      (() => {
-        const root = document.documentElement;
-        // Sections that differ by version repeat their heading; the hidden
-        // version gives up its ids so in-page links and the table of contents
-        // land on the visible one.
-        const hidden = root.hasAttribute('data-expressive') ? 'standard' : 'expressive';
-        const dropIds = () => {
-          for (const el of document.querySelectorAll(`[data-variant="${hidden}"] [id]`)) {
-            el.dataset.variantId = el.id;
-            el.removeAttribute('id');
-          }
-          // The table of contents lists both versions' headings: drop the
-          // hidden version's entries, then give the visible headings the ids
-          // they would have without the hidden duplicates (tokens-1 -> tokens)
-          // and point the links at them.
-          const gone = new Set(
-            [...document.querySelectorAll(`[data-variant="${hidden}"] [data-variant-id]`)].map((el) => el.dataset.variantId),
-          );
-          if (!gone.size || document.documentElement.hasAttribute('data-ids-fixed')) return;
-          document.documentElement.setAttribute('data-ids-fixed', '');
-          for (const a of document.querySelectorAll('.toc a[href^="#"]')) {
-            if (gone.has(decodeURIComponent(a.hash.slice(1)))) (a.closest('li') || a).remove();
-          }
-          const rename = new Map();
-          for (const el of document.querySelectorAll('[id]')) {
-            const m = /^(.+)-\d+$/.exec(el.id);
-            if (m && gone.has(m[1]) && !document.getElementById(m[1])) {
-              rename.set(el.id, m[1]);
-              el.id = m[1];
-            }
-          }
-          for (const a of document.querySelectorAll('a[href^="#"]')) {
-            const to = rename.get(decodeURIComponent(a.hash.slice(1)));
-            if (to) a.setAttribute('href', '#' + to);
-          }
-        };
-        dropIds();
-        document.addEventListener('DOMContentLoaded', dropIds);
-        // In v3.0-Alpha the palette menu also themes the labs/gb tokens.
-        if (root.hasAttribute('data-expressive')) {
-          const lib = window.__gbLibrary || `${location.protocol}//${location.hostname}:8001/`;
-          const gb = import(`${lib}labs/gb/styles/color/dynamic-color.js`);
-          const apply = async () => {
-            try {
-              const source = localStorage.getItem('seed-color');
-              if (!source) return;
-              const mode = localStorage.getItem('color-mode') || 'auto';
-              const dark = mode === 'auto'
-                ? matchMedia('(prefers-color-scheme: dark)').matches
-                : mode === 'dark';
-              const {themeFromSource, themeToCss} = await gb;
-              // Contrast 'auto' (prefers-contrast: more) like applyTheme().
-              const high = matchMedia('(prefers-contrast: more)').matches;
-              const theme = themeFromSource({source, contrast: high ? 'high' : 'standard'});
-              const css = themeToCss(theme, {dark, layer: ''});
-              let sheet = globalThis['material-theme-gb'];
-              if (!sheet) {
-                sheet = new CSSStyleSheet();
-                globalThis['material-theme-gb'] = sheet;
-                document.adoptedStyleSheets.push(sheet);
-              }
-              sheet.replaceSync(css);
-              localStorage.setItem('material-theme-gb', css);
-            } catch (e) {
-              console.warn('Could not theme the labs/gb tokens', e);
-            }
-          };
-          window.addEventListener('theme-changed', apply);
-          apply();
-        }
-        // v3.0-Alpha shows the M3 Expressive (labs/gb) components.
-        const select = document.getElementById('version-select');
-        const locked = select.hasAttribute('data-locked');
-        const standard = select.querySelector('option[value="standard"]');
-        const sync = () => {
-          const on = root.hasAttribute('data-expressive');
-          select.value = on ? 'expressive' : 'standard';
-          // Expressive-only pages have no v2.5.0 version.
-          standard.disabled = locked && on;
-          select.title = standard.disabled
-            ? 'This component only exists in v3.0-Alpha (M3 Expressive)'
-            : 'Material Web version';
-        };
-        const prefix = '/3.0';
-        const inVersion = (path) => path === prefix || path.startsWith(prefix + '/');
-        const base = (path) => (inVersion(path) ? path.slice(prefix.length) || '/' : path);
-        // Switching versions loads the same page under the other base URL.
-        select.addEventListener('change', () => {
-          const path = base(location.pathname);
-          const next = select.value === 'expressive' ? prefix + path : path;
-          location.assign(next + location.search + location.hash);
-        });
-        // Inside v3.0-Alpha, links to other catalog pages keep the /3.0/ base
-        // (links in the navigation's shadow roots too, via composedPath).
-        if (root.hasAttribute('data-expressive')) {
-          document.addEventListener('click', (event) => {
-            if (event.defaultPrevented || event.button !== 0) return;
-            const link = event.composedPath().find((el) => el instanceof HTMLAnchorElement && el.href);
-            if (!link || link.target && link.target !== '_self' || link.hasAttribute('download')) return;
-            const url = new URL(link.href, location.href);
-            if (url.origin !== location.origin || inVersion(url.pathname)) return;
-            // Same-page anchors stay as they are.
-            if (url.pathname === location.pathname.slice(prefix.length) && url.hash) return;
-            url.pathname = prefix + url.pathname;
-            event.preventDefault();
-            if (event.metaKey || event.ctrlKey || event.shiftKey) {
-              window.open(url.href, '_blank');
-            } else {
-              location.assign(url.href);
-            }
-          }, true);
-        }
-        sync();
-      })();
+      // "/" is v2.5.0; the version select opens the /3.0/ site.
+      document.getElementById('version-select').addEventListener('change', (event) => {
+        if (event.target.value === '3.0') location.assign('/3.0/');
+      });
     </script>
     {% endif %}
   </body>

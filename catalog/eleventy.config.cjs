@@ -8,6 +8,7 @@ const litPlugin = require('@lit-labs/eleventy-plugin-lit');
 const inlineCss = require('./eleventy-helpers/shortcodes/inline-css.cjs');
 const inlineJS = require('./eleventy-helpers/shortcodes/inline-js.cjs');
 const playgroundExample = require('./eleventy-helpers/shortcodes/playground-example.cjs');
+const gbShortcodes = require('./eleventy-helpers/shortcodes/gb.cjs');
 const minifyHTML = require('./eleventy-helpers/transforms/minify-html.cjs');
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
 const pluginTOC = require('eleventy-plugin-nesting-toc');
@@ -54,6 +55,7 @@ module.exports = function (eleventyConfig) {
   inlineCss(eleventyConfig, DEV);
   inlineJS(eleventyConfig, DEV, { jsDir });
   playgroundExample(eleventyConfig);
+  gbShortcodes(eleventyConfig);
 
   // install filters
   filterSort(eleventyConfig);

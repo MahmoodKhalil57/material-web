@@ -29,7 +29,7 @@
  * @param eleventyConfig The 11ty config in which to attach this shortcode.
  */
 function playgroundExample(eleventyConfig) {
-  eleventyConfig.addShortcode('playgroundexample', (config) => {
+  eleventyConfig.addShortcode('playgroundexample', function (config) {
     let { id, dirname } = config;
     if (!dirname) {
       throw new Error('No dirname provided to playgroundexample shortcode');
@@ -43,6 +43,21 @@ function playgroundExample(eleventyConfig) {
     const editorHeight = config.editorHeight
       ? `height: ${config.editorHeight}px`
       : 'height: 500px;';
+
+    // /3.0/ pages use md-gb-* components only (no md-* icon button, spinner).
+    if (this.page?.url?.startsWith('/3.0/')) {
+      return `
+      <details>
+        <summary>View interactive demo inline.</summary>
+        <lit-island on:visible import="/js/hydration-entrypoints/playground-elements.js" class="example">
+          <playground-project id="${id}" project-src="/assets/stories/${dirname}/project.json">
+          </playground-project>
+          <playground-preview style="${previewHeight}" project="${id}"></playground-preview>
+          <playground-file-editor style="${editorHeight}" project="${id}" filename="stories.ts" line-numbers></playground-file-editor>
+        </lit-island>
+      </details>
+      `;
+    }
 
     return `
       <details>

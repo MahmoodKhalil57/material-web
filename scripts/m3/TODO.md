@@ -506,3 +506,63 @@ toolbar padding where the spec says), and scripts/catalog-3.0/styles/spacing.md.
       values stay px because code reads them with parseFloat (carousel
       padding, tooltip viewport margin, tab indicator inset).
 - [x] The spacing page lists which components use which tokens.
+
+# 3.0 site as plain Markdown (2026-11-07)
+
+Goal: every /3.0/ page is a Markdown document under `docs/3.0/`, rendered by
+a site shell built from labs/gb (md-gb-*) components, following the M3 pages,
+WAI-ARIA 1.3/MDN and Baseline. "/" stays the v2.5.0 site and loses every 3.0
+overlay (no data-variant blocks, no /3.0 rewrite, no md-gb on "/").
+
+Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
+- Path: `docs/3.0/<section>/<slug>.md`, sections `about`, `foundations`,
+  `styles`, `components` (matching m3.material.io). URL `/3.0/<section>/<slug>/`.
+- Front matter: `title`, `section`, `order` (number, sidebar order),
+  `description` (one sentence), optional `hero` (example id).
+- Body: Markdown plus these shortcodes only:
+  `{% gbexample "<dir>/<story>" %}` (live demo with its code),
+  `{% gbapi "<dir>" %}` (generated API tables), `{% playgroundexample ... %}`.
+  Generated pages (compliance) are written into docs/3.0 by their generator.
+- Layout: `gb` (catalog/site/_includes/gb/default.html), data it gets:
+  `title`, `description`, `page.url`, `content`, `collections.gb3` (all 3.0
+  pages with `data.section/order/title`), `toc` (from the content headings).
+
+## M-1 (Sonnet): export the pages
+- [x] A one-shot script writes every current 3.0 page (component pages with
+      their expressive variant only, expressive-only pages, scripts/catalog-3.0
+      pages) to docs/3.0 per the contract; theming pages go to styles (color,
+      typography, shape) and foundations (design tokens).
+- [x] Demos and API tables become shortcodes; md-* tags become md-gb-*.
+- [x] gen-compliance-page writes docs/3.0/about/compliance.md.
+- [x] scripts/catalog-3.0 is deleted after the export (git keeps it).
+
+## M-2 (Sonnet, after M-1): build
+- [x] Eleventy renders docs/3.0 with layout `gb` to /3.0/; shortcodes
+      `gbexample` and `gbapi` implemented.
+- [x] Remove the overlay: addExpressiveVariants, addExpressivePageSections,
+      transformToExpressive, data-variant CSS/JS, the /3.0 rewrite middleware,
+      the 3.0 scripts in default.html. "/" builds as v2.5.0 only.
+- [x] catalog:dev watches docs/3.0; catalog-wait still works.
+
+## M-3 (Sonnet, parallel with M-1): site shell from labs/gb
+- [x] `gb` layout: app bar (version select, theme, GitHub link), navigation
+      drawer (modal below expanded, standard at expanded+) with sections
+      About / Foundations / Styles / Components, content pane, on-page TOC,
+      all md-gb-* components; landmarks, skip link, aria-current="page".
+- [x] Theme: dynamic color from a seed (labs/gb styles/color), light/dark/
+      system, saved per viewer; copy-code button.
+- [x] No md-* (v2.5) component on /3.0/ pages.
+
+## M-4 (Opus): verify and commit
+- [x] Every /3.0/ page: renders, no console errors, links resolve, axe clean.
+- [x] Every "/" page: no md-gb, no data-variant, renders as before.
+
+Left after M-4:
+- [ ] Production build: only scripts/catalog-dev.mjs copies docs/3.0 and
+      captures the gbexample demos (catalog/_dev-gb/examples.json); the
+      catalog's prod build needs the same steps.
+- [ ] axe: `aria-label` on the md-gb-fab and md-gb-text-field hosts is
+      reported as aria-prohibited-attr (library attribute delegation).
+- [ ] axe inside live demos (~110 nodes: color-contrast, empty-table-header,
+      button-name, aria-allowed-role, scrollable-region-focusable,
+      aria-required-children, aria-dialog-name).
