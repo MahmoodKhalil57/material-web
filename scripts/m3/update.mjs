@@ -170,6 +170,9 @@ node('scripts/m3/gen-gap-checklist.mjs', [], {capture: true, allowFail: true});
 const coverage = node('scripts/m3/spec-checks.mjs', ['--summary', '--strict'], {capture: true, allowFail: true});
 report.push(coverage.trim() || 'spec-checks.mjs failed; run it directly to see why.');
 
+// The catalog's Spec compliance page (3.0 only) from the data above.
+node('scripts/m3/gen-compliance-page.mjs', [], {capture: true, allowFail: true});
+
 await writeFile(join(SPECS, 'report.md'), report.join('\n') + '\n');
 console.log(`\nReport: ${join(SPECS, 'report.md')}`);
 

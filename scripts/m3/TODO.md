@@ -324,3 +324,116 @@ problems are fixed only in ways the M3 accessibility sections allow.
       cases inside local helper mixins: it now skips such selectors and inlines
       local mixins (also `@include x { }` blocks with `@content`); select gained
       32 cases and the text field 15.
+
+# Catalog 3.0 site (2026-11-07)
+
+Status: done (all seven checklists; plus Styles pages elevation and icons, the
+Foundations/Styles split of the sidebar, watch mode for catalog:dev).
+
+Goal: the /3.0/ catalog documents labs/gb fully. Each section below is a
+checklist an agent can follow without exploring; shared rules are in the
+scratchpad `site-brief.md`.
+
+How to add a page that only exists in /3.0/: write
+`scripts/catalog-3.0/<section>/<slug>.md` with front matter `name`, `title`,
+`order` and `expressiveOnly: true`. `npm run catalog:dev` copies it to
+`catalog/site/<section>/` (a new section folder gets the docs layout and a
+collection). The drawer lists About, Theming and Foundations (the
+`foundations` collection); "/" hides 3.0-only pages and redirects them. To
+replace a section of an existing About or Theming page in /3.0/ only, use a
+file with the same name and the same heading (`addExpressivePageSections` in
+scripts/catalog-dev.mjs).
+
+## S-A (Sonnet): theme picker and heading ids
+Owns: catalog/src/components/theme-changer.ts,
+catalog/src/inline/apply-saved-theme.ts, catalog/site/_includes/default.html.
+- [x] In /3.0/ the palette menu (source color, light or dark, contrast) also
+      themes the labs/gb tokens: `themeFromSource()` / `applyTheme()` from
+      labs/gb/styles/color/dynamic-color.ts, loaded only under /3.0/, on the
+      document and in the playground iframes if they don't inherit it (today
+      the button playground is purple while the site is brown). "/" unchanged.
+- [x] The saved theme applies before first paint in /3.0/ too (no flash).
+- [x] Heading ids: on /3.0/theming/color/, `#tokens` resolves to a hidden
+      element. The visible variant's headings own the ids, and the table of
+      contents links to them.
+- [x] Check with Playwright: changing the color in /3.0/ recolors the gb demo
+      and the page; a reload keeps it; "/" behaves as before; no console errors.
+
+## S-B (Sonnet): API reference from the source
+Owns: a new scripts/m3/gen-api-docs.mjs, and the API part of
+`addExpressiveVariants` and the Expressive-only page template in
+scripts/catalog-dev.mjs.
+- [x] Reuse the TypeScript reader in scripts/m3/gen-agent-skill.mjs (import it
+      or move it to a shared module) for each element's attributes and
+      properties (type, default, reflects, description), slots, events,
+      methods, CSS parts and CSS custom properties.
+- [x] In /3.0/, each component page's "API" section shows the md-gb-* tables
+      (data-variant expressive); "/" keeps the v2.5.0 tables. Pages for
+      gb-only components get the same tables.
+- [x] Check: /3.0/components/button/ lists md-gb-button attributes (color,
+      size, square, ...); /components/button/ is unchanged.
+
+## S-C (Sonnet): spec compliance page
+Owns: a new scripts/m3/gen-compliance-page.mjs and its output
+scripts/catalog-3.0/about/compliance.md (expressiveOnly; order after the intro).
+- [x] Per component and overall, from local data: spec units tested,
+      excluded (counts by reason) and tracked (.m3-specs/spec-checks/units.json);
+      the token audit (match, drift with reason, gaps) from
+      `node scripts/m3/audit-gb.mjs --gaps`; axe and ARIA 1.3 rows and known
+      gaps (labs/gb/components/shared/central/axe-helpers.ts, aria-rows.ts);
+      the Baseline summary (`npm run gb:baseline`); the size budgets
+      (scripts/size/gb-budgets.json).
+- [x] Numbers and unit ids only, no spec text. Say how each number is made
+      and how to rerun it (`node scripts/m3/gen-compliance-page.mjs`).
+- [x] Run it from scripts/m3/update.mjs after spec-checks; add a `--check` mode.
+
+## H-1 (Haiku): migration guide
+Owns: scripts/catalog-3.0/about/migration.md.
+- [x] A table: v2.5.0 element to 3.0 element and attributes, from
+      `transformToExpressive` in scripts/catalog-dev.mjs (read only that
+      function) and the labs/gb/components/*/md-gb-*.ts files.
+- [x] Call out: styles load with `adoptStyles(document, [m3Styles])`; slider
+      `aria-label-start/end` and `aria-valuetext-start/end` became `label-start`,
+      `label-end`, `valuetext-start`, `valuetext-end`; `full-screen` dialogs
+      turn into basic dialogs above compact windows (`always-full-screen`
+      keeps them full screen).
+- [x] What the spec no longer recommends, with replacements (paraphrase):
+      segmented buttons (connected button group), navigation drawer (expanded
+      navigation rail), bottom app bar (docked toolbar), medium and large app
+      bars (flexible app bars), small and surface FABs.
+
+## H-2 (Haiku): Foundations: motion, interaction states, density
+Owns: scripts/catalog-3.0/foundations/{motion,interaction-states,density}.md.
+- [x] Motion: expressive and standard springs
+      (labs/gb/styles/motion/md-motion-tokens-spring.scss),
+      `.md-motion-standard`, reduced motion, the labs/gb/components/shared/
+      motion.ts helpers, which components morph their shape on press.
+- [x] Interaction states: hover 8%, focus 10%, pressed 10%, dragged 16%;
+      hover only on hover-capable pointers; the ripple timing (75ms fade in,
+      225ms expansion, 150ms fade out; labs/gb/components/ripple/).
+- [x] Density: the `density` attribute (0 to -3), the components that
+      support it, and touch targets staying 48dp.
+
+## H-3 (Haiku): Foundations: accessibility, adaptive layout
+Owns: scripts/catalog-3.0/foundations/{accessibility,adaptive-layout}.md.
+- [x] Accessibility: keyboard (roving focus, Escape clears focus), the focus
+      ring, the WAI-ARIA 1.3 checks (shared/central/aria_test.ts) and axe
+      (axe_test.ts), the rule that M3 wins where it and ARIA disagree,
+      reduced motion.
+- [x] Adaptive layout: window size classes (shared/adaptive.ts), the app and
+      pane scaffolds (labs/gb/components/scaffold/), rails, safe areas,
+      full-screen dialogs only on compact windows.
+
+## H-4 (Haiku): browser support, AI agents, debugging, what's new
+Owns: scripts/catalog-3.0/about/{browser-support,ai-agents,debugging}.md and a
+data-variant="expressive" block on the home page (catalog/site/index.html).
+- [x] Browser support: the Baseline widely available targets (printed by
+      `node scripts/gb-css-validate.mjs`), and which features sit behind
+      `@supports` with which fallback (the reasons in
+      scripts/gb-baseline-allow.json).
+- [x] AI agents: install `labs/gb/skill/` as a Claude Code skill; regenerate
+      it with `node scripts/m3/gen-agent-skill.mjs`.
+- [x] Debugging: the `?md-gb-perf` / `MD_GB_DEBUG_PERF` / localStorage
+      `md-gb-perf` DevTools track (labs/gb/components/shared/perf.ts).
+- [x] What's new, on the /3.0/ home page only: the M3 Expressive components
+      new in 3.0 (the gb-only pages), with links to migration and compliance.

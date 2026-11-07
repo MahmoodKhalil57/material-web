@@ -13,3 +13,17 @@ const lastThemeString = localStorage.getItem('material-theme');
 if (lastThemeString) {
   applyThemeString(document, lastThemeString);
 }
+
+// In the v3.0-Alpha pages (local `npm run catalog:dev` builds), the labs/gb
+// tokens follow the same theme. The page script in _includes/default.html
+// caches the generated CSS; applying it here avoids a flash of the baseline.
+if (location.pathname === '/3.0' || location.pathname.startsWith('/3.0/')) {
+  const gbThemeString = localStorage.getItem('material-theme-gb');
+  if (gbThemeString) {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(gbThemeString);
+    (globalThis as unknown as Record<string, unknown>)['material-theme-gb'] =
+      sheet;
+    document.adoptedStyleSheets.push(sheet);
+  }
+}
