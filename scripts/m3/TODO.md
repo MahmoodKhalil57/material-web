@@ -560,9 +560,17 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
 Left after M-4:
 - [ ] Production build: only scripts/catalog-dev.mjs copies docs/3.0 and
       captures the gbexample demos (catalog/_dev-gb/examples.json); the
-      catalog's prod build needs the same steps.
+      catalog's prod build needs the same steps. The `gbcomponents`
+      filter and live demos also need MWC_GB_LIB (a production library URL).
 - [ ] axe: `aria-label` on the md-gb-fab and md-gb-text-field hosts is
       reported as aria-prohibited-attr (library attribute delegation).
 - [ ] axe inside live demos (~110 nodes: color-contrast, empty-table-header,
       button-name, aria-allowed-role, scrollable-region-focusable,
       aria-required-children, aria-dialog-name).
+- [ ] Demo cards: `aria-controls` on the View code md-gb-button can't
+      reach the code across the shadow root (aria-expanded alone works).
+- [ ] Carousel's captured demo code is ~10,700px when expanded; trim the
+      captured markup (or show the story source instead).
+- [ ] Figures still load placekitten.com images; use local images.
+- [ ] axe in demos: md-gb-chip-set aria-required-children/parent at 400px,
+      carousel aria-required-children.
