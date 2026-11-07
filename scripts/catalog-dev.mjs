@@ -349,7 +349,16 @@ function watchSources() {
   // under labs/gb only demos affect the pages.
   const relevant = (root, name) => {
     if (!name || !/\.(md|html|njk|ts|js|mjs|json|scss|css)$/.test(name)) return false;
-    if (root === join(ROOT, 'labs', 'gb') && !/[\\/]demo[\\/]/.test(name)) return false;
+    // Under labs/gb: demos, and compiled .js (gb-check --emit), which the
+    // /3.0/ shell bundle (catalog/src/gb) includes; else the shell keeps the
+    // old components and, defined first, wins over the library server's.
+    if (
+      root === join(ROOT, 'labs', 'gb') &&
+      !/[\\/]demo[\\/]/.test(name) &&
+      !(/\.js$/.test(name) && !/_test\.js$/.test(name))
+    ) {
+      return false;
+    }
     try {
       const path = root.endsWith('.html') ? root : join(root, name);
       return fsSync.statSync(path).mtimeMs > buildStarted;
