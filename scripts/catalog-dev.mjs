@@ -126,6 +126,8 @@ const VARIANTS = {
   'slider': 'slider',
   'switch': 'switch',
   'tabs': 'tabs',
+  'dialog': 'dialog',
+  'text-field': 'textfield',
 };
 
 /** labs/gb components that only exist in M3 Expressive, and their page slug. */
@@ -134,13 +136,21 @@ const EXPRESSIVE_ONLY = {
   badge: 'badge',
   buttongroup: 'button-group',
   card: 'card',
+  carousel: 'carousel',
+  datepicker: 'date-picker',
   fabmenu: 'fab-menu',
   loadingindicator: 'loading-indicator',
   navbar: 'navigation-bar',
+  navdrawer: 'navigation-drawer',
   navrail: 'navigation-rail',
+  search: 'search',
+  segmentedbutton: 'segmented-button',
+  sheet: 'sheets',
   snackbar: 'snackbar',
   splitbutton: 'split-button',
+  timepicker: 'time-picker',
   toolbar: 'toolbar',
+  tooltip: 'tooltip',
 };
 
 if (!argv.includes('--skip-build')) await buildLibrary({log});
@@ -504,6 +514,20 @@ function transformToExpressive(html) {
     rename(el, tag, set, drop);
   });
 
+  // Text fields: one element with a variant.
+  each('md-filled-text-field, md-outlined-text-field', (el) => {
+    const outlined = el.localName === 'md-outlined-text-field';
+    rename(el, 'md-gb-text-field', outlined ? {variant: 'outlined'} : {}, []);
+  });
+
+  // Dialogs: the content goes in the default slot.
+  each('md-dialog', (el) => {
+    const dialog = rename(el, 'md-gb-dialog', {}, []);
+    for (const child of dialog.querySelectorAll(':scope > [slot="content"]')) {
+      child.removeAttribute('slot');
+    }
+  });
+
   // Tabs: the Expressive tab takes its label in slot="label".
   each('md-tabs', (el) => {
     const secondary = !!el.querySelector('md-secondary-tab');
@@ -615,7 +639,12 @@ function jsdoc(block) {
 }
 
 function docsPage(dir, dirname, {title, elements}, stories) {
-  const main = elements.find((e) => e.tag) ?? elements[0];
+  // The container element (`-set`) or, failing that, one that is not an item.
+  const main =
+    elements.find((e) => e.tag?.endsWith('-set')) ??
+    elements.find((e) => e.tag && !e.tag.endsWith('-item')) ??
+    elements.find((e) => e.tag) ??
+    elements[0];
   const esc = (s) => String(s).replace(/\|/g, '\\|').replace(/[{}]/g, (c) => `&#${c.charCodeAt(0)};`);
   const usage = elements
     .filter((e) => e.tag)
@@ -656,7 +685,7 @@ ssrOnly: true
 
 # ${title}
 
-${esc(main?.text ?? '')}
+${esc(firstSentence(main?.text ?? ''))}
 
 This component is new in [M3 Expressive](https://m3.material.io/blog/building-with-m3-expressive)<!-- {.external} -->.
 
@@ -691,14 +720,16 @@ ${api}
 
 <style>
   .gb-hero {
-    align-items: center;
+    /* "safe" keeps tall examples (date picker, carousel) from being cut
+       off at the top; they scroll instead. */
+    align-items: safe center;
     background: var(--md-sys-color-surface-container-lowest);
     border-radius: var(--catalog-image-border-radius);
     box-sizing: border-box;
     display: flex;
-    justify-content: center;
+    justify-content: safe center;
     min-height: 240px;
-    overflow: hidden;
+    overflow: auto;
     padding: 24px;
     zoom: 1.25;
   }
@@ -720,7 +751,17 @@ function isPlayground(story) {
 }
 
 /** Header example: the first story that shows the component's range. */
+/** The first sentence of a description, for the page header. */
+function firstSentence(text) {
+  const flat = text.replace(/\s+/g, ' ').trim();
+  const end = flat.search(/[.!?](\s|$)/);
+  return end >= 0 ? flat.slice(0, end + 1) : flat;
+}
+
 function heroStory(stories) {
+  // Modal stories show nothing until opened, so prefer an inline one.
+  const inline = stories.findIndex((s) => !isPlayground(s) && !/modal/i.test(s.name));
+  if (inline >= 0) return inline;
   const index = stories.findIndex((s) => !isPlayground(s));
   return index >= 0 ? index : 0;
 }
