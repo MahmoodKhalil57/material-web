@@ -2,7 +2,7 @@
 title: Motion
 section: styles
 order: 8
-description: "This page follows the three subpages of the M3 motion guidance: the motion physics system, easing and duration and transitions."
+description: "Motion makes a UI expressive and easy to follow: springs for physics, easing and duration tokens, and transition patterns."
 ---
 
 ## Overview
