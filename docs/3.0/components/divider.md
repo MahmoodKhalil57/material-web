@@ -3,97 +3,71 @@ title: Divider
 section: components
 order: 11
 description: A divider is a thin line that groups content in lists and containers.
-hero: divider/insets
 ---
-Dividers can reinforce tapability, such as when used to separate list items or
-define tappable regions in an accordion.
+{% demo "A divider between two paragraphs" %}
+<p>Your order has shipped.</p>
+<md-gb-divider></md-gb-divider>
+<p>Delivery is expected on Friday.</p>
+{% enddemo %}
 
-![Screenshot of five stacked dividers](/components/images/divider/hero.webp "Dividers separating items in a list.")
+## Usage guidelines
 
-*   [Design article](https://m3.material.io/components/divider)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/labs/gb/components/divider)
+*   **Group and create hierarchy.** Dividers visually group components and can imply a parent and child relationship.
+*   **Full width for sections.** Use [full-width](#insets) dividers to separate larger sections of unrelated content.
+*   **Inset for related items.** Use [inset dividers](#insets) to separate related content within a section, such as items in a list.
+*   **Don't overuse.** Spacing and type styles often separate content well enough on their own.
 
-## Interactive Demo
+## Anatomy
 
-{% playgroundexample dirname="gb-divider", id="project-gb" %}
-
-## Usage
-
-Use full width dividers to separate larger sections of unrelated content.
-
-```js
-import '@material/web/labs/gb/components/divider/md-gb-divider.js';
-```
+A divider is a single element.
 
 ```html
-<section>
-  <p>Lorem ipsum...</p>
-  <md-gb-divider></md-gb-divider>
-  <p>Lorem ipsum...</p>
-</section>
+<md-gb-divider></md-gb-divider>
 ```
+
+## Examples
+
+### Insets
+
+Add `inset` to indent both ends by 16dp. Use `inset-start` or `inset-end` to indent only one end.
+
+{% demo "A full-width divider, a start-inset divider and a middle-inset divider" %}
+<md-gb-divider></md-gb-divider>
+<md-gb-divider inset-start></md-gb-divider>
+<md-gb-divider inset></md-gb-divider>
+{% enddemo %}
+
+### Vertical
+
+Add `vertical` for a divider between side-by-side content.
+
+{% demo "A vertical divider between two labels" %}
+<div style="display: flex; align-items: center; gap: 8px">
+  <span>Day</span>
+  <md-gb-divider vertical></md-gb-divider>
+  <span>Week</span>
+</div>
+{% enddemo %}
 
 ### Class API
 
-For plain HTML, the `divider()` class API styles a native `<hr>`. Add
-`vertical: true` for a vertical divider.
+For plain HTML, the `divider()` class function styles a native `<hr>`. Pass `{vertical: true}` for a vertical divider.
 
-{% gbexample "divider/directive" %}
+```js
+import {divider} from '@material/web/labs/gb/components/divider/divider.js';
 
-### Inset dividers
-
-Use inset dividers to separate related content within a section. `inset`
-indents both ends by 16dp (the spec's middle-inset divider); `inset-start`
-indents the leading end (the inset divider) and `inset-end` the trailing end.
-
-{% gbexample "divider/insets" %}
+const classes = divider({vertical: true});
+```
 
 ## Accessibility
 
-Dividers are decorative by default and not announced by assistive technology.
-
-Add a
-[`role="separator"`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/separator_role)
-attribute to non-decorative dividers that should be announced.
+*   A divider is decorative and not announced by assistive technology. It has no contrast minimum.
+*   Add `role="separator"` to a divider that should be announced.
 
 ```html
-<ul>
-  <li>Item one</li>
-  <md-gb-divider inset></md-gb-divider>
-  <li>Item two</li>
-  <md-gb-divider role="separator"></md-gb-divider>
-  <li>Item three</li>
-</ul>
+<md-gb-divider role="separator"></md-gb-divider>
 ```
 
-## Theming
-
-Divider supports [theming](/3.0/styles/color/) and can be customized with its
-CSS custom properties.
-
-| Property | Default value |
-| --- | --- |
-| `--color` | `--md-sys-color-outline-variant` |
-| `--thickness` | `1px` |
-| `--inset-leading-space` | `--md-sys-space-200` (16dp) |
-| `--inset-trailing-space` | `--md-sys-space-200` (16dp) |
-
-```html
-<style>
-md-gb-divider {
-  --color: #bec9c8;
-  --thickness: 2px;
-}
-</style>
-
-<section>
-  <p>Lorem ipsum...</p>
-  <md-gb-divider></md-gb-divider>
-  <p>Lorem ipsum...</p>
-</section>
-```
-
-## API
+## API reference
 
 {% gbapi "divider" %}

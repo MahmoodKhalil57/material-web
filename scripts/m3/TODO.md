@@ -574,3 +574,18 @@ Left after M-4:
 - [ ] Figures still load placekitten.com images; use local images.
 - [ ] axe in demos: md-gb-chip-set aria-required-children/parent at 400px,
       carousel aria-required-children.
+- [ ] gbapi: CSS custom properties tables have no Default column (the
+      element docs carry none); read defaults from each _*-tokens.scss.
+- [ ] Carousel: an uncontained layout with 3 items and --item-width 186px
+      throws "All KeylineLists must have at least one focal keyline"; with
+      no --item-width it renders ~33M px wide.
+- [ ] Carousel: axe aria-required-children on .carousel-scroller[role=list]
+      (items get role=listitem via ElementInternals, invisible to axe).
+- [ ] Date picker inline: empty-table-header on the weekday header cells.
+- [ ] Card (interactive): its button doesn't take the slotted content as its
+      name, so it needs aria-label (axe button-name).
+- [ ] Tabs: aria-label on icon-only md-gb-tab reported as
+      aria-prohibited-attr (role via ElementInternals; likely axe false
+      positive, verify against the ARIA model test).
+- [ ] Shortcode exposing the labs/gb module URL so {% demo %} scripts can
+      import helpers (applyTheme, transitions) live.

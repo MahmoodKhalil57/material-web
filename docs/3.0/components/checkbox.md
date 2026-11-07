@@ -2,72 +2,103 @@
 title: Checkbox
 section: components
 order: 7
-description: Checkboxes allow users to select one or more items from a set.
+description: Checkboxes let people select one or more items from a set, or turn an option on or off.
 ---
-
-[Checkboxes](https://m3.material.io/components/checkbox) allow users
-to select one or more items from a set. Checkboxes can turn an option on or off.
-
-There's one type of checkbox in Material. Use this selection control when the
-user needs to select one or more options from a list.
-
-<img
-    class="hero"
-    src="/components/images/checkbox/hero.webp"
-    alt="A list of burger additions represented with checkboxes"
-    title="Checkboxes in a list of items.">
-
-*   [Design article](https://m3.material.io/components/checkbox)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/checkbox)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-checkbox", id="project-gb" %}
-
-## Usage
-
-Checkboxes may be standalone, pre-checked, or indeterminate.
-
-{% demo "Three checkboxes in a row that are unselected, selected, and indeterminate" %}
-<md-gb-checkbox></md-gb-checkbox>
-<md-gb-checkbox checked></md-gb-checkbox>
-<md-gb-checkbox indeterminate></md-gb-checkbox>
-{% enddemo %}
-
-### Label
-
-Associate a label with a checkbox using the `<label>` element.
-
-{% demo "Two checkboxes with labels" %}
+{% demo "A checkbox with the label Remember me" %}
 <label>
   <md-gb-checkbox></md-gb-checkbox>
-  Checkbox one
+  Remember me
 </label>
-
-<md-gb-checkbox id="checkbox-two"></md-gb-checkbox>
-<label for="checkbox-two">Checkbox two</label>
 {% enddemo %}
 
-## Accessibility
+## Usage guidelines
 
-Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to checkboxes without labels or checkboxes whose labels need to be
-more descriptive.
+*   **Select from a set.** Use checkboxes when people can pick any number of options from a list, or to turn one option on or off.
+*   **Label every checkbox.** The label is the adjacent text, and it should say what checking the box does.
+*   **Use a parent for a group.** A parent checkbox shows an [indeterminate](#indeterminate) state when only some of its children are checked.
+*   **Don't apply density by default.** Let people opt in to a [denser layout](#density).
+
+## Anatomy
+
+A checkbox is one element. A `<label>` next to it, or around it, provides the text.
 
 ```html
-<md-gb-checkbox aria-label="Select all checkboxes"></md-gb-checkbox>
-
 <label>
-  <md-gb-checkbox aria-label="Agree to terms and conditions"></md-gb-checkbox>
-  Agree
+  <md-gb-checkbox></md-gb-checkbox>
+  …
 </label>
 ```
 
-> Note: checkboxes are not automatically labelled by `<label>` elements and
-> always need an `aria-label`. See b/294081528.
+## Examples
 
-## API
+### Checked and indeterminate
+
+Add `checked` for a selected checkbox. Add `indeterminate` for a parent whose children are partly selected.
+
+{% demo "A checked checkbox and an indeterminate checkbox" %}
+<label>
+  <md-gb-checkbox checked></md-gb-checkbox>
+  Email
+</label>
+<label>
+  <md-gb-checkbox indeterminate></md-gb-checkbox>
+  All notifications
+</label>
+{% enddemo %}
+
+### Error
+
+Add `error` to mark a checkbox as invalid. With `required`, it must be checked to submit a form.
+
+{% demo "A required checkbox in the error state" %}
+<label>
+  <md-gb-checkbox required error></md-gb-checkbox>
+  I accept the terms
+</label>
+{% enddemo %}
+
+### Disabled
+
+A `disabled` checkbox can't be changed.
+
+{% demo "A disabled checkbox" %}
+<label>
+  <md-gb-checkbox disabled></md-gb-checkbox>
+  Unavailable option
+</label>
+{% enddemo %}
+
+### Density
+
+Set `density` from 0 (default) to -3 to shrink the checkbox. The touch target stays 48px.
+
+{% demo "A checkbox with density -2" %}
+<label>
+  <md-gb-checkbox density="-2"></md-gb-checkbox>
+  Compact option
+</label>
+{% enddemo %}
+
+### Parent and children
+
+Call `linkParentCheckbox(parent, children)` from `checkbox-group.js`. Checking the parent checks every child, and a partial selection makes the parent indeterminate.
+
+```js
+import {linkParentCheckbox} from '@material/web/labs/gb/components/checkbox/checkbox-group.js';
+
+linkParentCheckbox(parent, [...children]);
+```
+
+## Accessibility
+
+*   The adjacent `<label>` text is the checkbox's accessible name. Use `aria-label` when there is no visible label or it needs more detail.
+*   Space toggles the focused checkbox, and Tab moves between checkboxes.
+*   A checkbox exposes its checked, unchecked or mixed state.
+
+```html
+<md-gb-checkbox aria-label="Select all messages"></md-gb-checkbox>
+```
+
+## API reference
 
 {% gbapi "checkbox" %}

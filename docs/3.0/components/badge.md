@@ -1,29 +1,56 @@
 ---
-title: badge
+title: Badge
 section: components
 order: 2
-description: A Material Design badge component.
-hero: badge/anchored
+description: A badge shows a small dot or a count to signal new or changed information.
 ---
-This component is new in [M3 Expressive](https://m3.material.io/blog/building-with-m3-expressive).
+{% demo "A dot badge, a badge with a count and a badge with a capped count" %}
+<md-gb-badge></md-gb-badge>
+<md-gb-badge>3</md-gb-badge>
+<md-gb-badge>99+</md-gb-badge>
+{% enddemo %}
 
-## Interactive Demo
+## Usage guidelines
 
-{% playgroundexample dirname="gb-badge" %}
+*   **Use a dot for something new.** A badge without content signals new or changed information.
+*   **Use a count for a number.** A large badge shows a number, such as unread messages.
+*   **Keep counts short.** Content is limited to four characters, including a `+`, so large numbers show as `999+`.
+*   **Attach it to an icon.** [Anchor](#anchored) the badge to the top trailing corner of the icon it describes.
 
-## Anchored
+## Anatomy
 
-{% gbexample "badge/anchored" %}
+A badge is a single element. Without content it is a dot; with content it is a larger badge.
 
-## Usage
-
-```js
-import '@material/web/labs/gb/components/badge/md-gb-badge.js';
+```html
+<md-gb-badge>…</md-gb-badge>
 ```
 
-Every component also has a class API for plain HTML; see
-`labs/gb/components/badge/` and its stories above.
+## Examples
 
-## API
+### Count
+
+Set `value` to show a number. Counts above `max` (999 by default) show as `max+`.
+
+{% demo "A badge with a count over the maximum" %}
+<md-gb-badge value="1200"></md-gb-badge>
+{% enddemo %}
+
+### Anchored
+
+Add `anchored` to place the badge on the top trailing corner of its positioned parent.
+
+{% demo "A bell icon with a count badge" %}
+<span style="position: relative; display: inline-flex">
+  <md-gb-icon>notifications</md-gb-icon>
+  <md-gb-badge anchored>3</md-gb-badge>
+</span>
+{% enddemo %}
+
+## Accessibility
+
+*   A dot badge is announced with its `label`, which defaults to "New notification". Set it to match your content.
+*   Place the badge after the label of the destination it belongs to, so it is read in that order.
+
+## API reference
 
 {% gbapi "badge" %}

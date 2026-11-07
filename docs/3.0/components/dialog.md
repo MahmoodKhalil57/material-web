@@ -4,123 +4,123 @@ section: components
 order: 10
 description: Dialogs provide important prompts in a user flow.
 ---
-<img class="hero" src="/components/images/dialog/hero.webp" alt="A dialog displaying phone ringtone options."
-title="A dialog">
+{% demo "A button that opens a dialog asking to delete messages" %}
+<md-gb-button id="open-delete">Delete</md-gb-button>
+<md-gb-dialog id="delete-dialog">
+  <span slot="headline">Permanently delete?</span>
+  Deleting the selected messages also removes them from your other devices.
+  <form id="delete-form" method="dialog"></form>
+  <md-gb-button slot="actions" form="delete-form" value="cancel">Cancel</md-gb-button>
+  <md-gb-button slot="actions" form="delete-form" value="delete">Delete</md-gb-button>
+</md-gb-dialog>
+{% enddemo %}
 
-*   [Design article](https://m3.material.io/components/dialogs)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/dialog)
+```js
+document.querySelector('#open-delete').addEventListener('click', () => {
+  document.querySelector('#delete-dialog').show();
+});
+```
 
-## Interactive Demo
+<script type="module">
+  document.querySelector('#open-delete').addEventListener('click', () => {
+    document.querySelector('#delete-dialog').show();
+  });
+</script>
 
-{% playgroundexample dirname="gb-dialog", id="project-gb" %}
+## Usage guidelines
 
-## Usage
+*   **Use them sparingly.** A dialog interrupts people to ask for a decision or to show critical information, so it blocks the rest of the app until it is dismissed.
+*   **Pick the right priority.** For low or medium priority information, use a snackbar instead.
+*   **Choose basic or full-screen.** Use a basic dialog by default. A [full-screen dialog](#full-screen) suits compact windows with a lot of content.
+*   **Order the actions.** Put the dismissive action first and the confirming action last.
 
-Dialogs behave like
-[`<dialog>`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement)
-elements, and can be closed with a `<form method="dialog">` element.
+## Anatomy
 
-Dialogs have three optional sections: the headline title, the main content, and
-action buttons.
+A dialog has an optional icon and headline, supporting content, and actions.
 
 ```html
 <md-gb-dialog>
-  <div slot="headline">
-    Dialog title
-  </div>
-  <form id="form-id" method="dialog">
-    A simple dialog with free-form content.
-  </form>
-  <div slot="actions">
-    <md-gb-button form="form-id" color="text">Ok</md-gb-button>
-  </div>
+  <md-gb-icon slot="icon"></md-gb-icon>
+  <span slot="headline"></span>
+  …
+  <md-gb-button slot="actions"></md-gb-button>
 </md-gb-dialog>
 ```
 
-> Tip: use `margin`, `height`, and `width` CSS properties to control the
-> dialog's size and position.
+## Examples
 
-### Opening and closing
+### With an icon
 
-Dialogs are opened and closed by setting the `open` attribute or property.
+Put an `md-gb-icon` in the `icon` slot to center the headline under a hero icon.
 
-```html
-<md-gb-dialog open>
-  <div>
-    A dialog that is opened by default.
-  </div>
+{% demo "A dialog with a hero icon" %}
+<md-gb-button id="open-reset">Reset</md-gb-button>
+<md-gb-dialog id="reset-dialog">
+  <md-gb-icon slot="icon">restart_alt</md-gb-icon>
+  <span slot="headline">Reset settings?</span>
+  This returns your preferences to their defaults.
+  <form id="reset-form" method="dialog"></form>
+  <md-gb-button slot="actions" form="reset-form" value="cancel">Cancel</md-gb-button>
+  <md-gb-button slot="actions" form="reset-form" value="reset">Reset</md-gb-button>
 </md-gb-dialog>
-```
+{% enddemo %}
 
-Dialogs are also opened and closed by calling `dialog.show()` and
-`dialog.close()`.
+<script type="module">
+  document.querySelector('#open-reset').addEventListener('click', () => {
+    document.querySelector('#reset-dialog').show();
+  });
+</script>
 
-Both return a Promise that resolves after the dialog's animation finishes.
+### Full-screen
 
-```ts
-closeButton.addEventListener('click', async () => {
-  await dialog.close();
-});
-```
+Set `full-screen` for a dialog that fills a compact window, with a close button and the confirming action in its header. Above compact sizes it falls back to a basic dialog; add `always-full-screen` to keep it.
+
+{% demo "A full-screen dialog for a new event" %}
+<md-gb-button id="open-event">New event</md-gb-button>
+<md-gb-dialog id="event-dialog" full-screen>
+  <span slot="headline">New event</span>
+  <md-gb-button slot="actions">Save</md-gb-button>
+  <label>
+    Event name
+    <input type="text">
+  </label>
+</md-gb-dialog>
+{% enddemo %}
+
+<script type="module">
+  document.querySelector('#open-event').addEventListener('click', () => {
+    document.querySelector('#event-dialog').show();
+  });
+</script>
 
 ### Return value
 
-A button's value attribute will set the dialog's `returnValue` property to
-identify which button closed it.
+A button's `value` becomes the dialog's `returnValue` when it closes the dialog through its form. Read it in the `closed` event.
 
-```html
-<md-gb-dialog open>
-  <form id="form-id" method="dialog">...</form>
-  <div slot="actions">
-    <md-gb-button form="form-id" value="cancel" color="text">Cancel</md-gb-button>
-    <md-gb-button form="form-id" value="ok" color="text">Ok</md-gb-button>
-  </div>
-</md-gb-dialog>
+```js
+dialog.addEventListener('closed', () => {
+  if (dialog.returnValue === 'delete') {
+    // …
+  }
+});
 ```
 
-```ts
-dialog.addEventListener('close', () => {
-  const cancelClicked = dialog.returnValue === 'cancel';
-  const okClicked = dialog.returnValue === 'ok';
-});
+### Opening and closing
+
+Open and close a dialog with `show()` and `close()`, or by setting `open`. Both methods return a promise that resolves after the animation. Cancel the `cancel` event to keep the dialog open.
+
+```js
+await dialog.show();
+await dialog.close();
 ```
 
 ## Accessibility
 
-Dialogs are labelled by their headlines. Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to dialogs without a headline.
+*   The headline names the dialog. Add `aria-label` to a dialog without a headline.
+*   A basic dialog is an alert dialog (`role="alertdialog"`) by default, as M3 asks for on the web. Set `type="dialog"` for a plain dialog.
+*   Focus moves into the dialog and Tab cycles inside it. Escape closes it and focus returns to what opened it.
+*   Label buttons and fields inside the dialog as you would elsewhere. In a full-screen dialog, set `close-label` to name the close button.
 
-```html
-<md-gb-dialog aria-label="Error message">
-  <div>An error occurred, details ...</div>
-</md-gb-dialog>
-```
-
-### Alerts
-
-Add a
-[`type="alert"`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alertdialog_role)
-attribute to dialogs that need to communicate an important message and require a
-user's response.
-
-Common examples include error messages that require confirmation and other
-action confirmation prompts.
-
-```html
-<md-gb-dialog type="alert">
-  <div slot="headline">Confirm deletion</div>
-  <form id="form-id" method="dialog">
-    Are you sure you wish to delete this item?
-  </form>
-  <div slot="actions">
-    <md-gb-button form="form-id" value="cancel" color="text">Cancel</md-gb-button>
-    <md-gb-button form="form-id" value="delete" color="text">Delete</md-gb-button>
-  </div>
-</md-gb-dialog>
-```
-
-## API
+## API reference
 
 {% gbapi "dialog" %}
