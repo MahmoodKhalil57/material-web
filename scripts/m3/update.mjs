@@ -99,6 +99,8 @@ await cp(TOKENS, PREV, {recursive: true});
 node('scripts/m3/gen-sass-tokens.mjs', ['--out', TOKENS]);
 await generateTokenMeta();
 node('scripts/m3/gen-motion.mjs');
+// Token files of components built from the spec by this pipeline.
+node('scripts/m3/spec-tokens.mjs', ['--write']);
 if (await exists('scripts/m3/gen-shapes.mjs')) node('scripts/m3/gen-shapes.mjs');
 // Components whose behavior is generated from the Compose reference.
 for (const generator of ['gen-loading-indicator', 'gen-progress', 'gen-fab-menu']) {

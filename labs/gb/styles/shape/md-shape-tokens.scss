@@ -11,11 +11,16 @@
   :root {
     --md-sys-shape-corner-none: #{tokens.$md-sys-shape--corner-none};
     --md-sys-shape-corner-xs: #{tokens.$md-sys-shape--corner-extra-small};
+    --md-sys-shape-corner-xs-top: #{tokens.$md-sys-shape--corner-extra-small-top};
     --md-sys-shape-corner-sm: #{tokens.$md-sys-shape--corner-small};
     --md-sys-shape-corner-md: #{tokens.$md-sys-shape--corner-medium};
     --md-sys-shape-corner-lg: #{tokens.$md-sys-shape--corner-large};
+    --md-sys-shape-corner-lg-top: #{tokens.$md-sys-shape--corner-large-top};
+    --md-sys-shape-corner-lg-start: #{tokens.$md-sys-shape--corner-large-start};
+    --md-sys-shape-corner-lg-end: #{tokens.$md-sys-shape--corner-large-end};
     --md-sys-shape-corner-lg-increased: #{tokens.$md-sys-shape--corner-large-increased};
     --md-sys-shape-corner-xl: #{tokens.$md-sys-shape--corner-extra-large};
+    --md-sys-shape-corner-xl-top: #{tokens.$md-sys-shape--corner-extra-large-top};
     --md-sys-shape-corner-xl-increased: #{tokens.$md-sys-shape--corner-extra-large-increased};
     --md-sys-shape-corner-xxl: #{tokens.$md-sys-shape--corner-extra-extra-large};
     --md-sys-shape-corner-full: 50cqmin;
