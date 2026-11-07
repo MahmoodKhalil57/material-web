@@ -2,73 +2,90 @@
 title: Sliders
 section: components
 order: 29
-description: Sliders allow users to view and select a value (or range) along a track.
+description: Sliders let people view and select a value, or a range of values, along a track.
 ---
+{% demo "A volume slider with a value label" %}
+<md-gb-slider aria-label="Volume" value="50" labeled></md-gb-slider>
+{% enddemo %}
 
-[Sliders](https://m3.material.io/components/sliders) allow users to
-view and select a value (or range) along a track. They're ideal for adjusting
-settings such as volume and brightness, or for applying image filters.
+## Usage guidelines
 
-Sliders can use icons or labels to represent a numeric or relative scale.
+*   **Show the full range.** A slider should present every value that can be chosen, with `min` and `max` set to match.
+*   **Apply the value right away.** Use sliders for settings such as volume or brightness, where people see the effect as they drag.
+*   **Pick the variant by the value.** A standard slider fills from the start, a [centered](#centered) slider fills from the middle, and a [range](#range) slider selects two values.
 
-![Sound settings screen with sliders labeled 'Media volume', and 'Call volume'.](/components/images/slider/hero.webp)
+## Anatomy
 
-*   [Design article](https://m3.material.io/components/sliders)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/slider)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-slider", id="project-gb", previewHeight=650 %}
-
-## Usage
-
-Sliders may be continuous or discrete, and may also represent a range.
+A slider has a track, a handle, an optional value label and an optional icon.
 
 ```html
-<md-gb-slider></md-gb-slider>
-<md-gb-slider ticks value="50"></md-gb-slider>
-<md-gb-slider range value-start="25" value-end="75"></md-gb-slider>
+<md-gb-slider>
+  <md-gb-icon slot="icon"></md-gb-icon>
+</md-gb-slider>
 ```
 
-### Continuous
+## Examples
 
-Allows users to select a value along a subjective range.
+### Stops
 
-```html
-<md-gb-slider min="0" max="100" value="50"></md-gb-slider>
-```
+Set `step` for a slider that snaps to values, and add `ticks` to show a stop at each one.
 
-### Discrete
+{% demo "A slider that snaps every 10 with tick marks" %}
+<md-gb-slider aria-label="Brightness" min="0" max="100" step="10" value="50" ticks labeled></md-gb-slider>
+{% enddemo %}
 
-Allows users to select a specific value from a predetermined range. Tick marks
-may be used to indicate available values.
+### Centered
 
-```html
-<md-gb-slider step="5" ticks min="0" max="20"></md-gb-slider>
-```
+A centered slider starts its active track at the middle of the range, which suits values with a neutral point, such as balance.
+
+{% demo "A centered slider from -50 to 50" %}
+<md-gb-slider aria-label="Balance" centered min="-50" max="50" value="0" labeled></md-gb-slider>
+{% enddemo %}
 
 ### Range
 
-A range slider has two handles, and indicates a minimum and maximum value in a
-range.
+Set `range` for two handles. Use `value-start` and `value-end` for the chosen values, and `label-start` and `label-end` to name the handles.
+
+{% demo "A price range slider" %}
+<md-gb-slider range min="0" max="100" value-start="25" value-end="75" label-start="Minimum price" label-end="Maximum price" labeled></md-gb-slider>
+{% enddemo %}
+
+### Icon and size
+
+Put an icon in the `icon` slot to show it inside the track. Sizes run from `xs` (the default) to `xl`.
+
+{% demo "A large slider with a volume icon" %}
+<md-gb-slider aria-label="Volume" size="lg" value="60" labeled>
+  <md-gb-icon slot="icon">volume_up</md-gb-icon>
+</md-gb-slider>
+{% enddemo %}
+
+### Vertical
+
+Set `orientation="vertical"` for a vertical slider. Range sliders can't be vertical.
+
+{% demo "A vertical brightness slider" %}
+<md-gb-slider aria-label="Brightness" orientation="vertical" value="40" labeled></md-gb-slider>
+{% enddemo %}
+
+### Disabled
+
+A `disabled` slider can't be changed and leaves the focus order.
+
+{% demo "A disabled slider" %}
+<md-gb-slider aria-label="Volume" value="30" disabled></md-gb-slider>
+{% enddemo %}
+
+## Accessibility
+
+*   Name every slider with an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) or a visible label. A range slider names each handle with `label-start` and `label-end`.
+*   The handle is a `slider` that exposes its minimum, maximum and value. Set `value-label` (or `value-label-start` and `value-label-end`) when the number alone is unclear: the text is shown on the label and read out, such as "5 minutes".
+*   Arrow keys change the value by one step, Page Up and Page Down by a larger amount, and Home and End jump to the ends.
 
 ```html
-<md-gb-slider range value-start="25" value-end="50"></md-gb-slider>
+<md-gb-slider aria-label="Timer" min="1" max="60" value="5" value-label="5 minutes" labeled></md-gb-slider>
 ```
 
-### Value label
-
-A value label displays the specific value that corresponds with the handle's
-placement.
-
-The label appears when the handle is selected. For range sliders, labels appear
-when either handle is selected.
-
-```html
-<md-gb-slider labeled></md-gb-slider>
-```
-
-## API
+## API reference
 
 {% gbapi "slider" %}

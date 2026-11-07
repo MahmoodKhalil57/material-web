@@ -4,75 +4,95 @@ section: components
 order: 32
 description: Switches toggle the state of an item on or off.
 ---
-<img
-    class="hero"
-    src="/components/images/switch/hero.webp"
-    alt="Two switches on a settings page for Wi-Fi and Bluetooth. The first is on and the second is off."
-    title="Switches on a settings page.">
-
-*   [Design article](https://m3.material.io/components/switch)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/switch)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-switch", id="project-gb" %}
-
-## Usage
-
-Switches are similar to checkboxes, and can be unselected or selected.
-
-```html
-<md-gb-switch></md-gb-switch>
-<md-gb-switch selected></md-gb-switch>
-```
-
-### Icons
-
-Icons can be used to visually emphasize the switch's selected state. Switches
-can choose to display both icons or only selected icons.
-
-```html
-<md-gb-switch icons></md-gb-switch>
-<md-gb-switch icons selected></md-gb-switch>
-
-<md-gb-switch icons show-only-selected-icon></md-gb-switch>
-<md-gb-switch icons show-only-selected-icon selected></md-gb-switch>
-```
-
-### Label
-
-Associate a label with a switch using the `<label>` element.
-
-```html
+{% demo "A switch with a text label" %}
 <label>
   Wi-Fi
   <md-gb-switch selected></md-gb-switch>
 </label>
+{% enddemo %}
 
-<label for="switch">Bluetooth</label>
-<md-gb-switch id="switch"></md-gb-switch>
+## Usage guidelines
+
+*   **Use for settings.** Switches are the best way to let people adjust a setting. Use a switch, not a radio button, when each item in a list is controlled on its own.
+*   **Visible at a glance.** Make the on or off state clear, and let the change take effect right away.
+*   **Label with text.** Put the label next to the switch in a `<label>`. Its text color stays the same, even when the switch changes.
+
+## Anatomy
+
+A switch has a track, a handle and optional icons shown in the handle.
+
+```html
+<md-gb-switch>
+  <md-gb-icon slot="off-icon"></md-gb-icon>
+  <md-gb-icon slot="on-icon"></md-gb-icon>
+</md-gb-switch>
 ```
+
+## Examples
+
+### Selected
+
+Add `selected` to start with the switch on.
+
+{% demo "A label wrapping a selected switch, and a label linked by for" %}
+<label>
+  Wi-Fi
+  <md-gb-switch selected></md-gb-switch>
+</label>
+<label for="bluetooth">Bluetooth</label>
+<md-gb-switch id="bluetooth"></md-gb-switch>
+{% enddemo %}
+
+### Icons
+
+Icons in the `on-icon` and `off-icon` slots appear in the handle. Fill only `on-icon` to show an icon just when the switch is on.
+
+{% demo "A switch with a check mark when on and a close mark when off" %}
+<md-gb-switch aria-label="Notifications">
+  <md-gb-icon slot="on-icon">check</md-gb-icon>
+  <md-gb-icon slot="off-icon">close</md-gb-icon>
+</md-gb-switch>
+{% enddemo %}
+
+{% demo "A switch with an icon only when on" %}
+<md-gb-switch aria-label="Dark mode" selected>
+  <md-gb-icon slot="on-icon">check</md-gb-icon>
+</md-gb-switch>
+{% enddemo %}
+
+### Disabled
+
+A `disabled` switch can't be changed.
+
+{% demo "A disabled switch that is off and one that is on" %}
+<md-gb-switch aria-label="Sync off" disabled></md-gb-switch>
+<md-gb-switch aria-label="Sync on" disabled selected></md-gb-switch>
+{% enddemo %}
+
+### In a form
+
+A switch submits its `value` (`on` by default) under its `name` when it is selected, and `required` means it must be on.
+
+{% demo "A required switch that accepts the terms" %}
+<form>
+  <label>
+    Accept terms
+    <md-gb-switch name="terms" required></md-gb-switch>
+  </label>
+  <md-gb-button type="submit">Continue</md-gb-button>
+</form>
+{% enddemo %}
 
 ## Accessibility
 
-Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to switches without labels or switches whose labels need to be more
-descriptive.
+*   A switch has the `switch` role. It takes its name from an adjacent `<label>`, or from an explicit [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label), which wins over the label.
+*   Add an `aria-label` to a switch with no visible label.
+*   Space toggles the switch.
 
 ```html
 <md-gb-switch aria-label="Lights"></md-gb-switch>
-
-<label>
-  All
-  <md-gb-switch aria-label="All notifications"></md-gb-switch>
-</label>
 ```
 
-> Note: switches are not automatically labelled by `<label>` elements and always
-> need an `aria-label`. See b/294081528.
-
-## API
+## API reference
 
 {% gbapi "switch" %}

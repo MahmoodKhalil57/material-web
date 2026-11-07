@@ -2,271 +2,142 @@
 title: Text field
 section: components
 order: 34
-description: Text fields let users enter text into a UI.
+description: Text fields let people enter and edit text.
 ---
-<img class="hero" src="/components/images/textfield/hero.webp" alt="Several text fields in a form"
-title="Text fields">
-
-*   [Design article](https://m3.material.io/components/text-fields)
-*   [API Documentation](#api)
-*   [Source code](https://github.com/material-components/material-web/tree/main/textfield)
-
-## Types
-
-1.  [Filled text field](#filled-text-field)
-1.  [Outlined text field](#outlined-text-field)
-
-## Interactive Demo
-
-{% playgroundexample dirname="gb-textfield", id="project-gb" %}
-
-## Usage
-
-Text fields behave like
-[`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
-elements. They provide a container with labels for user input.
-
-{% demo "A filled textfield next to an outlined textfield. Both have a value of Value prefilled" %}
-<md-gb-text-field label="Label" value="Value">
-</md-gb-text-field>
-
-<md-gb-text-field label="Label" value="Value" variant="outlined">
-</md-gb-text-field>
+{% demo "A filled text field with a label" %}
+<md-gb-text-field label="Name"></md-gb-text-field>
 {% enddemo %}
 
-### Input type
+## Usage guidelines
 
-A text field's `type` attribute changes how the text field works, such as
-displaying a different keyboard or providing default validation.
+*   **Filled or outlined.** Filled fields have more visual weight and suit most forms. [Outlined](#variants) fields are lighter and work where many fields sit together. Don't mix them in one form.
+*   **Label every field.** The label floats above the text once the field has a value or focus. Use a [placeholder](#variants) only as an example of the input, never in place of the label.
+*   **Help before and after.** Use [supporting text](#supporting-text-and-counter) for hints, and explain what went wrong in an [error](#error-and-validation).
 
--   [`type="text"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text)
-    (default)
--   [`type="email"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email)
+## Anatomy
 
--   [`type="number"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number)
-
--   [`type="password"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)
-
--   [`type="search"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search)
-
--   [`type="tel"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/tel)
-
--   [`type="url"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url)
-
--   [`type="textarea"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)
-
-{% demo "Two filled textfields next to each other. The first has a label of Username and the outlined one has a label of Password" %}
-<md-gb-text-field label="Username" type="email">
-</md-gb-text-field>
-
-<md-gb-text-field label="Password" type="password">
-</md-gb-text-field>
-{% enddemo %}
-
-> Tip: use the
-> [`inputmode`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode)
-> attribute for more control over the displayed keyboard.
-
-### Labels
-
-Text fields should label their value with a floating `label`, a `placeholder`,
-or an external label. Labels help the user understand what value to input.
-
-{% demo "Three outlined textfields next to each other. the first has a label of Favorite food, the second one a placeholder of email@domain.com and there is a label that says First name and an empty outlined textfield next to it" %}
-<md-gb-text-field label="Favorite food" variant="outlined">
-</md-gb-text-field>
-
-<md-gb-text-field placeholder="email@domain.com" variant="outlined">
-</md-gb-text-field>
-
-<div>First name</div>
-<md-gb-text-field aria-label="First name" variant="outlined">
-</md-gb-text-field>
-{% enddemo %}
-
-> Note: text fields do not currently support `aria-labelledby`. External labels
-> must provide an `aria-label`. See b/276484803.
-
-### Textarea
-
-Multi-line text fields behave like
-[`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)
-elements.
-
-Textareas can specify the initial number of `rows`. Use CSS `width`, `height`,
-and `resize` to control the resize behavior of a textarea.
-
-<div class="figure-wrapper textarea">
-  <figure aria-label="A filled textarea that is vertically larger and has a label that says Vertical resize" style="padding-block: 16px; gap: 16px">
-  <style>
-    .figure-wrapper.textarea md-gb-text-field {
-      resize: vertical;
-    }
-  </style>
-  <md-gb-text-field type="textarea" label="Vertical resize" rows="3"></md-gb-text-field>
-  </figure>
-</div>
+A text field has a label, the input, optional icons and prefix or suffix text, and supporting text.
 
 ```html
-<style>
-  md-filled-text-field {
-    resize: vertical;
-  }
-</style>
-<md-gb-text-field type="textarea" label="Vertical resize" rows="3">
+<md-gb-text-field>
+  <md-gb-icon slot="leading-icon"></md-gb-icon>
+  <md-gb-icon slot="trailing-icon"></md-gb-icon>
 </md-gb-text-field>
 ```
 
+## Examples
+
+### Variants
+
+Text fields are `filled` by default. Set `variant="outlined"` for an outlined field. Add `placeholder` for an example of the input.
+
+{% demo "An outlined text field with a placeholder" %}
+<md-gb-text-field label="Email" variant="outlined" placeholder="name@example.com"></md-gb-text-field>
+{% enddemo %}
+
+### Input types
+
+`type` changes the keyboard and the built-in validation. It can be `text` (default), `email`, `number`, `password`, `search`, `tel`, `url` or `textarea`.
+
+{% demo "Password, email and number fields" %}
+<md-gb-text-field type="password" label="Password"></md-gb-text-field>
+<md-gb-text-field type="email" label="Email"></md-gb-text-field>
+<md-gb-text-field type="number" label="Quantity" min="1" max="10"></md-gb-text-field>
+{% enddemo %}
+
+### Textarea
+
+`type="textarea"` makes a multi-line field. Set `rows` for its height.
+
+{% demo "A three-row textarea" %}
+<md-gb-text-field type="textarea" label="Message" rows="3"></md-gb-text-field>
+{% enddemo %}
+
 ### Icons
 
-Text fields may display optional icons. Use icons to describe the input method
-(such as a search icon), provide additional functionality (such as a clear
-icon), or to express errors.
+Icons in the `leading-icon` and `trailing-icon` slots sit before and after the input. A trailing icon button needs an `aria-label`.
 
-{% demo "Three outlined textfields next to each other the first has a search icon at the start the label Search Messages, the second a label that says Password and an eye icon toggle button at the end, and a red, visually errored outlined textfield with the label Username with an exclamation icon at the end and helper error text under the field that says Username not available" %}
-<md-gb-text-field placeholder="Search for messages" has-leading-icon variant="outlined">
+{% demo "A search field with a leading icon and a clear button" %}
+<md-gb-text-field label="Search" value="Pasta">
   <md-gb-icon slot="leading-icon">search</md-gb-icon>
-</md-gb-text-field>
-
-<md-gb-text-field label="Password" type="password" has-trailing-icon variant="outlined">
-  <md-gb-icon-button slot="trailing-icon" color="standard" aria-label="Visibility">
-    <md-gb-icon>visibility</md-gb-icon>
-
+  <md-gb-icon-button slot="trailing-icon" aria-label="Clear">
+    <md-gb-icon>cancel</md-gb-icon>
   </md-gb-icon-button>
-</md-gb-text-field>
-
-<md-gb-text-field label="Username" error error-text="Username not available" has-trailing-icon variant="outlined">
-  <md-gb-icon slot="trailing-icon">error</md-gb-icon>
 </md-gb-text-field>
 {% enddemo %}
 
 ### Prefix and suffix
 
-Add `prefix-text` and `suffix-text` attributes to text fields to display
-additional context for the value.
+`prefix-text` and `suffix-text` show fixed text around the input, such as a currency or a domain.
 
-<div class="figure-wrapper textarea">
-  <figure aria-label="An outlined textfield with a floating label that says Dollar amount, a prefix dollar sign, the number zero as a value and a suffix of decimal zero zero at the end of the field" style="padding-block: 16px; gap: 16px">
-    <md-gb-text-field label="Dollar amount" type="number" value="0" prefix-text="$" suffix-text=".00" variant="outlined"></md-gb-text-field>
-  </figure>
-</div>
-
-```html
-<md-gb-text-field label="Dollar amount" type="number" value="0" prefix-text="$" suffix-text=".00" variant="outlined">
-</md-gb-text-field>
-```
-
-### Supporting text
-
-Supporting text conveys additional information about the input field, such as
-how it will be used. Supporting text can be replaced with error text when
-[validating](#validation).
-
-{% demo "Two filled fields next to each other. The first has a label that says comments and supporting text under the field that says Provide comments for the issue. The second field has a label of Name with an asterisk and supporting text under the field that has an asterisk followed by the word required" %}
-<md-gb-text-field label="Comments" supporting-text="Provide comments for the issue">
-</md-gb-text-field>
-
-<md-gb-text-field label="Name" required supporting-text="*required" error-text="Please fill out this field">
-</md-gb-text-field>
+{% demo "Fields with a prefix and a suffix" %}
+<md-gb-text-field label="Amount" prefix-text="$" value="100"></md-gb-text-field>
+<md-gb-text-field label="Email" suffix-text="@example.com" value="ada"></md-gb-text-field>
 {% enddemo %}
 
-### Character counter
+### Supporting text and counter
 
-Text fields with a `maxlength` attribute will display a character counter.
+`supporting-text` shows a hint below the field. A `maxlength` adds a character counter.
 
-{% demo "An outlined textfield with a floating label that says Title and a filled value that says Short and the text 5 / 10 under the field at the end" %}
-<md-gb-text-field label="Title" value="Short" maxlength="10" variant="outlined">
-</md-gb-text-field>
+{% demo "A field with a hint and a 20 character limit" %}
+<md-gb-text-field label="Bio" maxlength="20" value="Hello" supporting-text="Tell us about yourself"></md-gb-text-field>
 {% enddemo %}
 
-### Validation
+### Error and validation
 
-Text fields that validate can use
-[constraint validation](#constraint-validation) or
-[manual validation](#manual-validation).
+Set `error` and `error-text` to show an error yourself. A field also validates with the browser's constraint attributes (`required`, `pattern`, `minlength`, `min`, `max`) when its form is submitted or `reportValidity()` is called, and shows the message in its supporting text.
 
-#### Constraint validation
+{% demo "A field in an error state" %}
+<md-gb-text-field label="ZIP code" value="1234" error error-text="Enter a 5-digit ZIP code"></md-gb-text-field>
+{% enddemo %}
 
-Text fields may validate using the browser's
-[constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation)
-API. Each [input type](#input-type) above links to an article that describes how
-to validate it.
+### Required
 
-Text fields in a `<form>` will validate on submission, or by calling
-`textField.reportValidity()`.
+`required` adds an asterisk to the label and makes an empty field invalid. Add `no-asterisk` to hide it.
 
-```html
+{% demo "A required field" %}
+<md-gb-text-field label="Username" required supporting-text="Required"></md-gb-text-field>
+{% enddemo %}
+
+### Disabled and read-only
+
+A `disabled` field can't be focused. A `readonly` field can be focused and selected but not edited.
+
+{% demo "A disabled field and a read-only field" %}
+<md-gb-text-field label="Account" value="Locked" disabled></md-gb-text-field>
+<md-gb-text-field label="Order number" value="A-1042" readonly></md-gb-text-field>
+{% enddemo %}
+
+### In a form
+
+Fields take part in a form through their `name` and `value`, and the form checks them on submit.
+
+{% demo "A form with a required name and an email field" %}
 <form>
-  <md-gb-text-field name="name" label="Name" required>
-  </md-gb-text-field>
-  <md-gb-text-field name="email" label="Email" pattern="[\w\d-]+" suffix-text="@gmail.com">
-  </md-gb-text-field>
+  <md-gb-text-field name="name" label="Name" required></md-gb-text-field>
+  <md-gb-text-field name="email" type="email" label="Email" required></md-gb-text-field>
+  <md-gb-button type="submit">Subscribe</md-gb-button>
 </form>
-```
+{% enddemo %}
 
-Use the following properties and methods to check and report validation errors.
+### Density
 
--   `validity` is the text field's current
-    [`ValidityState`](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState).
--   [`setCustomValidity()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setCustomValidity)
-    sets a custom error message.
--   [`checkValidity()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/checkValidity)
-    dispatches an
-    [`invalid` event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event).
--   [`reportValidity()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/reportValidity)
-    dispatches an
-    [`invalid` event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
-    and displays the error in the text field's supporting text.
+Set `density` from 0 (default) to -3 to remove 4px of height per step.
 
-#### Manual validation
-
-Alternatively, text fields can manually control their error state and error
-message. Use manual validation if the text fields are driven by application
-state logic.
-
-```html
-<md-gb-text-field label="Username" value="jdoe" error error-text="Username is not available" variant="outlined">
-</md-gb-text-field>
-```
-
-> Tip: Prefer [constraint validation](#constraint-validation) when possible for
-> more platform features, such as `<form>` validation and listening to `invalid`
-> events.
+{% demo "A field with a density of -2" %}
+<md-gb-text-field label="Name" density="-2"></md-gb-text-field>
+{% enddemo %}
 
 ## Accessibility
 
-Add an
-[`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label)
-attribute to text fields with external labels or text fields whose labels need
-to be more descriptive.
+*   The field's `label` names the input. For a field with an external label, add an [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label).
+*   Supporting and error text are linked to the input, so screen readers read them with it. An invalid field is marked with `aria-invalid`.
+*   Icon buttons in a slot need their own `aria-label`.
 
 ```html
-<div>Username</div>
-<md-gb-text-field aria-label="Username"></md-gb-text-field>
-
-<md-gb-text-field label="First" aria-label="First name"></md-gb-text-field>
+<md-gb-text-field aria-label="Search the catalog"></md-gb-text-field>
 ```
 
-## Filled text field
-
-Filled and outlined text fields are functionally identical. See
-[choosing a text field](https://m3.material.io/components/text-fields/guidelines#83956188-4d8f-4c11-9389-aaba30b10214)
-for guidance on which one to use.
-
-```html
-<md-gb-text-field label="Filled" value="Value"></md-gb-text-field>
-```
-
-## Outlined text field
-
-Filled and outlined text fields are functionally identical. See
-[choosing a text field](https://m3.material.io/components/text-fields/guidelines#83956188-4d8f-4c11-9389-aaba30b10214)
-for guidance on which one to use.
-
-```html
-<md-gb-text-field label="Outlined" value="Value" variant="outlined"></md-gb-text-field>
-```
-
-## API
+## API reference
 
 {% gbapi "textfield" %}

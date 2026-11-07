@@ -873,7 +873,7 @@ export class SliderElement extends baseClass {
               type="range"
               class="slider-start"
               orient=${isVertical ? 'vertical' : nothing}
-              .tabIndex=${1}
+              .tabIndex=${0}
               ?disabled=${this.disabled}
               .min=${String(this.min)}
               .max=${String(this.max)}
