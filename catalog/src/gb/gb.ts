@@ -27,6 +27,7 @@ import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
 import './navigation.js';
 import './search.js';
+import './webmcp.js';
 
 import {
   themeFromSource,

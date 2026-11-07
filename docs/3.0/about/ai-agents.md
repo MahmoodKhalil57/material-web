@@ -38,6 +38,37 @@ Run the same command with `--check` to fail when the output is stale. After you
 change a component, regenerate the skill and copy it again, because an installed
 copy does not update itself.
 
+## Browser agents (WebMCP)
+
+On every page of these docs, a browser that supports
+[WebMCP](https://webmachinelearning.github.io/webmcp/) lets its agent search and
+read the docs through five read-only tools. Nothing is registered in other
+browsers. The tools use the same search as the Cmd+K dialog, and every page is
+also available as Markdown at its URL plus `.md`.
+
+- `search_docs` finds sections by keywords: `{query, limit?}`.
+- `get_page` returns a page or one section as Markdown: `{path, section?}`.
+- `list_pages` lists the pages, optionally of one section: `{section?}`.
+- `get_component_api` returns the properties, slots, events, methods, CSS parts
+  and custom properties of an element: `{tag}`.
+- `get_current_page` describes the page the user is on, with its outline.
+
+An agent calls them through the browser. This demo calls the same functions the
+page registers (`window.gbDocsTools`) and shows the first three results of a
+search.
+
+{% demo "Search result of the WebMCP tool" height=200 %}
+```html
+<output id="result">Searching…</output>
+```
+```ts
+const tools = (parent as any).gbDocsTools;
+const out = document.querySelector('#result')!;
+const found = await tools.search_docs({query: 'split button menu', limit: 3});
+out.textContent = found.results.map((r: any) => `${r.heading}: ${r.url}`).join('\n');
+```
+{% enddemo %}
+
 ## Watch out
 
 - The skill covers the `md-gb-*` elements of 3.0 only. For 2.5.0 `md-*`

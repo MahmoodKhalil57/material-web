@@ -29,7 +29,7 @@ interface RawPage {
   x: Array<[string, string, string, string]>;
 }
 
-interface Section {
+export interface Section {
   page: Page;
   id: string;
   heading: string;
@@ -39,7 +39,7 @@ interface Section {
   lowText: string;
 }
 
-interface Page {
+export interface Page {
   url: string;
   title: string;
   section: string;
@@ -90,7 +90,7 @@ function words(text: string): string[] {
   return out;
 }
 
-class Index {
+export class Index {
   readonly pages: Page[] = [];
   readonly sections: Section[] = [];
   /** Page-level words of the title. */
@@ -308,7 +308,7 @@ class Index {
   }
 }
 
-interface Result {
+export interface Result {
   page: Page;
   score: number;
   titleMatch: boolean;
@@ -380,7 +380,8 @@ const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 let indexPromise: Promise<Index | null> | null = null;
 let index: Index | null = null;
 
-function loadIndex(): Promise<Index | null> {
+/** Also used by webmcp.ts, which shares the index and the ranking. */
+export function loadIndex(): Promise<Index | null> {
   indexPromise ??= fetch(INDEX_URL, {cache: 'no-cache'})
     .then((r) => {
       if (!r.ok) throw new Error(`${r.status}`);
@@ -428,7 +429,7 @@ function highlight(parent: HTMLElement, text: string, tokens: string[]) {
 }
 
 /** A window of the section text around the first match. */
-function snippet(section: Section, tokens: string[]): string {
+export function snippet(section: Section, tokens: string[]): string {
   const text = section.text || section.page.description;
   const low = section.lowText || text.toLowerCase();
   let at = -1;
