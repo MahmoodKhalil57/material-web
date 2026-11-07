@@ -13,6 +13,14 @@
  * solved in closed form and emitted as a `linear()` easing plus the duration
  * after which the spring stays within SETTLE of its target.
  *
+ * Reduced motion (spec, styles/motion/transitions "Follows accessibility
+ * settings": use subtle fades instead of sliding or scaling, disable
+ * decorative effects like parallax or shape morphing): with
+ * `prefers-reduced-motion: reduce`, or inside `.md-motion-reduced`, the
+ * spatial springs (position, size, shape) finish instantly while the effects
+ * springs (opacity, color) keep animating, so every transition built on the
+ * spring tokens degrades to a fade.
+ *
  *   node scripts/m3/gen-motion.mjs [--out labs/gb/styles/motion/md-motion-tokens-spring.scss]
  */
 
@@ -42,6 +50,17 @@ function springParams(name, ctx) {
     return v;
   };
   return {damping: get('damping'), stiffness: get('stiffness')};
+}
+
+/** Spatial springs collapse to an instant change with reduced motion. */
+function reducedDeclarations(indent) {
+  return SPRINGS.filter((name) => name.endsWith('-spatial'))
+    .map(
+      (name) =>
+        `${indent}--md-sys-motion-spring-${name}: linear;\n` +
+        `${indent}--md-sys-motion-spring-${name}-duration: 0ms;\n`,
+    )
+    .join('');
 }
 
 function declarations(scheme, indent) {
@@ -79,6 +98,19 @@ ${declarations('expressive', '    ')}  }
   // Standard motion scheme.
   :where(.md-motion-standard) {
 ${declarations('standard', '    ')}  }
+
+  // Reduced motion (spec: transitions follow the platform setting and use
+  // fades instead of sliding, scaling or shape morphing). Spatial springs end
+  // instantly; effects springs (fades, color) are unchanged.
+  @media (prefers-reduced-motion: reduce) {
+    :root,
+    :where(.md-motion-standard) {
+${reducedDeclarations('      ')}    }
+  }
+
+  // Opts a subtree into reduced motion regardless of the platform setting.
+  :where(.md-motion-reduced) {
+${reducedDeclarations('    ')}  }
 }
 `;
 await writeFile(OUT, scss);

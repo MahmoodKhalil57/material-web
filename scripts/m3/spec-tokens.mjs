@@ -25,7 +25,7 @@
 import {readdir, readFile, writeFile} from 'node:fs/promises';
 import {dirname, join} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {compileMixin, norm, parseMixins, sameValue} from './gb-compile.mjs';
+import {compileBinding, compileMixin, norm, parseMixins, sameValue} from './gb-compile.mjs';
 import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -127,37 +127,7 @@ async function writeTokens(name, binding, checkOnly) {
   const previous = await readFile(binding.file, 'utf8').catch(() => '');
   const edits = parseEdits(previous);
   const exclude = (binding.exclude ?? []).map((p) => new RegExp(p));
-  const keep = (prop) => !exclude.some((re) => re.test(prop));
-
-  const compile = (specs) => {
-    const out = {};
-    for (const spec of [].concat(specs)) {
-      const decls = compileMixin(db, spec, WEB_CONTEXT);
-      // A type style (`x.font`, `x.size`, ... referencing one
-      // `md.sys.typescale.<style>`) is emitted as one
-      // `--x: var(--md-sys-typescale-<style>)` (+ `-axes`, `-tracking`) like
-      // the other gb components, instead of its parts.
-      const typeStyles = Object.entries(decls)
-        .map(([p, v]) => [p, v.match(/^var\(--md-sys-typescale-([\w-]+)-font\)$/)?.[1]])
-        .filter(([p, style]) => p.endsWith('-font') && style)
-        .map(([p, style]) => [p.slice(0, -'-font'.length), style]);
-      for (const [base, name] of typeStyles) {
-        const style = `var(--md-sys-typescale-${name})`;
-        for (const p of Object.keys(decls)) {
-          if (!p.startsWith(`${base}-`)) continue;
-          const part = p.slice(base.length + 1);
-          if (/^(font|weight|size|line-height|tracking|type)(-axes|-tracking)?$/.test(part)) delete decls[p];
-        }
-        decls[base] = style;
-        decls[`${base}-axes`] = style.replace(/\)$/, '-axes)');
-        decls[`${base}-tracking`] = style.replace(/\)$/, '-tracking)');
-      }
-      for (const [prop, value] of Object.entries(decls)) {
-        if (keep(prop)) out[prop] = value;
-      }
-    }
-    return out;
-  };
+  const compile = (specs) => compileBinding(db, specs, exclude, WEB_CONTEXT).decls;
 
   const blocks = [];
   const root = compile(binding.root);

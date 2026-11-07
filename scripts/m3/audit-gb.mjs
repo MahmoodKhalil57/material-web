@@ -12,6 +12,10 @@
  *   node scripts/m3/audit-gb.mjs [component ...] [--verbose] [--sync] [--gaps]
  *
  * `--sync`  rewrites only high-confidence declarations that differ from the spec.
+ *
+ * Drift marks: `~` high confidence (for a generated token file: out of date
+ * with its binding), `E~` a deliberate `// EDIT:` override of a generated
+ * value, `?~` an inferred binding that may be wrong.
  * `--gaps`  lists spec tokens Compose uses that no gb declaration implements.
  *
  * Exits non-zero on high-confidence drift (unless synced). Token mixins the
@@ -28,6 +32,7 @@ const gapsOnly = argv.includes('--gaps');
 const only = argv.filter((a) => !a.startsWith('--'));
 
 const {db, usage, analyze} = await loadBindings();
+const INTERACTION = ['hover', 'hovered', 'focus', 'focused', 'pressed'];
 const totals = {decls: 0, match: 0, derived: 0, drift: 0, confident: 0, unbound: 0, gaps: 0, unwired: 0};
 const rows = [];
 
@@ -35,17 +40,41 @@ for (const dir of (await readdir(GB)).sort()) {
   if (!COMPONENT_SETS[dir] || (only.length && !only.includes(dir))) continue;
   const result = await analyze(dir);
   if (!result) continue;
-  const {path, records, tokens, bound, unwired} = result;
+  const {files, records, tokens, bound, unwired} = result;
   const by = (status) => records.filter((r) => r.status === status);
   const drift = by('drift');
   const confident = drift.filter((d) => d.confident);
 
-  if (sync && confident.length) await writeFile(path, applySync(result.source, confident));
+  if (sync) {
+    for (const {path, source} of files) {
+      const mine = confident.filter((d) => d.file === path);
+      if (mine.length) await writeFile(path, applySync(source, mine));
+    }
+  }
 
   // Gaps: tokens the reference implementation uses for this component that
   // no gb declaration is bound to (spec features gb may be missing).
+  // A token whose twin in a sibling set (same path after the component
+  // name, same value) is implemented counts as implemented, e.g.
+  // `md.comp.fab.primary-container.container.color` when the FAB colors
+  // compile from `md.comp.extended-fab.primary-container`.
+  const rel = (t) => t.split('.').slice(3).join('.');
+  const value = (t) => JSON.stringify(db.resolve(t)?.ref ?? db.resolve(t)?.resolved);
+  const twins = new Map();
+  for (const b of bound) twins.set(`${rel(b)} ${value(b)}`, b);
   const gaps = tokens
     .filter((t) => usage.has(t) && !bound.has(t) && !db.tokens.get(t).token.deprecationMessage)
+    .filter((t) => !twins.has(`${rel(t)} ${value(t)}`))
+    // A hover / focus / pressed token equal to its resting token, which is
+    // implemented, is implemented by that resting value.
+    .filter((t) => {
+      const parts = t.split('.');
+      return !parts.some((p, i) => {
+        if (!INTERACTION.includes(p)) return false;
+        const rest = [...parts.slice(0, i), ...parts.slice(i + 1)].join('.');
+        return bound.has(rest) && value(rest) === value(t);
+      });
+    })
     .sort();
 
   const counts = [records.length, by('match').length, by('derived').length, drift.length, by('unbound').length, gaps.length, unwired.length];
@@ -61,9 +90,11 @@ for (const dir of (await readdir(GB)).sort()) {
 
   const showDetails = !gapsOnly && (drift.length || unwired.length || (verbose && counts[4]));
   if (showDetails) {
-    console.log(`\n## ${dir} (${path})`);
+    console.log(`\n## ${dir} (${files.map((f) => f.path).join(', ')})`);
     for (const d of drift) {
-      console.log(`  ${d.confident ? '~' : '?~'} ${d.mixin}: --${d.prop} is ${d.have}, spec ${d.token} says ${d.want}`);
+      const mark = d.confident ? '~' : d.edited ? 'E~' : '?~';
+      const where = files.length > 1 ? `${d.ns}.${d.mixin}` : d.mixin;
+      console.log(`  ${mark} ${where}: --${d.prop} is ${d.have}, spec ${d.token} says ${d.want}`);
     }
     for (const m of unwired) console.log(`  ! @mixin ${m} is never included by the component`);
     if (verbose) for (const u of by('unbound')) console.log(`  ? ${u.mixin}: --${u.prop}: ${u.have}`);

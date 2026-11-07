@@ -24,6 +24,7 @@
 import {readdir, readFile, writeFile} from 'node:fs/promises';
 import {basename, join} from 'node:path';
 import {COMPONENT_SETS, GB, loadBindings} from './gb-bindings.mjs';
+import {loadUnits} from './spec-units.mjs';
 
 const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const {db, analyze} = await loadBindings();
@@ -43,6 +44,40 @@ const PROBE = {
   TYPOGRAPHY: 'font',
 };
 
+/** gb component -> the spec pages whose token tables its tests check. */
+const SPEC_PAGES = {
+  appbar: ['app-bars'],
+  badge: ['badges'],
+  button: ['buttons'],
+  buttongroup: ['button-groups'],
+  card: ['cards'],
+  carousel: ['carousel'],
+  checkbox: ['checkbox'],
+  chip: ['chips'],
+  datepicker: ['date-pickers'],
+  dialog: ['dialogs'],
+  fab: ['floating-action-button', 'extended-fab'],
+  fabmenu: ['fab-menu'],
+  iconbutton: ['icon-buttons'],
+  list: ['lists'],
+  loadingindicator: ['loading-indicator'],
+  menu: ['menus'],
+  navbar: ['navigation-bar'],
+  navdrawer: ['navigation-drawer'],
+  navrail: ['navigation-rail'],
+  progress: ['progress-indicators'],
+  radio: ['radio-button'],
+  search: ['search'],
+  sheet: ['bottom-sheets', 'side-sheets'],
+  slider: ['sliders'],
+  splitbutton: ['split-button'],
+  switch: ['switch'],
+  textfield: ['text-fields'],
+  timepicker: ['time-pickers'],
+  toolbar: ['toolbars'],
+  tooltip: ['tooltips'],
+};
+
 const summary = [];
 for (const dir of (await readdir(GB)).sort()) {
   if (!COMPONENT_SETS[dir] || (only.length && !only.includes(dir))) continue;
@@ -53,7 +88,8 @@ for (const dir of (await readdir(GB)).sort()) {
   const includes = new Map(); // mixin -> markup
   const unbuildable = new Set();
   for (const {file, source} of styles) {
-    for (const {mixin, selector, styles: queries} of includedSelectors(source)) {
+    for (const {ns, mixin: name, selector, styles: queries} of includedSelectors(source)) {
+      const mixin = `${ns}.${name}`;
       if (includes.has(mixin)) continue;
       // First alternative of the selector list that markup can match.
       let markup;
@@ -62,25 +98,31 @@ for (const dir of (await readdir(GB)).sort()) {
         if (markup) break;
       }
       if (markup) includes.set(mixin, {markup, file});
-      else unbuildable.add(mixin);
+      else if (name !== 'inherit') unbuildable.add(mixin);
     }
   }
 
   const cases = [];
   for (const r of result.records) {
     if (r.status !== 'match' && !(r.status === 'drift' && r.confident)) continue;
-    const target = includes.get(r.mixin);
+    const target = includes.get(`${r.ns}.${r.mixin}`);
     if (!target || r.want === undefined) continue;
     // gb may spell a full corner as `50%`; it only equals the spec's full
     // corner relative to the element's box, which a probe cannot reproduce.
     if (/corner-full/.test(r.want) && r.have !== r.want) continue;
-    const property = probeProperty(r.prop, db.type(r.token));
+    // A weak binding (through a sibling mixin's word, e.g. a root default
+    // that a size mixin always overrides) is a guess, and a `1.15` factor
+    // matching a `15%` multiplier cannot be resolved through one property.
+    if (r.weak || (/%$/.test(r.want) && !/%/.test(r.have))) continue;
+    const property = probeProperty(r.prop, db.type(r.token), r.want);
     if (!property) continue;
     cases.push({
-      mixin: r.mixin,
+      // Components with several token files name the file too.
+      mixin: result.files.length > 1 ? `${r.ns}.${r.mixin}` : r.mixin,
       prop: r.prop,
       token: r.token,
-      spec: r.want,
+      // gb has no `corner-value` properties (see `equivalent`).
+      spec: r.want.replace(/--md-sys-shape-corner-value-/g, '--md-sys-shape-corner-'),
       property,
       markup: target.markup,
     });
@@ -142,10 +184,11 @@ export function includedSelectors(source) {
       stack.pop();
       buf = '';
     } else if (c === ';') {
-      const m = buf.trim().match(/^@include\s+[\w-]+-tokens\.([\w-]+)/);
+      const m = buf.trim().match(/^@include\s+([\w-]+-tokens)\.([\w-]+)/);
       if (m) {
         found.push({
-          mixin: m[1],
+          ns: m[1],
+          mixin: m[2],
           selector: currentSelector() ?? null,
           styles: stack.filter((e) => e.style).map((e) => e.style),
         });
@@ -284,14 +327,31 @@ function matchParen(s, open) {
   return s.length;
 }
 
-function probeProperty(prop, type) {
+function probeProperty(prop, type, spec) {
   if (/-axes$/.test(prop)) return 'font-variation-settings';
+  if (/-tracking$/.test(prop)) return 'letter-spacing';
+  // A composite type style: `var(--md-sys-typescale-<style>)`.
+  if (/^var\(--md-sys-typescale-[\w-]+\)$/.test(spec) && !/-(font|weight|size|line-height)\)$/.test(spec)) {
+    return 'font';
+  }
   if (/-tracking$/.test(prop)) return 'letter-spacing';
   if (/(^|-)color$/.test(prop)) return 'color';
   if (/(^|-)elevation$/.test(prop)) return 'box-shadow';
   if (/(^|-)shape$/.test(prop)) return 'border-top-left-radius';
   if (/(^|-)opacity$/.test(prop)) return 'opacity';
   return PROBE[type];
+}
+
+/**
+ * Section IDs (spec-units.mjs) of the "Specs > Tokens & specs" sections the
+ * generated cases verify: the page's token table. Cited for spec-checks.mjs.
+ */
+function tokenSections(dir) {
+  // Cached on the function: testFile runs before later module-level lets.
+  const sections = (tokenSections.cache ??= new Set(loadUnits().map((u) => u.section)));
+  return (SPEC_PAGES[dir] ?? [])
+    .map((page) => `${page}/specs/tokens-specs`)
+    .filter((s) => sections.has(s));
 }
 
 function testFile(dir, files, cases) {
@@ -306,7 +366,7 @@ function testFile(dir, files, cases) {
 
 // AUTOGENERATED. DO NOT MODIFY.
 // To modify this file, run: node scripts/m3/gen-spec-tests.mjs ${dir}
-// Spec: m3.material.io ${db.version}
+// Spec: m3.material.io ${db.version}${tokenSections(dir).map((s) => `\n// spec: ${s}`).join('')}
 //
 // Each case renders markup matching the selector that includes a token mixin
 // and checks that the property resolves to the M3 spec value.

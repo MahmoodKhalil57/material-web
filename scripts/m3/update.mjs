@@ -12,6 +12,7 @@
  *   npm run m3:update -- --offline    # reuse .m3-specs, regenerate + report
  *   npm run m3:update -- --sync       # also apply high-confidence gb drift
  *   npm run m3:update -- --accept     # mark current upstream files reviewed
+ *   npm run m3:update -- --extract    # spec-checks also runs Clairic
  *
  * Steps:
  *   1. Download docs + token DB (m3.material.io) and Compose Material 3 sources.
@@ -22,6 +23,9 @@
  *   5. Regenerate browser spec tests (<component>_spec_test.ts in each component).
  *   6. Report upstream Compose files that changed since they were last
  *      reviewed (scripts/m3/upstream-review.json).
+ *   7. Spec coverage: classify new spec units (needs OPENROUTER_API_KEY;
+ *      cached) and report buildable units nothing cites (spec-checks.mjs;
+ *      full list in .m3-specs/spec-checks/report.md).
  *
  * The report is written to .m3-specs/report.md.
  */
@@ -101,6 +105,8 @@ await generateTokenMeta();
 node('scripts/m3/gen-motion.mjs');
 // Token files of components built from the spec by this pipeline.
 node('scripts/m3/spec-tokens.mjs', ['--write']);
+// Layout values (breakpoints, margins, panes) read from the layout pages.
+node('scripts/m3/gen-layout.mjs');
 if (await exists('scripts/m3/gen-shapes.mjs')) node('scripts/m3/gen-shapes.mjs');
 // Components whose behavior is generated from the Compose reference.
 for (const generator of ['gen-loading-indicator', 'gen-progress', 'gen-fab-menu']) {
@@ -140,6 +146,16 @@ if (accept) {
   await writeFile(REVIEW, JSON.stringify(sortKeys(current), null, 2) + '\n');
   report.push(`\nRecorded ${Object.keys(current).length} files as reviewed in \`${REVIEW}\`.`);
 }
+
+// 7. Spec coverage, computed from `spec:` citations in labs/gb and scripts/m3.
+// Runs after the test generators so their citations are current.
+section('Spec coverage');
+const coverage = node(
+  'scripts/m3/spec-checks.mjs',
+  ['--summary', ...(argv.includes('--extract') ? ['--extract'] : [])],
+  {capture: true, allowFail: true},
+);
+report.push(coverage.trim() || 'spec-checks.mjs failed; run it directly to see why.');
 
 await writeFile(join(SPECS, 'report.md'), report.join('\n') + '\n');
 console.log(`\nReport: ${join(SPECS, 'report.md')}`);
