@@ -31,7 +31,9 @@
           root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
           const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
           const seed = localStorage.getItem('seed-color');
-          if (cache && cache.css && (!seed || cache.seed === seed)) {
+          // Only a cache for the saved seed, written by this version of gb.js
+          // (THEME_CACHE_VERSION in catalog/src/gb/gb.ts).
+          if (cache && cache.v === 1 && cache.css && seed && cache.seed === seed) {
             const style = document.createElement('style');
             style.id = 'gb-theme-style';
             style.textContent = cache.css;

@@ -27,6 +27,11 @@ import {
 } from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
 const DEFAULT_SEED = '#6750a4';
+/**
+ * Bump when themeToCss output changes: the pre-paint script in
+ * catalog/site/_includes/gb/default.html ignores caches of other versions.
+ */
+const THEME_CACHE_VERSION = 1;
 const MODES = ['auto', 'light', 'dark'] as const;
 type Mode = (typeof MODES)[number];
 const MODE_ICON: Record<Mode, string> = {
@@ -98,7 +103,7 @@ function applySeed(seed: string) {
   let css = '';
   try {
     const parsed = cached ? JSON.parse(cached) : null;
-    if (parsed?.seed === seed) css = parsed.css;
+    if (parsed?.v === THEME_CACHE_VERSION && parsed.seed === seed) css = parsed.css;
   } catch {
     // Regenerate below.
   }
@@ -108,7 +113,7 @@ function applySeed(seed: string) {
       layer: '',
     });
     css = `${standard}@media (prefers-contrast: more){${high}}`;
-    write('gb-theme-css', JSON.stringify({seed, css}));
+    write('gb-theme-css', JSON.stringify({v: THEME_CACHE_VERSION, seed, css}));
   }
   let style = document.getElementById('gb-theme-style');
   if (!style) {
@@ -127,6 +132,9 @@ if (seed.toLowerCase() !== DEFAULT_SEED) {
   } catch (e) {
     console.warn('Could not generate the theme from', seed, e);
   }
+} else {
+  // The baseline needs no generated CSS: drop any applied before paint.
+  document.getElementById('gb-theme-style')?.remove();
 }
 
 /** Sets the seed color of the dynamic theme and remembers it. */
