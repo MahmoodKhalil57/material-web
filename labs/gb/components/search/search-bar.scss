@@ -42,8 +42,9 @@
   .search-bar {
     // The unfocused glyphs sit 24dp from the container edge (search.md
     // Measurements); the icons are centered in tap targets.
+    --_glyph-margin: var(--unfocused-glyph-margin);
     --_glyph-inset: calc(
-      var(--unfocused-glyph-margin) - (var(--icon-target-size) - var(--icon-size)) / 2
+      var(--_glyph-margin) - (var(--icon-target-size) - var(--icon-size)) / 2
     );
     position: relative;
     display: flex;
@@ -68,6 +69,12 @@
       .search-bar-trailing > :not(slot)
     ) {
     padding-inline-end: var(--_glyph-inset);
+  }
+
+  // Focused (expanded): the glyphs move in to 12dp from the container edge
+  // (search.md Measurements: "Unfocused: 24dp, focused: 12dp").
+  .search-bar.search-bar-expanded {
+    --_glyph-margin: var(--focused-glyph-margin);
   }
 
   .search-bar.search-bar-disabled {

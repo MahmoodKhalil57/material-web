@@ -4,7 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CSSResultOrNative, html, LitElement, PropertyValues } from "lit";
+import {
+  css,
+  CSSResultOrNative,
+  html,
+  LitElement,
+  nothing,
+  PropertyValues,
+} from "lit";
 import { property, queryAssignedElements } from "lit/decorators.js";
 import {
   internals,
@@ -12,7 +19,16 @@ import {
 } from "../../../behaviors/element-internals.js";
 import { adoptStyles } from "../../styles/adopt-styles.js";
 import { type ButtonElement } from "../button/button-element.js";
+import "../iconbutton/md-gb-icon-button.js";
+import "../menu/md-gb-menu.js";
+import "../menu/md-gb-menu-item.js";
 import { clampDensity, type Density } from "../shared/density.js";
+import {
+  OverflowController,
+  overflowIcon,
+  overflowStyles,
+  renderOverflowMenu,
+} from "../shared/overflow.js";
 import { RovingFocusController } from "../shared/roving-focus.js";
 import { SelectionController } from "../shared/selection.js";
 import { updateClassList } from "../shared/update-class-list.js";
@@ -20,6 +36,7 @@ import {
   buttonGroupClasses,
   type ButtonGroupSelection,
   type ButtonGroupVariant,
+  type ButtonGroupResizing,
   isItemSelectable,
 } from "./button-group.js";
 
@@ -38,6 +55,7 @@ const baseClass = mixinElementInternals(LitElement);
  * A Material Design button group component.
  *
  * @slot - Used to display buttons.
+ * @slot overflow - Replaces the default overflow button (see `overflowMenu`).
  * @fires {InputEvent} input - Fired when selection changes. --bubbles --composed
  * @fires {Event} change - Fired when selection changes. --bubbles
  * @cssprop --between-space
@@ -52,7 +70,17 @@ const baseClass = mixinElementInternals(LitElement);
  */
 export class ButtonGroupElement extends baseClass {
   /** @nocollapse */
-  static override styles: CSSResultOrNative[] = [buttonGroupStyles];
+  static override styles: CSSResultOrNative[] = [
+    buttonGroupStyles,
+    overflowStyles,
+    css`
+      /* A group with an overflow menu stays inside its container, so buttons
+         that do not fit overflow instead of widening the group. */
+      :host([overflow-menu]) {
+        max-inline-size: 100%;
+      }
+    `,
+  ];
 
   constructor() {
     super();
@@ -98,6 +126,48 @@ export class ButtonGroupElement extends baseClass {
     this.requestUpdate("density", old);
   }
   private densityValue: Density = 0;
+
+  /**
+   * Whether the buttons at the trailing edge that do not fit collapse into a
+   * trailing overflow menu, and come back when the group has room again
+   * (button-groups.md, Adaptive design: "Buttons at the trailing edge of the
+   * button group can be customized to collapse into an overflow menu at
+   * smaller breakpoints, and become visible again at larger sizes."). The
+   * group is as wide as its container allows: give it a width, or put it in
+   * a narrower container, to make buttons overflow. Choosing a menu entry
+   * clicks the original button.
+   */
+  @property({ type: Boolean, reflect: true, attribute: "overflow-menu" })
+  overflowMenu = false;
+
+  /**
+   * How the group and its buttons resize (button-groups.md, Resizing).
+   * `fixed`: every button keeps the width its own size and width give it.
+   * `flexible`: the group fills the width of its container and its buttons
+   * grow with it; an icon button does not stretch past its set width, and a
+   * button with `resizing="fixed"` keeps its width. A button with
+   * `resizing="flexible"` in a fixed group grows when the group is given
+   * more width. Unset: a connected group is flexible (it spans its
+   * surface), a standard group is fixed.
+   */
+  @property({ reflect: true }) resizing: ButtonGroupResizing = "";
+
+  /**
+   * Buttons that do not fit hide, last first, and the menu entries click
+   * them (shared OverflowController).
+   */
+  protected readonly overflowing = new OverflowController(this, {
+    items: () => this.buttons,
+    container: () => this,
+    trigger: () =>
+      (this.renderRoot
+        ?.querySelector<HTMLSlotElement>("slot[name=overflow]")
+        ?.assignedElements({ flatten: true })[0] as HTMLElement | undefined) ??
+      null,
+    menu: () =>
+      this.renderRoot?.querySelector<HTMLElement>(".overflow-menu") ?? null,
+    enabled: () => this.overflowMenu,
+  });
 
   @queryAssignedElements({ flatten: true })
   private readonly assignedElementsList!: HTMLElement[];
@@ -260,9 +330,19 @@ export class ButtonGroupElement extends baseClass {
   protected handleSlotChange(): void {
     this.syncButtonsDisabledAndType();
     this.selectionModel.normalize();
+    this.overflowing.refresh();
   }
 
   protected override render() {
-    return html`<slot @slotchange=${this.handleSlotChange}></slot>`;
+    return html`<slot @slotchange=${this.handleSlotChange}></slot
+      ><slot name="overflow"
+        >${this.overflowMenu
+          ? html`<md-gb-icon-button
+              class="overflow-trigger"
+              aria-label="More buttons"
+              >${overflowIcon}</md-gb-icon-button
+            >`
+          : nothing}</slot
+      >${renderOverflowMenu(this.overflowing)}`;
   }
 }

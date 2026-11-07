@@ -12,7 +12,8 @@ import '../../sheet/md-gb-side-sheet.js';
 
 import {sendMouse} from '@web/test-runner-commands';
 
-import {center, deepElements, settle, sleep} from './subjects.js';
+import {center, deepElements, settle, until} from './subjects.js';
+import {frames} from './states-helpers.js';
 
 // Styles > Motion > Transitions > Enter and exit (styles/motion/transitions.md)
 // as the sheets use it: which sheets share the elevation of the main content,
@@ -56,7 +57,9 @@ describe('enter and exit with sheets (central)', () => {
     behind.addEventListener('click', () => clicks++);
     const c = center(behind);
     await sendMouse({type: 'click', position: [c.x, c.y]});
-    await sleep(30);
+    await until(() => clicks === 1);
+    // The sheet must stay open: give any reaction a few frames to show.
+    await frames();
     expect(clicks).toBe(1);
     expect(sheet.open).toBeTrue();
     cleanup();

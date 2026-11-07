@@ -23,6 +23,7 @@ import {
   waitForDuration,
   waitForMotion,
 } from './motion.js';
+import {until} from './test-dom.js';
 
 adoptStyles(document, [m3Styles]);
 
@@ -38,15 +39,11 @@ afterEach(async () => {
   await emulateMedia({reducedMotion: 'no-preference'});
 });
 
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/** Waits until the condition holds (at most one second). */
-async function until(condition: () => boolean) {
-  for (let i = 0; i < 100 && !condition(); i++) {
-    await wait(10);
-  }
+/** Two frames: lets media query change events and their listeners run. */
+function twoFrames() {
+  return new Promise((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(resolve)),
+  );
 }
 
 /** Starts a long animation of an opacity transition on `el`. */
@@ -220,7 +217,7 @@ describe('reduced motion setting', () => {
     stop();
     abort.abort();
     await emulateMedia({reducedMotion: 'no-preference'});
-    await wait(100);
+    await twoFrames();
     expect(seen).toEqual([true]);
     expect(aborted).toEqual([true]);
   });
@@ -304,7 +301,7 @@ describe('waitForMotion()', () => {
     const animation = animate(host, 60000);
     const abort = new AbortController();
     const result = waitForMotion(host, {timeout: 5000, signal: abort.signal});
-    setTimeout(() => abort.abort(), 20);
+    abort.abort();
     expect(await result).toBe('aborted');
     animation.cancel();
     abort.abort();
@@ -328,9 +325,10 @@ describe('waitForDuration()', () => {
 
   it('ends early when the signal aborts', async () => {
     const abort = new AbortController();
-    setTimeout(() => abort.abort(), 10);
     const start = performance.now();
-    await waitForDuration(5000, abort.signal);
+    const waiting = waitForDuration(5000, abort.signal);
+    abort.abort();
+    await waiting;
     expect(performance.now() - start).toBeLessThan(500);
     await waitForDuration(5000, abort.signal);
   });

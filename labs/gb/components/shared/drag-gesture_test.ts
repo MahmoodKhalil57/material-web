@@ -208,3 +208,81 @@ describe('DragGesture', () => {
     expect(gesture.dragging).toBeFalse();
   });
 });
+
+describe('DragGesture with a long press', () => {
+  let target: HTMLElement;
+  beforeEach(() => {
+    target = document.createElement('div');
+    document.body.append(target);
+  });
+  afterEach(() => target.remove());
+
+  const held = (onLongPress: jasmine.Spy) =>
+    new Promise<void>((resolve) => {
+      onLongPress.and.callFake(() => resolve());
+    });
+
+  it('drags in any direction once held', async () => {
+    const onLongPress = jasmine.createSpy('onLongPress');
+    const onStart = jasmine.createSpy('onStart');
+    const onMove = jasmine.createSpy('onMove');
+    const onEnd = jasmine.createSpy('onEnd');
+    const gesture = new DragGesture(target, {
+      axis: 'y',
+      longPress: 20,
+      onLongPress,
+      onStart,
+      onMove,
+      onEnd,
+    });
+    const wait = held(onLongPress);
+    pointer('pointerdown', target, 0, 0, 0);
+    await wait;
+    // Sideways movement is fine once held.
+    pointer('pointermove', target, 3, 0, 100);
+    expect(onStart).toHaveBeenCalledTimes(1);
+    pointer('pointermove', target, 3, 30, 110);
+    expect(onMove).toHaveBeenCalledWith(30, jasmine.anything());
+    pointer('pointerup', target, 3, 30, 120);
+    expect(onEnd).toHaveBeenCalledTimes(1);
+    gesture.disconnect();
+  });
+
+  it('gives up when the pointer moves before it is held', async () => {
+    const onLongPress = jasmine.createSpy('onLongPress');
+    const onStart = jasmine.createSpy('onStart');
+    const gesture = new DragGesture(target, {
+      axis: 'y',
+      longPress: 20,
+      onLongPress,
+      onStart,
+    });
+    pointer('pointerdown', target, 0, 0, 0);
+    pointer('pointermove', target, 0, 40, 5);
+    await new Promise((resolve) => setTimeout(resolve, 40));
+    expect(onLongPress).not.toHaveBeenCalled();
+    pointer('pointermove', target, 0, 80, 100);
+    expect(onStart).not.toHaveBeenCalled();
+    gesture.disconnect();
+  });
+
+  it('cancels a held press that is released without moving', async () => {
+    const onLongPress = jasmine.createSpy('onLongPress');
+    const onCancel = jasmine.createSpy('onCancel');
+    const onEnd = jasmine.createSpy('onEnd');
+    const gesture = new DragGesture(target, {
+      axis: 'y',
+      longPress: 20,
+      onLongPress,
+      onCancel,
+      onEnd,
+    });
+    const wait = held(onLongPress);
+    pointer('pointerdown', target, 0, 0, 0);
+    await wait;
+    pointer('pointerup', target, 0, 0, 100);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onEnd).not.toHaveBeenCalled();
+    gesture.disconnect();
+  });
+});

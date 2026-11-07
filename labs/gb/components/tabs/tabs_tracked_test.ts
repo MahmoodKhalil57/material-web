@@ -93,8 +93,12 @@ describe('md-gb-tabs tracked spec units', () => {
 
   describe('layout', () => {
     // spec: tabs-f6cf78, tabs-a716c4
-    it('sizes a tab by its label, so tabs grow with the number of items', async () => {
-      const {items, tabs} = await render(three);
+    it('sizes a scrollable tab by its label, so tabs grow with the number of items', async () => {
+      const {items, tabs} = await render(html`<md-gb-tabs aria-label="Trips" scrollable>
+        <md-gb-tab selected><span slot="label">Flights</span></md-gb-tab>
+        <md-gb-tab><span slot="label">Hotels</span></md-gb-tab>
+        <md-gb-tab><span slot="label">Car rental and more</span></md-gb-tab>
+      </md-gb-tabs>`);
       const widths = items.map((i) => i.getBoundingClientRect().width);
       expect(widths[2]).toBeGreaterThan(widths[0]);
       expect(widths[0]).not.toBe(widths[1]);

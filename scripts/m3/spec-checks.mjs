@@ -332,7 +332,13 @@ function walk(dir, files) {
     if (e.name === 'node_modules' || e.name.startsWith('.')) continue;
     const p = join(dir, e.name);
     if (e.isDirectory()) walk(p, files);
-    else if (/\.(ts|js|mjs|scss|css|md|html)$/.test(e.name) && !/\.(d\.ts|cssresult\.js)$/.test(e.name)) {
+    else if (
+      /\.(ts|js|mjs|scss|css|md|html)$/.test(e.name) &&
+      !/\.(d\.ts|cssresult\.js)$/.test(e.name) &&
+      // tsc output (a `.js` next to its `.d.ts`): the `.ts` is the source, and
+      // a stale `.js` whose `.ts` was deleted must not keep its citations.
+      !(e.name.endsWith('.js') && existsSync(join(dir, e.name.replace(/\.js$/, '.d.ts'))))
+    ) {
       files.push(relative('.', p).split(sep).join('/'));
     }
   }

@@ -304,44 +304,44 @@ describe('<md-gb-dialog> measurements', () => {
 
   // spec: dialogs-ab39f9, dialogs-128a15
   it('Container shape', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> [part=dialog]', 'radius', {eq: 0});
   });
 
   // spec: dialogs-a9c2a5, dialogs-e8a3e0
   it('Header height', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> [part=header]', 'height', {eq: 56});
   });
 
   // spec: dialogs-8cf991, dialogs-8b4e9d
   it('Header width', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> [part=header]', 'width', {like: 'md-gb-dialog >> [part=dialog]'});
   });
 
   // spec: dialogs-815352, dialogs-7f2313
   it('Headline text alignment', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectCss('md-gb-dialog >> [part=headline]', 'text-align', 'start|left', '');
   });
 
   // spec: dialogs-8e7b0b, dialogs-f8a175
   it('Divider height', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> .dialog-divider-top', 'border-bottom', {eq: 1});
   });
 
   // spec: dialogs-30379c, dialogs-4450f1
   it('Close icon size', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> [part=close-button] svg', 'width', {eq: 24});
     expectDp('md-gb-dialog >> [part=close-button] svg', 'height', {eq: 24});
   });
 
   // spec: dialogs-bceb7a, dialogs-5932a8
   it('Top/left/right padding', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> [part=header]', 'padding-left', {eq: 24});
     expectDp('md-gb-dialog >> [part=header]', 'padding-right', {eq: 24});
     expectDp('md-gb-dialog >> [part=content]', 'padding-left', {eq: 24});
@@ -349,7 +349,7 @@ describe('<md-gb-dialog> measurements', () => {
 
   // spec: dialogs-990f9d, dialogs-b70a06
   it('Padding between elements', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
+    await mount('<md-gb-dialog open quick full-screen always-full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> [part=header]', 'gap', {eq: 8});
   });
 });

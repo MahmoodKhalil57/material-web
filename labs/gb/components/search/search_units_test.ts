@@ -418,4 +418,74 @@ describe('search spec units', () => {
     expect(q('.search-view-input').getAttribute('enterkeyhint')).toBe('search');
     expect(view.shadowRoot!.querySelector(`.${SEARCH_VIEW_CLASSES.input}`)).not.toBeNull();
   });
+
+  // spec: search-168029
+  it('shows a progress indicator and marks results busy while searching', async () => {
+    const {bar, view, q} = await render(contained);
+    await bar.show();
+    finish(bar, view);
+    expect(q('md-gb-progress')).withContext('idle').toBeNull();
+    expect(q('.search-view-results').getAttribute('aria-busy')).toBe('false');
+    bar.searching = true;
+    await bar.updateComplete;
+    await view.updateComplete;
+    const progress = q('md-gb-progress');
+    expect(progress).withContext('searching').not.toBeNull();
+    await (progress as unknown as {updateComplete: Promise<unknown>}).updateComplete;
+    expect(progress.shadowRoot!.querySelector('[role="progressbar"]')!
+      .getAttribute('aria-label')).toBe('Searching');
+    expect(q('.search-view-results').getAttribute('aria-busy')).toBe('true');
+    expect(q('.search-view-status').textContent!.trim()).toBe('Searching');
+    bar.searching = false;
+    await bar.updateComplete;
+    await view.updateComplete;
+    expect(q('md-gb-progress')).withContext('done').toBeNull();
+  });
+
+  // spec: spacing-69a83a, spacing-4e4961
+  it('pads the 40dp leading icon 8dp vertically and 8dp from the input text', async () => {
+    const {barBox, barInput} = await render(
+      html`<md-gb-search-bar quick placeholder="Search"
+        ><button slot="leading" aria-label="Menu"
+          style="inline-size: 40px; block-size: 40px; padding: 0; border: 0"
+          >m</button
+        ></md-gb-search-bar
+      >`,
+    );
+    const box = barBox.getBoundingClientRect();
+    const icon = barBox.getRootNode() instanceof ShadowRoot
+      ? (barBox.getRootNode() as ShadowRoot).host.querySelector('[slot="leading"]')!.getBoundingClientRect()
+      : box;
+    expect(icon.top - box.top).withContext('vertical padding').toBe(8);
+    expect(box.bottom - icon.bottom).toBe(8);
+    expect(barInput.getBoundingClientRect().left - icon.right)
+      .withContext('horizontal gap').toBe(8);
+  });
+
+  // spec: spacing-17a38e, spacing-780579
+  it('recommends 24dp margins for the bar and 12dp in the focused view with the same padding and gaps', async () => {
+    const {bar, view, q, barBox} = await render(contained);
+    const margin = (el: Element, prop: string) =>
+      parseFloat(getComputedStyle(el).getPropertyValue(prop));
+    const toPx = (el: Element, token: string) => {
+      const probe = document.createElement('div');
+      probe.style.inlineSize = `var(${token})`;
+      el.appendChild(probe);
+      const px = probe.getBoundingClientRect().width;
+      probe.remove();
+      return px;
+    };
+    expect(toPx(barBox, '--contained-leading-margin')).withContext('bar leading').toBe(24);
+    expect(toPx(barBox, '--contained-trailing-margin')).withContext('bar trailing').toBe(24);
+    await bar.show();
+    finish(bar, view);
+    const header = q('.search-view-header');
+    expect(margin(header, 'margin-inline-start')).withContext('view leading').toBe(12);
+    expect(margin(header, 'margin-inline-end')).withContext('view trailing').toBe(12);
+    const input = q('.search-view-input').getBoundingClientRect();
+    const back = q('.search-view-back').getBoundingClientRect();
+    const hb = header.getBoundingClientRect();
+    expect(back.top - hb.top).withContext('vertical padding').toBe(8);
+    expect(input.left - back.right).withContext('horizontal gap').toBe(8);
+  });
 });

@@ -110,6 +110,17 @@ export interface PanePlanState {
   levitate?: PaneLevitate;
   /** Whether a levitated secondary pane is shown. */
   levitateOpen?: boolean;
+  /**
+   * Whether the levitated pane is modal, a temporary task that stays
+   * floating at every window size class (spec: scaffold, Floating).
+   */
+  levitateModal?: boolean;
+  /**
+   * Opts a levitated pane out of the large-screen default and keeps it
+   * co-planar where two panes fit (spec: scaffold, "On large screens,
+   * consider changing docked panes into co-planar panes").
+   */
+  levitateCoplanar?: boolean;
   /** The orientation of a fold (hinge) that crosses the scaffold, if any. */
   fold?: FoldOrientation | null;
 }
@@ -151,6 +162,8 @@ export function planPanes({
   collapsedPane = null,
   levitate = 'none',
   levitateOpen = false,
+  levitateModal = false,
+  levitateCoplanar = false,
   fold = null,
 }: PanePlanState): PanePlan {
   const {panesRecommended, panesMax} = windowSizeClassValues(windowClass);
@@ -199,7 +212,18 @@ export function planPanes({
     };
   }
 
-  if (twoPane) {
+  // Spec (scaffold, Levitate): "On large screens: floating panes are the
+  // default", so a levitated (temporary) pane keeps floating at large and
+  // extra-large instead of turning co-planar, unless the author opts into
+  // co-planar. A modal pane (a temporary task) floats at every size class.
+  const floatsByDefault =
+    levitate !== 'none' &&
+    layout !== 'list-detail' &&
+    !levitateCoplanar &&
+    isWindowSizeClassAtLeast(windowClass, 'large');
+  const temporaryTask =
+    levitate !== 'none' && (levitateModal || floatsByDefault);
+  if (twoPane && !temporaryTask) {
     const visible: PanePlan['visible'] =
       collapsedPane === 'secondary'
         ? ['primary']

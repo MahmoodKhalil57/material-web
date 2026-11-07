@@ -312,6 +312,19 @@ export interface ThemeOptions {
    * the source color still drives harmonization of custom colors.
    */
   palettes?: SchemePalettes;
+  /**
+   * Color fidelity per role (color > Adjust existing colors > Use color
+   * fidelity): `true` takes the role's color from the `fidelity` variant, whose
+   * tones match the source color; `false` takes it from `variant` (or from
+   * `tonal-spot` when `variant` is `fidelity`). Roles that are not flagged
+   * follow `variant`.
+   *
+   * @example
+   * ```ts
+   * themeFromSource({source, fidelity: {'primary-container': true}});
+   * ```
+   */
+  fidelity?: Partial<Record<ColorRole, boolean>>;
 }
 
 /** Role name -> hex color. */
@@ -600,6 +613,30 @@ export function themeFromSource(options: ThemeOptions): DynamicTheme {
     const roles: Record<string, string> = rolesFromScheme(
       options.palettes ? withPalettes(scheme, options.palettes) : scheme,
     );
+    const flags = Object.entries(options.fidelity ?? {});
+    if (flags.length) {
+      const fidelity = rolesFromScheme(
+        createScheme(source, 'fidelity', isDark, contrast, {
+          specVersion,
+          platform,
+        }),
+      );
+      const plain =
+        variant === 'fidelity'
+          ? rolesFromScheme(
+              createScheme(source, 'tonal-spot', isDark, contrast, {
+                specVersion,
+                platform,
+              }),
+            )
+          : roles;
+      for (const [role, on] of flags) {
+        if (!(COLOR_ROLES as readonly string[]).includes(role)) {
+          throw new Error(`Unknown color role "${role}" in fidelity.`);
+        }
+        roles[role] = on ? fidelity[role as ColorRole] : plain[role as ColorRole];
+      }
+    }
     for (const color of customColors) {
       Object.assign(roles, customRolesFromScheme(scheme, color));
     }

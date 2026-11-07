@@ -21,6 +21,14 @@ import {
 // in `state-layers_test.ts` and `state-layers-gated_test.ts`.
 
 describe('state layers (central gaps)', () => {
+  // With no known gaps the suite would have no tests, which the runner
+  // reports as a failed file ("Unknown error").
+  if (KNOWN_GAPS.hoverGate.length === 0 && KNOWN_GAPS.hoverFade.length === 0) {
+    it("has no known gaps", () => {
+    expect(KNOWN_GAPS.hoverGate).toEqual([]);
+    expect(KNOWN_GAPS.hoverFade).toEqual([]);
+    });
+  }
   // spec: interaction-states-cbf1a8, interaction-states-e2f309
   for (const id of KNOWN_GAPS.hoverGate) {
     it(`${id}: gates every :hover rule on (hover: hover)`, async () => {

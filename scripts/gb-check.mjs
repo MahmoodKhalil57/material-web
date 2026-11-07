@@ -16,6 +16,7 @@
  *   npm run gb:check -- --no-test slider  # build only
  *   npm run gb:check -- --fast slider     # skip the type check while iterating
  *   npm run gb:check -- --emit slider     # also write tsc's .js output
+ *   npm run gb:check -- --watch slider    # keep running; rerun affected tests on save
  *
  * Steps, each limited to what was asked for:
  *   1. Sass for the named directories (labs/gb/styles too with --styles/--all).
@@ -28,7 +29,7 @@
  */
 
 import {execFileSync} from 'node:child_process';
-import {existsSync, readdirSync, readFileSync, statSync, writeFileSync} from 'node:fs';
+import {existsSync, readdirSync, readFileSync, statSync, watch as watchFs, writeFileSync} from 'node:fs';
 import {dirname, join, relative} from 'node:path';
 
 const argv = process.argv.slice(2);
@@ -36,7 +37,9 @@ const all = argv.includes('--all');
 const styles = all || argv.includes('--styles');
 const test = !argv.includes('--no-test');
 // Type checking takes a few seconds; skip it while iterating (`--fast`).
-const typecheck = !argv.includes('--fast');
+const watch = argv.includes('--watch');
+// `--watch` skips it too: the editor type checks as you go.
+const typecheck = !argv.includes('--fast') && !watch;
 // Compiled .js is only needed by the catalog and by `npm test`'s file glob.
 const emit = argv.includes('--emit') || all;
 const dirs = argv.filter((a) => !a.startsWith('--'));
@@ -141,8 +144,40 @@ if (test) {
     const globs = targets.map((d) =>
       isFile(d) ? relative('.', d).replace(/\\/g, '/') : `${relative('.', d).replace(/\\/g, '/')}/**/${pattern}`,
     );
-    node(BIN.wtr, globs);
+    if (watch) {
+      watchStyles();
+      // The runner and its browser stay up; on save it reruns only the test
+      // files that load the changed module.
+      node(BIN.wtr, [...globs, '--watch']);
+    } else {
+      node(BIN.wtr, globs);
+    }
   });
+}
+
+/**
+ * `--watch`: recompiles a folder's Sass (and its .cssresult.ts) when one of its
+ * .scss files changes; web-test-runner then reruns the tests that load it.
+ */
+function watchStyles() {
+  const pending = new Set();
+  let timer;
+  for (const dir of sassTargets) {
+    watchFs(dir, {recursive: true}, (_, name) => {
+      if (!name?.endsWith('.scss')) return;
+      pending.add(dir);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const dirs = [...pending].map((d) => relative('.', d));
+        pending.clear();
+        try {
+          execFileSync(process.execPath, [process.argv[1], '--no-test', '--fast', ...dirs], {stdio: 'inherit'});
+        } catch {
+          // Sass errors are already printed; keep watching.
+        }
+      }, 50);
+    });
+  }
 }
 console.log(`[gb:check] done in ${((Date.now() - started) / 1000).toFixed(1)}s`);
 

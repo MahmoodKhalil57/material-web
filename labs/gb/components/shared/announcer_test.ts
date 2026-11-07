@@ -61,10 +61,6 @@ function regionOf(host: LitElement, politeness: string) {
   );
 }
 
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 describe('normalizeAnnouncement()', () => {
   it('collapses whitespace and trims', () => {
     expect(normalizeAnnouncement('  Message \n  sent  ')).toBe('Message sent');
@@ -197,7 +193,6 @@ describe('AnnouncerController', () => {
       expect(polite.textContent).toBe('');
       await promise;
       expect(polite.textContent).toBe('Refreshing');
-      await wait(0);
       // The region went empty, then held the text again: a change to read.
       expect(changes).toContain('');
       expect(changes[changes.length - 1]).toBe('Refreshing');
@@ -217,7 +212,6 @@ describe('AnnouncerController', () => {
       const first = host.announcer.announce('Same');
       const second = host.announcer.announce('Other');
       await Promise.all([first, second]);
-      await wait(15);
       expect(host.announcer.text()).toBe('Other');
     });
 
@@ -265,7 +259,6 @@ describe('AnnouncerController', () => {
       const pending = host.announcer.announce('Saved');
       host.announcer.clear();
       await pending;
-      await wait(15);
       expect(host.announcer.text()).toBe('');
     });
   });
@@ -280,7 +273,6 @@ describe('AnnouncerController', () => {
       expect(host.shadowRoot!.querySelector(`[${ANNOUNCER_ATTRIBUTE}]`))
         .withContext('no region left behind')
         .toBeNull();
-      await wait(15);
       expect(host.shadowRoot!.querySelector(`[${ANNOUNCER_ATTRIBUTE}]`))
         .withContext('the dropped announcement does not come back')
         .toBeNull();

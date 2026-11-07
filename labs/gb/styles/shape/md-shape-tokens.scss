@@ -24,5 +24,48 @@
     --md-sys-shape-corner-xl-increased: #{tokens.$md-sys-shape--corner-extra-large-increased};
     --md-sys-shape-corner-xxl: #{tokens.$md-sys-shape--corner-extra-extra-large};
     --md-sys-shape-corner-full: 50cqmin;
+
+    // Single-corner values (md.sys.shape.corner-value.*): what component
+    // inner-corner tokens map to (shape-83346d), apart from the all-corner
+    // tokens above, so overriding one leaves the other alone.
+    --md-sys-shape-corner-value-xs: #{tokens.$md-sys-shape--corner-value-extra-small};
+    --md-sys-shape-corner-value-sm: #{tokens.$md-sys-shape--corner-value-small};
+    --md-sys-shape-corner-value-md: #{tokens.$md-sys-shape--corner-value-medium};
+    --md-sys-shape-corner-value-lg: #{tokens.$md-sys-shape--corner-value-large};
+    --md-sys-shape-corner-value-lg-increased: #{tokens.$md-sys-shape--corner-value-large-increased};
+    --md-sys-shape-corner-value-xl: #{tokens.$md-sys-shape--corner-value-extra-large};
+    --md-sys-shape-corner-value-xl-increased: #{tokens.$md-sys-shape--corner-value-extra-large-increased};
+    --md-sys-shape-corner-value-xxl: #{tokens.$md-sys-shape--corner-value-extra-extra-large};
+
+    // Corner family (shape > Corner radius scale > Customizing shapes): the
+    // shape style family can be customized from `round` (rounded) to `bevel`
+    // (cut). Components apply it with `corner-shape: var(--md-sys-shape-family)`.
+    --md-sys-shape-family: round;
+  }
+
+  // Corner-value tokens for individual corners (shape > Corner radius scale >
+  // Shape tokens): every scale step also has one token per corner, which
+  // defaults to the step's all-corner token. Override one to shape a single
+  // corner; component inner-corner tokens map to these.
+  :root {
+    @each $size in ('none', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'full') {
+      @each $corner in ('start-start', 'start-end', 'end-end', 'end-start') {
+        --md-sys-shape-corner-#{$size}-#{$corner}: var(--md-sys-shape-corner-#{$size});
+      }
+    }
+  }
+
+  // The cut family, in browsers that support `corner-shape`: `data-shape-family
+  // ="cut"` on an element (usually `<html>`) cuts the corners of everything
+  // below it that is outside a shadow root. Components in shadow roots apply
+  // `corner-shape: var(--md-sys-shape-family)` themselves.
+  @supports (corner-shape: bevel) {
+    [data-shape-family='cut'] {
+      --md-sys-shape-family: bevel;
+    }
+
+    [data-shape-family] :where(*) {
+      corner-shape: var(--md-sys-shape-family);
+    }
   }
 }

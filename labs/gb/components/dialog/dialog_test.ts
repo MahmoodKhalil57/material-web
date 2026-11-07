@@ -139,6 +139,7 @@ describe('<md-gb-dialog>', () => {
     it('is a dialog when full-screen', async () => {
       const {el, dialog} = await setupTest();
       el.fullScreen = true;
+      el.alwaysFullScreen = true;
       await el.updateComplete;
       expect(dialog.getAttribute('role')).toBe('dialog');
     });
@@ -150,6 +151,7 @@ describe('<md-gb-dialog>', () => {
       expect(dialog.getAttribute('role')).toBe('dialog');
       el.type = 'alert';
       el.fullScreen = true;
+      el.alwaysFullScreen = true;
       await el.updateComplete;
       expect(dialog.getAttribute('role')).toBe('alertdialog');
     });
@@ -462,7 +464,7 @@ describe('<md-gb-dialog>', () => {
   describe('full-screen', () => {
     async function setupFullScreen() {
       return setupTest(
-        html`<md-gb-dialog quick full-screen close-label="Discard">
+        html`<md-gb-dialog quick full-screen always-full-screen close-label="Discard">
           <span slot="headline">New event</span>
           <input class="field" />
           <md-gb-button slot="actions" class="save" value="save"

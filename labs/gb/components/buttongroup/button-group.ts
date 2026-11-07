@@ -16,6 +16,9 @@ import {
 /** Button group variant layout types. */
 export type ButtonGroupVariant = 'standard' | 'connected';
 
+/** Button group resizing types (empty: by variant). */
+export type ButtonGroupResizing = 'fixed' | 'flexible' | '';
+
 /** Button group selection types. */
 export type ButtonGroupSelection = 'none' | 'single' | 'multiple';
 

@@ -95,7 +95,8 @@ describe('carousel spec units', () => {
     const box = scroller.getBoundingClientRect();
     const large = items[2];
     expect(size(2)).toBeGreaterThan(100);
-    const r = large.getBoundingClientRect();
+    // The item's visible bounds (its box stays in the scroll flow).
+    const r = large.shadowRoot!.querySelector('[part=frame]')!.getBoundingClientRect();
     expect((r.left + r.right) / 2).toBeCloseTo((box.left + box.right) / 2, 0);
     expect(size(1)).toBeLessThan(60);
     expect(size(3)).toBeLessThan(60);

@@ -21,6 +21,7 @@ import {
 import listStyles from "./list.css" with { type: "css" }; // github-only
 // import {styles as listStyles} from './list.cssresult.js'; // google3-only
 
+import { DragGesture } from "../shared/drag-gesture.js";
 import { isRtl, nextFocusIndex } from "../shared/roving-focus.js";
 import {
   LIST_ITEM_CLASSES,
@@ -31,6 +32,7 @@ import {
 import {
   getListItemLabel,
   isTextEntry,
+  LIST_ITEM_CHECKED_EVENT,
   ListItemElement,
 } from "./list-item-element.js";
 
@@ -102,6 +104,8 @@ interface PointerDrag {
   hostTop: number;
   /** Whether the pointer moved past the slop (a drag, not a tap). */
   moved: boolean;
+  /** Whether a long press and drag (`DragGesture`) drives it, not a handle. */
+  gesture?: boolean;
 }
 
 interface KeyboardDrag {
@@ -165,6 +169,16 @@ const baseClass = mixinElementInternals(LitElement);
  * the item, then tap its move up / move down buttons; tap the handle again to
  * drop it (or move focus away).
  *
+ * Selection checkboxes (selection.md, "Click"): in a `selectable` list every
+ * item shows a checkbox for itself while the cursor hovers it, and all items
+ * show one once an item is selected. Set `selection-primary` for lists whose
+ * main activity is selecting: the checkboxes are then always visible. Tapping
+ * an item's avatar selects it (a selection shortcut).
+ *
+ * Long press an item of a `reorderable` list (that is not `selectable`) and
+ * drag it to move it, without using its drag handle (interaction gestures:
+ * "A long press and drag allows people to reorder content").
+ *
  * Set `density` (0 to -3) for denser lists (foundations Layout > Spacing >
  * Density): each step removes 4px from the item height and 2px from its top
  * and bottom padding.
@@ -220,6 +234,7 @@ export class ListElement extends baseClass {
     this.addEventListener("pointerup", this.handleSelectPointerUp);
     this.addEventListener("pointercancel", this.handleSelectPointerCancel);
     this.addEventListener("click", this.handleSelectClick, true);
+    this.addEventListener(LIST_ITEM_CHECKED_EVENT, this.handleItemChecked);
     this.addEventListener("contextmenu", this.handleContextMenu);
     this.addEventListener("click", this.handleMoveButtonClick);
     this.addEventListener("keydown", this.handleNavigationKeydown);
@@ -236,6 +251,13 @@ export class ListElement extends baseClass {
    * Whether the items can be reordered. Shows a drag handle on every item.
    */
   @property({ type: Boolean, reflect: true }) reorderable = false;
+
+  /**
+   * Whether selecting is the list's primary activity: a `selectable` list then
+   * always shows the selection checkboxes (on desktop).
+   */
+  @property({ type: Boolean, reflect: true, attribute: "selection-primary" })
+  selectionPrimary = false;
 
   /**
    * Whether the user can select several items with a long press (and drag),
@@ -290,6 +312,38 @@ export class ListElement extends baseClass {
   private movingItem = false;
   /** A press on the handle of the grabbed item: a tap drops it. */
   private tapDropPointer: number | null = null;
+  /** The item a long press picked up and the press' start (client y). */
+  private pressedItem: HTMLElement | null = null;
+  private pickedUp: { item: HTMLElement; startY: number } | null = null;
+  private readonly reorderGesture = new DragGesture(this, {
+    axis: "y",
+    longPress: LIST_LONG_PRESS_MS,
+    slop: LIST_LONG_PRESS_SLOP_PX,
+    canStart: (event) => this.canLongPressReorder(event),
+    onLongPress: (event) => {
+      const item = this.pressedItem;
+      if (!item) return;
+      this.pickedUp = { item, startY: event.clientY };
+      setDragging(item, true);
+      this.addEventListener("touchmove", preventDefault, { passive: false });
+    },
+    onStart: (event) => {
+      const picked = this.pickedUp;
+      if (!picked) return;
+      this.beginPointerDrag(picked.item, event.pointerId, picked.startY, true);
+    },
+    onMove: (delta) => {
+      if (this.pointerDrag?.gesture) this.movePointerDrag(delta, true);
+    },
+    onEnd: () => {
+      if (this.pointerDrag?.gesture) this.endPointerDrag(true);
+      this.releasePickedUp();
+    },
+    onCancel: () => {
+      if (this.pointerDrag?.gesture) this.endPointerDrag(false);
+      this.releasePickedUp();
+    },
+  });
   /** Items whose `rovingTabIndex` the list set. */
   private readonly managedItems = new Set<ListItemElement>();
 
@@ -300,10 +354,16 @@ export class ListElement extends baseClass {
     );
   }
 
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.reorderGesture.cancel();
+  }
+
   protected override updated(changed: PropertyValues<this>) {
     if (changed.has("reorderable")) {
       this.syncReorderable(true);
     }
+    if (changed.has("selectionPrimary")) this.syncSelectionMode();
     if (changed.has("selectable")) {
       this.syncSelectionMode();
       this.syncListboxRoles();
@@ -341,7 +401,10 @@ export class ListElement extends baseClass {
   private syncListboxRoles() {
     this[internals].role = this.selectable ? "listbox" : "list";
     this[internals].ariaMultiSelectable = this.selectable ? "true" : null;
-    for (const item of this.navigationItems()) item.option = this.selectable;
+    for (const item of this.navigationItems()) {
+      item.option = this.selectable;
+      item.selectable = this.selectable;
+    }
   }
 
   private handleSlotChange() {
@@ -442,8 +505,18 @@ export class ListElement extends baseClass {
 
   /** Reflects selection mode as `selection-mode` (for styling). */
   private syncSelectionMode() {
-    this.toggleAttribute("selection-mode", this.selectionMode);
+    const mode = this.selectionMode;
+    this.toggleAttribute("selection-mode", mode);
+    // Checkboxes show on every item once one is selected, or always when
+    // selection is the primary activity; otherwise on hover (CSS).
+    const visible = this.selectable && (mode || this.selectionPrimary);
+    for (const item of this.navigationItems()) item.selectionVisible = visible;
   }
+
+  /** A `checked` change by the app: the other items' checkboxes follow. */
+  private readonly handleItemChecked = () => {
+    this.syncSelectionMode();
+  };
 
   /** The selectable item an event came from, or null. */
   private findSelectableItem(event: Event) {
@@ -533,7 +606,7 @@ export class ListElement extends baseClass {
 
   /** A long press opens no context menu on items it selects. */
   private readonly handleContextMenu = (event: Event) => {
-    if (this.longPress?.active || this.suppressNextClick) {
+    if (this.longPress?.active || this.suppressNextClick || this.pickedUp) {
       event.preventDefault();
     }
   };
@@ -561,9 +634,19 @@ export class ListElement extends baseClass {
       event.stopPropagation();
       return;
     }
-    if (!this.selectionMode) return;
     const item = this.findSelectableItem(event);
     if (!item) return;
+    // A tap on the checkbox, or on the avatar (a selection shortcut), selects
+    // the item even when no item is selected yet.
+    const shortcut = event
+      .composedPath()
+      .some(
+        (node) =>
+          node instanceof HTMLElement &&
+          (node.classList.contains("list-item-select-checkbox") ||
+            node.slot === "avatar"),
+      );
+    if (!this.selectionMode && !shortcut) return;
     event.preventDefault();
     event.stopPropagation();
     setChecked(item, !isChecked(item));
@@ -650,34 +733,84 @@ export class ListElement extends baseClass {
       this.endKeyboardDrag(true);
     }
     event.preventDefault();
-    const items = this.items;
-    const from = items.indexOf(hit.item);
     try {
       hit.handle.setPointerCapture(event.pointerId);
     } catch {
       // The pointer may already be released.
     }
+    this.beginPointerDrag(hit.item, event.pointerId, event.clientY, false);
+  };
+
+  private beginPointerDrag(
+    item: HTMLElement,
+    pointerId: number,
+    startY: number,
+    gesture: boolean,
+  ) {
+    const items = this.items;
+    const from = items.indexOf(item);
     this.pointerDrag = {
-      pointerId: event.pointerId,
-      item: hit.item,
+      pointerId,
+      item,
       items,
       rects: items.map((el) => el.getBoundingClientRect()),
       from,
       to: from,
-      startY: event.clientY,
+      startY,
       hostTop: this.getBoundingClientRect().top,
-      moved: false,
+      moved: gesture,
+      gesture,
     };
-    setDragging(hit.item, true);
+    setDragging(item, true);
     this.showDropZone(this.pointerDrag);
-  };
+  }
+
+  /** Whether a press may become a long press and drag to reorder. */
+  private canLongPressReorder(event: PointerEvent) {
+    if (!this.reorderable || this.selectable) return false;
+    if (this.pointerDrag || this.keyboardDrag) return false;
+    this.pressedItem = this.reorderItemAt(event);
+    return Boolean(this.pressedItem);
+  }
+
+  /** The item an event came from, unless it hit one of the item's controls. */
+  private reorderItemAt(event: Event) {
+    const path = event.composedPath();
+    const inControl = path.some(
+      (node) =>
+        node instanceof HTMLElement &&
+        (node.classList.contains(LIST_ITEM_CLASSES.listItemDragHandle) ||
+          node.classList.contains(LIST_ITEM_CLASSES.listItemMoveButton) ||
+          node.classList.contains(LIST_ITEM_CLASSES.listItemRevealButton) ||
+          node.matches('[slot$="-actions"]')),
+    );
+    if (inControl) return null;
+    const item = this.items.find((el) => path.includes(el));
+    if (!item || item.hasAttribute("disabled") || item.hasAttribute("static")) {
+      return null;
+    }
+    return item;
+  }
+
+  private releasePickedUp() {
+    const picked = this.pickedUp;
+    if (!picked) return;
+    this.pickedUp = null;
+    this.removeEventListener("touchmove", preventDefault);
+    if (!this.pointerDrag) setDragging(picked.item, false);
+  }
 
   private readonly handlePointerMove = (event: PointerEvent) => {
     const drag = this.pointerDrag;
-    if (!drag || event.pointerId !== drag.pointerId) return;
+    if (!drag || drag.gesture || event.pointerId !== drag.pointerId) return;
     event.preventDefault();
+    this.movePointerDrag(event.clientY - drag.startY, false);
+  };
+
+  private movePointerDrag(dy: number, gesture: boolean) {
+    const drag = this.pointerDrag;
+    if (!drag || Boolean(drag.gesture) !== gesture) return;
     const { rects, from, items } = drag;
-    const dy = event.clientY - drag.startY;
     if (!drag.moved && Math.abs(dy) <= LIST_LONG_PRESS_SLOP_PX) return;
     drag.moved = true;
     drag.item.style.translate = `0 ${dy}px`;
@@ -703,7 +836,7 @@ export class ListElement extends baseClass {
         i === from ? el.style.translate : offset ? `0 ${offset}px` : "";
     });
     this.showDropZone(drag);
-  };
+  }
 
   private readonly handlePointerUp = (event: PointerEvent) => {
     if (this.tapDropPointer === event.pointerId) {
@@ -712,7 +845,7 @@ export class ListElement extends baseClass {
       return;
     }
     const drag = this.pointerDrag;
-    if (!drag || event.pointerId !== drag.pointerId) return;
+    if (!drag || drag.gesture || event.pointerId !== drag.pointerId) return;
     if (!drag.moved) {
       // A tap on the handle: grab the item to move it with its move up /
       // move down buttons (single-pointer alternative to dragging).
@@ -729,7 +862,7 @@ export class ListElement extends baseClass {
   private readonly handlePointerCancel = (event: PointerEvent) => {
     if (this.tapDropPointer === event.pointerId) this.tapDropPointer = null;
     const drag = this.pointerDrag;
-    if (!drag || event.pointerId !== drag.pointerId) return;
+    if (!drag || drag.gesture || event.pointerId !== drag.pointerId) return;
     this.endPointerDrag(false);
   };
 

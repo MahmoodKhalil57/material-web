@@ -40,7 +40,12 @@ import { styles as chipStyles } from "./chip.cssresult.js";
  *   when selected.
  * - Input chips (`type="input"`) represent user input; add `removable` for a
  *   remove button, and an avatar in the `icon` slot (`class="chip-avatar"`
- *   or an `<img>`).
+ *   or an `<img>`). Add `editable` to let people correct the text (an
+ *   email address, say): the first click or Enter selects the chip, a second
+ *   interaction on the selected chip (or a double click) turns it back into
+ *   a text string to edit. Enter or leaving the field commits, Escape
+ *   cancels. A chip with only a remove icon (no label, icon or avatar) is
+ *   one focusable element, the remove button.
  * - Suggestion chips (`type="suggestion"`) offer dynamic suggestions.
  *
  * Assist, filter and suggestion chips are flat (outlined) unless `elevated`.
@@ -58,6 +63,9 @@ import { styles as chipStyles } from "./chip.cssresult.js";
  *     --bubbles
  * @fires {InputEvent} input - Fired when a filter chip's selection changes.
  *     --bubbles --composed
+ * @fires {CustomEvent} edit - Fired when an `editable` chip's new text is
+ *     committed; `detail` has `value` and `previousValue`. --bubbles
+ *     --composed
  * @fires {Event} update-focus - Fired when `disabled` changes, so a chip set
  *     can update its tab stop. --bubbles
  * @csspart chip - The root container element.
@@ -109,6 +117,17 @@ export class ChipElement extends LitElement {
       [hidden] {
         display: none !important;
       }
+      .chip-edit {
+        flex: 1;
+        min-inline-size: 4ch;
+        margin: 0;
+        border: none;
+        outline: none;
+        background: none;
+        padding-inline: var(--leading-space, 12px) var(--trailing-space, 12px);
+        color: var(--label-text-color, inherit);
+        font: inherit;
+      }
     `,
   ];
 
@@ -129,6 +148,16 @@ export class ChipElement extends LitElement {
 
   /** Whether the chip has a remove button (input chips). */
   @property({ type: Boolean, reflect: true }) removable = false;
+
+  /**
+   * Whether the text of an input chip can be edited (chips.md "Input chips":
+   * "Input chips can support editing to change their contents, such as
+   * correcting an email address"). Editing starts by interacting with the
+   * chip: a second click, Enter or Space on the selected chip, or a double
+   * click. Committing with Enter or by leaving the field changes the chip's
+   * text and fires `edit`; Escape (or emptying the text) keeps the old text.
+   */
+  @property({ type: Boolean, reflect: true }) editable = false;
 
   /** Whether the chip is being dragged (spec dragged state elevation). */
   @property({ type: Boolean, reflect: true }) dragged = false;
@@ -215,6 +244,13 @@ export class ChipElement extends LitElement {
   /** Whether the remove button has focus (takes the primary action out of
    * the tab order, so Shift+Tab leaves the chip). */
   @state() private removeFocused = false;
+  @state() private editing = false;
+  @query(".chip-edit") private readonly editInput!: HTMLInputElement | null;
+
+  /** Whether the chip is currently turned into a text string for editing. */
+  get isEditing(): boolean {
+    return this.editing;
+  }
 
   @query(".chip-action, .chip:not(div)")
   private readonly primaryAction!: HTMLElement | null;
@@ -224,6 +260,7 @@ export class ChipElement extends LitElement {
     super();
     if (!isServer) {
       this.addEventListener("keydown", this.handleActionNavigation);
+      this.addEventListener("dblclick", () => this.startEdit());
     }
   }
 
@@ -242,6 +279,109 @@ export class ChipElement extends LitElement {
       return;
     }
     super.focus(options);
+  }
+
+  /**
+   * Turns an editable input chip into a text string to edit. Does nothing
+   * for other chips.
+   */
+  startEdit() {
+    if (
+      !this.editable ||
+      this.editing ||
+      specChipType(this.type) !== "input" ||
+      this.effectivelyDisabled ||
+      this.softDisabled
+    ) {
+      return;
+    }
+    // The label state follows slotchange; read the text directly in case it
+    // has not fired yet.
+    this.label = Array.from(this.childNodes)
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent ?? "")
+      .join("")
+      .replace(/\s+/g, " ")
+      .trim() || this.label;
+    this.selected = true;
+    this.editing = true;
+    void this.updateComplete.then(() => {
+      const input = this.editInput;
+      input?.focus();
+      input?.select();
+    });
+  }
+
+  /** Ends editing and applies the new text (empty or unchanged text keeps the old). */
+  commitEdit() {
+    if (!this.editing) return;
+    const previousValue = this.label;
+    const text = (this.editInput?.value ?? "").replace(/\s+/g, " ").trim();
+    this.finishEdit();
+    if (!text || text === previousValue) return;
+    this.setLabelText(text);
+    this.label = text;
+    this.dispatchEvent(
+      new CustomEvent("edit", {
+        detail: { value: text, previousValue },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  /** Ends editing and keeps the old text. */
+  cancelEdit() {
+    if (!this.editing) return;
+    this.finishEdit();
+  }
+
+  private finishEdit() {
+    const hadFocus = this.shadowRoot?.activeElement === this.editInput;
+    this.editing = false;
+    if (hadFocus) {
+      void this.updateComplete.then(() => this.focus());
+    }
+  }
+
+  /** Replaces the chip's text, keeping its icons and other children. */
+  private setLabelText(text: string) {
+    const texts = Array.from(this.childNodes).filter(
+      (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+    );
+    if (texts.length === 0) {
+      this.append(document.createTextNode(text));
+      return;
+    }
+    texts[0].textContent = text;
+    texts.slice(1).forEach((node) => node.remove());
+  }
+
+  private handleEditKeydown(event: KeyboardEvent) {
+    // Keys typed in the field are the field's: not the chip set's arrow keys
+    // or the chip's Backspace removal.
+    event.stopPropagation();
+    if (event.key === "Enter") {
+      event.preventDefault();
+      this.commitEdit();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      this.cancelEdit();
+    }
+  }
+
+  /**
+   * An editable chip is selected by its first activation and edited by the
+   * next one (chips.md: "either by selecting it or by a second interaction
+   * after selection").
+   */
+  private handleActivate() {
+    if (!this.editable || specChipType(this.type) !== "input") return;
+    if (this.selected) {
+      this.startEdit();
+    } else {
+      this.selected = true;
+    }
   }
 
   protected override updated(changed: PropertyValues<this>) {
@@ -276,6 +416,49 @@ export class ChipElement extends LitElement {
 
     const content = this.renderContent(isFilterSelected);
 
+    if (this.editing) {
+      const editLabel = this.label ? `Edit ${this.label}` : "Edit";
+      return html`<div part="chip" class="${chipClasses}">
+        <input
+          class="chip-edit"
+          type="text"
+          aria-label=${editLabel}
+          .value=${this.label}
+          @keydown=${this.handleEditKeydown}
+          @blur=${() => this.commitEdit()}
+        />
+        ${this.removable ? this.renderRemoveButton() : nothing}
+      </div>`;
+    }
+
+    if (
+      this.removable &&
+      !this.href &&
+      !this.label &&
+      !this.hasLeadingIcon &&
+      !this.hasAvatar
+    ) {
+      // Only a remove icon: the whole chip is the remove button (one
+      // focusable element).
+      return html`<button
+        part="chip"
+        class="${chipClasses}"
+        type="button"
+        aria-label=${this.removeLabel || "Remove"}
+        ?disabled=${this.effectivelyDisabled}
+        aria-disabled=${this.softDisabled ? "true" : nothing}
+        @click=${this.handleRemove}
+        @keydown=${this.handleKeydown}
+      >
+        ${content}
+        <span class="chip-trailing-icon" aria-hidden="true">
+          <slot name="remove-icon"
+            ><span class="chip-glyph">close</span></slot
+          >
+        </span>
+      </button>`;
+    }
+
     if (this.href || this.type === "link") {
       return html`<a
         part="chip"
@@ -309,6 +492,7 @@ export class ChipElement extends LitElement {
           ?disabled=${this.effectivelyDisabled}
           aria-disabled=${this.softDisabled ? "true" : nothing}
           aria-pressed=${pressed}
+          @click=${this.handleActivate}
           @keydown=${this.handleKeydown}
         >
           ${content}
@@ -324,6 +508,7 @@ export class ChipElement extends LitElement {
       ?disabled=${this.effectivelyDisabled}
       aria-disabled=${this.softDisabled ? "true" : nothing}
       aria-pressed=${pressed}
+      @click=${this.handleActivate}
       @keydown=${this.handleKeydown}
       @change=${this.handleChange}
     >
@@ -403,6 +588,8 @@ export class ChipElement extends LitElement {
 
   private handleLabelSlotChange(event: Event) {
     const slot = event.target as HTMLSlotElement;
+    // A slot that render() removed (editing) reports its nodes as gone.
+    if (!slot.isConnected) return;
     this.label = slot
       .assignedNodes({ flatten: true })
       .map((node) => node.textContent ?? "")

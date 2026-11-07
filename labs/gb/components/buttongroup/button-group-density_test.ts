@@ -105,6 +105,9 @@ describe('<md-gb-button-group> density', () => {
     group.density = -2;
     await env.waitForStability();
     const first = part(root.querySelector('md-gb-button')!, 'btn');
+    // The corner springs to its dense size (button.scss border-radius
+    // transition); read it once the motion ends.
+    first.getAnimations().forEach((a) => a.finish());
     // Half the 32px dense height.
     expect(getComputedStyle(first).borderStartStartRadius).toBe('16px');
   });

@@ -76,11 +76,110 @@
         $typescale-emphasized-vars
       );
 
-      --md-sys-typescale-#{$scale}-#{$short-size}: #{$font};
       --md-sys-typescale-#{$scale}-#{$short-size}-tracking: #{$tracking};
       --md-sys-typescale-#{$scale}-#{$short-size}-axes: #{$axes};
-      --md-sys-typescale-emphasized-#{$scale}-#{$short-size}: #{$emphasized-font};
       --md-sys-typescale-emphasized-#{$scale}-#{$short-size}-axes: #{$emphasized-axes};
+    }
+  }
+
+  // The size, weight, family and line height of every style, and the `font`
+  // shorthand made of them. The line heights follow the language height.
+  --md-sys-language-height-scale: #{map.get($language-height-scales, $default-language-height)};
+  @include emit-styles($typescale-vars, $typescale-meta, $typescale-emphasized-vars, $typescale-emphasized-meta);
+}
+
+/// Language height (typography > Type scale tokens > Language height
+/// support): the type scale's line heights adapt to the height of the
+/// script. The published tokens are the `small` (base) values; `medium` is
+/// about 7% taller, `large` 30% and `extra-large` 100%.
+$language-height-scales: (
+  'small': 1,
+  'medium': 1.07,
+  'large': 1.3,
+  'extra-large': 2,
+);
+
+/// The language height of text whose language is not listed below. The page
+/// recommends the medium height as the app default ("most languages fall in
+/// that category"), but the components' fixed heights (a text field's 56dp)
+/// are built for the small values, so the library keeps the published
+/// line heights; set `--md-sys-language-height-scale` on `:root` (for
+/// example to 1.07) to make another height the default.
+$default-language-height: 'small' !default;
+
+/// The languages of each language height other than `small`, by language
+/// code (matched with `:lang()`).
+$language-height-languages: (
+  // Medium (~7% taller): Amharic, Arabic, Armenian, Bangla, Chinese,
+  // Gujarati, Hindi, Japanese, Kannada, Khmer, Korean, Lao, Malayalam, Odia,
+  // Punjabi, Sinhala, Tamil, Thai, Vietnamese, most other languages.
+  'medium': ('am', 'ar', 'hy', 'bn', 'zh', 'gu', 'hi', 'ja', 'kn', 'km', 'ko',
+    'lo', 'ml', 'or', 'pa', 'si', 'ta', 'th', 'vi', 'ne', 'mr', 'fa', 'ka'),
+  // Large (~30% taller): Burmese, Telugu.
+  'large': ('my', 'te'),
+  // Extra large (~100% taller): Nastaliq (Urdu).
+  'extra-large': ('ur'),
+);
+
+/// The line heights, and the `font` shorthands that use them, of every style
+/// for the language height scale that is in effect where this is emitted.
+/// Custom properties are resolved where they are declared, so each language
+/// height emits them again (see `emit-language-heights`).
+@mixin emit-styles(
+  $typescale-vars,
+  $typescale-meta,
+  $typescale-emphasized-vars,
+  $typescale-emphasized-meta
+) {
+  $scales: ('label', 'body', 'title', 'headline', 'display');
+  $sizes: (
+    'small': 'sm',
+    'medium': 'md',
+    'large': 'lg',
+  );
+  @each $scale in $scales {
+    @each $long-size, $short-size in $sizes {
+      $typescale: '#{$scale}-#{$long-size}';
+      @include _emit-style('', $typescale, $short-size, $scale, $typescale-vars, $typescale-meta);
+      @include _emit-style('emphasized-', $typescale, $short-size, $scale, $typescale-emphasized-vars, $typescale-emphasized-meta);
+    }
+  }
+}
+
+@mixin _emit-style($prefix, $typescale, $short-size, $scale, $vars, $meta) {
+  $name: '--md-sys-typescale-#{$prefix}#{$scale}-#{$short-size}';
+  $line-height: map_ext.get-strict($vars, '#{$typescale}-line-height');
+  #{$name}-font: #{map_ext.get-strict($meta, '#{$typescale}-font--resolved')};
+  #{$name}-size: #{map_ext.get-strict($vars, '#{$typescale}-size')};
+  #{$name}-weight: #{map_ext.get-strict($meta, '#{$typescale}-weight--resolved')};
+  #{$name}-line-height: calc(#{$line-height} * var(--md-sys-language-height-scale));
+  #{$name}: var(#{$name}-weight) var(#{$name}-size) / var(#{$name}-line-height) var(#{$name}-font);
+}
+
+/// Emits the type scale again for the languages of a language height, so
+/// that text in them (and everything inside it) gets taller line heights.
+@mixin emit-language-height(
+  $height,
+  $typescale-vars: meta.module-variables(md-sys-typescale),
+  $typescale-meta: meta.module-variables(md-sys-typescale-meta),
+  $typescale-emphasized-vars: meta.module-variables(md-sys-typescale-emphasized),
+  $typescale-emphasized-meta: meta.module-variables(md-sys-typescale-emphasized-meta)
+) {
+  --md-sys-language-height-scale: #{map.get($language-height-scales, $height)};
+  @include emit-styles($typescale-vars, $typescale-meta, $typescale-emphasized-vars, $typescale-emphasized-meta);
+}
+
+/// The `:lang()` rules of every language height. The heights are emitted from
+/// the shortest to the tallest, so the taller one wins for a language that is
+/// listed twice.
+@mixin emit-language-heights {
+  @each $height, $languages in $language-height-languages {
+    $selectors: ();
+    @each $lang in $languages {
+      $selectors: list.append($selectors, string.unquote(':lang(#{$lang})'), $separator: comma);
+    }
+    #{$selectors} {
+      @include emit-language-height($height);
     }
   }
 }

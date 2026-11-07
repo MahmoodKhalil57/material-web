@@ -59,6 +59,10 @@ export class Strategy {
    * @param itemSpacing the space between items
    * @param beforeContentPadding the padding to add before the list content
    * @param afterContentPadding the padding to add after the list content
+   * @param centered whether the focal items rest in the middle of the
+   *     container (center-aligned hero): the keylines then never shift to the
+   *     start or end, and the scroll origin is offset by `originShift`
+   *     instead, so the first item rests centered.
    */
   constructor(
     readonly defaultKeylines: KeylineList,
@@ -66,19 +70,24 @@ export class Strategy {
     readonly itemSpacing: number,
     readonly beforeContentPadding: number,
     readonly afterContentPadding: number,
+    readonly centered = false,
   ) {
-    this.startKeylineSteps = getStartKeylineSteps(
-      defaultKeylines,
-      availableSpace,
-      itemSpacing,
-      beforeContentPadding,
-    );
-    this.endKeylineSteps = getEndKeylineSteps(
-      defaultKeylines,
-      availableSpace,
-      itemSpacing,
-      afterContentPadding,
-    );
+    this.startKeylineSteps = centered
+      ? [defaultKeylines]
+      : getStartKeylineSteps(
+          defaultKeylines,
+          availableSpace,
+          itemSpacing,
+          beforeContentPadding,
+        );
+    this.endKeylineSteps = centered
+      ? [defaultKeylines]
+      : getEndKeylineSteps(
+          defaultKeylines,
+          availableSpace,
+          itemSpacing,
+          afterContentPadding,
+        );
     let min = defaultKeylines.minSize;
     let max = defaultKeylines.maxSize;
     for (const step of [...this.startKeylineSteps, ...this.endKeylineSteps]) {
@@ -109,6 +118,22 @@ export class Strategy {
       !defaultKeylines.isEmpty() &&
       availableSpace !== 0 &&
       this.itemMainAxisSize !== 0;
+  }
+
+  /**
+   * For a `centered` strategy, how far the first item's natural position is
+   * shifted into the container so that it rests on the first focal keyline;
+   * 0 otherwise. The scroller needs this much leading space.
+   */
+  get originShift(): number {
+    if (!this.centered || this.defaultKeylines.isEmpty()) return 0;
+    return Math.max(
+      0,
+      Math.round(
+        this.defaultKeylines.firstFocal.unadjustedOffset -
+          this.itemMainAxisSize / 2,
+      ),
+    );
   }
 
   /** The size of items when in focus and fully unmasked. */
@@ -153,6 +178,8 @@ export class Strategy {
     maxScrollOffset: number,
     roundToNearestStep: boolean,
   ): KeylineList {
+    // Centered strategies keep the focal items in the middle.
+    if (this.centered) return this.defaultKeylines;
     // The scroll offset could be slightly negative due to rounding.
     const positiveScrollOffset = Math.max(0, scrollOffset);
     const startShiftOffset = this.startShiftDistance;

@@ -29,6 +29,7 @@ export const CARD_CLASSES = {
   focus: PSEUDO_CLASSES.focus,
   active: PSEUDO_CLASSES.active,
   dragged: 'dragged',
+  selected: 'card-selected',
   disabled: PSEUDO_CLASSES.disabled,
 } as const;
 
@@ -48,6 +49,8 @@ export interface CardClassesState {
   dragged?: boolean;
   /** Emulates `:disabled`. */
   disabled?: boolean;
+  /** Whether the card is selected (selection.md: a check mark and surface color change). */
+  selected?: boolean;
 }
 
 /**
@@ -64,6 +67,7 @@ export function cardClasses({
   active = false,
   dragged = false,
   disabled = false,
+  selected = false,
 }: CardClassesState = {}): ClassInfo {
   return {
     [FOCUS_RING_CLASSES.focusRingOuter]: interactive,
@@ -76,6 +80,7 @@ export function cardClasses({
     [CARD_CLASSES.active]: active,
     [CARD_CLASSES.dragged]: dragged,
     [CARD_CLASSES.disabled]: disabled,
+    [CARD_CLASSES.selected]: selected,
   };
 }
 

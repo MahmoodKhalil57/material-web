@@ -15,6 +15,7 @@ import {mixinFocusable} from '../../../behaviors/focusable.js';
 
 import {AnchoredOverlayController} from '../shared/anchored-overlay.js';
 import {clampDensity, type Density} from '../shared/density.js';
+import {isReducedMotion, springDuration} from '../shared/motion.js';
 import {nextFocusIndex} from '../shared/roving-focus.js';
 import menuStyles from './menu.css' with {type: 'css'}; // github-only
 // import {styles as menuStyles} from './menu.cssresult.js'; // google3-only
@@ -141,6 +142,24 @@ export class MenuElement extends baseClass {
   @property({attribute: 'context-for'}) contextFor = '';
 
   /**
+   * The id of a text field (in the same root) the menu is attached to. As
+   * the person types in it, the menu opens (without taking focus) and shows
+   * only the items whose label contains the text, case-insensitively
+   * (menus.md "Filtering": "As someone types, the list of menu options
+   * filters to show relevant results"). The remaining items ease into
+   * their new position ("Menu items ease into their new position as the menu
+   * is filtered"), unless motion is reduced. Fires `filter` with the query.
+   */
+  @property({attribute: 'filter-for'}) filterFor = '';
+
+  /** The text the menu is filtered by. Empty shows every item. */
+  get filterQuery(): string {
+    return this.filterText;
+  }
+  private filterText = '';
+  private filterAbort?: AbortController;
+
+  /**
    * The density, from 0 (default) to -3 (menus.md "Density": "On web only,
    * density levels control the spacing between elements. Increasing density
    * decreases the top and bottom padding"). Each step removes 4px from the
@@ -170,6 +189,11 @@ export class MenuElement extends baseClass {
 
   /** The menu's items (not those of its submenus), in document order. */
   get items(): HTMLElement[] {
+    return this.allItems.filter((item) => !item.hidden);
+  }
+
+  /** Every item of the menu, filtered out ones included. */
+  private get allItems(): HTMLElement[] {
     return Array.from(this.itemsSet).sort((a, b) => {
       return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING
         ? 1
@@ -200,6 +224,8 @@ export class MenuElement extends baseClass {
   private invokerAbort?: AbortController;
   /** The invoker that opened the menu from the keyboard, for focus return. */
   private keyboardInvoker: HTMLElement | null = null;
+  /** The invokers marked `aria-expanded` while the menu is open. */
+  private markedInvokers = new Set<HTMLElement>();
 
   /**
    * The popover (shown in front of all other UI), its position next to the
@@ -227,7 +253,8 @@ export class MenuElement extends baseClass {
       source ??
       this.keyboardInvoker ??
       (this.contextTarget ? this.activeElementOutside() : null),
-    onOpen: () => {
+    onOpen: (source) => {
+      this.markInvokers(true, source);
       // Focus the first item (menus.md "Initial focus": "focus should be
       // placed on the first menu item").
       const skip = this.skipInitialFocus;
@@ -240,6 +267,7 @@ export class MenuElement extends baseClass {
       }
     },
     onClose: () => {
+      this.markInvokers(false);
       this.inactive = false;
       this.removeAttribute('context-menu');
       const parentMenu = closestMenu(this.parentElement);
@@ -287,10 +315,13 @@ export class MenuElement extends baseClass {
     super.connectedCallback();
     this.bindContextTarget();
     this.bindInvokerKeys();
+    this.bindFilterTarget();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.filterAbort?.abort();
+    this.filterAbort = undefined;
     this.unbindContextTarget();
     this.invokerAbort?.abort();
     this.invokerAbort = undefined;
@@ -300,6 +331,88 @@ export class MenuElement extends baseClass {
     if (changed.has('contextFor')) {
       this.bindContextTarget();
     }
+    if (changed.has('filterFor')) {
+      this.bindFilterTarget();
+    }
+  }
+
+  /**
+   * Shows only the items whose label contains `query`, easing the others
+   * into their new position.
+   */
+  filter(query: string) {
+    const text = query.trim().toLowerCase();
+    this.filterText = text;
+    const open = this.matches(':popover-open');
+    const items = this.allItems;
+    const before = new Map<HTMLElement, DOMRect>();
+    if (open) {
+      for (const item of items) {
+        if (!item.hidden) before.set(item, item.getBoundingClientRect());
+      }
+    }
+    for (const item of items) {
+      item.hidden = !labelOf(item).includes(text);
+    }
+    // A group with nothing left to show goes away with its items.
+    for (const group of this.querySelectorAll<HTMLElement>(
+      ':scope > md-gb-menu-group, :scope > .menu-group',
+    )) {
+      const inside = items.filter((item) => group.contains(item));
+      group.hidden = inside.length > 0 && inside.every((item) => item.hidden);
+    }
+    if (open && !isReducedMotion(this)) {
+      const duration = springDuration(this, 'fast', 'spatial');
+      const easing =
+        getComputedStyle(this)
+          .getPropertyValue('--md-sys-motion-spring-fast-spatial')
+          .trim() || 'ease-out';
+      for (const [item, from] of before) {
+        if (item.hidden) continue;
+        const dy = from.top - item.getBoundingClientRect().top;
+        if (!dy || !duration) continue;
+        // FLIP: start where the item was, ease to where it is.
+        item.animate(
+          [{transform: `translateY(${dy}px)`}, {transform: 'none'}],
+          {duration, easing},
+        );
+      }
+    }
+    this.dispatchEvent(
+      new CustomEvent('filter', {
+        detail: {query: text, count: this.items.length},
+      }),
+    );
+  }
+
+  private bindFilterTarget() {
+    this.filterAbort?.abort();
+    this.filterAbort = undefined;
+    if (!this.filterFor || !this.isConnected) return;
+    const root = this.getRootNode() as Document | ShadowRoot;
+    const target = root.getElementById?.(this.filterFor);
+    if (!target) return;
+    const abort = new AbortController();
+    this.filterAbort = abort;
+    target.addEventListener(
+      'input',
+      (event) => {
+        const origin = event.composedPath()[0] as {value?: unknown};
+        const value = (target as {value?: unknown}).value ?? origin.value;
+        if (!this.matches(':popover-open')) {
+          this.skipInitialFocus = true;
+          try {
+            (this.showPopover as (o?: {source?: HTMLElement}) => void)({
+              source: target,
+            });
+          } catch {
+            // Already open.
+          }
+        }
+        this.filter(typeof value === 'string' ? value : '');
+      },
+      {signal: abort.signal},
+    );
   }
 
   /**
@@ -442,6 +555,35 @@ export class MenuElement extends baseClass {
       },
       {signal: abort.signal},
     );
+  }
+
+  /**
+   * Marks the menu's invokers as expanded while it is open, the hook for
+   * the trigger components to draw it pressed (menus.md "Selecting": "the
+   * corresponding button or icon button should remain the same visually,
+   * with the addition of a pressed state ... even when opening from a
+   * keyboard shortcut"). It follows the popover's toggle, so every way of
+   * opening the menu is covered.
+   */
+  private markInvokers(open: boolean, source?: HTMLElement | null) {
+    if (this.hasAttribute('submenu') || this.hasAttribute('context-menu')) {
+      return;
+    }
+    if (open) {
+      const root = this.getRootNode() as Document | ShadowRoot;
+      const invokers = new Set(
+        Array.from(
+          root.querySelectorAll<HTMLElement>('[popovertarget], [commandfor]'),
+        ).filter((el) => isInvokerOf(el, this)),
+      );
+      if (source && !this.contains(source)) invokers.add(source);
+      if (this.keyboardInvoker) invokers.add(this.keyboardInvoker);
+      this.markedInvokers = invokers;
+    }
+    for (const invoker of this.markedInvokers) {
+      invoker.setAttribute('aria-expanded', String(open));
+    }
+    if (!open) this.markedInvokers = new Set();
   }
 
   private activeElementOutside(): HTMLElement | null {

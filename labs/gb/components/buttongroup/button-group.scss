@@ -39,6 +39,34 @@
     min-inline-size: max-content;
   }
 
+  // Resizing (button-groups.md, Resizing: "fixed or flexible"). Fixed
+  // buttons keep the width their size and width give them. A flexible group
+  // fills its container and its flexible buttons grow with it; icon buttons
+  // do not stretch past their set width ("avoid stretching icon buttons
+  // beyond the wide setting"). A connected group is flexible unless set
+  // otherwise (it spans its surface).
+  .btn-group[resizing='flexible'] {
+    display: flex;
+    inline-size: 100%;
+  }
+
+  .btn-group[resizing='flexible'] > * {
+    flex-grow: 1;
+  }
+
+  .btn-group[resizing='flexible'] > md-gb-icon-button:not([resizing='flexible']) {
+    flex-grow: 0;
+  }
+
+  .btn-group > [resizing='flexible'] {
+    flex-grow: 1;
+  }
+
+  .btn-group[resizing='fixed'] > *,
+  .btn-group > [resizing='fixed'] {
+    flex-grow: 0;
+  }
+
   // Variant layout: standard (default)
   .btn-group-standard,
   .btn-group:not(.btn-group-connected) {

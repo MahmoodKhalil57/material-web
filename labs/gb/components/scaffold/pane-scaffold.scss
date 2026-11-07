@@ -64,7 +64,8 @@ $_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
       var(
         --_pane-width,
         calc(
-          50% - var(--md-gb-scaffold-nav-inline-size, 0px) / 2 -
+          50% - var(--md-gb-scaffold-nav-inline-size, 0px) / 2 +
+            var(--md-gb-scaffold-companion-inline-size, 0px) / 2 -
             var(--md-sys-layout-spacer) / 2
         )
       ),
@@ -78,6 +79,7 @@ $_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
         --_pane-width,
         calc(
           50% + var(--md-gb-scaffold-nav-inline-size, 0px) / 2 -
+            var(--md-gb-scaffold-companion-inline-size, 0px) / 2 -
             var(--md-sys-layout-spacer) / 2
         )
       ),
@@ -238,13 +240,87 @@ $_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
   .pane-scaffold-floating .pane-secondary {
     @include levitated-pane-tokens.floating;
     animation: pane-float-in #{$_spatial};
-    inline-size: min(
-      var(--md-sys-layout-fixed-pane-width),
-      100% - 2 * var(--md-sys-layout-margin)
+    block-size: var(--_float-height, auto);
+    inline-size: var(
+      --_float-width,
+      min(
+        var(--md-sys-layout-fixed-pane-width),
+        100% - 2 * var(--md-sys-layout-margin)
+      )
     );
     inset-block-end: var(--md-sys-layout-margin);
+    translate: var(--_float-x, 0) var(--_float-y, 0);
     inset-inline-start: var(--md-sys-layout-margin);
     max-block-size: calc(100% - 2 * var(--md-sys-layout-margin));
+  }
+
+  // Drag and resize handles of a floating pane: a sticky bar on top.
+  .float-bar {
+    block-size: 24px;
+    display: flex;
+    inset-block-start: 0;
+    justify-content: center;
+    margin-block-end: -24px;
+    position: sticky;
+    z-index: 1;
+  }
+
+  .float-move {
+    align-items: center;
+    cursor: grab;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    outline: none;
+    touch-action: none;
+  }
+
+  .float-grip {
+    background-color: var(--md-sys-color-on-surface-variant);
+    block-size: 4px;
+    border-radius: var(--md-sys-shape-corner-full);
+    inline-size: 32px;
+    opacity: 0.4;
+  }
+
+  .float-resize {
+    align-items: center;
+    cursor: nesw-resize;
+    display: flex;
+    inline-size: 24px;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    justify-content: center;
+    position: absolute;
+    touch-action: none;
+  }
+
+  .float-resize-right {
+    inset-inline-end: 0;
+    inset-inline-start: auto;
+    right: 0;
+    left: auto;
+  }
+
+  .float-resize:not(.float-resize-right) {
+    cursor: nwse-resize;
+    left: 0;
+    right: auto;
+  }
+
+  .float-corner {
+    border-block-start: 2px solid var(--md-sys-color-on-surface-variant);
+    block-size: 10px;
+    inline-size: 10px;
+    opacity: 0.6;
+  }
+
+  .float-resize-right .float-corner {
+    border-inline-end: 2px solid var(--md-sys-color-on-surface-variant);
+  }
+
+  .float-resize:not(.float-resize-right) .float-corner {
+    border-inline-start: 2px solid var(--md-sys-color-on-surface-variant);
   }
 
   .pane-scaffold-floating.pane-scaffold-secondary-end .pane-secondary {

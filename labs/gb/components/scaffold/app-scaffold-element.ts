@@ -13,8 +13,8 @@ import {
 } from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {styleMap} from 'lit/directives/style-map.js';
 import {
+  isWindowSizeClassAtLeast,
   type WindowHeightClass,
   WindowSizeClassController,
   type WindowSizeClass,
@@ -25,6 +25,7 @@ import {
   resolveNavigation,
   type ScaffoldNavigation,
   shouldExpandRail,
+  type SideSheetNavigation,
 } from './app-scaffold.js';
 import {
   type PaneLayoutChangeDetail,
@@ -60,10 +61,17 @@ export interface NavigationChangeDetail {
  * @slot navigation-bar - A navigation bar (`md-gb-nav-bar`) at the bottom.
  * @slot navigation-rail - A navigation rail (`md-gb-nav-rail`) at the
  *     leading edge.
+ * @slot companion-rail - A companion rail on the trailing side of large
+ *     and extra-large windows, holding supporting controls or actions that
+ *     modify or relate to the content in a pane.
+ * @slot toolbar - A toolbar floating in the bottom rail region, centered
+ *     above the navigation bar (mobile).
  * @slot fab - A FAB, 16px from the trailing and bottom edges of the content.
  * @slot snackbar - A snackbar host (`md-gb-snackbar`), above the FAB.
  * @csspart scaffold - The scaffold grid.
  * @csspart rail - The navigation rail region.
+ * @csspart companion-rail - The companion rail region.
+ * @csspart toolbar - The floating toolbar region.
  * @csspart top-app-bar - The top app bar region.
  * @csspart body - The content region (content, FAB and snackbar).
  * @csspart content - The scrolling content container.
@@ -104,6 +112,20 @@ export class AppScaffoldElement extends LitElement {
   @property({type: Boolean, attribute: 'auto-expand-rail', reflect: true})
   autoExpandRail = false;
 
+  /**
+   * What the navigation rail does while a side sheet is present (spec:
+   * breakpoints and scaffold): `keep` it as is, `collapse` it to the
+   * collapsed rail, or `hide` it completely. A side sheet is present while
+   * the nested pane scaffold shows its tertiary pane or `side-sheet-open`
+   * is set.
+   */
+  @property({attribute: 'side-sheet-navigation', reflect: true})
+  sideSheetNavigation: SideSheetNavigation = 'keep';
+
+  /** Whether an app-managed side sheet is open. */
+  @property({type: Boolean, attribute: 'side-sheet-open', reflect: true})
+  sideSheetOpen = false;
+
   /** The current window size class (read-only, reflected). */
   get windowClass(): WindowSizeClass {
     return this.size.value;
@@ -122,16 +144,22 @@ export class AppScaffoldElement extends LitElement {
   @state() private hasBar = false;
   @state() private hasRail = false;
   @state() private hasFab = false;
+  @state() private hasToolbar = false;
   @state() private contentPaneCount = 1;
-  @state() private railInlineSize = 0;
+  @state() private paneSideSheet = false;
 
   @query('.app-scaffold-rail') private readonly railRegion!: HTMLElement | null;
+  @query('.app-scaffold-companion')
+  private readonly companionRegion!: HTMLElement | null;
+  @query('.app-scaffold-body') private readonly bodyRegion!: HTMLElement | null;
   @query('slot[name="navigation-rail"]')
   private readonly railSlot!: HTMLSlotElement | null;
 
   private active: ActiveNavigation = 'none';
   private lastActive: ActiveNavigation | null = null;
   private railObserver: ResizeObserver | null = null;
+  /** Rails collapsed for a side sheet, with their previous state. */
+  private readonly collapsedForSheet = new Map<HTMLElement, boolean>();
 
   private readonly size = new WindowSizeClassController(this, {
     onChange: (windowClass, previous) => {
@@ -177,21 +205,68 @@ export class AppScaffoldElement extends LitElement {
 
   private observeRail() {
     this.railObserver?.disconnect();
-    const region = this.railRegion;
-    if (!region) return;
-    this.railObserver = new ResizeObserver(() => {
-      const width = region.getBoundingClientRect().width;
-      if (width !== this.railInlineSize) this.railInlineSize = width;
-    });
-    this.railObserver.observe(region);
+    this.railObserver = new ResizeObserver(() => this.measureRegions());
+    for (const region of [this.railRegion, this.companionRegion]) {
+      if (region) this.railObserver.observe(region);
+    }
+    this.measureRegions();
+  }
+
+  /**
+   * Tells a nested pane scaffold how much space the rails take on each side
+   * (it keeps a split-pane spacer centered in the window).
+   */
+  private measureRegions() {
+    const body = this.bodyRegion;
+    if (!body) return;
+    const width = (region: HTMLElement | null) =>
+      region && !region.hidden ? region.getBoundingClientRect().width : 0;
+    body.style.setProperty(
+      '--md-gb-scaffold-nav-inline-size',
+      `${width(this.railRegion)}px`,
+    );
+    body.style.setProperty(
+      '--md-gb-scaffold-companion-inline-size',
+      `${width(this.companionRegion)}px`,
+    );
   }
 
   private readonly handlePaneLayoutChange = (event: Event) => {
-    const {paneCount} = (event as CustomEvent<PaneLayoutChangeDetail>).detail;
+    const {paneCount, visiblePanes} = (
+      event as CustomEvent<PaneLayoutChangeDetail>
+    ).detail;
     this.contentPaneCount = paneCount;
+    this.paneSideSheet = visiblePanes.includes('tertiary');
   };
 
+  private get sideSheetPresent(): boolean {
+    return this.sideSheetOpen || this.paneSideSheet;
+  }
+
+  /** Collapses the slotted rails for a side sheet, and restores them. */
+  private syncRailForSideSheet() {
+    const collapse =
+      this.sideSheetPresent && this.sideSheetNavigation === 'collapse';
+    const rails = (
+      this.railSlot?.assignedElements({flatten: true}) ?? []
+    ).filter((el): el is HTMLElement & {expanded: boolean} => 'expanded' in el);
+    if (collapse) {
+      for (const rail of rails) {
+        if (!this.collapsedForSheet.has(rail)) {
+          this.collapsedForSheet.set(rail, rail.expanded);
+          rail.expanded = false;
+        }
+      }
+    } else {
+      for (const [rail, expanded] of this.collapsedForSheet) {
+        (rail as HTMLElement & {expanded: boolean}).expanded = expanded;
+      }
+      this.collapsedForSheet.clear();
+    }
+  }
+
   private syncRailExpanded(windowClass: WindowSizeClass) {
+    if (this.collapsedForSheet.size > 0) return;
     const expanded = shouldExpandRail(windowClass);
     for (const el of this.railSlot?.assignedElements({flatten: true}) ?? []) {
       if ('expanded' in el) {
@@ -210,9 +285,13 @@ export class AppScaffoldElement extends LitElement {
       case 'navigation-rail':
         this.hasRail = has;
         if (has && this.autoExpandRail) this.syncRailExpanded(this.size.value);
+        this.syncRailForSideSheet();
         break;
       case 'fab':
         this.hasFab = has;
+        break;
+      case 'toolbar':
+        this.hasToolbar = has;
         break;
       default:
         break;
@@ -241,6 +320,8 @@ export class AppScaffoldElement extends LitElement {
   }
 
   protected override updated() {
+    this.measureRegions();
+    this.syncRailForSideSheet();
     if (this.active !== this.lastActive) {
       this.lastActive = this.active;
       this.dispatchEvent(
@@ -254,10 +335,10 @@ export class AppScaffoldElement extends LitElement {
   }
 
   protected override render() {
-    const rail = this.active === 'rail';
-    const bodyStyle = {
-      '--md-gb-scaffold-nav-inline-size': `${rail ? this.railInlineSize : 0}px`,
-    };
+    const rail =
+      this.active === 'rail' &&
+      !(this.sideSheetPresent && this.sideSheetNavigation === 'hide');
+    const companion = isWindowSizeClassAtLeast(this.size.value, 'large');
     return html`
       <div
         part="scaffold"
@@ -267,10 +348,16 @@ export class AppScaffoldElement extends LitElement {
             name="navigation-rail"
             @slotchange=${this.handleSlotChange}></slot>
         </div>
+        <div
+          class="app-scaffold-companion"
+          part="companion-rail"
+          ?hidden=${!companion}>
+          <slot name="companion-rail"></slot>
+        </div>
         <div class="app-scaffold-top" part="top-app-bar">
           <slot name="top-app-bar"></slot>
         </div>
-        <div class="app-scaffold-body" part="body" style=${styleMap(bodyStyle)}>
+        <div class="app-scaffold-body" part="body">
           <div class="app-scaffold-content" part="content">
             <slot></slot>
           </div>
@@ -278,8 +365,18 @@ export class AppScaffoldElement extends LitElement {
             <div class="app-scaffold-snackbar">
               <slot name="snackbar"></slot>
             </div>
-            <div class="app-scaffold-fab" ?hidden=${!this.hasFab}>
-              <slot name="fab" @slotchange=${this.handleSlotChange}></slot>
+            <div class="app-scaffold-bottom-rail">
+              <div
+                class="app-scaffold-toolbar"
+                part="toolbar"
+                ?hidden=${!this.hasToolbar}>
+                <slot
+                  name="toolbar"
+                  @slotchange=${this.handleSlotChange}></slot>
+              </div>
+              <div class="app-scaffold-fab" ?hidden=${!this.hasFab}>
+                <slot name="fab" @slotchange=${this.handleSlotChange}></slot>
+              </div>
             </div>
           </div>
         </div>

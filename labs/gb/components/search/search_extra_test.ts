@@ -14,6 +14,7 @@ import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {center, deepElements, prop, ripplesOf} from '../shared/central/subjects.js';
+import {type SearchBarElement} from './search-bar-element.js';
 import {type SearchViewElement} from './search-view-element.js';
 
 adoptStyles(document, [m3Styles]);
@@ -95,5 +96,34 @@ describe('<md-gb-search-view> more spec behavior', () => {
     // The arrow keys still move into the results.
     await sendKeys({press: 'ArrowDown'});
     expect(document.activeElement?.textContent).toBe('One');
+  });
+});
+
+describe('<md-gb-search-bar> focused glyph margins', () => {
+  const env = new Environment();
+
+  // spec: search-86d2ac, search-aa3bb4
+  it('moves the glyphs from 24dp to 12dp from the container edge when focused', async () => {
+    const root = env.render(html`<div style="inline-size: 500px">
+      <md-gb-search-bar quick placeholder="Search"></md-gb-search-bar>
+    </div>`);
+    await env.waitForStability();
+    const bar = root.querySelector('md-gb-search-bar') as SearchBarElement;
+    await bar.updateComplete;
+    const offset = () => {
+      const container = bar.shadowRoot!.querySelector('[part=bar]')!.getBoundingClientRect();
+      const icon = bar.shadowRoot!.querySelector('.search-bar-icon')!.getBoundingClientRect();
+      return icon.left - container.left;
+    };
+    expect(offset()).toBeCloseTo(24, 0);
+    await bar.show();
+    await env.waitForStability();
+    await bar.updateComplete;
+    expect(bar.hasAttribute('expanded')).toBeTrue();
+    expect(offset()).toBeCloseTo(12, 0);
+    await bar.close();
+    await env.waitForStability();
+    await bar.updateComplete;
+    expect(offset()).toBeCloseTo(24, 0);
   });
 });

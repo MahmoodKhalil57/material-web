@@ -271,7 +271,6 @@ function surfaceSetup(s) {
 async function openModal${s.id}(el: ${type}) {
   ${s.mode === 'lifecycle' ? 'await el.show();' : 'el.expanded = true;'}
   await settle();
-  await new Promise((resolve) => setTimeout(resolve, 30));
 }
 
 function isOpenModal${s.id}(el: ${type}) {
@@ -290,8 +289,7 @@ function surfaceTests(s) {
   const beforeRequest = lifecycle ? `const closed = modalOnce(el, 'closed');` : '';
   const afterRequest = lifecycle
     ? 'await closed;'
-    : `await settle();
-    await new Promise((resolve) => setTimeout(resolve, 30));`;
+    : `await settle();`;
   const record = lifecycle
     ? 'const log = modalRecord(el);'
     : `const reasons: string[] = [];
@@ -370,7 +368,7 @@ ${cite(s, 'back')}    const {el} = await setupModal${id}();
     }
     ${record}
     ${beforeRequest}
-    await modalOutwaitEscape();
+    await modalForgetEscape();
     dialog.requestClose();
     ${afterRequest}
     expect(${isOpen}).toBeFalse();
@@ -386,7 +384,7 @@ ${cite(s, 'back')}    const global = globalThis as {CloseWatcher?: unknown};
       const {el} = await setupModal${id}();
       ${open}
       ${record}
-      await modalOutwaitEscape();
+      await modalForgetEscape();
       FakeCloseWatcher.active()[0].requestClose();
       // The back motion plays before the rail collapses.
       el.shadowRoot!.querySelector('.nav-rail')!.getAnimations().forEach((a) => a.finish());
@@ -461,6 +459,7 @@ export function tests(dir, config) {
   const lifecycle = surfaces.some((s) => s.mode === 'lifecycle');
   const toggle = surfaces.some((s) => s.mode === 'toggle');
   const common = [
+    "import {resetEscapeTracking} from '../shared/predictive-back.js';\n",
     toggle
       ? "import {FakeCloseWatcher} from '../shared/predictive-back-harness.js';\n"
       : '',
@@ -500,11 +499,11 @@ interface ModalToggleElement extends HTMLElement {
       : '',
     `/**
  * A close request counts as Escape for a second after an Escape press (the
- * browser reports Escape and the back gesture alike); waits that out so a
- * request is a back request.
+ * browser reports Escape and the back gesture alike). Forgets the recorded
+ * presses, so the next close request is a back request.
  */
-function modalOutwaitEscape() {
-  return new Promise((resolve) => setTimeout(resolve, 1100));
+function modalForgetEscape() {
+  resetEscapeTracking();
 }
 
 /** Whether the page scroll is locked (CSS overflow of the root element). */

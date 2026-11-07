@@ -8,6 +8,7 @@ import {css, type CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {live} from 'lit/directives/live.js';
+import '../progress/md-gb-progress.js';
 import {iconButton} from '../iconbutton/icon-button.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {
@@ -193,6 +194,15 @@ export class SearchViewElement extends LitElement {
   /** Announced when suggestions or results become available. */
   @property({attribute: 'suggestions-label'})
   suggestionsLabel = 'Suggestions available';
+
+  /**
+   * Whether the app is searching: shows a progress indicator under the header
+   * and marks the results busy for assistive technology.
+   */
+  @property({type: Boolean, reflect: true}) searching = false;
+
+  /** Accessible label of the searching progress indicator. */
+  @property({attribute: 'searching-label'}) searchingLabel = 'Searching';
 
   /** Whether to skip the open and close animations. */
   @property({type: Boolean, reflect: true}) quick = false;
@@ -648,6 +658,12 @@ export class SearchViewElement extends LitElement {
               <slot name="trailing"></slot>
             </div>
           </div>
+          ${this.searching
+            ? html`<md-gb-progress
+                class="search-view-progress"
+                part="progress"
+                aria-label=${this.searchingLabel}></md-gb-progress>`
+            : nothing}
           <div
             class="${SEARCH_VIEW_CLASSES.divider}"
             part="divider"
@@ -657,12 +673,13 @@ export class SearchViewElement extends LitElement {
             class="${SEARCH_VIEW_CLASSES.results}"
             part="results"
             role="listbox"
+            aria-busy=${this.searching ? 'true' : 'false'}
             aria-label=${this.resultsLabel}>
             <slot @slotchange=${this.handleSlotChange}></slot>
           </div>
         </div>
         <div class="search-view-status" role="status" aria-live="polite">
-          ${this.announcement}
+          ${this.searching ? this.searchingLabel : this.announcement}
         </div>
       </dialog>
     `;

@@ -8,6 +8,7 @@ import {css, CSSResultOrNative, html, type PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
+import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
 import {SelectionController} from '../shared/selection.js';
 
 import navBarStyles from './nav-bar.css' with {type: 'css'}; // github-only
@@ -23,6 +24,11 @@ import {NavBarItemElement} from './nav-bar-item-element.js';
 
 /**
  * A Material Design gBreeze navigation bar component.
+ *
+ * Scroll behavior (navigation-bar.md): `scroll-behavior="hide"` hides the bar
+ * when the page scrolls down and reveals it when scrolling up;
+ * `scroll-target` is the id of the scrolling element (default: the window).
+ * Make the bar fixed or sticky at the bottom of the page.
  *
  * @slot - Used to display navigation bar items (`md-gb-nav-bar-item`).
  * @csspart nav-bar - The navigation bar's root container.
@@ -73,6 +79,32 @@ export class NavBarElement extends AriaTablistElement {
    */
   @property({attribute: 'item-layout', reflect: true})
   itemLayout: NavBarLayout = 'vertical';
+
+  /** How the bar reacts to scrolling: `hide` hides it on scroll down. */
+  @property({attribute: 'scroll-behavior', reflect: true})
+  scrollBehavior?: 'hide';
+
+  /** The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. */
+  @property({attribute: 'scroll-target'}) scrollTarget = '';
+
+  /**
+   * Hides and reveals the bar on scroll.
+   *
+   * Accessibility: "Don't hide the navigation bar on scroll when a screen
+   * reader is active" (navigation-bar-791f1a). A web page cannot detect a
+   * screen reader, so the bar errs on the side of staying: it never hides
+   * while focus is inside it, and never when the page scrolls because of a
+   * key press (`keyboardKeepsVisible`: screen reader and switch users move
+   * with the keyboard), so only wheel, touch, pointer and programmatic
+   * scrolling hide it. Focus moving into a hidden bar reveals it. An app can
+   * also keep it visible for good by not setting `scroll-behavior`.
+   */
+  protected readonly scrollController = new ScrollBehaviorController(this, {
+    behavior: () => this.scrollBehavior,
+    target: () => this.scrollTarget,
+    hiddenTransform: 'translateY(100%)',
+    keyboardKeepsVisible: true,
+  });
 
   /**
    * The selection model (shared SelectionController): exactly one tab is

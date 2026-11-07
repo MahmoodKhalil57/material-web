@@ -20,7 +20,16 @@ import '../../slider/md-gb-slider.js';
 
 import {sendKeys, sendMouse} from '@web/test-runner-commands';
 
-import {center, deepElements, renderSubject, settle, sleep, SUBJECTS, type Subject} from './subjects.js';
+import {
+  center,
+  deepElements,
+  renderSubject,
+  settle,
+  sleep,
+  SUBJECTS,
+  type Subject,
+  until,
+} from './subjects.js';
 import {paintFingerprint as paint} from './style-helpers.js';
 
 // Foundations > Interaction > Selection (foundations/interaction/selection.md):
@@ -38,6 +47,12 @@ async function mount(html: string) {
   return {container, cleanup: () => container.remove()};
 }
 
+/**
+ * The hold of a long press: the component starts it after its own threshold
+ * (about 0.4s), so the pointer must be held for real time.
+ */
+const LONG_PRESS_HOLD_MS = 450;
+
 /** A touch long press on an element: pointer down, hold, release. */
 async function touchLongPress(target: Element) {
   const c = center(target);
@@ -52,11 +67,10 @@ async function touchLongPress(target: Element) {
     clientY: c.y,
   };
   target.dispatchEvent(new PointerEvent('pointerdown', init));
-  await sleep(450);
+  await sleep(LONG_PRESS_HOLD_MS);
   target.dispatchEvent(new PointerEvent('pointerup', init));
   // The click that follows the release belongs to the long press.
   (target as HTMLElement).click();
-  await sleep(20);
 }
 
 describe('selection indicators (central)', () => {
@@ -87,7 +101,7 @@ describe('selection indicators (central)', () => {
       // Finish the transition of the new look.
       for (const a of el.getAnimations({subtree: true})) a.finish();
       for (const a of (el.shadowRoot?.getAnimations?.() ?? []) as Animation[]) a.finish();
-      await sleep(50);
+      await until(() => paint(el) !== before);
       expect(paint(el)).withContext(id).not.toBe(before);
       cleanup();
     });
@@ -101,7 +115,7 @@ describe('selection indicators (central)', () => {
     const before = shape();
     (el as unknown as {value: number}).value = 80;
     await settle(el);
-    await sleep(150);
+    await until(() => shape() !== before);
     expect(shape()).not.toBe(before);
     cleanup();
   });
@@ -115,7 +129,7 @@ describe('selection indicators (central)', () => {
     const before = paint(item);
     item.checked = true;
     await settle(item);
-    await sleep(120);
+    await until(() => paint(item) !== before);
     expect(paint(item)).not.toBe(before);
     cleanup();
   });
@@ -126,7 +140,7 @@ describe('selection indicators (central)', () => {
     const resting = paint(whole.el);
     whole.el.toggleAttribute('selected', true);
     await settle(whole.el);
-    await sleep(120);
+    await until(() => paint(whole.el) !== resting);
     expect(paint(whole.el)).not.toBe(resting);
     whole.cleanup();
 
@@ -136,7 +150,7 @@ describe('selection indicators (central)', () => {
     const oneBefore = paint(one);
     one.toggleAttribute('selected', true);
     await settle(container);
-    await sleep(120);
+    await until(() => paint(one) !== oneBefore);
     expect(paint(one)).not.toBe(oneBefore);
     expect(paint(two)).toBe(twoBefore);
     cleanup();
@@ -150,12 +164,12 @@ describe('selection indicators (central)', () => {
       expect(read()).toBeFalsy();
       const c = center(el);
       await sendMouse({type: 'click', position: [c.x, c.y]});
-      await sleep(30);
+      await until(() => !!read());
       expect(read()).toBeTruthy();
       await sendKeys({press: 'Shift'});
       el.focus();
       await sendKeys({press: 'Space'});
-      await sleep(30);
+      await until(() => !read());
       expect(read()).toBeFalsy();
       cleanup();
     });
@@ -195,7 +209,7 @@ describe('selection indicators (central)', () => {
         two.click();
         await settle(container);
         for (const a of group.getAnimations({subtree: true})) a.finish();
-        await sleep(50);
+        await until(() => reported(group).filter((e) => e.localName === itemTag)[0] === two);
         expect(reported(group).filter((e) => e.localName === itemTag)).toEqual([two]);
         // The indicator moved: the first item no longer looks the same as selected.
         expect(paint(one)).not.toBe(indicatorBefore);
@@ -234,6 +248,7 @@ describe('types of selection (central)', () => {
   it('selects an item and enters selection mode with a long press on touch', async () => {
     const {list, items, checked, cleanup} = await mountList();
     await touchLongPress(items[1]);
+    await until(() => items[1].checked && list.selectionMode);
     expect(checked()).toEqual([false, true, false, false]);
     expect(list.selectionMode).toBeTrue();
     cleanup();
@@ -244,11 +259,11 @@ describe('types of selection (central)', () => {
     const {list, items, checked, cleanup} = await mountList();
     await touchLongPress(items[0]);
     items[2].click();
-    await sleep(20);
+    await until(() => items[2].checked);
     expect(checked()).toEqual([true, false, true, false]);
     items[0].click();
     items[2].click();
-    await sleep(20);
+    await until(() => !items[2].checked);
     expect(checked()).toEqual([false, false, false, false]);
     expect(list.selectionMode).toBeFalse();
     cleanup();
@@ -261,10 +276,10 @@ describe('types of selection (central)', () => {
     const to = center(items[2]);
     const init = {pointerType: 'touch', isPrimary: true, button: 0, pointerId: 9, bubbles: true, composed: true, cancelable: true};
     items[0].dispatchEvent(new PointerEvent('pointerdown', {...init, clientX: from.x, clientY: from.y}));
-    await sleep(450);
+    await sleep(LONG_PRESS_HOLD_MS);
     items[0].dispatchEvent(new PointerEvent('pointermove', {...init, clientX: to.x, clientY: to.y}));
     items[2].dispatchEvent(new PointerEvent('pointerup', {...init, clientX: to.x, clientY: to.y}));
-    await sleep(20);
+    await until(() => checked().join() === 'true,true,true,false');
     expect(checked()).toEqual([true, true, true, false]);
     cleanup();
   });

@@ -147,6 +147,26 @@ describe('dynamic color', () => {
       );
     });
 
+    // spec: color-advanced-01b1f7
+    it('flags single roles for color fidelity with a boolean', () => {
+      const source = '#b33b15';
+      const fidelity = themeFromSource({source, variant: 'fidelity'});
+      const plain = themeFromSource({source});
+      const flagged = themeFromSource({
+        source,
+        fidelity: {'primary-container': true, 'on-primary': false},
+      });
+      expect(flagged.light['primary-container']).toBe(fidelity.light['primary-container']);
+      expect(flagged.dark['primary-container']).toBe(fidelity.dark['primary-container']);
+      expect(flagged.light['on-primary']).toBe(plain.light['on-primary']);
+      // Unflagged roles keep following the variant.
+      expect(flagged.light.secondary).toBe(plain.light.secondary);
+      // `false` turns fidelity off for a role of a fidelity theme.
+      const off = themeFromSource({source, variant: 'fidelity', fidelity: {primary: false}});
+      expect(off.light.primary).toBe(plain.light.primary);
+      expect(off.light['primary-container']).toBe(fidelity.light['primary-container']);
+    });
+
     const FIXED_ROLES = [
       'primary-fixed',
       'primary-fixed-dim',

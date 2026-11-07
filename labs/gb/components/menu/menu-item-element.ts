@@ -105,6 +105,9 @@ export class MenuItemElement extends baseClass {
         display: flex;
         outline: none;
       }
+      :host([hidden]) {
+        display: none;
+      }
       .menu-item {
         flex: 1;
       }

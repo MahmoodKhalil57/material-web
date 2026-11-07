@@ -2851,9 +2851,7 @@
    "designing-4a1da9"
   ],
   "elevation/tokens/component-elevation": [
-   "elevation-23a31c",
    "elevation-44606d",
-   "elevation-4aa184",
    "elevation-d614e6",
    "elevation-f678be"
   ],
@@ -2870,12 +2868,6 @@
   "interaction-inputs/tab-1/external-inputs-for-devices/input-device-behaviors": [
    "interaction-inputs-786dbb",
    "interaction-inputs-efaa26"
-  ],
-  "interaction-selection/tab-1/selection-indicators": [
-   "interaction-selection-504d1d"
-  ],
-  "layout-scaffold/rails/rails": [
-   "layout-scaffold-236688"
   ],
   "lists/specs/list-baseline/layout/three-line-lists": [
    "lists-02c500",
@@ -2937,7 +2929,6 @@
   ],
   "navigation-rail/specs/configurations": [
    "navigation-rail-8bdda6",
-   "navigation-rail-9d8ecf",
    "navigation-rail-f63678"
   ],
   "search/specs/states/search-suggestions-results": [
@@ -2948,10 +2939,6 @@
   ],
   "toolbars/specs/bottom-app-bar-baseline/common-layouts": [
    "toolbars-9eca49"
-  ],
-  "typography/type-scale-tokens/language-height-support/language-script-categories": [
-   "typography-0bd294",
-   "typography-d6d5a7"
   ],
   "typography/type-scale-tokens/where-emphasized-styles-can-be-used/components": [
    "typography-c0db18"
@@ -3021,22 +3008,6 @@
     "1a23e6a21326"
    ],
    "final": "claude-opus-5-5"
-  },
-  "app-bars-2cbec6": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/appbar/app-bar-element.ts:137",
-    "labs/gb/components/appbar/app-bar-element.ts:137"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "74b2c89cb8f9",
-    "74b2c89cb8f9"
-   ],
-   "final": "agreement"
   },
   "app-bars-397d75": {
    "rule": "llm-review",
@@ -3141,19 +3112,6 @@
    ],
    "final": "agreement"
   },
-  "app-bars-66cf99": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/appbar/_app-bar-tokens.scss:14"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "782773e4b709"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "app-bars-79dbbb": {
    "rule": "llm-review",
    "evidence": [
@@ -3166,22 +3124,6 @@
     "2f8c24a3cce6"
    ],
    "final": "claude-opus-5-5"
-  },
-  "app-bars-7cc942": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/appbar/app-bar-element.ts:137",
-    "labs/gb/components/appbar/app-bar-element.ts:137"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "74b2c89cb8f9",
-    "90b1105eed97"
-   ],
-   "final": "agreement"
   },
   "app-bars-7d57b7": {
    "rule": "llm-review",
@@ -3214,19 +3156,6 @@
     "3d9a993036ac"
    ],
    "final": "agreement"
-  },
-  "app-bars-81de25": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/appbar/_app-bar-tokens.scss:42"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "7af816163469"
-   ],
-   "final": "claude-opus-5-5"
   },
   "app-bars-85fd31": {
    "rule": "llm-review",
@@ -3442,19 +3371,6 @@
     "160e707a95e6"
    ],
    "final": "agreement"
-  },
-  "app-bars-e394e9": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/appbar/_app-bar-tokens.scss:14"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "782773e4b709"
-   ],
-   "final": "claude-opus-5-5"
   },
   "app-bars-f3237f": {
    "rule": "llm-review",
@@ -3990,19 +3906,6 @@
     "d348b10f9eec"
    ],
    "final": "agreement"
-  },
-  "button-groups-8290ab": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/buttongroup/button-group-element.ts:395"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "01e4a43bbee8"
-   ],
-   "final": "claude-opus-5-5"
   },
   "button-groups-b94e47": {
    "rule": "llm-review",
@@ -4898,19 +4801,6 @@
    ],
    "quoteHashes": [
     "ee4fa257dd96"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "carousel-a29de2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/carousel/carousel-item.scss:102"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "bace6b0a3ec5"
    ],
    "final": "claude-opus-5-5"
   },
@@ -10038,32 +9928,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "layout-scaffold-6373e2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/scaffold/pane-scaffold.scss:120"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "f58216152722"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "layout-scaffold-6cbe67": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/scaffold/pane-scaffold.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "c3b7b053752e"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "layout-scaffold-736d69": {
    "rule": "cluster",
    "via": "layout-scaffold-316936"
@@ -10091,19 +9955,6 @@
    ],
    "quoteHashes": [
     "9946be614da1"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "layout-scaffold-8c3637": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/scaffold/pane-scaffold.scss:120"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "f58216152722"
    ],
    "final": "claude-opus-5-5"
   },
@@ -10149,19 +10000,6 @@
    ],
    "quoteHashes": [
     "5731c9084dc7"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "layout-scaffold-a101cd": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/scaffold/pane-scaffold.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "c3b7b053752e"
    ],
    "final": "claude-opus-5-5"
   },
@@ -10264,18 +10102,15 @@
   "layout-scaffold-e2f82c": {
    "rule": "llm-review",
    "evidence": [
-    "labs/gb/components/scaffold/app-scaffold-element.ts:194",
-    "labs/gb/components/scaffold/app-scaffold-element.ts:198"
+    "labs/gb/components/scaffold/app-scaffold.ts:88"
    ],
    "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
+    "claude-opus-5-5"
    ],
    "quoteHashes": [
-    "3357df760b6f",
-    "3483a3abfd62"
+    "8329002c3da5"
    ],
-   "final": "agreement"
+   "final": "claude-opus-5-5"
   },
   "layout-scaffold-e403f3": {
    "rule": "llm-review",
@@ -10292,19 +10127,6 @@
     "bb2e5167b0a7"
    ],
    "final": "agreement"
-  },
-  "layout-scaffold-f2efe4": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/scaffold/pane-scaffold.scss:120"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "f58216152722"
-   ],
-   "final": "claude-opus-5-5"
   },
   "layout-scaffold-fdb95d": {
    "rule": "llm-review",
@@ -16128,19 +15950,6 @@
    ],
    "final": "agreement"
   },
-  "text-fields-1f192d": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/textfield/text-field-element.ts:532"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "c56dfc6bc76f"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "text-fields-226a2f": {
    "rule": "llm-review",
    "evidence": [
@@ -16260,19 +16069,6 @@
    ],
    "quoteHashes": [
     "b9488b785a57"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "text-fields-34cdb7": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/textfield/text-field-element.ts:532"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "c56dfc6bc76f"
    ],
    "final": "claude-opus-5-5"
   },
@@ -18971,11 +18767,6 @@
    "model": "claude-opus-5-5",
    "reason": "Choosing a single prominent action and styling it as a filled, tonal or wide icon button is app-level content and design advice, not component behavior."
   },
-  "app-bars-f59139": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "This is only a lead-in to a list of optional content and states no checkable requirement of its own."
-  },
   "badges-2c6db4": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -19088,11 +18879,6 @@
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These are captions that describe example videos."
-  },
-  "button-groups-07602b": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Mixing label and icon buttons is an example layout the app chooses, not a behavior the library must provide."
   },
   "button-groups-103b55": {
    "rule": "llm-review",
@@ -21465,25 +21251,10 @@
    "model": "claude-opus-5-5",
    "reason": "These are video captions and a lead-in phrase that only describe examples and state no requirement of their own."
   },
-  "layout-scaffold-089d9d": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences advise designers on picking layouts and pane counts, or only introduce a list, so they are not component requirements."
-  },
   "layout-scaffold-08d743": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These are video captions and a lead-in phrase that only describe examples and state no requirement of their own."
-  },
-  "layout-scaffold-172813": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences advise designers on picking layouts and pane counts, or only introduce a list, so they are not component requirements."
-  },
-  "layout-scaffold-1d8e24": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences describe an example video rather than state a requirement."
   },
   "layout-scaffold-325561": {
    "rule": "llm-review",
@@ -21514,11 +21285,6 @@
    "model": "claude-opus-5-5",
    "reason": "Presenting panes as disconnected spatial panels, with containment and grouping rules for those panels, applies only to XR devices and not to a web component library."
   },
-  "layout-scaffold-6e9c9c": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences advise designers on picking layouts and pane counts, or only introduce a list, so they are not component requirements."
-  },
   "layout-scaffold-8b3249": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -21528,11 +21294,6 @@
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "Rails floating as orbiters in XR full space are XR-only behavior."
-  },
-  "layout-scaffold-a423c5": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences describe an example video rather than state a requirement."
   },
   "layout-scaffold-b92b31": {
    "rule": "llm-review",

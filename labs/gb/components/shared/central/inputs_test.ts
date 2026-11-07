@@ -30,9 +30,9 @@ import {
   renderSubject,
   ripplesOf,
   settle,
-  sleep,
   SUBJECTS,
   type Subject,
+  until,
 } from './subjects.js';
 
 // Foundations > Interaction > Inputs (foundations/interaction/inputs.md):
@@ -52,11 +52,6 @@ async function mount(html: string) {
   return {container, cleanup: () => container.remove()};
 }
 
-/** Waits until `check()` is true (up to 1.5s). */
-async function until(check: () => boolean) {
-  for (let i = 0; i < 50 && !check(); i++) await sleep(30);
-}
-
 describe('mouse and cursor (central)', () => {
   afterEach(async () => {
     await sendMouse({type: 'up'}).catch(() => {});
@@ -70,8 +65,8 @@ describe('mouse and cursor (central)', () => {
     const c = center(el);
     await sendMouse({type: 'move', position: [c.x, c.y]});
     await sendMouse({type: 'down'});
-    await sleep(150);
     const [ripple] = ripplesOf(el);
+    await until(() => prop(ripple, '--ripple-press-opacity') === '10%');
     expect(prop(ripple, '--ripple-press-opacity')).toBe('10%');
     expect(ripple.getAnimations().map((a) => (a as CSSAnimation).animationName)).toContain('ripple-press');
     await sendMouse({type: 'up'});
@@ -197,15 +192,15 @@ describe('mouse and cursor (central)', () => {
         ${Array.from({length: 8}, (_, i) => `<md-gb-carousel-item style="width:200px;height:100px" aria-label="Item ${i}"></md-gb-carousel-item>`).join('')}
       </md-gb-carousel>`);
     const carousel = container.querySelector('md-gb-carousel') as HTMLElement;
-    await sleep(100);
-    const scrollers = [carousel, ...deepElements(carousel)].filter((e) => {
+    const scrollers = () => [carousel, ...deepElements(carousel)].filter((e) => {
       const o = getComputedStyle(e).overflowX;
       return (o === 'auto' || o === 'scroll') && e.scrollWidth > e.clientWidth;
     });
-    expect(scrollers.length).toBeGreaterThan(0);
-    const scroller = scrollers[0];
+    await until(() => scrollers().length > 0);
+    expect(scrollers().length).toBeGreaterThan(0);
+    const scroller = scrollers()[0];
     scroller.scrollLeft = 80;
-    await sleep(60);
+    await until(() => scroller.scrollLeft > 0);
     expect(scroller.scrollLeft).toBeGreaterThan(0);
     cleanup();
   });
@@ -241,11 +236,14 @@ describe('physical keyboard (central)', () => {
     const visibleRings = (el: HTMLElement) =>
       focusRingsOf(el).filter((r) => prop(r, '--focus-ring-outline') !== 'none').length;
     const order: number[] = [];
+    const focusedButton = () => {
+      const active = deepActiveElement();
+      return buttons.findIndex((b) => b === active || b.shadowRoot?.contains(active));
+    };
     await sendKeys({press: 'Tab'});
     for (let i = 0; i < 3; i++) {
-      await sleep(40);
-      const active = deepActiveElement();
-      const index = buttons.findIndex((b) => b === active || b.shadowRoot?.contains(active));
+      await until(() => focusedButton() === i);
+      const index = focusedButton();
       order.push(index);
       expect(visibleRings(buttons[index])).toBeGreaterThan(0);
       await sendKeys({press: 'Tab'});

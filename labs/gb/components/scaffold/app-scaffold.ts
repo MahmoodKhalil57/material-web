@@ -24,6 +24,9 @@ import {createClassMapDirective} from '../shared/directives.js';
  */
 export type ScaffoldNavigation = 'auto' | 'bar' | 'rail' | 'none';
 
+/** What the navigation rail does while a side sheet is present. */
+export type SideSheetNavigation = 'keep' | 'collapse' | 'hide';
+
 /** The navigation component actually shown. */
 export type ActiveNavigation = 'bar' | 'rail' | 'none';
 

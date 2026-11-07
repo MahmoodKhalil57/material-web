@@ -57,7 +57,7 @@ describe('md-gb-dialog spec units', () => {
     <md-gb-button slot="actions" value="accept">Accept</md-gb-button>
   </md-gb-dialog>`;
 
-  const fullScreen = html`<md-gb-dialog quick full-screen>
+  const fullScreen = html`<md-gb-dialog quick full-screen always-full-screen>
     <span slot="headline">New event</span>
     Supporting content
     <md-gb-button slot="actions" value="save">Save</md-gb-button>
@@ -118,6 +118,7 @@ describe('md-gb-dialog spec units', () => {
     expect(inner(el).getAttribute('role')).toBe('alertdialog');
     expect(el.shadowRoot!.querySelector('.dialog-header .dialog-close')).toBeNull();
     el.fullScreen = true;
+    el.alwaysFullScreen = true;
     await el.updateComplete;
     expect(el.shadowRoot!.querySelector('.dialog-header .dialog-close')).not.toBeNull();
     expect(inner(el).getBoundingClientRect().width).toBe(window.innerWidth);

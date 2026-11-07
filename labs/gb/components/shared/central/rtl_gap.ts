@@ -13,6 +13,13 @@ import {KNOWN_GAPS} from './subjects.js';
 // the LTR layout. Run with `npm run gb:check -- --gaps ...`.
 
 describe('RTL (central gaps)', () => {
+  // With no known gaps the suite would have no tests, which the runner
+  // reports as a failed file ("Unknown error").
+  if (KNOWN_GAPS.rtlMirror.length === 0) {
+    it("has no known gaps", () => {
+    expect(KNOWN_GAPS.rtlMirror).toEqual([]);
+    });
+  }
   for (const id of KNOWN_GAPS.rtlMirror) {
     // spec: layout-bidirectionality-rtl-b465b1, layout-bidirectionality-rtl-4d6f2c, layout-bidirectionality-rtl-be21f1
     it(`${id} mirrors its layout in RTL`, async () => {

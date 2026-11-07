@@ -155,6 +155,15 @@ export class NavRailElement extends AriaTablistElement {
         z-index: 1;
       }
 
+      /* Hide when collapsed: no collapsed rail, no space in the layout. */
+      :host([hide-when-collapsed]:not([expanded])) {
+        display: none;
+      }
+
+      :host([hide-when-collapsed]) .nav-rail-modal-host {
+        inline-size: 0;
+      }
+
       /* Navigation rail, Divider: on the edge next to the content. */
       :host([divider]) .nav-rail {
         border-inline-end: 1px solid var(--md-sys-color-outline-variant);
@@ -224,6 +233,21 @@ export class NavRailElement extends AriaTablistElement {
   @property({type: Boolean, reflect: true}) modal = false;
 
   /**
+   * Hide when collapsed (navigation-rail.md): the collapsed rail is not shown
+   * and takes no space, so the body content fills in. The expanded rail
+   * (always modal in this mode) appears over the content when the app's
+   * menu button calls `expand()` or `toggle()`; keep that menu button
+   * accessible.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'hide-when-collapsed'})
+  hideWhenCollapsed = false;
+
+  /** Whether the expanded rail is modal, explicitly or when hiding. */
+  private get isModal(): boolean {
+    return this.modal || this.hideWhenCollapsed;
+  }
+
+  /**
    * Whether the collapsed rail uses the narrow width
    * (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp).
    */
@@ -242,8 +266,8 @@ export class NavRailElement extends AriaTablistElement {
    * in, trap and restore, and page scroll lock. The rail owns `expanded`.
    */
   protected readonly modalSurface = new ModalSurfaceController(this, {
-    isOpen: () => this.modal && this.expanded,
-    modal: () => this.modal,
+    isOpen: () => this.isModal && this.expanded,
+    modal: () => this.isModal,
     surface: () => this,
     scrim: () =>
       this.shadowRoot?.querySelector<HTMLElement>('.nav-rail-scrim') ?? null,
@@ -362,7 +386,7 @@ export class NavRailElement extends AriaTablistElement {
    * back. Resolves after the back motion.
    */
   async handleBack(): Promise<void> {
-    if (!this.modal || !this.expanded) {
+    if (!this.isModal || !this.expanded) {
       return;
     }
     const rail = this.railElement;
@@ -370,7 +394,7 @@ export class NavRailElement extends AriaTablistElement {
       ? playPredictiveBack(rail, {kind: 'side', edge: 'start'})
       : null;
     await motion?.finished;
-    if (!this.modal || !this.expanded) {
+    if (!this.isModal || !this.expanded) {
       motion?.cancel();
       return;
     }
@@ -387,7 +411,7 @@ export class NavRailElement extends AriaTablistElement {
     const showHeader = this.hasHeader || this.collapsible;
     const showBuiltInMenuButton = this.collapsible && !this.hasSlottedToggle;
 
-    const modalOpen = this.modal && this.expanded;
+    const modalOpen = this.isModal && this.expanded;
     const dragging = modalOpen && this.dragOffset !== null;
     const railStyle = dragging
       ? `translate: ${-this.dragDirection * this.dragOffset!}px 0`
@@ -399,7 +423,7 @@ export class NavRailElement extends AriaTablistElement {
           alignment: this.alignment,
           expanded: this.expanded,
           itemLayout: effectiveLayout,
-          modal: this.modal,
+          modal: this.isModal,
           narrow: this.narrow,
           dragging,
         })}"
@@ -433,7 +457,7 @@ export class NavRailElement extends AriaTablistElement {
         </div>
       </div>
     `;
-    if (!this.modal) {
+    if (!this.isModal) {
       return rail;
     }
     const scrimStyle =
@@ -464,14 +488,14 @@ export class NavRailElement extends AriaTablistElement {
   protected readonly swipe = new DragSettleController(this, {
     axis: 'x',
     target: () =>
-      this.isConnected && this.modal && this.expanded ? this.railElement : null,
+      this.isConnected && this.isModal && this.expanded ? this.railElement : null,
     anchors: () => [0, this.railElement?.offsetWidth ?? 0],
     value: () => 0,
     // The rail closes toward the left in LTR: against the pointer's x.
     reverse: () => !this.railIsRtl(),
     velocityThreshold: NAV_RAIL_VELOCITY_THRESHOLD_PX_PER_S,
     positionalThreshold: (distance) => distance * NAV_RAIL_POSITIONAL_THRESHOLD,
-    disabled: () => !(this.modal && this.expanded),
+    disabled: () => !(this.isModal && this.expanded),
     onDragStart: () => {
       this.dragWidth = this.railElement?.offsetWidth ?? 0;
       this.dragDirection = this.railIsRtl() ? -1 : 1;

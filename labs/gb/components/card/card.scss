@@ -140,6 +140,33 @@
       --container-elevation: none;
     }
 
+    // Selected card (selection.md, Selection indicators): a check mark and a
+    // change in surface color.
+    &.card-selected {
+      --container-color: var(--md-sys-color-secondary-container);
+      --outline-color: var(--md-sys-color-primary);
+
+      &.card-outlined {
+        --outline-width: 2px;
+      }
+
+      &::after {
+        content: 'check' / '';
+        position: absolute;
+        inset-block-start: 8px;
+        inset-inline-start: 8px;
+        display: grid;
+        place-items: center;
+        inline-size: 24px;
+        block-size: 24px;
+        border-radius: 50%;
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        font: 18px var(--md-icon-font);
+        pointer-events: none;
+      }
+    }
+
     .card-btn {
       appearance: none;
       background-color: transparent;

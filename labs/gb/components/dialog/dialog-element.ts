@@ -11,6 +11,7 @@ import {ARIAMixinStrict} from '../../../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../../../internal/aria/delegate.js';
 import {divider} from '../divider/divider.js';
 import {iconButton} from '../iconbutton/icon-button.js';
+import {AdaptiveController} from '../shared/adaptive.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {dialogClasses} from './dialog.js';
 
@@ -148,6 +149,30 @@ export class DialogElement extends baseClass {
    */
   @property({type: Boolean, reflect: true, attribute: 'full-screen'})
   fullScreen = false;
+
+  /**
+   * Full-screen dialogs are for compact windows only (dialogs.md: use a basic
+   * dialog at medium and expanded). So `full-screen` applies at compact
+   * windows and the dialog is a basic dialog above, with the same slots. The
+   * host gets `adaptive-basic` while it falls back. Set `always-full-screen`
+   * to keep the full-screen variant at every window size.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'always-full-screen'})
+  alwaysFullScreen = false;
+
+  /** Window size class of the viewport. */
+  private readonly windowSize = new AdaptiveController(this, {
+    target: () => window,
+    reflect: false,
+  });
+
+  /** Whether the dialog currently renders as the full-screen variant. */
+  private get isFullScreen(): boolean {
+    return (
+      this.fullScreen &&
+      (this.alwaysFullScreen || this.windowSize.sizeClass === 'compact')
+    );
+  }
 
   /**
    * Skips the opening and closing animations.
@@ -320,7 +345,7 @@ export class DialogElement extends baseClass {
 
   private isOnScrim(event: MouseEvent) {
     const dialogElement = this.dialogElement;
-    if (!dialogElement || this.fullScreen || event.composedPath()[0] !== dialogElement) {
+    if (!dialogElement || this.isFullScreen || event.composedPath()[0] !== dialogElement) {
       return false;
     }
     const rect = dialogElement.getBoundingClientRect();
@@ -357,6 +382,13 @@ export class DialogElement extends baseClass {
     );
   }
 
+  protected override willUpdate() {
+    this.toggleAttribute(
+      'adaptive-basic',
+      this.fullScreen && !this.isFullScreen,
+    );
+  }
+
   protected override firstUpdated() {
     if (!this.scroller || !this.topAnchor || !this.bottomAnchor) {
       return;
@@ -380,7 +412,7 @@ export class DialogElement extends baseClass {
   private get dialogRole(): 'alertdialog' | 'dialog' {
     if (this.type === 'alert') return 'alertdialog';
     if (this.type === 'dialog') return 'dialog';
-    return this.fullScreen ? 'dialog' : 'alertdialog';
+    return this.isFullScreen ? 'dialog' : 'alertdialog';
   }
 
   protected override render() {
@@ -391,7 +423,7 @@ export class DialogElement extends baseClass {
     // not with the `dialog-full-screen` class; see dialog.scss.
     const classes = classMap(dialogClasses({
       closing: this.isClosing,
-      hasIcon: this.hasIcon && !this.fullScreen,
+      hasIcon: this.hasIcon && !this.isFullScreen,
       hasHeadline: this.hasHeadline,
       hasActions: this.hasActions,
       scrollable,
@@ -417,7 +449,7 @@ export class DialogElement extends baseClass {
         aria-describedby="${this.hasContent ? 'content' : nothing}"
 >
         <div class="dialog-header" part="header">
-          ${this.fullScreen
+          ${this.isFullScreen
             ? html`<button
                 type="button"
                 class="${iconButton({
@@ -440,7 +472,7 @@ export class DialogElement extends baseClass {
           <h2 class="dialog-headline" id="headline" part="headline">
             <slot name="headline" @slotchange=${this.handleSlotChange}></slot>
           </h2>
-          ${this.fullScreen
+          ${this.isFullScreen
             ? html`<div class="dialog-header-actions" part="actions">
                 ${actions}
               </div>`
@@ -463,7 +495,7 @@ export class DialogElement extends baseClass {
             classes: {'dialog-divider': true, 'dialog-divider-bottom': true},
           })}"
           aria-hidden="true" />
-        ${this.fullScreen
+        ${this.isFullScreen
           ? nothing
           : html`<div class="dialog-actions" part="actions">${actions}</div>`}
       </dialog>

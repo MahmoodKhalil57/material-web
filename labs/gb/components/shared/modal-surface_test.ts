@@ -21,6 +21,7 @@ import {
 } from './modal-surface.js';
 import {FakeCloseWatcher, useCloseWatcher} from './predictive-back-harness.js';
 import {resetEscapeTracking} from './predictive-back.js';
+import {until} from './test-dom.js';
 
 /** A surface on a native `<dialog>` with two buttons. */
 class TestModalHost extends LitElement {
@@ -117,6 +118,15 @@ function record(el: HTMLElement) {
   return log;
 }
 
+/**
+ * Lets the pending updates and one frame run, for a check that nothing else
+ * happened (a close that must not follow, a state that must hold).
+ */
+async function flush(el: LitElement) {
+  await el.updateComplete;
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+}
+
 async function press(key: string) {
   await sendKeys({press: key});
   await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -198,28 +208,28 @@ describe('ModalSurfaceController lifecycle', () => {
   });
 
   it('waits for the motion before opened and closed, with opening / closing flags', async () => {
-    let finish!: () => void;
+    const finishes: Array<() => void> = [];
     const el = await mount<TestModalHost>('test-modal-host', (host) => {
       host.options = {
-        waitForMotion: () => new Promise<void>((r) => (finish = r)),
+        waitForMotion: () => new Promise<void>((r) => finishes.push(r)),
       };
     });
     const log = record(el);
     const showing = el.controller.show();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => finishes.length === 1);
     expect(el.controller.opening).toBeTrue();
     expect(log).toEqual(['open']);
-    finish();
+    finishes[0]();
     await showing;
     expect(el.controller.opening).toBeFalse();
     expect(log).toEqual(['open', 'opened']);
 
     const closing = el.controller.close();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => finishes.length === 2);
     expect(el.controller.closing).toBeTrue();
     expect(el.controller.open).toBeFalse();
     expect(el.dialog.open).withContext('dialog stays for the motion').toBeTrue();
-    finish();
+    finishes[1]();
     await closing;
     expect(el.controller.closing).toBeFalse();
     expect(el.dialog.open).toBeFalse();
@@ -237,10 +247,10 @@ describe('ModalSurfaceController lifecycle', () => {
     await el.controller.show();
     const log = record(el);
     el.controller.close();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => !!finish);
     await el.controller.show();
     finish();
-    await new Promise((r) => setTimeout(r, 20));
+    await flush(el);
     expect(el.controller.open).toBeTrue();
     expect(el.dialog.open).toBeTrue();
     expect(log).not.toContain('closed:dismiss');
@@ -277,7 +287,7 @@ describe('ModalSurfaceController lifecycle', () => {
     container.append(host);
     host.controller.show();
     await host.updateComplete;
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => log.includes('opened'));
     expect(log).toEqual(['open', 'opened']);
     expect(host.dialog.open).toBeTrue();
   });
@@ -289,9 +299,12 @@ describe('ModalSurfaceController lifecycle', () => {
     const host = document.createElement('test-modal-host') as TestModalHost;
     host.addEventListener('open', (e) => e.preventDefault());
     container.append(host);
-    host.controller.show();
+    const shown = host.controller.show();
+    // Opening is requested at once; the canceled `open` event reverts it.
+    expect(host.controller.open).toBeTrue();
+    expect(await until(() => !host.controller.open)).toBeTrue();
+    await shown;
     await host.updateComplete;
-    await new Promise((r) => setTimeout(r, 20));
     expect(host.controller.open).toBeFalse();
     expect(host.dialog.open).toBeFalse();
   });
@@ -326,7 +339,7 @@ describe('ModalSurfaceController close requests', () => {
     await el.controller.show();
     const log = record(el);
     await press('Escape');
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => log.includes('closed:escape'));
     expect(el.controller.open).toBeFalse();
     expect(log).toEqual(['close:escape', 'closed:escape']);
   });
@@ -339,7 +352,7 @@ describe('ModalSurfaceController close requests', () => {
     await el.controller.show();
     const log = record(el);
     el.dialog.requestClose();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => log.includes('closed:back'));
     expect(log).toEqual(['close:back', 'closed:back']);
   });
 
@@ -348,7 +361,7 @@ describe('ModalSurfaceController close requests', () => {
     await el.controller.show();
     const log = record(el);
     el.dialog.dispatchEvent(new Event('cancel', {cancelable: true}));
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => log.includes('closed:escape'));
     expect(log).toEqual(['close:escape', 'closed:escape']);
   });
 
@@ -366,7 +379,7 @@ describe('ModalSurfaceController close requests', () => {
       once: true,
     });
     el.dialog.dispatchEvent(used);
-    await new Promise((r) => setTimeout(r, 20));
+    await flush(el);
     expect(el.controller.open).toBeTrue();
     expect(log).toEqual([]);
   });
@@ -389,7 +402,7 @@ describe('ModalSurfaceController close requests', () => {
     await el.controller.show();
     const log = record(el);
     el.dialog.click();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => log.includes('closed:scrim'));
     expect(log).toEqual(['close:scrim', 'closed:scrim']);
   });
 
@@ -410,7 +423,7 @@ describe('ModalSurfaceController close requests', () => {
     // The next press that starts on the scrim does close.
     el.dialog.dispatchEvent(new PointerEvent('pointerdown'));
     el.dialog.click();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => !el.controller.open);
     expect(el.controller.open).toBeFalse();
   });
 
@@ -443,7 +456,7 @@ describe('ModalSurfaceController close requests', () => {
       new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}),
     );
     el.dialog.click();
-    await new Promise((r) => setTimeout(r, 20));
+    await flush(el);
     expect(el.controller.open).toBeTrue();
     expect(log).toEqual([]);
   });
@@ -452,7 +465,7 @@ describe('ModalSurfaceController close requests', () => {
     const el = await mount<TestModalHost>('test-modal-host');
     const log = record(el);
     el.controller.requestClose('escape');
-    await new Promise((r) => setTimeout(r, 20));
+    await flush(el);
     expect(log).toEqual([]);
   });
 
@@ -464,7 +477,7 @@ describe('ModalSurfaceController close requests', () => {
     await el.controller.show();
     const log = record(el);
     el.dialog.close();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => log.includes('closed:forced'));
     expect(el.controller.open).toBeFalse();
     expect(forced).toHaveBeenCalledTimes(1);
     expect(log).toEqual(['close:forced', 'closed:forced']);
@@ -477,7 +490,7 @@ describe('ModalSurfaceController close requests', () => {
     });
     await el.controller.show();
     await el.controller.close();
-    await new Promise((r) => setTimeout(r, 20));
+    await flush(el);
     expect(forced).not.toHaveBeenCalled();
   });
 
@@ -488,7 +501,7 @@ describe('ModalSurfaceController close requests', () => {
     await el.controller.show();
     const log = record(el);
     el.remove();
-    await new Promise((r) => setTimeout(r, 20));
+    await flush(el);
     expect(el.controller.open).toBeFalse();
     expect(log).toEqual([]);
     expect(isLocked()).toBeFalse();
@@ -602,7 +615,7 @@ describe('ModalSurfaceController focus', () => {
     el.expanded = true;
     el.requestUpdate();
     await el.updateComplete;
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => el.shadowRoot!.activeElement?.id === 'first');
     const other = document.createElement('button');
     container!.append(other);
     other.focus();
@@ -631,7 +644,7 @@ describe('ModalSurfaceController focus', () => {
     el.expanded = true;
     el.requestUpdate();
     await el.updateComplete;
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => el.shadowRoot!.activeElement?.id === 'first');
     expect(el.shadowRoot!.activeElement?.id).toBe('first');
     el.expanded = false;
     el.requestUpdate();
@@ -674,7 +687,7 @@ describe('ModalSurfaceController focus', () => {
     el.expanded = true;
     el.requestUpdate();
     await el.updateComplete;
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => el.shadowRoot!.activeElement?.id === 'first');
     const id = () => el.shadowRoot!.activeElement?.id;
     await press('Tab');
     expect(id()).toBe('second');

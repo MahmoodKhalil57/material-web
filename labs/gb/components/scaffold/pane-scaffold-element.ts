@@ -13,6 +13,7 @@ import {
   type PropertyValues,
 } from 'lit';
 import {property, query, state} from 'lit/decorators.js';
+import {DragGesture} from '../shared/drag-gesture.js';
 import {DragSettleController} from '../shared/drag-settle.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
@@ -82,6 +83,12 @@ export interface PaneResizeDetail {
  */
 const RESIZE_VELOCITY_THRESHOLD_PX_PER_S = 500;
 
+/** Arrow key step (px) of moving or resizing a floating pane; Shift x4. */
+const FLOAT_KEY_STEP_PX = 16;
+/** Smallest size (px) a floating pane can be resized to. */
+const FLOAT_MIN_WIDTH_PX = 240;
+const FLOAT_MIN_HEIGHT_PX = 120;
+
 /** Focusable descendants, for moving focus into a modal levitated pane. */
 const FOCUSABLE =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -146,6 +153,14 @@ const APP_SCAFFOLD_TAG = 'md-gb-app-scaffold';
  * it is used or Escape is pressed. Modality is scoped to the scaffold; use
  * `md-gb-dialog` or `md-gb-sheet` for app-wide modals.
  *
+ * At large and extra-large windows a levitated pane keeps floating (spec:
+ * "On large screens, floating panes are the default"); the scrim is optional
+ * (`levitate-modal` adds it). `levitate-coplanar` opts into a co-planar pane
+ * there instead. `levitate-draggable` and `levitate-resizable` add a move
+ * handle and a resize corner to a floating pane: drag them, or focus them and
+ * use the arrow keys (Shift moves in larger steps). `levitate-change` fires
+ * after each move or resize.
+ *
  * Foldables: the scaffold reads the fold (hinge) from the Viewport Segments
  * API and keeps panes off it. A vertical fold splits two panes at the fold
  * with the spacer on it (at least the spacer width); a horizontal fold
@@ -167,6 +182,8 @@ const APP_SCAFFOLD_TAG = 'md-gb-app-scaffold';
  * @cssprop --md-gb-scaffold-nav-inline-size - Width of a navigation rail
  *     beside the scaffold, so split panes keep the spacer centered in the
  *     window. Set by `md-gb-app-scaffold`.
+ * @cssprop --md-gb-scaffold-companion-inline-size - Width of a companion rail
+ *     on the trailing side of the scaffold. Set by `md-gb-app-scaffold`.
  * @fires {CustomEvent<WindowClassChangeDetail>} window-class-change - Fired
  *     when the window size class changes. --bubbles --composed
  * @fires {CustomEvent<WindowHeightClassChangeDetail>} window-height-class-change
@@ -266,6 +283,37 @@ export class PaneScaffoldElement extends LitElement {
   @property({type: Boolean, attribute: 'levitate-modal', reflect: true})
   levitateModal = false;
 
+  /**
+   * Keeps a levitated pane co-planar at large and extra-large windows. By
+   * default it floats there (spec: scaffold, "On large screens: floating
+   * panes are the default").
+   */
+  @property({type: Boolean, attribute: 'levitate-coplanar', reflect: true})
+  levitateCoplanar = false;
+
+  /**
+   * Lets a floating pane be dragged by its handle, or moved with the arrow
+   * keys while the handle is focused (spec: scaffold, floating panes "can be
+   * customized to be dragged or resized").
+   */
+  @property({type: Boolean, attribute: 'levitate-draggable', reflect: true})
+  levitateDraggable = false;
+
+  /**
+   * Lets a floating pane be resized by its corner handle, or with the arrow
+   * keys while the handle is focused.
+   */
+  @property({type: Boolean, attribute: 'levitate-resizable', reflect: true})
+  levitateResizable = false;
+
+  /** Accessible label of the floating pane's move handle. */
+  @property({attribute: 'levitate-move-label'})
+  levitateMoveLabel = 'Move pane';
+
+  /** Accessible label of the floating pane's resize handle. */
+  @property({attribute: 'levitate-resize-label'})
+  levitateResizeLabel = 'Resize pane';
+
   /** Accessible label of a modal levitated pane (its dialog role). */
   @property({attribute: 'levitate-label'}) levitateLabel = '';
 
@@ -318,6 +366,12 @@ export class PaneScaffoldElement extends LitElement {
   @state() private hasTertiary = false;
   @state() private hasPlaceholder = false;
   @state() private pressed = false;
+  /** The floating pane's offset from its default place, in px. */
+  @state() private floatX = 0;
+  @state() private floatY = 0;
+  /** The floating pane's size once resized, in px. */
+  @state() private floatWidth: number | null = null;
+  @state() private floatHeight: number | null = null;
   @state() private elementFold: ElementFold | null = null;
 
   @query('.pane-primary') private readonly primaryPane!: HTMLElement | null;
@@ -412,6 +466,218 @@ export class PaneScaffoldElement extends LitElement {
     this.foldResizeObserver?.disconnect();
     this.foldResizeObserver = null;
     this.listenOutside(false);
+    this.disconnectFloatGestures();
+  }
+
+  // --- Floating pane: drag and resize -----------------------------------------
+
+  /** Whether the floating pane shows its move and resize handles. */
+  private get floatControls(): boolean {
+    return (
+      this.plan.mode === 'levitated' &&
+      this.plan.levitated === 'floating' &&
+      this.plan.visible.includes('secondary') &&
+      (this.levitateDraggable || this.levitateResizable)
+    );
+  }
+
+  private floatGestures = new Map<Element, DragGesture>();
+
+  private disconnectFloatGestures() {
+    for (const gesture of this.floatGestures.values()) gesture.disconnect();
+    this.floatGestures.clear();
+  }
+
+  /** Binds pointer gestures to the handles that are currently rendered. */
+  private syncFloatGestures() {
+    const root = this.renderRoot;
+    const move = root.querySelector<HTMLElement>('.float-move');
+    const resize = root.querySelector<HTMLElement>('.float-resize');
+    for (const [el, gesture] of this.floatGestures) {
+      if (el !== move && el !== resize) {
+        gesture.disconnect();
+        this.floatGestures.delete(el);
+      }
+    }
+    if (move && !this.floatGestures.has(move)) {
+      this.floatGestures.set(move, this.createFloatGesture(move, 'move'));
+    }
+    if (resize && !this.floatGestures.has(resize)) {
+      this.floatGestures.set(resize, this.createFloatGesture(resize, 'resize'));
+    }
+  }
+
+  private createFloatGesture(target: HTMLElement, kind: 'move' | 'resize') {
+    let startX = 0;
+    let startY = 0;
+    let base = {x: 0, y: 0, width: 0, height: 0};
+    return new DragGesture(target, {
+      axis: 'x',
+      canStart: (event) => {
+        startX = event.clientX;
+        startY = event.clientY;
+        base = {
+          x: this.floatX,
+          y: this.floatY,
+          width: this.secondaryPane?.offsetWidth ?? 0,
+          height: this.secondaryPane?.offsetHeight ?? 0,
+        };
+        return true;
+      },
+      // A free two-axis drag: any travel past the slop picks the pane up.
+      shouldDrag: () => true,
+      onMove: (_delta, event) => {
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        if (kind === 'move') {
+          this.moveFloatTo(base.x + dx, base.y + dy);
+        } else {
+          const grow = this.secondaryOnLeft ? 1 : -1;
+          this.resizeFloatTo(base.width + grow * dx, base.height - dy);
+        }
+      },
+      onEnd: () => this.dispatchFloatChange(),
+      captureTarget: () => target,
+    });
+  }
+
+  /** Moves the floating pane to an offset, keeping it inside the scaffold. */
+  private moveFloatTo(x: number, y: number) {
+    const pane = this.secondaryPane;
+    const container = pane?.offsetParent;
+    if (!pane || !container) return;
+    const rect = pane.getBoundingClientRect();
+    const bounds = container.getBoundingClientRect();
+    const dx = Math.min(
+      Math.max(x - this.floatX, bounds.left - rect.left),
+      bounds.right - rect.right,
+    );
+    const dy = Math.min(
+      Math.max(y - this.floatY, bounds.top - rect.top),
+      bounds.bottom - rect.bottom,
+    );
+    this.floatX = Math.round(this.floatX + dx);
+    this.floatY = Math.round(this.floatY + dy);
+  }
+
+  /** Resizes the floating pane, within the scaffold and a minimum size. */
+  private resizeFloatTo(width: number, height: number) {
+    const container = this.secondaryPane?.offsetParent;
+    if (!container) return;
+    this.floatWidth = Math.round(
+      Math.min(
+        Math.max(width, FLOAT_MIN_WIDTH_PX),
+        Math.max(container.clientWidth, FLOAT_MIN_WIDTH_PX),
+      ),
+    );
+    this.floatHeight = Math.round(
+      Math.min(
+        Math.max(height, FLOAT_MIN_HEIGHT_PX),
+        Math.max(container.clientHeight, FLOAT_MIN_HEIGHT_PX),
+      ),
+    );
+    // Growing can push the pane past an edge: pull it back in.
+    this.updateComplete.then(() => this.moveFloatTo(this.floatX, this.floatY));
+  }
+
+  private dispatchFloatChange() {
+    const pane = this.secondaryPane;
+    this.dispatchEvent(
+      new CustomEvent('levitate-change', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          x: this.floatX,
+          y: this.floatY,
+          width: pane?.offsetWidth ?? 0,
+          height: pane?.offsetHeight ?? 0,
+        },
+      }),
+    );
+  }
+
+  private resetFloat() {
+    this.floatX = 0;
+    this.floatY = 0;
+    this.floatWidth = null;
+    this.floatHeight = null;
+  }
+
+  /** The arrow key's travel, in px (right/down positive), or null. */
+  private floatKeyDelta(event: KeyboardEvent): {dx: number; dy: number} | null {
+    const step = FLOAT_KEY_STEP_PX * (event.shiftKey ? 4 : 1);
+    switch (event.key) {
+      case 'ArrowLeft':
+        return {dx: -step, dy: 0};
+      case 'ArrowRight':
+        return {dx: step, dy: 0};
+      case 'ArrowUp':
+        return {dx: 0, dy: -step};
+      case 'ArrowDown':
+        return {dx: 0, dy: step};
+      default:
+        return null;
+    }
+  }
+
+  private readonly handleFloatMoveKeyDown = (event: KeyboardEvent) => {
+    const delta = this.floatKeyDelta(event);
+    if (!delta) return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.moveFloatTo(this.floatX + delta.dx, this.floatY + delta.dy);
+    this.updateComplete.then(() => this.dispatchFloatChange());
+  };
+
+  private readonly handleFloatResizeKeyDown = (event: KeyboardEvent) => {
+    const delta = this.floatKeyDelta(event);
+    if (!delta) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const pane = this.secondaryPane;
+    if (!pane) return;
+    // The handle's edge moves in the arrow's direction.
+    const grow = this.secondaryOnLeft ? 1 : -1;
+    this.resizeFloatTo(
+      (this.floatWidth ?? pane.offsetWidth) + grow * delta.dx,
+      (this.floatHeight ?? pane.offsetHeight) - delta.dy,
+    );
+    this.updateComplete.then(() => this.dispatchFloatChange());
+  };
+
+  private renderFloatControls() {
+    if (!this.floatControls) return nothing;
+    const onLeft = this.secondaryOnLeft;
+    return html`<div class="float-bar" part="float-bar">
+      ${this.levitateDraggable
+        ? html`<div
+            class="float-move focus-ring-outer"
+            part="float-move"
+            role="button"
+            tabindex="0"
+            aria-label=${this.levitateMoveLabel}
+            aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"
+            @keydown=${this.handleFloatMoveKeyDown}>
+            <span class="float-grip"></span>
+          </div>`
+        : nothing}
+      ${this.levitateResizable
+        ? html`<div
+            class=${classMap({
+              'float-resize': true,
+              'focus-ring-outer': true,
+              'float-resize-right': onLeft,
+            })}
+            part="float-resize"
+            role="button"
+            tabindex="0"
+            aria-label=${this.levitateResizeLabel}
+            aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight"
+            @keydown=${this.handleFloatResizeKeyDown}>
+            <span class="float-corner"></span>
+          </div>`
+        : nothing}
+    </div>`;
   }
 
   /** List-detail: shows the detail pane (e.g. after selecting an item). */
@@ -629,6 +895,8 @@ export class PaneScaffoldElement extends LitElement {
       collapsedPane: this.collapsedPane,
       levitate: this.levitate,
       levitateOpen: this.levitateOpen,
+      levitateModal: this.levitateModal,
+      levitateCoplanar: this.levitateCoplanar,
       fold: this.elementFold?.orientation ?? null,
     });
     if (this.getAttribute('window-class') !== this.size.value) {
@@ -644,6 +912,8 @@ export class PaneScaffoldElement extends LitElement {
     } else {
       this.removeAttribute('fold');
     }
+    // A floating pane opens at its default place and size again.
+    if (changed.has('levitateOpen') && !this.levitateOpen) this.resetFloat();
     // Remember where focus was when a levitated pane opens (the trigger).
     if (changed.has('levitateOpen') && this.levitateOpen) {
       const active = deepActiveElement();
@@ -654,6 +924,7 @@ export class PaneScaffoldElement extends LitElement {
 
   protected override updated(changed: PropertyValues<this>) {
     this.syncHandleValue();
+    this.syncFloatGestures();
     const key = `${this.size.value}|${this.plan.mode}|${this.plan.visible.join()}|${this.plan.tertiary}`;
     if (key !== this.lastLayoutKey) {
       this.lastLayoutKey = key;
@@ -786,12 +1057,14 @@ export class PaneScaffoldElement extends LitElement {
 
   /** Secondary width that centers the spacer in the window. */
   private splitWidth(available: number): number {
+    const style = getComputedStyle(this);
+    const rail = (name: string) =>
+      parseFloat(style.getPropertyValue(name)) || 0;
+    // The navigation shrinks the leading pane; a companion rail on the
+    // trailing side grows it back.
     const nav =
-      parseFloat(
-        getComputedStyle(this).getPropertyValue(
-          '--md-gb-scaffold-nav-inline-size',
-        ),
-      ) || 0;
+      rail('--md-gb-scaffold-nav-inline-size') -
+      rail('--md-gb-scaffold-companion-inline-size');
     const offset = this.plan.tertiary ? 0 : nav / 2;
     return this.effectivePosition === 'start'
       ? available / 2 - offset
@@ -959,8 +1232,22 @@ export class PaneScaffoldElement extends LitElement {
     };
     if (name === 'secondary') {
       const modal = mode === 'levitated' && this.levitateModal;
+      const floatStyle: Record<string, string> = {};
+      if (this.floatControls) {
+        if (this.floatX || this.floatY) {
+          floatStyle['--_float-x'] = `${this.floatX}px`;
+          floatStyle['--_float-y'] = `${this.floatY}px`;
+        }
+        if (this.floatWidth !== null) {
+          floatStyle['--_float-width'] = `${this.floatWidth}px`;
+        }
+        if (this.floatHeight !== null) {
+          floatStyle['--_float-height'] = `${this.floatHeight}px`;
+        }
+      }
       return html`<div
         class=${classMap(classes)}
+        style=${styleMap(floatStyle)}
         part="pane secondary"
         id="secondary"
         tabindex="-1"
@@ -968,6 +1255,7 @@ export class PaneScaffoldElement extends LitElement {
         aria-label=${modal && this.levitateLabel ? this.levitateLabel : nothing}
         @focusin=${this.handleSecondaryFocusIn}
         @keydown=${this.handleSecondaryKeyDown}>
+        ${this.renderFloatControls()}
         <slot name="secondary" @slotchange=${this.handleSlotChange}></slot>
       </div>`;
     }

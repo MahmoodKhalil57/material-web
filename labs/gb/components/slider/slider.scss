@@ -587,6 +587,9 @@
     line-height: var(--md-sys-typescale-label-large-line-height, 20px);
     letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.1px);
     font-weight: var(--md-sys-typescale-label-large-weight, 500);
+    // typography/applying-type/ensuring-readability: values that change keep
+    // their width (tabular figures), so the label does not shift while dragging.
+    font-variant-numeric: tabular-nums;
     opacity: 0;
     transform: scale(0.8);
     transform-origin: center bottom;

@@ -46,12 +46,13 @@ function annRegion(el: HTMLElement, politeness: 'polite' | 'assertive') {
 
 /** Waits (at most a second) until the live region holds `expected`, and returns its text. */
 async function annText(el: HTMLElement, politeness: 'polite' | 'assertive', expected: string) {
-  let text = annRegion(el, politeness)?.textContent?.trim() ?? '';
-  for (let i = 0; i < 100 && text !== expected; i++) {
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    text = annRegion(el, politeness)?.textContent?.trim() ?? '';
+  const text = () => annRegion(el, politeness)?.textContent?.trim() ?? '';
+  // Checks once per frame (the shared until() helper, inlined).
+  const end = performance.now() + 1000;
+  while (text() !== expected && performance.now() < end) {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
   }
-  return text;
+  return text();
 }
 
 describe('<md-gb-text-field> announcer contract (AnnouncerController)', () => {

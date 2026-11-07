@@ -175,12 +175,13 @@ function annRegion(el: HTMLElement, politeness: 'polite' | 'assertive') {
 
 /** Waits (at most a second) until the live region holds `expected`, and returns its text. */
 async function annText(el: HTMLElement, politeness: 'polite' | 'assertive', expected: string) {
-  let text = annRegion(el, politeness)?.textContent?.trim() ?? '';
-  for (let i = 0; i < 100 && text !== expected; i++) {
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    text = annRegion(el, politeness)?.textContent?.trim() ?? '';
+  const text = () => annRegion(el, politeness)?.textContent?.trim() ?? '';
+  // Checks once per frame (the shared until() helper, inlined).
+  const end = performance.now() + 1000;
+  while (text() !== expected && performance.now() < end) {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
   }
-  return text;
+  return text();
 }
 
 describe('<md-gb-date-picker> announcer contract (AnnouncerController)', () => {
@@ -395,6 +396,8 @@ describe('<md-gb-date-picker> form contract (shared form layer)', () => {
   });
 });
 
+import {resetEscapeTracking} from '../shared/predictive-back.js';
+
 /** What the lifecycle surfaces share: `show()`, `close()`, `open` and events. */
 interface ModalLifecycleElement extends HTMLElement {
   open: boolean;
@@ -422,11 +425,11 @@ function modalOnce(el: HTMLElement, type: string) {
 
 /**
  * A close request counts as Escape for a second after an Escape press (the
- * browser reports Escape and the back gesture alike); waits that out so a
- * request is a back request.
+ * browser reports Escape and the back gesture alike). Forgets the recorded
+ * presses, so the next close request is a back request.
  */
-function modalOutwaitEscape() {
-  return new Promise((resolve) => setTimeout(resolve, 1100));
+function modalForgetEscape() {
+  resetEscapeTracking();
 }
 
 /** Whether the page scroll is locked (CSS overflow of the root element). */
@@ -444,7 +447,6 @@ async function setupModalDatePicker() {
 async function openModalDatePicker(el: ModalLifecycleElement) {
   await el.show();
   await settle();
-  await new Promise((resolve) => setTimeout(resolve, 30));
 }
 
 function isOpenModalDatePicker(el: ModalLifecycleElement) {
@@ -512,7 +514,7 @@ describe('<md-gb-date-picker> modal surface contract (modal date picker; ModalSu
     }
     const log = modalRecord(el);
     const closed = modalOnce(el, 'closed');
-    await modalOutwaitEscape();
+    await modalForgetEscape();
     dialog.requestClose();
     await closed;
     expect(isOpenModalDatePicker(el)).toBeFalse();

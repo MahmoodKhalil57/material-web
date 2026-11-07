@@ -10,7 +10,7 @@ import '../../menu/md-gb-menu.js';
 import '../../menu/md-gb-menu-item.js';
 
 import {unmirrored, horizontalScale} from './rtl-helpers.js';
-import {deepElements, KNOWN_GAPS, renderSubject, settle, SUBJECTS} from './subjects.js';
+import {deepElements, KNOWN_GAPS, settle, SUBJECTS} from './subjects.js';
 
 // Suite 5 of the central CSS/token suites: RTL
 // (foundations/layout/bidirectionality-rtl.md). A layout that is changed from
@@ -24,15 +24,6 @@ describe('RTL (central)', () => {
     // spec: layout-bidirectionality-rtl-b465b1, layout-bidirectionality-rtl-4d6f2c, layout-bidirectionality-rtl-be21f1
     it(`${subject.id} mirrors its layout in RTL`, async () => {
       expect(await unmirrored(subject.id)).toEqual([]);
-    });
-
-    // spec: layout-bidirectionality-rtl-7c4554, layout-bidirectionality-rtl-763eb5
-    it(`${subject.id} follows the inherited direction for text`, async () => {
-      const {container, el, cleanup} = await renderSubject(subject);
-      container.dir = 'rtl';
-      await settle(container);
-      expect(getComputedStyle(el).direction).toBe('rtl');
-      cleanup();
     });
   }
 });

@@ -249,6 +249,34 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     fill: currentColor;
   }
 
+  // The error icon: in the trailing box, shown in the error state. Its color
+  // follows the trailing icon color, which the error tokens set.
+  .text-field-error-icon {
+    display: none;
+    inline-size: 1em;
+    block-size: 1em;
+    fill: currentColor;
+  }
+
+  .text-field-error .text-field-error-icon {
+    display: block;
+  }
+
+  // error-icon="focus": keeps its space, hidden until the field has focus.
+  .text-field-error-icon-focus {
+    visibility: hidden;
+  }
+
+  .text-field:focus-within .text-field-error-icon-focus {
+    visibility: visible;
+  }
+
+  // supporting-text-visibility="focus": keeps its space, hidden until the
+  // field has focus.
+  .text-field:not(:focus-within) .text-field-supporting-text-focus {
+    visibility: hidden;
+  }
+
   // The input area: the input row, padded so the label fits above it.
   .text-field-content {
     // Paints the input above the state layer.

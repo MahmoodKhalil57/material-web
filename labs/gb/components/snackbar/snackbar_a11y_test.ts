@@ -169,6 +169,10 @@ describe('<md-gb-snackbar> accessibility and layout', () => {
 
   describe('layout', () => {
     // spec: snackbar-5f9681, snackbar-625f0b
+    // snackbar-fbf72d says 48dp to 64dp; the token database and Compose
+    // (SnackbarTokens.TwoLinesContainerHeight) give the two-line container
+    // 68dp, and the page's measurement figure shows only the 48dp line, so
+    // the token value wins.
     it('is 48dp for one line and grows for two lines on compact layouts, with fixed edge distances', async () => {
       const heights: number[] = [];
       const edges: number[][] = [];

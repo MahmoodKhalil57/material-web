@@ -18,7 +18,7 @@ import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {center, deepElements, prop, ripplesOf} from '../shared/central/subjects.js';
+import {center, deepElements, prop, ripplesOf} from '../shared/test-dom.js';
 import {type ButtonElement} from './button-element.js';
 
 adoptStyles(document, [m3Styles]);

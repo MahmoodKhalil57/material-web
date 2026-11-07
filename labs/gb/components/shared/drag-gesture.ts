@@ -126,6 +126,16 @@ export interface DragGestureOptions {
    * the axis is larger than across it.
    */
   shouldDrag?: (delta: number, crossDelta: number, event: PointerEvent) => boolean;
+  /**
+   * Hold time (ms) before a press can become a drag ("long press and drag").
+   * Moving past the slop before the hold ends the gesture (the page scrolls
+   * instead). Once held, `onLongPress` is called and any movement starts the
+   * drag, whatever its direction; a release without movement calls
+   * `onCancel`.
+   */
+  longPress?: number;
+  /** Called when a press was held for `longPress` ms. */
+  onLongPress?: (event: PointerEvent) => void;
   /** Called when the drag starts. */
   onStart?: (event: PointerEvent) => void;
   /** Called on every move while dragging, with the travel since the press. */
@@ -143,6 +153,9 @@ interface DragPointer {
   startX: number;
   startY: number;
   dragging: boolean;
+  /** Set once the press was held for `longPress` ms. */
+  held: boolean;
+  timer?: ReturnType<typeof setTimeout>;
 }
 
 /**
@@ -182,9 +195,9 @@ export class DragGesture {
 
   /** Cancels a drag in progress. */
   cancel() {
-    const wasDragging = this.dragging;
+    const wasActive = this.dragging || Boolean(this.pointer?.held);
     this.end();
-    if (wasDragging) {
+    if (wasActive) {
       this.options.onCancel?.();
     }
   }
@@ -204,7 +217,17 @@ export class DragGesture {
       startX: event.clientX,
       startY: event.clientY,
       dragging: false,
+      held: false,
     };
+    const hold = this.options.longPress;
+    if (hold !== undefined) {
+      const pointer = this.pointer;
+      pointer.timer = globalThis.setTimeout(() => {
+        if (this.pointer !== pointer) return;
+        pointer.held = true;
+        this.options.onLongPress?.(event);
+      }, hold);
+    }
     this.tracker.reset();
     this.tracker.add(this.position(event), event.timeStamp);
     // Track the pointer on the window: a fast drag leaves the target before
@@ -223,12 +246,20 @@ export class DragGesture {
     this.tracker.add(this.position(event), event.timeStamp);
     if (!pointer.dragging) {
       const slop = this.options.slop ?? DRAG_SLOP_PX;
-      if (Math.hypot(delta, crossDelta) < slop) {
+      const travel = Math.hypot(delta, crossDelta);
+      const waiting = this.options.longPress !== undefined && !pointer.held;
+      if (pointer.held) {
+        // Held: any movement picks the item up.
+        if (travel < 1) return;
+      } else if (travel < slop) {
         return;
       }
-      const shouldDrag = this.options.shouldDrag
-        ? this.options.shouldDrag(delta, crossDelta, event)
-        : Math.abs(delta) > Math.abs(crossDelta);
+      const shouldDrag = waiting
+        ? false
+        : pointer.held ||
+          (this.options.shouldDrag
+            ? this.options.shouldDrag(delta, crossDelta, event)
+            : Math.abs(delta) > Math.abs(crossDelta));
       if (!shouldDrag) {
         this.end();
         return;
@@ -258,7 +289,16 @@ export class DragGesture {
       return;
     }
     if (!pointer.dragging) {
+      const held = pointer.held;
       this.end();
+      if (held) {
+        // A held press that never moved: keep the click from activating.
+        this.suppressClick = true;
+        globalThis.setTimeout(() => {
+          this.suppressClick = false;
+        });
+        this.options.onCancel?.();
+      }
       return;
     }
     const {delta} = this.deltas(event);
@@ -309,6 +349,7 @@ export class DragGesture {
   }
 
   private end() {
+    clearTimeout(this.pointer?.timer);
     for (const [type, listener] of this.windowListeners) {
       window.removeEventListener(type, listener as EventListener, true);
     }

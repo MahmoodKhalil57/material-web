@@ -293,6 +293,84 @@
       color: var(--avatar-label-color);
     }
 
+    // Selection checkbox of a selectable list (selection.md, "Click"): shown on
+    // hover (desktop), and on every item once one is selected or when
+    // selection is the primary activity (`list-item-selection-visible`). It
+    // covers the avatar or leading content; items without any reserve room.
+    .list-item-select-checkbox {
+      flex: none;
+      box-sizing: border-box;
+      display: grid;
+      place-items: center;
+      inline-size: 18px;
+      block-size: 18px;
+      border: 2px solid var(--md-sys-color-on-surface-variant);
+      border-radius: 2px;
+      color: var(--md-sys-color-on-primary);
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 100ms linear,
+        visibility 0s linear 100ms;
+
+      &::before {
+        content: 'check' / '';
+        font: 14px var(--md-icon-font);
+        opacity: 0;
+      }
+    }
+
+    .list-item-leading:has(> .has-slotted) > .list-item-select-checkbox {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      // The avatar or icon under it is hidden while it is shown.
+    }
+
+    .list-item-leading {
+      position: relative;
+    }
+
+    &.list-item-selection-visible .list-item-select-checkbox {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+
+    @media (hover: hover) {
+      &.list-item-selectable:not(.list-item-static):hover
+        .list-item-select-checkbox {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s;
+      }
+    }
+
+    &.list-item-selection-visible:has(
+        > .list-item-leading > .list-item-select-checkbox
+      )
+      .list-item-leading
+      > :is(slot.has-slotted) {
+      visibility: hidden;
+    }
+
+    @media (hover: hover) {
+      &.list-item-selectable:not(.list-item-static):hover
+        .list-item-leading
+        > :is(slot.has-slotted) {
+        visibility: hidden;
+      }
+    }
+
+    &:is(:checked, .checked) .list-item-select-checkbox {
+      border-color: var(--md-sys-color-primary);
+      background-color: var(--md-sys-color-primary);
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
     &::checkmark {
       font: var(--leading-icon-size) var(--md-icon-font);
       color: var(--leading-icon-color);

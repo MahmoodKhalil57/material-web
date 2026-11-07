@@ -54,7 +54,7 @@ describe('md-gb-dialog tracked spec units', () => {
     <md-gb-button slot="actions" id="confirm" value="accept">Accept</md-gb-button>
   </md-gb-dialog>`;
 
-  const fullScreen = html`<md-gb-dialog quick full-screen>
+  const fullScreen = html`<md-gb-dialog quick full-screen always-full-screen>
     <span slot="headline">New event</span>
     Supporting content
     <md-gb-button slot="actions" value="save">Save</md-gb-button>

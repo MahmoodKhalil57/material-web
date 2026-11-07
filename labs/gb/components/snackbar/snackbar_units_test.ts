@@ -13,6 +13,7 @@ import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 
 import './md-gb-snackbar.js';
+import {until} from '../shared/test-dom.js';
 import {type SnackbarElement} from './snackbar-element.js';
 
 adoptStyles(document, [m3Styles]);
@@ -163,12 +164,8 @@ describe('<md-gb-snackbar> spec units', () => {
   async function politeText(snackbar: SnackbarElement, expected: string) {
     const region = () =>
       snackbar.shadowRoot!.querySelector<HTMLElement>('[data-announcer="polite"]');
-    let text = region()?.textContent?.trim() ?? '';
-    for (let i = 0; i < 100 && text !== expected; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      text = region()?.textContent?.trim() ?? '';
-    }
-    return text;
+    await until(() => region()?.textContent?.trim() === expected);
+    return region()?.textContent?.trim() ?? '';
   }
 
   // spec: snackbar-9f201c, snackbar-a475ea, snackbar-66bf7e

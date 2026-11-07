@@ -145,6 +145,12 @@ export class SearchBarElement extends LitElement {
   /** Accessible label of the results listbox. */
   @property({attribute: 'results-label'}) resultsLabel = 'Search results';
 
+  /** Whether the app is searching: shows progress in the view. */
+  @property({type: Boolean, reflect: true}) searching = false;
+
+  /** Accessible label of the searching progress indicator. */
+  @property({attribute: 'searching-label'}) searchingLabel = 'Searching';
+
   /** Announced when suggestions or results become available. */
   @property({attribute: 'suggestions-label'})
   suggestionsLabel = 'Suggestions available';
@@ -306,6 +312,8 @@ export class SearchBarElement extends LitElement {
         clear-label=${this.clearLabel}
         results-label=${this.resultsLabel}
         suggestions-label=${this.suggestionsLabel}
+        searching-label=${this.searchingLabel}
+        ?searching=${this.searching}
         ?docked=${this.docked}
         ?divided=${this.divided}
         ?quick=${this.quick}

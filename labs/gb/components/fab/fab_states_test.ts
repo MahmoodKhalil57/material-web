@@ -17,7 +17,7 @@ import {
   focusRingsOf,
   prop,
   ripplesOf,
-} from '../shared/central/subjects.js';
+} from '../shared/test-dom.js';
 
 adoptStyles(document, [m3Styles]);
 

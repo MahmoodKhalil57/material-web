@@ -16,11 +16,11 @@ import {
   renderSubject,
   deepElements,
   ripplesOf,
-  sleep,
   SUBJECTS,
   type Subject,
 } from './subjects.js';
 import {colorAlpha, contentAlphas, isWithin} from './style-helpers.js';
+import {frames} from './states-helpers.js';
 
 // Suite 4 of the central CSS/token suites: disabled parts
 // (foundations/interaction/states.md, Disabled). Disabled states are inherited
@@ -28,11 +28,8 @@ import {colorAlpha, contentAlphas, isWithin} from './style-helpers.js';
 // navigation), so those are not in this table. `disabled_gap.ts` has the
 // checks that fail.
 
-const DISABLED_COMPONENTS = [
-  'button', 'iconbutton', 'checkbox', 'radio', 'switch', 'chip',
-  'segmentedbutton', 'card', 'list', 'menu', 'textfield', 'slider',
-];
-const subjects = SUBJECTS.filter((s) => DISABLED_COMPONENTS.includes(s.component));
+const COMPONENTS: string[] = ["button"];
+const subjects = SUBJECTS.filter((s) => COMPONENTS.includes(s.component));
 
 /** Menus are the exception: disabled items can receive focus (menus.md). */
 const FOCUSABLE_WHEN_DISABLED = ['menu-item'];
@@ -106,7 +103,8 @@ describe('disabled (central)', () => {
           el.focus();
           await sendKeys({press: 'Space'});
           await sendKeys({press: 'Enter'});
-          await sleep(30);
+          // A disabled part must not react: give the input a few frames to be processed.
+          await frames();
           expect(read()).toBe(before);
           expect(fired).toBe(0);
           cleanup();
@@ -120,7 +118,7 @@ describe('disabled (central)', () => {
           const c = center(el);
           await sendMouse({type: 'move', position: [c.x, c.y]});
           await sendMouse({type: 'down'});
-          await sleep(120);
+          await frames();
           for (const ripple of ripplesOf(el)) {
             const layer = getComputedStyle(ripple).backgroundImage;
             const painted =

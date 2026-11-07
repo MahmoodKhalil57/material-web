@@ -12,8 +12,8 @@
   --motion-spring-fast-spatial-duration: var(
     --md-sys-motion-spring-fast-spatial-duration
   );
-  --inner-corner-size: var(--md-sys-shape-corner-sm);
-  --pressed-inner-corner-size: var(--md-sys-shape-corner-xs);
+  --inner-corner-size: var(--md-sys-shape-corner-value-sm);
+  --pressed-inner-corner-size: var(--md-sys-shape-corner-value-xs);
   --outer-corner-size: calc(var(--container-height) / 2);
   --outer-corner-square-size: var(--md-sys-shape-corner-sm);
   // Not a spec token. button-groups.md, Density: "Button groups adapt to the
@@ -49,28 +49,28 @@
 
 @mixin inner-corner-xs {
   // Design override of GM3 v35: inner corners for XS are 4px (corner-xs)
-  --inner-corner-size: var(--md-sys-shape-corner-xs);
-  --pressed-inner-corner-size: var(--md-sys-shape-corner-xs);
+  --inner-corner-size: var(--md-sys-shape-corner-value-xs);
+  --pressed-inner-corner-size: var(--md-sys-shape-corner-value-xs);
 }
 
 @mixin inner-corner-sm {
-  --inner-corner-size: var(--md-sys-shape-corner-sm);
-  --pressed-inner-corner-size: var(--md-sys-shape-corner-xs);
+  --inner-corner-size: var(--md-sys-shape-corner-value-sm);
+  --pressed-inner-corner-size: var(--md-sys-shape-corner-value-xs);
 }
 
 @mixin inner-corner-md {
-  --inner-corner-size: var(--md-sys-shape-corner-sm);
-  --pressed-inner-corner-size: var(--md-sys-shape-corner-xs);
+  --inner-corner-size: var(--md-sys-shape-corner-value-sm);
+  --pressed-inner-corner-size: var(--md-sys-shape-corner-value-xs);
 }
 
 @mixin inner-corner-lg {
-  --inner-corner-size: var(--md-sys-shape-corner-lg);
-  --pressed-inner-corner-size: var(--md-sys-shape-corner-md);
+  --inner-corner-size: var(--md-sys-shape-corner-value-lg);
+  --pressed-inner-corner-size: var(--md-sys-shape-corner-value-md);
 }
 
 @mixin inner-corner-xl {
-  --inner-corner-size: var(--md-sys-shape-corner-lg-increased);
-  --pressed-inner-corner-size: var(--md-sys-shape-corner-lg);
+  --inner-corner-size: var(--md-sys-shape-corner-value-lg-increased);
+  --pressed-inner-corner-size: var(--md-sys-shape-corner-value-lg);
 }
 
 @mixin outer-corner-round {

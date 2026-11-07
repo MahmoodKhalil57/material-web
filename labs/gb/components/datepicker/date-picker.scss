@@ -277,6 +277,9 @@ $slide-distance: 20%;
     font: var(--header-headline);
     letter-spacing: var(--header-headline-tracking);
     font-variation-settings: var(--header-headline-axes);
+    // typography/applying-type/ensuring-readability: the headline's dates
+    // change as the user picks, so their width stays fixed.
+    font-variant-numeric: tabular-nums;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -629,6 +632,9 @@ $slide-distance: 20%;
     font: var(--date-label-text);
     letter-spacing: var(--date-label-text-tracking);
     font-variation-settings: var(--date-label-text-axes);
+    // typography/applying-type/ensuring-readability: tabular figures keep the
+    // day numbers aligned in their columns.
+    font-variant-numeric: tabular-nums;
     transition:
       background-color var(--md-sys-motion-spring-fast-effects-duration)
         var(--md-sys-motion-spring-fast-effects),

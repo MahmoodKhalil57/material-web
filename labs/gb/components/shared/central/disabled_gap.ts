@@ -14,6 +14,13 @@ import {contentAlphas} from './style-helpers.js';
 // Run with `npm run gb:check -- --gaps ...`.
 
 describe('disabled (central gaps)', () => {
+  // With no known gaps the suite would have no tests, which the runner
+  // reports as a failed file ("Unknown error").
+  if (KNOWN_GAPS.disabledContent.length === 0) {
+    it("has no known gaps", () => {
+    expect(KNOWN_GAPS.disabledContent).toEqual([]);
+    });
+  }
   for (const id of KNOWN_GAPS.disabledContent) {
     // spec: interaction-states-fb47ea (text fields: text-fields-70a237,
     // text-fields-7c17c3; cards: cards-996afd, cards-115d45, cards-63b06f)

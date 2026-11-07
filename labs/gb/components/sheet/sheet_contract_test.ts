@@ -381,6 +381,8 @@ describe('<md-gb-bottom-sheet> drag and settle contract (DragSettleController: f
   });
 });
 
+import {resetEscapeTracking} from '../shared/predictive-back.js';
+
 /** What the lifecycle surfaces share: `show()`, `close()`, `open` and events. */
 interface ModalLifecycleElement extends HTMLElement {
   open: boolean;
@@ -408,11 +410,11 @@ function modalOnce(el: HTMLElement, type: string) {
 
 /**
  * A close request counts as Escape for a second after an Escape press (the
- * browser reports Escape and the back gesture alike); waits that out so a
- * request is a back request.
+ * browser reports Escape and the back gesture alike). Forgets the recorded
+ * presses, so the next close request is a back request.
  */
-function modalOutwaitEscape() {
-  return new Promise((resolve) => setTimeout(resolve, 1100));
+function modalForgetEscape() {
+  resetEscapeTracking();
 }
 
 /** Whether the page scroll is locked (CSS overflow of the root element). */
@@ -430,7 +432,6 @@ async function setupModalBottomSheet(opts: {standard?: boolean} = {}) {
 async function openModalBottomSheet(el: ModalLifecycleElement) {
   await el.show();
   await settle();
-  await new Promise((resolve) => setTimeout(resolve, 30));
 }
 
 function isOpenModalBottomSheet(el: ModalLifecycleElement) {
@@ -447,7 +448,6 @@ async function setupModalSideSheet(opts: {standard?: boolean} = {}) {
 async function openModalSideSheet(el: ModalLifecycleElement) {
   await el.show();
   await settle();
-  await new Promise((resolve) => setTimeout(resolve, 30));
 }
 
 function isOpenModalSideSheet(el: ModalLifecycleElement) {
@@ -519,7 +519,7 @@ describe('<md-gb-bottom-sheet> modal surface contract (bottom sheet; ModalSurfac
     }
     const log = modalRecord(el);
     const closed = modalOnce(el, 'closed');
-    await modalOutwaitEscape();
+    await modalForgetEscape();
     dialog.requestClose();
     await closed;
     expect(isOpenModalBottomSheet(el)).toBeFalse();
@@ -644,7 +644,7 @@ describe('<md-gb-side-sheet> modal surface contract (side sheet; ModalSurfaceCon
     }
     const log = modalRecord(el);
     const closed = modalOnce(el, 'closed');
-    await modalOutwaitEscape();
+    await modalForgetEscape();
     dialog.requestClose();
     await closed;
     expect(isOpenModalSideSheet(el)).toBeFalse();

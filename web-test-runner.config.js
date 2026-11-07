@@ -6,7 +6,7 @@
 
 import {playwrightLauncher} from '@web/test-runner-playwright';
 import {transform} from 'esbuild';
-import {existsSync, readFileSync} from 'node:fs';
+import {existsSync, readFileSync, statSync} from 'node:fs';
 import {join} from 'node:path';
 import {jasmineTestRunnerConfig} from 'web-test-runner-jasmine';
 
@@ -17,6 +17,9 @@ import {jasmineTestRunnerConfig} from 'web-test-runner-jasmine';
  * need a tsc build first. Type checking stays a separate step
  * (`npm run gb:check`). Set MWC_TEST_COMPILED=1 to test tsc's output instead.
  */
+/** Transpiled sources by path; reused while the file is unchanged (mtime). */
+const transformCache = new Map();
+
 const serveGbTypeScript = {
   name: 'serve-gb-typescript',
   async serve(context) {
@@ -29,6 +32,9 @@ const serveGbTypeScript = {
     // sources); imports between modules use `.js`.
     const source = join(process.cwd(), path.slice(1, -'.js'.length) + '.ts');
     if (!existsSync(source)) return undefined;
+    const mtime = statSync(source).mtimeMs;
+    const hit = transformCache.get(source);
+    if (hit?.mtime === mtime) return {body: hit.code, type: 'js'};
     const {code} = await transform(readFileSync(source, 'utf8'), {
       loader: 'ts',
       format: 'esm',
@@ -39,6 +45,7 @@ const serveGbTypeScript = {
         compilerOptions: {experimentalDecorators: true, useDefineForClassFields: false},
       },
     });
+    transformCache.set(source, {mtime, code});
     return {body: code, type: 'js'};
   },
 };

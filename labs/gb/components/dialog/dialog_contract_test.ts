@@ -45,6 +45,8 @@ async function press(key: string) {
   await settle();
 }
 
+import {resetEscapeTracking} from '../shared/predictive-back.js';
+
 /** What the lifecycle surfaces share: `show()`, `close()`, `open` and events. */
 interface ModalLifecycleElement extends HTMLElement {
   open: boolean;
@@ -72,11 +74,11 @@ function modalOnce(el: HTMLElement, type: string) {
 
 /**
  * A close request counts as Escape for a second after an Escape press (the
- * browser reports Escape and the back gesture alike); waits that out so a
- * request is a back request.
+ * browser reports Escape and the back gesture alike). Forgets the recorded
+ * presses, so the next close request is a back request.
  */
-function modalOutwaitEscape() {
-  return new Promise((resolve) => setTimeout(resolve, 1100));
+function modalForgetEscape() {
+  resetEscapeTracking();
 }
 
 /** Whether the page scroll is locked (CSS overflow of the root element). */
@@ -94,7 +96,6 @@ async function setupModalDialog() {
 async function openModalDialog(el: ModalLifecycleElement) {
   await el.show();
   await settle();
-  await new Promise((resolve) => setTimeout(resolve, 30));
 }
 
 function isOpenModalDialog(el: ModalLifecycleElement) {
@@ -166,7 +167,7 @@ describe('<md-gb-dialog> modal surface contract (dialog; ModalSurfaceController)
     }
     const log = modalRecord(el);
     const closed = modalOnce(el, 'closed');
-    await modalOutwaitEscape();
+    await modalForgetEscape();
     dialog.requestClose();
     await closed;
     expect(isOpenModalDialog(el)).toBeFalse();

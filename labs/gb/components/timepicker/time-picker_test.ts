@@ -192,6 +192,9 @@ describe('<md-gb-time-picker>', () => {
     });
 
     // spec: time-pickers-dbff70, time-pickers-bd287c
+    // time-pickers-690231 puts even hours inside and odd outside, but its own
+    // figure and Compose (TimePicker.kt: outer `Hours`, inner `ExtraHours`)
+    // put 00-11 on the outer ring and 12-23 on the inner one, as here.
     it('shows the 24-hour inner ring', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -205,6 +208,15 @@ describe('<md-gb-time-picker>', () => {
       );
       expect(inner.length).toBe(12);
       expect(inner[0].textContent).toBe('12');
+      expect([...inner].map((l) => Number(l.textContent)).sort((a, b) => a - b)).toEqual(
+        Array.from({length: 12}, (_, i) => i + 12),
+      );
+      const outer = [
+        ...picker.shadowRoot!.querySelectorAll(
+          '.time-picker-dial-face-hour .time-picker-dial-label:not(.time-picker-dial-label-inner)',
+        ),
+      ].map((l) => Number(l.textContent));
+      expect(outer.sort((a, b) => a - b)).toEqual(Array.from({length: 12}, (_, i) => i));
       expect(q(picker, '.time-picker').classList).toContain('time-picker-24h');
     });
 

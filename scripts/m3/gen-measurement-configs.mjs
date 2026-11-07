@@ -123,11 +123,11 @@ const dialog = {
       page: 'dialogs',
       section: 'dialogs/specs/full-screen-dialogs/full-screen-dialog-measurements',
       host: 'md-gb-dialog',
-      base: DIALOG(' full-screen', '<span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button>'),
+      base: DIALOG(' full-screen always-full-screen', '<span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button>'),
       rows: [
         {cells: ['Container shape', '0dp corner radius'], name: 'Container shape', el: '[part=dialog]', m: 'radius', dp: 0},
         {cells: ['Container height', 'Dynamic'], name: 'Container height', skip: 'dynamic; not a dp value'},
-        {cells: ['Container width', 'Container width; Max 560dp'], name: 'Container width', el: '[part=dialog]', m: 'width', dp: {max: 560}, gap: 'dialogs-1bb3d9 and dialogs-6777bc say a full-screen dialog fills the entire screen; the measurement table caps it at 560dp. The two conflict above 560dp, and full-screen dialogs are for compact windows only, so it fills the window'},
+        {cells: ['Container width', 'Container width; Max 560dp'], name: 'Container width', skip: 'a full-screen dialog fills the window (dialogs-1bb3d9, dialogs-6777bc); the 560dp cap is excluded, window width is tested in dialog_adaptive_test.ts'},
         {cells: ['Header height', '56dp'], name: 'Header height', el: '[part=header]', m: 'height', dp: 56},
         {cells: ['Header width', 'Container width'], name: 'Header width', el: '[part=header]', m: 'width', dp: {like: '[part=dialog]'}},
         {cells: ['Headline text alignment', 'Start-aligned'], name: 'Headline text alignment', el: '[part=headline]', css: 'text-align', is: ['start', 'left']},

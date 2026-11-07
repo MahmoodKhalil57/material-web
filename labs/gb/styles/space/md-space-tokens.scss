@@ -3,6 +3,30 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sass:map';
+@use '../layout/md-layout';
+// go/keep-sorted end
+
+// Adaptive layout density (spacing > Applying spacing > Customizing the
+// system): the adaptive spacing tokens map to different system spacing tokens
+// for each window size class, so components that use them adapt their spacing
+// to the form factor. The spacing unit itself never changes by breakpoint.
+$adaptive-space: (
+  'compact': ('inline': 200, 'block': 200, 'gap': 100),
+  'medium': ('inline': 300, 'block': 300, 'gap': 200),
+  'expanded': ('inline': 300, 'block': 400, 'gap': 200),
+  'large': ('inline': 400, 'block': 400, 'gap': 300),
+  'extra-large': ('inline': 400, 'block': 500, 'gap': 300),
+);
+
+@mixin adaptive-space($class) {
+  $steps: map.get($adaptive-space, $class);
+  @each $name, $step in $steps {
+    --md-sys-space-adaptive-#{$name}: var(--md-sys-space-#{$step});
+  }
+}
+
 @layer md.sys.space {
   :root {
     --md-sys-space-unit: 8px;
@@ -24,5 +48,20 @@
     --md-sys-space-700: calc(var(--md-sys-space-unit) * 7);
     --md-sys-space-800: calc(var(--md-sys-space-unit) * 8);
     --md-sys-space-900: calc(var(--md-sys-space-unit) * 9);
+  }
+
+  // `:root` follows the viewport's window size class; `.md-window` children
+  // follow the container's width (as the layout tokens do).
+  @each $class in md-layout.$window-classes {
+    @include md-layout.media($class) {
+      :root {
+        @include adaptive-space($class);
+      }
+    }
+    @include md-layout.container($class, md-window) {
+      :where(.md-window) > * {
+        @include adaptive-space($class);
+      }
+    }
   }
 }

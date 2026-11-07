@@ -216,6 +216,8 @@ describe('<md-gb-nav-rail> drag and settle contract (DragSettleController: follo
   });
 });
 
+import {resetEscapeTracking} from '../shared/predictive-back.js';
+
 import {FakeCloseWatcher} from '../shared/predictive-back-harness.js';
 
 /** The modal rail: the host owns `expanded`. */
@@ -225,11 +227,11 @@ interface ModalToggleElement extends HTMLElement {
 
 /**
  * A close request counts as Escape for a second after an Escape press (the
- * browser reports Escape and the back gesture alike); waits that out so a
- * request is a back request.
+ * browser reports Escape and the back gesture alike). Forgets the recorded
+ * presses, so the next close request is a back request.
  */
-function modalOutwaitEscape() {
-  return new Promise((resolve) => setTimeout(resolve, 1100));
+function modalForgetEscape() {
+  resetEscapeTracking();
 }
 
 /** Whether the page scroll is locked (CSS overflow of the root element). */
@@ -247,7 +249,6 @@ async function setupModalNavRail(opts: {standard?: boolean} = {}) {
 async function openModalNavRail(el: ModalToggleElement) {
   el.expanded = true;
   await settle();
-  await new Promise((resolve) => setTimeout(resolve, 30));
 }
 
 function isOpenModalNavRail(el: ModalToggleElement) {
@@ -269,7 +270,6 @@ describe('<md-gb-nav-rail> modal surface contract (modal navigation rail; ModalS
     
     await press('Escape');
     await settle();
-    await new Promise((resolve) => setTimeout(resolve, 30));
     expect(isOpenModalNavRail(el)).toBeFalse();
     expect(reasons).toEqual(['escape']);
   });
@@ -286,7 +286,6 @@ describe('<md-gb-nav-rail> modal surface contract (modal navigation rail; ModalS
     
     el.shadowRoot!.querySelector<HTMLElement>('.nav-rail-scrim')!.click();
     await settle();
-    await new Promise((resolve) => setTimeout(resolve, 30));
     expect(isOpenModalNavRail(el)).toBeFalse();
     expect(reasons).toEqual(['scrim']);
   });
@@ -305,12 +304,11 @@ describe('<md-gb-nav-rail> modal surface contract (modal navigation rail; ModalS
       const reason = (event as unknown as CustomEvent).detail.reason;
       if (reason) reasons.push(reason);
     });
-      await modalOutwaitEscape();
+      await modalForgetEscape();
       FakeCloseWatcher.active()[0].requestClose();
       // The back motion plays before the rail collapses.
       el.shadowRoot!.querySelector('.nav-rail')!.getAnimations().forEach((a) => a.finish());
       await settle();
-    await new Promise((resolve) => setTimeout(resolve, 30));
       expect(isOpenModalNavRail(el)).toBeFalse();
       expect(reasons).toEqual(['back']);
     } finally {
@@ -329,7 +327,6 @@ describe('<md-gb-nav-rail> modal surface contract (modal navigation rail; ModalS
     
     await press('Escape');
     await settle();
-    await new Promise((resolve) => setTimeout(resolve, 30));
     expect(document.activeElement).toBe(before);
   });
 
@@ -356,7 +353,6 @@ describe('<md-gb-nav-rail> modal surface contract (modal navigation rail; ModalS
     
     await press('Escape');
     await settle();
-    await new Promise((resolve) => setTimeout(resolve, 30));
     expect(modalPageLocked()).toBeFalse();
   });
 

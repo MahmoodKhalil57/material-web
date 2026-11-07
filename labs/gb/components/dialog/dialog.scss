@@ -40,7 +40,9 @@ $action-overhang: 12px;
   // The element marks the full-screen variant on its host only (not with the
   // `dialog-full-screen` class on its inner `<dialog>`), so full-screen token
   // values set on the host element still apply inside its shadow root.
-  :host([full-screen]),
+  // A full-screen dialog that falls back to a basic one above compact
+  // (`adaptive-basic`) keeps the basic tokens: color, elevation, shape.
+  :host([full-screen]:not([adaptive-basic])),
   .dialog.dialog-full-screen {
     @include dialog-tokens.full-screen;
   }
@@ -285,7 +287,7 @@ $action-overhang: 12px;
   // Full-screen dialog: fills the window, with a 56px header holding the
   // close icon button, the headline and the confirm action. The element marks
   // the variant on its host, Light DOM on the `<dialog>`.
-  :host([full-screen]) .dialog,
+  :host([full-screen]:not([adaptive-basic])) .dialog,
   .dialog.dialog-full-screen {
     inline-size: 100%;
     block-size: 100%;

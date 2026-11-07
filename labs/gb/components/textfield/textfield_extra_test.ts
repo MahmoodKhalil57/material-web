@@ -132,3 +132,113 @@ describe('<md-gb-text-field> more spec behavior', () => {
     expect(described).toContain('We never share it');
   });
 });
+
+describe('<md-gb-text-field> error icon', () => {
+  const env = new Environment();
+
+  async function setup(template: unknown) {
+    const root = env.render(html`<div style="padding: 24px">${template}</div>`);
+    await env.waitForStability();
+    const fields = root.querySelectorAll<TextFieldElement>('md-gb-text-field');
+    const el = fields[fields.length - 1];
+    await el.updateComplete;
+    return el;
+  }
+
+  const icon = (el: TextFieldElement) =>
+    el.shadowRoot!.querySelector<SVGElement>('.text-field-error-icon')!;
+
+  // spec: text-fields-57887f, text-fields-ddd1ec, text-fields-3ccd4e
+  it('shows an error icon labelled "Error" in the error state', async () => {
+    const el = await setup(
+      html`<md-gb-text-field label="Email" error error-text="Not valid"></md-gb-text-field>`,
+    );
+    const labelled = el.shadowRoot!.querySelector('[aria-label="Error"]');
+    expect(labelled).toBe(icon(el));
+    expect(icon(el).getAttribute('role')).toBe('img');
+    expect(icon(el).getBoundingClientRect().width).toBeGreaterThan(0);
+    // The icon sits in the trailing edge, after the input.
+    const input = el.shadowRoot!.querySelector('input')!;
+    expect(icon(el).getBoundingClientRect().left).toBeGreaterThan(
+      input.getBoundingClientRect().right - 1,
+    );
+  });
+
+  // spec: text-fields-57887f, text-fields-ddd1ec, text-fields-3ccd4e
+  it('colors the error icon with the error role', async () => {
+    const el = await setup(
+      html`<md-gb-text-field label="Email" error></md-gb-text-field>`,
+    );
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--md-sys-color-error)';
+    document.body.append(probe);
+    const error = getComputedStyle(probe).color;
+    probe.remove();
+    expect(getComputedStyle(icon(el)).color).toBe(error);
+  });
+
+  // spec: text-fields-57887f, text-fields-ddd1ec, text-fields-3ccd4e
+  it('leaves the error icon decorative outside the error state', async () => {
+    const el = await setup(html`<md-gb-text-field label="Email"></md-gb-text-field>`);
+    expect(el.shadowRoot!.querySelector('[aria-label="Error"]')).toBeNull();
+    expect(icon(el).getAttribute('aria-hidden')).toBe('true');
+    expect(icon(el).getBoundingClientRect().width).toBe(0);
+  });
+
+  // spec: text-fields-57887f, text-fields-ddd1ec, text-fields-3ccd4e
+  it('with error-icon="focus", shows the error icon only while focused, in its place', async () => {
+    const el = await setup(
+      html`<md-gb-text-field label="Email" error error-icon="focus" error-text="Not valid"></md-gb-text-field>`,
+    );
+    const input = el.shadowRoot!.querySelector('input')!;
+    const before = input.getBoundingClientRect().right;
+    expect(getComputedStyle(icon(el)).visibility).toBe('hidden');
+    expect(icon(el).getBoundingClientRect().width).toBeGreaterThan(0);
+    expect(input.getBoundingClientRect().right).toBe(before);
+
+    el.focus();
+    await el.updateComplete;
+    expect(getComputedStyle(icon(el)).visibility).toBe('visible');
+    expect(input.getBoundingClientRect().right).toBe(before);
+
+    input.blur();
+    await el.updateComplete;
+    expect(getComputedStyle(icon(el)).visibility).toBe('hidden');
+  });
+
+  // spec: text-fields-57887f, text-fields-ddd1ec, text-fields-3ccd4e
+  it('with error-icon="always" (default), shows the error icon without focus', async () => {
+    const el = await setup(
+      html`<md-gb-text-field label="Email" error></md-gb-text-field>`,
+    );
+    expect(el.errorIcon).toBe('always');
+    expect(getComputedStyle(icon(el)).visibility).toBe('visible');
+  });
+
+  // spec: text-fields-aed1bf
+  it('shows the supporting text always, or only while focused with supporting-text-visibility="focus"', async () => {
+    const el = await setup(html`<md-gb-text-field label="Name" supporting-text="Help"></md-gb-text-field>
+      <md-gb-text-field label="Name" supporting-text="Help" supporting-text-visibility="focus"></md-gb-text-field>`);
+    const always = el.previousElementSibling as TextFieldElement;
+    const text = (f: TextFieldElement) => f.shadowRoot!.querySelector<HTMLElement>('[part=supporting-text]')!;
+    expect(getComputedStyle(text(always)).visibility).toBe('visible');
+    expect(getComputedStyle(text(el)).visibility).toBe('hidden');
+    const height = el.getBoundingClientRect().height;
+    // It stays the input's description while hidden.
+    const input = el.shadowRoot!.querySelector('input')!;
+    expect(input.getAttribute('aria-describedby')).toContain('supporting-text');
+    el.focus();
+    await el.updateComplete;
+    expect(getComputedStyle(text(el)).visibility).toBe('visible');
+    // Its space was reserved, so focusing does not move the layout.
+    expect(el.getBoundingClientRect().height).toBe(height);
+    // An error message shows without focus.
+    input.blur();
+    await el.updateComplete;
+    expect(getComputedStyle(text(el)).visibility).toBe('hidden');
+    el.error = true;
+    el.errorText = 'Required';
+    await el.updateComplete;
+    expect(getComputedStyle(text(el)).visibility).toBe('visible');
+  });
+});

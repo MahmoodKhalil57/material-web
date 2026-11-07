@@ -42,6 +42,8 @@ export const TEXT_FIELD_CLASSES = {
   supporting: 'text-field-supporting',
   supportingText: 'text-field-supporting-text',
   counter: 'text-field-counter',
+  errorIconFocus: 'text-field-error-icon-focus',
+  supportingTextFocus: 'text-field-supporting-text-focus',
 } as const;
 
 /** The state provided to `textFieldClasses()`. */

@@ -248,6 +248,12 @@ $icon-btn-size: 40px;
   }
 
   // Divided (baseline) style: a divider separates the header and results.
+  // Indeterminate progress while the app is searching.
+  .search-view-progress {
+    flex: none;
+    inline-size: 100%;
+  }
+
   .search-view-divider {
     display: none;
   }

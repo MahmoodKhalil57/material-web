@@ -10,38 +10,52 @@ import {sendMouse} from '@web/test-runner-commands';
 
 import {
   center,
+  deepActiveElement,
+  KNOWN_GAPS,
   prop,
   renderSubject,
   ripplesOf,
-  sheetsOf,
-  sleep,
   stateLayerAlpha,
-  KNOWN_GAPS,
   SUBJECTS,
-  walkRules,
-  isHoverMedia,
+  until,
 } from './subjects.js';
 
 // Suite 1 of the central CSS/token suites: state layers
 // (foundations/interaction/states.md, "State layer tokens & values": hover
-// 8%, focus 10%, pressed 10%, dragged 16% of the content color).
+// 8%, focus 10%, pressed 10%, dragged 16% of the content color). This file
+// checks the hover layer, its transition and its color for buttons and FABs.
+// The pressed layer is in `state-layers-pressed_test.ts`, the focus and
+// dragged layers and the hover gating in `state-layers-focus_test.ts`.
 // `state-layers_gap.ts` has the checks the components don't meet yet.
 
-const interactive = SUBJECTS.filter((s) => s.disabled && !s.noRipple);
+const COMPONENTS = ["button","fab"];
+const interactive = SUBJECTS.filter((s) => s.disabled && !s.noRipple && COMPONENTS.includes(s.component));
 
+/** Finishes open/close motion (a menu grows in) so the cursor lands on the rest position. */
+function restMotion() {
+  for (const a of document.getAnimations()) {
+    try {
+      a.finish();
+    } catch {
+      // An infinite animation cannot finish.
+    }
+  }
+}
+
+/** Moves the cursor onto a part and finishes the hover fade (the layer's end value is checked). */
 async function hover(el: Element) {
+  restMotion();
   const c = center(el);
   await sendMouse({type: 'move', position: [c.x, c.y]});
-  await sleep(120);
+  restMotion();
 }
 
 async function leave() {
   await sendMouse({type: 'up'}).catch(() => {});
   await sendMouse({type: 'move', position: [0, 0]});
-  await sleep(40);
 }
 
-describe('state layers (central)', () => {
+describe('state layers (central, hover)', () => {
   afterEach(leave);
 
   for (const subject of interactive) {
@@ -49,25 +63,16 @@ describe('state layers (central)', () => {
       // spec: interaction-states-17d344, interaction-states-85b09d, interaction-states-cbf1a8
       it('shows an 8% hover layer when the cursor is over it', async () => {
         const {el, cleanup} = await renderSubject(subject);
+        // (A menu focuses its first item when it opens: a focus layer takes the place of hover.)
+        (deepActiveElement() as HTMLElement | null)?.blur();
         const ripples = ripplesOf(el);
         expect(ripples.length).toBeGreaterThan(0);
         expect(ripples.map((r) => prop(r, '--ripple-hover-opacity'))).toEqual(
           jasmine.arrayContaining(['0%']),
         );
         await hover(el);
+        await until(() => ripples.some((r) => prop(r, '--ripple-hover-opacity') === '8%'));
         expect(ripples.some((r) => prop(r, '--ripple-hover-opacity') === '8%')).toBeTrue();
-        cleanup();
-      });
-
-      // spec: interaction-states-ef6972, interaction-states-ba2793
-      it('shows a 10% pressed (ripple) layer while pressed', async () => {
-        const {el, cleanup} = await renderSubject(subject);
-        const ripples = ripplesOf(el);
-        await hover(el);
-        await sendMouse({type: 'down'});
-        await sleep(150);
-        expect(ripples.some((r) => prop(r, '--ripple-press-opacity') === '10%')).toBeTrue();
-        await sendMouse({type: 'up'});
         cleanup();
       });
 
@@ -88,7 +93,11 @@ describe('state layers (central)', () => {
       // spec: interaction-states-c90ca1, interaction-states-664005, interaction-states-a5d49d
       it('paints the hover layer in the content color', async () => {
         const {el, cleanup} = await renderSubject(subject);
+        (deepActiveElement() as HTMLElement | null)?.blur();
         await hover(el);
+        // Wait for the hover layer (the state the hover test checks): some parts
+        // paint it on a child instead, and the loop below then checks nothing.
+        await until(() => ripplesOf(el).some((r) => prop(r, '--ripple-hover-opacity') === '8%'));
         const layered = ripplesOf(el).filter((r) => stateLayerAlpha(r) > 0);
         for (const ripple of layered) {
           const bg = getComputedStyle(ripple).backgroundImage;
@@ -103,22 +112,4 @@ describe('state layers (central)', () => {
       });
     });
   }
-
-  // spec: interaction-states-ef6972, interaction-states-820c79
-  // (constraint from ENGINEERING-BACKLOG item 1: only hover may be gated)
-  it('keeps pressed and focus rules outside any (hover: hover) media query', async () => {
-    const offenders = new Set<string>();
-    for (const subject of interactive) {
-      const {el, cleanup} = await renderSubject(subject);
-      for (const sheet of sheetsOf(el)) {
-        for (const {rule, media} of walkRules(sheet.cssRules)) {
-          if (isHoverMedia(media) && /:(active|focus)/.test(rule.selectorText)) {
-            offenders.add(`${subject.component}: ${rule.selectorText}`);
-          }
-        }
-      }
-      cleanup();
-    }
-    expect([...offenders]).toEqual([]);
-  });
 });

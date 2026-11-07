@@ -42,7 +42,14 @@ import {
   FormDisabledController,
   ValueFieldController,
 } from '../shared/form-field.js';
-import {textFieldClasses, type TextFieldVariant} from './text-field.js';
+// Escape leaves the field: the caret goes away, the text stays (spec:
+// interaction-inputs-e456f0), also when no other component loaded it.
+import '../shared/focus-reset.js';
+import {
+  TEXT_FIELD_CLASSES,
+  textFieldClasses,
+  type TextFieldVariant,
+} from './text-field.js';
 
 import textFieldStyles from './text-field.css' with {type: 'css'}; // github-only
 // import textFieldStyles from './text-field.cssresult.js'; // google3-only
@@ -57,6 +64,12 @@ export type TextFieldType =
   | 'text'
   | 'url'
   | 'textarea';
+
+/** When the error icon shows: in the error state, or only on focus. */
+export type ErrorIconVisibility = 'always' | 'focus';
+
+/** When the supporting text shows: `always`, or `focus` only while focused. */
+export type SupportingTextVisibility = 'always' | 'focus';
 
 /** Input types that render a value or mask while empty. */
 export type UnsupportedTextFieldType =
@@ -204,6 +217,14 @@ export class TextFieldElement extends baseClass {
   @property({type: Boolean, reflect: true}) error = false;
 
   /**
+   * When the error icon shows in the trailing edge: `always` (default) in
+   * the error state, or `focus` only while the field has focus. Its space
+   * stays reserved, so focusing the field does not move the text.
+   */
+  @property({attribute: 'error-icon'}) errorIcon: ErrorIconVisibility =
+    'always';
+
+  /**
    * The message that replaces the supporting text while `error` is true. If
    * empty, the supporting text keeps showing. Overrides the message shown by
    * `reportValidity()`.
@@ -255,6 +276,15 @@ export class TextFieldElement extends baseClass {
 
   /** Additional information shown below the field. */
   @property({attribute: 'supporting-text'}) supportingText = '';
+
+  /**
+   * When the supporting text shows: `always` (default), or `focus` only while
+   * the field has focus (text-fields-aed1bf). Its space stays reserved so the
+   * layout does not move, it stays in the input's accessible description, and
+   * an error message always shows.
+   */
+  @property({attribute: 'supporting-text-visibility'})
+  supportingTextVisibility: SupportingTextVisibility = 'always';
 
   /** Overrides the input's CSS `direction`. */
   @property({attribute: 'text-direction'}) textDirection = '';
@@ -500,7 +530,8 @@ export class TextFieldElement extends baseClass {
       error: showError,
       hasLabel: !!this.label,
       hasLeadingIcon: this.hasLeadingIcon,
-      hasTrailingIcon: this.hasTrailingIcon,
+      // The error icon takes the trailing box, like a trailing icon.
+      hasTrailingIcon: this.hasTrailingIcon || showError,
       textarea,
       noSpinner: this.noSpinner,
       disabled: this.disabled,
@@ -544,6 +575,7 @@ export class TextFieldElement extends baseClass {
               name="trailing-icon"
               @slotchange=${this.handleIconChange}
             ></slot>
+            ${this.renderErrorIcon(showError)}
           </span>
           <div class="text-field-outline" aria-hidden="true">
             <div class="text-field-outline-start"></div>
@@ -558,7 +590,11 @@ export class TextFieldElement extends baseClass {
             ? html`<div class="text-field-supporting">
                 <span
                   id="supporting-text"
-                  class="text-field-supporting-text"
+                  class=${classMap({
+                    'text-field-supporting-text': true,
+                    [TEXT_FIELD_CLASSES.supportingTextFocus]:
+                      this.supportingTextVisibility === 'focus' && !(showError && errorText),
+                  })}
                   part="supporting-text"
                   role=${showError && errorText ? 'alert' : nothing}
                   >${supporting}</span
@@ -656,6 +692,29 @@ export class TextFieldElement extends baseClass {
       @input=${this.handleInput}
       @select=${this.redispatchEvent}
     />`;
+  }
+
+  /**
+   * The error icon. In the error state it is labelled "Error" (the spec's
+   * label for an icon with no action). Otherwise it is decorative and hidden
+   * from assistive technology. With `error-icon="focus"` it is hidden until
+   * the field has focus, but keeps its place.
+   */
+  private renderErrorIcon(showError: boolean) {
+    const classes = classMap({
+      'text-field-error-icon': true,
+      [TEXT_FIELD_CLASSES.errorIconFocus]: this.errorIcon === 'focus',
+    });
+    return html`<svg
+      class=${classes}
+      viewBox="0 0 24 24"
+      role=${showError ? 'img' : nothing}
+      aria-label=${showError ? 'Error' : nothing}
+      aria-hidden=${showError ? nothing : 'true'}
+      focusable="false">
+      <path
+        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+    </svg>`;
   }
 
   private renderAffix(

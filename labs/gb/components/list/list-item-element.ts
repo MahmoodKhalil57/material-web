@@ -65,6 +65,9 @@ export function getListItemLabel(item: Element): string {
     .trim();
 }
 
+/** Fired (not composed) on an item whose `checked` changed. */
+export const LIST_ITEM_CHECKED_EVENT = "list-item-checked-change";
+
 // Separate variable needed for closure.
 const baseClass = mixinDelegatesAria(mixinElementInternals(LitElement));
 
@@ -220,7 +223,7 @@ export class ListItemElement extends baseClass {
         grid-area: 2 / 1;
       }
       :is(.list-item-leading, .list-item-trailing):not(
-        :has(.has-slotted, .list-item-expand-icon)
+        :has(.has-slotted, .list-item-expand-icon, .list-item-select-checkbox)
       ) {
         display: none;
       }
@@ -241,6 +244,24 @@ export class ListItemElement extends baseClass {
    * Whether the list item is selected.
    */
   @property({ type: Boolean }) checked = false;
+
+  /**
+   * Whether the item shows a selection checkbox (hover, or whenever
+   * `selectionVisible`). Set by a `selectable` parent `md-gb-list`.
+   *
+   * @internal
+   */
+  @property({ type: Boolean, attribute: false }) selectable = false;
+
+  /**
+   * Whether the selection checkbox is always shown: the list sets it when
+   * selection is the primary activity or once an item is selected
+   * (selection.md, "Click"). Otherwise the checkbox shows on hover.
+   *
+   * @internal
+   */
+  @property({ type: Boolean, reflect: true, attribute: "selection-visible" })
+  selectionVisible = false;
 
   /**
    * Whether the list item is disabled.
@@ -478,6 +499,10 @@ export class ListItemElement extends baseClass {
 
   protected override updated(changed: PropertyValues<this>) {
     if (changed.has("checked") && this.isOption) this.syncOptionAria();
+    if (changed.has("checked") && changed.get("checked") !== undefined) {
+      // Lets the list show or hide the checkboxes of all items.
+      this.dispatchEvent(new Event(LIST_ITEM_CHECKED_EVENT, { bubbles: true }));
+    }
     if (changed.has("rovingTabIndex")) this.syncSlottedTabIndex();
     if (changed.has("revealed") && !this.swiping) {
       this.setOffset(this.anchorFor(this.revealed));
@@ -499,7 +524,12 @@ export class ListItemElement extends baseClass {
       revealButton: this.showsRevealButton(),
       swiped: this.revealed !== "" || this.swipedAway,
       swiping: this.swiping,
-      classes: { "list-item-has-actions": this.hasActions() },
+      classes: {
+        "list-item-has-actions": this.hasActions(),
+        "list-item-selectable": this.selectable,
+        "list-item-selection-visible":
+          this.selectable && (this.selectionVisible || this.checked),
+      },
     };
 
     let item;
@@ -572,6 +602,15 @@ export class ListItemElement extends baseClass {
   private renderContent() {
     return html`
       <span class="list-item-leading">
+        ${
+          this.selectable
+            ? html`<span
+                part="select-checkbox"
+                class="list-item-select-checkbox"
+                aria-hidden="true"
+              ></span>`
+            : nothing
+        }
         <slot name="avatar" class="list-item-avatar" ${hasSlotted()}></slot>
         <slot
           name="leading"

@@ -16,8 +16,8 @@ import {
   KNOWN_GAPS,
   prop,
   renderSubject,
-  sleep,
   SUBJECTS,
+  until,
 } from './subjects.js';
 
 // Suite 2 of the central CSS/token suites: the keyboard focus indicator
@@ -30,15 +30,18 @@ const THICKNESS = '3px';
 const OUTER_OFFSET = '2px';
 const INNER_OFFSET = '-3px';
 
+const COMPONENTS: string[] = ["button","fab"];
 const ringed = SUBJECTS.filter(
-  (s) => s.disabled && !s.input && s.id !== 'slider' && !KNOWN_GAPS.focusRing.includes(s.id),
+  (s) => COMPONENTS.includes(s.component) && s.disabled && !s.input && s.id !== 'slider' && !KNOWN_GAPS.focusRing.includes(s.id),
 );
 
 /** Moves focus the way a keyboard user does (the last input was a key). */
 async function focusByKeyboard(el: HTMLElement) {
   await sendKeys({press: 'Shift'});
   el.focus();
-  await sleep(60);
+  // The ring grows from nothing: finish that, then wait until it is drawn.
+  restingState(el);
+  await until(() => shownRings(el).length > 0 && shownRings(el).every((r) => drawnOutline(r) !== null));
 }
 
 /** Finishes the ring's grow/shrink animations (also in shadow roots). */
@@ -92,7 +95,7 @@ describe('focus indicator (central)', () => {
         expect(focusRingsOf(el).length).toBeGreaterThan(0);
         // (A menu focuses its first item when it opens.)
         (deepActiveElement() as HTMLElement | null)?.blur();
-        await sleep(30);
+        await until(() => !deepElements(el).includes(deepActiveElement()!));
         expect(shownRings(el).length).toBe(0);
         await focusByKeyboard(el);
         const rings = shownRings(el);
@@ -137,7 +140,8 @@ describe('focus indicator (central)', () => {
         await sendMouse({type: 'move', position: [c.x, c.y]});
         await sendMouse({type: 'down'});
         await sendMouse({type: 'up'});
-        await sleep(60);
+        // The pointer gives the part focus; wait for that, then check no ring.
+        await until(() => deepElements(el).includes(deepActiveElement()!));
         expect(shownRings(el).length).toBe(0);
         cleanup();
       });

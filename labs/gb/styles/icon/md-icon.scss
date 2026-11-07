@@ -69,6 +69,10 @@
     min-width: var(--md-icon-size);
     max-width: var(--md-icon-size);
     font-size: var(--md-icon-size);
+    // icons.md, Using Material Symbols with typography: a symbol next to text
+    // shifts its baseline down about 11.5% of the text size. The em here is the
+    // symbol's own size, which matches the text beside it.
+    vertical-align: -0.115em;
     font-family: var(--md-icon-font);
     font-variation-settings:
       // The size in px as a number (tan(atan2()) divides two lengths).

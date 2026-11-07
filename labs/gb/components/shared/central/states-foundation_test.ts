@@ -6,77 +6,25 @@
 
 // import 'jasmine'; (google3-only)
 
-import '../../appbar/md-gb-app-bar.js';
 import '../../iconbutton/md-gb-icon-button.js';
 import '../../button/md-gb-button.js';
 import '../../fab/md-gb-fab.js';
 import '../../tabs/md-gb-tabs.js';
 import '../../tabs/md-gb-tab.js';
 
-import {sendKeys, sendMouse} from '@web/test-runner-commands';
+import {sendMouse} from '@web/test-runner-commands';
 
-import {
-  center,
-  deepActiveElement,
-  deepElements,
-  hitTargetSize,
-  prop,
-  renderSubject,
-  ripplesOf,
-  settle,
-  sleep,
-  SUBJECTS,
-  type Subject,
-} from './subjects.js';
-import {contentAlphas, isWithin, paintFingerprint as paint, textElements} from './style-helpers.js';
+import {hitTargetSize, prop, renderSubject, ripplesOf, until} from './subjects.js';
+import {anyLayer, focusByKeyboard, hover, layers, reset, subject} from './states-helpers.js';
+import {paintFingerprint as paint, textElements} from './style-helpers.js';
 
-// Foundations > Interaction > States (foundations/interaction/states.md):
-// the model of state layers (one layer at a time, in the content color, fixed
-// opacities) and which components inherit which state. The per-state opacity
-// checks of every part are in `state-layers_test.ts`, the focus ring in
-// `focus-indicator_test.ts`, disabled parts in `disabled_test.ts`.
-
-const subject = (id: string): Subject => SUBJECTS.find((s) => s.id === id)!;
-
-async function hover(el: Element) {
-  const c = center(el);
-  await sendMouse({type: 'move', position: [c.x, c.y]});
-  await sleep(100);
-}
-
-async function reset() {
-  await sendMouse({type: 'up'}).catch(() => {});
-  await sendMouse({type: 'move', position: [0, 0]});
-  (document.activeElement as HTMLElement | null)?.blur();
-  await sleep(30);
-}
-
-async function focusByKeyboard(el: HTMLElement) {
-  await sendKeys({press: 'Shift'});
-  el.focus();
-  await sleep(60);
-}
-
-/** The layer opacities (hover/focus/drag, press) of a subject's ripples. */
-function layers(el: Element) {
-  const ripples = ripplesOf(el);
-  const pct = (name: string) =>
-    Math.max(0, ...ripples.map((r) => parseFloat(prop(r, name)) || 0));
-  return {layer: pct('--ripple-hover-opacity'), press: pct('--ripple-press-opacity')};
-}
-
-/** Whether a ripple paints a state layer. */
-function rippleLayer(el: Element) {
-  return ripplesOf(el).some((r) => {
-    const painted = getComputedStyle(r).backgroundImage !== 'none';
-    return painted && (parseFloat(prop(r, '--ripple-hover-opacity')) > 0 || parseFloat(prop(r, '--ripple-press-opacity')) > 0);
-  });
-}
-
-/** Whether a subject shows a state layer: a ripple, or its own (text fields) via `resting`. */
-function anyLayer(el: Element, resting?: string) {
-  return rippleLayer(el) || (resting !== undefined && paint(el) !== resting);
-}
+// Foundations > Interaction > States (foundations/interaction/states.md): the
+// model of state layers (one layer at a time, in the content color, fixed
+// opacities). The hover, focus, pressed and dragged/disabled inheritance are in
+// `states-foundation-hover_test.ts`, `states-foundation-focus_test.ts`,
+// `states-foundation-pressed_test.ts` and `states-foundation-dragged_test.ts`.
+// The per-state opacity checks of every part are in `state-layers_test.ts`, the
+// focus ring in `focus-indicator_test.ts`, disabled parts in `disabled_test.ts`.
 
 describe('state layer model (central)', () => {
   afterEach(reset);
@@ -87,17 +35,17 @@ describe('state layer model (central)', () => {
     const [ripple] = ripplesOf(el);
     expect(prop(ripple, '--ripple-hover-opacity')).toBe('0%');
     ripple.classList.add('hover');
-    await sleep(60);
+    await until(() => prop(ripple, '--ripple-hover-opacity') === '8%');
     expect(prop(ripple, '--ripple-hover-opacity')).toBe('8%');
     // Focus takes the place of hover: the layers never add up.
     ripple.classList.add('focus');
-    await sleep(60);
+    await until(() => prop(ripple, '--ripple-hover-opacity') === '10%');
     expect(prop(ripple, '--ripple-hover-opacity')).toBe('10%');
     ripple.classList.add('dragged');
-    await sleep(60);
+    await until(() => prop(ripple, '--ripple-hover-opacity') === '16%');
     expect(prop(ripple, '--ripple-hover-opacity')).toBe('16%');
     ripple.classList.remove('dragged', 'focus');
-    await sleep(60);
+    await until(() => prop(ripple, '--ripple-hover-opacity') === '8%');
     expect(prop(ripple, '--ripple-hover-opacity')).toBe('8%');
     cleanup();
   });
@@ -106,11 +54,12 @@ describe('state layer model (central)', () => {
   it('shows a 10% layer for focus from the keyboard and 10% for press', async () => {
     const {el, cleanup} = await renderSubject(subject('button-tonal'));
     await focusByKeyboard(el);
+    await until(() => layers(el).layer === 10);
     expect(layers(el).layer).toBe(10);
     await reset();
     await hover(el);
     await sendMouse({type: 'down'});
-    await sleep(150);
+    await until(() => layers(el).press === 10);
     expect(layers(el).press).toBe(10);
     cleanup();
   });
@@ -122,6 +71,7 @@ describe('state layer model (central)', () => {
       const resting = paint(el);
       expect(anyLayer(el, resting)).withContext(id).toBeFalse();
       await hover(el);
+      await until(() => anyLayer(el, resting));
       expect(anyLayer(el, resting)).withContext(id).toBeTrue();
       cleanup();
     }
@@ -132,6 +82,7 @@ describe('state layer model (central)', () => {
     const {el, cleanup} = await renderSubject(subject('button-tonal'));
     const [ripple] = ripplesOf(el);
     await hover(el);
+    await until(() => getComputedStyle(ripple).backgroundImage !== 'none');
     const style = getComputedStyle(ripple);
     // The container color and the state layer image are painted by the same
     // element, the image over the color; the content is a child, above both.
@@ -205,375 +156,5 @@ describe('state layer model (central)', () => {
     const radius = parseFloat(getComputedStyle(circle).borderTopLeftRadius);
     expect(radius).toBeGreaterThanOrEqual(rect.width / 2 - 1);
     part.cleanup();
-  });
-});
-
-describe('hover state (central)', () => {
-  afterEach(reset);
-
-  const HOVER: Array<[string, string, string]> = [
-    ['button-filled', 'buttons', 'interaction-states-358427'],
-    ['card-interactive', 'cards', 'interaction-states-66a13e'],
-    ['list-item', 'list items', 'interaction-states-6f4995'],
-    ['fab', 'FABs', 'interaction-states-7c8ce5'],
-    ['icon-button-standard', 'icon buttons', 'interaction-states-5fe04f'],
-    ['chip-assist', 'chips', 'interaction-states-5fe04f'],
-    ['segmented-button', 'segmented buttons', 'interaction-states-5fe04f'],
-    ['switch', 'switches', 'interaction-states-5fe04f'],
-    ['checkbox', 'checkboxes', 'interaction-states-5fe04f'],
-    ['text-field-filled', 'text fields', 'interaction-states-37b5c2'],
-  ];
-
-  // spec: interaction-states-5fe04f, interaction-states-358427, interaction-states-66a13e, interaction-states-6f4995, interaction-states-37b5c2, interaction-states-7c8ce5, interaction-inputs-436ac1, interaction-inputs-71feb3, interaction-inputs-0a1add, interaction-inputs-cc8fb9
-  for (const [id, label] of HOVER) {
-    it(`inherits hover: ${label}`, async () => {
-      const {el, cleanup} = await renderSubject(subject(id));
-      const resting = paint(el);
-      expect(anyLayer(el, resting)).toBeFalse();
-      await hover(el);
-      expect(anyLayer(el, resting)).toBeTrue();
-      cleanup();
-    });
-  }
-
-  // spec: interaction-states-cb1f4a, interaction-states-6da805
-  it('does not give the whole app bar a hover state, only the components inside it', async () => {
-    const {container, cleanup} = await renderSubject({
-      id: 'app-bar',
-      component: 'appbar',
-      html: `<md-gb-app-bar data-subject style="width:400px" headline="Title"><md-gb-icon-button slot="trailing" aria-label="Search"><md-gb-icon>search</md-gb-icon></md-gb-icon-button></md-gb-app-bar>`,
-    });
-    const bar = container.querySelector('md-gb-app-bar') as HTMLElement;
-    const button = container.querySelector('md-gb-icon-button') as HTMLElement;
-    const rect = bar.getBoundingClientRect();
-    const resting = paint(bar);
-    // Hover the bar's own area, away from the button.
-    await sendMouse({type: 'move', position: [Math.round(rect.left + 30), Math.round(rect.top + rect.height / 2)]});
-    await sleep(100);
-    expect(anyLayer(bar, resting)).toBeFalse();
-    await hover(button);
-    expect(layers(button).layer).toBe(8);
-    cleanup();
-  });
-
-  // spec: interaction-states-1b2c02, interaction-states-23a7c8
-  it('combines hover with the selected state of a filter chip', async () => {
-    const {el, cleanup} = await renderSubject(subject('chip-filter'), {selected: true});
-    await hover(el);
-    expect(el.hasAttribute('selected')).toBeTrue();
-    expect(layers(el).layer).toBe(8);
-    cleanup();
-  });
-
-  // spec: interaction-states-c9f338, interaction-states-44fdbf
-  it('shows a hover state on one element at a time, where the cursor is', async () => {
-    const {container, cleanup} = await renderSubject({
-      id: 'two-buttons',
-      component: 'button',
-      html: `<div style="display:flex;gap:24px"><md-gb-button data-subject color="tonal">One</md-gb-button><md-gb-button color="tonal">Two</md-gb-button></div>`,
-    });
-    const [one, two] = Array.from(container.querySelectorAll<HTMLElement>('md-gb-button'));
-    await hover(one);
-    expect(layers(one).layer).toBe(8);
-    expect(layers(two).layer).toBe(0);
-    await hover(two);
-    expect(layers(two).layer).toBe(8);
-    await sleep(60);
-    expect(layers(one).layer).toBe(0);
-    cleanup();
-  });
-});
-
-describe('focused state (central)', () => {
-  afterEach(reset);
-
-  const FOCUS: Array<[string, string]> = [
-    ['button-filled', 'buttons'],
-    ['text-field-filled', 'text fields'],
-    ['fab', 'FABs'],
-    ['chip-assist', 'chips'],
-    ['icon-button-standard', 'icon buttons'],
-    ['segmented-button', 'segmented buttons'],
-    ['checkbox', 'checkboxes'],
-    ['switch', 'selection controls'],
-    ['card-interactive', 'cards'],
-    ['list-item', 'list items'],
-  ];
-
-  // spec: interaction-states-96c50e, interaction-states-641b81, interaction-states-e1b5b5, interaction-states-9380ab, interaction-states-a29d51, interaction-states-7cfb53, interaction-states-cd9032
-  for (const [id, label] of FOCUS) {
-    it(`inherits focus from the keyboard: ${label}`, async () => {
-      const {el, cleanup} = await renderSubject(subject(id));
-      (deepActiveElement() as HTMLElement | null)?.blur();
-      await sleep(30);
-      const resting = paint(el);
-      expect(anyLayer(el, resting)).toBeFalse();
-      await focusByKeyboard(el);
-      expect(anyLayer(el, resting)).toBeTrue();
-      cleanup();
-    });
-  }
-
-  // spec: interaction-states-99f4b0, interaction-states-695dd6
-  it('does not give the whole app bar a focus state, only the components inside it', async () => {
-    const {container, cleanup} = await renderSubject({
-      id: 'app-bar',
-      component: 'appbar',
-      html: `<md-gb-app-bar data-subject style="width:400px" headline="Title"><md-gb-icon-button slot="trailing" aria-label="Search"><md-gb-icon>search</md-gb-icon></md-gb-icon-button></md-gb-app-bar>`,
-    });
-    const bar = container.querySelector('md-gb-app-bar') as HTMLElement;
-    const button = container.querySelector('md-gb-icon-button') as HTMLElement;
-    await sendKeys({press: 'Shift'});
-    button.focus();
-    await sleep(60);
-    expect(layers(button).layer).toBe(10);
-    expect(bar.shadowRoot!.querySelectorAll('.ripple').length).toBe(0);
-    expect(deepActiveElement()).toBe(button.shadowRoot?.activeElement ?? button);
-    cleanup();
-  });
-
-  // spec: interaction-states-fddfb1
-  it('acts on the focused element with the keyboard', async () => {
-    const {el, cleanup} = await renderSubject(subject('button-filled'));
-    let clicks = 0;
-    el.addEventListener('click', () => clicks++);
-    await focusByKeyboard(el);
-    await sendKeys({press: 'Enter'});
-    await sendKeys({press: 'Space'});
-    expect(clicks).toBe(2);
-    cleanup();
-  });
-
-  // spec: interaction-states-2178d5, interaction-states-ad486a
-  it('combines focus with hover and selected', async () => {
-    const {el, cleanup} = await renderSubject(subject('chip-filter'), {selected: true});
-    await hover(el);
-    await focusByKeyboard(el);
-    expect(el.hasAttribute('selected')).toBeTrue();
-    // Focus shows as its 10% layer, in place of the 8% hover layer.
-    expect(layers(el).layer).toBe(10);
-    cleanup();
-  });
-
-  // spec: interaction-states-33e1d9, interaction-states-17511f
-  it('shows a focus state on one element at a time', async () => {
-    const {container, cleanup} = await renderSubject({
-      id: 'two-buttons',
-      component: 'button',
-      html: `<div style="display:flex;gap:24px"><md-gb-button data-subject color="tonal">One</md-gb-button><md-gb-button color="tonal">Two</md-gb-button></div>`,
-    });
-    const [one, two] = Array.from(container.querySelectorAll<HTMLElement>('md-gb-button'));
-    await focusByKeyboard(one);
-    expect(layers(one).layer).toBe(10);
-    await sendKeys({press: 'Tab'});
-    await sleep(60);
-    expect(layers(two).layer).toBe(10);
-    expect(layers(one).layer).toBe(0);
-    cleanup();
-  });
-});
-
-describe('pressed state (central)', () => {
-  afterEach(reset);
-
-  const PRESS: Array<[string, string]> = [
-    ['button-filled', 'buttons'],
-    ['card-interactive', 'cards'],
-    ['checkbox', 'checkboxes'],
-    ['list-item', 'list items'],
-    ['fab', 'FABs'],
-    ['icon-button-standard', 'icon buttons'],
-    ['chip-assist', 'chips'],
-  ];
-
-  // spec: interaction-states-5bd6a8, interaction-states-72e9ef, interaction-states-47c383, interaction-states-4f5d95, interaction-states-c3bd3f, interaction-states-a15b30
-  for (const [id, label] of PRESS) {
-    it(`inherits pressed with a 10% layer: ${label}`, async () => {
-      const {el, cleanup} = await renderSubject(subject(id));
-      expect(layers(el).press).toBe(0);
-      await hover(el);
-      await sendMouse({type: 'down'});
-      await sleep(150);
-      expect(layers(el).press).toBe(10);
-      await sendMouse({type: 'up'});
-      cleanup();
-    });
-  }
-
-  // spec: interaction-states-fb6e5c
-  it('makes pressed higher emphasis than hover: a stronger layer that grows from the press point', async () => {
-    const {el, cleanup} = await renderSubject(subject('button-filled'));
-    const [ripple] = ripplesOf(el);
-    await hover(el);
-    const hoverLayer = layers(el).layer;
-    await sendMouse({type: 'down'});
-    await sleep(150);
-    const animations = ripple.getAnimations().map((a) => (a as CSSAnimation).animationName);
-    expect(animations).toContain('ripple-press');
-    expect(layers(el).press).toBeGreaterThan(hoverLayer);
-    await sendMouse({type: 'up'});
-    cleanup();
-  });
-
-  // spec: interaction-states-7cc5d6
-  it('starts a pressed state from the keyboard too', async () => {
-    const {el, cleanup} = await renderSubject(subject('button-filled'));
-    await focusByKeyboard(el);
-    await sendKeys({down: 'Enter'});
-    await sleep(80);
-    await sendKeys({up: 'Enter'});
-    expect(layers(el).press).toBeCloseTo(10, 1);
-    cleanup();
-  });
-
-  // spec: interaction-states-ce409c, interaction-states-bd56b1
-  it('combines pressed with hover, focus and selected', async () => {
-    const {el, cleanup} = await renderSubject(subject('chip-filter'), {selected: true});
-    await hover(el);
-    await sendMouse({type: 'down'});
-    await sleep(150);
-    expect(el.hasAttribute('selected')).toBeTrue();
-    expect(layers(el)).toEqual({layer: 8, press: 10});
-    await sendMouse({type: 'up'});
-    cleanup();
-  });
-
-  // spec: interaction-states-1a4b2a, interaction-states-8ca115
-  it('shows a pressed state on one element at a time', async () => {
-    const {container, cleanup} = await renderSubject({
-      id: 'two-buttons',
-      component: 'button',
-      html: `<div style="display:flex;gap:24px"><md-gb-button data-subject color="tonal">One</md-gb-button><md-gb-button color="tonal">Two</md-gb-button></div>`,
-    });
-    const [one, two] = Array.from(container.querySelectorAll<HTMLElement>('md-gb-button'));
-    await hover(one);
-    await sendMouse({type: 'down'});
-    await sleep(150);
-    expect(layers(one).press).toBe(10);
-    expect(layers(two).press).toBe(0);
-    await sendMouse({type: 'up'});
-    cleanup();
-  });
-
-  // spec: interaction-states-f18cb7, interaction-states-fe46d9
-  it('does not give the whole app bar a pressed state', async () => {
-    const {container, cleanup} = await renderSubject({
-      id: 'app-bar',
-      component: 'appbar',
-      html: `<md-gb-app-bar data-subject style="width:400px" headline="Title"></md-gb-app-bar>`,
-    });
-    const bar = container.querySelector('md-gb-app-bar') as HTMLElement;
-    const rect = bar.getBoundingClientRect();
-    const resting = paint(bar);
-    await sendMouse({type: 'move', position: [Math.round(rect.left + 30), Math.round(rect.top + rect.height / 2)]});
-    await sendMouse({type: 'down'});
-    await sleep(120);
-    expect(bar.shadowRoot!.querySelectorAll('.ripple').length).toBe(0);
-    expect(anyLayer(bar, resting)).toBeFalse();
-    await sendMouse({type: 'up'});
-    cleanup();
-  });
-});
-
-describe('dragged state (central)', () => {
-  afterEach(reset);
-
-  /** The elevation (box shadow) of an element or its shadow-DOM container. */
-  function shadowOf(el: Element) {
-    const parts = [el, ...Array.from(el.shadowRoot?.querySelectorAll('*') ?? [])];
-    return parts.map((p) => getComputedStyle(p).boxShadow).filter((s) => s !== 'none').join('|');
-  }
-
-  const DRAGGABLE: Array<[string, string]> = [
-    ['card-interactive', 'cards'],
-    ['chip-assist', 'chips'],
-  ];
-
-  // spec: interaction-states-479709, interaction-states-ae9cc9, interaction-states-6afeb4, interaction-states-0c3752, interaction-states-15c64f, interaction-states-581df2
-  for (const [id, label] of DRAGGABLE) {
-    it(`inherits dragged with a 16% layer and a raised elevation: ${label}`, async () => {
-      const {el, cleanup} = await renderSubject(subject(id));
-      const resting = shadowOf(el);
-      (el as unknown as {dragged: boolean}).dragged = true;
-      await settle(el);
-      await sleep(60);
-      expect(layers(el).layer === 16 || paint(el).includes('0.16')).withContext(label).toBeTrue();
-      expect(shadowOf(el)).not.toBe(resting);
-      cleanup();
-    });
-  }
-
-  // spec: interaction-states-479709, interaction-states-b196d6
-  it('inherits dragged: list items', async () => {
-    const {el, cleanup} = await renderSubject(subject('list-item'), {dragging: true});
-    await sleep(60);
-    const painted = deepElements(el).map((e) => getComputedStyle(e).backgroundImage).join('|');
-    expect(painted).toContain('0.16');
-    cleanup();
-  });
-
-  // spec: interaction-states-5e30bf, interaction-states-bd1aa2, interaction-states-529659
-  it('does not move or lift an app bar with a dragged state', async () => {
-    const {container, cleanup} = await renderSubject({
-      id: 'app-bar',
-      component: 'appbar',
-      html: `<md-gb-app-bar data-subject style="width:400px" headline="Title"></md-gb-app-bar>`,
-    });
-    const bar = container.querySelector('md-gb-app-bar') as HTMLElement;
-    const before = bar.getBoundingClientRect();
-    const resting = shadowOf(bar);
-    bar.classList.add('dragged');
-    bar.setAttribute('aria-grabbed', 'true');
-    await settle(bar);
-    const after = bar.getBoundingClientRect();
-    expect(after.top).toBe(before.top);
-    expect(after.left).toBe(before.left);
-    expect(bar.shadowRoot!.querySelectorAll('.ripple').length).toBe(0);
-    expect(shadowOf(bar)).toBe(resting);
-    cleanup();
-  });
-});
-
-describe('disabled state inheritance (central)', () => {
-  afterEach(reset);
-
-  const DISABLED: Array<[string, string]> = [
-    ['button-filled', 'buttons'],
-    ['card-interactive', 'cards'],
-    ['checkbox', 'checkboxes'],
-    ['radio', 'radio buttons'],
-    ['switch', 'switches'],
-    ['text-field-filled', 'text fields'],
-    ['icon-button-standard', 'icon buttons'],
-    ['segmented-button', 'segmented buttons'],
-    ['chip-assist', 'chips'],
-    ['list-item', 'list items'],
-  ];
-
-  // spec: interaction-states-c93a1d, interaction-states-82df36, interaction-states-958a20, interaction-states-99010f, interaction-states-a6d043, interaction-states-dfd586, interaction-states-8a4a3a, interaction-states-aa0177, interaction-states-97a617, interaction-states-0c2b3c, interaction-states-296613, interaction-states-e767ef, interaction-states-bbcd6f, interaction-states-8fdb93, interaction-states-a63ef7
-  for (const [id, label] of DISABLED) {
-    it(`inherits disabled, with reduced content and no state layers: ${label}`, async () => {
-      const {el, cleanup} = await renderSubject(subject(id), {disabled: true});
-      for (const alpha of contentAlphas(el)) expect(alpha).toBeLessThan(0.5);
-      const resting = paint(el);
-      await hover(el);
-      expect(anyLayer(el, resting)).toBeFalse();
-      cleanup();
-    });
-  }
-
-  // spec: interaction-states-03fd93, interaction-states-2128d7, interaction-states-e22cd3
-  it('has no disabled state for FABs and tabs: the attribute neither dims them nor stops them', async () => {
-    for (const id of ['fab', 'tab-primary']) {
-      const plain = await renderSubject(subject(id));
-      const alphasBefore = contentAlphas(plain.el);
-      plain.cleanup();
-      const {el, cleanup} = await renderSubject(subject(id), {disabled: true});
-      expect(contentAlphas(el)).withContext(id).toEqual(alphasBefore);
-      await sendKeys({press: 'Shift'});
-      el.focus();
-      expect(isWithin(el, deepActiveElement())).withContext(id).toBeTrue();
-      cleanup();
-    }
   });
 });

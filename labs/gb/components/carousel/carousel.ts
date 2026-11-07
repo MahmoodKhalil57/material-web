@@ -42,6 +42,12 @@ export const CAROUSEL_LAYOUTS = {
 export type CarouselLayout =
   (typeof CAROUSEL_LAYOUTS)[keyof typeof CAROUSEL_LAYOUTS];
 
+/** The container size up to which a hero carousel shows one large item. */
+export const HERO_COMPACT_MAX_SIZE = 600;
+
+/** The large item size of a hero carousel in a container wider than that. */
+export const HERO_WIDE_LARGE_ITEM_SIZE = 400;
+
 /** Carousel alignment. `center` applies to the hero layout. */
 export type CarouselAlignment = 'start' | 'center';
 
@@ -289,6 +295,8 @@ export class CarouselController {
   private strategy = Strategy.EMPTY;
   private items: HTMLElement[] = [];
   private snapOffsets: number[] = [];
+  /** See `Strategy.originShift`. */
+  private originShift = 0;
   /** Uncontained multi-aspect: item starts and sizes along the main axis. */
   private itemStarts: number[] = [];
   private itemSizes: number[] = [];
@@ -460,7 +468,14 @@ export class CarouselController {
         case 'hero':
           keylines = heroKeylineList({
             ...options,
-            preferredItemSize: Number.isFinite(preferred) ? preferred : null,
+            // Compact containers show one large item; wider ones fit more
+            // (guidelines Hero: "On larger screens, more large items are
+            // visible").
+            preferredItemSize: Number.isFinite(preferred)
+              ? preferred
+              : available > HERO_COMPACT_MAX_SIZE
+                ? HERO_WIDE_LARGE_ITEM_SIZE
+                : null,
             isCentered: root.classList.contains(CAROUSEL_CLASSES.centered),
           });
           break;
@@ -471,13 +486,24 @@ export class CarouselController {
           break;
       }
     }
+    // A center-aligned hero rests with its first large item in the middle
+    // (arrangements that cannot be centered start at the edge).
+    const centered =
+      layout === 'hero' &&
+      root.classList.contains(CAROUSEL_CLASSES.centered) &&
+      !this.reducedMotion &&
+      !keylines.isEmpty() &&
+      !keylines.isFirstFocalItemAtStartOfContainer();
     this.strategy = new Strategy(
       keylines,
       available,
       itemSpacing,
       beforeContentPadding,
       afterContentPadding,
+      centered,
     );
+    this.originShift = this.strategy.originShift;
+    this.applyCenteredPadding(available, itemSpacing);
 
     const strategy = this.strategy;
     if (strategy.isValid) {
@@ -496,6 +522,14 @@ export class CarouselController {
     this.itemStarts = [];
     this.itemSizes = [];
     if (layout === 'uncontained-multi-aspect') {
+      // "Item widths can range anywhere between 9:16 for min width size to
+      // 16:9 for max width."
+      const minKey = this.vertical ? 'minBlockSize' : 'minInlineSize';
+      const maxKey = this.vertical ? 'maxBlockSize' : 'maxInlineSize';
+      for (const item of this.items) {
+        item.style[minKey] = `${(this.crossSize * 9) / 16}px`;
+        item.style[maxKey] = `${(this.crossSize * 16) / 9}px`;
+      }
       const scrollerRect = scroller.getBoundingClientRect();
       const offset = this.getOffset();
       for (const item of this.items) {
@@ -525,10 +559,17 @@ export class CarouselController {
         }
         const position = this.reducedMotion
           ? 0
-          : getSnapPositionOffset(strategy, i, count);
+          : strategy.centered
+            ? 0
+            : getSnapPositionOffset(strategy, i, count);
         item.style[margin] = `${Math.max(0, position)}px`;
         this.snapOffsets.push(
-          this.reducedMotion
+          strategy.centered
+            ? Math.min(
+                i * (strategy.itemMainAxisSize + itemSpacing),
+                this.maxOffset(),
+              )
+            : this.reducedMotion
             ? Math.min(
                 i * (strategy.itemMainAxisSize + itemSpacing),
                 calculateMaxScrollOffset(strategy, count),
@@ -553,8 +594,9 @@ export class CarouselController {
   update() {
     const items = this.items;
     const count = items.length;
-    const offset = this.getOffset();
-    const current = this.indexNearest(offset);
+    // Scrolling starts `originShift` before the first item's natural place.
+    const offset = this.getOffset() - this.originShift;
+    const current = this.indexNearest(this.getOffset());
     const layout = this.layout;
 
     if (this.reducedMotion) {
@@ -610,7 +652,7 @@ export class CarouselController {
         range > 0 ? (placement.size - strategy.minItemSize) / range : 1;
       this.setItem(
         item,
-        placement.translation,
+        placement.translation + this.originShift,
         placement.maskStart,
         strategy.itemMainAxisSize - placement.maskEnd,
         null,
@@ -699,6 +741,20 @@ export class CarouselController {
       this.setOffset(target);
       this.update();
     }
+  }
+
+  /**
+   * Trailing space of a centered strategy that lets the last item scroll to
+   * the middle too. The items stay where they are in the flow (scroll offset
+   * `i * stride` rests item `i`); `update()` translates them by
+   * `originShift` onto the keylines.
+   */
+  private applyCenteredPadding(available: number, itemSpacing: number) {
+    const style = this.scroller.style;
+    const end = this.vertical ? 'paddingBlockEnd' : 'paddingInlineEnd';
+    style[end] = this.strategy.centered
+      ? `${Math.max(0, available - this.strategy.itemMainAxisSize)}px`
+      : '';
   }
 
   /** The scroll distance from the start, in reading direction. */

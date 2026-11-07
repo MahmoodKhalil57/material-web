@@ -6,6 +6,7 @@
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import '../shared/focus-reset.js';
 
 /** Focus ring type configuration types. */
 export type FocusRingType = 'outer' | 'inner';

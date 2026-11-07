@@ -50,7 +50,7 @@ describe('type scale', () => {
         expect(declared.has(`emphasized-${role}-${size}`)).withContext(`emphasized ${role}-${size}`).toBeTrue();
       }
     }
-    const styles = [...declared].filter((n) => !/-(tracking|axes)$/.test(n));
+    const styles = [...declared].filter((n) => !/-(tracking|axes|font|size|weight|line-height)$/.test(n));
     expect(styles.length).toBe(30);
   });
 
@@ -71,7 +71,8 @@ describe('type scale', () => {
     expect(styleOf('body-md').size).toBe(14);
     expect(styleOf('body-lg').tracking).toBe(0.5);
     expect(styleOf('label-lg').tracking).toBeCloseTo(0.1, 5);
-    expect(typographyStyles.cssText).toContain('0.875rem/1.25rem');
+    expect(typographyStyles.cssText).toContain('--md-sys-typescale-body-md-size:0.875rem');
+    expect(typographyStyles.cssText).toContain('--md-sys-typescale-body-md-line-height:calc(1.25rem');
   });
 
   // spec: typography-4ae5cf, typography-a5c422

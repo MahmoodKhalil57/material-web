@@ -392,7 +392,7 @@ the 2,187 tracked units (±20%).
   - [x] Disabled state (38% content, 12% outlined button and icon button outline)
   - [x] RTL mirroring (segmented-button label)
   - [x] Reduced motion (text field label, menu radius, slider clip-path)
-  - [x] Color roles, shape, type scale and elevation scales (`scales_test.ts`)
+  - [x] Color roles, shape, type scale and elevation scales (`scales*_test.ts`: shape in `scales_test.ts`, then `-type`, `-elevation`, `-color`, `-color-dark`)
 - [x] **Generators** (all run by `npm run m3:update`; each has `--check`)
   - [x] Contract tests (`scripts/m3/gen-contract-tests.mjs`): roving focus from `CONTRACTS`, every other controller from its module in `scripts/m3/contracts/`; emits only the helpers a file uses
   - [x] Measurement tests from the spec's measurement tables (`gen-measurement-tests.mjs`, rows in `gen-measurement-configs.mjs`); rows measured wrong go to `*_measurement_gap.ts`

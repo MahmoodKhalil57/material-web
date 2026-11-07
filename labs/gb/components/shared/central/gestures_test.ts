@@ -15,7 +15,7 @@ import '../../tabs/md-gb-tab-panels.js';
 
 import {sendMouse} from '@web/test-runner-commands';
 
-import {center, settle, sleep} from './subjects.js';
+import {center, settle, sleep, until} from './subjects.js';
 
 // Foundations > Interaction > Gestures (foundations/interaction/gestures.md):
 // the touch gestures that components respond to. Scrolling, panning, pinch,
@@ -57,9 +57,7 @@ async function swipe(target: Element, from: number, to: number, y: number) {
   for (let i = 1; i <= steps; i++) {
     touch('pointermove', target, from + ((to - from) * i) / steps, y, i * 40);
   }
-  await sleep(20);
   touch('pointerup', target, to, y, steps * 40 + 20);
-  await sleep(60);
 }
 
 const TABS = `<md-gb-tabs aria-label="Views">
@@ -85,7 +83,7 @@ describe('gestures (central)', () => {
     const r = panel.getBoundingClientRect();
     expect(tabs.selectedTabIndex).toBe(0);
     await swipe(panel, Math.round(r.right - 20), Math.round(r.left + 40), Math.round(r.top + 10));
-    await sleep(300);
+    await until(() => tabs.selectedTabIndex === 1);
     expect(tabs.selectedTabIndex).toBe(1);
     cleanup();
   });
@@ -98,7 +96,7 @@ describe('gestures (central)', () => {
     const r = panel.getBoundingClientRect();
     // The next view is reached by swiping to the right (toward the end side).
     await swipe(panel, Math.round(r.left + 20), Math.round(r.right - 40), Math.round(r.top + 10));
-    await sleep(300);
+    await until(() => tabs.selectedTabIndex === 1);
     expect(tabs.selectedTabIndex).toBe(1);
     cleanup();
   });
@@ -118,7 +116,7 @@ describe('gestures (central)', () => {
     const y = Math.round(r.top + r.height / 2);
     expect(item.revealed).toBe('');
     await swipe(body, Math.round(r.right - 40), Math.round(r.right - 140), y);
-    await sleep(300);
+    await until(() => item.revealed === 'trailing');
     expect(item.revealed).toBe('trailing');
     cleanup();
   });
@@ -132,7 +130,7 @@ describe('gestures (central)', () => {
     const y = Math.round(r.top + r.height / 2);
     // Trailing actions sit at the left in RTL, so the swipe goes to the right.
     await swipe(body, Math.round(r.left + 40), Math.round(r.left + 140), y);
-    await sleep(300);
+    await until(() => item.revealed === 'trailing');
     expect(item.revealed).toBe('trailing');
     cleanup();
   });
@@ -167,7 +165,7 @@ describe('gestures (central)', () => {
     await sendMouse({type: 'move', position: [c.x, Math.round((c.y + target) / 2)]});
     await sendMouse({type: 'move', position: [c.x, target]});
     await sendMouse({type: 'up'});
-    await sleep(100);
+    await until(() => labels().join() === 'Bananas,Apples,Cherries');
     expect(labels()).toEqual(['Bananas', 'Apples', 'Cherries']);
     cleanup();
   });

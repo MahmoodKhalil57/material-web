@@ -12,6 +12,13 @@ import {hitTargetSize, KNOWN_GAPS, renderSubject, SUBJECTS} from './subjects.js'
 // than 48x48 at some density. Run with `npm run gb:check -- --gaps ...`.
 
 describe('touch targets (central gaps)', () => {
+  // With no known gaps the suite would have no tests, which the runner
+  // reports as a failed file ("Unknown error").
+  if (KNOWN_GAPS.touchTarget.length === 0) {
+    it("has no known gaps", () => {
+    expect(KNOWN_GAPS.touchTarget).toEqual([]);
+    });
+  }
   for (const key of KNOWN_GAPS.touchTarget) {
     const [id, density] = key.split('@');
     const subject = SUBJECTS.find((s) => s.id === id)!;

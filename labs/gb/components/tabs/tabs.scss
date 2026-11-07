@@ -74,6 +74,23 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     // tree order wins for all of them — measured: with several bars on a
     // page, every indicator resolved against the last bar's selected tab.
     anchor-scope: --tab, --tab-content-start, --tab-content-end;
+
+    // Wider than compact: the tabs do not stretch across the window. Each is
+    // at most as wide as the widest tab and the group is centered (or at the
+    // leading edge with align="start"). Hand-authored bars without the
+    // attribute keep filling the bar.
+    &:not([scrollable])[window-size-class]:not([window-size-class='compact']) {
+      justify-content: safe center;
+
+      > .tab {
+        flex: 0 1 var(--tabs-widest, auto);
+        max-inline-size: var(--tabs-widest, none);
+      }
+
+      &[align='start'] {
+        justify-content: flex-start;
+      }
+    }
   }
 
   .tab {
@@ -84,7 +101,11 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     // Containing block for the `::before` focus ring and out-of-flow `.tab-badge`.
     position: relative;
     anchor-scope: --tab-icon;
+    // Fixed tabs are equal sections that fill the bar at compact windows and
+    // are never narrower than the widest tab (`--tabs-widest`, set by the
+    // element); above compact they stop growing at that width (see `.tabs`).
     flex: 1 1 0;
+    min-inline-size: var(--tabs-widest, auto);
     align-items: center;
     justify-content: center;
     gap: var(--icon-label-space);

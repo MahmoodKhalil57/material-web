@@ -104,6 +104,17 @@
       --ripple-animation: ripple-press forwards 450ms cubic-bezier(0.2, 0, 0, 1);
     }
 
+    // Expanded: the trigger of an open menu holds the pressed layer
+    // (menus-baa57f: it stays the same visually, with the pressed state added).
+    // The menu sets `aria-expanded="true"` on its invoker.
+    &[aria-expanded='true'],
+    &:has(.ripple-target[aria-expanded='true']),
+    .ripple-target[aria-expanded='true'] &,
+    :host([aria-expanded='true']) &.ripple-host {
+      --ripple-press-opacity: 10%;
+      --ripple-scale: 100%;
+    }
+
     &:is(:disabled, .disabled) {
       --ripple: none;
     }

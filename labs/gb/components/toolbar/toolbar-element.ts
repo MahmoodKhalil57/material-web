@@ -9,6 +9,7 @@ import {
   CSSResultOrNative,
   html,
   LitElement,
+  nothing,
   type PropertyValues,
 } from 'lit';
 import {property, state} from 'lit/decorators.js';
@@ -17,6 +18,16 @@ import {
   DisclosureController,
   reflectedExpandedConverter,
 } from '../shared/disclosure.js';
+import '../iconbutton/md-gb-icon-button.js';
+import '../menu/md-gb-menu.js';
+import '../menu/md-gb-menu-item.js';
+import {
+  OverflowController,
+  overflowIcon,
+  overflowStyles,
+  renderOverflowMenu,
+} from '../shared/overflow.js';
+import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
 import {
   RovingFocusController,
   type RovingFocusOptions,
@@ -93,6 +104,7 @@ export class ToolbarElement extends LitElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [
     toolbarStyles,
+    overflowStyles,
     css`
       :host {
         display: inline-flex;
@@ -183,6 +195,64 @@ export class ToolbarElement extends LitElement {
       .filter((el): el is HTMLElement => el.matches(CONTROL_SELECTOR));
   }
 
+  /**
+   * Whether trailing actions that do not fit move into an overflow menu in
+   * the trailing slot (toolbars.md, Adaptive design). On by itself when an
+   * `overflow` slot trigger is provided; this turns it on with the default
+   * "More actions" button.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'overflow-menu'})
+  overflowMenu = false;
+
+  @state() private hasOverflowSlot = false;
+
+  /**
+   * Trailing actions hide, last first, while they do not fit the toolbar's
+   * width (the window, the parent or a `max-width` on the toolbar), and
+   * return when it grows. The menu in the trailing slot lists them and
+   * clicks the original action (toolbars.md: "If there's not enough space
+   * for all items, put them in an overflow menu in the trailing slot.").
+   */
+  protected readonly overflowing = new OverflowController(this, {
+    items: () => this.trailingActions,
+    container: () => this.renderRoot.querySelector<HTMLElement>('.toolbar'),
+    trigger: () =>
+      (this.renderRoot
+        .querySelector<HTMLSlotElement>('slot[name=overflow]')
+        ?.assignedElements({flatten: true})[0] as HTMLElement | undefined) ??
+      null,
+    menu: () => this.renderRoot.querySelector<HTMLElement>('.overflow-menu'),
+    enabled: () => this.overflowMenu || this.hasOverflowSlot,
+    axis: () =>
+      !this.docked && this.orientation === 'vertical' ? 'block' : 'inline',
+  });
+
+  /**
+   * How a docked or floating toolbar reacts to scrolling: `hide` slides it
+   * beyond the bottom edge when the page scrolls down and back on scroll up
+   * (toolbars.md: docked and floating toolbars "can animate offscreen").
+   */
+  @property({attribute: 'scroll-behavior', reflect: true})
+  scrollBehavior?: 'hide';
+
+  /** The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. */
+  @property({attribute: 'scroll-target'}) scrollTarget = '';
+
+  /** Hides and reveals the toolbar on scroll (see `scroll-behavior`). */
+  protected readonly scrollController = new ScrollBehaviorController(this, {
+    behavior: () => this.scrollBehavior,
+    target: () => this.scrollTarget,
+    // Past the bottom edge, including a floating toolbar's margin.
+    hiddenTransform: 'translateY(calc(100% + 16px))',
+  });
+
+  private get trailingActions(): HTMLElement[] {
+    const slot = this.renderRoot?.querySelector<HTMLSlotElement>(
+      'slot[name=trailing]',
+    );
+    return (slot?.assignedElements({flatten: true}) ?? []) as HTMLElement[];
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     adoptStyles(this, toolbarStyles);
@@ -222,7 +292,17 @@ export class ToolbarElement extends LitElement {
         })}">
         <slot name="leading"></slot>
         <slot></slot>
-        <slot name="trailing"></slot>
+        <slot name="trailing" @slotchange=${this.handleTrailingSlotChange}></slot>
+        <slot name="overflow" @slotchange=${this.handleOverflowSlotChange}
+          >${this.overflowMenu
+            ? html`<md-gb-icon-button
+                class="overflow-trigger"
+                aria-label="More actions"
+                >${overflowIcon}</md-gb-icon-button
+              >`
+            : nothing}</slot
+        >
+        ${renderOverflowMenu(this.overflowing)}
       </div>
     `;
     const fabSlot = html`<slot
@@ -242,6 +322,15 @@ export class ToolbarElement extends LitElement {
     return html`<div part="toolbar-with-fab" class=${classes}>
       ${bar}${fabSlot}
     </div>`;
+  }
+
+  private handleTrailingSlotChange() {
+    this.overflowing.refresh();
+  }
+
+  private handleOverflowSlotChange(event: Event) {
+    const slot = event.target as HTMLSlotElement;
+    this.hasOverflowSlot = slot.assignedElements().length > 0;
   }
 
   private handleFabSlotChange(event: Event) {

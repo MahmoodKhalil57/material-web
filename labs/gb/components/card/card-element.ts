@@ -104,6 +104,19 @@ export class CardElement extends baseClass {
   @property({type: Boolean, reflect: true}) dragged = false;
 
   /**
+   * Whether an interactive card can be selected: activating it toggles
+   * `selected` (selection.md lists cards among the components that can be
+   * selected).
+   */
+  @property({type: Boolean, reflect: true}) selectable = false;
+
+  /**
+   * Whether a `selectable` card is selected. A selected card shows a check
+   * mark and a change in surface color.
+   */
+  @property({type: Boolean, reflect: true}) selected = false;
+
+  /**
    * Makes an interactive card a link (spec: directly actionable cards have the
    * button or link role).
    */
@@ -121,6 +134,7 @@ export class CardElement extends baseClass {
         disabled: this.disabled,
         dragged: this.dragged,
         interactive: this.interactive,
+        selected: this.selectable && this.selected,
       })}">
       ${this.renderAction(ariaLabel)}
       <slot></slot>
@@ -148,6 +162,15 @@ export class CardElement extends baseClass {
       class="card-btn ripple focus-ring-target"
       ${ripple()}
       ?disabled="${this.disabled}"
+      aria-pressed="${this.selectable ? String(this.selected) : nothing}"
+      @click="${this.handleToggle}"
       aria-label="${ariaLabel || nothing}"></button>`;
+  }
+
+  private readonly handleToggle = () => {
+    if (!this.selectable || this.disabled) return;
+    this.selected = !this.selected;
+    this.dispatchEvent(new Event('input', {bubbles: true, composed: true}));
+    this.dispatchEvent(new Event('change', {bubbles: true}));
   }
 }

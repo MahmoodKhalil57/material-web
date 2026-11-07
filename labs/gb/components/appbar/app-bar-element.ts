@@ -12,11 +12,21 @@ import {
   type AdaptiveOptions,
 } from '../shared/adaptive.js';
 
+import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
+
 import {appBar, type AppBarSize, type AppBarVariant} from './app-bar.js';
 import {styles as appBarStyles} from './app-bar.cssresult.js';
 
 /**
  * A Material Design Expressive App Bar component (`md-gb-app-bar`).
+ *
+ * Scroll behavior (app-bars.md "Scrolling"): `scroll-behavior="hide"` hides
+ * the app bar when the page scrolls down and reveals it when scrolling up;
+ * `scroll-behavior="compress"` turns a medium or large flexible app bar into a
+ * small one as soon as the page is scrolled and keeps it small until the page
+ * is back at the top. `scroll-target` is the id of the scrolling element
+ * (default: the window). Both set `scrolled` for the on-scroll color. Make the
+ * app bar sticky or fixed at the top of the page. See `ScrollBehaviorController`.
  *
  * Adaptive design (app-bars.md "Adaptive design", "Resizing"): the app bar
  * fills the width of its container and tracks that width's window size class
@@ -38,6 +48,10 @@ import {styles as appBarStyles} from './app-bar.cssresult.js';
  * @slot image - An optional image or logo. In a small app bar it can replace
  *     the title text; in medium and large flexible app bars it appears above
  *     the text.
+ * @slot tabs - Optional `md-gb-tabs` attached below the app bar. They are part
+ *     of the app bar's box, so they hide and reveal with it as one unit
+ *     (tabs.md: "When tabs are attached to a component, they should appear
+ *     and move as a single unit").
  * @slot leading - Used to display the leading navigation icon button (e.g. menu or back).
  * @slot trailing - Used to display trailing action buttons and/or user avatar.
  * @slot search - Used to display the search bar input or controls when
@@ -104,6 +118,7 @@ export class AppBarElement extends LitElement {
     css`
       :host {
         display: flex;
+        flex-direction: column;
         width: 100%;
         position: relative;
       }
@@ -116,8 +131,46 @@ export class AppBarElement extends LitElement {
   /** The behavioral variant of the app bar (`standard` or `search`). Defaults to `standard`. */
   @property({reflect: true}) variant: AppBarVariant = 'standard';
 
-  /** Whether the app bar is in its scrolled state. Defaults to `false`. */
+  /**
+   * Whether the app bar is in its scrolled state. Defaults to `false`. A
+   * medium or large flexible app bar in its scrolled state is shown as a small
+   * one (app-bars.md: "When scrolled, medium flexible and large flexible app
+   * bars can transform into small app bars").
+   */
   @property({type: Boolean, reflect: true}) scrolled = false;
+
+  /**
+   * How the app bar reacts to scrolling: `hide` (hide on scroll down, reveal
+   * on scroll up) or `compress` (medium and large flexible app bars become
+   * small until scrolled back to the top).
+   */
+  @property({attribute: 'scroll-behavior', reflect: true})
+  scrollBehavior?: 'hide' | 'compress';
+
+  /** The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. */
+  @property({attribute: 'scroll-target'}) scrollTarget = '';
+
+  /** Hides, reveals or compresses the app bar with the scroll target. */
+  protected readonly scrollController = new ScrollBehaviorController(this, {
+    behavior: () => this.scrollBehavior,
+    target: () => this.scrollTarget,
+    hiddenTransform: 'translateY(-100%)',
+    onScrolledChange: (scrolled) => {
+      if (
+        this.scrollBehavior === 'compress' ||
+        (this.scrollBehavior === 'hide' && this.size === 'sm')
+      ) {
+        this.scrolled = scrolled;
+        this.dispatchEvent(
+          new CustomEvent('scrollstatechange', {
+            bubbles: true,
+            composed: true,
+            detail: {scrolled},
+          }),
+        );
+      }
+    },
+  });
 
   /**
    * Whether the title and subtitle are centered instead of leading-aligned
@@ -143,8 +196,10 @@ export class AppBarElement extends LitElement {
 
   protected override render() {
     const withSubtitle = this.variant !== 'search' && this.hasSubtitle;
+    // A scrolled flexible app bar is a small one.
+    const size = this.scrolled ? 'sm' : this.size;
     const directive = appBar({
-      size: this.size,
+      size,
       withSubtitle,
       variant: this.variant,
       scrolled: this.scrolled,
@@ -170,7 +225,8 @@ export class AppBarElement extends LitElement {
           </div>
         </div>
         ${trailing}
-      </div>`;
+      </div>
+      <slot name="tabs"></slot>`;
     }
 
     const title = html`<div class="app-bar-title-wrapper">
@@ -185,16 +241,17 @@ export class AppBarElement extends LitElement {
       </div>
     </div>`;
 
-    if (this.size === 'md' || this.size === 'lg') {
+    const tabs = html`<slot name="tabs"></slot>`;
+    if (size === 'md' || size === 'lg') {
       return html`<div part="app-bar" class="${directive}">
         <div class="app-bar-top-row">${leading}${trailing}</div>
         <div class="app-bar-bottom-row">${title}</div>
-      </div>`;
+      </div>${tabs}`;
     }
 
     return html`<div part="app-bar" class="${directive}">
       ${leading}${title}${trailing}
-    </div>`;
+    </div>${tabs}`;
   }
 
   protected override updated() {

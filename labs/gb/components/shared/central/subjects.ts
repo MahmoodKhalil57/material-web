@@ -12,35 +12,13 @@
  */
 
 import '../../../styles/icon/md-gb-icon.js';
-import '../../button/md-gb-button.js';
-import '../../iconbutton/md-gb-icon-button.js';
-import '../../fab/md-gb-fab.js';
-import '../../checkbox/md-gb-checkbox.js';
-import '../../radio/md-gb-radio.js';
-import '../../switch/md-gb-switch.js';
-import '../../chip/md-gb-chip.js';
-import '../../chip/md-gb-chip-set.js';
-import '../../segmentedbutton/md-gb-segmented-button.js';
-import '../../segmentedbutton/md-gb-segmented-button-set.js';
-import '../../card/md-gb-card.js';
-import '../../list/md-gb-list.js';
-import '../../list/md-gb-list-item.js';
-import '../../menu/md-gb-menu.js';
-import '../../menu/md-gb-menu-item.js';
-import '../../navbar/md-gb-nav-bar.js';
-import '../../navbar/md-gb-nav-bar-item.js';
-import '../../navdrawer/md-gb-nav-drawer.js';
-import '../../navdrawer/md-gb-nav-drawer-item.js';
-import '../../navrail/md-gb-nav-rail.js';
-import '../../navrail/md-gb-nav-rail-item.js';
-import '../../search/md-gb-search-bar.js';
-import '../../tabs/md-gb-tabs.js';
-import '../../tabs/md-gb-tab.js';
-import '../../textfield/md-gb-text-field.js';
-import '../../slider/md-gb-slider.js';
 
 import {adoptStyles} from '../../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../../styles/m3.cssresult.js';
+import {center, deepElements, focusRingsOf, prop, ripplesOf, until} from '../test-dom.js';
+
+// Shared with the component tests that do not need the subject table.
+export {center, deepElements, focusRingsOf, prop, ripplesOf, until};
 
 adoptStyles(document, [m3Styles]);
 
@@ -292,6 +270,7 @@ export const SUBJECTS: Subject[] = [
 
 /** Renders a subject into a fresh container and returns its subject element. */
 export async function renderSubject(subject: Subject, attrs: Record<string, string | boolean> = {}) {
+  await loadSubject(subject);
   const container = document.createElement('div');
   container.style.cssText = 'padding:64px;display:block;position:relative';
   container.innerHTML = subject.html;
@@ -306,6 +285,37 @@ export async function renderSubject(subject: Subject, attrs: Record<string, stri
   return {container, el, cleanup: () => container.remove()};
 }
 
+// Each subject's component loads when the subject is first rendered, so a
+// suite file only pays for the components it renders (the central suites are
+// split into many files, and every file loading all of them used to triple
+// the import time of the full run).
+const LOADERS: Record<string, () => Promise<unknown[]>> = {
+  button: () => Promise.all([import('../../button/md-gb-button.js')]),
+  iconbutton: () => Promise.all([import('../../iconbutton/md-gb-icon-button.js')]),
+  fab: () => Promise.all([import('../../fab/md-gb-fab.js')]),
+  checkbox: () => Promise.all([import('../../checkbox/md-gb-checkbox.js')]),
+  radio: () => Promise.all([import('../../radio/md-gb-radio.js')]),
+  switch: () => Promise.all([import('../../switch/md-gb-switch.js')]),
+  chip: () => Promise.all([import('../../chip/md-gb-chip.js'), import('../../chip/md-gb-chip-set.js')]),
+  segmentedbutton: () => Promise.all([import('../../segmentedbutton/md-gb-segmented-button.js'), import('../../segmentedbutton/md-gb-segmented-button-set.js')]),
+  card: () => Promise.all([import('../../card/md-gb-card.js')]),
+  list: () => Promise.all([import('../../list/md-gb-list.js'), import('../../list/md-gb-list-item.js')]),
+  menu: () => Promise.all([import('../../menu/md-gb-menu.js'), import('../../menu/md-gb-menu-item.js')]),
+  navbar: () => Promise.all([import('../../navbar/md-gb-nav-bar.js'), import('../../navbar/md-gb-nav-bar-item.js')]),
+  navdrawer: () => Promise.all([import('../../navdrawer/md-gb-nav-drawer.js'), import('../../navdrawer/md-gb-nav-drawer-item.js')]),
+  navrail: () => Promise.all([import('../../navrail/md-gb-nav-rail.js'), import('../../navrail/md-gb-nav-rail-item.js')]),
+  search: () => Promise.all([import('../../search/md-gb-search-bar.js')]),
+  tabs: () => Promise.all([import('../../tabs/md-gb-tabs.js'), import('../../tabs/md-gb-tab.js')]),
+  textfield: () => Promise.all([import('../../textfield/md-gb-text-field.js')]),
+  slider: () => Promise.all([import('../../slider/md-gb-slider.js')]),
+};
+
+/** Loads the components a subject renders (all of them with no subject). */
+export async function loadSubject(subject?: Subject) {
+  const dirs = subject ? [subject.component] : Object.keys(LOADERS);
+  await Promise.all(dirs.map((d) => LOADERS[d]?.()));
+}
+
 /** Waits for every custom element under `root` to finish rendering. */
 export async function settle(root: Element) {
   const all = [root, ...root.querySelectorAll('*')] as Array<
@@ -314,24 +324,6 @@ export async function settle(root: Element) {
   await Promise.all(all.map((e) => e.updateComplete));
   await new Promise((r) => requestAnimationFrame(() => r(null)));
   await Promise.all(all.map((e) => e.updateComplete));
-}
-
-/** All elements under and including `root`, descending into open shadow roots. */
-export function deepElements(root: Element | ShadowRoot): Element[] {
-  const out: Element[] = [];
-  const visit = (node: Element | ShadowRoot) => {
-    if (node instanceof Element) out.push(node);
-    if (node instanceof Element && node.shadowRoot) visit(node.shadowRoot);
-    for (const child of Array.from(node.children)) visit(child);
-  };
-  visit(root);
-  return out;
-}
-
-/** The center of an element's box in viewport coordinates. */
-export function center(el: Element) {
-  const r = el.getBoundingClientRect();
-  return {x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2)};
 }
 
 /** The element that has focus, descending through shadow roots. */
@@ -343,23 +335,6 @@ export function deepActiveElement(): Element | null {
 
 /** The pause that lets a transition on a registered property finish. */
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-/** The ripple (state layer) elements of a subject, in its shadow trees. */
-export function ripplesOf(el: Element): HTMLElement[] {
-  return deepElements(el).filter((e) => e.classList.contains('ripple')) as HTMLElement[];
-}
-
-/** The focus ring elements of a subject, in its shadow trees and itself. */
-export function focusRingsOf(el: Element): HTMLElement[] {
-  return deepElements(el).filter((e) =>
-    e.classList.contains('focus-ring-outer') || e.classList.contains('focus-ring-inner'),
-  ) as HTMLElement[];
-}
-
-/** A computed custom property, trimmed. */
-export function prop(el: Element, name: string, pseudo?: string): string {
-  return getComputedStyle(el, pseudo).getPropertyValue(name).trim();
-}
 
 /** The largest alpha among the colors painted by an element's background. */
 export function stateLayerAlpha(el: Element): number {

@@ -9,10 +9,10 @@
 import {emulateMedia} from '@web/test-runner-commands';
 
 import {
-  offColorRoles,
-  offElevationScale,
   offShapeScale,
   offTypeScale,
+  offElevationScale,
+  offColorRoles,
 } from './scale-helpers.js';
 import {renderSubject, SUBJECTS} from './subjects.js';
 
@@ -20,7 +20,7 @@ import {renderSubject, SUBJECTS} from './subjects.js';
 // elevation, per part. The generated token tests check each token against its
 // value; these check what actually renders: every text style, corner, shadow
 // and color of every part is on the M3 scale, at rest and disabled (and in
-// both color schemes for color roles).
+// both color schemes for color roles). This file: shape corners (and the negative controls).
 
 const STATES: Array<[string, Record<string, boolean>]> = [
   ['at rest', {}],
@@ -41,7 +41,7 @@ function suite(
     for (const subject of SUBJECTS) {
       for (const [state, attrs] of STATES) {
         if (state === 'disabled' && !subject.disabled) continue;
-                it(`${subject.id} ${state}`, async () => {
+        it(`${subject.id} ${state}`, async () => {
           const {el, cleanup} = await renderSubject(subject, attrs);
           expect(check(el)).withContext(units).toEqual([]);
           cleanup();
@@ -53,16 +53,6 @@ function suite(
 
 // spec: shape-9f7e7b, shape-1a341f
 suite('shape scale (central)', 'shape: corner radius scale', (el) => offShapeScale(el));
-
-// spec: typography-c8d861
-suite('type scale (central)', 'typography: type scale', (el) => offTypeScale(el));
-
-// spec: elevation-a20c45
-suite('elevation scale (central)', 'elevation: levels', (el) => offElevationScale(el));
-
-// spec: color-roles-8239c8, color-roles-e1801e
-suite('color roles, light (central)', 'color roles', (el) => offColorRoles(el), 'light');
-suite('color roles, dark (central)', 'color roles', (el) => offColorRoles(el), 'dark');
 
 describe('scale checks (negative controls)', () => {
   it('flags an off-scale type style, corner, shadow and color', () => {

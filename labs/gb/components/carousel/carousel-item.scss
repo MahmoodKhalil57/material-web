@@ -37,6 +37,12 @@ $clip-left: var(--_carousel-item-clip-left, 0px);
     display: block;
     position: relative;
     box-sizing: border-box;
+    // The press shape change eases in and out (the property is registered by
+    // `CarouselItemElement`).
+    --_carousel-item-press: 0px;
+    transition: --_carousel-item-press
+      var(--md-sys-motion-spring-fast-spatial-duration)
+      var(--md-sys-motion-spring-fast-spatial);
     block-size: 100%;
     inline-size: 100%;
     margin: 0;
@@ -67,8 +73,11 @@ $clip-left: var(--_carousel-item-clip-left, 0px);
       }
     }
 
-    &:is(:active, .active):not(.disabled) {
+    &:is(:active, .active, :has(.ripple.active)):not(.disabled) {
       @include carousel-tokens.pressed;
+      // Touch: "Tapping on a carousel item changes the shape slightly". The
+      // ripple's `.active` class outlasts a short tap.
+      --_carousel-item-press: 8px;
 
       &.carousel-item-outlined {
         @include carousel-tokens.with-outline-pressed;
@@ -104,7 +113,8 @@ $clip-left: var(--_carousel-item-clip-left, 0px);
     background-color: var(--container-color);
     translate: var(--_carousel-item-translate, none);
     clip-path: inset(
-      $clip-top $clip-right $clip-bottom $clip-left round var(--container-shape)
+      $clip-top $clip-right $clip-bottom $clip-left round
+        max(0px, calc(var(--container-shape) - var(--_carousel-item-press, 0px)))
     );
     pointer-events: none;
   }
@@ -163,7 +173,10 @@ $clip-left: var(--_carousel-item-clip-left, 0px);
     position: absolute;
     inset: $clip-top $clip-right $clip-bottom $clip-left;
     box-sizing: border-box;
-    border-radius: var(--container-shape);
+    border-radius: max(
+      0px,
+      calc(var(--container-shape) - var(--_carousel-item-press, 0px))
+    );
     border: var(--outline-width, 0px) solid var(--outline-color, transparent);
     box-shadow: var(--container-elevation);
     translate: var(--_carousel-item-translate, none);

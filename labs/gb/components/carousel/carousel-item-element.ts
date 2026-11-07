@@ -1,3 +1,26 @@
+let pressRegistered = false;
+
+/**
+ * Registers the press shape change as an animatable length. `@property` rules
+ * do not apply in shadow roots, so the item registers it itself.
+ */
+function registerPressProperty() {
+  if (pressRegistered || typeof CSS === 'undefined' || !CSS.registerProperty) {
+    return;
+  }
+  pressRegistered = true;
+  try {
+    CSS.registerProperty({
+      name: '--_carousel-item-press',
+      syntax: '<length>',
+      initialValue: '0px',
+      inherits: true,
+    });
+  } catch {
+    // Already registered.
+  }
+}
+
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -75,6 +98,7 @@ export class CarouselItemElement extends LitElement {
   constructor() {
     super();
     this.internals.role = 'listitem';
+    registerPressProperty();
   }
 
   protected override render() {

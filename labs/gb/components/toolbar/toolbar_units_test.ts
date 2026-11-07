@@ -160,7 +160,10 @@ describe('md-gb-toolbar spec units', () => {
         <button slot="trailing">More</button>
       </md-gb-toolbar>`,
     );
-    const slots = Array.from(bar(toolbar).querySelectorAll('slot'));
+    // The overflow slot after them is covered by toolbar_overflow_test.ts.
+    const slots = Array.from(bar(toolbar).querySelectorAll('slot')).filter(
+      (s) => s.name !== 'overflow',
+    );
     expect(slots.map((s) => s.name)).toEqual(['leading', '', 'trailing']);
     expect(slots[0].assignedElements().length).toBe(1);
     expect(slots[1].assignedElements().map((e) => e.localName)).toEqual([

@@ -16,6 +16,13 @@ import {spatialTransitions} from './style-helpers.js';
 // reveal) with `prefers-reduced-motion: reduce`. Run with `--gaps`.
 
 describe('reduced motion (central gaps)', () => {
+  // With no known gaps the suite would have no tests, which the runner
+  // reports as a failed file ("Unknown error").
+  if (KNOWN_GAPS.reducedMotion.length === 0) {
+    it("has no known gaps", () => {
+    expect(KNOWN_GAPS.reducedMotion).toEqual([]);
+    });
+  }
   afterEach(() => emulateMedia({reducedMotion: 'no-preference'}));
 
   for (const id of KNOWN_GAPS.reducedMotion) {

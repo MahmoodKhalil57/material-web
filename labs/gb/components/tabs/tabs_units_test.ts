@@ -12,6 +12,7 @@ import './md-gb-tab.js';
 import './md-gb-tabs.js';
 import '../../styles/icon/md-gb-icon.js';
 
+import {setViewport} from '@web/test-runner-commands';
 import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
@@ -32,7 +33,12 @@ adoptStyles(document, [
 describe('tabs spec units', () => {
   const env = new Environment();
 
+  afterEach(async () => {
+    await setViewport({width: 800, height: 600});
+  });
+
   async function render(template: unknown) {
+    await setViewport({width: 400, height: 600});
     const root = env.render(html`${template}`);
     await env.waitForStability();
     await env.waitForStability();

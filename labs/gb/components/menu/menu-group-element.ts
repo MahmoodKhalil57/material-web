@@ -50,6 +50,9 @@ export class MenuGroupElement extends baseClass {
       :host {
         display: contents;
       }
+      :host([hidden]) {
+        display: none;
+      }
     `,
   ];
 

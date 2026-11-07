@@ -14,4 +14,16 @@
   :root {
     @include typography-tokens.emit-custom-properties;
   }
+
+  // Language height: taller line heights for the scripts that need them.
+  @include typography-tokens.emit-language-heights;
+}
+
+// Hyperlinks (typography/applying-type/accessibility/color-contrast): primary
+// text and underlined. Plain anchors only; components style their own links.
+@layer md.sys.typescale {
+  a:not([class], [role]) {
+    color: var(--md-sys-color-primary);
+    text-decoration-line: underline;
+  }
 }

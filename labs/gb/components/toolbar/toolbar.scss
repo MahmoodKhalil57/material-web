@@ -159,6 +159,15 @@
       width: fit-content;
     }
 
+    // Trailing actions and the overflow trigger keep their size, so an
+    // action that does not fit moves into the overflow menu instead of
+    // shrinking (toolbars.md, Adaptive design).
+    ::slotted([slot='trailing']),
+    ::slotted([slot='overflow']),
+    .overflow-trigger {
+      flex: none;
+    }
+
     .btn,
     ::slotted(.btn) {
       --container-color: var(--button-container-color);
@@ -199,6 +208,11 @@
   .toolbar md-gb-icon-button[selected] {
     --md-icon-color: var(--selected-icon-color);
   }
+
+  // Standard color scheme: standard icon buttons keep their own
+  // on-surface-variant icon (md.comp.toolbar.standard.icon.color, and the
+  // color figure on toolbars.md). The page's list says "Standard button
+  // (Primary)", which neither the tokens nor the figure show.
 
   md-gb-toolbar md-gb-button::part(btn),
   .toolbar md-gb-button::part(btn) {
