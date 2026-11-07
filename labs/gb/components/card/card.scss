@@ -111,6 +111,9 @@
       box-shadow: var(--container-elevation);
       // Elevated and filled cards have no outline.
       border: var(--outline-width, 0) solid var(--outline-color, transparent);
+      // cards.md Measurements: 16dp left/right padding. Set
+      // `--padding-inline: 0` for full-bleed media.
+      padding-inline: var(--padding-inline, 16px);
       // Elevation and outline changes are effects (not movement), so they keep
       // animating with reduced motion.
       transition-property: box-shadow, border-color;

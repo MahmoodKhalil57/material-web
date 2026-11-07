@@ -38,6 +38,7 @@ const baseClass = mixinDelegatesAria(LitElement);
  * @cssprop --container-shape
  * @cssprop --container-width
  * @cssprop --progress
+ * @cssprop --size - The container size, clamped to 24dp-240dp (48dp default).
  */
 export class LoadingIndicatorElement extends baseClass {
   /** @nocollapse */

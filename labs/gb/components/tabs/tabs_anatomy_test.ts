@@ -112,4 +112,16 @@ describe('<md-gb-tabs> anatomy', () => {
     await mount('<md-gb-tabs aria-label="Trips"><md-gb-tab><span slot="label">Flights</span></md-gb-tab></md-gb-tabs>');
     expectPart('md-gb-tabs >> light:md-gb-tab >> slot[name=label]', '', true);
   });
+
+  // spec: tabs-b6b602
+  it('exposes the divider', async () => {
+    await mount('<md-gb-tabs aria-label="Trips"><md-gb-tab><span slot="label">Flights</span></md-gb-tab></md-gb-tabs>');
+    expectPart('md-gb-tabs');
+  });
+
+  // spec: tabs-abb41e
+  it('exposes the active indicator', async () => {
+    await mount('<md-gb-tabs aria-label="Trips"><md-gb-tab><span slot="label">Flights</span></md-gb-tab></md-gb-tabs>');
+    expectPart('md-gb-tabs', '::after');
+  });
 });

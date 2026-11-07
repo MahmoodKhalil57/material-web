@@ -64,7 +64,7 @@ describe('carousel spec units', () => {
     expect(size(2)).toBeLessThanOrEqual(56);
   });
 
-  // spec: carousel-c3b54d, carousel-8abe0b
+  // spec: carousel-c3b54d, carousel-8abe0b, carousel-2c5135, carousel-a11a15
   it('shows more items at once as the container grows', async () => {
     const visible = async (width: number) => {
       const {items, scroller} = await setup({width});
@@ -101,7 +101,7 @@ describe('carousel spec units', () => {
     expect(size(3)).toBeLessThan(60);
   });
 
-  // spec: carousel-925651
+  // spec: carousel-925651, carousel-57a12d
   it('full-screen shows a single item filling the container', async () => {
     const {items, scroller} = await setup({layout: 'full-screen', width: 360});
     expect(items[0].getBoundingClientRect().height).toBeCloseTo(scroller.clientHeight, 0);

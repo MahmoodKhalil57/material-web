@@ -97,6 +97,7 @@ describe('.fab styles', () => {
     });
   }
 
+  // spec: floating-action-button-61bbe0, extended-fab-03ccd6, extended-fab-aec35a
   it('collapses an extended FAB to the icon-only FAB size', () => {
     const {button, label} = render('fab fab-collapsed', 'Compose');
     label!.style.transition = 'none';
@@ -145,6 +146,7 @@ describe('<md-gb-fab>', () => {
     expect(fab.scrollTarget).toBe('');
   });
 
+  // spec: extended-fab-77f84c
   it('renders the label as the accessible name', async () => {
     const {button} = await setupTest(
       html`<md-gb-fab label="Compose"><span>edit</span></md-gb-fab>`,
@@ -196,7 +198,7 @@ describe('<md-gb-fab>', () => {
     expect(button.classList).toContain(FAB_CLASSES.fabTertiary);
   });
 
-  // spec: extended-fab-a2d0b8, extended-fab-b48f68, extended-fab-df20bc, floating-action-button-45ef94
+  // spec: extended-fab-a2d0b8, extended-fab-b48f68, extended-fab-df20bc, floating-action-button-45ef94, floating-action-button-cbdf03
   it('collapses on scroll down and expands on scroll up', async () => {
     const {root, fab} = await setupTest(html`
       <div id="list" style="block-size: 100px; inline-size: 100px; overflow: auto">

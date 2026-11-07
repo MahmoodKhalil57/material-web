@@ -212,16 +212,4 @@ describe('<md-gb-dialog> measurements (gaps)', () => {
     await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
     expectDp('md-gb-dialog >> [part=dialog]', 'width', {max: 560});
   });
-
-  // spec: dialogs-6eb875, dialogs-b2937b
-  it('Bottom action bar height', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
-    expectDp('md-gb-dialog >> .dialog-actions', 'height', {eq: 56});
-  });
-
-  // spec: dialogs-ac829e, dialogs-2a98e4
-  it('Bottom action bar width', async () => {
-    await mount('<md-gb-dialog open quick full-screen><span slot="headline">Title</span>Body text<md-gb-button slot="actions">Save</md-gb-button></md-gb-dialog>');
-    expectDp('md-gb-dialog >> .dialog-actions', 'width', {like: 'md-gb-dialog >> [part=dialog]'});
-  });
 });

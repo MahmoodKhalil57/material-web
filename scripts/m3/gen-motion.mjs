@@ -40,6 +40,30 @@ const TOLERANCE = 0.002;
 const SPRINGS = ['fast-spatial', 'default-spatial', 'slow-spatial', 'fast-effects', 'default-effects', 'slow-effects'];
 const SCHEMES = {expressive: {'motion.scheme': 'expressive'}, standard: {'motion.scheme': 'standard'}};
 
+/**
+ * Spec (motion overview, "Web: Convert springs to curves"): the curve that
+ * mimics each spring for animations without interruptions or gestures, as
+ * [x1, y1, x2, y2, duration ms].
+ */
+const CURVES = {
+  expressive: {
+    'fast-spatial': [0.42, 1.67, 0.21, 0.9, 350],
+    'default-spatial': [0.38, 1.21, 0.22, 1.0, 500],
+    'slow-spatial': [0.39, 1.29, 0.35, 0.98, 650],
+    'fast-effects': [0.31, 0.94, 0.34, 1.0, 150],
+    'default-effects': [0.34, 0.8, 0.34, 1.0, 200],
+    'slow-effects': [0.34, 0.88, 0.34, 1.0, 300],
+  },
+  standard: {
+    'fast-spatial': [0.27, 1.06, 0.18, 1.0, 350],
+    'default-spatial': [0.27, 1.06, 0.18, 1.0, 500],
+    'slow-spatial': [0.27, 1.06, 0.18, 1.0, 750],
+    'fast-effects': [0.31, 0.94, 0.34, 1.0, 150],
+    'default-effects': [0.34, 0.8, 0.34, 1.0, 200],
+    'slow-effects': [0.34, 0.88, 0.34, 1.0, 300],
+  },
+};
+
 const db = await SpecDb.load();
 
 function springParams(name, ctx) {
@@ -58,9 +82,20 @@ function reducedDeclarations(indent) {
     .map(
       (name) =>
         `${indent}--md-sys-motion-spring-${name}: linear;\n` +
-        `${indent}--md-sys-motion-spring-${name}-duration: 0ms;\n`,
+        `${indent}--md-sys-motion-spring-${name}-duration: 0ms;\n` +
+        `${indent}--md-sys-motion-curve-${name}: linear;\n` +
+        `${indent}--md-sys-motion-curve-${name}-duration: 0ms;\n`,
     )
     .join('');
+}
+
+/** The cubic-bezier curve that mimics a spring, and its duration. */
+function curveDeclaration(scheme, name, indent) {
+  const [x1, y1, x2, y2, ms] = CURVES[scheme][name];
+  return (
+    `${indent}--md-sys-motion-curve-${name}: cubic-bezier(${x1}, ${y1}, ${x2}, ${y2});\n` +
+    `${indent}--md-sys-motion-curve-${name}-duration: ${ms}ms;\n`
+  );
 }
 
 function declarations(scheme, indent) {
@@ -71,7 +106,8 @@ function declarations(scheme, indent) {
     return (
       `${indent}// md.sys.motion.spring.${name.replace('-', '.')}: damping ${damping}, stiffness ${stiffness}\n` +
       `${indent}--md-sys-motion-spring-${name}: ${springEasing(damping, stiffness, duration, TOLERANCE)};\n` +
-      `${indent}--md-sys-motion-spring-${name}-duration: ${Math.round(duration * 1000)}ms;\n`
+      `${indent}--md-sys-motion-spring-${name}-duration: ${Math.round(duration * 1000)}ms;\n` +
+      curveDeclaration(scheme, name, indent)
     );
   }).join('');
 }
@@ -89,6 +125,9 @@ const scss = `//
 // ${SETTLE} of its target. Use as:
 //   transition: width var(--md-sys-motion-spring-fast-spatial-duration)
 //     var(--md-sys-motion-spring-fast-spatial);
+// The \`--md-sys-motion-curve-*\` tokens are the cubic-bezier curves that mimic
+// each spring (motion overview, "Web: Convert springs to curves"), for
+// animations without interruptions or gestures.
 
 @layer md.sys.motion {
   // M3 Expressive motion scheme (default).

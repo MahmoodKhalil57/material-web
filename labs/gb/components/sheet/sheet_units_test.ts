@@ -373,6 +373,9 @@ describe('md-gb-side-sheet spec units', () => {
     before.focus();
     await sendKeys({press: 'Tab'});
     expect(sheet.shadowRoot!.activeElement).toBe(shadow(sheet, '.side-sheet-back'));
+    // The headline is next in the focus order (headline, close, actions).
+    await sendKeys({press: 'Tab'});
+    expect(sheet.shadowRoot!.activeElement).toBe(shadow(sheet, '.side-sheet-headline'));
     await sendKeys({press: 'Tab'});
     expect(sheet.shadowRoot!.activeElement).toBe(shadow(sheet, '.side-sheet-close'));
     await sendKeys({press: 'Tab'});
@@ -397,9 +400,19 @@ describe('md-gb-side-sheet spec units', () => {
     expect(back).toHaveBeenCalledTimes(2);
 
     await sendKeys({press: 'Tab'});
+    await sendKeys({press: 'Tab'});
     expect(sheet.shadowRoot!.activeElement).toBe(shadow(sheet, '.side-sheet-close'));
     await sendKeys({press: 'Space'});
     await env.waitForStability();
     expect(sheet.open).toBeFalse();
+  });
+  // spec: side-sheets-1a579d
+  it('draws the standard side sheet divider with the outline variant role', async () => {
+    const {sheet} = await render(html`
+      <md-gb-side-sheet open quick divider headline="Title"></md-gb-side-sheet>
+    `);
+    expect(getComputedStyle(panelOf(sheet)).borderInlineStartColor).toBe(
+      resolvedColor('--md-sys-color-outline-variant'),
+    );
   });
 });

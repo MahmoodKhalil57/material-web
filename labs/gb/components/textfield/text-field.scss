@@ -315,10 +315,13 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     transition: color $effects;
   }
 
+  // A multi-line field grows with its text (text-fields.md Input text); `rows`
+  // is its initial height. It scrolls once the app caps its height.
   textarea.text-field-input {
     block-size: auto;
     resize: none;
-    // The textarea scrolls inside the content area instead of growing.
+    field-sizing: content;
+    min-block-size: calc(var(--_rows, 2) * 1lh);
     overflow-y: auto;
   }
 

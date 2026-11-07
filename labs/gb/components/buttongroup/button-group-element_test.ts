@@ -973,6 +973,7 @@ describe("ButtonGroupElement", () => {
       expect(s2.borderBottomRightRadius).toBe("20px");
     });
 
+    // spec: button-groups-654634
     it("sets overflow: visible on the group", async () => {
       const root = env.render(html`
         <md-gb-button-group id="focus-group">
@@ -1059,7 +1060,7 @@ describe("ButtonGroupElement", () => {
       expect(s1After.borderBottomRightRadius).toBe("8px");
     });
 
-    // spec: button-groups-8e6a2b, button-groups-7a90b2, button-groups-e2950b
+    // spec: button-groups-8e6a2b, button-groups-7a90b2, button-groups-e2950b, button-groups-5c7a13, button-groups-5ed1f3
     it("real hit test for the xs/sm 48px touch target toggles button in Chrome and Firefox", async () => {
       const root = env.render(html`
         <div style="padding-top: 50px;">
@@ -1265,6 +1266,7 @@ describe("ButtonGroupElement", () => {
       expect(getInnerCorner("#rc-xl-1")).toBe("20px");
     });
 
+    // spec: button-groups-6f6f7f, button-groups-779561
     it("ensures children in connected xs and sm have min width 48px and pass hit-test", async () => {
       const root = env.render(html`
         <div style="padding-top: 50px;">

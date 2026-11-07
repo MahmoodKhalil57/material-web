@@ -9,6 +9,7 @@ import {property} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../../aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {clampDensity, type Density} from '../shared/density.js';
+import {RovingFocusController} from '../shared/roving-focus.js';
 import {SelectionController} from '../shared/selection.js';
 import {updateClassList} from '../shared/update-class-list.js';
 
@@ -84,6 +85,20 @@ export class TabsElement extends AriaTablistElement {
     setSelected: (tab, selected) => this.setTabSelected(tab, selected),
     events: ['change'],
     vetoable: false,
+  });
+
+  /**
+   * Arrow keys move focus between the tabs (tabs.md, Keyboard navigation:
+   * "Use Arrow/Tab to navigate through items"). The tab list declares
+   * `focusgroup` for browsers that ship it; Chromium does not, so the shared
+   * RovingFocusController implements the arrows. Moving focus doesn't select:
+   * Space and Enter activate the focused tab. Home and End go to the first
+   * and last tab.
+   */
+  protected readonly rovingFocus = new RovingFocusController(this, {
+    items: () => this.tabs,
+    orientation: 'horizontal',
+    tabStops: 'all',
   });
 
   constructor() {

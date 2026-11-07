@@ -139,6 +139,9 @@
 
     &.toolbar-horizontal:not(.toolbar-docked) {
       flex-direction: row;
+      // A floating toolbar stays fully on screen: it never exceeds its
+      // window or pane (toolbars.md, Container).
+      max-inline-size: 100%;
       height: var(--horizontal-container-height);
       padding-block: var(--container-leading-space);
       padding-inline: var(--container-leading-space)
@@ -203,6 +206,16 @@
     --icon-color: var(--toolbar-icon-color);
     --label-text-color: var(--toolbar-label-text-color);
     --md-icon-color: var(--toolbar-icon-color);
+  }
+
+  // A filled button keeps its own colors in both schemes: primary with on
+  // primary content (toolbars.md, Color).
+  md-gb-toolbar md-gb-button[color='filled']::part(btn),
+  .toolbar md-gb-button[color='filled']::part(btn) {
+    --container-color: var(--md-sys-color-primary);
+    --icon-color: var(--md-sys-color-on-primary);
+    --label-text-color: var(--md-sys-color-on-primary);
+    --md-icon-color: var(--md-sys-color-on-primary);
   }
 
   md-gb-toolbar md-gb-button[selected]::part(btn),

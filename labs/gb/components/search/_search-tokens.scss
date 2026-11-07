@@ -44,6 +44,8 @@
   --trailing-space: var(--md-sys-space-200);
   // EDIT: Spec measurements: icon paddings are measured from a 48dp tap target.
   --icon-target-size: 48px;
+  // EDIT: Spec measurements: unfocused leading and trailing glyphs are 24dp from the container edge.
+  --unfocused-glyph-margin: 24px;
   // EDIT: Spec measurements: container width min 360dp (Compose SearchBarMinWidth).
   --min-width: 360px;
   // EDIT: Spec measurements: container width max 720dp (Compose SearchBarMaxWidth).
@@ -160,4 +162,5 @@
   --trailing-icon-color: inherit;
   --trailing-icon-label-trailing-icon-space: inherit;
   --trailing-space: inherit;
+  --unfocused-glyph-margin: inherit;
 }

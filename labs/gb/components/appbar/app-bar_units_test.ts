@@ -114,7 +114,9 @@ describe('md-gb-app-bar spec units', () => {
     expect(getComputedStyle(bar).backgroundColor).toBe(
       resolvedColor('--md-sys-color-surface-container'),
     );
-    expect(getComputedStyle(bar).boxShadow).not.toBe('none');
+    // M3 separates a scrolled bar with the fill, not a drop shadow
+    // (app-bars-4e5480).
+    expect(getComputedStyle(bar).boxShadow).toBe('none');
   });
 
   // spec: app-bars-abc1ef, app-bars-d2f0aa, app-bars-a1ad83, app-bars-374c9e, app-bars-439d46

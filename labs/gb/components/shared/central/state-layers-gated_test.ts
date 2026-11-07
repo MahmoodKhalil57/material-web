@@ -26,7 +26,7 @@ import {
 const interactive = SUBJECTS.filter((s) => s.disabled && !s.noRipple);
 
 describe('state layers (central, hover gating, focus, dragged)', () => {
-  // spec: interaction-states-cbf1a8, interaction-states-e2f309
+  // spec: interaction-states-cbf1a8, interaction-states-e2f309, interaction-inputs-7b9c68
   // (ENGINEERING-BACKLOG item 1): "Hover states are initiated by the user
   // pausing over an interactive element using a cursor", so touch taps must not
   // leave a hover layer on.

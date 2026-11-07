@@ -114,12 +114,29 @@ $item-transition: (
     flex-direction: column;
     gap: var(--item-between-space);
     inline-size: max-content;
-    inset-block-end: calc(100% + var(--close-button-between-space));
+    // The list reaches down behind the close button, so items scroll behind
+    // it when the window is too short for all of them (fab-menu.md
+    // Scrolling); the bottom padding keeps the resting items clear of it.
+    inset-block-end: calc(100% - var(--close-button-container-height));
     inset-inline: auto 0;
     margin: 0;
+    max-block-size: calc(
+      100dvh - 2 * var(--fab-menu-window-margin, 16px) -
+        (
+          var(--container-height, var(--close-button-container-height)) -
+            var(--close-button-container-height)
+        )
+    );
+    box-sizing: border-box;
     outline: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 0;
+    padding-block-end: calc(
+      var(--close-button-container-height) + var(--close-button-between-space)
+    );
     position: absolute;
+    scrollbar-width: none;
 
     .fab-menu-start & {
       align-items: flex-start;
@@ -130,6 +147,9 @@ $item-transition: (
   // The toggle FAB: a `.fab` that morphs into the close button.
   .fab-menu-button {
     & {
+      // Above the scrolling items, which pass behind it.
+      position: relative;
+      z-index: 1;
       // Compose anchors the close button to the FAB box's top-end corner: the
       // margins keep the box (and the items above it) in place while the
       // button resizes.

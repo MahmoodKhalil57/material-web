@@ -68,6 +68,7 @@ export default {
         : []),
       ...(c === 'filled' || c === 'elevated' || c === 'tonal'
         ? [
+            {name: `${c}-hovered`, set: `${B}.${c}`, state: 'hovered', pick: elevation, only: true},
             {name: `${c}-focused`, set: `${B}.${c}`, state: 'focused', pick: elevation, only: true},
             {name: `${c}-pressed`, set: `${B}.${c}`, state: 'pressed', pick: elevation, only: true},
           ]

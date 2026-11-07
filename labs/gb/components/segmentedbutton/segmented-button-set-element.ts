@@ -46,6 +46,10 @@ const baseClass = mixinConstraintValidation(
   mixinFormAssociated(mixinElementInternals(LitElement)),
 );
 
+/** The fewest and most segments a segmented button has (spec Anatomy). */
+const MIN_SEGMENTS = 2;
+const MAX_SEGMENTS = 5;
+
 /**
  * A Material Design segmented button set: two to five
  * `md-gb-segmented-button` segments for picking options, switching views or
@@ -301,6 +305,15 @@ export class SegmentedButtonSetElement extends baseClass {
   }
 
   private handleSlotChange() {
+    // Spec (Anatomy > Segments): a segmented button has 2 to 5 segments.
+    const count = this.segments.length;
+    if (count < MIN_SEGMENTS || count > MAX_SEGMENTS) {
+      console.warn(
+        `<md-gb-segmented-button-set> has ${count} segments; Material ` +
+          `segmented buttons have ${MIN_SEGMENTS} to ${MAX_SEGMENTS}. ` +
+          'Use another component, such as chips or tabs, for other counts.',
+      );
+    }
     this.selection.normalize();
     this.syncSegments();
     this.requestUpdate();

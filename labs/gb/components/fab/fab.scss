@@ -119,6 +119,12 @@
 
     // An icon-only (or collapsed extended) FAB is a square
     // md.comp.fab.container.width wide with the icon centered.
+    // An extended FAB is at least 80dp wide (extended-fab.md Measurements:
+    // dynamic width, 80dp min).
+    &:has(.fab-label):not(.fab-collapsed) {
+      min-inline-size: max(80px, var(--container-width));
+    }
+
     &:not(:has(.fab-label)),
     &.fab-collapsed {
       padding-inline: calc((var(--container-width) - var(--icon-size)) / 2);

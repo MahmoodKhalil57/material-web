@@ -174,6 +174,13 @@ export class SnackbarElement extends LitElement {
   @property({type: Boolean, reflect: true}) quick = false;
 
   /**
+   * Where a snackbar sits on wide layouts: `center` (default) or `start`
+   * (left-aligned). Use the same value wherever snackbars appear, so they
+   * always show in the same spot. Compact layouts span the width.
+   */
+  @property({reflect: true}) align: 'center' | 'start' = 'center';
+
+  /**
    * The id of an element the snackbar appears above, such as a FAB or a
    * docked toolbar, in the snackbar's root (document or shadow root). See
    * `anchorElement`.
@@ -211,6 +218,7 @@ export class SnackbarElement extends LitElement {
     this.addEventListener('focusout', this.handleFocusOut);
     this.addEventListener('keydown', this.handleKeyDown);
     this.addEventListener('click', this.handleClick);
+    document.addEventListener('keydown', this.handleFocusShortcut);
     if (this.open && !this.isOpening && !this.isClosing) {
       this.startAutoDismissTimer();
     }
@@ -224,6 +232,7 @@ export class SnackbarElement extends LitElement {
     this.removeEventListener('focusout', this.handleFocusOut);
     this.removeEventListener('keydown', this.handleKeyDown);
     this.removeEventListener('click', this.handleClick);
+    document.removeEventListener('keydown', this.handleFocusShortcut);
     this.clearAutoDismissTimer();
     this.stopAnchorTracking();
   }
@@ -436,6 +445,7 @@ export class SnackbarElement extends LitElement {
     const prev = this.isOpenInternal;
     this.isOpenInternal = false;
     this.requestUpdate('open', prev);
+    this.restoreFocus();
     this.isOpening = false;
     this.isClosing = true;
     this.announcer.clear();
@@ -475,9 +485,24 @@ export class SnackbarElement extends LitElement {
     );
   }
 
+  /** Whether the snackbar has an action (built-in or slotted). */
+  private get hasAction(): boolean {
+    const slot =
+      this.renderRoot?.querySelector<HTMLSlotElement>('slot[name="action"]');
+    const slotted = slot?.assignedNodes({flatten: true}) ?? [];
+    return (
+      this.actionLabel.trim() !== '' ||
+      slotted.some(
+        (node) => node.nodeType === Node.ELEMENT_NODE || !!node.textContent?.trim(),
+      )
+    );
+  }
+
   private startAutoDismissTimer() {
     this.clearAutoDismissTimer();
-    if (this.timeoutMs <= 0) {
+    // Snackbars with an action don't auto-dismiss (snackbar.md,
+    // Accessibility): a person needs time to find and use the action.
+    if (this.timeoutMs <= 0 || this.hasAction) {
       return;
     }
     this.remainingTimeMs = this.timeoutMs;
@@ -541,7 +566,77 @@ export class SnackbarElement extends LitElement {
     }
   };
 
-  private readonly handleFocusIn = () => {
+  /** The element that had focus before it moved into the snackbar. */
+  private returnFocusTo: HTMLElement | null = null;
+
+  /**
+   * Moves focus to the action of an open snackbar with an action
+   * (`Alt+G`, snackbar.md Accessibility). Document this shortcut for users,
+   * for example in a help article.
+   */
+  private readonly handleFocusShortcut = (event: KeyboardEvent) => {
+    if (
+      !this.isOpenInternal ||
+      !event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.code !== 'KeyG' ||
+      !this.hasAction
+    ) {
+      return;
+    }
+    const action =
+      this.querySelector<HTMLElement>('[slot="action"]') ??
+      this.renderRoot.querySelector<HTMLElement>('.snackbar-action');
+    if (action) {
+      event.preventDefault();
+      action.focus();
+    }
+  };
+
+  /**
+   * Returns focus when the snackbar closes while it holds focus: to the
+   * element that had it before, else to the next most logical element on the
+   * page (the next focusable after the snackbar, or the last one before it).
+   */
+  private restoreFocus() {
+    const previous = this.returnFocusTo;
+    this.returnFocusTo = null;
+    const active = document.activeElement;
+    if (!active || !(this === active || this.contains(active))) {
+      return;
+    }
+    if (previous?.isConnected && !this.contains(previous)) {
+      previous.focus();
+      return;
+    }
+    const focusable = [
+      ...document.querySelectorAll<HTMLElement>(
+        'a[href], button, input, select, textarea, summary, [tabindex]',
+      ),
+    ].filter(
+      (el) =>
+        !this.contains(el) &&
+        !el.matches(':disabled, [tabindex="-1"], [hidden]') &&
+        el.getClientRects().length > 0,
+    );
+    const next = focusable.find(
+      (el) =>
+        this.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    const before = focusable.filter(
+      (el) =>
+        this.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_PRECEDING,
+    );
+    (next ?? before[before.length - 1] ?? document.body).focus();
+  }
+
+  private readonly handleFocusIn = (event: FocusEvent) => {
+    const from = event.relatedTarget;
+    if (from instanceof HTMLElement && !this.contains(from)) {
+      this.returnFocusTo = from;
+    }
     this.isFocused = true;
     this.pauseAutoDismissTimer();
   };

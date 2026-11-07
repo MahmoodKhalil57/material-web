@@ -193,6 +193,12 @@ function measure(chain: string, metric: string, pseudo = '', rel = ''): number {
   throw new Error('unknown metric ' + metric);
 }
 
+/** Checks a computed style property against any of the pipe-separated values. */
+function expectCss(chain: string, prop: string, values: string, pseudo = '') {
+  const actual = getComputedStyle(need(chain), pseudo).getPropertyValue(prop);
+  expect(values.split('|')).withContext(chain + pseudo + ' ' + prop + ' is ' + actual).toContain(actual);
+}
+
 function expectDp(chain: string, metric: string, spec: Spec, pseudo = '') {
   const actual = measure(chain, metric, pseudo, spec.rel);
   if (spec.like !== undefined) spec = {...spec, eq: measure(spec.like, metric, pseudo)};
@@ -211,5 +217,18 @@ describe('<md-gb-toolbar> measurements', () => {
   it('Default toolbar, height', async () => {
     await mount('<md-gb-toolbar><md-gb-icon-button><md-gb-icon>edit</md-gb-icon></md-gb-icon-button><md-gb-icon-button><md-gb-icon>share</md-gb-icon></md-gb-icon-button></md-gb-toolbar>');
     expectDp('md-gb-toolbar >> [part=toolbar]', 'height', {eq: 64});
+  });
+
+  // spec: toolbars-8f692f
+  it('Default toolbar, minimum outside padding', async () => {
+    await mount('<md-gb-toolbar docked><md-gb-icon-button><md-gb-icon>edit</md-gb-icon></md-gb-icon-button><md-gb-icon-button><md-gb-icon>share</md-gb-icon></md-gb-icon-button></md-gb-toolbar>');
+    expectDp('md-gb-toolbar >> [part=toolbar]', 'padding-left', {min: 16});
+    expectDp('md-gb-toolbar >> [part=toolbar]', 'padding-right', {min: 16});
+  });
+
+  // spec: toolbars-8f692f
+  it('Default toolbar, center-aligned', async () => {
+    await mount('<md-gb-toolbar docked><md-gb-icon-button><md-gb-icon>edit</md-gb-icon></md-gb-icon-button><md-gb-icon-button><md-gb-icon>share</md-gb-icon></md-gb-icon-button></md-gb-toolbar>');
+    expectCss('md-gb-toolbar >> [part=toolbar]', 'justify-content', 'center', '');
   });
 });

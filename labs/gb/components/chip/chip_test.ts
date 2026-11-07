@@ -204,6 +204,7 @@ describe('<md-gb-chip>', () => {
   });
 
   describe('input chips', () => {
+    // spec: chips-f8b672
     it('have a separately focusable, labeled remove button', async () => {
       const {chipEl} = await setup(
         html`<md-gb-chip type="input" removable>Hiking</md-gb-chip>`,

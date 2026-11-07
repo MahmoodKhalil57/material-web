@@ -66,6 +66,11 @@
   --label-text-color: var(--md-sys-color-on-primary);
 }
 
+@mixin filled-hovered {
+  // EDIT: md.comp.button.filled.hovered.container.elevation is level1 (buttons.md Specs > States, Hovered); the spec DB does not expose hovered tokens.
+  --container-elevation: var(--md-sys-elevation-shadow-1);
+}
+
 @mixin filled-focused {
   --container-elevation: var(--md-sys-elevation-shadow-0);
 }
@@ -100,6 +105,11 @@
   --label-text-color: var(--md-sys-color-on-primary);
 }
 
+@mixin elevated-hovered {
+  // EDIT: md.comp.button.elevated.hovered.container.elevation is level2 (buttons.md Specs > States, Hovered); the spec DB does not expose hovered tokens.
+  --container-elevation: var(--md-sys-elevation-shadow-2);
+}
+
 @mixin elevated-focused {
   --container-elevation: var(--md-sys-elevation-shadow-1);
 }
@@ -132,6 +142,11 @@
   --container-color: var(--md-sys-color-secondary);
   --icon-color: var(--md-sys-color-on-secondary);
   --label-text-color: var(--md-sys-color-on-secondary);
+}
+
+@mixin tonal-hovered {
+  // EDIT: md.comp.button.tonal.hovered.container.elevation is level1 (buttons.md Specs > States, Hovered); the spec DB does not expose hovered tokens.
+  --container-elevation: var(--md-sys-elevation-shadow-1);
 }
 
 @mixin tonal-focused {

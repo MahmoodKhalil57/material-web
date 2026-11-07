@@ -429,6 +429,29 @@
       }
     }
 
+    // A label wider than its container truncates (chips.md Placement).
+    max-inline-size: 100%;
+    min-inline-size: 0;
+
+    // A chip with a secondary action (the remove button) is at least 88dp
+    // wide, so its two 48x48dp targets fit side by side (chips.md Trailing
+    // icon).
+    &:where(.chip-removable) {
+      min-inline-size: 88px;
+    }
+
+    .chip-label {
+      min-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chip-action {
+      min-inline-size: 0;
+      flex: 1;
+    }
+
     // Avatar (input chips): a 24dp image or element in the `icon` slot. It
     // shrinks with dense containers to keep 2px above and below.
     .chip-avatar,

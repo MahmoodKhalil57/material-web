@@ -24,6 +24,7 @@ import type {
   IconButtonSize,
   IconButtonWidth,
 } from './icon-button.js';
+import '../tooltip/md-gb-tooltip.js';
 import {iconButton} from './icon-button.js';
 
 // spec-labels: icon-buttons/specs/color, icon-buttons/specs/variants, icon-buttons/specs/configurations, icon-buttons/specs/anatomy, icon-buttons/guidelines/anatomy
@@ -79,6 +80,15 @@ export class IconButtonElement extends baseClass {
 
       :host([type='toggle'][selected]) {
         --md-icon-fill: 1;
+      }
+
+      /*
+       * A selected toggle whose icon has no filled version gets a semibold
+       * icon instead of a filled one.
+       */
+      :host([type='toggle'][selected][unfilled-icon]) .icon-btn {
+        --md-icon-fill: 0;
+        --md-icon-wght: 600;
       }
 
       .icon-btn {
@@ -163,6 +173,20 @@ export class IconButtonElement extends baseClass {
   @property({type: Boolean, reflect: true}) selected = false;
 
   /**
+   * Set when the icon has no filled version: a selected toggle button then
+   * shows the icon in semibold weight instead of filled.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'unfilled-icon'})
+  unfilledIcon = false;
+
+  /**
+   * Shows a tooltip with the button's accessibility label (`aria-label`) on
+   * hover and keyboard focus. The label should describe the action, not name
+   * the icon.
+   */
+  @property({type: Boolean, reflect: true}) tooltip = false;
+
+  /**
    * The URL that the link button points to.
    */
   @property() href = '';
@@ -203,6 +227,7 @@ export class IconButtonElement extends baseClass {
     const {ariaLabel, ariaHasPopup, ariaExpanded} = this as ARIAMixinStrict;
     if (this.type === 'link') {
       return html`<a
+        id="icon-btn"
         part="icon-btn"
         class=${classes}
         href=${safeHref(this.href)}
@@ -216,10 +241,11 @@ export class IconButtonElement extends baseClass {
         aria-disabled=${this.disabled || this.softDisabled || nothing}
         tabindex=${this.disabled && !this.softDisabled ? -1 : nothing}>
         <slot></slot>
-      </a>`;
+      </a>${this.renderTooltip(ariaLabel)}`;
     }
 
     return html`<button
+      id="icon-btn"
       part="icon-btn"
       class=${classes}
       type="button"
@@ -231,7 +257,13 @@ export class IconButtonElement extends baseClass {
       aria-expanded=${ariaExpanded || nothing}
       @change=${this.handleChange}>
       <slot></slot>
-    </button>`;
+    </button>${this.renderTooltip(ariaLabel)}`;
+  }
+
+  private renderTooltip(label: string | null) {
+    return this.tooltip && label
+      ? html`<md-gb-tooltip for="icon-btn">${label}</md-gb-tooltip>`
+      : nothing;
   }
 
   private handleChange(event: Event) {

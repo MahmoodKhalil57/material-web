@@ -57,6 +57,29 @@
     &.btn-outlined:where(.btn-selected, [aria-pressed='true']) {
       @include button-tokens.outlined-selected;
     }
+    // md.comp.button.{filled,tonal}.hovered.container.elevation is level 1 and
+    // md.comp.button.elevated.hovered.container.elevation is level 2.
+    &.btn-filled:where(.hover):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
+      @include button-tokens.filled-hovered;
+    }
+    &.btn-elevated:where(.hover):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
+      @include button-tokens.elevated-hovered;
+    }
+    &.btn-tonal:where(.hover):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
+      @include button-tokens.tonal-hovered;
+    }
+    // Hover only on pointers that can hover (touch would leave it stuck).
+    @media (hover: hover) {
+      &.btn-filled:where(:hover):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
+        @include button-tokens.filled-hovered;
+      }
+      &.btn-elevated:where(:hover):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
+        @include button-tokens.elevated-hovered;
+      }
+      &.btn-tonal:where(:hover):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
+        @include button-tokens.tonal-hovered;
+      }
+    }
     // spec-labels: buttons/specs/states/filled-button-states/default, buttons/specs/states/filled-button-states/toggle, buttons/specs/states/tonal-button-states/default, buttons/specs/states/tonal-button-states/toggle, buttons/specs/states/elevated-button-states/default, buttons/specs/states/elevated-button-states/toggle, buttons/specs/states/outlined-button-states/default, buttons/specs/states/outlined-button-states/toggle, buttons/specs/states/text-button-style-states
     &.btn-filled:where(:focus-visible, .focus-visible) {
       @include button-tokens.filled-focused;
@@ -177,6 +200,9 @@
       letter-spacing: var(--label-text-tracking);
       font-variation-settings: var(--label-text-axes);
       -webkit-font-smoothing: antialiased;
+      // buttons.md: label text is never truncated or wrapped; it stays fully
+      // visible on a single line.
+      white-space: nowrap;
       // md.comp.button.pressed.container.corner-size.motion.spring is the
       // fast spatial spring (scripts/m3/gen-motion.mjs).
       transition:

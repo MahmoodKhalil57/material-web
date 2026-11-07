@@ -85,8 +85,8 @@ describe('<md-gb-progress> spec behavior', () => {
     expect(lengths[1]).toBeLessThan(lengths[2]);
     expect(lengths[1]).toBeGreaterThan(lengths[0]);
     expect(lengths[2]).toBeLessThan(lengths[3]);
-    // At 100% the active indicator spans the track (200px minus the caps).
-    expect(lengths[3]).toBeCloseTo(196, 0);
+    // At 100% the active indicator spans the track (200px minus the 4px insets and the caps).
+    expect(lengths[3]).toBeCloseTo(188, 0);
   });
 
   // spec: progress-indicators-559c77

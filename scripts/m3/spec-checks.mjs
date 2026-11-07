@@ -260,6 +260,13 @@ const labelCited = new Map();
  * `tracked`, never covered).
  */
 const gapCited = new Map();
+/**
+ * Unit or section ID -> [file:line] of `spec-exclude:` citations: units that
+ * can't be built or tested in a component library (usage advice for
+ * designers, platform-only rules), each with the reason next to the citation.
+ * They become `excluded`, never covered.
+ */
+const excludeCited = new Map();
 const stale = [];
 for (const c of citations) {
   const hit = byId.has(c.id) ? [byId.get(c.id)] : sections.get(c.id);
@@ -267,9 +274,10 @@ for (const c of citations) {
     stale.push(c);
     continue;
   }
-  if (c.gapOnly) {
-    if (!gapCited.has(c.id)) gapCited.set(c.id, []);
-    gapCited.get(c.id).push(c.where);
+  if (c.gapOnly || c.excludeOnly) {
+    const map = c.gapOnly ? gapCited : excludeCited;
+    if (!map.has(c.id)) map.set(c.id, []);
+    map.get(c.id).push(c.where);
     continue;
   }
   if (c.labelsOnly) {
@@ -292,16 +300,20 @@ function scanCitations() {
     // Compiled output of a TypeScript source cites the same thing.
     if (/\.js$/.test(file) && present.has(file.replace(/\.js$/, '.ts'))) continue;
     const lines = readFileSync(file, 'utf8').split('\n');
+    // `*_gap.ts` files are red tests for unbuilt features: a citation there
+    // tracks the unit as a known gap, it doesn't cover it.
+    const redTests = /_gap\.(ts|js)$/.test(file);
     lines.forEach((line, n) => {
       // `spec-labels: <section>` covers only the section's short labels
       // (part names, states, legend entries), not its sentences.
       // `spec-gap: <ids>` (in CHECKLIST.md) tracks open units as known gaps.
-      const m = line.match(/(?:\/\/|\/\*+|<!--|^\s*\*|^\s*#)\s*spec(-labels|-gap)?:\s*(.*)/);
+      // `spec-exclude: <ids>` (in CHECKLIST.md, with the reason) excludes them.
+      const m = line.match(/(?:\/\/|\/\*+|<!--|^\s*\*|^\s*#)\s*spec(-labels|-gap|-exclude)?:\s*(.*)/);
       if (!m) return;
       const list = m[2].replace(/\s*(\*\/|-->).*$/, '');
       for (const token of list.split(/[\s,]+/)) {
         if (looksLikeId(token)) {
-          out.push({id: token, where: `${file}:${n + 1}`, labelsOnly: m[1] === '-labels', gapOnly: m[1] === '-gap'});
+          out.push({id: token, where: `${file}:${n + 1}`, labelsOnly: m[1] === '-labels', gapOnly: m[1] === '-gap' || redTests, excludeOnly: m[1] === '-exclude'});
         }
       }
     });
@@ -357,11 +369,14 @@ for (const u of units) {
   const s = status.get(u.id);
   if (s.status !== 'uncovered' && s.status !== 'label') continue;
   const parts = u.section.split('/');
-  const where =
-    gapCited.get(u.id) ??
-    (s.rep && gapCited.get(s.rep)) ??
-    parts.map((_, i) => gapCited.get(parts.slice(0, i + 1).join('/'))).find(Boolean);
-  if (where) status.set(u.id, {...s, status: 'tracked', trackedAt: where});
+  const lookup = (map) =>
+    map.get(u.id) ??
+    (s.rep && map.get(s.rep)) ??
+    parts.map((_, i) => map.get(parts.slice(0, i + 1).join('/'))).find(Boolean);
+  const excludedAt = lookup(excludeCited);
+  const where = excludedAt ? undefined : lookup(gapCited);
+  if (excludedAt) status.set(u.id, {...s, status: 'excluded', excludedAt});
+  else if (where) status.set(u.id, {...s, status: 'tracked', trackedAt: where});
 }
 
 // --- Report -------------------------------------------------------------------
@@ -398,6 +413,7 @@ for (const u of units) {
       labels: 0,
       labelSections: new Set(),
       tracked: 0,
+      excluded: 0,
       tested: 0,
       clusters: 0,
       uncovered: [],
@@ -417,6 +433,7 @@ for (const u of units) {
   else if (s.status === 'auto-review') p.autoReview++;
   else if (s.status === 'review-not-applicable') p.reviewNA++;
   else if (s.status === 'tracked') p.tracked++;
+  else if (s.status === 'excluded') p.excluded++;
   else if (s.status === 'label') {
     p.labels++;
     p.labelSections.add(u.section);
@@ -452,6 +469,7 @@ const totals = {
   labels: total('labels'),
   labelSections: pageList.reduce((n, p) => n + p.labelSections.size, 0),
   tracked: total('tracked'),
+  excluded: total('excluded'),
   tested: total('tested'),
   uncovered: total('uncovered'),
   clusters: total('clusters'),
@@ -562,7 +580,7 @@ function summaryLines() {
     `- Tested: ${totals.tested} of ${totals.buildable} buildable units are cited from a \`*_test.ts\` file.`,
   );
   lines.push(
-    `- Buildable units: ${totals.cited} cited (directly or through a cited cluster member), ${totals.autoToken} auto-token, ${totals.autoSection} auto-section, ${totals.notARequirement} not a requirement, ${totals.tracked} tracked as gaps in CHECKLIST.md (\`spec-gap:\`), ${totals.labels} short labels waiting for ${totals.labelSections} section citations, **${totals.uncovered} uncovered**; **${totals.uncovered + totals.labels} unaccounted for** (${totals.clusters} after merging duplicate text); ${totals.citations} citations scanned in ${SCAN.join(', ')}. Auto statuses, rules and evidence: \`${AUTOCITE_FILE}\`.`,
+    `- Buildable units: ${totals.cited} cited (directly or through a cited cluster member), ${totals.autoToken} auto-token, ${totals.autoSection} auto-section, ${totals.notARequirement} not a requirement, ${totals.tracked} tracked as gaps in CHECKLIST.md (\`spec-gap:\`), ${totals.excluded} excluded with a reason (\`spec-exclude:\`), ${totals.labels} short labels waiting for ${totals.labelSections} section citations, **${totals.uncovered} uncovered**; **${totals.uncovered + totals.labels} unaccounted for** (${totals.clusters} after merging duplicate text); ${totals.citations} citations scanned in ${SCAN.join(', ')}. Auto statuses, rules and evidence: \`${AUTOCITE_FILE}\`.`,
   );
   if (review) {
     lines.push(

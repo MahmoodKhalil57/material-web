@@ -588,7 +588,10 @@ export class TextFieldElement extends baseClass {
     showError: boolean,
     describedBy: string,
   ) {
-    const style = styleMap({direction: this.textDirection || null});
+    const style = styleMap({
+      direction: this.textDirection || null,
+      '--_rows': textarea ? String(this.rows) : null,
+    });
     const {ariaLabel} = this as ARIAMixinStrict;
     // lit-analyzer `autocomplete` types are too strict.
     // tslint:disable-next-line:no-any

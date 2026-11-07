@@ -212,6 +212,12 @@ describe('<md-gb-fab> measurements', () => {
     expectDp('md-gb-fab >> [part=fab]', 'height', {eq: 56});
   });
 
+  // spec: extended-fab-4d2544, extended-fab-ace637
+  it('Container width, 80dp minimum', async () => {
+    await mount('<md-gb-fab label="A"><md-gb-icon>add</md-gb-icon></md-gb-fab>');
+    expectDp('md-gb-fab >> [part=fab]', 'width', {min: 80});
+  });
+
   // spec: extended-fab-578afe, extended-fab-468180
   it('Container shape', async () => {
     await mount('<md-gb-fab label="Create"><md-gb-icon>add</md-gb-icon></md-gb-fab>');

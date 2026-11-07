@@ -73,7 +73,9 @@
     display: flex;
     flex-direction: row;
     gap: var(--item-between-space);
-    height: var(--container-height);
+    // The bar grows vertically for larger text (navigation-bar.md, Text
+    // scaling) and keeps its padding.
+    min-height: var(--container-height);
     isolation: isolate;
     justify-content: space-around;
     margin: 0;
@@ -86,6 +88,14 @@
     > :focus-within,
     ::slotted(:focus-within) {
       z-index: 1;
+    }
+
+    // With vertical items the bar is divided into equal-width segments
+    // (navigation-bar.md, Navigation items); horizontal items are centered
+    // with outer margins (Compose).
+    &.nav-bar-vertical ::slotted(*) {
+      flex: 1 1 0;
+      min-inline-size: 48px;
     }
 
     &.nav-bar-horizontal {
@@ -208,11 +218,14 @@
     font: var(--item-label-text);
     font-variation-settings: var(--item-label-text-axes);
     letter-spacing: var(--item-label-text-tracking);
-    overflow: hidden;
+    // Labels stay on one line at the default size and wrap, not truncate,
+    // when scaled text needs the room (the full label is visible at up to
+    // 2x text size).
+    max-inline-size: 100%;
+    overflow-wrap: break-word;
     text-align: center;
-    text-overflow: ellipsis;
     transition: all var(--motion-duration) var(--motion-easing);
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .nav-bar-item-badge {
@@ -260,6 +273,9 @@
     }
 
     .nav-bar-item-label {
+      // A selected destination has a bold label (navigation-bar.md,
+      // Visual indicators); the others a medium one.
+      font-weight: bold;
       color: var(--item-active-label-text-color);
     }
   }

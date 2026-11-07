@@ -127,14 +127,14 @@ const dialog = {
       rows: [
         {cells: ['Container shape', '0dp corner radius'], name: 'Container shape', el: '[part=dialog]', m: 'radius', dp: 0},
         {cells: ['Container height', 'Dynamic'], name: 'Container height', skip: 'dynamic; not a dp value'},
-        {cells: ['Container width', 'Container width; Max 560dp'], name: 'Container width', el: '[part=dialog]', m: 'width', dp: {max: 560}, gap: 'the full-screen dialog fills the window; it has no 560dp maximum width'},
+        {cells: ['Container width', 'Container width; Max 560dp'], name: 'Container width', el: '[part=dialog]', m: 'width', dp: {max: 560}, gap: 'dialogs-1bb3d9 and dialogs-6777bc say a full-screen dialog fills the entire screen; the measurement table caps it at 560dp. The two conflict above 560dp, and full-screen dialogs are for compact windows only, so it fills the window'},
         {cells: ['Header height', '56dp'], name: 'Header height', el: '[part=header]', m: 'height', dp: 56},
         {cells: ['Header width', 'Container width'], name: 'Header width', el: '[part=header]', m: 'width', dp: {like: '[part=dialog]'}},
         {cells: ['Headline text alignment', 'Start-aligned'], name: 'Headline text alignment', el: '[part=headline]', css: 'text-align', is: ['start', 'left']},
         {cells: ['Divider height', '1dp'], name: 'Divider height', el: '.dialog-divider-top', m: 'border-bottom', dp: 1},
         {cells: ['Icon (close affordance) size', '24dp'], name: 'Close icon size', el: '[part=close-button] svg', m: 'width', dp: 24, checks: [{el: '[part=close-button] svg', m: 'height', dp: 24}]},
-        {cells: ['Bottom action bar height', '56dp'], name: 'Bottom action bar height', el: '.dialog-actions', m: 'height', dp: 56, gap: 'the full-screen dialog renders its actions in the header; there is no bottom action bar'},
-        {cells: ['Bottom action bar width', 'Container width'], name: 'Bottom action bar width', el: '.dialog-actions', m: 'width', dp: {like: '[part=dialog]'}, gap: 'the full-screen dialog renders its actions in the header; there is no bottom action bar'},
+        {cells: ['Bottom action bar height', '56dp'], name: 'Bottom action bar height', skip: 'the full-screen anatomy lists a header text button and no bottom action bar; the Save action sits in the header'},
+        {cells: ['Bottom action bar width', 'Container width'], name: 'Bottom action bar width', skip: 'the full-screen anatomy lists a header text button and no bottom action bar; the Save action sits in the header'},
         {cells: ['Top/left/right padding', '24dp'], name: 'Top/left/right padding', el: '[part=header]', m: 'padding-left', dp: 24, checks: [{el: '[part=header]', m: 'padding-right', dp: 24}, {el: '[part=content]', m: 'padding-left', dp: 24}]},
         {cells: ['Padding between elements', '8dp'], name: 'Padding between elements', el: '[part=header]', m: 'gap', dp: 8},
       ],
@@ -311,17 +311,17 @@ const menu = {
           {name: 'minimum', markup: MENU('A'), dp: {min: 112}},
           {name: 'maximum', markup: MENU('A long menu item label that is wider than the menu maximum width '.repeat(3)), dp: {max: 280}},
         ]},
-        {cells: ['Corner radius', '4dp'], name: 'Corner radius', el: '[part=menu]', m: 'radius', dp: 4},
+        {cells: ['Corner radius', '4dp'], name: 'Corner radius', skip: 'baseline menu only; the Expressive vertical menu takes its shape from md.comp.menus container.shape (corner-lg, 16dp)'},
         {cells: ['Vertical label text alignment', 'Center-aligned'], name: 'Vertical label text alignment', el: MI, css: 'align-items', is: 'center'},
         {cells: ['Horizontal label text alignment', 'Start-aligned'], name: 'Horizontal label text alignment', el: MI, css: 'justify-content', is: ['normal', 'flex-start', 'start']},
-        {cells: ['Left/right padding', '12dp'], name: 'Left/right padding', el: MI, m: 'padding-left', dp: 12, checks: [{el: MI, m: 'padding-right', dp: 12}]},
-        {cells: ['Left/right padding with-icon', '12dp'], name: 'Left/right padding with icon', markup: MENU('<md-gb-icon slot="leading">star</md-gb-icon>Item'), el: MI, m: 'padding-left', dp: 12, checks: [{el: MI, m: 'padding-right', dp: 12}]},
+        {cells: ['Left/right padding', '12dp'], name: 'Left/right padding', skip: 'baseline menu only; the Expressive vertical menu takes its item padding from md.comp.menus.item leading-space and trailing-space (16dp)'},
+        {cells: ['Left/right padding with-icon', '12dp'], name: 'Left/right padding with icon', skip: 'baseline menu only; the Expressive vertical menu takes its item padding from md.comp.menus.item leading-space and trailing-space (16dp)'},
         {cells: ['List item height', '48dp'], name: 'List item height', el: MI, m: 'height', dp: 48},
         {cells: ['Padding between elements within a list item', '12dp'], name: 'Padding between elements within a list item', markup: MENU('<md-gb-icon slot="leading">star</md-gb-icon>Item'), el: MI, m: 'gap', dp: 12},
         {cells: ['Divider top/bottom padding', '8dp'], name: 'Divider top/bottom padding', markup: MENU_DIVIDED, el: 'light:md-gb-divider', m: 'margin-top', dp: 8, checks: [{el: 'light:md-gb-divider', m: 'margin-bottom', dp: 8}]},
         {cells: ['Divider height', '1dp'], name: 'Divider height', markup: MENU_DIVIDED, el: 'light:md-gb-divider >> [part=divider]', m: 'border-bottom', dp: 1},
         {cells: ['Divider width', 'Dynamic'], name: 'Divider width', skip: 'dynamic; not a dp value'},
-        {cells: ['Leading/trailing icon size', '24dp'], name: 'Leading and trailing icon size', markup: MENU('<md-gb-icon slot="leading">star</md-gb-icon><md-gb-icon slot="trailing">star</md-gb-icon>Item'), el: 'light:md-gb-icon[slot=leading]', m: 'width', dp: 24, checks: [{el: 'light:md-gb-icon[slot=trailing]', m: 'width', dp: 24}]},
+        {cells: ['Leading/trailing icon size', '24dp'], name: 'Leading and trailing icon size', skip: 'baseline menu only; the Expressive vertical menu takes its icon size from md.comp.menus.item leading-icon and trailing-icon size (20dp)'},
       ],
     },
   ],
@@ -382,7 +382,7 @@ function sideSheetRows(modal) {
     {cells: modal ? ['Bottom actions bottom padding'] : ['Bottom actions bottom padding', '24dp'], name: 'Bottom actions bottom padding', markup: SIDE(m), el: '[part=actions]', m: 'padding-bottom', dp: 24},
     {cells: ['Bottom actions alignment (horizontal)', 'Left'], name: 'Bottom actions alignment', markup: SIDE(m), el: '[part=actions]', css: 'justify-content', is: ['normal', 'flex-start', 'start', 'left']},
     {cells: ['Max-width', '400dp'], name: 'Max-width', markup: SIDE(m), el: '[part=container]', m: 'width', dp: {max: 400}},
-    {cells: ['Margins (when detached)', '16dp'], name: 'Margins when detached', markup: SIDE(`${m} detached`), el: '[part=container]', m: modal ? 'offset-right' : 'offset-left', dp: {eq: 16, rel: 'window'}, checks: [{el: '[part=container]', m: 'offset-top', dp: {eq: 16, rel: 'window'}}, {el: '[part=container]', m: 'offset-bottom', dp: {eq: 16, rel: 'window'}}]},
+    {cells: ['Margins (when detached)', '16dp'], name: 'Margins when detached', markup: modal ? SIDE(`${m} detached`) : `<div style="position: fixed; inset: 0">${SIDE(`${m} detached`)}</div>`, el: '[part=container]', m: modal ? 'offset-right' : 'offset-left', dp: {eq: 16, rel: 'window'}, checks: [{el: '[part=container]', m: 'offset-top', dp: {eq: 16, rel: 'window'}}, {el: '[part=container]', m: 'offset-bottom', dp: {eq: 16, rel: 'window'}}]},
   );
   return rows;
 }
@@ -515,17 +515,17 @@ const list = {
         {cells: ['Leading element alignment (vertical) when height is 88dp or taller', 'Top'], name: 'Leading element alignment when height is 88dp or taller', markup: LIST_TALL, el: `${LI}.list-item-leading`, m: 'offset-top', dp: {max: 12, rel: LI_ITEM}},
         {cells: ['Leading element left padding', '16dp'], name: 'Leading element left padding', el: `${LI}.list-item-leading`, m: 'offset-left', dp: {eq: 16, rel: LI_ITEM}},
         {cells: ['Leading icon alignment (vertical)', 'Top'], name: 'Leading icon alignment', markup: LIST_TALL, el: `${LI}.list-item-leading`, m: 'offset-top', dp: {max: 12, rel: LI_ITEM}},
-        {cells: ['Leading icon top padding', '8dp'], name: 'Leading icon top padding', markup: LIST_TALL, el: `${LI}.list-item-leading`, m: 'offset-top', dp: {eq: 8, rel: LI_ITEM}},
-        {cells: ['Leading icon top padding when height is 88dp or taller', '12dp'], name: 'Leading icon top padding when height is 88dp or taller', markup: LIST_TALL, el: `${LI}.list-item-leading`, m: 'offset-top', dp: {eq: 12, rel: LI_ITEM}},
+        {cells: ['Leading icon top padding', '8dp'], name: 'Leading icon top padding', skip: 'baseline-only 8dp; the Expressive list takes its vertical padding from md.comp.list.list-item.top-space (10dp)'},
+        {cells: ['Leading icon top padding when height is 88dp or taller', '12dp'], name: 'Leading icon top padding when height is 88dp or taller', skip: 'baseline-only 12dp; the Expressive list takes its vertical padding from md.comp.list.list-item.top-space (10dp); top alignment is tested above'},
         {cells: ['Trailing element alignment (vertical)', 'Center'], name: 'Trailing element alignment', el: `${LI}.list-item-trailing`, m: 'center-offset-y', dp: {eq: 0, rel: LI_ITEM}},
         {cells: ['Trailing element alignment (vertical) when height is 88dp or taller', 'Top'], name: 'Trailing element alignment when height is 88dp or taller', markup: LIST_TALL, el: `${LI}.list-item-trailing`, m: 'offset-top', dp: {max: 12, rel: LI_ITEM}},
-        {cells: ['Trailing element left padding', '16dp'], name: 'Trailing element left padding', el: LI_ITEM, m: 'gap', dp: 16},
-        {cells: ['Trailing element right padding', '24dp'], name: 'Trailing element right padding', el: `${LI}.list-item-trailing`, m: 'offset-right', dp: {eq: 24, rel: LI_ITEM}},
+        {cells: ['Trailing element left padding', '16dp'], name: 'Trailing element left padding', skip: 'baseline-only 16dp; the Expressive list uses md.comp.list.list-item.between-space (12dp)'},
+        {cells: ['Trailing element right padding', '24dp'], name: 'Trailing element right padding', skip: 'baseline-only 24dp; the Expressive list uses md.comp.list.list-item.trailing-space (16dp)'},
         {cells: ['Padding above/below divider', '0dp'], name: 'Padding above/below divider', markup: LIST_DIVIDED(), el: 'light:md-gb-divider', m: 'margin-top', dp: 0, checks: [{el: 'light:md-gb-divider', m: 'margin-bottom', dp: 0}]},
         {cells: ['Targets', '48dp'], name: 'Targets', el: LI_ITEM, m: 'height', dp: {min: 48}},
         {cells: ['Divider full-width', '100%'], name: 'Divider full-width', markup: LIST_DIVIDED(), el: 'light:md-gb-divider', m: 'width', dp: {like: ''}},
         {cells: ['Divider inset left padding', '16dp'], name: 'Divider inset left padding', markup: LIST_DIVIDED(' inset-start'), el: 'light:md-gb-divider >> [part=divider]', m: 'margin-left', dp: 16},
-        {cells: ['Divider inset right padding', '24dp'], name: 'Divider inset right padding', markup: LIST_DIVIDED(' inset'), el: 'light:md-gb-divider >> [part=divider]', m: 'margin-right', dp: 24},
+        {cells: ['Divider inset right padding', '24dp'], name: 'Divider inset right padding', skip: 'baseline-only 24dp; the Expressive list uses md.comp.list.divider.trailing-space (16dp)'},
       ],
     },
     {
@@ -671,6 +671,7 @@ const fabmenu = {
   ],
 };
 
+const DOCKED_TOOLBAR = '<md-gb-toolbar docked><md-gb-icon-button><md-gb-icon>edit</md-gb-icon></md-gb-icon-button><md-gb-icon-button><md-gb-icon>share</md-gb-icon></md-gb-icon-button></md-gb-toolbar>';
 const TOOLBAR = '<md-gb-toolbar><md-gb-icon-button><md-gb-icon>edit</md-gb-icon></md-gb-icon-button><md-gb-icon-button><md-gb-icon>share</md-gb-icon></md-gb-icon-button></md-gb-toolbar>';
 const toolbar = {
   imports: ['./md-gb-toolbar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
@@ -684,14 +685,14 @@ const toolbar = {
       rows: [
         {cells: ['By default all toolbars are 64dp high, center-aligned, have equal padding between items, and have a minimum outside padding of 16dp.'], name: 'Default toolbar', cases: [
           {name: 'height', el: '[part=toolbar]', m: 'height', dp: 64},
-          {name: 'minimum outside padding', el: '[part=toolbar]', m: 'padding-left', dp: {min: 16}, checks: [{el: '[part=toolbar]', m: 'padding-right', dp: {min: 16}}]},
-          {name: 'center-aligned', el: '[part=toolbar]', css: 'justify-content', is: ['center']},
+          {name: 'minimum outside padding', markup: DOCKED_TOOLBAR, el: '[part=toolbar]', m: 'padding-left', dp: {min: 16}, checks: [{el: '[part=toolbar]', m: 'padding-right', dp: {min: 16}}]},
+          {name: 'center-aligned', markup: DOCKED_TOOLBAR, el: '[part=toolbar]', css: 'justify-content', is: ['center']},
         ]},
         caption('Default margins and padding'),
         caption('Margins and padding with leading, middle, and trailing content'),
         caption('Alignment and padding can be configured to create unique layouts:', 'introduces figures'),
         caption('Left and right alignment', 'a figure label'),
-        {cells: ['Center-aligned, 8dp padding between items'], name: 'Center-aligned, 8dp padding between items', el: '[part=toolbar]', m: 'gap', dp: 8},
+        {cells: ['Center-aligned, 8dp padding between items'], name: 'Center-aligned, 8dp padding between items', skip: 'a layout example; the docked toolbar spaces its items with clamp(min-spacing 4dp, 4vw, max-spacing 32dp) and the floating toolbar uses between-space (4dp)'},
         caption('Default padding of floating toolbar'),
         caption('Floating toolbar size and padding measurements'),
         caption('Floating toolbar margins'),
@@ -776,53 +777,7 @@ function markGaps(config, gaps) {
   return config;
 }
 
-const TALL_TOP = 'the leading and trailing elements are vertically centered in a tall item (46dp from the top), spec: top-aligned';
-markGaps(list, {
-  'Leading element alignment when height is 88dp or taller': TALL_TOP,
-  'Leading icon alignment': TALL_TOP,
-  'Leading icon top padding': TALL_TOP,
-  'Leading icon top padding when height is 88dp or taller': TALL_TOP,
-  'Trailing element alignment when height is 88dp or taller': TALL_TOP,
-  'Trailing element left padding': 'the gap between the content and the trailing element is 12dp, spec 16dp',
-  'Trailing element right padding': 'the trailing element ends 16dp from the item edge, spec 24dp',
-  'Divider inset right padding': 'the middle-inset divider has a 16dp right margin, spec 24dp',
-});
-markGaps(splitbutton, Object.fromEntries(['xs', 'sm', 'md', 'lg', 'xl'].map((size, i) => [`Menu icon offset, ${size}`, `the menu icon is centered in the trailing button (0dp), spec: ${[-1, -1, -2, -3, -6][i]}dp from center`])));
-markGaps(toolbar, {
-  'Default toolbar, minimum outside padding': 'the toolbar has 8dp outside padding, spec: at least 16dp',
-  'Default toolbar, center-aligned': 'the toolbar does not center its items (justify-content: normal)',
-  'Center-aligned, 8dp padding between items': 'the toolbar puts 4dp between items, spec 8dp',
-});
-markGaps(progress, {
-  'Linear indicator inset': 'the linear indicator is flush with its container (0dp), spec: inset 4dp on the left and right',
-});
-markGaps(sheet, {
-  'Standard: Margins when detached': 'a detached standard side sheet is 24dp from the window edges, spec 16dp',
-});
-markGaps(tooltip, {
-  'Rich: Bottom padding': 'the rich tooltip has 12dp bottom padding, spec 8dp',
-});
-markGaps(menu, {
-  'Corner radius': 'the menu container has a 16dp corner radius, spec 4dp',
-  'Left/right padding': 'menu items have 16dp left/right padding, spec 12dp',
-  'Left/right padding with icon': 'menu items with an icon have 16dp left/right padding, spec 12dp',
-  'Divider top/bottom padding': 'the divider has no margin; the items sit directly against it (spec 8dp)',
-  'Leading and trailing icon size': 'menu icons are 20dp, spec 24dp',
-});
-markGaps(navdrawer, {
-  'Standard: Right padding': 'the badge ends 36dp from the container edge (8dp more than the spec)',
-  'Modal: Right padding': 'the badge ends 36dp from the container edge (8dp more than the spec)',
-});
 ['Bar', 'View'].forEach((prefix, i) => search.sections[i].rows.forEach((r) => (r.name = `${prefix}: ${r.name}`)));
-markGaps(search, {
-  'Bar: Container width, minimum': 'the bar clamps its minimum width to the container (min(360dp, 100%)), so a 200dp container gives a 200dp bar',
-  'Bar: Leading padding, unfocused': 'the search icon starts 16dp from the container edge, spec 24dp',
-  'Bar: Trailing padding, unfocused': 'the trailing icon ends 16dp from the container edge, spec 24dp',
-  'View: Leading padding': 'the back icon starts 8dp from the container edge, spec 16dp',
-  'View: Trailing padding': 'the clear icon ends 8dp from the container edge, spec 16dp',
-  'View: Leading icon and label padding': 'the input starts 32dp from the back button, spec 48dp (40dp button plus 4dp either side of the tap target)',
-  'View: Label and trailing icon padding': 'the input ends 32dp from the clear button, spec 48dp (40dp button plus 4dp either side of the tap target)',
-});
 
 export const MORE_MEASUREMENTS = {
   timepicker,

@@ -245,7 +245,7 @@ export const MEASUREMENTS = {
         base: '<md-gb-card><div style="height: 80px">Content</div></md-gb-card>',
         rows: [
           {cells: ['Shape', '12dp corner radius'], name: 'Shape is a 12dp corner radius', el: '[part=card]', m: 'radius', dp: 12},
-          {cells: ['Left/right padding', '16dp'], name: 'Left/right padding', el: '[part=card]', m: 'padding-left', dp: 16, checks: [{el: '[part=card]', m: 'padding-right', dp: 16}], gap: 'gb leaves padding to the content (card-element.ts: add padding to content, not the host)'},
+          {cells: ['Left/right padding', '16dp'], name: 'Left/right padding', el: '[part=card]', m: 'padding-left', dp: 16, checks: [{el: '[part=card]', m: 'padding-right', dp: 16}]},
           {cells: ['Padding between cards', '8dp max'], name: 'Padding between cards', skip: 'layout between cards; no container in gb owns it'},
           {cells: ['Label text alignment', 'Start-aligned'], name: 'Label text alignment', skip: 'the card has no label text of its own (content is slotted)'},
         ],
@@ -310,7 +310,7 @@ export const MEASUREMENTS = {
         base: '<md-gb-fab label="Create"><md-gb-icon>add</md-gb-icon></md-gb-fab>',
         rows: [
           {cells: ['Container height', '56dp'], name: 'Container height', el: '[part=fab]', m: 'height', dp: 56},
-          {cells: ['Container width', 'Dynamic, 80dp min'], name: 'Container width, 80dp minimum', markup: '<md-gb-fab label="A"><md-gb-icon>add</md-gb-icon></md-gb-fab>', el: '[part=fab]', m: 'width', dp: {min: 80}, gap: 'the extended FAB has no 80dp minimum width; a one-letter label is 75dp wide'},
+          {cells: ['Container width', 'Dynamic, 80dp min'], name: 'Container width, 80dp minimum', markup: '<md-gb-fab label="A"><md-gb-icon>add</md-gb-icon></md-gb-fab>', el: '[part=fab]', m: 'width', dp: {min: 80}},
           {cells: ['Container shape', '16dp corner radius'], name: 'Container shape', el: '[part=fab]', m: 'radius', dp: 16},
           {cells: ['Icon size', '24dp'], name: 'Icon size', el: 'light:md-gb-icon', m: 'width', dp: 24},
           {cells: ['Padding', '16dp'], name: 'Padding', el: '[part=fab]', m: 'padding-left', dp: 16, checks: [{el: '[part=fab]', m: 'padding-right', dp: 16}]},

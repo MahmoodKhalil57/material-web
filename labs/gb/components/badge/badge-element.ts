@@ -22,6 +22,8 @@ import {styles as badgeStyles} from './badge.cssresult.js';
  * @cssprop --size
  * @cssprop --label-text-color
  * @cssprop --padding-inline
+ * @attr anchored - Places the badge on the top trailing corner of its
+ *     positioned parent.
  */
 export class BadgeElement extends LitElement {
   /** @nocollapse */
@@ -30,6 +32,23 @@ export class BadgeElement extends LitElement {
     css`
       :host {
         display: inline-flex;
+      }
+      /*
+       * Anchored to the top trailing corner of the nearest positioned
+       * ancestor (the icon's bounding box), in logical directions so it
+       * mirrors for right-to-left. The leading corner of the badge's bottom
+       * edge sits 6dp below the top and 6dp inside the trailing edge for a
+       * small badge, 14dp and 12dp for a large one; a growing count extends
+       * toward the trailing side and keeps the same placement.
+       */
+      :host([anchored]) {
+        position: absolute;
+        inset-block-end: calc(100% - 6px);
+        inset-inline-start: calc(100% - 6px);
+      }
+      :host([anchored][large]) {
+        inset-block-end: calc(100% - 14px);
+        inset-inline-start: calc(100% - 12px);
       }
       .badge {
         flex: 1;
@@ -53,7 +72,21 @@ export class BadgeElement extends LitElement {
    */
   @property() label = 'New notification';
 
+  /**
+   * Anchors the badge to the top trailing corner of its positioned parent
+   * (the icon's bounding box).
+   */
+  @property({type: Boolean, reflect: true}) anchored = false;
+
   @state() private hasContent = false;
+
+  protected override willUpdate() {
+    // Lets the host's anchored placement depend on the badge size.
+    this.toggleAttribute(
+      'large',
+      (this.value !== undefined && this.value !== null) || this.hasContent,
+    );
+  }
 
   protected override render() {
     const text =

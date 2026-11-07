@@ -12,7 +12,7 @@ $drag-target-size: 48px;
 
 // Cascade layer order follows first declaration; this pins
 // `md.comp.bottom-sheet` above the shared focus ring layer.
-@layer md.sys, md.comp.focus-ring;
+@layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.icon-btn;
 @layer md.comp.bottom-sheet {
   // The token root: the `md-gb-bottom-sheet` host, or a Light DOM
   // `<dialog class="bottom-sheet">`.
@@ -177,6 +177,27 @@ $drag-target-size: 48px;
 
   .bottom-sheet-dragging .bottom-sheet-drag-area {
     cursor: grabbing;
+  }
+
+  // The app bar of a full-screen sheet: a collapse (standard) or close (modal)
+  // icon button.
+  .bottom-sheet-app-bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-inline: 4px;
+
+    .bottom-sheet-app-bar-button {
+      --outline-width: 0;
+      flex: none;
+
+      svg {
+        inline-size: var(--icon-size);
+        block-size: var(--icon-size);
+        fill: currentColor;
+      }
+    }
   }
 
   // spec-labels: bottom-sheets/specs, bottom-sheets/guidelines/anatomy, bottom-sheets/specs/measurements

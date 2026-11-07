@@ -11,6 +11,7 @@ import {adoptStyles} from '../../styles/adopt-styles.js';
 import {setupRipple} from '../ripple/ripple.js';
 import {DragSettleController} from '../shared/drag-settle.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
+import {RovingFocusController} from '../shared/roving-focus.js';
 import {BACK_REASON, playPredictiveBack} from '../shared/predictive-back.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
@@ -154,6 +155,21 @@ export class NavRailElement extends AriaTablistElement {
         z-index: 1;
       }
 
+      /* Navigation rail, Divider: on the edge next to the content. */
+      :host([divider]) .nav-rail {
+        border-inline-end: 1px solid var(--md-sys-color-outline-variant);
+      }
+
+      /* Scrolling: elevating the rail to level 1 separates it from content. */
+      :host([elevated]) .nav-rail {
+        box-shadow: var(--md-sys-elevation-shadow-1);
+      }
+
+      /* Secondary destinations show only in the expanded rail. */
+      :host(:not([expanded])) ::slotted(md-gb-nav-rail-item[secondary]) {
+        display: none;
+      }
+
       .nav-rail-header ::slotted(md-gb-icon-button),
       .nav-rail-header ::slotted(.icon-btn),
       .nav-rail-header ::slotted([data-nav-rail-toggle]),
@@ -164,6 +180,33 @@ export class NavRailElement extends AriaTablistElement {
   ];
 
   override orientation: 'horizontal' | 'vertical' = 'vertical';
+
+  /**
+   * Arrow keys move focus between the destinations (navigation-rail.md,
+   * Keyboard navigation: "Tab / Arrows | Navigate between interactive
+   * elements"). The rail declares `focusgroup` for browsers that ship it;
+   * Chromium does not, so the shared RovingFocusController implements the
+   * arrows. Every destination stays in the tab order. Disabled destinations
+   * are skipped.
+   */
+  protected readonly rovingFocus = new RovingFocusController(this, {
+    items: () => this.tabs,
+    orientation: 'both',
+    homeEnd: false,
+    tabStops: 'all',
+  });
+
+  /**
+   * Whether a vertical divider marks the edge of the rail next to the app's
+   * content.
+   */
+  @property({type: Boolean, reflect: true}) divider = false;
+
+  /**
+   * Whether the rail is elevated to level 1, to distinguish it from content
+   * that scrolls underneath it.
+   */
+  @property({type: Boolean, reflect: true}) elevated = false;
 
   /** Whether the navigation rail is expanded to show horizontal items. */
   @property({type: Boolean, reflect: true}) expanded = false;

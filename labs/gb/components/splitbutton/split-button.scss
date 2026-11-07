@@ -33,6 +33,11 @@
         }
       }
 
+      // The inner corners morph for keyboard focus like they do for hover.
+      &:where(.focus-visible) {
+        @include split-button-tokens.xs-hovered;
+      }
+
       &:where(:active, .active) {
         @include split-button-tokens.xs-pressed;
       }
@@ -53,6 +58,11 @@
         &:where(:hover, .hover) {
           @include split-button-tokens.sm-hovered;
         }
+      }
+
+      // The inner corners morph for keyboard focus like they do for hover.
+      &:where(.focus-visible) {
+        @include split-button-tokens.sm-hovered;
       }
 
       &:where(:active, .active) {
@@ -77,6 +87,11 @@
         }
       }
 
+      // The inner corners morph for keyboard focus like they do for hover.
+      &:where(.focus-visible) {
+        @include split-button-tokens.md-hovered;
+      }
+
       &:where(:active, .active) {
         @include split-button-tokens.md-pressed;
       }
@@ -99,6 +114,11 @@
         }
       }
 
+      // The inner corners morph for keyboard focus like they do for hover.
+      &:where(.focus-visible) {
+        @include split-button-tokens.lg-hovered;
+      }
+
       &:where(:active, .active) {
         @include split-button-tokens.lg-pressed;
       }
@@ -119,6 +139,11 @@
         &:where(:hover, .hover) {
           @include split-button-tokens.xl-hovered;
         }
+      }
+
+      // The inner corners morph for keyboard focus like they do for hover.
+      &:where(.focus-visible) {
+        @include split-button-tokens.xl-hovered;
       }
 
       &:where(:active, .active) {
@@ -162,6 +187,9 @@
         aspect-ratio: 1;
         width: var(--md-icon-size);
         overflow: hidden;
+        // Optical offset toward the leading edge when unselected.
+        position: relative;
+        inset-inline-start: calc(var(--menu-icon-offset, 0px) * -1);
         transition: transform var(--md-sys-motion-duration-short4)
           var(--md-sys-motion-easing-standard);
       }
@@ -170,6 +198,10 @@
     &:is(.split-btn-selected, :has(:popover-open))
       :nth-last-child(1 of .btn)::after {
       transform: rotate(180deg);
+    }
+    &:is(.split-btn-selected, :has(:popover-open))
+      :nth-last-child(1 of .btn) {
+      --menu-icon-offset: 0px;
     }
   }
 

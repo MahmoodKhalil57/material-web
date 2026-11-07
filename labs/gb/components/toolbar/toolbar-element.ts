@@ -17,10 +17,31 @@ import {
   DisclosureController,
   reflectedExpandedConverter,
 } from '../shared/disclosure.js';
+import {
+  RovingFocusController,
+  type RovingFocusOptions,
+} from '../shared/roving-focus.js';
 import toolbarStyles from './toolbar.css' with {type: 'css'}; // github-only
 // import {styles as toolbarStyles} from './toolbar.cssresult.js'; // google3-only
 
 import {toolbar, type ToolbarColor, type ToolbarOrientation} from './toolbar.js';
+
+const CONTROL_SELECTOR =
+  'md-gb-button, md-gb-icon-button, md-gb-split-button, button, a[href], input, select, [tabindex]';
+
+function rovingOptions(host: ToolbarElement): RovingFocusOptions {
+  return {
+    items: () => host.controls,
+    // Read on every key press: the orientation can change.
+    get orientation() {
+      return host.orientation === 'vertical' && !host.docked
+        ? 'vertical'
+        : 'horizontal';
+    },
+    homeEnd: false,
+    tabStops: 'all',
+  };
+}
 
 /**
  * A Material Design gBreeze toolbar component.
@@ -75,6 +96,7 @@ export class ToolbarElement extends LitElement {
     css`
       :host {
         display: inline-flex;
+        max-inline-size: 100%;
       }
 
       :host([docked]) {
@@ -132,6 +154,34 @@ export class ToolbarElement extends LitElement {
     enabled: () => this.hasFab && !this.docked,
     aria: false,
   });
+
+  /**
+   * Arrow keys move focus between the controls (toolbars.md: the toolbar
+   * declares `focusgroup="toolbar wrap inline|block"`, which Chromium does
+   * not ship, so the shared RovingFocusController implements it). Up and
+   * Down move in a vertical toolbar, Left and Right in a horizontal one
+   * (mirrored in RTL). Every control stays in the tab order ("Use Tab to
+   * navigate through all other actions"). Disabled controls are skipped.
+   */
+  protected readonly rovingFocus = new RovingFocusController(
+    this,
+    rovingOptions(this),
+  );
+
+  /**
+   * The toolbar's interactive controls in the leading, default and trailing
+   * slots.
+   *
+   * @internal
+   */
+  get controls(): HTMLElement[] {
+    const slots = Array.from(
+      this.renderRoot.querySelectorAll<HTMLSlotElement>('slot:not([name=fab])'),
+    );
+    return slots
+      .flatMap((slot) => slot.assignedElements({flatten: true}))
+      .filter((el): el is HTMLElement => el.matches(CONTROL_SELECTOR));
+  }
 
   override connectedCallback() {
     super.connectedCallback();

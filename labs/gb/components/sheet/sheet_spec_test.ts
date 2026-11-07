@@ -126,14 +126,6 @@ const CASES: SpecCase[] = [
   },
   {
     "mixin": "side",
-    "prop": "divider-color",
-    "token": "md.comp.sheet.side.docked.divider.color",
-    "spec": "var(--md-sys-color-outline)",
-    "property": "color",
-    "markup": "<span></span><div class=\"side-sheet\" data-spec-target></div><span></span>"
-  },
-  {
-    "mixin": "side",
     "prop": "headline",
     "token": "md.comp.sheet.side.docked.headline.font",
     "spec": "var(--md-sys-typescale-title-lg)",

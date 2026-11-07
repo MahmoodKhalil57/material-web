@@ -309,7 +309,7 @@ describe('md-gb-nav-rail spec units', () => {
       .toBeLessThanOrEqual(noFab.items[0].getBoundingClientRect().top + 1);
   });
 
-  // spec: navigation-rail-182ad4, navigation-rail-6ba429, navigation-rail-4e6ac3
+  // spec: navigation-rail-182ad4, navigation-rail-6ba429, navigation-rail-4e6ac3, navigation-rail-97d3c2
   it('transforms between collapsed and expanded when the menu button is selected', async () => {
     const {rail} = await render(
       html`<md-gb-nav-rail collapsible>${items}</md-gb-nav-rail>`,
@@ -344,7 +344,7 @@ describe('md-gb-nav-rail spec units', () => {
     expect(Math.abs(label.top + label.height / 2 - (icon.top + icon.height / 2))).toBeLessThan(2);
   });
 
-  // spec: navigation-rail-a79223, navigation-rail-ec2ae4, navigation-rail-90be1b
+  // spec: navigation-rail-a79223, navigation-rail-ec2ae4, navigation-rail-90be1b, navigation-rail-a5c09d, navigation-rail-3a45ff, navigation-rail-3ccdf1
   it('shifts the page content and fills the space when a standard rail expands', async () => {
     const {rail, items: list} = await render(
       html`<div style="display: flex; inline-size: 800px; block-size: 400px">

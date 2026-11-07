@@ -87,4 +87,17 @@ describe('time picker spec units', () => {
       await setViewport({width: 800, height: 600});
     }
   });
+
+  // spec: time-pickers-79857b, time-pickers-eff744, time-pickers-84c14a, time-pickers-014b04
+  it('falls back to the input picker and fits a 400px-high viewport', async () => {
+    await setViewport({width: 900, height: 400});
+    try {
+      const picker = await setup();
+      expect(picker.mode).toBe('input');
+      const rect = q(picker, '.time-picker').getBoundingClientRect();
+      expect(rect.height).toBeLessThanOrEqual(window.innerHeight);
+    } finally {
+      await setViewport({width: 800, height: 600});
+    }
+  });
 });

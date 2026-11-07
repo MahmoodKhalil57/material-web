@@ -271,6 +271,12 @@ describe('<md-gb-nav-drawer> measurements', () => {
     expectDp('md-gb-nav-drawer >> light:md-gb-icon', 'offset-left', {eq: 28, rel: 'md-gb-nav-drawer >> [part=drawer]'});
   });
 
+  // spec: navigation-drawer-09b206, navigation-drawer-d025f6
+  it('Standard: Right padding', async () => {
+    await mount('<div style="height: 500px; position: relative"><md-gb-nav-drawer open aria-label="Mail"><md-gb-nav-drawer-item badge="12"><md-gb-icon slot="icon">inbox</md-gb-icon>Inbox</md-gb-nav-drawer-item></md-gb-nav-drawer></div>');
+    expectDp('md-gb-nav-drawer >> light:md-gb-nav-drawer-item >> [part=badge]', 'offset-right', {eq: 28, rel: 'md-gb-nav-drawer >> [part=drawer]'});
+  });
+
   // spec: navigation-drawer-708f6b, navigation-drawer-b06660
   it('Standard: Active indicator padding', async () => {
     await mount('<div style="height: 500px; position: relative"><md-gb-nav-drawer open aria-label="Mail"><md-gb-nav-drawer-item><md-gb-icon slot="icon">inbox</md-gb-icon>Inbox</md-gb-nav-drawer-item></md-gb-nav-drawer></div>');
@@ -331,6 +337,12 @@ describe('<md-gb-nav-drawer> measurements', () => {
   it('Modal: Left padding', async () => {
     await mount('<div style="height: 500px; position: relative"><md-gb-nav-drawer open modal aria-label="Mail"><md-gb-nav-drawer-item><md-gb-icon slot="icon">inbox</md-gb-icon>Inbox</md-gb-nav-drawer-item></md-gb-nav-drawer></div>');
     expectDp('md-gb-nav-drawer >> light:md-gb-icon', 'offset-left', {eq: 28, rel: 'md-gb-nav-drawer >> [part=drawer]'});
+  });
+
+  // spec: navigation-drawer-61d3b5, navigation-drawer-1b26c5
+  it('Modal: Right padding', async () => {
+    await mount('<div style="height: 500px; position: relative"><md-gb-nav-drawer open modal aria-label="Mail"><md-gb-nav-drawer-item badge="12"><md-gb-icon slot="icon">inbox</md-gb-icon>Inbox</md-gb-nav-drawer-item></md-gb-nav-drawer></div>');
+    expectDp('md-gb-nav-drawer >> light:md-gb-nav-drawer-item >> [part=badge]', 'offset-right', {eq: 28, rel: 'md-gb-nav-drawer >> [part=drawer]'});
   });
 
   // spec: navigation-drawer-d315ba, navigation-drawer-ea1125

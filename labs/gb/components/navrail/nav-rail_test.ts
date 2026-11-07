@@ -119,7 +119,7 @@ describe('md-gb-nav-rail', () => {
       return rail;
     }
 
-    // spec: navigation-rail-eddba8, navigation-rail-7610d0, navigation-rail-47a2d3
+    // spec: navigation-rail-eddba8, navigation-rail-7610d0, navigation-rail-47a2d3, navigation-rail-1393b4, navigation-rail-0934d2
     it('expands over the content without changing the layout', async () => {
       const rail = await setupModal();
       const before = rail.getBoundingClientRect().width;

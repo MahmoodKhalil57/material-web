@@ -94,3 +94,26 @@ export function spatialTransitions(root: Element): string[] {
   return found;
 }
 
+
+/**
+ * A computed-style fingerprint of the painted parts (colors, backgrounds,
+ * borders, shadows) of a subject and its shadow trees: it changes when a state
+ * (selected, hovered, ...) changes how the subject looks.
+ */
+export function paintFingerprint(root: Element): string {
+  return deepElements(root)
+    .flatMap((e) =>
+      [undefined, '::before', '::after'].map((pseudo) => {
+        const style = getComputedStyle(e, pseudo);
+        return [
+          style.backgroundColor,
+          style.backgroundImage,
+          style.borderColor,
+          style.outlineStyle,
+          style.boxShadow,
+          style.color,
+        ].join(' ');
+      }),
+    )
+    .join('|');
+}

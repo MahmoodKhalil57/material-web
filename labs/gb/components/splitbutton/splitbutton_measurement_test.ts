@@ -206,6 +206,36 @@ function expectDp(chain: string, metric: string, spec: Spec, pseudo = '') {
 }
 
 describe('<md-gb-split-button> measurements', () => {
+  // spec: split-button-98932f
+  it('Menu icon offset, xs', async () => {
+    await mount('<md-gb-split-button size="xs"><button slot="leading">Save</button><button slot="trailing" aria-label="More"><md-gb-icon>arrow_drop_down</md-gb-icon></button></md-gb-split-button>');
+    expectDp('md-gb-split-button >> light:button[slot=trailing] md-gb-icon', 'center-offset-x', {eq: -1, rel: 'md-gb-split-button >> light:button[slot=trailing]'});
+  });
+
+  // spec: split-button-84b10b
+  it('Menu icon offset, sm', async () => {
+    await mount('<md-gb-split-button size="sm"><button slot="leading">Save</button><button slot="trailing" aria-label="More"><md-gb-icon>arrow_drop_down</md-gb-icon></button></md-gb-split-button>');
+    expectDp('md-gb-split-button >> light:button[slot=trailing] md-gb-icon', 'center-offset-x', {eq: -1, rel: 'md-gb-split-button >> light:button[slot=trailing]'});
+  });
+
+  // spec: split-button-db30c4
+  it('Menu icon offset, md', async () => {
+    await mount('<md-gb-split-button size="md"><button slot="leading">Save</button><button slot="trailing" aria-label="More"><md-gb-icon>arrow_drop_down</md-gb-icon></button></md-gb-split-button>');
+    expectDp('md-gb-split-button >> light:button[slot=trailing] md-gb-icon', 'center-offset-x', {eq: -2, rel: 'md-gb-split-button >> light:button[slot=trailing]'});
+  });
+
+  // spec: split-button-57ba0b
+  it('Menu icon offset, lg', async () => {
+    await mount('<md-gb-split-button size="lg"><button slot="leading">Save</button><button slot="trailing" aria-label="More"><md-gb-icon>arrow_drop_down</md-gb-icon></button></md-gb-split-button>');
+    expectDp('md-gb-split-button >> light:button[slot=trailing] md-gb-icon', 'center-offset-x', {eq: -3, rel: 'md-gb-split-button >> light:button[slot=trailing]'});
+  });
+
+  // spec: split-button-11cb04
+  it('Menu icon offset, xl', async () => {
+    await mount('<md-gb-split-button size="xl"><button slot="leading">Save</button><button slot="trailing" aria-label="More"><md-gb-icon>arrow_drop_down</md-gb-icon></button></md-gb-split-button>');
+    expectDp('md-gb-split-button >> light:button[slot=trailing] md-gb-icon', 'center-offset-x', {eq: -6, rel: 'md-gb-split-button >> light:button[slot=trailing]'});
+  });
+
   // spec: split-button-1d4f6b
   it('Space between the buttons', async () => {
     await mount('<md-gb-split-button size="md"><button slot="leading">Save</button><button slot="trailing" aria-label="More"><md-gb-icon>arrow_drop_down</md-gb-icon></button></md-gb-split-button>');

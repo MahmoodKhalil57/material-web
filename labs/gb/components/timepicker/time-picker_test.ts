@@ -208,7 +208,7 @@ describe('<md-gb-time-picker>', () => {
       expect(q(picker, '.time-picker').classList).toContain('time-picker-24h');
     });
 
-    // spec: time-pickers-3d7e71
+    // spec: time-pickers-3d7e71, time-pickers-920d0e, time-pickers-80acbd, time-pickers-b81cc6
     it('lays out horizontally', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -309,7 +309,7 @@ describe('<md-gb-time-picker>', () => {
       expect(dial.getAttribute('aria-valuemin')).toBe('1');
       expect(dial.getAttribute('aria-valuemax')).toBe('12');
       expect(dial.getAttribute('aria-valuenow')).toBe('2');
-      expect(dial.getAttribute('aria-valuetext')).toBe("2 o'clock");
+      expect(dial.getAttribute('aria-valuetext')).toBe('Hour 2 of 12');
       expect(dial.tabIndex).toBe(0);
     });
 
@@ -356,7 +356,7 @@ describe('<md-gb-time-picker>', () => {
       expect(picker.selection).toBe('minute');
       expect(dial.getAttribute('aria-label')).toBe('Select minutes');
       expect(dial.getAttribute('aria-valuemax')).toBe('59');
-      expect(dial.getAttribute('aria-valuetext')).toBe('30 minutes');
+      expect(dial.getAttribute('aria-valuetext')).toBe('Minute 30 of 60');
       expect(q(picker, '[role="status"]').textContent?.trim()).toBe(
         'Select minutes',
       );
@@ -386,6 +386,7 @@ describe('<md-gb-time-picker>', () => {
       expect(picker.pendingValue).toBe('23:45');
     });
 
+    // spec: time-pickers-83ccc5
     it('picks the tapped hour, then switches to minutes', async () => {
       const {picker} = await setupTest();
       const dial = q(picker, '.time-picker-dial');
@@ -404,6 +405,7 @@ describe('<md-gb-time-picker>', () => {
       expect(picker.pendingValue).toBe('15:45');
     });
 
+    // spec: time-pickers-83ccc5
     it('follows a drag', async () => {
       const {picker} = await setupTest();
       const dial = q(picker, '.time-picker-dial');
@@ -504,7 +506,7 @@ describe('<md-gb-time-picker>', () => {
   });
 
   describe('input mode', () => {
-    // spec: time-pickers-a80351, time-pickers-5c65e6, time-pickers-1f1a21, time-pickers-f26520, time-pickers-1e0ef8, time-pickers-2846c6
+    // spec: time-pickers-a80351, time-pickers-5c65e6, time-pickers-1f1a21, time-pickers-f26520, time-pickers-1e0ef8, time-pickers-2846c6, time-pickers-a93a27, time-pickers-c86ae4, time-pickers-ad7609
     it('toggles from the mode button', async () => {
       const {picker} = await setupTest();
       const toggle = q(picker, '.time-picker-mode-toggle');
@@ -547,7 +549,7 @@ describe('<md-gb-time-picker>', () => {
       expect(hour.offsetHeight).toBe(72);
     });
 
-    // spec: time-pickers-906143, time-pickers-66ab7d, time-pickers-58fb92
+    // spec: time-pickers-906143, time-pickers-66ab7d, time-pickers-58fb92, time-pickers-1d5455
     it('takes typed hours and minutes', async () => {
       const {picker} = await setupTest(
         html`<md-gb-time-picker
@@ -603,7 +605,7 @@ describe('<md-gb-time-picker>', () => {
   });
 
   describe('actions', () => {
-    // spec: time-pickers-a7d83e, time-pickers-b0923c
+    // spec: time-pickers-a7d83e, time-pickers-b0923c, time-pickers-6dad40
     it('commits with OK', async () => {
       const {picker} = await setupTest();
       const change = jasmine.createSpy('change');

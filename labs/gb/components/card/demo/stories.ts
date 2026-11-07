@@ -27,6 +27,10 @@ export interface StoryKnobs {
 adoptStyles(document, [m3Styles]);
 
 const styles = css`
+  md-gb-card {
+    --padding-inline: 0px;
+  }
+
   .row {
     display: flex;
     gap: 16px;

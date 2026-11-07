@@ -44,11 +44,12 @@
   --container-height: 100%;
   --container-shape: var(--md-sys-shape-corner-none);
   --container-width: 256px;
-  --divider-color: var(--md-sys-color-outline);
   --headline: var(--md-sys-typescale-title-lg);
   --headline-axes: var(--md-sys-typescale-title-lg-axes);
   --headline-color: var(--md-sys-color-on-surface-variant);
   --headline-tracking: var(--md-sys-typescale-title-lg-tracking);
+  // EDIT: The side sheet page lists the outline variant role for the standard sheet divider; the token database has outline.
+  --divider-color: var(--md-sys-color-outline-variant);
   // EDIT: Spec Measurements, max-width (400dp).
   --max-width: 400px;
   // EDIT: Spec Measurements, start/end padding (24dp).

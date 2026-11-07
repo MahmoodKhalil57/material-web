@@ -120,7 +120,7 @@ describe('<md-gb-button-group> spec behavior', () => {
     expect(outer(groups[1])).toBeLessThan(20);
   });
 
-  // spec: button-groups-1f00dc, button-groups-0fcd09
+  // spec: button-groups-1f00dc, button-groups-0fcd09, button-groups-c28b3d, button-groups-e4000d, button-groups-343789, button-groups-b9079f, button-groups-717d11, button-groups-d05a6d, button-groups-0b1fed, button-groups-4baef7, button-groups-0b796f
   it('widens a pressed button in a standard group and moves its neighbors', async () => {
     const {groups, buttons} = await setup(html`
       <md-gb-button-group>
@@ -216,8 +216,6 @@ describe('<md-gb-button-group> spec behavior', () => {
         const {groups, buttons} = await setup(template(true));
         for (const b of buttons(groups[0])) {
           expect(b.disabled).toBeTrue();
-          // The selected outlined button is a known gap: buttongroup_gap.ts.
-          if (b.selected) continue;
           const m = getComputedStyle(inner(b)).color.match(/\/\s*([\d.]+)\)/);
           expect(Number(m?.[1])).toBeCloseTo(0.38, 2);
         }
@@ -225,4 +223,83 @@ describe('<md-gb-button-group> spec behavior', () => {
     });
   }
 
+
+  // spec: button-groups-aa6886
+  it('keeps the color style of each button in the group', async () => {
+    const {root, groups, buttons} = await setup(html`
+      <md-gb-button-group>
+        <md-gb-button color="filled">One</md-gb-button>
+        <md-gb-button color="tonal">Two</md-gb-button>
+        <md-gb-button color="outlined">Three</md-gb-button>
+      </md-gb-button-group>
+      <div>
+        <md-gb-button color="filled">One</md-gb-button>
+        <md-gb-button color="tonal">Two</md-gb-button>
+        <md-gb-button color="outlined">Three</md-gb-button>
+      </div>`);
+    const inGroup = buttons(groups[0]);
+    const alone = [...root.querySelectorAll<ButtonElement>('div > md-gb-button')];
+    inGroup.forEach((b, i) => {
+      expect(getComputedStyle(inner(b)).backgroundColor)
+        .withContext(`color ${i}`)
+        .toBe(getComputedStyle(inner(alone[i])).backgroundColor);
+    });
+  });
+
+  // spec: button-groups-54eda3, button-groups-67b7fb, button-groups-ecefcd, button-groups-704f9e, button-groups-e8e91c
+  it('changes the shape and color of a toggle button when it is selected in a standard group', async () => {
+    const {groups, buttons} = await setup(html`
+      <md-gb-button-group selection="single">
+        <md-gb-button color="filled">One</md-gb-button>
+        <md-gb-button color="filled">Two</md-gb-button>
+      </md-gb-button-group>`);
+    const [one, two] = buttons(groups[0]);
+    const before = {
+      radius: getComputedStyle(inner(one)).borderTopLeftRadius,
+      color: getComputedStyle(inner(one)).backgroundColor,
+    };
+    one.click();
+    await one.updateComplete;
+    settleTransitions(groups[0]);
+    expect(one.selected).toBeTrue();
+    expect(getComputedStyle(inner(one)).borderTopLeftRadius).not.toBe(before.radius);
+    expect(getComputedStyle(inner(one)).backgroundColor).not.toBe(before.color);
+    // The unselected sibling keeps its shape and color.
+    expect(getComputedStyle(inner(two)).borderTopLeftRadius).toBe(before.radius);
+    expect(getComputedStyle(inner(two)).backgroundColor).toBe(before.color);
+  });
+
+  // spec: button-groups-b9bb6b, button-groups-c59e4b
+  it('spans a connected group over the width of its surface, widening its buttons', async () => {
+    const {root, groups, buttons} = await setup(html`
+      <div id="surface" style="inline-size: 600px; display: flex">
+        <md-gb-button-group variant="connected" style="flex: 1">
+          <md-gb-button color="filled">One</md-gb-button>
+          <md-gb-button color="filled">Two</md-gb-button>
+        </md-gb-button-group>
+      </div>`);
+    const narrow = buttons(groups[0]).map((b) => b.getBoundingClientRect().width);
+    const group = groups[0].getBoundingClientRect();
+    expect(group.width).toBeCloseTo(600, 0);
+    const widths = buttons(groups[0]).map((b) => b.getBoundingClientRect().width);
+    expect(widths[0] + widths[1]).toBeGreaterThan(300);
+    void narrow;
+    void root;
+  });
+
+  // spec: button-groups-bf1625, button-groups-88a925
+  it('keeps the buttons of a group on a single line without wrapping', async () => {
+    for (const variant of ['standard', 'connected']) {
+      const {groups, buttons} = await setup(html`
+        <div style="inline-size: 120px">
+          <md-gb-button-group variant=${variant}>
+            <md-gb-button color="filled">First</md-gb-button>
+            <md-gb-button color="filled">Second</md-gb-button>
+            <md-gb-button color="filled">Third</md-gb-button>
+          </md-gb-button-group>
+        </div>`);
+      const tops = buttons(groups[0]).map((b) => Math.round(b.getBoundingClientRect().top));
+      expect(new Set(tops).size).withContext(variant).toBe(1);
+    }
+  });
 });

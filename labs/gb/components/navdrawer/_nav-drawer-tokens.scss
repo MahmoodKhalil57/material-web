@@ -60,8 +60,8 @@
   --container-width-minimum: 240px;
   // EDIT: Compose NavigationDrawerItem Row padding start.
   --item-leading-space: 16px;
-  // EDIT: Compose NavigationDrawerItem Row padding end.
-  --item-trailing-space: 24px;
+  // EDIT: Spec page measurements: right padding 28dp from the container edge (12dp active indicator padding plus 16dp; Compose uses 24dp).
+  --item-trailing-space: 16px;
   // EDIT: Compose NavigationDrawerItem spacer between icon, label and badge.
   --item-icon-label-space: 12px;
   // EDIT: Spec page: section labels and headline align with the label text (28dp from the container edge).

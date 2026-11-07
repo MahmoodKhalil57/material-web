@@ -147,7 +147,7 @@ describe('<md-gb-radio> keyboard (spec)', () => {
   });
 
   // Spec: "Tab" | "Moves focus into the group to the selected radio button, or the first if none are selected"
-  // spec: radio-button-02eb5d
+  // spec: radio-button-02eb5d, radio-button-342ba1, radio-button-c144f6
   describe("Tab: Moves focus into the group to the selected radio button, or the first if none are selected", () => {
     it("Tab moves focus to the first item when none is selected", async () => {
       const f = await setup();
@@ -165,7 +165,7 @@ describe('<md-gb-radio> keyboard (spec)', () => {
   });
 
   // Spec: "Shift + Tab" | "Moves focus into the group to the selected radio button, or the last if none are selected"
-  // spec: radio-button-0f62bd
+  // spec: radio-button-0f62bd, radio-button-342ba1
   describe("Shift + Tab: Moves focus into the group to the selected radio button, or the last if none are selected", () => {
     it("Shift+Tab moves focus to the last item when none is selected", async () => {
       const f = await setup();
@@ -183,7 +183,7 @@ describe('<md-gb-radio> keyboard (spec)', () => {
   });
 
   // Spec: "Arrows" | "Moves focus and selects the previous or next radio button. Wraps focus and selection between the first and last radio buttons."
-  // spec: radio-button-4a92aa
+  // spec: radio-button-4a92aa, radio-button-fa995d, radio-button-5154cb
   describe("Arrows: Moves focus and selects the previous or next radio button. Wraps focus and selection between the first and last radio buttons.", () => {
     it("ArrowRight moves focus to the next item and selects it", async () => {
       const f = await setup();

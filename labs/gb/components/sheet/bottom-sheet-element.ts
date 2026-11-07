@@ -9,6 +9,7 @@ import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {focusRingClasses} from '../focus/focus-ring.js';
+import {iconButton} from '../iconbutton/icon-button.js';
 import {
   BOTTOM_SHEET_STATES,
   bottomSheetClasses,
@@ -24,6 +25,10 @@ import {SheetBase} from './sheet-base.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
+import iconButtonStyles from '../iconbutton/icon-button.css' with {type: 'css'}; // github-only
+// import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
+import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
 import bottomSheetStyles from './bottom-sheet.css' with {type: 'css'}; // github-only
 // import bottomSheetStyles from './bottom-sheet.cssresult.js'; // google3-only
 
@@ -88,6 +93,8 @@ export class BottomSheetElement extends SheetBase {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [
     focusRingStyles,
+    rippleStyles,
+    iconButtonStyles,
     bottomSheetStyles,
     css`
       :host([hidden]) {
@@ -120,6 +127,20 @@ export class BottomSheetElement extends SheetBase {
   /** Accessible label of the sheet dialog. */
   @property() label = 'Bottom sheet';
 
+  /** Accessible label of the collapse icon button of a full-screen sheet. */
+  @property({attribute: 'collapse-label'}) collapseLabel = 'Collapse';
+
+  /** Accessible label of the close icon button of a full-screen sheet. */
+  @property({attribute: 'close-label'}) closeLabel = 'Close';
+
+  /**
+   * Whether the sheet is open at full-screen height (expanded up to the top
+   * margin). It then shows an app bar with a collapse icon button (standard
+   * sheets with a partially expanded height) or a close icon button (modal
+   * sheets).
+   */
+  @state() private fullHeight = false;
+
   @state() private isDragging = false;
   @state() private hasPartialHeight = true;
 
@@ -137,6 +158,7 @@ export class BottomSheetElement extends SheetBase {
     super.connectedCallback();
     this.resizeObserver ??= new ResizeObserver(() => {
       this.measurePartialHeight();
+      this.measureFullHeight();
     });
   }
 
@@ -151,6 +173,65 @@ export class BottomSheetElement extends SheetBase {
     if (panel) {
       this.resizeObserver?.observe(panel);
     }
+  }
+
+  protected override updated() {
+    this.measureFullHeight();
+  }
+
+  private measureFullHeight() {
+    const panel = this.panel;
+    if (!panel) {
+      return;
+    }
+    // The panel's `max-block-size` is `100% - var(--top-margin)` of the
+    // dialog (a percentage does not resolve in the computed value).
+    const dialog = this.dialog;
+    const topMargin = parseFloat(
+      getComputedStyle(panel).getPropertyValue('--top-margin'),
+    );
+    const max = dialog ? dialog.clientHeight - topMargin : NaN;
+    const full =
+      this.open &&
+      this.effectiveState === BOTTOM_SHEET_STATES.expanded &&
+      Number.isFinite(max) &&
+      panel.offsetHeight >= max - 1;
+    if (full !== this.fullHeight) {
+      this.fullHeight = full;
+    }
+  }
+
+  private handleAppBarClick() {
+    if (this.modal) {
+      this.close(CLOSE_REASONS.DISMISS);
+    } else {
+      this.setState(BOTTOM_SHEET_STATES.partiallyExpanded, true);
+    }
+  }
+
+  private renderAppBar() {
+    // A standard sheet collapses back to its partially expanded height, if
+    // it has one; a modal sheet closes.
+    if (!this.fullHeight || (!this.modal && !this.hasPartialHeight)) {
+      return nothing;
+    }
+    return html`<div class="bottom-sheet-app-bar" part="app-bar">
+      <button
+        type="button"
+        class="${iconButton({classes: {'bottom-sheet-app-bar-button': true}})}"
+        part="app-bar-button"
+        aria-label=${this.modal ? this.closeLabel : this.collapseLabel}
+        @click=${this.handleAppBarClick}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d=${this.modal
+              ? 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'
+              : 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z'}
+          />
+        </svg>
+      </button>
+    </div>`;
   }
 
   protected override willShow() {
@@ -364,6 +445,7 @@ export class BottomSheetElement extends SheetBase {
                   </div>
                 `
           }
+          ${this.renderAppBar()}
           <div class="bottom-sheet-content" part="content">
             <slot></slot>
           </div>

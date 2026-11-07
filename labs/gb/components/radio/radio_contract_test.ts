@@ -111,7 +111,7 @@ describe('<md-gb-radio> form contract (shared form layer)', () => {
   });
 
   it('has at most one selected radio per group', async () => {
-    // spec: radio-button-68ee76, radio-button-822466
+    // spec: radio-button-68ee76, radio-button-822466, radio-button-663210, radio-button-b150b7, radio-button-45c957, radio-button-d939ba
     const f = await setupFormRadio();
     await selectFormRadio(f.a[0]);
     await selectFormRadio(f.a[2]);

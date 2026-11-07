@@ -199,6 +199,7 @@ describe("<md-gb-chip-set>", () => {
       expect(chips[1].tabIndex).toBe(0);
     });
 
+    // spec: chips-afb975
     it("moves between a chip primary action and remove button", async () => {
       const { chips } = await setup(
         html`<md-gb-chip-set>

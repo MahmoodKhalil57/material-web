@@ -32,6 +32,7 @@ import {
   ToggleFieldController,
 } from '../shared/form-field.js';
 import {hasSlotted} from '../shared/has-slotted.js';
+import {LabelTextController} from '../shared/label-text.js';
 
 import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
@@ -41,6 +42,9 @@ import switchStyles from './switch.css' with {type: 'css'}; // github-only
 // import switchStyles from './switch.cssresult.js'; // google3-only
 
 import {switchToggle} from './switch.js';
+
+/** How far (px) a pointer must move to count as a drag instead of a tap. */
+const DRAG_THRESHOLD = 8;
 
 // Separate variable needed for closure.
 const baseClass = mixinDelegatesAria(
@@ -178,6 +182,32 @@ export class SwitchElement extends baseClass {
     },
   });
 
+  /**
+   * The adjacent `<label>` text, used as the accessibility label when there
+   * is no `aria-label` (spec: the label is the adjacent text label).
+   */
+  private readonly labelFromText = new LabelTextController(this);
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('click', this.clickCapture, true);
+    this.addEventListener('click', this.handleHostClick);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('click', this.clickCapture, true);
+    this.removeEventListener('click', this.handleHostClick);
+  }
+
+  /**
+   * Selecting the text label clicks the switch element itself (not the
+   * button in its shadow root); pass it on so the label selects it too.
+   */
+  private readonly handleHostClick = (event: MouseEvent) => {
+    if (event.composedPath()[0] === this) this.button?.click();
+  };
+
   protected override render() {
     const {ariaLabel} = this as ARIAMixinStrict;
     return html`
@@ -186,8 +216,11 @@ export class SwitchElement extends baseClass {
         part="switch"
         class="${switchToggle({density: this.density})}"
         aria-checked="${this.selected ? 'true' : 'false'}"
-        aria-label=${ariaLabel || nothing}
+        aria-label=${ariaLabel || this.labelFromText.text || nothing}
         ?disabled=${this.disabled}
+        @pointerdown=${this.handlePointerDown}
+        @pointermove=${this.handlePointerMove}
+        @pointerup=${this.handlePointerUp}
         @change=${this.handleChange}>
         <span class="switch-touch" aria-hidden="true"></span>
         <slot name="off-icon" class="switch-icon-off" ${hasSlotted()}></slot>
@@ -195,6 +228,46 @@ export class SwitchElement extends baseClass {
       </button>
     `;
   }
+
+  // Dragging the handle (touch or pointer): a drag toward the other end
+  // switches it, like a tap; a drag toward the end it is already at keeps it.
+  private dragStartX: number | null = null;
+  private dragDistance = 0;
+  private suppressClick = false;
+
+  private readonly handlePointerDown = (event: PointerEvent) => {
+    this.dragStartX = event.clientX;
+    this.dragDistance = 0;
+  };
+
+  private readonly handlePointerMove = (event: PointerEvent) => {
+    if (this.dragStartX === null) return;
+    this.dragDistance = event.clientX - this.dragStartX;
+  };
+
+  private readonly handlePointerUp = () => {
+    const distance = this.dragDistance;
+    this.dragStartX = null;
+    this.dragDistance = 0;
+    if (Math.abs(distance) < DRAG_THRESHOLD) return;
+    const rtl = getComputedStyle(this).direction === 'rtl';
+    const towardOn = rtl ? distance < 0 : distance > 0;
+    if (towardOn === this.selected) {
+      // The click that follows this release must not toggle.
+      this.suppressClick = true;
+      setTimeout(() => {
+        this.suppressClick = false;
+      }, 0);
+    }
+  };
+
+  /** Runs on the host in the capture phase, before the button toggles. */
+  private readonly clickCapture = (event: Event) => {
+    if (!this.suppressClick) return;
+    this.suppressClick = false;
+    event.stopImmediatePropagation();
+    event.preventDefault();
+  };
 
   private handleChange(event: Event) {
     this.field.markDirty();

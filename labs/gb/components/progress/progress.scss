@@ -82,6 +82,11 @@
     // --- Linear -----------------------------------------------------------
     &:not(.progress-circular) {
       .progress-container {
+        // The track is inset 4dp from each end (spec Measurements); 4dp is
+        // the minimum, `--inset-inline` can enlarge it.
+        --_inset: max(4px, var(--inset-inline, 4px));
+        --_w: calc(100cqw - 2 * var(--_inset));
+        inset-inline: var(--_inset);
         // Line fractions: [tail, head] pairs. Determinate is one line from 0.
         --_h1: var(--_p);
         --_t1: 0;
@@ -252,12 +257,14 @@
     // --- Circular ---------------------------------------------------------
     &.progress-circular {
       & {
+        // Circular sizes range from 24dp to 240dp (spec Responsive layout).
+        --_circular-size: clamp(24px, var(--size), 240px);
         align-items: center;
-        block-size: var(--size);
+        block-size: var(--_circular-size);
         container-type: normal;
         display: inline-flex;
         flex: none;
-        inline-size: var(--size);
+        inline-size: var(--_circular-size);
         justify-content: center;
         min-inline-size: 0;
         overflow: visible;
@@ -284,9 +291,9 @@
       }
 
       .progress-ring {
-        block-size: var(--size);
+        block-size: var(--_circular-size);
         flex: none;
-        inline-size: var(--size);
+        inline-size: var(--_circular-size);
       }
 
       .progress-ring-track,
@@ -339,10 +346,10 @@
       // The view box is sized for the wavy indicator.
       .progress-ring {
         block-size: calc(
-          var(--size) * #{math.div(motion.$circular-wave-size, motion.$circular-size)}
+          var(--_circular-size) * #{math.div(motion.$circular-wave-size, motion.$circular-size)}
         );
         inline-size: calc(
-          var(--size) * #{math.div(motion.$circular-wave-size, motion.$circular-size)}
+          var(--_circular-size) * #{math.div(motion.$circular-wave-size, motion.$circular-size)}
         );
       }
       .progress-active {

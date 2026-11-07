@@ -91,6 +91,8 @@ $icon-btn-size: 40px;
     overflow: hidden;
     background-color: var(--container-color);
     border-radius: var(--container-shape);
+    // Focused after a search runs; it is not a control.
+    outline: none;
   }
 
   // Contained full-screen: the header bar floats on a lower surface.
@@ -177,6 +179,12 @@ $icon-btn-size: 40px;
     --icon-size: var(--_icon-size);
     --outline-width: 0;
     flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: $icon-btn-size;
+    block-size: $icon-btn-size;
     margin: calc((var(--icon-target-size) - #{$icon-btn-size}) / 2);
     padding: 0;
     -webkit-tap-highlight-color: transparent;

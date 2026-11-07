@@ -8,7 +8,7 @@
 import './md-gb-fab-menu.js';
 import './md-gb-fab-menu-item.js';
 
-import {sendKeys, sendMouse} from '@web/test-runner-commands';
+import {sendKeys, sendMouse, setViewport} from '@web/test-runner-commands';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {
@@ -148,7 +148,7 @@ describe('<md-gb-fab-menu> spec behavior', () => {
     }
   });
 
-  // spec: fab-menu-67df5c
+  // spec: fab-menu-67df5c, floating-action-button-8217db
   it('opens from a FAB of any size', async () => {
     for (const size of ['sm', 'default', 'md', 'lg']) {
       const {el, items} = await mount(`size="${size}"`, '', 3, false);
@@ -159,7 +159,7 @@ describe('<md-gb-fab-menu> spec behavior', () => {
     }
   });
 
-  // spec: fab-menu-88b0bd
+  // spec: fab-menu-88b0bd, fab-menu-34b825
   it('aligns to the other side in right-to-left, with its content mirrored', async () => {
     const ltr = await mount('', '', 3);
     const rtl = await mount('', 'dir="rtl"', 3);
@@ -177,5 +177,67 @@ describe('<md-gb-fab-menu> spec behavior', () => {
     expect(button.getAttribute('aria-label')).toBe('Create');
     expect(button.getAttribute('aria-haspopup')).toBe('menu');
     expect(el.shadowRoot!.querySelector('[role="menu"]')).not.toBeNull();
+  });
+
+  // spec: fab-menu-a91379, fab-menu-10b2e4, fab-menu-837b40
+  it('opens from the FAB and inherits the item states of the baseline menu', async () => {
+    const {el, button} = await mount('', '', 3, false);
+    expect(el.open).toBeFalse();
+    button.click();
+    await el.updateComplete;
+    expect(el.open).toBeTrue();
+  });
+
+  // spec: fab-menu-3c707b
+  it('rounds the close button and every item fully', async () => {
+    const {button, items, inner} = await mount('', '', 3);
+    const full = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      const radius = parseFloat(getComputedStyle(el).borderTopLeftRadius);
+      return radius >= Math.min(r.width, r.height) / 2 - 0.5;
+    };
+    expect(full(button)).withContext('close button').toBeTrue();
+    for (const item of items) {
+      expect(full(inner(item))).withContext(item.textContent!).toBeTrue();
+    }
+  });
+
+  // spec: fab-menu-0e916a, fab-menu-553e02, fab-menu-403dfa, fab-menu-4864e5, fab-menu-f31512, fab-menu-adc179, fab-menu-6c28a7, fab-menu-d1c52f, fab-menu-21eb2f
+  it('scrolls its items behind the close button when the window is too short', async () => {
+    await setViewport({width: 800, height: 300});
+    try {
+      const container = document.createElement('div');
+      container.style.cssText = 'position: fixed; inset-block-end: 16px; inset-inline-end: 16px';
+      containers.push(container);
+      container.innerHTML = `<md-gb-fab-menu aria-label="Create" open>${Array.from(
+        {length: 6},
+        (_, i) => `<md-gb-fab-menu-item>Item ${i + 1}</md-gb-fab-menu-item>`,
+      ).join('')}</md-gb-fab-menu>`;
+      document.body.append(container);
+      const el = container.querySelector('md-gb-fab-menu') as Menu;
+      await el.updateComplete;
+      settle(el);
+      const button = el.shadowRoot!.querySelector<HTMLElement>('.fab-menu-button')!;
+      const list = el.shadowRoot!.querySelector<HTMLElement>('.fab-menu-list')!;
+      // The list is capped to the window height and its items scroll.
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position: fixed; block-size: 100dvh; inline-size: 1px';
+      document.body.append(probe);
+      const windowHeight = probe.getBoundingClientRect().height;
+      probe.remove();
+      expect(list.getBoundingClientRect().height).toBeLessThanOrEqual(windowHeight - 32 + 0.5);
+      expect(getComputedStyle(list).overflowY).toBe('auto');
+      expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
+      // Scrolled items pass behind the close button, which stays on top.
+      list.scrollTop = list.scrollHeight;
+      const c = center(button);
+      const hit = el.shadowRoot!.elementFromPoint(c.x, c.y);
+      expect(hit === button || button.contains(hit)).toBeTrue();
+      const r = button.getBoundingClientRect();
+      expect(r.bottom).toBeLessThanOrEqual(window.innerHeight);
+      expect(r.width).toBeGreaterThanOrEqual(56);
+    } finally {
+      await setViewport({width: 800, height: 600});
+    }
   });
 });

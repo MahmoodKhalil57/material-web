@@ -166,6 +166,7 @@ describe('predictive back', () => {
       expect(start.surface.transformOrigin).toBe('0% 50%');
     });
 
+    // spec: layout-bidirectionality-rtl-612126, layout-bidirectionality-rtl-b55016
     it('mirrors the pivot in RTL', () => {
       const root = env.render(
         html`<div
@@ -214,6 +215,7 @@ describe('predictive back', () => {
       return sheet as BottomSheetElement;
     }
 
+    // spec: interaction-gestures-a6ed0c
     it('closes with reason back', async () => {
       const sheet = await setup();
       const reasons: string[] = [];
@@ -237,6 +239,7 @@ describe('predictive back', () => {
       expect(sheet.open).toBeFalse();
     });
 
+    // spec: interaction-gestures-d00947
     it('stays open when the back close is canceled', async () => {
       const sheet = await setup();
       sheet.addEventListener('close', (e) => e.preventDefault());

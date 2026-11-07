@@ -97,6 +97,7 @@ export class ChipElement extends LitElement {
     css`
       :host {
         display: inline-flex;
+        max-inline-size: 100%;
         vertical-align: middle;
       }
       :host([hidden]) {

@@ -6,6 +6,7 @@
 
 // import 'jasmine'; (google3-only)
 import './md-gb-button.js';
+import '../../styles/icon/md-gb-icon.js';
 import '../buttongroup/md-gb-button-group.js';
 import '../fab/md-gb-fab.js';
 import '../fabmenu/md-gb-fab-menu.js';
@@ -17,7 +18,7 @@ import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {center, deepElements} from '../shared/central/subjects.js';
+import {center, deepElements, prop, ripplesOf} from '../shared/central/subjects.js';
 import {type ButtonElement} from './button-element.js';
 
 adoptStyles(document, [m3Styles]);
@@ -182,7 +183,7 @@ describe('<md-gb-button> spec behavior', () => {
     ).toEqual([true, true, true, true, true]);
   });
 
-  // spec: buttons-eb9f8c, buttons-61534c
+  // spec: buttons-eb9f8c, buttons-61534c, buttons-2461bf
   it('can be square, with a smaller corner than a round button', async () => {
     const {root, buttons, part} = await setup(html`
       ${SIZES.map((s) => html`<md-gb-button size=${s} square>Label</md-gb-button>`)}`);
@@ -234,7 +235,7 @@ describe('<md-gb-button> spec behavior', () => {
     });
   }
 
-  // spec: buttons-96dd91, buttons-7a42aa, buttons-916313, buttons-c19c81, buttons-0dfe5a, buttons-0e958b, buttons-b0bb0d, buttons-b3a897, buttons-88aa58
+  // spec: buttons-96dd91, buttons-7a42aa, buttons-916313, buttons-c19c81, buttons-0dfe5a, buttons-0e958b, buttons-b0bb0d, buttons-b3a897, buttons-88aa58, buttons-b978b3
   it('swaps round and square on a toggle button when selected', async () => {
     const {root, buttons, part} = await setup(html`
       <md-gb-button type="toggle" size="md">Round</md-gb-button>
@@ -323,5 +324,122 @@ describe('<md-gb-button> spec behavior', () => {
     const {buttons, part} = await setup(html`<md-gb-button>Done</md-gb-button>`);
     expect(part(buttons[0]).hasAttribute('aria-label')).toBeFalse();
     expect(buttons[0].textContent!.trim()).toBe('Done');
+  });
+
+  // spec: buttons-ed8443, buttons-35d145, buttons-019fb6
+  // md.comp.button.{filled,tonal}.hovered.container.elevation = level1 and
+  // md.comp.button.elevated.hovered.container.elevation = level2.
+  for (const [color, level] of [
+    ['filled', 1],
+    ['tonal', 1],
+    ['elevated', 2],
+  ] as const) {
+    it(`${color}: raises the container to elevation ${level} when hovered`, async () => {
+      const container = document.createElement('div');
+      container.style.padding = '64px';
+      container.innerHTML = `<md-gb-button color="${color}">Label</md-gb-button>`;
+      document.body.append(container);
+      const el = container.firstElementChild as ButtonElement;
+      await el.updateComplete;
+      const btn = el.shadowRoot!.querySelector<HTMLElement>('[part="btn"]')!;
+      const probe = document.createElement('span');
+      probe.style.boxShadow = `var(--md-sys-elevation-shadow-${level})`;
+      container.append(probe);
+      const expected = getComputedStyle(probe).boxShadow;
+      const c = center(btn);
+      await sendMouse({type: 'move', position: [c.x, c.y]});
+      expect(getComputedStyle(btn).boxShadow).toBe(expected);
+      await sendMouse({type: 'move', position: [0, 0]});
+      container.remove();
+    });
+  }
+
+  // The emulated `.active` class keeps the pressed shape for at most the
+  // ripple's minimum press time; it must not stay after the mouse is released.
+  it('drops the pressed shape (and `.active`) after the mouse is released', async () => {
+    const {buttons, part} = await setup(html`<md-gb-button color="filled">Label</md-gb-button>`);
+    const btn = part(buttons[0]);
+    const rest = corner(btn);
+    const c = center(btn);
+    await sendMouse({type: 'move', position: [c.x, c.y]});
+    await sendMouse({type: 'down'});
+    await sendMouse({type: 'up'});
+    // The ripple keeps `.active` for its 225ms minimum press time.
+    jasmine.clock().tick(400);
+    await sendMouse({type: 'move', position: [0, 0]});
+    settle(buttons[0]);
+    expect(btn.classList.contains('active')).toBeFalse();
+    expect(corner(btn)).toBe(rest);
+  });
+
+  // spec: buttons-174aee, buttons-c25110
+  for (const color of ['outlined', 'text'] as const) {
+    it(`${color}: has an invisible container at rest but the same state layers when hovered, pressed and disabled`, async () => {
+      const {buttons, part} = await setup(
+        html`<md-gb-button color=${color}>One</md-gb-button><md-gb-button color=${color} disabled>Two</md-gb-button>`,
+      );
+      const [enabled, disabled] = buttons;
+      const btn = part(enabled);
+      expect(getComputedStyle(btn).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+      const c = center(btn);
+      await sendMouse({type: 'move', position: [c.x, c.y]});
+      settle(enabled);
+      expect(ripplesOf(enabled).some((r) => prop(r, '--ripple-hover-opacity') === '8%')).toBeTrue();
+      await sendMouse({type: 'down'});
+      settle(enabled);
+      expect(ripplesOf(enabled).some((r) => prop(r, '--ripple-press-opacity') === '10%')).toBeTrue();
+      await sendMouse({type: 'up'});
+      const label = getComputedStyle(part(disabled)).color.match(/\/\s*([\d.]+)\)/);
+      expect(Number(label?.[1])).toBeCloseTo(0.38, 2);
+    });
+  }
+
+  // spec: buttons-fd7ee9, buttons-6c4b57, buttons-aafb87, buttons-c08bc4, buttons-360bae
+  it('keeps its label on one line and never narrower than the label text', async () => {
+    const {buttons, part} = await setup(html`<div style="inline-size: 60px">
+      <md-gb-button color="filled">A rather long label</md-gb-button>
+    </div>`);
+    const btn = part(buttons[0]);
+    expect(getComputedStyle(btn).whiteSpace).toBe('nowrap');
+    expect(btn.getBoundingClientRect().height).toBe(40);
+    const slot = btn.querySelector('slot')!;
+    const text = slot.assignedNodes()[0];
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    expect(btn.getBoundingClientRect().width).toBeGreaterThanOrEqual(
+      range.getBoundingClientRect().width,
+    );
+  });
+
+  // spec: buttons-4f7033, buttons-82a3d7, buttons-e79818
+  it('places the icon before the label: on the left in LTR, on the right in RTL', async () => {
+    for (const dir of ['ltr', 'rtl']) {
+      const {buttons} = await setup(html`<div dir=${dir}>
+        <md-gb-button color="filled"><md-gb-icon>add</md-gb-icon>Label</md-gb-button>
+      </div>`);
+      const icon = buttons[0].querySelector('md-gb-icon')!.getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(buttons[0].childNodes[1]);
+      const text = range.getBoundingClientRect();
+      if (dir === 'ltr') {
+        expect(icon.right).withContext(dir).toBeLessThanOrEqual(text.left + 0.5);
+      } else {
+        expect(icon.left).withContext(dir).toBeGreaterThanOrEqual(text.right - 0.5);
+      }
+    }
+  });
+
+  // spec: buttons-cb5ac3
+  it('does not underline the text button', async () => {
+    const {buttons, part} = await setup(html`<md-gb-button color="text">Label</md-gb-button>`);
+    expect(getComputedStyle(part(buttons[0])).textDecorationLine).toBe('none');
+  });
+
+  // spec: buttons-7e9118
+  it('uses a semibold icon instead of a filled one when a toggle has no filled icon', async () => {
+    const {buttons} = await setup(html`<md-gb-button type="toggle" selected unfilled-icon><md-gb-icon>star</md-gb-icon>Label</md-gb-button>`);
+    const style = getComputedStyle(buttons[0]);
+    expect(style.getPropertyValue('--md-icon-fill').trim()).toBe('0');
+    expect(style.getPropertyValue('--md-icon-wght').trim()).toBe('600');
   });
 });

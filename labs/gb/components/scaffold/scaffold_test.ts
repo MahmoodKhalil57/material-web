@@ -77,6 +77,7 @@ describe('planPanes()', () => {
     }
   });
 
+  // spec: layout-canonical-examples-eaec2e, layout-canonical-examples-444991, layout-canonical-examples-d27fc5, layout-canonical-examples-d28065
   it('stacks the supporting pane below at compact and medium', () => {
     for (const windowClass of ['compact', 'medium'] as const) {
       const plan = planPanes({
@@ -115,6 +116,7 @@ describe('planPanes()', () => {
 });
 
 describe('paneSnapTargets()', () => {
+  // spec: layout-breakpoints-d481ce, layout-scaffold-57e7c5, layout-overview-378e6d, layout-scaffold-40a879, layout-scaffold-583685, layout-scaffold-dddd06
   it('snaps to 0, 360, 412, split and full at expanded and larger', () => {
     expect(paneSnapTargets('large', 1000, 480)).toEqual([
       0, 360, 412, 480, 1000,
@@ -243,6 +245,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(getComputedStyle(container).paddingInlineStart).toBe('16px');
   });
 
+  // spec: layout-canonical-examples-9a00d0, layout-canonical-examples-771ee3, layout-canonical-examples-f0fe0a, layout-canonical-examples-a6b1a8
   it('shows one pane at compact and swaps to the detail', async () => {
     const {scaffold, isShown} = await setup(500, listDetail());
     expect(isShown('secondary')).toBeTrue();
@@ -272,7 +275,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(document.activeElement).toBe(item);
   });
 
-  // spec: layout-scaffold-404e4f, layout-scaffold-c07466
+  // spec: layout-scaffold-404e4f, layout-scaffold-c07466, layout-canonical-examples-c5a94a, layout-canonical-examples-566b84, layout-overview-efb0eb, layout-scaffold-5bc59b, layout-breakpoints-4e1827
   it('shows both panes at expanded with a 360px fixed list', async () => {
     const {scaffold, pane, isShown} = await setup(1000, listDetail());
     expect(scaffold.windowClass).toBe('expanded');
@@ -288,6 +291,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(pane('secondary').getBoundingClientRect().width).toBeCloseTo(412, 0);
   });
 
+  // spec: layout-canonical-examples-6600fc, layout-canonical-examples-dd3b35
   it('shows the placeholder in two panes until the detail opens', async () => {
     const {root, scaffold} = await setup(1000, listDetail());
     const placeholder = root.querySelector<HTMLElement>('.placeholder')!;
@@ -300,7 +304,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(detail.getClientRects().length).toBeGreaterThan(0);
   });
 
-  // spec: layout-scaffold-39c2e5, layout-scaffold-83733f
+  // spec: layout-scaffold-39c2e5, layout-scaffold-83733f, layout-breakpoints-4e025d, layout-breakpoints-780cd4, layout-breakpoints-26fc7f, layout-scaffold-2867c6
   it('splits medium two-pane layouts 50/50', async () => {
     const {scaffold, pane} = await setup(
       700,
@@ -317,7 +321,7 @@ describe('<md-gb-pane-scaffold>', () => {
     expect(b).toBeCloseTo(314, 0);
   });
 
-  // spec: layout-scaffold-742d83, layout-scaffold-48f69f, layout-scaffold-ba81a9, layout-scaffold-c80a1a, layout-scaffold-2e92e2
+  // spec: layout-scaffold-742d83, layout-scaffold-48f69f, layout-scaffold-ba81a9, layout-scaffold-c80a1a, layout-scaffold-2e92e2, layout-canonical-examples-e3a17d
   it('reflows when the window size class changes', async () => {
     const {scaffold, frame, isShown} = await setup(1000, listDetail());
     expect(scaffold.mode).toBe('two-pane');
@@ -362,7 +366,7 @@ describe('<md-gb-pane-scaffold>', () => {
       );
     });
 
-    // spec: layout-scaffold-404346, layout-scaffold-7d34b7
+    // spec: layout-scaffold-404346, layout-scaffold-7d34b7, layout-canonical-examples-5e54c8, layout-canonical-examples-4d9065, layout-canonical-examples-a32f8d
     it('puts a 360px supporting pane on the trailing side at expanded', async () => {
       const {pane} = await setup(1000, supporting);
       const primary = pane('primary').getBoundingClientRect();
@@ -391,13 +395,13 @@ describe('<md-gb-pane-scaffold>', () => {
         .filter(Boolean).length;
     }
 
-    // spec: layout-canonical-examples-34064f
+    // spec: layout-canonical-examples-34064f, layout-canonical-examples-7da338, layout-canonical-examples-d1ebe0
     it('stacks the feed at compact', async () => {
       const {scaffold} = await setup(500, feed);
       expect(columnCount(scaffold)).toBe(1);
     });
 
-    // spec: layout-canonical-examples-34064f, layout-canonical-examples-e5fdf6
+    // spec: layout-canonical-examples-34064f, layout-canonical-examples-e5fdf6, layout-canonical-examples-71a1c8, layout-canonical-examples-5c7c7f, layout-canonical-examples-bfdef6, layout-canonical-examples-25c7b4, layout-canonical-examples-9a6102
     it('adds columns as the window grows', async () => {
       const {scaffold, frame} = await setup(700, feed);
       expect(columnCount(scaffold)).toBe(4);
@@ -409,7 +413,7 @@ describe('<md-gb-pane-scaffold>', () => {
     });
   });
 
-  // spec: layout-scaffold-88b22a, layout-scaffold-8b2cb5
+  // spec: layout-scaffold-88b22a, layout-scaffold-8b2cb5, layout-scaffold-3e9154, layout-overview-402541
   it('shows the tertiary pane at extra-large only', async () => {
     const content = html`<md-gb-pane-scaffold>
       <div slot="secondary">List</div>
@@ -602,7 +606,7 @@ describe('<md-gb-pane-scaffold>', () => {
       expect(pane('secondary').style.visibility).toBe('');
     });
 
-    // spec: layout-scaffold-57ce22, layout-scaffold-c2f2c5
+    // spec: layout-scaffold-57ce22, layout-scaffold-c2f2c5, layout-scaffold-c601e9
     it('keeps a persistent width across window size classes', async () => {
       const {scaffold, frame} = await setup(1000, resizable);
       scaffold.paneWidth = 412;
@@ -659,6 +663,7 @@ describe('<md-gb-app-scaffold>', () => {
     return {root, scaffold, frame, shown};
   }
 
+  // spec: layout-breakpoints-621aba
   it('shows the navigation bar at compact', async () => {
     const {scaffold, shown} = await setup(400);
     expect(scaffold.windowClass).toBe('compact');
@@ -668,6 +673,7 @@ describe('<md-gb-app-scaffold>', () => {
     expect(shown('.rail')).toBeFalse();
   });
 
+  // spec: layout-breakpoints-bb5a9a, layout-overview-d0b913
   it('shows the navigation rail at medium and larger', async () => {
     const {scaffold, shown} = await setup(700);
     expect(scaffold.activeNavigation).toBe('rail');
@@ -675,6 +681,7 @@ describe('<md-gb-app-scaffold>', () => {
     expect(shown('.bar')).toBeFalse();
   });
 
+  // spec: layout-breakpoints-02069b, layout-breakpoints-635c4e, layout-breakpoints-0f0313
   it('places the rail on the leading edge and the bar at the bottom', async () => {
     const wide = await setup(1000);
     const rail = wide.root.querySelector('.rail')!.getBoundingClientRect();
@@ -691,6 +698,7 @@ describe('<md-gb-app-scaffold>', () => {
     expect(bar.top).toBeGreaterThan(content2.top);
   });
 
+  // spec: layout-scaffold-cbfa10
   it('places the FAB 16px from the trailing and bottom edges', async () => {
     const {root, scaffold} = await setup(400);
     const fab = root.querySelector('.fab')!.getBoundingClientRect();
@@ -701,6 +709,7 @@ describe('<md-gb-app-scaffold>', () => {
     expect(body.bottom - fab.bottom).toBeCloseTo(16, 0);
   });
 
+  // spec: layout-breakpoints-b044e6
   it('swaps to a bar at medium when the content shows two panes', async () => {
     const {scaffold} = await setup(
       700,
@@ -735,6 +744,7 @@ describe('<md-gb-app-scaffold>', () => {
     expect(panes.mode).toBe('two-pane');
   });
 
+  // spec: layout-breakpoints-6c6a54, layout-breakpoints-302a10, layout-breakpoints-01072a, layout-breakpoints-c2b572, layout-breakpoints-7ea162, layout-breakpoints-3e0c7f, layout-breakpoints-2d095e, layout-breakpoints-614389, layout-breakpoints-a2e842, layout-breakpoints-53dd5c, layout-breakpoints-f38151, layout-overview-f78bee, layout-overview-e9b657
   it('follows window resizes and fires window-class-change', async () => {
     const {scaffold, frame} = await setup(400);
     const changed = classChange(scaffold);
@@ -745,6 +755,7 @@ describe('<md-gb-app-scaffold>', () => {
     expect(scaffold.activeNavigation).toBe('rail');
   });
 
+  // spec: layout-overview-94783c
   it('auto-expands a slotted rail at large', async () => {
     const {root} = await setup(
       1300,
@@ -773,6 +784,7 @@ describe('<md-gb-app-scaffold>', () => {
 });
 
 describe('planPanes() on foldables and with levitate', () => {
+  // spec: layout-breakpoints-3fc971
   it('splits two panes at a vertical fold even in compact windows', () => {
     for (const layout of ['list-detail', 'supporting-pane'] as const) {
       const plan = planPanes({
@@ -820,6 +832,7 @@ describe('planPanes() on foldables and with levitate', () => {
     expect(plan.fold).toBeNull();
   });
 
+  // spec: layout-scaffold-416a94, layout-overview-483276, layout-scaffold-588dd9, layout-overview-61a52d
   it('docks at compact and floats at medium (spec: levitate)', () => {
     const state = {
       layout: 'supporting-pane' as const,
@@ -980,6 +993,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
     expect(scaffold.getAttribute('window-height-class')).toBe('expanded');
   });
 
+  // spec: layout-canonical-examples-b063d7
   it('splits two panes at a vertical hinge', async () => {
     const {scaffold, frame, pane} = await setup(800, listDetail());
     expect(scaffold.mode).toBe('single');
@@ -1139,7 +1153,7 @@ describe('<md-gb-pane-scaffold> height, folds and levitate', () => {
   });
 
   describe('modal levitated pane', () => {
-    // spec: layout-scaffold-a8434d, layout-scaffold-92ba79, layout-scaffold-7fa733
+    // spec: layout-scaffold-a8434d, layout-scaffold-92ba79, layout-scaffold-7fa733, layout-scaffold-11321f
     it('moves focus in, makes the panes behind inert and shows a scrim', async () => {
       const {root, scaffold, pane} = await setup(
         500,

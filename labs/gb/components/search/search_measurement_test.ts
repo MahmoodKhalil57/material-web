@@ -215,6 +215,12 @@ function expectDp(chain: string, metric: string, spec: Spec, pseudo = '') {
 
 describe('<md-gb-search-bar> measurements', () => {
   // spec: search-2f30e4, search-50bf5f, search-0856b4
+  it('Bar: Container width, minimum', async () => {
+    await mount('<div style="width: 200px"><md-gb-search-bar placeholder="Search" quick></md-gb-search-bar></div>');
+    expectDp('md-gb-search-bar >> [part=bar]', 'width', {min: 360});
+  });
+
+  // spec: search-2f30e4, search-50bf5f, search-0856b4
   it('Bar: Container width, maximum', async () => {
     await mount('<div style="width: 900px"><md-gb-search-bar placeholder="Search" quick></md-gb-search-bar></div>');
     expectDp('md-gb-search-bar >> [part=bar]', 'width', {max: 720});
@@ -230,6 +236,18 @@ describe('<md-gb-search-bar> measurements', () => {
   it('Bar: Label alignment', async () => {
     await mount('<div style="width: 500px"><md-gb-search-bar placeholder="Search" quick></md-gb-search-bar></div>');
     expectCss('md-gb-search-bar >> [part=input]', 'text-align', 'start|left', '');
+  });
+
+  // spec: search-5021fc, search-86d2ac
+  it('Bar: Leading padding, unfocused', async () => {
+    await mount('<div style="width: 500px"><md-gb-search-bar placeholder="Search" quick></md-gb-search-bar></div>');
+    expectDp('md-gb-search-bar >> .search-bar-icon', 'offset-left', {eq: 24, rel: 'md-gb-search-bar >> [part=bar]'});
+  });
+
+  // spec: search-b270dd, search-aa3bb4
+  it('Bar: Trailing padding, unfocused', async () => {
+    await mount('<div style="width: 500px"><md-gb-search-bar placeholder="Search" quick><md-gb-icon-button slot="trailing"><md-gb-icon>mic</md-gb-icon></md-gb-icon-button></md-gb-search-bar></div>');
+    expectDp('md-gb-search-bar >> light:md-gb-icon', 'offset-right', {eq: 24, rel: 'md-gb-search-bar >> [part=bar]'});
   });
 
   // spec: search-8a2df5, search-5cd2b5
@@ -286,5 +304,29 @@ describe('<md-gb-search-bar> measurements', () => {
   it('View: Label alignment', async () => {
     await mount('<md-gb-search-view open quick placeholder="Search"></md-gb-search-view>');
     expectCss('md-gb-search-view >> [part=input]', 'text-align', 'start|left', '');
+  });
+
+  // spec: search-3e9a13, search-440c48
+  it('View: Leading padding', async () => {
+    await mount('<md-gb-search-view open quick placeholder="Search"></md-gb-search-view>');
+    expectDp('md-gb-search-view >> .search-view-back svg', 'offset-left', {eq: 16, rel: 'md-gb-search-view >> [part=header]'});
+  });
+
+  // spec: search-0a5eee, search-9a4abb
+  it('View: Trailing padding', async () => {
+    await mount('<md-gb-search-view open quick placeholder="Search" value="Query"></md-gb-search-view>');
+    expectDp('md-gb-search-view >> .search-view-clear svg', 'offset-right', {eq: 16, rel: 'md-gb-search-view >> [part=header]'});
+  });
+
+  // spec: search-20ac6e, search-50af94
+  it('View: Leading icon and label padding', async () => {
+    await mount('<md-gb-search-view open quick placeholder="Search"></md-gb-search-view>');
+    expectDp('md-gb-search-view >> [part=input]', 'offset-left', {eq: 48, rel: 'md-gb-search-view >> .search-view-back'});
+  });
+
+  // spec: search-866b8e, search-91b4bf
+  it('View: Label and trailing icon padding', async () => {
+    await mount('<md-gb-search-view open quick placeholder="Search" value="Query"></md-gb-search-view>');
+    expectDp('md-gb-search-view >> [part=input]', 'offset-right', {eq: 48, rel: 'md-gb-search-view >> .search-view-clear'});
   });
 });

@@ -252,6 +252,11 @@ $pressed-opacity: math.percentage(md-sys-state.$pressed-state-layer-opacity);
       margin-inline: auto;
     }
 
+    // Left-aligned (start-aligned) on wide layouts.
+    :host([align='start']) .snackbar-surface {
+      margin-inline: 16px auto;
+    }
+
     // The label reserves the lesser of its text width and 70% of the widest
     // surface's content box (~448px at the 672px default), so a long action
     // wraps to its own line instead of squeezing the message. Unlike compact,

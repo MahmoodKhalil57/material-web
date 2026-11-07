@@ -306,6 +306,7 @@ export class ListElement extends baseClass {
     }
     if (changed.has("selectable")) {
       this.syncSelectionMode();
+      this.syncListboxRoles();
       if (!this.selectable) this.cancelLongPress();
     }
   }
@@ -331,7 +332,20 @@ export class ListElement extends baseClass {
       ></div>`;
   }
 
+  /**
+   * On the web a selectable list is a `listbox` of `option`s that expose
+   * whether they are selected; a list that isn't selectable keeps the plain
+   * list roles (lists.md, Labeling elements). The accessible label of the
+   * list should describe the type of selection.
+   */
+  private syncListboxRoles() {
+    this[internals].role = this.selectable ? "listbox" : "list";
+    this[internals].ariaMultiSelectable = this.selectable ? "true" : null;
+    for (const item of this.navigationItems()) item.option = this.selectable;
+  }
+
   private handleSlotChange() {
+    this.syncListboxRoles();
     this.syncReorderable(false);
     this.syncSelectionMode();
     this.syncTabStops();
@@ -372,9 +386,15 @@ export class ListElement extends baseClass {
     const focused = leaving
       ? undefined
       : items.find((item) => item.matches(":focus-within"));
+    // Focus enters on the selected item when the list has one ("The first
+    // element in a list should always receive focus, unless the list has a
+    // selected element"), else on the first (Tab) or last (Shift+Tab) item.
+    const selected = focusable.find(isChecked);
     const stops = focused
       ? [focused]
-      : [focusable[0], focusable[focusable.length - 1]];
+      : selected
+        ? [selected]
+        : [focusable[0], focusable[focusable.length - 1]];
     for (const item of items) {
       this.managedItems.add(item);
       item.rovingTabIndex = stops.includes(item) ? 0 : -1;

@@ -232,16 +232,34 @@ describe('<md-gb-list> measurements', () => {
     expectDp('md-gb-list >> light:md-gb-list-item >> .list-item-leading', 'center-offset-y', {eq: 0, rel: 'md-gb-list >> light:md-gb-list-item >> [part=list-item]'});
   });
 
+  // spec: lists-f61f36, lists-443252
+  it('Leading element alignment when height is 88dp or taller', async () => {
+    await mount('<div style="width: 360px"><md-gb-list><md-gb-list-item><md-gb-icon slot="leading">star</md-gb-icon><span slot="overline">Overline</span>Item<span slot="supporting-text">Supporting text that is long enough to wrap onto several lines of the narrow list so that the item is taller than 88dp</span><md-gb-icon slot="trailing">star</md-gb-icon></md-gb-list-item></md-gb-list></div>');
+    expectDp('md-gb-list >> light:md-gb-list-item >> .list-item-leading', 'offset-top', {max: 12, rel: 'md-gb-list >> light:md-gb-list-item >> [part=list-item]'});
+  });
+
   // spec: lists-e83c7f, lists-e9c9f0
   it('Leading element left padding', async () => {
     await mount('<div style="width: 360px"><md-gb-list><md-gb-list-item><md-gb-icon slot="leading">star</md-gb-icon>Item<md-gb-icon slot="trailing">star</md-gb-icon></md-gb-list-item></md-gb-list></div>');
     expectDp('md-gb-list >> light:md-gb-list-item >> .list-item-leading', 'offset-left', {eq: 16, rel: 'md-gb-list >> light:md-gb-list-item >> [part=list-item]'});
   });
 
+  // spec: lists-e3ea80, lists-c293d8
+  it('Leading icon alignment', async () => {
+    await mount('<div style="width: 360px"><md-gb-list><md-gb-list-item><md-gb-icon slot="leading">star</md-gb-icon><span slot="overline">Overline</span>Item<span slot="supporting-text">Supporting text that is long enough to wrap onto several lines of the narrow list so that the item is taller than 88dp</span><md-gb-icon slot="trailing">star</md-gb-icon></md-gb-list-item></md-gb-list></div>');
+    expectDp('md-gb-list >> light:md-gb-list-item >> .list-item-leading', 'offset-top', {max: 12, rel: 'md-gb-list >> light:md-gb-list-item >> [part=list-item]'});
+  });
+
   // spec: lists-437f27, lists-7d128d
   it('Trailing element alignment', async () => {
     await mount('<div style="width: 360px"><md-gb-list><md-gb-list-item><md-gb-icon slot="leading">star</md-gb-icon>Item<md-gb-icon slot="trailing">star</md-gb-icon></md-gb-list-item></md-gb-list></div>');
     expectDp('md-gb-list >> light:md-gb-list-item >> .list-item-trailing', 'center-offset-y', {eq: 0, rel: 'md-gb-list >> light:md-gb-list-item >> [part=list-item]'});
+  });
+
+  // spec: lists-b2a73f, lists-21f715
+  it('Trailing element alignment when height is 88dp or taller', async () => {
+    await mount('<div style="width: 360px"><md-gb-list><md-gb-list-item><md-gb-icon slot="leading">star</md-gb-icon><span slot="overline">Overline</span>Item<span slot="supporting-text">Supporting text that is long enough to wrap onto several lines of the narrow list so that the item is taller than 88dp</span><md-gb-icon slot="trailing">star</md-gb-icon></md-gb-list-item></md-gb-list></div>');
+    expectDp('md-gb-list >> light:md-gb-list-item >> .list-item-trailing', 'offset-top', {max: 12, rel: 'md-gb-list >> light:md-gb-list-item >> [part=list-item]'});
   });
 
   // spec: lists-477067, lists-a53273

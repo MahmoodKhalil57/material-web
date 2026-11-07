@@ -270,6 +270,25 @@ export interface CustomColor {
   harmonize?: boolean;
 }
 
+/**
+ * A key color of a scheme: a hex string or ARGB integer, or a hue (0-360) and
+ * chroma that define the tonal palette directly.
+ */
+export type PaletteInput = string | number | {hue: number; chroma: number};
+
+/**
+ * Your own key colors for the scheme's tonal palettes (advanced.md "Adjust
+ * existing schemes"). Palettes you leave out come from the variant.
+ */
+export interface SchemePalettes {
+  primary?: PaletteInput;
+  secondary?: PaletteInput;
+  tertiary?: PaletteInput;
+  neutral?: PaletteInput;
+  neutralVariant?: PaletteInput;
+  error?: PaletteInput;
+}
+
 /** Options for generating a dynamic theme. */
 export interface ThemeOptions {
   /** The source color, as a hex string or ARGB integer. */
@@ -287,6 +306,12 @@ export interface ThemeOptions {
   platform?: Platform;
   /** Static colors to add to the scheme. */
   customColors?: CustomColor[];
+  /**
+   * Your own primary, secondary, tertiary, neutral, neutral variant and
+   * error key colors. The scheme's regular color roles are derived from them;
+   * the source color still drives harmonization of custom colors.
+   */
+  palettes?: SchemePalettes;
 }
 
 /** Role name -> hex color. */
@@ -453,6 +478,39 @@ export function harmonize(color: string | number, source: string | number) {
   return hexFromArgb(Blend.harmonize(toArgb(color), toArgb(source)));
 }
 
+function paletteFrom(input: PaletteInput): TonalPalette {
+  if (typeof input === 'object') {
+    return TonalPalette.fromHueAndChroma(input.hue, input.chroma);
+  }
+  return TonalPalette.fromInt(toArgb(input));
+}
+
+/** Replaces a scheme's tonal palettes with your own key colors. */
+function withPalettes(
+  scheme: DynamicScheme,
+  palettes: SchemePalettes,
+): DynamicScheme {
+  const pick = (input: PaletteInput | undefined, fallback: TonalPalette) =>
+    input === undefined ? fallback : paletteFrom(input);
+  return new DynamicScheme({
+    sourceColorHct: scheme.sourceColorHct,
+    variant: scheme.variant,
+    contrastLevel: scheme.contrastLevel,
+    isDark: scheme.isDark,
+    specVersion: scheme.specVersion,
+    platform: scheme.platform,
+    primaryPalette: pick(palettes.primary, scheme.primaryPalette),
+    secondaryPalette: pick(palettes.secondary, scheme.secondaryPalette),
+    tertiaryPalette: pick(palettes.tertiary, scheme.tertiaryPalette),
+    neutralPalette: pick(palettes.neutral, scheme.neutralPalette),
+    neutralVariantPalette: pick(
+      palettes.neutralVariant,
+      scheme.neutralVariantPalette,
+    ),
+    errorPalette: pick(palettes.error, scheme.errorPalette),
+  });
+}
+
 const ROLE_NAME = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 
 /** The four role names generated for a custom color. */
@@ -539,7 +597,9 @@ export function themeFromSource(options: ThemeOptions): DynamicTheme {
       specVersion,
       platform,
     });
-    const roles: Record<string, string> = rolesFromScheme(scheme);
+    const roles: Record<string, string> = rolesFromScheme(
+      options.palettes ? withPalettes(scheme, options.palettes) : scheme,
+    );
     for (const color of customColors) {
       Object.assign(roles, customRolesFromScheme(scheme, color));
     }

@@ -561,8 +561,10 @@ export const ANATOMY = {
           'icon': {markup: TABS('<md-gb-icon>flight</md-gb-icon>'), el: 'light:md-gb-tab >> slot:not([name])', assigned: true},
           'badge': {markup: TABS('<span slot="badge">3</span>'), el: 'light:md-gb-tab >> slot[name=badge]', assigned: true},
           'label': {el: 'light:md-gb-tab >> slot[name=label]', assigned: true},
-          'divider': {el: '[part=divider]', gap: 'tabs have no divider part; the divider under the tab row is not exposed'},
-          'active indicator': {el: 'light:md-gb-tab >> [part=indicator]', gap: 'the active indicator is not exposed as a part of the tab'},
+          // The tabs element has no shadow root: it draws the divider as its
+          // bottom border and the active indicator as its ::after.
+          'divider': {el: ''},
+          'active indicator': {el: '', pseudo: '::after'},
         },
       },
     ],

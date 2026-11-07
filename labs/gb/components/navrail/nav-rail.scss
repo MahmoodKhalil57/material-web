@@ -64,6 +64,12 @@
     }
   }
 
+  // A FAB nested in the rail rests at elevation level 0 (navigation-rail.md,
+  // Floating action button).
+  md-gb-nav-rail > md-gb-fab[slot='header']::part(fab) {
+    box-shadow: var(--md-sys-elevation-shadow-0);
+  }
+
   .nav-rail-header {
     align-items: flex-start;
     box-sizing: border-box;
@@ -298,11 +304,15 @@
     font: var(--item-label-text-font);
     font-variation-settings: var(--item-label-text-font-axes);
     letter-spacing: var(--item-label-text-font-tracking);
-    overflow: hidden;
+    // navigation-rail.md, Label text: "If necessary, create a line break
+    // between words, or hyphenate longer words" and "Don't truncate or
+    // display an ellipsis"; with larger text the item grows vertically.
+    hyphens: auto;
+    max-inline-size: 100%;
+    overflow-wrap: break-word;
     text-align: center;
-    text-overflow: ellipsis;
     transition: all var(--motion-duration) var(--motion-easing);
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .nav-rail-item-badge {

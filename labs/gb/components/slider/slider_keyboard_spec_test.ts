@@ -193,7 +193,7 @@ describe('<md-gb-slider> keyboard (spec)', () => {
   });
 
   // Spec: "Space & Arrows" | "Increase and decrease the value by one interval or one stop indicator"
-  // spec: sliders-e26fe9, sliders-ead175
+  // spec: sliders-e26fe9, sliders-ead175, sliders-f11e18
   describe("Space & Arrows: Increase and decrease the value by one interval or one stop indicator", () => {
     it("Space+ArrowRight increases the value by one stop", async () => {
       const f = await setup({step: 10});

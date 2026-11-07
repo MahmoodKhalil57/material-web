@@ -23,7 +23,7 @@
   :host {
     display: block;
     inline-size: 100%;
-    min-inline-size: min(var(--min-width), 100%);
+    min-inline-size: var(--min-width);
     max-inline-size: var(--max-width);
   }
 
@@ -40,13 +40,18 @@
   // Contained (M3 Expressive) search bar. Leading and trailing paddings are
   // measured to the 48dp tap targets of the icons.
   .search-bar {
+    // The unfocused glyphs sit 24dp from the container edge (search.md
+    // Measurements); the icons are centered in tap targets.
+    --_glyph-inset: calc(
+      var(--unfocused-glyph-margin) - (var(--icon-target-size) - var(--icon-size)) / 2
+    );
     position: relative;
     display: flex;
     align-items: center;
     box-sizing: border-box;
     inline-size: 100%;
     block-size: var(--container-height);
-    padding-inline: var(--contained-leading-space)
+    padding-inline: var(--_glyph-inset)
       var(--contained-no-actions-trailing-space);
     background-color: var(--container-color);
     border-radius: var(--container-shape);
@@ -62,7 +67,7 @@
       .search-bar-trailing > slot.has-slotted,
       .search-bar-trailing > :not(slot)
     ) {
-    padding-inline-end: var(--contained-trailing-actions-trailing-space);
+    padding-inline-end: var(--_glyph-inset);
   }
 
   .search-bar.search-bar-disabled {

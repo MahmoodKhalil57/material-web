@@ -224,6 +224,12 @@ describe('<md-gb-tooltip> measurements', () => {
     expectDp('md-gb-tooltip >> [part=tooltip]', 'padding-top', {eq: 12});
   });
 
+  // spec: tooltips-940ed6
+  it('Rich: Bottom padding', async () => {
+    await mount('<button id="anchor">Anchor</button><md-gb-tooltip for="anchor" open quick variant="rich"><span slot="subhead">Subhead</span>Supporting text for the rich tooltip.</md-gb-tooltip>');
+    expectDp('md-gb-tooltip >> [part=tooltip]', 'padding-bottom', {eq: 8});
+  });
+
   // spec: tooltips-e416be
   it('Rich: Left and right padding', async () => {
     await mount('<button id="anchor">Anchor</button><md-gb-tooltip for="anchor" open quick variant="rich"><span slot="subhead">Subhead</span>Supporting text for the rich tooltip.</md-gb-tooltip>');

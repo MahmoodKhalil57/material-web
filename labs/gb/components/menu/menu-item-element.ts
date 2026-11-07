@@ -287,7 +287,10 @@ export class MenuItemElement extends baseClass {
   private renderContent() {
     return html`
       <span class="menu-item-leading">
-        <slot name="leading" ${hasSlotted()}>
+        <slot
+          name="leading"
+          ${hasSlotted()}
+          @slotchange=${this.markIconsDecorative}>
           ${this.checked ? html`<span class="checkmark">check</span>` : nothing}
         </slot>
       </span>
@@ -301,7 +304,10 @@ export class MenuItemElement extends baseClass {
           class="menu-item-trailing-text"
           ${hasSlotted()}
         ></slot>
-        <slot name="trailing" ${hasSlotted()}>
+        <slot
+          name="trailing"
+          ${hasSlotted()}
+          @slotchange=${this.markIconsDecorative}>
           ${
             this.hasSubmenu
               ? html`<span class="menu-item-submenu-icon" aria-hidden="true"
@@ -313,6 +319,20 @@ export class MenuItemElement extends baseClass {
       </span>
     `;
   }
+
+  /**
+   * The label of an item with text and an icon is the text: its icons are
+   * decorative (menus.md, Labeling elements), so a slotted icon without a
+   * label of its own is hidden from assistive technology.
+   */
+  private readonly markIconsDecorative = (event: Event) => {
+    const slot = event.target as HTMLSlotElement;
+    for (const icon of slot.assignedElements({flatten: true})) {
+      if (!icon.matches('md-gb-icon, svg, img[alt=""]')) continue;
+      if (icon.hasAttribute('aria-label') || icon.hasAttribute('aria-labelledby')) continue;
+      icon.setAttribute('aria-hidden', 'true');
+    }
+  };
 
   protected override updated() {
     if (this.hasSubmenu) {

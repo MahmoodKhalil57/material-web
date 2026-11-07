@@ -210,4 +210,11 @@ describe('<md-gb-card> measurements', () => {
     await mount('<md-gb-card><div style="height: 80px">Content</div></md-gb-card>');
     expectDp('md-gb-card >> [part=card]', 'radius', {eq: 12});
   });
+
+  // spec: cards-1c1b41, cards-0d986b
+  it('Left/right padding', async () => {
+    await mount('<md-gb-card><div style="height: 80px">Content</div></md-gb-card>');
+    expectDp('md-gb-card >> [part=card]', 'padding-left', {eq: 16});
+    expectDp('md-gb-card >> [part=card]', 'padding-right', {eq: 16});
+  });
 });

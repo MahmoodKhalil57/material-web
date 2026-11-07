@@ -216,4 +216,11 @@ describe('<md-gb-progress> measurements', () => {
     await mount('<md-gb-progress value="0.5" style="width: 300px"></md-gb-progress>');
     expectDp('md-gb-progress >> .progress-track-1', 'height', {eq: 4});
   });
+
+  // spec: progress-indicators-010005
+  it('Linear indicator inset', async () => {
+    await mount('<md-gb-progress value="0.5" style="width: 300px"></md-gb-progress>');
+    expectDp('md-gb-progress >> .progress-container', 'offset-left', {eq: 4, rel: 'md-gb-progress >> [part=indicator]'});
+    expectDp('md-gb-progress >> .progress-container', 'offset-right', {eq: 4, rel: 'md-gb-progress >> [part=indicator]'});
+  });
 });

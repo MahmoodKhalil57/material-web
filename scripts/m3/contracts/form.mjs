@@ -88,7 +88,7 @@ export const entries = {
     imports: ['./md-gb-radio.js'],
     spec: {
       value: ['radio-button-68ee76', 'radio-button-822466', 'radio-button-4a92aa'],
-      group: ['radio-button-68ee76', 'radio-button-822466'],
+      group: ['radio-button-68ee76', 'radio-button-822466', 'radio-button-663210', 'radio-button-b150b7', 'radio-button-45c957', 'radio-button-d939ba'],
       scope: ['radio-button-68ee76', 'radio-button-822466'],
       reset: ['radio-button-e9e213', 'radio-button-68ee76'],
       restore: ['radio-button-e9e213', 'radio-button-22e734'],
@@ -195,7 +195,6 @@ export const entries = {
   await settle();
   await press('ArrowUp');
   await press('Enter');`,
-    validation: false,
     dirty: false,
     shownError: null,
     innerDisabled: null,

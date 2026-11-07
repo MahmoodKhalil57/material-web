@@ -547,10 +547,15 @@ export class SearchViewElement extends LitElement {
           detail: {value: this.value},
         }),
       );
+      // The query stays visible in the input, but out of focus; the arrow
+      // keys still move into the results (search.md Search results).
+      this.container?.focus({preventScroll: true});
       return;
     }
     const options = getResultOptions(results);
-    if (moveResultFocus(event, input, options)) return;
+    const origin =
+      path[0] === this.container && this.container ? this.container : input;
+    if (moveResultFocus(event, origin, options)) return;
     // Enter on a non-native option activates it.
     const target = path[0];
     if (
@@ -583,7 +588,10 @@ export class SearchViewElement extends LitElement {
         part="dialog"
         aria-label=${label}
         @keydown=${this.handleKeyDown}>
-        <div class="${SEARCH_VIEW_CLASSES.container}" part="container">
+        <div
+          class="${SEARCH_VIEW_CLASSES.container}"
+          part="container"
+          tabindex="-1">
           <div class="${SEARCH_VIEW_CLASSES.header}" part="header">
             <slot name="leading">
               <button

@@ -53,6 +53,7 @@ describe('<md-gb-skeleton>', () => {
     expect(content.inert).toBeTrue();
   });
 
+  // spec: motion-transitions-f42659, motion-transitions-4ecbe4, motion-transitions-508ea7
   it('keeps the content layout while loading', async () => {
     const {skeleton, content} = await setupTest();
     expect(content.getBoundingClientRect().height).toBeGreaterThan(0);
@@ -61,6 +62,7 @@ describe('<md-gb-skeleton>', () => {
     );
   });
 
+  // spec: motion-transitions-fc01f1, motion-transitions-60e397, motion-transitions-eed611
   it('fades the content in when loaded', async () => {
     const {skeleton, content} = await setupTest();
     skeleton.loading = false;
@@ -73,12 +75,27 @@ describe('<md-gb-skeleton>', () => {
     expect(style.transitionDuration).toBe('0.2s');
   });
 
+  // spec: motion-transitions-503062, motion-transitions-ac2c1d
   it('pulses with the extra long duration', async () => {
     const {placeholder} = await setupTest();
     const style = getComputedStyle(placeholder);
     expect(style.animationName).toBe('md-skeleton-pulse');
     expect(style.animationDuration).toBe('2s');
     expect(style.backgroundAttachment).toBe('fixed');
+  });
+
+  // spec: motion-transitions-802540
+  it('sweeps the pulse from the top left to the bottom right (mirrored in RTL)', async () => {
+    const {skeleton, placeholder} = await setupTest();
+    // 135deg points toward the bottom right; the gradient is fixed to the
+    // viewport so the pulse crosses the whole screen.
+    expect(getComputedStyle(placeholder).backgroundImage).toContain('135deg');
+    expect(getComputedStyle(placeholder).backgroundAttachment).toBe('fixed');
+    expect(getComputedStyle(placeholder).animationName).toBe('md-skeleton-pulse');
+    skeleton.dir = 'rtl';
+    expect(getComputedStyle(placeholder).backgroundImage).toContain('225deg');
+    expect(getComputedStyle(placeholder).animationName).toBe('md-skeleton-pulse-rtl');
+    skeleton.dir = '';
   });
 
   it('reflects the shape', async () => {

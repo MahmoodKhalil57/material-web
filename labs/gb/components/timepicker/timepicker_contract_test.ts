@@ -163,6 +163,50 @@ describe('<md-gb-time-picker> form contract (shared form layer)', () => {
     expect(submittedEntries(f.form)).toEqual([['when', '09:30']]);
   });
 
+  it('is invalid while required and empty, valid once picked', async () => {
+    const f = await setupFormPicker({required: ''});
+    expect(f.el.validity.valueMissing).toBeTrue();
+    expect(f.form.checkValidity()).toBeFalse();
+    await pickFormPicker(f);
+    expect(f.el.validity.valid).toBeTrue();
+    expect(f.form.checkValidity()).toBeTrue();
+  });
+
+  it('setCustomValidity() invalidates until cleared', async () => {
+    const f = await setupFormPicker();
+    f.el.setCustomValidity('Not available');
+    expect(f.el.validity.customError).toBeTrue();
+    expect(f.el.validationMessage).toBe('Not available');
+    expect(f.form.checkValidity()).toBeFalse();
+    f.el.setCustomValidity('');
+    expect(f.el.validity.valid).toBeTrue();
+  });
+
+  it('blocks a submit while invalid and lets it through once valid', async () => {
+    const f = await setupFormPicker({required: ''});
+    let submitted = 0;
+    f.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitted++;
+    });
+    f.form.requestSubmit();
+    expect(submitted).toBe(0);
+    await pickFormPicker(f);
+    f.form.requestSubmit();
+    expect(submitted).toBe(1);
+  });
+
+  it('reportValidity() fires invalid and reports false while required and empty', async () => {
+    const f = await setupFormPicker({required: ''});
+    let invalid = 0;
+    f.el.addEventListener('invalid', () => invalid++);
+    expect(f.el.reportValidity()).toBeFalse();
+    expect(invalid).toBe(1);
+    await pickFormPicker(f);
+    expect(f.el.reportValidity()).toBeTrue();
+    expect(invalid).toBe(1);
+  });
+
   it('follows a disabled fieldset, is left out of the form and recovers', async () => {
     const f = await setupFormPicker({value: '09:30'});
     expect(f.el.disabled).toBeFalse();
@@ -174,6 +218,14 @@ describe('<md-gb-time-picker> form contract (shared form layer)', () => {
     await settle();
     expect(f.el.disabled).toBeFalse();
     expect(submittedEntries(f.form)).toEqual([['when', '09:30']]);
+  });
+
+  it('is not validated while disabled', async () => {
+    const f = await setupFormPicker({required: ''});
+    f.fieldset.disabled = true;
+    await settle();
+    expect(f.el.willValidate).toBeFalse();
+    expect(f.form.checkValidity()).toBeTrue();
   });
 });
 

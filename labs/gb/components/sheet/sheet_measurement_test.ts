@@ -343,6 +343,15 @@ describe('<md-gb-bottom-sheet> measurements', () => {
     expectDp('md-gb-side-sheet >> [part=container]', 'width', {max: 400});
   });
 
+  // spec: side-sheets-6bdd56, side-sheets-a21f9d
+  it('Standard: Margins when detached', async () => {
+    await mount('<div style="position: fixed; inset: 0"><md-gb-side-sheet open quick headline="Title" divider detached>Content<button slot="actions">Save</button></md-gb-side-sheet></div>');
+    await settleStyle('md-gb-side-sheet >> [part=container]');
+    expectDp('md-gb-side-sheet >> [part=container]', 'offset-left', {eq: 16, rel: 'window'});
+    expectDp('md-gb-side-sheet >> [part=container]', 'offset-top', {eq: 16, rel: 'window'});
+    expectDp('md-gb-side-sheet >> [part=container]', 'offset-bottom', {eq: 16, rel: 'window'});
+  });
+
   // spec: side-sheets-bb73f6, side-sheets-1eb4cc
   it('Modal: Start/end padding', async () => {
     await mount('<md-gb-side-sheet open quick headline="Title" divider modal>Content<button slot="actions">Save</button></md-gb-side-sheet>');

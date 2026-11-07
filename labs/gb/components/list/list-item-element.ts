@@ -185,7 +185,6 @@ export class ListItemElement extends baseClass {
         position: relative;
         z-index: 1;
         align-self: stretch;
-        align-items: inherit;
       }
       .list-item-has-actions {
         touch-action: pan-y;
@@ -459,7 +458,26 @@ export class ListItemElement extends baseClass {
     this.revealed = "";
   }
 
+  /**
+   * Whether the item is an option of a selectable list: the list sets it so
+   * the item has the `option` role and exposes whether it is selected.
+   *
+   * @internal
+   */
+  set option(option: boolean) {
+    this.isOption = option;
+    this.syncOptionAria();
+  }
+
+  private isOption = false;
+
+  private syncOptionAria() {
+    this[internals].role = this.isOption ? "option" : "listitem";
+    this[internals].ariaSelected = this.isOption ? String(this.checked) : null;
+  }
+
   protected override updated(changed: PropertyValues<this>) {
+    if (changed.has("checked") && this.isOption) this.syncOptionAria();
     if (changed.has("rovingTabIndex")) this.syncSlottedTabIndex();
     if (changed.has("revealed") && !this.swiping) {
       this.setOffset(this.anchorFor(this.revealed));
@@ -722,7 +740,10 @@ export class ListItemElement extends baseClass {
       this.itemElement?.focus();
       return;
     }
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const vertical = event.key === "ArrowUp" || event.key === "ArrowDown";
+    if (!vertical && event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+      return;
+    }
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
       return;
     }
@@ -735,10 +756,28 @@ export class ListItemElement extends baseClass {
     // list moves to the next or previous item (lists.md, Keyboard
     // navigation: "Down and right arrow keys | Moves to the next element in
     // the list").
-    const row = this.rowElements();
-    const current = row.findIndex((el) => path.includes(el));
+    const all = this.rowElements();
+    // Up and Down only step through the item and its slotted actions, not
+    // its drag handle, reorder or reveal buttons or swipe actions.
+    const row = vertical
+      ? all.filter(
+          (el) =>
+            !el.matches(
+              ".list-item-reveal-button, .list-item-move-up, .list-item-move-down, .list-item-drag-handle",
+            ) && !el.closest("[slot$='-actions']"),
+        )
+      : all;
+    // The innermost control in the path: slotted controls sit inside the
+    // item button in the flat tree.
+    const origin = path.find((node) => row.includes(node as HTMLElement));
+    const current = origin ? row.indexOf(origin as HTMLElement) : -1;
     if (current < 0) return;
-    const forward = (event.key === "ArrowRight") !== this.isRtl();
+    // Up and Down step through the actions too, in reading order ("Down and
+    // Right arrow keys move focus to the next action of the list item, or to
+    // the first action in the next item").
+    const forward = vertical
+      ? event.key === "ArrowDown"
+      : (event.key === "ArrowRight") !== this.isRtl();
     const next = row[current + (forward ? 1 : -1)];
     if (!next) return;
     event.preventDefault();

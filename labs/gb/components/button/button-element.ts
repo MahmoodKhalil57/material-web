@@ -89,6 +89,15 @@ export class ButtonElement extends baseClass {
         --md-icon-fill: 1;
       }
 
+      /*
+       * A selected toggle whose icon has no filled version gets a semibold
+       * icon instead of a filled one (buttons.md Toggle buttons).
+       */
+      :host([type='toggle'][selected][unfilled-icon]) {
+        --md-icon-fill: 0;
+        --md-icon-wght: 600;
+      }
+
       .btn {
         flex: 1;
         position: relative;
@@ -128,6 +137,13 @@ export class ButtonElement extends baseClass {
    * Changes the shape of the button to be square.
    */
   @property({type: Boolean}) square = false;
+
+  /**
+   * Set when the icon has no filled version: a selected toggle button then
+   * shows the icon in semibold weight instead of filled.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'unfilled-icon'})
+  unfilledIcon = false;
 
   /**
    * A string indicating the behavior of the button.

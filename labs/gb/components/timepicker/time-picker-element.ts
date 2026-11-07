@@ -17,6 +17,11 @@ import {
 import {property, query, state} from 'lit/decorators.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {
+  createValidator,
+  getValidityAnchor,
+  mixinConstraintValidation,
+} from '../../../behaviors/constraint-validation.js';
+import {
   getFormState,
   getFormValue,
   mixinFormAssociated,
@@ -29,6 +34,7 @@ import {AnnouncerController} from '../shared/announcer.js';
 import {clampDensity, type Density} from '../shared/density.js';
 import {FormDisabledController} from '../shared/form-field.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
+import {TimePickerValidator} from './time-picker-validator.js';
 import {waitForMotion} from '../shared/motion.js';
 import {
   angleToValue,
@@ -84,6 +90,16 @@ const TYPE_AHEAD_MS = 1000;
 export const HORIZONTAL_LAYOUT_QUERY =
   '(orientation: landscape) and (max-height: 599.98px)';
 
+/**
+ * Viewport where the horizontal dial layout no longer fits without scrolling
+ * (406dp tall plus the dialog's 24dp window margins): the dial picker falls
+ * back to the input picker (spec page "Adaptive design": "Time pickers can
+ * fallback to the input time picker when there isn't enough vertical real
+ * estate to present the landscape orientation without scrolling").
+ */
+export const INPUT_FALLBACK_QUERY =
+  '(orientation: landscape) and (max-height: 453.98px)';
+
 const KEYBOARD_ICON =
   'M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z';
 const CLOCK_ICON =
@@ -105,7 +121,9 @@ function currentTime(): TimeOfDay {
 // spec-labels: time-pickers/specs/measurements/time-picker-dial-vertical, time-pickers/specs/measurements/time-picker-dial-horizontal, time-pickers/specs/measurements/time-picker-input
 // spec-labels: time-pickers/specs/states, time-pickers/specs/configurations/vertical-orientation-and-horizontal-orientation
 // spec-labels: time-pickers/specs/configurations/12-hour-and-24-hour-time-picker-inputs
-const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
+const baseClass = mixinConstraintValidation(
+  mixinFormAssociated(mixinElementInternals(LitElement)),
+);
 
 /**
  * A Material Design time picker: lets people pick an hour and minute on a
@@ -290,6 +308,12 @@ export class TimePickerElement extends baseClass {
   /** Skips transitions. */
   @property({type: Boolean, reflect: true}) quick = false;
 
+  /**
+   * Whether a time is required: with no time the picker is invalid
+   * (`valueMissing`) and blocks the form's submit.
+   */
+  @property({type: Boolean, reflect: true}) required = false;
+
   /** Cancel action label. */
   @property({attribute: 'cancel-label'}) cancelLabel = 'Cancel';
 
@@ -414,6 +438,9 @@ export class TimePickerElement extends baseClass {
     return this.modalSurface.closing;
   }
   private mediaQuery?: MediaQueryList;
+  private fallbackQuery?: MediaQueryList;
+  /** The input mode is in use only because the viewport is too short. */
+  private inputFromFallback = false;
 
   constructor() {
     super();
@@ -428,12 +455,16 @@ export class TimePickerElement extends baseClass {
       this.mediaQuery = window.matchMedia(HORIZONTAL_LAYOUT_QUERY);
       this.viewportIsShort = this.mediaQuery.matches;
       this.mediaQuery.addEventListener('change', this.handleViewportChange);
+      this.fallbackQuery = window.matchMedia(INPUT_FALLBACK_QUERY);
+      this.fallbackQuery.addEventListener('change', this.applyInputFallback);
+      this.applyInputFallback();
     }
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.mediaQuery?.removeEventListener('change', this.handleViewportChange);
+    this.fallbackQuery?.removeEventListener('change', this.applyInputFallback);
     clearTimeout(this.typeAheadTimer);
   }
 
@@ -505,6 +536,7 @@ export class TimePickerElement extends baseClass {
 
   /** Switches between the dial and input modes. */
   toggleMode() {
+    this.inputFromFallback = false;
     this.mode = this.mode === 'dial' ? 'input' : 'dial';
     this.syncFieldText();
     this.announce(this.headlineText);
@@ -516,6 +548,18 @@ export class TimePickerElement extends baseClass {
 
   override formStateRestoreCallback(state: string) {
     this.value = state;
+  }
+
+  override [createValidator]() {
+    return new TimePickerValidator(() => ({
+      required: this.required,
+      hasValue: !!this.committed,
+    }));
+  }
+
+  /** The picker is not a single field: no element shows the browser's pop-up. */
+  override [getValidityAnchor](): HTMLElement | null {
+    return null;
   }
 
   override [getFormValue]() {
@@ -980,6 +1024,26 @@ export class TimePickerElement extends baseClass {
     this.viewportIsShort = event.matches;
   };
 
+  /**
+   * Falls back to the input picker while the viewport is too short for the
+   * dial, and returns to the dial when it grows again. An explicit
+   * `orientation`, or the person's own mode choice, is left alone.
+   */
+  private readonly applyInputFallback = () => {
+    const tooShort = !!this.fallbackQuery?.matches;
+    if (tooShort && this.mode === 'dial' && !this.orientation) {
+      this.inputFromFallback = true;
+      this.mode = 'input';
+      this.syncFieldText();
+    } else if (!tooShort && this.inputFromFallback) {
+      this.inputFromFallback = false;
+      if (this.mode === 'input') {
+        this.mode = 'dial';
+        this.syncFieldText();
+      }
+    }
+  };
+
   // ---- Rendering ----
 
   protected override willUpdate(changed: PropertyValues<this>) {
@@ -1151,7 +1215,7 @@ export class TimePickerElement extends baseClass {
       aria-valuemin=${hourMode ? (hour24 ? 0 : 1) : 0}
       aria-valuemax=${hourMode ? (hour24 ? 23 : 12) : 59}
       aria-valuenow=${value}
-      aria-valuetext=${this.valueText(this.selection, value)}
+      aria-valuetext=${this.dialValueText(this.selection, value)}
       aria-disabled=${this.disabled ? 'true' : nothing}
       style=${styleMap(dialStyle)}
       @pointerdown=${this.handleDialPointerDown}
@@ -1302,6 +1366,17 @@ export class TimePickerElement extends baseClass {
               </button>`
       }
     </div>`;
+  }
+
+  /**
+   * What the dial reads: the selection out of the total, such as "Hour 7 of
+   * 12" (time-pickers.md Accessibility, Dial selector).
+   */
+  private dialValueText(selection: TimePickerSelection, value: number) {
+    if (selection === 'minute') {
+      return `Minute ${value} of 60`;
+    }
+    return `Hour ${value} of ${this.is24Hour ? 24 : 12}`;
   }
 
   private valueText(selection: TimePickerSelection, value: number) {

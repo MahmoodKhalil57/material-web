@@ -23,15 +23,24 @@
     }
 
     & {
+      // The container is 48dp by default and can be resized with `--size`
+      // from 24dp to 240dp (spec Responsive layout); the active indicator
+      // keeps its ratio to the container (38 / 48).
+      --_size: clamp(
+        24px,
+        var(--size, var(--container-width)),
+        240px
+      );
+      --_ratio: calc(var(--active-indicator-size) / var(--container-width));
       align-items: center;
       background-color: var(--container-color);
-      block-size: var(--container-height);
-      border-radius: var(--container-shape);
+      block-size: var(--_size);
+      border-radius: calc(var(--_size) / 2);
       box-sizing: border-box;
       color: var(--active-indicator-color);
       display: inline-flex;
       flex: none;
-      inline-size: var(--container-width);
+      inline-size: var(--_size);
       justify-content: center;
       overflow: hidden;
       vertical-align: middle;
@@ -40,10 +49,10 @@
     // A linear turn every few seconds, independent of the morphs.
     .loading-indicator-spin {
       animation: md-loading-indicator-spin motion.$spin-duration linear infinite;
-      block-size: var(--active-indicator-size);
+      block-size: calc(var(--_size) * var(--_ratio));
       display: flex;
       flex: none;
-      inline-size: var(--active-indicator-size);
+      inline-size: calc(var(--_size) * var(--_ratio));
     }
 
     // +90deg per morph, on the morph spring.

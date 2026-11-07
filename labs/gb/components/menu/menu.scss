@@ -124,6 +124,11 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
     ::slotted(.divider) {
       margin: 8px 16px;
     }
+
+    // menus.md measurements: "Divider top/bottom padding 8dp".
+    ::slotted(md-gb-divider) {
+      margin-block: 8px;
+    }
   }
 
   // A group of items: a `<div class="menu-group">` in Light DOM, or the

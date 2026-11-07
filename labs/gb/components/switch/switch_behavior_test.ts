@@ -85,13 +85,17 @@ describe('<md-gb-switch> spec behavior', () => {
     );
   });
 
-  // spec: switch-1ca0b6
+  // spec: switch-1ca0b6, switch-e867fc
   it('shows the hovered state when the pointer is over it', async () => {
     const {switches, button} = await setup(
       html`<md-gb-switch aria-label="a"></md-gb-switch>`,
     );
+    const idle = getComputedStyle(button(switches[0]), '::after').backgroundImage;
     await pointerOver(switches[0]);
     expect(prop(button(switches[0]), '--handle-color')).toBe('rgb(6, 6, 6)');
+    // The hover area (state layer) appears around the handle.
+    finish(button(switches[0]));
+    expect(getComputedStyle(button(switches[0]), '::after').backgroundImage).not.toBe(idle);
     await sendMouse({type: 'move', position: [0, 0]});
   });
 
@@ -107,7 +111,7 @@ describe('<md-gb-switch> spec behavior', () => {
     expect(prop(button(switches[0]), '--handle-color')).toBe('rgb(6, 6, 6)');
   });
 
-  // spec: switch-91bddb, switch-5367bd
+  // spec: switch-91bddb, switch-5367bd, switch-e867fc
   it('grows the handle to 28px while pressed', async () => {
     const {switches, button} = await setup(
       html`<md-gb-switch aria-label="a"></md-gb-switch>`,
@@ -123,7 +127,7 @@ describe('<md-gb-switch> spec behavior', () => {
     await sendMouse({type: 'move', position: [0, 0]});
   });
 
-  // spec: switch-10d6ba
+  // spec: switch-10d6ba, switch-b856fb
   it('indicates the on state with a larger handle', async () => {
     const {switches, button} = await setup(html`
       <md-gb-switch aria-label="a"></md-gb-switch>

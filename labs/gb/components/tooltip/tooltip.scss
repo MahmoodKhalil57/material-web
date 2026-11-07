@@ -113,7 +113,7 @@ $effects-duration: var(--md-sys-motion-spring-fast-effects-duration, 140ms);
     text-align: start;
   }
 
-  .tooltip.tooltip-rich.tooltip-has-actions {
+  .tooltip.tooltip-rich {
     padding-block-end: var(--actions-padding-block-end);
   }
 

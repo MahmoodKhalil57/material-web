@@ -6,6 +6,7 @@
 
 import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
+import '../tooltip/md-gb-tooltip.js';
 import {ARIAMixinStrict} from '../../../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../../../internal/aria/delegate.js';
 import {
@@ -116,6 +117,15 @@ export class FabElement extends baseClass {
   expanded = true;
 
   /**
+   * Shows a tooltip with the FAB's name (the `label`, else `aria-label`) on
+   * hover and keyboard focus. On by default for an icon-only FAB, whose icon
+   * has no visible text (floating-action-button.md: on web, a FAB should
+   * display a tooltip with its text label); `tooltip="false"` turns it off.
+   */
+  @property({type: Boolean, converter: expandedUnlessFalseConverter})
+  tooltip = true;
+
+  /**
    * Opt-in: the `id` of a scroll container (in the same root), or `window`.
    * The FAB collapses while it scrolls down and expands while it scrolls up.
    */
@@ -154,7 +164,14 @@ export class FabElement extends baseClass {
           >${this.label}</span
         >`
       : nothing;
+    const name = this.label || ariaLabel;
+    const iconOnly = !this.label || !this.expanded;
+    const tooltip =
+      this.tooltip && iconOnly && name
+        ? html`<md-gb-tooltip for="fab">${name}</md-gb-tooltip>`
+        : nothing;
     return html`<button
+      id="fab"
       part="fab"
       class="${fab({
         color: this.color,
@@ -163,7 +180,7 @@ export class FabElement extends baseClass {
       })}"
       aria-label=${ariaLabel || nothing}>
       <slot></slot>${label}
-    </button>`;
+    </button>${tooltip}`;
   }
 
   protected override updated(changed: Map<PropertyKey, unknown>) {

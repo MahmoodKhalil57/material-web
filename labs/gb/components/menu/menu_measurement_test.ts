@@ -284,6 +284,15 @@ describe('<md-gb-menu> measurements', () => {
     expectDp('md-gb-menu >> light:md-gb-menu-item >> [part=menu-item]', 'gap', {eq: 12});
   });
 
+  // spec: menus-aa323a, menus-90d6d4
+  it('Divider top/bottom padding', async () => {
+    await mount('<md-gb-menu open><md-gb-menu-item>One</md-gb-menu-item><md-gb-divider></md-gb-divider><md-gb-menu-item>Two</md-gb-menu-item></md-gb-menu>');
+    need('md-gb-menu').showPopover();
+    await settleStyle('md-gb-menu >> [part=menu]');
+    expectDp('md-gb-menu >> light:md-gb-divider', 'margin-top', {eq: 8});
+    expectDp('md-gb-menu >> light:md-gb-divider', 'margin-bottom', {eq: 8});
+  });
+
   // spec: menus-5bf46b, menus-a92538
   it('Divider height', async () => {
     await mount('<md-gb-menu open><md-gb-menu-item>One</md-gb-menu-item><md-gb-divider></md-gb-divider><md-gb-menu-item>Two</md-gb-menu-item></md-gb-menu>');

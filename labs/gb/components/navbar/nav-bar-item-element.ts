@@ -43,6 +43,12 @@ export class NavBarItemElement extends AriaTabElement {
         display: flex;
         outline: none;
       }
+
+      /* An icon with no filled style uses the semibold weight when active. */
+      :host([unfilled-icon][active]) .nav-bar-item {
+        --md-icon-fill: 0;
+        --md-icon-wght: 600;
+      }
     `,
   ];
 
@@ -83,6 +89,13 @@ export class NavBarItemElement extends AriaTabElement {
 
   /** Optional label text if not provided via default slot. */
   @property() label = '';
+
+  /**
+   * Whether the icon has no filled style. The active destination then uses
+   * the semibold icon weight instead of the filled icon.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'unfilled-icon'})
+  unfilledIcon = false;
 
   /** Optional badge text (or 'dot' / 'true' for a small dot badge). */
   @property() badge = '';

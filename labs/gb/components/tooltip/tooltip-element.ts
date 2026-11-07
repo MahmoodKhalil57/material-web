@@ -142,6 +142,20 @@ export class TooltipElement extends LitElement {
    */
   @property({type: Boolean, reflect: true}) persistent = false;
 
+  /**
+   * Plain only: the anchor has no visual boundary, such as a text baseline,
+   * so the tooltip sits 8dp from it instead of 4dp.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'no-boundary'})
+  noBoundary = false;
+
+  /**
+   * How the tooltip lines up with its anchor along the placement side:
+   * `center` (plain default) or `start` (rich default). A rich tooltip can
+   * be `center`ed below its anchor on desktop.
+   */
+  @property({reflect: true}) align: 'start' | 'center' | '' = '';
+
   /** Whether to draw a caret pointing at the anchor. */
   @property({type: Boolean, reflect: true}) caret = false;
 
@@ -230,9 +244,15 @@ export class TooltipElement extends LitElement {
       const style = getComputedStyle(this);
       const caretHeight = this.caret ? px(style, '--caret-height', 8) : 0;
       return {
-        placement: this.placement || (this.isRich ? 'below' : 'above'),
-        align: this.isRich ? 'start' : 'center',
-        spacing: px(style, '--anchor-spacing', 4) + caretHeight,
+        // A plain tooltip is above its anchor, or below it in an app bar.
+        placement:
+          this.placement ||
+          (this.isRich || this.anchorInAppBar() ? 'below' : 'above'),
+        align: this.align || (this.isRich ? 'start' : 'center'),
+        spacing:
+          (this.noBoundary
+            ? px(style, '--text-anchor-spacing', 8)
+            : px(style, '--anchor-spacing', 4)) + caretHeight,
         margin: px(style, '--viewport-margin', 8),
         caretInset: px(style, '--caret-width', 16) / 2 + 4,
       };
@@ -244,6 +264,19 @@ export class TooltipElement extends LitElement {
       this.applyPosition(position);
     },
   });
+
+  /** Whether the anchor is inside an app bar (also through shadow roots). */
+  private anchorInAppBar(): boolean {
+    let node: Node | null = this.boundAnchor;
+    while (node) {
+      if (node instanceof Element && node.closest('md-gb-app-bar')) {
+        return true;
+      }
+      const root: Node = node.getRootNode();
+      node = root instanceof ShadowRoot ? root.host : null;
+    }
+    return false;
+  }
 
   private get isRich() {
     return this.variant === TOOLTIP_VARIANTS.rich;
@@ -593,9 +626,20 @@ export class TooltipElement extends LitElement {
     this.hideTimer = undefined;
   }
 
+  /**
+   * The tooltip's interactive elements in reading order (top to bottom):
+   * links in the supporting text, then the actions.
+   */
+  private interactiveElements(): HTMLElement[] {
+    return Array.from(
+      this.querySelectorAll<HTMLElement>(
+        'a[href], button, [slot="action"], [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((el) => !el.matches(':disabled, [disabled]'));
+  }
+
   private focusFirstAction(): boolean {
-    const target = Array.from(this.querySelectorAll<HTMLElement>('[slot="action"]'))
-      .find((el) => !el.matches(':disabled,[disabled]'));
+    const target = this.interactiveElements()[0];
     if (!target) return false;
     target.focus();
     return true;
@@ -720,14 +764,20 @@ export class TooltipElement extends LitElement {
   };
 
   private readonly handleTooltipKeyDown = (event: KeyboardEvent) => {
-    // Shift+Tab from the first action returns to the anchor.
-    if (event.key !== 'Tab' || !event.shiftKey || !this.boundAnchor) return;
-    const actions = Array.from(
-      this.querySelectorAll<HTMLElement>('[slot="action"]'),
+    // Focus moves top to bottom between the interactive elements (links, then
+    // actions). Shift+Tab from the first one returns to the anchor.
+    if (event.key !== 'Tab' || !this.boundAnchor) return;
+    const items = this.interactiveElements();
+    const index = items.findIndex((el) =>
+      composedContains(el, event.target as Node),
     );
-    if (actions.length && composedContains(actions[0], event.target as Node)) {
+    if (index < 0) return;
+    if (event.shiftKey) {
       event.preventDefault();
-      this.boundAnchor.focus();
+      (items[index - 1] ?? this.boundAnchor).focus();
+    } else if (index < items.length - 1) {
+      event.preventDefault();
+      items[index + 1].focus();
     }
   };
 }

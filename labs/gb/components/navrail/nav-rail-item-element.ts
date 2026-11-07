@@ -44,6 +44,12 @@ export class NavRailItemElement extends AriaTabElement {
         outline: none;
       }
 
+      /* An icon with no filled style uses the semibold weight when active. */
+      :host([unfilled-icon][selected]) .nav-rail-item {
+        --md-icon-fill: 0;
+        --md-icon-wght: 600;
+      }
+
       @media (hover: hover) {
         :host(:hover) .nav-rail-item {
           --md-icon-color: var(--item-inactive-hovered-icon-color);
@@ -127,6 +133,19 @@ export class NavRailItemElement extends AriaTabElement {
 
   /** Optional label text if not provided via default slot. */
   @property() label = '';
+
+  /**
+   * Whether the icon has no filled style. The active destination then uses
+   * the semibold icon weight instead of the filled icon.
+   */
+  @property({type: Boolean, reflect: true, attribute: 'unfilled-icon'})
+  unfilledIcon = false;
+
+  /**
+   * Whether the destination is secondary: it shows only while the rail is
+   * expanded.
+   */
+  @property({type: Boolean, reflect: true}) secondary = false;
 
   /** Optional badge text (or 'dot' / 'true' for a small dot badge). */
   @property() badge = '';

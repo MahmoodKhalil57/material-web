@@ -210,6 +210,7 @@ describe('<md-gb-pull-to-refresh>', () => {
       expect(element.refreshing).toBeFalse();
     });
 
+    // spec: loading-indicator-1ec7ff, loading-indicator-c9516c
     it('refreshes when released past the threshold', async () => {
       const {element, content, container} = await setupTest();
       const refreshSpy = jasmine.createSpy('refresh');
@@ -229,6 +230,7 @@ describe('<md-gb-pull-to-refresh>', () => {
       expect(status.textContent!.trim()).toBe('Refreshing');
     });
 
+    // spec: loading-indicator-1ec7ff
     it('does not refresh when released before the threshold', async () => {
       const {element, content} = await setupTest();
       const refreshSpy = jasmine.createSpy('refresh');
@@ -239,6 +241,7 @@ describe('<md-gb-pull-to-refresh>', () => {
       expect(element.refreshing).toBeFalse();
     });
 
+    // spec: loading-indicator-34b068
     it('cancels when pulled back up', async () => {
       const {element, content} = await setupTest();
       pull(content, 0, [20, 200, 40]);
@@ -246,6 +249,7 @@ describe('<md-gb-pull-to-refresh>', () => {
       expect(element.refreshing).toBeFalse();
     });
 
+    // spec: loading-indicator-3a2cdc, loading-indicator-15f70f
     it('rests the indicator at the threshold until refreshing ends', async () => {
       const {element, content, indicator} = await setupTest();
       pull(content, 0, [20, 400]);
@@ -261,6 +265,22 @@ describe('<md-gb-pull-to-refresh>', () => {
       expect(indicator.getAttribute('aria-hidden')).toBe('true');
       const status = element.shadowRoot!.querySelector('[role="status"]')!;
       expect(status.textContent!.trim()).toBe('');
+    });
+
+    // spec: loading-indicator-bb0156
+    it('keeps the indicator in view while the content scrolls during a refresh', async () => {
+      const {element, content, indicator, scroller} = await setupTest();
+      pull(content, 0, [20, 400]);
+      await env.waitForStability();
+      expect(element.refreshing).toBeTrue();
+      scroller.scrollTop = 300;
+      await env.waitForStability();
+      indicator.getAnimations().forEach((a) => a.finish());
+      const host = element.getBoundingClientRect();
+      const box = indicator.getBoundingClientRect();
+      expect(getComputedStyle(indicator).visibility).toBe('visible');
+      expect(box.top).toBeGreaterThanOrEqual(host.top - 1);
+      expect(box.bottom).toBeLessThanOrEqual(host.bottom + 1);
     });
 
     it('turns the loading indicator past the threshold', async () => {

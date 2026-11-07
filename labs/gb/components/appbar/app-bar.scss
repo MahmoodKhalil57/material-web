@@ -51,9 +51,12 @@ $search-bar-max-width: 720px;
   }
 
   // spec-labels: app-bars/specs/color/scroll-states
+  // On scroll there is "no drop shadow, instead a color fill creates
+  // separation from content" (app-bars.md, Differences from M2): the tonal
+  // elevation token `--on-scroll-container-elevation` raises the container
+  // color, it does not cast a shadow.
   .app-bar-scrolled {
     background-color: var(--on-scroll-container-color);
-    box-shadow: var(--on-scroll-container-elevation);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -149,6 +152,18 @@ $search-bar-max-width: 720px;
     margin-inline-start: var(--title-inset);
   }
 
+  // Images and logos (app-bars.md, Adding logos).
+  .app-bar-image {
+    display: flex;
+    max-inline-size: 100%;
+
+    ::slotted(*) {
+      max-block-size: 40px;
+      max-inline-size: 100%;
+      object-fit: contain;
+    }
+  }
+
   .app-bar-title {
     margin: 0;
     font: var(--title-font);
@@ -236,7 +251,11 @@ $search-bar-max-width: 720px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    flex: 1 1 auto;
+    // app-bars.md, Resizing: the search container fills 100% of the space
+    // between the leading and trailing elements until it reaches 312dp, then
+    // only grows to fill 50% of that space.
+    flex: none;
+    inline-size: min(100%, max(312px, 50%));
     min-width: 0;
     max-width: $search-bar-max-width;
     min-height: var(--search-container-height);

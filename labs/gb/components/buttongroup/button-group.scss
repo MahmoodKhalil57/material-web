@@ -42,7 +42,9 @@
   // Variant layout: standard (default)
   .btn-group-standard,
   .btn-group:not(.btn-group-connected) {
-    flex-wrap: wrap;
+    // button-groups.md Resizing: a group moves through layouts in a single
+    // line; it shouldn't wrap to a second line.
+    flex-wrap: nowrap;
     @include button-group-tokens.standard-sm;
 
     &:has(> :is([size='xs'], .btn-xs)) {
@@ -67,6 +69,13 @@
   }
 
   // Connected variant layout and gaps
+  // A connected group spans the width of its surface, increasing the widths
+  // of the buttons inside (button-groups.md Container).
+  .btn-group-connected > .btn,
+  .btn-group-connected > * {
+    flex-grow: 1;
+  }
+
   .btn-group-connected {
     flex-wrap: nowrap;
     @include button-group-tokens.connected;
@@ -228,9 +237,18 @@
   }
 
   // Outlined selected button has no outline in both standard and connected variants
-  .btn-group > .btn.btn-outlined:is(.btn-selected, [aria-pressed='true']),
+  // (a disabled one keeps the disabled button colors: buttons.md Disabled).
   .btn-group
-    > [color='outlined']:is([selected], [aria-pressed='true'])::part(btn) {
+    > .btn.btn-outlined:is(.btn-selected, [aria-pressed='true']):not(
+      :disabled,
+      .disabled,
+      [aria-disabled='true']
+    ),
+  .btn-group
+    > [color='outlined']:is([selected], [aria-pressed='true']):not(
+      [disabled],
+      [soft-disabled]
+    )::part(btn) {
     --outline-color: transparent;
     border-color: transparent;
     background-color: var(--md-sys-color-inverse-surface);

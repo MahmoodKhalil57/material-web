@@ -156,7 +156,6 @@
    "progress-indicators-637069",
    "progress-indicators-9ad98c",
    "progress-indicators-b6327b",
-   "radio-button-7b3f8e",
    "radio-button-e05570",
    "search-19d451",
    "search-36f3e0",
@@ -2859,9 +2858,7 @@
    "elevation-f678be"
   ],
   "fab-menu/specs/measurements": [
-   "fab-menu-10b2e4",
-   "fab-menu-707a36",
-   "fab-menu-837b40"
+   "fab-menu-707a36"
   ],
   "icons/designing-icons/icon-metrics/anatomy": [
    "icons-6c2ed8",
@@ -2870,85 +2867,21 @@
    "icons-b275c8",
    "icons-c92116"
   ],
-  "interaction-gestures/tab-1/types-of-gestures/swipe": [
-   "interaction-gestures-ae499a"
-  ],
   "interaction-inputs/tab-1/external-inputs-for-devices/input-device-behaviors": [
-   "interaction-inputs-436ac1",
    "interaction-inputs-786dbb",
-   "interaction-inputs-a92149",
-   "interaction-inputs-b307e1",
    "interaction-inputs-efaa26"
   ],
   "interaction-selection/tab-1/selection-indicators": [
-   "interaction-selection-03be0d",
-   "interaction-selection-05e235",
-   "interaction-selection-07f10e",
-   "interaction-selection-1c8dd6",
-   "interaction-selection-3a99c3",
-   "interaction-selection-3e106f",
-   "interaction-selection-3ffe78",
-   "interaction-selection-504d1d",
-   "interaction-selection-51e678",
-   "interaction-selection-5ff2fd",
-   "interaction-selection-856cb9",
-   "interaction-selection-a6f97a",
-   "interaction-selection-b1b63a",
-   "interaction-selection-c0739a",
-   "interaction-selection-ee3bc2"
-  ],
-  "interaction-states/applying-states/disabled": [
-   "interaction-states-0c2b3c",
-   "interaction-states-2128d7",
-   "interaction-states-296613",
-   "interaction-states-8a4a3a",
-   "interaction-states-958a20",
-   "interaction-states-97a617",
-   "interaction-states-99010f",
-   "interaction-states-a6d043",
-   "interaction-states-aa0177",
-   "interaction-states-dfd586",
-   "interaction-states-e22cd3",
-   "interaction-states-e767ef"
-  ],
-  "interaction-states/applying-states/hover": [
-   "interaction-states-358427",
-   "interaction-states-37b5c2",
-   "interaction-states-66a13e",
-   "interaction-states-6f4995",
-   "interaction-states-7c8ce5"
-  ],
-  "interaction-states/applying-states/pressed": [
-   "interaction-states-47c383",
-   "interaction-states-4f5d95",
-   "interaction-states-72e9ef",
-   "interaction-states-a15b30",
-   "interaction-states-c3bd3f"
-  ],
-  "interaction-states/applying-states/enabled": [
-   "interaction-states-4944ed",
-   "interaction-states-54d395",
-   "interaction-states-920331"
-  ],
-  "interaction-states/applying-states/dragged": [
-   "interaction-states-581df2",
-   "interaction-states-6afeb4",
-   "interaction-states-ae9cc9",
-   "interaction-states-bd1aa2"
-  ],
-  "interaction-states/applying-states/focused": [
-   "interaction-states-7cfb53",
-   "interaction-states-9380ab",
-   "interaction-states-a29d51",
-   "interaction-states-e1b5b5"
-  ],
-  "interaction-states/applying-states/disabled/behavior": [
-   "interaction-states-8fdb93",
-   "interaction-states-a63ef7"
+   "interaction-selection-504d1d"
   ],
   "layout-scaffold/rails/rails": [
-   "layout-scaffold-236688",
-   "layout-scaffold-cbfa10"
+   "layout-scaffold-236688"
+  ],
+  "lists/specs/list-baseline/layout/three-line-lists": [
+   "lists-02c500",
+   "lists-05342e",
+   "lists-90366d",
+   "lists-fa3cfa"
   ],
   "lists/specs/list-baseline/states": [
    "lists-116437",
@@ -2958,31 +2891,10 @@
    "lists-f488f7",
    "lists-ffb788"
   ],
-  "lists/specs/list-baseline/configurations/leading-video": [
-   "lists-25f323"
-  ],
   "lists/specs/variants/baseline-lists": [
    "lists-6e3b0b",
    "lists-b68252",
    "lists-c40015"
-  ],
-  "lists/specs/list-baseline/configurations/leading-image-or-thumbnail": [
-   "lists-7f525d"
-  ],
-  "lists/specs/list-baseline/configurations/leading-icon": [
-   "lists-865926"
-  ],
-  "lists/specs/list-baseline/configurations/leading-radio-button": [
-   "lists-a43b62"
-  ],
-  "lists/specs/list-baseline/configurations/leading-checkbox": [
-   "lists-e00042"
-  ],
-  "lists/specs/list-baseline/configurations/trailing-switch": [
-   "lists-e2680b"
-  ],
-  "lists/specs/list-baseline/configurations/leading-avatar": [
-   "lists-ee0a9c"
   ],
   "menus/specs/menu-baseline/states/selected-menu-items": [
    "menus-06aa18",
@@ -2997,10 +2909,6 @@
    "menus-8bc757",
    "menus-ff3d2c"
   ],
-  "menus/specs/menu-baseline/measurements": [
-   "menus-5777ee",
-   "menus-76bb14"
-  ],
   "menus/specs/menu-baseline/states/default-menu-items": [
    "menus-62b0a5",
    "menus-66ab0c",
@@ -3008,8 +2916,11 @@
    "menus-a870cc",
    "menus-e82cb0"
   ],
-  "menus/specs/menu-baseline/configurations": [
-   "menus-6933aa"
+  "menus/specs/menu-baseline/measurements": [
+   "menus-75b3cd",
+   "menus-76bb14",
+   "menus-b5267f",
+   "menus-b7dd6e"
   ],
   "navigation-bar/specs/baseline-navigation-bar": [
    "navigation-bar-36d39d",
@@ -3025,14 +2936,8 @@
    "navigation-bar-f1d74d"
   ],
   "navigation-rail/specs/configurations": [
-   "navigation-rail-0934d2",
-   "navigation-rail-1393b4",
-   "navigation-rail-3a45ff",
-   "navigation-rail-3ccdf1",
    "navigation-rail-8bdda6",
-   "navigation-rail-97d3c2",
    "navigation-rail-9d8ecf",
-   "navigation-rail-a5c09d",
    "navigation-rail-f63678"
   ],
   "search/specs/states/search-suggestions-results": [
@@ -3041,37 +2946,12 @@
    "search-845498",
    "search-d6b559"
   ],
-  "split-button/specs/states/trailing-button-shape": [
-   "split-button-0e4f06",
-   "split-button-11b552",
-   "split-button-43331c",
-   "split-button-71c25b",
-   "split-button-cfefa6",
-   "split-button-ea7bb0"
-  ],
-  "split-button/guidelines/behavior/menu-placement": [
-   "split-button-28705b",
-   "split-button-37f600",
-   "split-button-808fbb",
-   "split-button-e3528c"
-  ],
-  "split-button/specs/states/leading-button-shape": [
-   "split-button-4822af",
-   "split-button-7e8ca9",
-   "split-button-920aa2",
-   "split-button-966ff8",
-   "split-button-eb0651"
-  ],
   "toolbars/specs/bottom-app-bar-baseline/common-layouts": [
    "toolbars-9eca49"
   ],
   "typography/type-scale-tokens/language-height-support/language-script-categories": [
    "typography-0bd294",
    "typography-d6d5a7"
-  ],
-  "typography/applying-type/accessibility/color-contrast": [
-   "typography-366342",
-   "typography-f4c546"
   ],
   "typography/type-scale-tokens/where-emphasized-styles-can-be-used/components": [
    "typography-c0db18"
@@ -9334,18 +9214,15 @@
   "fab-menu-9903cf": {
    "rule": "llm-review",
    "evidence": [
-    "labs/gb/components/fabmenu/fab-menu.scss:117",
     "labs/gb/components/fabmenu/fab-menu.scss:166"
    ],
    "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
+    "claude-opus-5-5"
    ],
    "quoteHashes": [
-    "d48f454b9b2b",
     "7cc4b98db68f"
    ],
-   "final": "agreement"
+   "final": "claude-opus-5-5"
   },
   "fab-menu-9fbcd6": {
    "rule": "llm-review",
@@ -11606,6 +11483,19 @@
    ],
    "final": "agreement"
   },
+  "menus-19d373": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/menu/_menu-tokens.scss:93"
+   ],
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "quoteHashes": [
+    "58a77ec5152a"
+   ],
+   "final": "claude-opus-5-5"
+  },
   "menus-1a7c12": {
    "rule": "cluster",
    "via": "menus-e6c21d"
@@ -11720,6 +11610,32 @@
    ],
    "quoteHashes": [
     "0110ba869ff6"
+   ],
+   "final": "claude-opus-5-5"
+  },
+  "menus-503378": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/menu/_menu-tokens.scss:93"
+   ],
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "quoteHashes": [
+    "58a77ec5152a"
+   ],
+   "final": "claude-opus-5-5"
+  },
+  "menus-511fd6": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/menu/_menu-tokens.scss:93"
+   ],
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "quoteHashes": [
+    "58a77ec5152a"
    ],
    "final": "claude-opus-5-5"
   },
@@ -12090,6 +12006,19 @@
    ],
    "final": "claude-opus-5-5"
   },
+  "menus-d45b66": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/menu/_menu-tokens.scss:93"
+   ],
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "quoteHashes": [
+    "58a77ec5152a"
+   ],
+   "final": "claude-opus-5-5"
+  },
   "menus-dee305": {
    "rule": "llm-review",
    "evidence": [
@@ -12105,6 +12034,19 @@
     "895cf5647419"
    ],
    "final": "agreement"
+  },
+  "menus-e15909": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/menu/_menu-tokens.scss:93"
+   ],
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "quoteHashes": [
+    "58a77ec5152a"
+   ],
+   "final": "claude-opus-5-5"
   },
   "menus-e2fbe3": {
    "rule": "cluster",
@@ -13601,22 +13543,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "progress-indicators-7dbe71": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/progress/progress.scss:260",
-    "labs/gb/components/progress/_progress-tokens.scss:35"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "f5628e8bc52b",
-    "d803d68e4aaf"
-   ],
-   "final": "agreement"
-  },
   "progress-indicators-9c305e": {
    "rule": "llm-review",
    "evidence": [
@@ -13687,19 +13613,6 @@
     "6e553cc752be"
    ],
    "final": "agreement"
-  },
-  "progress-indicators-c888f2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/progress/progress.scss:90"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "473be47f332a"
-   ],
-   "final": "claude-opus-5-5"
   },
   "progress-indicators-e01121": {
    "rule": "llm-review",
@@ -14551,19 +14464,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "side-sheets-037092": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/sheet/side-sheet-element.ts:337"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "e7076e045949"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "side-sheets-114dfb": {
    "rule": "llm-review",
    "evidence": [
@@ -14580,19 +14480,6 @@
    ],
    "final": "agreement"
   },
-  "side-sheets-22cf8b": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/sheet/side-sheet-element.ts:279"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "4a1b00b617f9"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "side-sheets-4e4c8b": {
    "rule": "llm-review",
    "evidence": [
@@ -14608,32 +14495,6 @@
     "7bafc4c0f97b"
    ],
    "final": "agreement"
-  },
-  "side-sheets-51f691": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/sheet/side-sheet.scss:255"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "8a8319da8255"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "side-sheets-7a69a5": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/sheet/side-sheet-element.ts:279"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "4a1b00b617f9"
-   ],
-   "final": "claude-opus-5-5"
   },
   "side-sheets-dcf915": {
    "rule": "llm-review",
@@ -14666,19 +14527,6 @@
     "77b87a898c81"
    ],
    "final": "agreement"
-  },
-  "side-sheets-e37a74": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/sheet/side-sheet-element.ts:155"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "549dd52d270b"
-   ],
-   "final": "claude-opus-5-5"
   },
   "side-sheets-f3f51c": {
    "rule": "llm-review",
@@ -17535,19 +17383,6 @@
    ],
    "final": "agreement"
   },
-  "time-pickers-1d5455": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/timepicker/time-picker-element.ts:505"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "2d9e87fb4678"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "time-pickers-2066fb": {
    "rule": "llm-review",
    "evidence": [
@@ -17790,6 +17625,22 @@
    ],
    "final": "agreement"
   },
+  "time-pickers-675ef6": {
+   "rule": "llm-review",
+   "evidence": [
+    "labs/gb/components/timepicker/time-picker-element.ts:901",
+    "labs/gb/components/timepicker/time-picker-element.ts:1314"
+   ],
+   "models": [
+    "claude-haiku-5-5",
+    "claude-sonnet-5-5"
+   ],
+   "quoteHashes": [
+    "cc1475f600be",
+    "5b371c66d6c6"
+   ],
+   "final": "agreement"
+  },
   "time-pickers-6bae85": {
    "rule": "llm-review",
    "evidence": [
@@ -17950,18 +17801,21 @@
    ],
    "final": "agreement"
   },
-  "time-pickers-ad7609": {
+  "time-pickers-b3dd53": {
    "rule": "llm-review",
    "evidence": [
-    "labs/gb/components/timepicker/time-picker-element.ts:505"
+    "labs/gb/components/timepicker/time-picker-element.ts:1201",
+    "labs/gb/components/timepicker/time-picker-element.ts:1202"
    ],
    "models": [
-    "claude-opus-5-5"
+    "claude-haiku-5-5",
+    "claude-sonnet-5-5"
    ],
    "quoteHashes": [
-    "2d9e87fb4678"
+    "b11ada008bd4",
+    "24a3f06aaee9"
    ],
-   "final": "claude-opus-5-5"
+   "final": "agreement"
   },
   "time-pickers-b5f1c4": {
    "rule": "llm-review",
@@ -18997,6 +18851,11 @@
    "model": "claude-opus-5-5",
    "reason": "Contrast checks when an app remaps or invents color roles are the app's theming responsibility, not something the component implements."
   },
+  "app-bars-321317": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Choosing a lighter color for dark backgrounds and checking contrast of app-chosen colors is design advice for the app."
+  },
   "app-bars-3e1c70": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -19031,6 +18890,11 @@
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "Choosing extra context or wording for labels, including icon button labels like View on map, is content the app writes for its own slotted elements."
+  },
+  "app-bars-6ca9a4": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Requiring the word Search in the label is copy guidance for whoever writes the placeholder text."
   },
   "app-bars-724b18": {
    "rule": "llm-review",
@@ -19107,6 +18971,11 @@
    "model": "claude-opus-5-5",
    "reason": "Choosing a single prominent action and styling it as a filled, tonal or wide icon button is app-level content and design advice, not component behavior."
   },
+  "app-bars-f59139": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "This is only a lead-in to a list of optional content and states no checkable requirement of its own."
+  },
   "badges-2c6db4": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -19155,6 +19024,11 @@
    "model": "claude-opus-5-5",
    "reason": "Lists, dividers and media are app-supplied slotted content, and these sentences only describe content choices or example images."
   },
+  "bottom-sheets-58ae23": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "These sentences advise how an app might present a sharing sheet, which is a content choice left to the app."
+  },
   "bottom-sheets-5aaf3b": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -19170,10 +19044,20 @@
    "model": "claude-opus-5-5",
    "reason": "The sentence captions an example image showing app-chosen list content inside a bottom sheet, not a component requirement."
   },
+  "bottom-sheets-b801e7": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "This describes the Android system back gesture, which is platform-only behavior rather than a web component requirement."
+  },
   "bottom-sheets-c631cb": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "Lists, dividers and media are app-supplied slotted content, and these sentences only describe content choices or example images."
+  },
+  "bottom-sheets-d7ac18": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "These sentences advise how an app might present a sharing sheet, which is a content choice left to the app."
   },
   "bottom-sheets-dc38fc": {
    "rule": "llm-review",
@@ -19805,6 +19689,11 @@
    "model": "claude-opus-5-5",
    "reason": "These sentences advise designers on item sizing, content choices, app-level Show all pages, or describe example videos."
   },
+  "carousel-53373f": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "These are captions that only describe demo videos of tap and hover feedback."
+  },
   "carousel-57f9c6": {
    "rule": "cluster",
    "via": "carousel-49e74f"
@@ -19852,6 +19741,11 @@
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These sentences advise designers on item sizing, content choices, app-level Show all pages, or describe example videos."
+  },
+  "carousel-a2c914": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "These are captions that only describe demo videos of tap and hover feedback."
   },
   "carousel-acf8d7": {
    "rule": "llm-review",
@@ -20424,10 +20318,50 @@
    "model": "claude-opus-5-5",
    "reason": "These sentences describe example images of color pairings that fail the minimum, not requirements for the library."
   },
+  "dialogs-0f1bfa": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Button wording and not disabling the confirm button are app copy and usage choices."
+  },
+  "dialogs-17d7c3": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Where field and general errors appear is decided by the app's content, not the dialog component."
+  },
+  "dialogs-1870da": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
+  },
+  "dialogs-1fa6f2": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
+  },
   "dialogs-237d70": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These sentences describe example content an app may place in a dialog and point to other components' guidelines; they are not dialog behavior requirements."
+  },
+  "dialogs-24c366": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Where field and general errors appear is decided by the app's content, not the dialog component."
+  },
+  "dialogs-25b311": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Button wording and not disabling the confirm button are app copy and usage choices."
+  },
+  "dialogs-2b7a58": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Where field and general errors appear is decided by the app's content, not the dialog component."
+  },
+  "dialogs-3f0658": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "These list items are advice on when an app should choose a full-screen dialog."
   },
   "dialogs-427848": {
    "rule": "llm-review",
@@ -20457,15 +20391,30 @@
    "model": "claude-opus-5-5",
    "reason": "These sentences describe snackbar behavior to help designers choose between components, not a requirement on the dialog component."
   },
+  "dialogs-b05ce3": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "This sentence describes the purpose of desktop dialogs rather than stating a checkable behavior."
+  },
   "dialogs-c0cb2d": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These sentences describe snackbar behavior to help designers choose between components, not a requirement on the dialog component."
   },
+  "dialogs-c61d8b": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "These list items are advice on when an app should choose a full-screen dialog."
+  },
   "dialogs-d44985": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "This is Android-only guidance on keeping headline copy short at enlarged text sizes."
+  },
+  "dialogs-e6c9e7": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Where field and general errors appear is decided by the app's content, not the dialog component."
   },
   "divider-09a6f1": {
    "rule": "llm-review",
@@ -22065,10 +22014,25 @@
    "model": "claude-opus-5-5",
    "reason": "Replacing a menu with a different component on small screens is an app design choice, not menu behavior."
   },
+  "menus-199595": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
+  },
   "menus-1a23c9": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "This row maps Jetpack Compose roles, which is Android-only reference material."
+  },
+  "menus-43cbcb": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
+  },
+  "menus-477ac3": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
   },
   "menus-49f757": {
    "rule": "llm-review",
@@ -22107,6 +22071,11 @@
    "rule": "cluster",
    "via": "menus-d3769f"
   },
+  "menus-bd8d19": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
+  },
   "menus-c38f11": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -22117,10 +22086,25 @@
    "model": "claude-opus-5-5",
    "reason": "These sentences describe an example image or introduce a usage list rather than stating a component requirement."
   },
+  "menus-c9a829": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
+  },
   "menus-d3769f": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "Advice to designers on how to conceive and compose custom slotted menu content, not a component behavior."
+  },
+  "menus-dcdad3": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
+  },
+  "menus-dd4295": {
+   "rule": "llm-review",
+   "model": "claude-opus-5-5",
+   "reason": "Video captions only describe examples."
   },
   "menus-e443fd": {
    "rule": "llm-review",
@@ -22699,11 +22683,6 @@
    "model": "claude-opus-5-5",
    "reason": "These sentences advise authors on label text or describe an example image, which is content the app chooses rather than component behavior."
   },
-  "progress-indicators-26bf67": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "This is advice to makers about adapting sample thicknesses to their use cases, not a component requirement."
-  },
   "progress-indicators-412070": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -22748,10 +22727,6 @@
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These sentences describe images or give designers advice on when to use the wavy style or the stop indicator."
-  },
-  "progress-indicators-8fa1dc": {
-   "rule": "cluster",
-   "via": "progress-indicators-26bf67"
   },
   "progress-indicators-a3e28d": {
    "rule": "cluster",
@@ -23028,11 +23003,6 @@
    "model": "claude-opus-5-5",
    "reason": "These are descriptions of example videos, not requirements."
   },
-  "side-sheets-3cb0f0": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Choosing which slotted actions to emphasize is left to the app's buttons."
-  },
   "side-sheets-4620d2": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -23043,25 +23013,10 @@
    "model": "claude-opus-5-5",
    "reason": "Which breakpoints call for a standard side sheet is a layout choice left to the app."
   },
-  "side-sheets-9e3ce8": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "When to place dividers between kinds of content is a content decision for the app."
-  },
   "side-sheets-b9ce3a": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These sentences introduce the Android predictive back gesture and announce a list, stating no web requirement of their own."
-  },
-  "side-sheets-c44c2c": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "When to place dividers between kinds of content is a content decision for the app."
-  },
-  "side-sheets-e8813a": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Describes an example of content placed in a side sheet."
   },
   "side-sheets-fcbf0c": {
    "rule": "llm-review",
@@ -23633,11 +23588,6 @@
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "Whether an app needs a built-in label when it places its own adjacent label is usage advice to designers, not a component requirement."
-  },
-  "time-pickers-014b04": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Choosing the input picker alone or as the default depends on the app's use case and is advice to designers, not a component behavior."
   },
   "time-pickers-52bb7b": {
    "rule": "cluster",

@@ -55,7 +55,7 @@ describe('<md-gb-fab> spec behavior', () => {
     for (const c of containers.splice(0)) c.remove();
   });
 
-  // spec: floating-action-button-fe28f5, floating-action-button-5b8915, floating-action-button-5242eb, floating-action-button-a59ed1, floating-action-button-6ff243, floating-action-button-9d87ca, floating-action-button-3150a2, floating-action-button-879b39, floating-action-button-b42a70, floating-action-button-0ed13c
+  // spec: floating-action-button-fe28f5, floating-action-button-5b8915, floating-action-button-5242eb, floating-action-button-a59ed1, floating-action-button-6ff243, floating-action-button-9d87ca, floating-action-button-3150a2, floating-action-button-879b39, floating-action-button-b42a70, floating-action-button-0ed13c, floating-action-button-39d691
   it('comes in small (40), default (56), medium (80) and large (96) FAB sizes', async () => {
     for (const [size, px] of [
       ['sm', 40],
@@ -142,6 +142,33 @@ describe('<md-gb-fab> spec behavior', () => {
         expect(contrast(css.color, css.backgroundColor))
           .withContext(`${scheme} ${color}`)
           .toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
+  // spec: floating-action-button-cbc048, floating-action-button-8c8d67, extended-fab-d5d783, extended-fab-22a3f9
+  it('uses the icon color for the state layer in every color mapping', async () => {
+    for (const color of [
+      'primary-container',
+      'secondary-container',
+      'tertiary-container',
+      'primary',
+      'secondary',
+      'tertiary',
+    ]) {
+      for (const attrs of [`color="${color}"`, `color="${color}" label="Label"`]) {
+        const {btn} = await mount(attrs);
+        const style = getComputedStyle(btn);
+        // The state layer (ripple) paints in `currentColor`: the label and
+        // icon color.
+        expect(
+          (style.getPropertyValue('--ripple-color').trim() || 'currentColor').toLowerCase(),
+        )
+          .withContext(color)
+          .toBe('currentcolor');
+        expect(style.getPropertyValue('--icon-color').trim())
+          .withContext(`${color} icon`)
+          .toBe(style.getPropertyValue('--label-text-color').trim());
       }
     }
   });

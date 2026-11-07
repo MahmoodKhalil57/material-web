@@ -422,7 +422,7 @@ describe('<md-gb-chip-set> selection contract (SelectionController: none, single
   afterEach(() => container?.remove());
 
   it('selects the clicked item and unselects the previous one (single-select)', async () => {
-    // spec: chips-d48c6d
+    // spec: chips-d48c6d, chips-38712d, chips-e76874
     const f = await setupSelection({mode: 'single'});
     f.items[1].click();
     await settle();

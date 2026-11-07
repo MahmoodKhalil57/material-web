@@ -164,6 +164,9 @@
           > .list-item-supporting-text:is(:not(slot), .has-slotted)
       ) {
       --container-height: var(--three-line-container-height);
+      // Lists overview: items 88dp or taller (three lines) top-align their
+      // leading and trailing elements.
+      align-items: start;
     }
 
     &:is(:disabled, .disabled) {

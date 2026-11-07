@@ -52,6 +52,7 @@ describe('<md-gb-radio> density', () => {
     }
   });
 
+  // spec: radio-button-bc3bad
   it('keeps a 48px touch target at every density', async () => {
     const {radio, inner} = await setupTest();
     radio.density = -3;

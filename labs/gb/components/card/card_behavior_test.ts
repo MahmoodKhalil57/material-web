@@ -176,7 +176,7 @@ describe('<md-gb-card> variants, colors and states (spec)', () => {
         container.remove();
       });
 
-      // spec: cards-c489ef, cards-330669, cards-9fbde5, cards-efa561
+      // spec: cards-c489ef, cards-330669, cards-9fbde5, cards-efa561, cards-af81e6
       it('raises its elevation when picked up and dragged', async () => {
         const {container, cards, part} = await mount(
           `<md-gb-card color="${color}"></md-gb-card>`,
@@ -225,7 +225,7 @@ describe('<md-gb-card> variants, colors and states (spec)', () => {
     container.remove();
   });
 
-  // spec: cards-0d5c5b, cards-5b8f70, cards-3f9c4a, cards-6df9d7, cards-bb536a, cards-1c4825, cards-70f252, cards-f1432f, cards-9f5d66
+  // spec: cards-0d5c5b, cards-5b8f70, cards-3f9c4a, cards-6df9d7, cards-bb536a, cards-1c4825, cards-70f252, cards-f1432f, cards-9f5d66, cards-e5b29f
   it('tabs to actionable cards and to the buttons inside non-actionable ones, in order', async () => {
     const {container, cards} = await mount(`
       <button id="before">Before</button>
@@ -247,7 +247,7 @@ describe('<md-gb-card> variants, colors and states (spec)', () => {
     container.remove();
   });
 
-  // spec: cards-a27caa
+  // spec: cards-a27caa, cards-d00ce2
   it('performs the action with Space or Enter on a focused actionable card', async () => {
     const {container, cards} = await mount(
       `<md-gb-card interactive aria-label="Open"></md-gb-card>`,
@@ -261,7 +261,7 @@ describe('<md-gb-card> variants, colors and states (spec)', () => {
     container.remove();
   });
 
-  // spec: cards-0ecf50, cards-dcf6a8
+  // spec: cards-0ecf50, cards-dcf6a8, cards-05dc5a, cards-3f0ce3
   it('clips content taller than the card instead of scrolling it', async () => {
     const {container, cards, part} = await mount(`
       <md-gb-card style="height: 40px; min-height: 0"><div style="height: 300px">Tall</div></md-gb-card>`);

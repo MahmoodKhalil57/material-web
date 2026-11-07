@@ -35,6 +35,9 @@ import {styles as appBarStyles} from './app-bar.cssresult.js';
  *
  * @slot - Used to display the primary title text of the app bar.
  * @slot subtitle - Used to display an optional subtitle below the title.
+ * @slot image - An optional image or logo. In a small app bar it can replace
+ *     the title text; in medium and large flexible app bars it appears above
+ *     the text.
  * @slot leading - Used to display the leading navigation icon button (e.g. menu or back).
  * @slot trailing - Used to display trailing action buttons and/or user avatar.
  * @slot search - Used to display the search bar input or controls when
@@ -171,6 +174,7 @@ export class AppBarElement extends LitElement {
     }
 
     const title = html`<div class="app-bar-title-wrapper">
+      <div class="app-bar-image"><slot name="image"></slot></div>
       <div class="app-bar-title">
         <slot></slot>
       </div>

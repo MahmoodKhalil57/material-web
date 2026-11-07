@@ -34,6 +34,7 @@ import {
   FormDisabledController,
   ToggleFieldController,
 } from '../shared/form-field.js';
+import {LabelTextController} from '../shared/label-text.js';
 import {checkbox} from './checkbox.js';
 
 // Separate variable needed for closure.
@@ -162,6 +163,30 @@ export class CheckboxElement extends baseClass {
     },
   });
 
+  /**
+   * The adjacent `<label>` text, used as the accessibility label when there
+   * is no `aria-label` (spec: the label is the adjacent text label).
+   */
+  private readonly labelFromText = new LabelTextController(this);
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('click', this.handleHostClick);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('click', this.handleHostClick);
+  }
+
+  /**
+   * Selecting the text label clicks the checkbox element itself (not the
+   * input in its shadow root); pass it on so the label selects it too.
+   */
+  private readonly handleHostClick = (event: MouseEvent) => {
+    if (event.composedPath()[0] === this) this.input?.click();
+  };
+
   protected override render() {
     // Needed for closure conformance
     const {ariaLabel, ariaInvalid} = this as ARIAMixinStrict;
@@ -172,7 +197,7 @@ export class CheckboxElement extends baseClass {
         class="${checkbox({invalid, density: this.density})}"
         type="checkbox"
         aria-checked=${this.indeterminate ? 'mixed' : nothing}
-        aria-label=${ariaLabel || nothing}
+        aria-label=${ariaLabel || this.labelFromText.text || nothing}
         aria-invalid=${ariaInvalid || invalid || nothing}
         ?disabled=${this.disabled}
         ?required=${this.required}

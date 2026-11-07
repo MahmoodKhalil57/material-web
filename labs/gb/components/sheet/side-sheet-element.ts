@@ -295,7 +295,12 @@ export class SideSheetElement extends SheetBase {
                   `
                 : nothing
             }
-            <h2 id="headline" class="side-sheet-headline" part="headline">
+            <h2
+              id="headline"
+              class="side-sheet-headline focus-ring-outer"
+              part="headline"
+              tabindex="0"
+            >
               <slot name="headline" @slotchange=${this.handleHeadlineSlotChange}
                 >${this.headline}</slot
               >

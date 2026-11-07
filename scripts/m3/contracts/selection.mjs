@@ -119,7 +119,7 @@ export const entries = {
     events: ['input', 'change'],
     disabled: 'disabled',
     spec: {
-      select: ['chips-d48c6d'],
+      select: ['chips-d48c6d', 'chips-38712d', 'chips-e76874'],
       keys: ['chips-cfa8a5', 'chips-b762ef'],
       multiple: ['chips-b762ef'],
       none: [],

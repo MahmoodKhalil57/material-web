@@ -119,12 +119,37 @@ describe('<md-gb-radio> spec behavior', () => {
     expect(radios[0][internals].ariaChecked).toBe('true');
   });
 
-  // spec: radio-button-1958cc
+  // spec: radio-button-1958cc, radio-button-46261a
   it('is read as its label followed by the radio role', async () => {
     const {radios} = await setup(
       html`<md-gb-radio aria-label="Small"></md-gb-radio>`,
     );
     expect(radios[0][internals].role).toBe('radio');
     expect(radios[0].getAttribute('aria-label')).toBe('Small');
+  });
+
+  // spec: radio-button-e8f26d, radio-button-22a025
+  it('is selected by clicking either the radio button icon or its label', async () => {
+    const {radios} = await setup(html`
+      <label id="l1"><md-gb-radio name="size" value="s"></md-gb-radio> <span id="t1">Small</span></label>
+      <label id="l2"><md-gb-radio name="size" value="m"></md-gb-radio> <span id="t2">Medium</span></label>`);
+    const [small, medium] = radios;
+    (document.querySelector('#t1') as HTMLElement).click();
+    await small.updateComplete;
+    expect(small.checked).toBeTrue();
+    // The radio button icon itself.
+    const box = medium.getBoundingClientRect();
+    await sendMouse({
+      type: 'click',
+      position: [Math.round(box.x + box.width / 2), Math.round(box.y + box.height / 2)],
+    });
+    await medium.updateComplete;
+    expect(medium.checked).toBeTrue();
+    expect(small.checked).toBeFalse();
+    // Clicking the label text of the other choice selects it and deselects this one.
+    (document.querySelector('#t1') as HTMLElement).click();
+    await small.updateComplete;
+    expect(small.checked).toBeTrue();
+    expect(medium.checked).toBeFalse();
   });
 });

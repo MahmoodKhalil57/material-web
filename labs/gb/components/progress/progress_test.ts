@@ -159,15 +159,15 @@ describe('progress', () => {
     it('draws the active indicator to the progress, then a gap and the track', () => {
       const el = indicator('progress progress-determinate', '--progress: 0.5');
       const active = part(el, '.progress-active-1');
-      // From the start cap (2px) to the head (100px).
-      expect(px(getComputedStyle(active).strokeDasharray)).toBe(98);
+      // From the start cap (2px) to the head (96px; the 200px host is inset 4px each side).
+      expect(px(getComputedStyle(active).strokeDasharray)).toBe(94);
       expect(getComputedStyle(active).strokeWidth).toBe('4px');
       // The track starts after the head, the gap (4px) and both caps (4px),
       // minus its own cap.
       const track = part(el, '.progress-track-1');
-      expect(px(getComputedStyle(track).left)).toBe(106);
-      // ...and ends a cap before the end (200 - 2 + 2).
-      expect(px(getComputedStyle(track).left) + px(getComputedStyle(track).width)).toBe(200);
+      expect(px(getComputedStyle(track).left)).toBe(102);
+      // ...and ends a cap before the end (192 - 2 + 2).
+      expect(px(getComputedStyle(track).left) + px(getComputedStyle(track).width)).toBe(192);
     });
 
     // spec: progress-indicators-c87275, progress-indicators-ce0226
@@ -328,7 +328,7 @@ describe('progress', () => {
       );
       const active = inner.querySelector<SVGPathElement>('.progress-active-1')!;
       expect(getComputedStyle(active).d).toContain('Q 10 6 20 0');
-      expect(px(getComputedStyle(active).strokeDasharray)).toBe(98);
+      expect(px(getComputedStyle(active).strokeDasharray)).toBe(94);
     });
 
     it('clamps the value', async () => {

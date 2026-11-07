@@ -59,6 +59,8 @@ export class SplitButtonElement extends LitElement {
         &::slotted(button) {
           all: inherit;
           display: flex;
+          /* The slot's border is part of the size height. */
+          box-sizing: border-box;
         }
       }
       [name='trailing'] {
@@ -70,6 +72,10 @@ export class SplitButtonElement extends LitElement {
           background: none;
           border: none;
           outline: none;
+          /* Optically centers the menu icon (split-button.md Measurements):
+             content sits --menu-icon-offset left of center when unselected. */
+          padding: 0;
+          padding-inline-end: calc(var(--menu-icon-offset, 0px) * 2);
         }
       }
     `,
@@ -122,10 +128,19 @@ export class SplitButtonElement extends LitElement {
       .assignedElements()
       .find((el): el is HTMLButtonElement => el.matches('button'));
     if (!trailingButton?.popoverTargetElement) return;
-    trailingButton.popoverTargetElement.addEventListener(
+    // The trailing button tells assistive technology whether its menu is
+    // expanded or collapsed (split-button.md Accessibility).
+    const popover = trailingButton.popoverTargetElement;
+    trailingButton.setAttribute(
+      'aria-expanded',
+      String(popover.matches(':popover-open')),
+    );
+    popover.addEventListener(
       'toggle',
       (event: Event) => {
-        this.selected = (event as ToggleEvent).newState === 'open';
+        const open = (event as ToggleEvent).newState === 'open';
+        this.selected = open;
+        trailingButton.setAttribute('aria-expanded', String(open));
       },
       {signal: this.cleanupToggleListener.signal},
     );

@@ -259,7 +259,9 @@ $action-overhang: 12px;
   .dialog-actions {
     display: flex;
     flex: none;
-    flex-wrap: wrap;
+    // Stacked buttons put the confirming action (the last one) above the
+    // dismissive action (dialogs.md, Buttons): wrapped lines run upward.
+    flex-wrap: wrap-reverse;
     justify-content: flex-end;
     align-items: center;
     gap: $button-gap;

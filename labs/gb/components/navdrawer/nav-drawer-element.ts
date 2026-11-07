@@ -139,7 +139,11 @@ export class NavDrawerElement extends baseClass {
       :host {
         block-size: 100%;
         display: block;
-        flex: none;
+        /* A standard drawer changes size to suit the screen: it shrinks
+           when the window is narrower than the drawer. */
+        flex: 0 1 auto;
+        max-inline-size: 100%;
+        min-inline-size: 0;
       }
 
       :host([modal]) {

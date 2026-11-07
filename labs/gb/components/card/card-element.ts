@@ -28,7 +28,7 @@ const baseClass = mixinDelegatesAria(LitElement);
 /**
  * A Material Design card.
  *
- * @slot - Used to display the card's content. Note: add padding to content, not the host <md-gb-card> element.
+ * @slot - Used to display the card's content. The card has 16dp left/right padding; set `--padding-inline: 0` for full-bleed content. Add padding to content, not the host <md-gb-card> element.
  * @slot container - Used to set a custom background container for the card.
  * @csspart card - The card's root element.
  * @csspart card-btn - The card's main action (a button, or a link when `href` is set), when interactive.

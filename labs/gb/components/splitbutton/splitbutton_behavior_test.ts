@@ -212,4 +212,24 @@ describe('<md-gb-split-button> spec behavior', () => {
     await sendKeys({press: 'Space'});
     expect(clicks).toBe(2);
   });
+
+  // spec: split-button-ab3f83
+  // split-button.md Sizes: the leading and trailing buttons are exactly the
+  // size height (XS 32, S 40, M 56, L 96, XL 136dp).
+  it('makes the leading and trailing buttons exactly the size height', async () => {
+    const expected = {xs: 32, sm: 40, md: 56, lg: 96, xl: 136};
+    for (const [size, height] of Object.entries(expected)) {
+      const root = env.render(html`
+        <md-gb-split-button size=${size}>
+          <button slot="leading">Save</button>
+          <button slot="trailing" aria-label="More"></button>
+        </md-gb-split-button>`);
+      await env.waitForStability();
+      const el = root.querySelector<SplitButtonElement>('md-gb-split-button')!;
+      const leading = el.querySelector<HTMLElement>('[slot=leading]')!;
+      const trailing = el.querySelector<HTMLElement>('[slot=trailing]')!;
+      expect(leading.getBoundingClientRect().height).withContext(`${size} leading`).toBe(height);
+      expect(trailing.getBoundingClientRect().height).withContext(`${size} trailing`).toBe(height);
+    }
+  });
 });
