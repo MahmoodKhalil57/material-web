@@ -25,7 +25,16 @@
  *    the cluster). Writes `scripts/m3/spec-autocite.json` (IDs and evidence
  *    only) and one review file per page, with candidate code locations, to
  *    `.m3-specs/spec-checks/pages/`.
- * 6. Reports every buildable unit still uncovered, and citations of IDs that
+ * 6. With `--review`, reviews the uncovered units (one per cluster) with
+ *    LLMs (spec-review.mjs, REVIEW_MODE agree): Haiku on every unit, a second
+ *    pass (Sonnet) on the units with exactly one covered verdict, and a
+ *    binding final gate (Opus) on everything not agreed-covered. Agreed or
+ *    final-gate `covered` verdicts (quotes verified) become `auto-review`,
+ *    final-gate `not-applicable` ones `review-not-applicable`, and the rest
+ *    goes to the review queue `.m3-specs/spec-checks/review-gaps/`. Verdicts are cached in
+ *    `review.jsonl` and applied on every later run (also without `--review`)
+ *    while the unit and the code shown to the model are unchanged.
+ * 7. Reports every buildable unit still uncovered, and citations of IDs that
  *    no longer exist (the spec changed).
  *
  * Coverage comes only from citations: a comment whose text starts with
@@ -44,6 +53,10 @@
  *   node scripts/m3/spec-checks.mjs --extract       # also run Clairic
  *   node scripts/m3/spec-checks.mjs --offline       # no API calls (cache only)
  *   node scripts/m3/spec-checks.mjs --limit 100     # at most 100 API calls
+ *   node scripts/m3/spec-checks.mjs --review        # also LLM-review uncovered units (spec-review.mjs: Haiku, Sonnet, Opus)
+ *   node scripts/m3/spec-checks.mjs --review --stages 2 --max-usd 40  # no final gate; cap per stage
+ *   node scripts/m3/spec-checks.mjs --review --max-usd-final 120      # cap of the final gate
+ *   node scripts/m3/spec-checks.mjs --review --provider openrouter  # review with DeepSeek via OpenRouter
  *   node scripts/m3/spec-checks.mjs --summary       # print the summary (markdown)
  *   node scripts/m3/spec-checks.mjs --find "Page up"  # look up unit IDs
  *
@@ -57,7 +70,8 @@ import {existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, appendF
 import {basename, join, relative, sep} from 'node:path';
 import {loadUnits} from './spec-units.mjs';
 import {FatalApiError, hasKey, post, usage} from './openrouter.mjs';
-import {AUTOCITE_FILE, autocite} from './spec-autocite.mjs';
+import {AUTOCITE_FILE, PAGE_DIRS, autocite} from './spec-autocite.mjs';
+import {ACCEPT_NOT_APPLICABLE, FINAL, MODEL as REVIEW_MODEL, REVIEW_FILE, REVIEW_MODE, SECOND, costLine as reviewCost, hasKey as reviewHasKey, reviewAgree, reviewUnits, writeGapQueue} from './spec-review.mjs';
 
 const OUT = '.m3-specs/spec-checks';
 const CLASSIFIED = join(OUT, 'classified.jsonl');
@@ -79,6 +93,7 @@ const extract = flag('--extract');
 const summaryOnly = flag('--summary');
 const limit = Number(option('--limit') ?? Infinity);
 const find = option('--find');
+const reviewApi = flag('--review');
 
 const log = (...args) => (summaryOnly ? console.error : console.log)(...args);
 
@@ -237,11 +252,29 @@ for (const u of units) {
 
 const citations = scanCitations();
 const cited = new Map(); // unit ID -> [file:line]
+/** Section ID -> [file:line] of `spec-labels:` citations (short labels only). */
+const labelCited = new Map();
+/**
+ * Unit or section ID -> [file:line] of `spec-gap:` citations: an open
+ * checklist item tracks the not-yet-covered units it names (they become
+ * `tracked`, never covered).
+ */
+const gapCited = new Map();
 const stale = [];
 for (const c of citations) {
   const hit = byId.has(c.id) ? [byId.get(c.id)] : sections.get(c.id);
   if (!hit) {
     stale.push(c);
+    continue;
+  }
+  if (c.gapOnly) {
+    if (!gapCited.has(c.id)) gapCited.set(c.id, []);
+    gapCited.get(c.id).push(c.where);
+    continue;
+  }
+  if (c.labelsOnly) {
+    if (!labelCited.has(c.id)) labelCited.set(c.id, []);
+    labelCited.get(c.id).push(c.where);
     continue;
   }
   for (const u of hit) {
@@ -260,11 +293,16 @@ function scanCitations() {
     if (/\.js$/.test(file) && present.has(file.replace(/\.js$/, '.ts'))) continue;
     const lines = readFileSync(file, 'utf8').split('\n');
     lines.forEach((line, n) => {
-      const m = line.match(/(?:\/\/|\/\*+|<!--|^\s*\*|^\s*#)\s*spec:\s*(.*)/);
+      // `spec-labels: <section>` covers only the section's short labels
+      // (part names, states, legend entries), not its sentences.
+      // `spec-gap: <ids>` (in CHECKLIST.md) tracks open units as known gaps.
+      const m = line.match(/(?:\/\/|\/\*+|<!--|^\s*\*|^\s*#)\s*spec(-labels|-gap)?:\s*(.*)/);
       if (!m) return;
-      const list = m[1].replace(/\s*(\*\/|-->).*$/, '');
+      const list = m[2].replace(/\s*(\*\/|-->).*$/, '');
       for (const token of list.split(/[\s,]+/)) {
-        if (looksLikeId(token)) out.push({id: token, where: `${file}:${n + 1}`});
+        if (looksLikeId(token)) {
+          out.push({id: token, where: `${file}:${n + 1}`, labelsOnly: m[1] === '-labels', gapOnly: m[1] === '-gap'});
+        }
       }
     });
   }
@@ -290,9 +328,51 @@ function walk(dir, files) {
 
 // --- Mechanical reduction -------------------------------------------------------
 
-const {status} = await autocite({units, isBuildable, classified, extracted, cited});
+// LLM review of the uncovered units: API calls with --review, cached verdicts otherwise.
+let reviewNote = '';
+const review =
+  reviewApi || existsSync(REVIEW_FILE)
+    ? async (reps) => {
+        const items = reps.map(({u, candidates}) => ({u, candidates, dirs: PAGE_DIRS[u.slug] ?? []}));
+        const api = reviewApi && !offline && reviewHasKey();
+        const maxUsd = Number(option('--max-usd') ?? 5);
+        const r =
+          REVIEW_MODE === 'agree'
+            ? await reviewAgree(items, {api: reviewApi && !offline, log, maxUsd, maxUsdFinal: Number(option('--max-usd-final') ?? 120)})
+            : await reviewUnits(items, {api, log, maxUsd});
+        if (r.stages) log(`Review stages: ${JSON.stringify(r.stages)}`);
+        if (reviewApi && !offline) log(`Review cost: ${reviewCost()}`);
+        writeGapQueue(items, r.results);
+        if (r.missing) reviewNote = `${r.missing} uncovered units not reviewed yet${api ? (r.note ? ` (${r.note})` : '') : ' (run with --review)'}`;
+        return r.results;
+      }
+    : undefined;
+
+const {status} = await autocite({units, isBuildable, classified, extracted, cited, labelCited, review, reviewCovers: REVIEW_MODE !== 'triage', reviewAcceptsNA: REVIEW_MODE === 'cover' && ACCEPT_NOT_APPLICABLE});
+
+// Open units named by a `spec-gap:` checklist citation (the unit, or its
+// section or an enclosing one) are tracked gaps: accounted for, not covered.
+for (const u of units) {
+  if (!isBuildable(u)) continue;
+  const s = status.get(u.id);
+  if (s.status !== 'uncovered' && s.status !== 'label') continue;
+  const parts = u.section.split('/');
+  const where =
+    gapCited.get(u.id) ??
+    (s.rep && gapCited.get(s.rep)) ??
+    parts.map((_, i) => gapCited.get(parts.slice(0, i + 1).join('/'))).find(Boolean);
+  if (where) status.set(u.id, {...s, status: 'tracked', trackedAt: where});
+}
 
 // --- Report -------------------------------------------------------------------
+
+/**
+ * Tested: cited (directly or through a section) from a `*_test.ts` file. The
+ * test suite keeps those tests green, so a tested unit is proven by a test.
+ */
+function isTested(id) {
+  return (cited.get(id) ?? []).some((where) => /_test\.ts:\d+$/.test(where));
+}
 
 const pages = new Map();
 for (const u of units) {
@@ -307,6 +387,18 @@ for (const u of units) {
       autoToken: 0,
       autoSection: 0,
       notARequirement: 0,
+      autoReview: 0,
+      reviewNA: 0,
+      reviewGap: 0,
+      reviewUnverified: 0,
+      reviewCovered: 0,
+      reviewNAHint: 0,
+      reviewDisagree: 0,
+      reviewPending: 0,
+      labels: 0,
+      labelSections: new Set(),
+      tracked: 0,
+      tested: 0,
       clusters: 0,
       uncovered: [],
     });
@@ -317,13 +409,26 @@ for (const u of units) {
   if (!isBuildable(u)) continue;
   p.buildable++;
   const s = status.get(u.id);
+  if (isTested(u.id)) p.tested++;
   if (s.status === 'cited') p.cited++;
   else if (s.status === 'auto-token') p.autoToken++;
   else if (s.status === 'auto-section') p.autoSection++;
   else if (s.status === 'not-a-requirement') p.notARequirement++;
-  else {
+  else if (s.status === 'auto-review') p.autoReview++;
+  else if (s.status === 'review-not-applicable') p.reviewNA++;
+  else if (s.status === 'tracked') p.tracked++;
+  else if (s.status === 'label') {
+    p.labels++;
+    p.labelSections.add(u.section);
+  } else {
     p.uncovered.push(u);
     if (!s.rep) p.clusters++;
+    if (s.review === 'gap') p.reviewGap++;
+    if (s.review === 'unverified') p.reviewUnverified++;
+    if (s.review === 'covered') p.reviewCovered++;
+    if (s.review === 'not-applicable' || s.review === 'not-applicable?') p.reviewNAHint++;
+    if (s.review === 'disagree') p.reviewDisagree++;
+    if (s.review === 'pending') p.reviewPending++;
   }
 }
 const pageList = [...pages.values()];
@@ -336,6 +441,18 @@ const totals = {
   autoToken: total('autoToken'),
   autoSection: total('autoSection'),
   notARequirement: total('notARequirement'),
+  autoReview: total('autoReview'),
+  reviewNA: total('reviewNA'),
+  reviewGap: total('reviewGap'),
+  reviewUnverified: total('reviewUnverified'),
+  reviewCovered: total('reviewCovered'),
+  reviewNAHint: total('reviewNAHint'),
+  reviewDisagree: total('reviewDisagree'),
+  reviewPending: total('reviewPending'),
+  labels: total('labels'),
+  labelSections: pageList.reduce((n, p) => n + p.labelSections.size, 0),
+  tracked: total('tracked'),
+  tested: total('tested'),
   uncovered: total('uncovered'),
   clusters: total('clusters'),
   citations: citations.length,
@@ -386,6 +503,7 @@ writeFileSync(
           ...(status.get(u.id).rep ? {rep: status.get(u.id).rep} : {}),
           ...(status.get(u.id).cluster ? {cluster: status.get(u.id).cluster} : {}),
           ...(status.get(u.id).candidates ? {candidates: status.get(u.id).candidates} : {}),
+          ...(status.get(u.id).review ? {review: status.get(u.id).review} : {}),
           ...(extracted.has(u.id) ? {extracted: extracted.get(u.id)} : {}),
         })),
       })),
@@ -409,6 +527,7 @@ writeFileSync(
       class: classified.get(u.id)?.kind ?? null,
       cited: cited.get(u.id) ?? [],
       status: status.get(u.id)?.status ?? null,
+      tested: isTested(u.id),
       rule: status.get(u.id)?.rule ?? null,
       evidence: status.get(u.id)?.evidence ?? null,
     })),
@@ -421,6 +540,16 @@ else {
   console.log(`\nFull report: ${join(OUT, 'report.md')}`);
 }
 
+// --strict: every buildable unit must be in code, tracked in CHECKLIST.md,
+// or excluded by a named rule; stale citations also fail.
+if (flag('--strict')) {
+  const unaccounted = totals.uncovered + totals.labels;
+  if (unaccounted || stale.length) {
+    console.error(`spec-checks --strict: ${unaccounted} unaccounted units, ${stale.length} stale citations.`);
+    process.exitCode = 1;
+  } else console.log('spec-checks --strict: every spec unit is in code, tracked in CHECKLIST.md, or excluded.');
+}
+
 function summaryLines() {
   const lines = [];
   const unclassified = totals.units - totals.classified;
@@ -430,15 +559,27 @@ function summaryLines() {
       `; ${totals.buildable} buildable (Clef score >= ${THRESHOLD}).`,
   );
   lines.push(
-    `- Buildable units: ${totals.cited} cited (directly or through a cited cluster member), ${totals.autoToken} auto-token, ${totals.autoSection} auto-section, ${totals.notARequirement} not a requirement, **${totals.uncovered} uncovered** (${totals.clusters} after merging duplicate text); ${totals.citations} citations scanned in ${SCAN.join(', ')}. Auto statuses, rules and evidence: \`${AUTOCITE_FILE}\`.`,
+    `- Tested: ${totals.tested} of ${totals.buildable} buildable units are cited from a \`*_test.ts\` file.`,
   );
+  lines.push(
+    `- Buildable units: ${totals.cited} cited (directly or through a cited cluster member), ${totals.autoToken} auto-token, ${totals.autoSection} auto-section, ${totals.notARequirement} not a requirement, ${totals.tracked} tracked as gaps in CHECKLIST.md (\`spec-gap:\`), ${totals.labels} short labels waiting for ${totals.labelSections} section citations, **${totals.uncovered} uncovered**; **${totals.uncovered + totals.labels} unaccounted for** (${totals.clusters} after merging duplicate text); ${totals.citations} citations scanned in ${SCAN.join(', ')}. Auto statuses, rules and evidence: \`${AUTOCITE_FILE}\`.`,
+  );
+  if (review) {
+    lines.push(
+      REVIEW_MODE === 'agree'
+        ? `- LLM review, agree mode (${REVIEW_MODEL} + ${SECOND.model} must agree; final gate ${FINAL.model}, binding; \`${REVIEW_FILE}\`): ${totals.autoReview} auto-review (both covered with verified quotes, or the final gate covered), ${totals.reviewNA} review-not-applicable (final gate only); of the uncovered, ${totals.reviewGap} gap, ${totals.reviewDisagree} models disagree, ${totals.reviewUnverified} unverified, ${totals.reviewNAHint} "model: not applicable?" to confirm, ${totals.reviewPending} pending${reviewNote ? `; ${reviewNote}` : ''}. Review queue: \`.m3-specs/spec-checks/review-gaps/\`.`
+        : REVIEW_MODE === 'cover'
+        ? `- LLM review (${REVIEW_MODEL}, \`${REVIEW_FILE}\`): ${totals.autoReview} auto-review (covered, quote verified), ${totals.reviewNA} review-not-applicable; of the uncovered, ${totals.reviewGap} reviewed as gap and ${totals.reviewUnverified} unverified (claimed covered, quote not found)${reviewNote ? `; ${reviewNote}` : ''}. Build queue: \`.m3-specs/spec-checks/review-gaps/\`.`
+        : `- LLM review, triage only (${REVIEW_MODEL}, \`${REVIEW_FILE}\`; covers nothing, see REVIEW_MODE in spec-review.mjs): of the uncovered, ${totals.reviewCovered} reviewed as covered (quote verified; to confirm and cite), ${totals.reviewUnverified} unverified, ${totals.reviewGap} gap, ${totals.reviewNAHint} not-applicable${reviewNote ? `; ${reviewNote}` : ''}. Review queue: \`.m3-specs/spec-checks/review-gaps/\`.`,
+    );
+  }
   lines.push(`- API this run: ${cost.calls} calls, $${cost.usd}${apiNote ? ` (${apiNote})` : ''}.`);
-  lines.push('', '| Page | Buildable | Cited | Auto-token | Auto-section | Not a req. | Uncovered | Clusters |', '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |');
+  lines.push('', '| Page | Buildable | Cited | Auto-token | Auto-section | Not a req. | Auto-review | Review n/a | Uncovered | Clusters |', '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |');
   const top = [...pageList].sort((a, b) => b.clusters - a.clusters).slice(0, 20);
   for (const p of top) {
-    lines.push(`| ${p.page} | ${p.buildable} | ${p.cited} | ${p.autoToken} | ${p.autoSection} | ${p.notARequirement} | ${p.uncovered.length} | ${p.clusters} |`);
+    lines.push(`| ${p.page} | ${p.buildable} | ${p.cited} | ${p.autoToken} | ${p.autoSection} | ${p.notARequirement} | ${p.autoReview} | ${p.reviewNA} | ${p.uncovered.length} | ${p.clusters} |`);
   }
-  if (pageList.length > 20) lines.push(`| (${pageList.length - 20} more pages) | | | | | | | |`);
+  if (pageList.length > 20) lines.push(`| (${pageList.length - 20} more pages) | | | | | | | | | |`);
   lines.push('');
   if (stale.length) {
     lines.push(`**${stale.length} stale citations** (IDs no longer in the spec; re-cite the changed text):`, '');

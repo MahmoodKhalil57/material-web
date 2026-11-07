@@ -30,6 +30,11 @@
  * (keys, values, ARIA words, content nouns), and writes one review file per
  * page to `.m3-specs/spec-checks/pages/`.
  *
+ * With a `review` callback (spec-review.mjs, `spec-checks.mjs --review`), the
+ * uncovered representatives then get the LLM review's verdicts: `auto-review`
+ * (covered, with a verified quote) and `review-not-applicable`; cluster
+ * members take their representative's verdict. Gaps stay uncovered.
+ *
  * `scripts/m3/spec-autocite.json` (committed) holds only IDs, statuses, rule
  * names and evidence (file:line, custom property and token names), never
  * spec text.
@@ -95,7 +100,22 @@ export const NAR_RULES = {
   'usage-section-designer': 'In a Guidelines > Usage / Best practices / Examples type section, a sentence addressed to the app designer ("Use X to/when/for", "X is best for", "can be used to/for/in", "Consider", "Choose")',
   'designer-imperative': 'Clef kind "usage_advice" sentence that tells the designer which component or content to choose ("Use/Don\'t use/Avoid using/Choose/Consider/Place/Write/Keep ... concise")',
   'table-status-cell': 'Table cell that only says Available / Yes / No / -- / N/A / (default), under generic column headers only (Attribute, Value, Status, M3 Expressive): the requirement is the row\'s label unit',
+  'image-description': 'Alt text of a spec image with no values (dp/px/%/ms, color roles, shapes, type scale) and no normative wording: it describes the picture; the rule it illustrates is stated in the text',
+  'overview-notes': 'Overview tab (release notes, differences from M2, availability, resources) with no values: the features it announces are specified again in the Specs and Guidelines tabs',
 };
+
+/**
+ * Short labels (list items / table cells of <= 4 words, no values): anatomy
+ * part names, legend entries, variant names. They mean something only inside
+ * their section, so they are covered by citing the section, not one by one.
+ */
+const LABEL_STATUS = 'label';
+
+/**
+ * Whether lone color roles in a Specs color legend count as covered when a
+ * spec test checks that role. Off: the part they color is only in the image.
+ */
+const COLOR_LEGEND_AUTOCITE = false;
 
 const MODAL = /\b(must|should(n.t)?|never|always|don.t|do not|can.t|cannot|required?|requires|need(s)? to|avoid|only|make sure|ensure)\b/i;
 const USAGE_SECTION = /\/(usage|best-practices|when-to-use|choosing[a-z-]*|examples?|use-cases|principles|overview-principles)(\/|$)/;
@@ -430,9 +450,19 @@ function matchClaims(claims, facts) {
  * @param {Map<string, object>} o.classified Clef results by unit ID
  * @param {Map<string, object>} o.extracted Clairic results by unit ID
  * @param {Map<string, string[]>} o.cited unit ID -> citation sites
+ * @param {(reps: object[]) => Promise<Map<string, object>>} [o.review] LLM review
+ *   of the uncovered representatives (`[{u, candidates}]`): unit ID -> verdict row
+ * @param {boolean} [o.reviewCovers] whether verdicts set statuses (`cover`
+ *   and `agree` modes) or are only attached to uncovered units as `review`
+ *   (triage). In agree mode a row's `final` is the combined verdict of
+ *   spec-review.mjs reviewAgree (`covered` names every model that counts).
+ * @param {boolean} [o.reviewAcceptsNA] whether a `not-applicable` verdict
+ *   becomes `review-not-applicable` (`cover` mode with
+ *   ACCEPT_NOT_APPLICABLE, off by default). In agree mode only a binding
+ *   verdict of the final gate (`binding: true`) does.
  * @return {Promise<{status: Map<string, object>, clusters: string[][], sections: object}>}
  */
-export async function autocite({units, isBuildable, classified, extracted, cited}) {
+export async function autocite({units, isBuildable, classified, extracted, cited, labelCited = new Map(), review, reviewCovers = false, reviewAcceptsNA = false}) {
   const db = await SpecDb.load('.m3-specs');
   const buildable = units.filter(isBuildable);
   const kindOf = (u) => classified.get(u.id)?.kind;
@@ -521,12 +551,14 @@ export async function autocite({units, isBuildable, classified, extracted, cited
       rule = rule === 'token-value' ? 'token-value-container' : rule;
     }
     // Color legend items ("Primary", "Surface container low (optional)") in a
-    // color section: the role must be used by a gb property and by one of the
-    // component's spec tokens. Weaker: the numbered part is only in the image.
+    // color section: the part a role applies to is only in the spec image, so
+    // a matching token can't prove the right part uses it. Kept uncovered
+    // (needs a citation after review) to stay faithful to the spec; set
+    // COLOR_LEGEND_AUTOCITE to true to count role matches anyway.
     const bare = plain(u.text).replace(/\((optional|default)\)/gi, '').replace(/^[A-Z0-9]{1,2}[.:]\s*/, '').trim();
     if (u.kind === 'list-item' && /color/.test(u.section.split('/').at(-1)) && c.values.length === 1 && c.values[0].kind === 'role' && words(bare).join('-') === c.values[0].v) {
       const role = c.values[0].v;
-      const hit = facts.find((f) => f.token && f.dim === 'color' && f.values.some((v) => v.kind === 'role' && v.v === role) && legendScope(u, f.token, facts, cw));
+      const hit = COLOR_LEGEND_AUTOCITE && facts.find((f) => f.token && f.dim === 'color' && f.values.some((v) => v.kind === 'role' && v.v === role) && legendScope(u, f.token, facts, cw));
       if (hit) status.set(u.id, {status: 'auto-token', rule: 'color-legend-tested', evidence: [hit.evidence]});
       continue;
     }
@@ -573,6 +605,25 @@ export async function autocite({units, isBuildable, classified, extracted, cited
     sections[section] = {units: list.length, autoToken: auto.length};
   }
 
+  // Short labels wait for a section citation.
+  for (const u of buildable) {
+    if (status.has(u.id)) continue;
+    const text = plain(u.text).trim();
+    // Not in Accessibility: short cells there are key names and labels that
+    // keyboard tests and ARIA checks cite one by one.
+    if ((u.kind === 'list-item' || u.kind === 'table-row') && words(text).length <= 4 && !hasValues(u) && !MODAL.test(text) && !/^accessib/.test(tabOf(u))) {
+      // Covered when the section (or an enclosing one) has a `spec-labels:` citation.
+      const parts = u.section.split('/');
+      const where = parts.map((_, i) => labelCited.get(parts.slice(0, i + 1).join('/'))).find(Boolean);
+      status.set(
+        u.id,
+        where
+          ? {status: 'cited', rule: 'section-labels', evidence: where}
+          : {status: LABEL_STATUS, rule: 'short-label', evidence: [u.section]},
+      );
+    }
+  }
+
   for (const u of buildable) if (!status.has(u.id)) status.set(u.id, {status: 'uncovered'});
 
   // Representatives of the remaining units: the first uncovered member.
@@ -591,14 +642,48 @@ export async function autocite({units, isBuildable, classified, extracted, cited
   );
   for (const [id, list] of candidates) status.get(id).candidates = list;
 
+  if (review) {
+    const reps = buildable.filter((u) => status.get(u.id).status === 'uncovered' && !status.get(u.id).rep);
+    const results = await review(reps.map((u) => ({u, candidates: status.get(u.id).candidates ?? []})));
+    for (const u of buildable) {
+      const s = status.get(u.id);
+      if (s.status !== 'uncovered') continue;
+      const r = results.get(s.rep ?? u.id);
+      if (!r) continue;
+      const via = s.rep ? {via: s.rep} : {};
+      const rule = s.rep ? 'cluster' : 'llm-review';
+      if (reviewCovers && r.final === 'covered') {
+        const agree = r.models ? {models: r.models, quoteHashes: r.quoteHashes, final: r.stage === 3 ? r.models[0] : 'agreement'} : {quoteHash: r.quoteHash};
+        status.set(u.id, {status: 'auto-review', rule, evidence: r.evidence ?? [`${r.file}:${r.line}`], model: r.model, ...agree, ...via});
+      } else if (reviewCovers && r.final === 'not-applicable' && (r.binding || reviewAcceptsNA)) {
+        status.set(u.id, {status: 'review-not-applicable', rule, reason: r.reason, model: r.model, ...via});
+      } else {
+        s.review = r.final;
+        if (r.final === 'covered') s.reviewAt = `${r.file}:${r.line}`;
+      }
+    }
+  }
+
   writeAutocite(status, clusters, sections);
   writePages(units, buildable, status, classified);
   return {status, clusters, sections};
 }
 
+/** Top-level tab of a unit: `overview`, `specs`, `guidelines`, `accessibility`, ... */
+function tabOf(u) {
+  return u.section.split('/')[1] ?? '';
+}
+
+/** Whether a unit states a value: dp/px/%/ms numbers or a color/shape/type token. */
+function hasValues(u) {
+  return /\d+(\.\d+)?\s?(dp|px|%|ms)\b/i.test(u.text) || unitClaims(u.text, /color/.test(u.section)).values.length > 0;
+}
+
 function narRule(u, kind) {
   const text = plain(u.text).trim();
   const short = (u.kind === 'list-item' || u.kind === 'table-row') && words(text).length <= 4;
+  if (u.kind === 'image' && !hasValues(u) && !MODAL.test(text)) return 'image-description';
+  if (/^overview/.test(tabOf(u)) && !hasValues(u)) return 'overview-notes';
   if (u.kind === 'table-row') {
     // Column headers are prefixes ("Square: Available"); a content header
     // carries the requirement, so every prefix must be generic too.
@@ -745,7 +830,7 @@ function dirIndex(dir) {
   return {lines, df, idents};
 }
 
-function findCandidates(units, extracted) {
+export function findCandidates(units, extracted) {
   const indexes = new Map();
   const shared = dirIndex(`${GB}/shared`);
   const styles = dirIndex('labs/gb/styles');
@@ -820,10 +905,23 @@ function writeAutocite(status, clusters, sections) {
       },
       'auto-section': {'specs-section-all-tokens': 'value-less captions/intros of a Specs color/measurements/tokens section whose every value-bearing unit is auto-token'},
       'cited': {cluster: 'another member of the unit\'s cluster is cited'},
+      'auto-review': {
+        'llm-review': 'LLM review (scripts/m3/spec-review.mjs): in agree mode either two models (models, final: agreement) both judged the shown code implements the unit, or the final-gate model (final: <model>) did after they did not agree; every quote (hashes given) was found in its cited file within ±5 lines of the cited line (evidence: one file:line per model)',
+        'cluster': 'the cluster representative (via) is auto-review',
+      },
+      'review-not-applicable': {
+        'llm-review': 'the final-gate LLM (model given; binding) judged the unit is not a requirement for a web component library (platform-only, app-designer or copy advice, design-process prose); reason given',
+        'cluster': 'the cluster representative (via) is review-not-applicable',
+      },
+      'label': {'short-label': 'list item / table cell of <= 4 words with no values or normative wording (anatomy part, legend entry, variant name); covered by citing its section'},
     },
     autoToken: {},
     notARequirement: {},
     autoSection: {},
+    /** section -> label unit IDs waiting for a section citation */
+    labels: {},
+    autoReview: {},
+    reviewNotApplicable: {},
     clusters: clusters.map((c) => c),
     sections,
   };
@@ -831,6 +929,9 @@ function writeAutocite(status, clusters, sections) {
     if (s.status === 'auto-token') out.autoToken[id] = {rule: s.rule, evidence: s.evidence};
     else if (s.status === 'auto-section') out.autoSection[id] = s.evidence[0];
     else if (s.status === 'not-a-requirement') (out.notARequirement[s.rule] ??= []).push(id);
+    else if (s.status === 'label') (out.labels[s.evidence[0]] ??= []).push(id);
+    else if (s.status === 'auto-review') out.autoReview[id] = s.via ? {rule: s.rule, via: s.via} : {rule: s.rule, evidence: s.evidence, ...(s.models ? {models: s.models, quoteHashes: s.quoteHashes, final: s.final} : {model: s.model, quoteHash: s.quoteHash})};
+    else if (s.status === 'review-not-applicable') out.reviewNotApplicable[id] = s.via ? {rule: s.rule, via: s.via} : {rule: s.rule, model: s.model, reason: s.reason};
   }
   writeFileSync(AUTOCITE_FILE, JSON.stringify(out, null, 1) + '\n');
 }
@@ -865,7 +966,7 @@ function writePages(units, buildable, status, classified) {
         }
         const st = status.get(u.id);
         const text = plain(u.text).replace(/\s+/g, ' ').replace(/\|/g, '\\|');
-        const cand = st.candidates?.length ? ` → ${st.candidates.join(', ')}` : ' → (no candidates)';
+        const cand = (st.candidates?.length ? ` → ${st.candidates.join(', ')}` : ' → (no candidates)') + (st.review ? ` · review: ${st.review}${st.reviewAt ? ` at ${st.reviewAt}` : ''}` : '');
         md.push(`- \`${u.id}\` _${classified.get(u.id)?.kind}_${st.cluster ? ` ×${st.cluster}` : ''}: ${text.length > 160 ? `${text.slice(0, 160)}…` : text}${cand}`);
       }
       writeFileSync(join(PAGES_DIR, `${name}.md`), md.join('\n') + '\n');

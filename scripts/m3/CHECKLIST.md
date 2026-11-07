@@ -215,10 +215,12 @@ Everything listed on https://m3.material.io/components, /styles and
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog
   - [x] Primary, secondary
   - [x] Icons and labels
-- [x] **Text fields** (`textfield`)
+- [~] **Text fields** (`textfield`)
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog (Expressive variant of the Text field page)
   - [x] Filled, outlined
-  - [x] Supporting text, counter, error, prefix and suffix, icons, textarea
+  - [x] Supporting text, counter, error, prefix and suffix, icons
+  - [x] Text area (`type="textarea"`, fixed height, `rows`)
+  - [ ] Multi-line text field: starts as a single-line field and grows to fit its lines (`text-fields.md`: "Multi-line text fields grow to accommodate multiple lines of text… These fields initially appear as single-line fields"); `field-sizing: content` with a JS fallback (see `ENGINEERING-BACKLOG.md` item 3)
   - [x] Select and autocomplete (`select`: `md-gb-select`, `md-gb-autocomplete`)
 - [x] **Toolbars** (`toolbar`)
   - [x] Tokens · [x] Component · [x] Spec test · [x] Catalog
@@ -260,10 +262,10 @@ Everything listed on https://m3.material.io/components, /styles and
   - [x] FAB and FAB menu
   - [x] Snackbar (`anchor` above a FAB or toolbar)
   - [x] Side sheets and dialogs (top layer when modal)
-- [ ] **Keyboard spec tests generated from the spec's key tables** (`scripts/m3/gen-keyboard-tests.mjs`; open lines have failing `xit` cases)
-  - [ ] Button groups
+- [x] **Keyboard spec tests generated from the spec's key tables** (`scripts/m3/gen-keyboard-tests.mjs`; no `xit` cases left)
+  - [x] Button groups (Left/Right roving focus)
   - [x] Carousel
-  - [ ] Lists
+  - [x] Lists (one tab stop, arrow-key focus)
   - [x] Radio
   - [x] Segmented buttons
   - [x] Sliders
@@ -350,3 +352,576 @@ Everything listed on https://m3.material.io/components, /styles and
 - [-] **Glossary**: reference only
 - [-] **XR** (`xr/components`, `xr/design`): out of scope
 - [-] **Watches**: out of scope
+
+## Spec tests: shared architecture
+
+Goal: every spec unit that is in code is also **tested**, by a passing test
+that cites it. Instead of one test per sentence (~2,100 for the tracked
+gaps alone), behavior moves into shared code that is tested once: about 60%
+of the gaps sit behind ~10 controllers and ~7 central CSS/token suites, and
+per-component behavior is checked by contract tests generated from one
+config (like the token spec tests). Estimates come from keyword grouping of
+the 2,187 tracked units (±20%).
+
+- [x] **`tested` status in spec-checks**: a unit counts as tested when a `*_test.ts` file cites it (the suite keeps those green); the report's "Tested" line counts them (109 after RovingFocus). `--strict` can later require tested
+- [ ] **Shared controllers** (Lit `ReactiveController`s in `labs/gb/components/shared/`; each: extract, one thorough suite, migrate its users one at a time with the existing tests as the safety net, add it to the contract config)
+  - [x] RovingFocus: arrows, Home/End, wrap, RTL (computed direction), disabled skip, direction-aware entry, initial tab stop — `shared/roving-focus.ts` + suite (`roving-focus_test.ts`)
+    - [x] Controller: button group (horizontal, every button tabbable, no Home/End), segmented button (one tab stop), chip set (backwards enters a chip at its remove button), nav drawer (Tab enters on the first destination, per the spec's initial-focus rule; it used to start on the selected one)
+    - [x] Shared movement (`nextFocusIndex`) inside their own models: list (two tab stops while outside, item controls), menu (typeahead, submenus, disabled items stay focusable), FAB menu (menu button), carousel (no wrap; the other axis leaves the carousel)
+    - [-] Not roving focus, so not migrated: select and search results (listbox with `aria-activedescendant`, clamped, page keys), slider and time picker (arrows change a value), scaffold (arrows resize panes), date picker (2-D grid; a grid controller if another grid appears)
+  - [ ] ModalSurface: showModal, scrim, Escape / back (CloseWatcher, predictive back), focus trap and restore, open/close events, scroll lock (backlog) — date picker, dialog, nav drawer, nav rail, scaffold, search, sheets, time picker
+  - [ ] AnchoredOverlay: popover top layer, positioning and flip, light dismiss — menu, select, tooltip, docked date picker, split button, search, FAB menu, snackbar anchor
+  - [ ] Selection: none / single / multi, required, `aria-checked` / `pressed` / `selected`, form value — button group, chip set, segmented button, list, menu, select, tabs, nav bar, nav rail, date/time pickers
+  - [ ] Disclosure: `aria-expanded` / `aria-controls`, expand/collapse motion — list, menu submenus, FAB menu, search, sheets, nav rail, extended FAB, toolbar
+  - [ ] DragSettle: drag / swipe / fling and spring settle on `drag-gesture.ts` — sheets, nav drawer, nav rail, tab panels, list reveal and reorder, carousel, date picker months, pull to refresh, scaffold handle
+  - [ ] Announcer: one polite / assertive live region — badge, carousel, date picker, list, pull to refresh, search, segmented button, select, snackbar, text field, time picker
+  - [ ] Form: one validation and form-association layer on `labs/behaviors` — text field, select, autocomplete, date picker, time picker, checkbox, radio, switch, slider, chips, segmented button
+  - [ ] Motion: springs, reduced motion, transition/animation end in one helper — date picker, dialog, nav drawer, ripple, search, select, sheets, tabs, time picker
+  - [ ] Adaptive: window size class wiring (`window-size-class.ts`) for components that change by window size — nav bar, nav rail, search, sheets, dialogs, scaffold
+- [ ] **Central CSS / token suites** (one parametrized suite each, run over every component)
+  - [ ] State layers, with hover gated to hover-capable pointers (backlog item)
+  - [ ] Focus indicator
+  - [ ] Touch target and density
+  - [ ] Disabled state
+  - [ ] RTL mirroring
+  - [ ] Reduced motion
+  - [ ] Color roles, shape, type scale and elevation per part (extends the generated token spec tests)
+- [ ] **Generators**
+  - [~] Contract tests from a per-component controller config (`scripts/m3/gen-contract-tests.mjs`, `CONTRACTS`; run by `npm run m3:update`): roving focus for button group, segmented button, chip set and nav drawer (list, menu and carousel are proven by their generated keyboard spec tests); add each controller's checks as it lands
+  - [ ] Measurement tests from the spec's measurement tables (dp values already extracted and matched to parts)
+  - [ ] Anatomy tests: each component exposes the parts its spec anatomy lists
+- [ ] **Component-specific tests** (~60–90, for behavior, adaptive layout, keyboard / screen reader and motion units no shared piece covers), batched per component, must/should units first
+- [ ] **Exclusion review**: ~90 tracked description / usage-advice units that can't be tested get an explicit reason instead of a test
+
+## Engineering backlog (not spec requirements)
+
+Platform and tooling work from `ENGINEERING-BACKLOG.md`, which has the details,
+the spec rule each item must keep, and the ideas rejected because they
+conflict with the spec. Changes must keep the spec's token values and states
+and pass the existing spec tests unchanged; features that aren't Baseline get
+`@supports` or feature detection with the current behavior as the fallback.
+
+- [ ] **Hover state layers only on hover-capable pointers**: wrap `:hover` layers in `@media (hover: hover)` (22 stylesheets; `states.md` Hover). Pressed, focused and dragged layers unchanged.
+- [ ] **Text-field errors after interaction**: `:user-invalid`, keeping the spec's swap of error text for supporting text (`text-fields.md` Error text); the `error` property still overrides.
+- [ ] **Multi-line text field with `field-sizing: content`**: tracked under Text fields above (spec gap).
+- [ ] **Scrolled app-bar color via a scroll-state container query**: surface container, no shadow (`app-bars.md` Color); JS stays as the fallback.
+- [ ] **Connected button-group corners with `@scope`**: same token values (`button-groups.md`); only the mechanism changes.
+- [ ] **CSS scroll lock for modal surfaces**: modal dialogs and modal sheets only, never standard sheets (`dialogs.md` Scrolling, `bottom-sheets.md`).
+- [ ] **Tooling**
+  - [ ] Validate compiled CSS with Lightning CSS against the browser targets
+  - [ ] Per-component Brotli size budgets for CSS and JS (`scripts/size/bundle-size.ts`)
+  - [ ] Agent skill or plugin generated from the Custom Elements Manifest and this checklist
+  - [ ] `performance.mark`/`measure` behind a debug flag (DevTools custom track)
+  - [ ] axe-core checks in the test runner
+- [-] **Rejected** (conflict with the spec; reasons in `ENGINEERING-BACKLOG.md`): carousel scroll buttons and markers, `corner-shape`, `shape()` for the loading indicator, `text-box` trimming, `sibling-index()` stagger, OKLCH palettes, Tailwind `@apply` and checkbox/`:target` overlays, `random()` / `@function` / `if()` / `contrast-color()`.
+
+## Spec gaps by section (generated)
+
+<!-- spec-gaps:start -->
+Generated by `scripts/m3/gen-gap-checklist.mjs` from `spec-checks.mjs`: 438 spec sections with 2187 units that are neither in code nor excluded. Each line tracks its section's open units (`spec-gap:`); build the feature, cite it in code with `spec:`, and the line goes away on the next run.
+
+- **components/all-buttons**
+  - [ ] tab-1 › choosing-buttons (1 unit, 1 must/should) <!-- spec-gap: all-buttons/tab-1/choosing-buttons -->
+- **components/app-bars**
+  - [ ] accessibility › interaction-style (11 units, 2 must/should) <!-- spec-gap: app-bars/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (2 units) <!-- spec-gap: app-bars/accessibility/keyboard-navigation -->
+  - [ ] accessibility › labeling-elements (3 units, 1 must/should) <!-- spec-gap: app-bars/accessibility/labeling-elements -->
+  - [ ] accessibility › use-cases (2 units) <!-- spec-gap: app-bars/accessibility/use-cases -->
+  - [ ] guidelines › adaptive-design (6 units, 2 must/should) <!-- spec-gap: app-bars/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (3 units, 1 must/should) <!-- spec-gap: app-bars/guidelines/anatomy -->
+  - [ ] guidelines › behavior (9 units, 2 must/should) <!-- spec-gap: app-bars/guidelines/behavior -->
+  - [ ] guidelines › usage (1 unit) <!-- spec-gap: app-bars/guidelines/usage -->
+  - [ ] overview › differences-from-m2 (1 unit) <!-- spec-gap: app-bars/overview/differences-from-m2 -->
+  - [ ] specs › anatomy (8 units, 1 must/should) <!-- spec-gap: app-bars/specs/anatomy -->
+  - [ ] specs › variants (1 unit) <!-- spec-gap: app-bars/specs/variants -->
+- **components/badges**
+  - [ ] accessibility › interaction-style (1 unit) <!-- spec-gap: badges/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (1 unit) <!-- spec-gap: badges/accessibility/labeling-elements -->
+  - [ ] guidelines › container (4 units) <!-- spec-gap: badges/guidelines/container -->
+  - [ ] guidelines › placement (1 unit) <!-- spec-gap: badges/guidelines/placement -->
+  - [ ] guidelines › usage (1 unit) <!-- spec-gap: badges/guidelines/usage -->
+  - [ ] specs › measurements (5 units) <!-- spec-gap: badges/specs/measurements -->
+- **components/bottom-sheets**
+  - [ ] guidelines › behavior (3 units, 1 must/should) <!-- spec-gap: bottom-sheets/guidelines/behavior -->
+  - [ ] guidelines › modal-bottom-sheets (1 unit) <!-- spec-gap: bottom-sheets/guidelines/modal-bottom-sheets -->
+  - [ ] guidelines › standard-bottom-sheets (1 unit) <!-- spec-gap: bottom-sheets/guidelines/standard-bottom-sheets -->
+- **components/button-groups**
+  - [ ] accessibility › interaction-style (8 units, 3 must/should) <!-- spec-gap: button-groups/accessibility/interaction-style -->
+  - [ ] accessibility › use-cases (1 unit) <!-- spec-gap: button-groups/accessibility/use-cases -->
+  - [ ] guidelines › adaptive-design (9 units, 3 must/should) <!-- spec-gap: button-groups/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (3 units, 1 must/should) <!-- spec-gap: button-groups/guidelines/anatomy -->
+  - [ ] guidelines › behavior (2 units) <!-- spec-gap: button-groups/guidelines/behavior -->
+  - [ ] guidelines › usage (6 units, 1 must/should) <!-- spec-gap: button-groups/guidelines/usage -->
+  - [ ] specs › anatomy (1 unit) <!-- spec-gap: button-groups/specs/anatomy -->
+  - [ ] specs › measurements (2 units) <!-- spec-gap: button-groups/specs/measurements -->
+  - [ ] specs › selection-activation (4 units) <!-- spec-gap: button-groups/specs/selection-activation -->
+  - [ ] specs › states (3 units, 2 must/should) <!-- spec-gap: button-groups/specs/states -->
+- **components/buttons**
+  - [ ] accessibility › interaction-style (5 units, 1 must/should) <!-- spec-gap: buttons/accessibility/interaction-style -->
+  - [ ] guidelines › anatomy (7 units, 5 must/should) <!-- spec-gap: buttons/guidelines/anatomy -->
+  - [ ] guidelines › color-styles (3 units, 1 must/should) <!-- spec-gap: buttons/guidelines/color-styles -->
+  - [ ] guidelines › toggle-buttons (2 units) <!-- spec-gap: buttons/guidelines/toggle-buttons -->
+  - [ ] guidelines › usage (1 unit, 1 must/should) <!-- spec-gap: buttons/guidelines/usage -->
+  - [ ] specs › configurations (2 units) <!-- spec-gap: buttons/specs/configurations -->
+  - [ ] specs › states (2 units) <!-- spec-gap: buttons/specs/states -->
+- **components/cards**
+  - [ ] accessibility › interaction-style (5 units, 2 must/should) <!-- spec-gap: cards/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (1 unit) <!-- spec-gap: cards/accessibility/keyboard-navigation -->
+  - [ ] accessibility › labeling-elements (1 unit) <!-- spec-gap: cards/accessibility/labeling-elements -->
+  - [ ] guidelines › anatomy (14 units) <!-- spec-gap: cards/guidelines/anatomy -->
+  - [ ] guidelines › behavior (18 units, 5 must/should) <!-- spec-gap: cards/guidelines/behavior -->
+  - [ ] specs › measurements (7 units) <!-- spec-gap: cards/specs/measurements -->
+- **components/carousel**
+  - [ ] accessibility › interaction-style (2 units, 1 must/should) <!-- spec-gap: carousel/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (1 unit) <!-- spec-gap: carousel/accessibility/labeling-elements -->
+  - [ ] accessibility › reduced-motion (3 units, 2 must/should) <!-- spec-gap: carousel/accessibility/reduced-motion -->
+  - [ ] accessibility › requirements-on-scrolling-pages (5 units, 5 must/should) <!-- spec-gap: carousel/accessibility/requirements-on-scrolling-pages -->
+  - [ ] guidelines › adaptive-design (1 unit) <!-- spec-gap: carousel/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (7 units, 3 must/should) <!-- spec-gap: carousel/guidelines/anatomy -->
+  - [ ] guidelines › usage (8 units, 2 must/should) <!-- spec-gap: carousel/guidelines/usage -->
+  - [ ] specs › full-screen (1 unit) <!-- spec-gap: carousel/specs/full-screen -->
+- **components/checkbox**
+  - [ ] accessibility › avoid-applying-density-by-default (1 unit, 1 must/should) <!-- spec-gap: checkbox/accessibility/avoid-applying-density-by-default -->
+  - [ ] accessibility › interaction-style (4 units, 1 must/should) <!-- spec-gap: checkbox/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (3 units) <!-- spec-gap: checkbox/accessibility/keyboard-navigation -->
+  - [ ] accessibility › labeling-elements (2 units) <!-- spec-gap: checkbox/accessibility/labeling-elements -->
+  - [ ] guidelines › behavior (6 units) <!-- spec-gap: checkbox/guidelines/behavior -->
+  - [ ] specs › color (3 units) <!-- spec-gap: checkbox/specs/color -->
+- **components/chips**
+  - [ ] accessibility › interaction-style (1 unit, 1 must/should) <!-- spec-gap: chips/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (3 units) <!-- spec-gap: chips/accessibility/keyboard-navigation -->
+  - [ ] accessibility › labeling-elements (8 units, 4 must/should) <!-- spec-gap: chips/accessibility/labeling-elements -->
+  - [ ] guidelines › anatomy (8 units, 3 must/should) <!-- spec-gap: chips/guidelines/anatomy -->
+  - [ ] guidelines › assist-chips (2 units) <!-- spec-gap: chips/guidelines/assist-chips -->
+  - [ ] guidelines › filter-chips (5 units) <!-- spec-gap: chips/guidelines/filter-chips -->
+  - [ ] guidelines › input-chips (13 units, 2 must/should) <!-- spec-gap: chips/guidelines/input-chips -->
+  - [ ] guidelines › suggestion-chips (1 unit) <!-- spec-gap: chips/guidelines/suggestion-chips -->
+  - [ ] specs › assist-chip (1 unit) <!-- spec-gap: chips/specs/assist-chip -->
+  - [ ] specs › suggestion-chip (1 unit) <!-- spec-gap: chips/specs/suggestion-chip -->
+- **styles/color/advanced**
+  - [ ] adjust-existing-colors › define-your-own-baseline-scheme (3 units) <!-- spec-gap: color-advanced/adjust-existing-colors/define-your-own-baseline-scheme -->
+  - [ ] adjust-existing-colors › define-your-own-dynamic-scheme (3 units, 1 must/should) <!-- spec-gap: color-advanced/adjust-existing-colors/define-your-own-dynamic-scheme -->
+  - [ ] adjust-existing-colors › harmonize-colors (2 units) <!-- spec-gap: color-advanced/adjust-existing-colors/harmonize-colors -->
+  - [ ] adjust-existing-colors › use-color-fidelity (1 unit) <!-- spec-gap: color-advanced/adjust-existing-colors/use-color-fidelity -->
+  - [ ] apply-colors › map-or-remap-colors-on-ui-elements (2 units) <!-- spec-gap: color-advanced/apply-colors/map-or-remap-colors-on-ui-elements -->
+  - [ ] define-new-colors (1 unit) <!-- spec-gap: color-advanced/define-new-colors -->
+  - [ ] define-new-colors › define-custom-color-roles (4 units, 1 must/should) <!-- spec-gap: color-advanced/define-new-colors/define-custom-color-roles -->
+- **styles/color/choosing-a-scheme**
+  - [ ] tab-1 › static-color (1 unit) <!-- spec-gap: color-choosing-a-scheme/tab-1/static-color -->
+- **styles/color/dynamic**
+  - [ ] page introduction (1 unit) <!-- spec-gap: color-dynamic-f16282 -->
+  - [ ] content-based-source (3 units) <!-- spec-gap: color-dynamic/content-based-source -->
+  - [ ] user-generated-source › design-with-user-generated-color (5 units) <!-- spec-gap: color-dynamic/user-generated-source/design-with-user-generated-color -->
+- **styles/color/resources**
+  - [ ] tab-1 › material-theme-builder (1 unit) <!-- spec-gap: color-resources/tab-1/material-theme-builder -->
+- **styles/color/roles**
+  - [ ] page introduction (1 unit) <!-- spec-gap: color-roles-e1801e -->
+  - [ ] tab-1 › accent-color-roles (1 unit) <!-- spec-gap: color-roles/tab-1/accent-color-roles -->
+  - [ ] tab-1 › add-on-color-roles (36 units) <!-- spec-gap: color-roles/tab-1/add-on-color-roles -->
+  - [ ] tab-1 › error (4 units) <!-- spec-gap: color-roles/tab-1/error -->
+  - [ ] tab-1 › general-concepts (3 units, 1 must/should) <!-- spec-gap: color-roles/tab-1/general-concepts -->
+  - [ ] tab-1 › outline (8 units) <!-- spec-gap: color-roles/tab-1/outline -->
+  - [ ] tab-1 › primary (4 units) <!-- spec-gap: color-roles/tab-1/primary -->
+  - [ ] tab-1 › secondary (5 units) <!-- spec-gap: color-roles/tab-1/secondary -->
+  - [ ] tab-1 › surface (23 units, 1 must/should) <!-- spec-gap: color-roles/tab-1/surface -->
+  - [ ] tab-1 › tertiary (3 units) <!-- spec-gap: color-roles/tab-1/tertiary -->
+  - [ ] tab-1 › what-are-color-roles (6 units, 1 must/should) <!-- spec-gap: color-roles/tab-1/what-are-color-roles -->
+- **styles/color/static**
+  - [ ] baseline (1 unit) <!-- spec-gap: color-static/baseline -->
+  - [ ] baseline › baseline-color-tokens (1 unit) <!-- spec-gap: color-static/baseline/baseline-color-tokens -->
+  - [ ] baseline › baseline-colors (2 units) <!-- spec-gap: color-static/baseline/baseline-colors -->
+  - [ ] custom-brand › create-a-custom-brand-color-scheme (2 units) <!-- spec-gap: color-static/custom-brand/create-a-custom-brand-color-scheme -->
+  - [ ] custom-brand › develop-with-brand-colors (1 unit) <!-- spec-gap: color-static/custom-brand/develop-with-brand-colors -->
+- **styles/color/system**
+  - [ ] page introduction (1 unit) <!-- spec-gap: color-system-868ee9 -->
+  - [ ] how-the-system-works › color-roles-support-three-levels-of-contrast (11 units) <!-- spec-gap: color-system/how-the-system-works/color-roles-support-three-levels-of-contrast -->
+  - [ ] how-the-system-works › defining-colors-with-hue-chroma-and-tone-hct (2 units, 1 must/should) <!-- spec-gap: color-system/how-the-system-works/defining-colors-with-hue-chroma-and-tone-hct -->
+  - [ ] how-the-system-works › essential-terms (4 units) <!-- spec-gap: color-system/how-the-system-works/essential-terms -->
+  - [ ] how-the-system-works › how-dynamic-color-generates-color-schemes (6 units) <!-- spec-gap: color-system/how-the-system-works/how-dynamic-color-generates-color-schemes -->
+  - [ ] how-the-system-works › it-s-like-paint-by-number (6 units) <!-- spec-gap: color-system/how-the-system-works/it-s-like-paint-by-number -->
+  - [ ] how-the-system-works › pairing-accessible-tones (2 units) <!-- spec-gap: color-system/how-the-system-works/pairing-accessible-tones -->
+  - [ ] overview › what-s-new (7 units) <!-- spec-gap: color-system/overview/what-s-new -->
+- **foundations/customization**
+  - [ ] tab-1 › custom-color-schemes (2 units) <!-- spec-gap: customization/tab-1/custom-color-schemes -->
+  - [ ] tab-1 › dynamic-color-makes-personal-devices-feel-personal (2 units) <!-- spec-gap: customization/tab-1/dynamic-color-makes-personal-devices-feel-personal -->
+- **components/date-pickers**
+  - [ ] accessibility › affordance-for-keyboard-shortcuts (1 unit) <!-- spec-gap: date-pickers/accessibility/affordance-for-keyboard-shortcuts -->
+  - [ ] accessibility › color-contrast-between-dates (2 units, 1 must/should) <!-- spec-gap: date-pickers/accessibility/color-contrast-between-dates -->
+  - [ ] accessibility › date-entry-methods (1 unit) <!-- spec-gap: date-pickers/accessibility/date-entry-methods -->
+  - [ ] accessibility › interaction-style (2 units) <!-- spec-gap: date-pickers/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (2 units, 2 must/should) <!-- spec-gap: date-pickers/accessibility/labeling-elements -->
+  - [ ] accessibility › truncated-labels-tooltips (2 units, 1 must/should) <!-- spec-gap: date-pickers/accessibility/truncated-labels-tooltips -->
+  - [ ] guidelines › modal-date-input (3 units) <!-- spec-gap: date-pickers/guidelines/modal-date-input -->
+  - [ ] overview › differences-from-m2 (1 unit) <!-- spec-gap: date-pickers/overview/differences-from-m2 -->
+  - [ ] specs › docked-date-picker (1 unit) <!-- spec-gap: date-pickers/specs/docked-date-picker -->
+  - [ ] specs › modal-date-input (2 units) <!-- spec-gap: date-pickers/specs/modal-date-input -->
+- **foundations/design-tokens**
+  - [ ] overview (1 unit) <!-- spec-gap: design-tokens/overview -->
+  - [ ] overview › classes-of-tokens (1 unit) <!-- spec-gap: design-tokens/overview/classes-of-tokens -->
+- **foundations/designing**
+  - [ ] color-contrast › color-contrast (7 units, 1 must/should) <!-- spec-gap: designing/color-contrast/color-contrast -->
+  - [ ] elements › labeling-elements (7 units, 1 must/should) <!-- spec-gap: designing/elements/labeling-elements -->
+  - [ ] flow › focus-order-key-traversal (11 units, 3 must/should) <!-- spec-gap: designing/flow/focus-order-key-traversal -->
+  - [ ] flow › keyboard-shortcuts (4 units, 2 must/should) <!-- spec-gap: designing/flow/keyboard-shortcuts -->
+  - [ ] structure › hierarchy (2 units) <!-- spec-gap: designing/structure/hierarchy -->
+  - [ ] structure › target-sizes (8 units) <!-- spec-gap: designing/structure/target-sizes -->
+- **components/dialogs**
+  - [ ] accessibility › initial-focus (1 unit) <!-- spec-gap: dialogs/accessibility/initial-focus -->
+  - [ ] accessibility › interaction-style (1 unit) <!-- spec-gap: dialogs/accessibility/interaction-style -->
+  - [ ] guidelines › adaptive-design (6 units) <!-- spec-gap: dialogs/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (2 units) <!-- spec-gap: dialogs/guidelines/anatomy -->
+  - [ ] guidelines › full-screen-dialog (8 units, 4 must/should) <!-- spec-gap: dialogs/guidelines/full-screen-dialog -->
+  - [ ] specs › basic-dialogs (1 unit) <!-- spec-gap: dialogs/specs/basic-dialogs -->
+  - [ ] specs › full-screen-dialogs (4 units) <!-- spec-gap: dialogs/specs/full-screen-dialogs -->
+- **components/divider**
+  - [ ] specs › measurements (4 units) <!-- spec-gap: divider/specs/measurements -->
+- **styles/elevation**
+  - [ ] applying-elevation (3 units) <!-- spec-gap: elevation/applying-elevation -->
+  - [ ] applying-elevation › depicting-elevation (8 units, 4 must/should) <!-- spec-gap: elevation/applying-elevation/depicting-elevation -->
+  - [ ] applying-elevation › scrims (2 units) <!-- spec-gap: elevation/applying-elevation/scrims -->
+  - [ ] applying-elevation › shadows (4 units) <!-- spec-gap: elevation/applying-elevation/shadows -->
+  - [ ] overview (2 units) <!-- spec-gap: elevation/overview -->
+  - [ ] overview › all-surfaces-and-components-have-elevation-values (3 units) <!-- spec-gap: elevation/overview/all-surfaces-and-components-have-elevation-values -->
+  - [ ] overview › differences-from-m2 (1 unit) <!-- spec-gap: elevation/overview/differences-from-m2 -->
+  - [ ] tokens › component-elevation (17 units, 1 must/should) <!-- spec-gap: elevation/tokens/component-elevation -->
+- **components/extended-fab**
+  - [ ] accessibility › initial-focus (1 unit, 1 must/should) <!-- spec-gap: extended-fab/accessibility/initial-focus -->
+  - [ ] accessibility › labeling-elements (1 unit, 1 must/should) <!-- spec-gap: extended-fab/accessibility/labeling-elements -->
+  - [ ] guidelines › behavior (4 units) <!-- spec-gap: extended-fab/guidelines/behavior -->
+  - [ ] guidelines › responsive-layout (10 units, 2 must/should) <!-- spec-gap: extended-fab/guidelines/responsive-layout -->
+  - [ ] specs › baseline-extended-fab (1 unit) <!-- spec-gap: extended-fab/specs/baseline-extended-fab -->
+  - [ ] specs › color (2 units, 1 must/should) <!-- spec-gap: extended-fab/specs/color -->
+  - [ ] specs › measurements (1 unit, 1 must/should) <!-- spec-gap: extended-fab/specs/measurements -->
+  - [ ] specs › states (2 units, 1 must/should) <!-- spec-gap: extended-fab/specs/states -->
+- **components/fab-menu**
+  - [ ] accessibility › interaction-style (4 units, 2 must/should) <!-- spec-gap: fab-menu/accessibility/interaction-style -->
+  - [ ] guidelines › adaptive-layout (5 units, 2 must/should) <!-- spec-gap: fab-menu/guidelines/adaptive-layout -->
+  - [ ] guidelines › anatomy (1 unit, 1 must/should) <!-- spec-gap: fab-menu/guidelines/anatomy -->
+  - [ ] guidelines › behavior (12 units, 4 must/should) <!-- spec-gap: fab-menu/guidelines/behavior -->
+  - [ ] guidelines › usage (2 units, 2 must/should) <!-- spec-gap: fab-menu/guidelines/usage -->
+  - [ ] specs › measurements (14 units, 1 must/should) <!-- spec-gap: fab-menu/specs/measurements -->
+- **components/floating-action-button**
+  - [ ] accessibility › focus (3 units) <!-- spec-gap: floating-action-button/accessibility/focus -->
+  - [ ] accessibility › layout-position (7 units, 2 must/should) <!-- spec-gap: floating-action-button/accessibility/layout-position -->
+  - [ ] guidelines (1 unit) <!-- spec-gap: floating-action-button/guidelines -->
+  - [ ] guidelines › adaptive-design (1 unit) <!-- spec-gap: floating-action-button/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (1 unit, 1 must/should) <!-- spec-gap: floating-action-button/guidelines/anatomy -->
+  - [ ] guidelines › behaviors (16 units, 6 must/should) <!-- spec-gap: floating-action-button/guidelines/behaviors -->
+  - [ ] guidelines › usage (1 unit) <!-- spec-gap: floating-action-button/guidelines/usage -->
+  - [ ] specs › color (2 units) <!-- spec-gap: floating-action-button/specs/color -->
+  - [ ] specs › states (2 units, 1 must/should) <!-- spec-gap: floating-action-button/specs/states -->
+- **components/icon-buttons**
+  - [ ] accessibility › hover (1 unit, 1 must/should) <!-- spec-gap: icon-buttons/accessibility/hover -->
+  - [ ] accessibility › interaction-style (2 units, 2 must/should) <!-- spec-gap: icon-buttons/accessibility/interaction-style -->
+  - [ ] accessibility › layout-density (3 units, 2 must/should) <!-- spec-gap: icon-buttons/accessibility/layout-density -->
+  - [ ] accessibility › use-cases (1 unit, 1 must/should) <!-- spec-gap: icon-buttons/accessibility/use-cases -->
+  - [ ] guidelines (1 unit) <!-- spec-gap: icon-buttons/guidelines -->
+  - [ ] guidelines › anatomy (2 units, 1 must/should) <!-- spec-gap: icon-buttons/guidelines/anatomy -->
+  - [ ] guidelines › behavior (2 units) <!-- spec-gap: icon-buttons/guidelines/behavior -->
+  - [ ] guidelines › usage (1 unit) <!-- spec-gap: icon-buttons/guidelines/usage -->
+  - [ ] specs › baseline-tokens (1 unit) <!-- spec-gap: icon-buttons/specs/baseline-tokens -->
+  - [ ] specs › configurations (1 unit) <!-- spec-gap: icon-buttons/specs/configurations -->
+- **styles/icons**
+  - [ ] applying-icons › accessibility (8 units, 4 must/should) <!-- spec-gap: icons/applying-icons/accessibility -->
+  - [ ] applying-icons › customizing-symbols (16 units, 1 must/should) <!-- spec-gap: icons/applying-icons/customizing-symbols -->
+  - [ ] applying-icons › icon-material-symbol-styles (6 units) <!-- spec-gap: icons/applying-icons/icon-material-symbol-styles -->
+  - [ ] applying-icons › using-material-symbols-with-typography (1 unit) <!-- spec-gap: icons/applying-icons/using-material-symbols-with-typography -->
+  - [ ] designing-icons › grid-and-keyline-shapes (11 units) <!-- spec-gap: icons/designing-icons/grid-and-keyline-shapes -->
+  - [ ] designing-icons › icon-metrics (24 units, 2 must/should) <!-- spec-gap: icons/designing-icons/icon-metrics -->
+  - [ ] designing-icons › icon-sizes-and-layout (19 units, 3 must/should) <!-- spec-gap: icons/designing-icons/icon-sizes-and-layout -->
+- **foundations/interaction/gestures**
+  - [ ] tab-1 › types-of-gestures (14 units) <!-- spec-gap: interaction-gestures/tab-1/types-of-gestures -->
+- **foundations/interaction/inputs**
+  - [ ] tab-1 (1 unit) <!-- spec-gap: interaction-inputs/tab-1 -->
+  - [ ] tab-1 › external-inputs-for-devices (8 units) <!-- spec-gap: interaction-inputs/tab-1/external-inputs-for-devices -->
+  - [ ] tab-1 › mouse-and-cursor-interactions (29 units, 10 must/should) <!-- spec-gap: interaction-inputs/tab-1/mouse-and-cursor-interactions -->
+  - [ ] tab-1 › mouse-wheel-and-trackpad-gestures (9 units, 4 must/should) <!-- spec-gap: interaction-inputs/tab-1/mouse-wheel-and-trackpad-gestures -->
+  - [ ] tab-1 › physical-keyboard (13 units, 5 must/should) <!-- spec-gap: interaction-inputs/tab-1/physical-keyboard -->
+- **foundations/interaction/selection**
+  - [ ] tab-1 (3 units) <!-- spec-gap: interaction-selection/tab-1 -->
+  - [ ] tab-1 › selection-indicators (18 units, 1 must/should) <!-- spec-gap: interaction-selection/tab-1/selection-indicators -->
+  - [ ] tab-1 › types-of-selection (13 units, 1 must/should) <!-- spec-gap: interaction-selection/tab-1/types-of-selection -->
+- **foundations/interaction/states**
+  - [ ] page introduction (1 unit) <!-- spec-gap: interaction-states-85f3e0 -->
+  - [ ] applying-states › disabled (22 units, 2 must/should) <!-- spec-gap: interaction-states/applying-states/disabled -->
+  - [ ] applying-states › dragged (17 units, 3 must/should) <!-- spec-gap: interaction-states/applying-states/dragged -->
+  - [ ] applying-states › enabled (4 units) <!-- spec-gap: interaction-states/applying-states/enabled -->
+  - [ ] applying-states › focused (19 units, 1 must/should) <!-- spec-gap: interaction-states/applying-states/focused -->
+  - [ ] applying-states › hover (16 units, 2 must/should) <!-- spec-gap: interaction-states/applying-states/hover -->
+  - [ ] applying-states › pressed (19 units, 2 must/should) <!-- spec-gap: interaction-states/applying-states/pressed -->
+  - [ ] state-layers › state-layers (11 units, 1 must/should) <!-- spec-gap: interaction-states/state-layers/state-layers -->
+- **foundations/layout/bidirectionality-rtl**
+  - [ ] page introduction (1 unit) <!-- spec-gap: layout-bidirectionality-rtl-1c3f26 -->
+  - [ ] tab-1 (2 units, 1 must/should) <!-- spec-gap: layout-bidirectionality-rtl/tab-1 -->
+  - [ ] tab-1 › canonical-layout-examples (8 units) <!-- spec-gap: layout-bidirectionality-rtl/tab-1/canonical-layout-examples -->
+  - [ ] tab-1 › component-examples (16 units, 2 must/should) <!-- spec-gap: layout-bidirectionality-rtl/tab-1/component-examples -->
+  - [ ] tab-1 › icons-symbols (5 units, 2 must/should) <!-- spec-gap: layout-bidirectionality-rtl/tab-1/icons-symbols -->
+  - [ ] tab-1 › mirroring (3 units) <!-- spec-gap: layout-bidirectionality-rtl/tab-1/mirroring -->
+  - [ ] tab-1 › swipe-gestures (6 units, 4 must/should) <!-- spec-gap: layout-bidirectionality-rtl/tab-1/swipe-gestures -->
+  - [ ] tab-1 › text-rendering (2 units, 1 must/should) <!-- spec-gap: layout-bidirectionality-rtl/tab-1/text-rendering -->
+  - [ ] tab-1 › time (10 units, 4 must/should) <!-- spec-gap: layout-bidirectionality-rtl/tab-1/time -->
+- **foundations/layout/breakpoints**
+  - [ ] compact › navigation (3 units) <!-- spec-gap: layout-breakpoints/compact/navigation -->
+  - [ ] compact › special-considerations (6 units, 1 must/should) <!-- spec-gap: layout-breakpoints/compact/special-considerations -->
+  - [ ] expanded › panes (5 units) <!-- spec-gap: layout-breakpoints/expanded/panes -->
+  - [ ] expanded › special-considerations (2 units) <!-- spec-gap: layout-breakpoints/expanded/special-considerations -->
+  - [ ] large-extra-large › additional-panes (1 unit) <!-- spec-gap: layout-breakpoints/large-extra-large/additional-panes -->
+  - [ ] large-extra-large › panes (2 units, 1 must/should) <!-- spec-gap: layout-breakpoints/large-extra-large/panes -->
+  - [ ] large-extra-large › special-considerations (3 units, 1 must/should) <!-- spec-gap: layout-breakpoints/large-extra-large/special-considerations -->
+  - [ ] medium › navigation (3 units) <!-- spec-gap: layout-breakpoints/medium/navigation -->
+  - [ ] medium › panes (4 units, 2 must/should) <!-- spec-gap: layout-breakpoints/medium/panes -->
+  - [ ] medium › special-considerations (2 units) <!-- spec-gap: layout-breakpoints/medium/special-considerations -->
+  - [ ] overview › breakpoints-overview (3 units) <!-- spec-gap: layout-breakpoints/overview/breakpoints-overview -->
+- **foundations/layout/canonical-examples**
+  - [ ] feed › across-breakpoints (5 units, 2 must/should) <!-- spec-gap: layout-canonical-examples/feed/across-breakpoints -->
+  - [ ] feed › dividing-space (2 units, 1 must/should) <!-- spec-gap: layout-canonical-examples/feed/dividing-space -->
+  - [ ] list-detail › across-breakpoints (4 units, 1 must/should) <!-- spec-gap: layout-canonical-examples/list-detail/across-breakpoints -->
+  - [ ] list-detail › behavior (15 units, 10 must/should) <!-- spec-gap: layout-canonical-examples/list-detail/behavior -->
+  - [ ] list-detail › usage (1 unit) <!-- spec-gap: layout-canonical-examples/list-detail/usage -->
+  - [ ] supporting-pane › across-breakpoints (5 units, 3 must/should) <!-- spec-gap: layout-canonical-examples/supporting-pane/across-breakpoints -->
+  - [ ] supporting-pane › dividing-space (2 units) <!-- spec-gap: layout-canonical-examples/supporting-pane/dividing-space -->
+- **foundations/layout/grids-spacing**
+  - [ ] density (2 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density -->
+  - [ ] density › component-scaling (8 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density/component-scaling -->
+  - [ ] density › information-density (2 units, 1 must/should) <!-- spec-gap: layout-grids-spacing/density/information-density -->
+  - [ ] density › targets (5 units, 2 must/should) <!-- spec-gap: layout-grids-spacing/density/targets -->
+  - [ ] grids (1 unit) <!-- spec-gap: layout-grids-spacing/grids -->
+  - [ ] grids › rulers-alignment (1 unit) <!-- spec-gap: layout-grids-spacing/grids/rulers-alignment -->
+  - [ ] spacing (2 units) <!-- spec-gap: layout-grids-spacing/spacing -->
+- **foundations/layout/layout-overview**
+  - [ ] adaptive-design › adaptive-layouts (20 units, 2 must/should) <!-- spec-gap: layout-overview/adaptive-design/adaptive-layouts -->
+  - [ ] adaptive-design › designing-adaptive-experiences (2 units, 1 must/should) <!-- spec-gap: layout-overview/adaptive-design/designing-adaptive-experiences -->
+  - [ ] parts-of-layout › layout-scaffold (15 units, 2 must/should) <!-- spec-gap: layout-overview/parts-of-layout/layout-scaffold -->
+  - [ ] parts-of-layout › parts-of-layout (1 unit) <!-- spec-gap: layout-overview/parts-of-layout/parts-of-layout -->
+- **foundations/layout/scaffold**
+  - [ ] bars › bars (4 units, 1 must/should) <!-- spec-gap: layout-scaffold/bars/bars -->
+  - [ ] panes › accessibility-considerations (1 unit, 1 must/should) <!-- spec-gap: layout-scaffold/panes/accessibility-considerations -->
+  - [ ] panes › displaying-multiple-panes (4 units, 1 must/should) <!-- spec-gap: layout-scaffold/panes/displaying-multiple-panes -->
+  - [ ] panes › how-panes-adapt (4 units) <!-- spec-gap: layout-scaffold/panes/how-panes-adapt -->
+  - [ ] panes › pane-expansion-resizing (10 units, 2 must/should) <!-- spec-gap: layout-scaffold/panes/pane-expansion-resizing -->
+  - [ ] panes › panes (3 units) <!-- spec-gap: layout-scaffold/panes/panes -->
+  - [ ] panes › spatial-panels (1 unit) <!-- spec-gap: layout-scaffold/panes/spatial-panels -->
+  - [ ] rails › rails (8 units) <!-- spec-gap: layout-scaffold/rails/rails -->
+- **components/lists**
+  - [ ] accessibility › focus (8 units, 3 must/should) <!-- spec-gap: lists/accessibility/focus -->
+  - [ ] accessibility › indicate-selection-with-more-than-color (3 units, 1 must/should) <!-- spec-gap: lists/accessibility/indicate-selection-with-more-than-color -->
+  - [ ] accessibility › interaction-style (1 unit) <!-- spec-gap: lists/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (9 units, 2 must/should) <!-- spec-gap: lists/accessibility/labeling-elements -->
+  - [ ] guidelines (1 unit) <!-- spec-gap: lists/guidelines -->
+  - [ ] guidelines › adaptive-design (8 units, 2 must/should) <!-- spec-gap: lists/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (5 units) <!-- spec-gap: lists/guidelines/anatomy -->
+  - [ ] guidelines › behavior (3 units) <!-- spec-gap: lists/guidelines/behavior -->
+  - [ ] overview › differences-from-m2-to-m3-baseline (2 units) <!-- spec-gap: lists/overview/differences-from-m2-to-m3-baseline -->
+  - [ ] specs › anatomy (8 units, 4 must/should) <!-- spec-gap: lists/specs/anatomy -->
+  - [ ] specs › color (1 unit) <!-- spec-gap: lists/specs/color -->
+  - [ ] specs › configurations (2 units) <!-- spec-gap: lists/specs/configurations -->
+  - [ ] specs › list-baseline (52 units, 1 must/should) <!-- spec-gap: lists/specs/list-baseline -->
+  - [ ] specs › variants (4 units) <!-- spec-gap: lists/specs/variants -->
+- **components/loading-indicator**
+  - [ ] accessibility › interaction-style (1 unit) <!-- spec-gap: loading-indicator/accessibility/interaction-style -->
+  - [ ] guidelines › behavior (6 units, 2 must/should) <!-- spec-gap: loading-indicator/guidelines/behavior -->
+  - [ ] guidelines › responsive-layout (7 units, 4 must/should) <!-- spec-gap: loading-indicator/guidelines/responsive-layout -->
+  - [ ] guidelines › usage (2 units) <!-- spec-gap: loading-indicator/guidelines/usage -->
+  - [ ] specs › color (2 units) <!-- spec-gap: loading-indicator/specs/color -->
+- **components/menus**
+  - [ ] accessibility › focus (1 unit) <!-- spec-gap: menus/accessibility/focus -->
+  - [ ] accessibility › interaction-style (1 unit) <!-- spec-gap: menus/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (5 units, 2 must/should) <!-- spec-gap: menus/accessibility/labeling-elements -->
+  - [ ] guidelines › behavior (16 units, 3 must/should) <!-- spec-gap: menus/guidelines/behavior -->
+  - [ ] specs › color (2 units) <!-- spec-gap: menus/specs/color -->
+  - [ ] specs › menu-baseline (40 units) <!-- spec-gap: menus/specs/menu-baseline -->
+  - [ ] specs › variants (6 units) <!-- spec-gap: menus/specs/variants -->
+- **styles/motion/easing-and-duration**
+  - [ ] page introduction (1 unit) <!-- spec-gap: motion-easing-and-duration-e4bdc6 -->
+  - [ ] applying-easing-and-duration (1 unit) <!-- spec-gap: motion-easing-and-duration/applying-easing-and-duration -->
+  - [ ] applying-easing-and-duration › duration (16 units, 2 must/should) <!-- spec-gap: motion-easing-and-duration/applying-easing-and-duration/duration -->
+  - [ ] applying-easing-and-duration › easing (19 units, 2 must/should) <!-- spec-gap: motion-easing-and-duration/applying-easing-and-duration/easing -->
+  - [ ] applying-easing-and-duration › suggested-easing-and-duration-pairs (4 units) <!-- spec-gap: motion-easing-and-duration/applying-easing-and-duration/suggested-easing-and-duration-pairs -->
+  - [ ] tokens-specs › duration (27 units) <!-- spec-gap: motion-easing-and-duration/tokens-specs/duration -->
+  - [ ] tokens-specs › easing (13 units) <!-- spec-gap: motion-easing-and-duration/tokens-specs/easing -->
+  - [ ] tokens-specs › tokens (1 unit) <!-- spec-gap: motion-easing-and-duration/tokens-specs/tokens -->
+- **styles/motion/overview**
+  - [ ] how-it-works › a-motion-system-designed-for-expression (1 unit) <!-- spec-gap: motion-overview/how-it-works/a-motion-system-designed-for-expression -->
+  - [ ] how-it-works › advanced-customizations (8 units) <!-- spec-gap: motion-overview/how-it-works/advanced-customizations -->
+  - [ ] how-it-works › application (1 unit) <!-- spec-gap: motion-overview/how-it-works/application -->
+  - [ ] how-it-works › how-it-works-springs (7 units) <!-- spec-gap: motion-overview/how-it-works/how-it-works-springs -->
+  - [ ] how-it-works › spring-tokens (20 units, 3 must/should) <!-- spec-gap: motion-overview/how-it-works/spring-tokens -->
+  - [ ] how-it-works › the-basics-motion-schemes (10 units, 3 must/should) <!-- spec-gap: motion-overview/how-it-works/the-basics-motion-schemes -->
+  - [ ] specs › cross-platform-experiences (1 unit) <!-- spec-gap: motion-overview/specs/cross-platform-experiences -->
+  - [ ] specs › web-convert-springs-to-curves (12 units) <!-- spec-gap: motion-overview/specs/web-convert-springs-to-curves -->
+- **styles/motion/transitions**
+  - [ ] applying-transitions › choosing-a-transition-pattern (23 units, 3 must/should) <!-- spec-gap: motion-transitions/applying-transitions/choosing-a-transition-pattern -->
+  - [ ] applying-transitions › what-makes-a-good-transition (29 units, 12 must/should) <!-- spec-gap: motion-transitions/applying-transitions/what-makes-a-good-transition -->
+  - [ ] transition-patterns (3 units, 1 must/should) <!-- spec-gap: motion-transitions/transition-patterns -->
+  - [ ] transition-patterns › container-transform (14 units) <!-- spec-gap: motion-transitions/transition-patterns/container-transform -->
+  - [ ] transition-patterns › enter-and-exit (18 units) <!-- spec-gap: motion-transitions/transition-patterns/enter-and-exit -->
+  - [ ] transition-patterns › forward-and-backward (8 units) <!-- spec-gap: motion-transitions/transition-patterns/forward-and-backward -->
+  - [ ] transition-patterns › lateral (7 units) <!-- spec-gap: motion-transitions/transition-patterns/lateral -->
+  - [ ] transition-patterns › skeleton-loaders (6 units) <!-- spec-gap: motion-transitions/transition-patterns/skeleton-loaders -->
+  - [ ] transition-patterns › top-level (7 units) <!-- spec-gap: motion-transitions/transition-patterns/top-level -->
+- **components/navigation-bar**
+  - [ ] accessibility › initial-focus (3 units) <!-- spec-gap: navigation-bar/accessibility/initial-focus -->
+  - [ ] accessibility › interaction-style (11 units, 2 must/should) <!-- spec-gap: navigation-bar/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (2 units) <!-- spec-gap: navigation-bar/accessibility/keyboard-navigation -->
+  - [ ] accessibility › use-cases (2 units) <!-- spec-gap: navigation-bar/accessibility/use-cases -->
+  - [ ] accessibility › visual-indicators (2 units) <!-- spec-gap: navigation-bar/accessibility/visual-indicators -->
+  - [ ] guidelines › adaptive-design (2 units, 1 must/should) <!-- spec-gap: navigation-bar/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (5 units, 3 must/should) <!-- spec-gap: navigation-bar/guidelines/anatomy -->
+  - [ ] guidelines › behavior (7 units, 2 must/should) <!-- spec-gap: navigation-bar/guidelines/behavior -->
+  - [ ] guidelines › placement (1 unit, 1 must/should) <!-- spec-gap: navigation-bar/guidelines/placement -->
+  - [ ] guidelines › usage (3 units, 1 must/should) <!-- spec-gap: navigation-bar/guidelines/usage -->
+  - [ ] specs › baseline-navigation-bar (11 units) <!-- spec-gap: navigation-bar/specs/baseline-navigation-bar -->
+  - [ ] specs › measurements (1 unit) <!-- spec-gap: navigation-bar/specs/measurements -->
+- **components/navigation-drawer**
+  - [ ] accessibility › initial-focus (2 units) <!-- spec-gap: navigation-drawer/accessibility/initial-focus -->
+  - [ ] accessibility › interaction-style (4 units) <!-- spec-gap: navigation-drawer/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (1 unit) <!-- spec-gap: navigation-drawer/accessibility/keyboard-navigation -->
+  - [ ] accessibility › labeling-elements (1 unit) <!-- spec-gap: navigation-drawer/accessibility/labeling-elements -->
+  - [ ] accessibility › use-cases (1 unit) <!-- spec-gap: navigation-drawer/accessibility/use-cases -->
+  - [ ] accessibility › visual-indicators (1 unit) <!-- spec-gap: navigation-drawer/accessibility/visual-indicators -->
+  - [ ] guidelines › responsive-layout (4 units, 2 must/should) <!-- spec-gap: navigation-drawer/guidelines/responsive-layout -->
+  - [ ] guidelines › usage (1 unit, 1 must/should) <!-- spec-gap: navigation-drawer/guidelines/usage -->
+  - [ ] specs › measurements (2 units) <!-- spec-gap: navigation-drawer/specs/measurements -->
+- **components/navigation-rail**
+  - [ ] accessibility › interaction-style (13 units, 2 must/should) <!-- spec-gap: navigation-rail/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (3 units) <!-- spec-gap: navigation-rail/accessibility/keyboard-navigation -->
+  - [ ] accessibility › labeling-elements (1 unit) <!-- spec-gap: navigation-rail/accessibility/labeling-elements -->
+  - [ ] accessibility › use-cases (1 unit) <!-- spec-gap: navigation-rail/accessibility/use-cases -->
+  - [ ] guidelines › adaptive-design (1 unit) <!-- spec-gap: navigation-rail/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (14 units, 6 must/should) <!-- spec-gap: navigation-rail/guidelines/anatomy -->
+  - [ ] guidelines › behavior (6 units, 1 must/should) <!-- spec-gap: navigation-rail/guidelines/behavior -->
+  - [ ] guidelines › placement (1 unit) <!-- spec-gap: navigation-rail/guidelines/placement -->
+  - [ ] guidelines › usage (4 units, 2 must/should) <!-- spec-gap: navigation-rail/guidelines/usage -->
+  - [ ] specs › baseline-navigation-rail (1 unit) <!-- spec-gap: navigation-rail/specs/baseline-navigation-rail -->
+  - [ ] specs › configurations (9 units) <!-- spec-gap: navigation-rail/specs/configurations -->
+- **components/progress-indicators**
+  - [ ] accessibility › interaction-style (6 units, 2 must/should) <!-- spec-gap: progress-indicators/accessibility/interaction-style -->
+  - [ ] guidelines › placement (1 unit, 1 must/should) <!-- spec-gap: progress-indicators/guidelines/placement -->
+  - [ ] guidelines › responsive-layout (3 units, 2 must/should) <!-- spec-gap: progress-indicators/guidelines/responsive-layout -->
+  - [ ] specs › measurements (3 units) <!-- spec-gap: progress-indicators/specs/measurements -->
+- **components/radio-button**
+  - [ ] accessibility › initial-focus (4 units) <!-- spec-gap: radio-button/accessibility/initial-focus -->
+  - [ ] accessibility › interaction-style (3 units, 2 must/should) <!-- spec-gap: radio-button/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (3 units) <!-- spec-gap: radio-button/accessibility/labeling-elements -->
+  - [ ] guidelines › anatomy (3 units, 3 must/should) <!-- spec-gap: radio-button/guidelines/anatomy -->
+  - [ ] guidelines › behavior (1 unit) <!-- spec-gap: radio-button/guidelines/behavior -->
+  - [ ] guidelines › usage (3 units, 1 must/should) <!-- spec-gap: radio-button/guidelines/usage -->
+  - [ ] specs › color (3 units) <!-- spec-gap: radio-button/specs/color -->
+- **components/search**
+  - [ ] guidelines › adaptive-design (2 units, 2 must/should) <!-- spec-gap: search/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (2 units, 1 must/should) <!-- spec-gap: search/guidelines/anatomy -->
+  - [ ] guidelines › behavior (5 units, 1 must/should) <!-- spec-gap: search/guidelines/behavior -->
+  - [ ] guidelines › usage (1 unit) <!-- spec-gap: search/guidelines/usage -->
+  - [ ] specs › measurements (6 units) <!-- spec-gap: search/specs/measurements -->
+  - [ ] specs › states (5 units) <!-- spec-gap: search/specs/states -->
+- **components/segmented-buttons**
+  - [ ] guidelines › anatomy (2 units) <!-- spec-gap: segmented-buttons/guidelines/anatomy -->
+  - [ ] guidelines › placement (3 units, 2 must/should) <!-- spec-gap: segmented-buttons/guidelines/placement -->
+- **styles/shape**
+  - [ ] page introduction (1 unit) <!-- spec-gap: shape-eed7b1 -->
+  - [ ] corner-radius-scale (3 units) <!-- spec-gap: shape/corner-radius-scale -->
+  - [ ] corner-radius-scale › customizing-shapes (16 units, 1 must/should) <!-- spec-gap: shape/corner-radius-scale/customizing-shapes -->
+  - [ ] corner-radius-scale › shape-tokens (11 units) <!-- spec-gap: shape/corner-radius-scale/shape-tokens -->
+  - [ ] corner-radius-scale › symmetry (4 units, 1 must/should) <!-- spec-gap: shape/corner-radius-scale/symmetry -->
+  - [ ] overview-principles › m3-expressive-update (3 units) <!-- spec-gap: shape/overview-principles/m3-expressive-update -->
+  - [ ] shape-morph (2 units) <!-- spec-gap: shape/shape-morph -->
+  - [ ] shape-morph › using-shape-morph (8 units) <!-- spec-gap: shape/shape-morph/using-shape-morph -->
+- **components/side-sheets**
+  - [ ] accessibility › initial-focus (3 units) <!-- spec-gap: side-sheets/accessibility/initial-focus -->
+  - [ ] accessibility › interaction-style (1 unit, 1 must/should) <!-- spec-gap: side-sheets/accessibility/interaction-style -->
+  - [ ] guidelines › adaptive-design (1 unit) <!-- spec-gap: side-sheets/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (2 units) <!-- spec-gap: side-sheets/guidelines/anatomy -->
+  - [ ] guidelines › behavior (2 units, 1 must/should) <!-- spec-gap: side-sheets/guidelines/behavior -->
+- **components/sliders**
+  - [ ] accessibility › use-cases (1 unit) <!-- spec-gap: sliders/accessibility/use-cases -->
+  - [ ] guidelines › behaviors (1 unit) <!-- spec-gap: sliders/guidelines/behaviors -->
+  - [ ] guidelines › configurations (4 units, 2 must/should) <!-- spec-gap: sliders/guidelines/configurations -->
+- **components/snackbar**
+  - [ ] accessibility › accessibility-requirements-on-web (1 unit, 1 must/should) <!-- spec-gap: snackbar/accessibility/accessibility-requirements-on-web -->
+  - [ ] accessibility › focus (4 units, 3 must/should) <!-- spec-gap: snackbar/accessibility/focus -->
+  - [ ] accessibility › interaction-style (1 unit, 1 must/should) <!-- spec-gap: snackbar/accessibility/interaction-style -->
+  - [ ] guidelines › anatomy (2 units) <!-- spec-gap: snackbar/guidelines/anatomy -->
+  - [ ] guidelines › placement (4 units, 2 must/should) <!-- spec-gap: snackbar/guidelines/placement -->
+  - [ ] guidelines › responsive-layout (4 units, 1 must/should) <!-- spec-gap: snackbar/guidelines/responsive-layout -->
+  - [ ] guidelines › usage (1 unit, 1 must/should) <!-- spec-gap: snackbar/guidelines/usage -->
+- **styles/spacing**
+  - [ ] applying-spacing (1 unit) <!-- spec-gap: spacing/applying-spacing -->
+  - [ ] applying-spacing › customizing-the-system (11 units) <!-- spec-gap: spacing/applying-spacing/customizing-the-system -->
+  - [ ] applying-spacing › what-to-use (3 units, 1 must/should) <!-- spec-gap: spacing/applying-spacing/what-to-use -->
+  - [ ] overview › parts-of-spacing (5 units, 1 must/should) <!-- spec-gap: spacing/overview/parts-of-spacing -->
+  - [ ] tokens › component-spacing (3 units, 1 must/should) <!-- spec-gap: spacing/tokens/component-spacing -->
+  - [ ] tokens › system-spacing-tokens (2 units) <!-- spec-gap: spacing/tokens/system-spacing-tokens -->
+- **components/split-button**
+  - [ ] accessibility › interaction-style (4 units, 1 must/should) <!-- spec-gap: split-button/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (5 units, 3 must/should) <!-- spec-gap: split-button/accessibility/labeling-elements -->
+  - [ ] accessibility › use-cases (2 units) <!-- spec-gap: split-button/accessibility/use-cases -->
+  - [ ] guidelines › behavior (15 units, 2 must/should) <!-- spec-gap: split-button/guidelines/behavior -->
+  - [ ] specs › anatomy (1 unit) <!-- spec-gap: split-button/specs/anatomy -->
+  - [ ] specs › color (1 unit, 1 must/should) <!-- spec-gap: split-button/specs/color -->
+  - [ ] specs › measurements (7 units) <!-- spec-gap: split-button/specs/measurements -->
+  - [ ] specs › states (13 units) <!-- spec-gap: split-button/specs/states -->
+- **components/switch**
+  - [ ] accessibility › interaction-style (3 units, 1 must/should) <!-- spec-gap: switch/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (2 units) <!-- spec-gap: switch/accessibility/labeling-elements -->
+  - [ ] guidelines › behavior (1 unit) <!-- spec-gap: switch/guidelines/behavior -->
+  - [ ] specs › color (5 units) <!-- spec-gap: switch/specs/color -->
+- **components/tabs**
+  - [ ] accessibility › initial-focus (5 units, 2 must/should) <!-- spec-gap: tabs/accessibility/initial-focus -->
+  - [ ] accessibility › interaction-style (9 units, 1 must/should) <!-- spec-gap: tabs/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (3 units) <!-- spec-gap: tabs/accessibility/keyboard-navigation -->
+  - [ ] accessibility › use-cases (2 units) <!-- spec-gap: tabs/accessibility/use-cases -->
+  - [ ] guidelines › anatomy (6 units, 1 must/should) <!-- spec-gap: tabs/guidelines/anatomy -->
+  - [ ] guidelines › behavior (7 units, 1 must/should) <!-- spec-gap: tabs/guidelines/behavior -->
+  - [ ] guidelines › responsive-layout (3 units, 2 must/should) <!-- spec-gap: tabs/guidelines/responsive-layout -->
+- **components/text-fields**
+  - [ ] accessibility › interaction-style (3 units, 1 must/should) <!-- spec-gap: text-fields/accessibility/interaction-style -->
+  - [ ] accessibility › labeling-elements (7 units, 3 must/should) <!-- spec-gap: text-fields/accessibility/labeling-elements -->
+  - [ ] guidelines › adaptive-design (3 units, 2 must/should) <!-- spec-gap: text-fields/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (15 units, 7 must/should) <!-- spec-gap: text-fields/guidelines/anatomy -->
+- **components/time-pickers**
+  - [ ] accessibility › labeling-elements (2 units) <!-- spec-gap: time-pickers/accessibility/labeling-elements -->
+  - [ ] guidelines › adaptive-design (1 unit) <!-- spec-gap: time-pickers/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (1 unit) <!-- spec-gap: time-pickers/guidelines/anatomy -->
+  - [ ] guidelines › behavior (1 unit, 1 must/should) <!-- spec-gap: time-pickers/guidelines/behavior -->
+  - [ ] specs › color (1 unit) <!-- spec-gap: time-pickers/specs/color -->
+- **components/toolbars**
+  - [ ] accessibility › interaction-style (9 units) <!-- spec-gap: toolbars/accessibility/interaction-style -->
+  - [ ] accessibility › keyboard-navigation (2 units) <!-- spec-gap: toolbars/accessibility/keyboard-navigation -->
+  - [ ] accessibility › use-cases (1 unit) <!-- spec-gap: toolbars/accessibility/use-cases -->
+  - [ ] guidelines › adaptive-design (13 units, 4 must/should) <!-- spec-gap: toolbars/guidelines/adaptive-design -->
+  - [ ] guidelines › anatomy (5 units, 2 must/should) <!-- spec-gap: toolbars/guidelines/anatomy -->
+  - [ ] guidelines › behavior (7 units, 2 must/should) <!-- spec-gap: toolbars/guidelines/behavior -->
+  - [ ] guidelines › position-orientation (7 units, 4 must/should) <!-- spec-gap: toolbars/guidelines/position-orientation -->
+  - [ ] guidelines › usage (2 units) <!-- spec-gap: toolbars/guidelines/usage -->
+  - [ ] overview › differences-from-m2 (1 unit) <!-- spec-gap: toolbars/overview/differences-from-m2 -->
+  - [ ] specs › bottom-app-bar-baseline (3 units) <!-- spec-gap: toolbars/specs/bottom-app-bar-baseline -->
+  - [ ] specs › color (3 units) <!-- spec-gap: toolbars/specs/color -->
+  - [ ] specs › measurements (2 units) <!-- spec-gap: toolbars/specs/measurements -->
+- **components/tooltips**
+  - [ ] accessibility › focus-order (2 units, 1 must/should) <!-- spec-gap: tooltips/accessibility/focus-order -->
+  - [ ] accessibility › keyboard-navigation (2 units) <!-- spec-gap: tooltips/accessibility/keyboard-navigation -->
+  - [ ] guidelines › placement (3 units, 1 must/should) <!-- spec-gap: tooltips/guidelines/placement -->
+  - [ ] guidelines › usage (1 unit) <!-- spec-gap: tooltips/guidelines/usage -->
+- **styles/typography**
+  - [ ] applying-type › accessibility (15 units, 8 must/should) <!-- spec-gap: typography/applying-type/accessibility -->
+  - [ ] applying-type › applying-type (1 unit) <!-- spec-gap: typography/applying-type/applying-type -->
+  - [ ] applying-type › ensuring-readability (3 units) <!-- spec-gap: typography/applying-type/ensuring-readability -->
+  - [ ] applying-type › roles (2 units, 1 must/should) <!-- spec-gap: typography/applying-type/roles -->
+  - [ ] applying-type › typesetting (11 units, 2 must/should) <!-- spec-gap: typography/applying-type/typesetting -->
+  - [ ] editorial-treatments › editorial-treatment-best-practices (1 unit) <!-- spec-gap: typography/editorial-treatments/editorial-treatment-best-practices -->
+  - [ ] editorial-treatments › examples-of-editorial-treatments (1 unit) <!-- spec-gap: typography/editorial-treatments/examples-of-editorial-treatments -->
+  - [ ] fonts (1 unit) <!-- spec-gap: typography/fonts -->
+  - [ ] fonts › fallback-protection-with-variable-fonts (1 unit, 1 must/should) <!-- spec-gap: typography/fonts/fallback-protection-with-variable-fonts -->
+  - [ ] overview › m3-expressive-update (1 unit) <!-- spec-gap: typography/overview/m3-expressive-update -->
+  - [ ] overview › updates (1 unit) <!-- spec-gap: typography/overview/updates -->
+  - [ ] type-scale-tokens › customize-the-typeface (4 units) <!-- spec-gap: typography/type-scale-tokens/customize-the-typeface -->
+  - [ ] type-scale-tokens › customizing-type-styles (5 units, 1 must/should) <!-- spec-gap: typography/type-scale-tokens/customizing-type-styles -->
+  - [ ] type-scale-tokens › customizing-your-type-scale (7 units, 1 must/should) <!-- spec-gap: typography/type-scale-tokens/customizing-your-type-scale -->
+  - [ ] type-scale-tokens › emphasized-type-styles (1 unit) <!-- spec-gap: typography/type-scale-tokens/emphasized-type-styles -->
+  - [ ] type-scale-tokens › language-height-support (8 units, 1 must/should) <!-- spec-gap: typography/type-scale-tokens/language-height-support -->
+  - [ ] type-scale-tokens › type-scale (2 units) <!-- spec-gap: typography/type-scale-tokens/type-scale -->
+  - [ ] type-scale-tokens › type-scale-tokens (3 units) <!-- spec-gap: typography/type-scale-tokens/type-scale-tokens -->
+  - [ ] type-scale-tokens › where-emphasized-styles-can-be-used (4 units) <!-- spec-gap: typography/type-scale-tokens/where-emphasized-styles-can-be-used -->
+- **foundations/usability**
+  - [ ] applying-m3-expressive › example-2-breathing-session-inhale-exhale (1 unit) <!-- spec-gap: usability/applying-m3-expressive/example-2-breathing-session-inhale-exhale -->
+<!-- spec-gaps:end -->

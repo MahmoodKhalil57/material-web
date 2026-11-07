@@ -126,6 +126,10 @@ report.push('`~` = high confidence (synced by `--sync`), `?~` = needs review. Fu
 // Regenerate browser spec tests so `npm test` checks gb against this spec.
 section('Generated spec tests');
 report.push(fence(node('scripts/m3/gen-spec-tests.mjs', [], {capture: true})));
+// Keyboard tests from the spec's key tables, and contract tests from each
+// component's shared-controller config (CONTRACTS).
+report.push(fence(node('scripts/m3/gen-keyboard-tests.mjs', [], {capture: true, allowFail: true})));
+report.push(fence(node('scripts/m3/gen-contract-tests.mjs', [], {capture: true, allowFail: true})));
 report.push('Run `npm test` to check every component against the spec in a browser.');
 
 // 5. Upstream Compose files changed since last review.
@@ -150,11 +154,12 @@ if (accept) {
 // 7. Spec coverage, computed from `spec:` citations in labs/gb and scripts/m3.
 // Runs after the test generators so their citations are current.
 section('Spec coverage');
-const coverage = node(
-  'scripts/m3/spec-checks.mjs',
-  ['--summary', ...(argv.includes('--extract') ? ['--extract'] : [])],
-  {capture: true, allowFail: true},
-);
+// First pass computes statuses; the gap checklist is regenerated from them
+// (one open item per section with units neither in code nor excluded); the
+// second pass counts those as tracked and fails --strict on anything left.
+node('scripts/m3/spec-checks.mjs', ['--summary', ...(argv.includes('--extract') ? ['--extract'] : [])], {capture: true, allowFail: true});
+node('scripts/m3/gen-gap-checklist.mjs', [], {capture: true, allowFail: true});
+const coverage = node('scripts/m3/spec-checks.mjs', ['--summary', '--strict'], {capture: true, allowFail: true});
 report.push(coverage.trim() || 'spec-checks.mjs failed; run it directly to see why.');
 
 await writeFile(join(SPECS, 'report.md'), report.join('\n') + '\n');

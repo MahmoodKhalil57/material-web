@@ -71,6 +71,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "1.3.0",
     "@lit-labs/analyzer": "^0.14.0",
     "@lit-labs/gen-manifest": "^0.3.6",
     "@lit-labs/gen-utils": "^0.3.4",
