@@ -48,6 +48,7 @@ $clip-left: var(--_carousel-item-clip-left, 0px);
       @include carousel-tokens.with-outline;
     }
 
+    // spec-labels: carousel/specs/states
     &:is(:hover, .hover):not(.disabled) {
       @include carousel-tokens.hover;
 

@@ -182,6 +182,7 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
   // Spec gives inactive tabs on-surface colours on hover/focus/pressed. The
   // secondary-* mixins currently match the primary ones, but are applied
   // separately so spec changes to either variant reach the component.
+  // spec-labels: tabs/specs/primary-tabs/primary-tabs-states, tabs/specs/secondary-tabs/secondary-tabs-states
   .tab:is(:hover, .hover):not(#{$selected}) {
     @include tabs-tokens.hover;
 

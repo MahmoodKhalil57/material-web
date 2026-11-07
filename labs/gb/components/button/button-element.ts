@@ -28,6 +28,7 @@ import buttonStyles from './button.css' with {type: 'css'}; // github-only
 import {button} from './button.js';
 
 // Separate variable needed for closure.
+// spec-labels: all-buttons/tab-1/there-are-10-types-of-buttons-in-material-3, all-buttons/tab-1/choosing-buttons
 const baseClass = mixinDelegatesAria(
   mixinFormSubmitter(mixinFormAssociated(mixinElementInternals(LitElement))),
 );
@@ -60,6 +61,7 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --state-layer-color
  * @cssprop --trailing-space
  */
+// spec-labels: buttons/specs/anatomy, buttons/guidelines/anatomy, buttons/guidelines/usage, buttons/specs/variants, buttons/specs/configurations, buttons/specs/color
 export class ButtonElement extends baseClass {
   /** @nocollapse */
   static override shadowRootOptions: ShadowRootInit = {

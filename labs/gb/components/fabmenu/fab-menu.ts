@@ -10,6 +10,7 @@ import {focusRingClasses} from '../focus/focus-ring.js';
 import {rippleClasses, setupRipple} from '../ripple/ripple.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {nextFocusIndex} from '../shared/roving-focus.js';
 
 /**
  * FAB menu color configuration types. The FAB uses the `<color>-container`
@@ -259,6 +260,7 @@ function isNativelyActivated(item: HTMLElement) {
  * @param menu The FAB menu's root element.
  * @param opts Setup options, supports a cleanup `signal` and `getItems`.
  */
+// spec: fab-menu-6fcfde, fab-menu-f9c15a, fab-menu-8ec7af, fab-menu-fc5c9b
 export function setupFabMenu(
   menu: HTMLElement,
   opts: SetupFabMenuOptions = {},
@@ -359,19 +361,17 @@ export function setupFabMenu(
         event.preventDefault();
         items[(i + items.length) % items.length].focus();
       };
+      // Up / Down (wrapping), Home / End: shared roving focus movement. Like
+      // other menu items, disabled items stay focusable.
+      // spec: fab-menu/accessibility/keyboard-navigation, fab-menu-8ab78c, fab-menu-dc26b8, fab-menu-e8a4e5
+      if (!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+        const next = nextFocusIndex(items.length, index, event.key, {orientation: 'vertical'});
+        if (next >= 0) {
+          focusItem(next);
+          return;
+        }
+      }
       switch (event.key) {
-        case 'ArrowDown':
-          focusItem(index + 1);
-          break;
-        case 'ArrowUp':
-          focusItem(index - 1);
-          break;
-        case 'Home':
-          focusItem(0);
-          break;
-        case 'End':
-          focusItem(items.length - 1);
-          break;
         case 'Tab':
           if (event.shiftKey) {
             event.preventDefault();

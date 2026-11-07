@@ -21,6 +21,7 @@ $drag-target-size: 48px;
     @include sheet-tokens.root;
   }
 
+  // spec-labels: bottom-sheets/guidelines, bottom-sheets/guidelines/modal-bottom-sheets/visibility
   :host([modal]),
   .bottom-sheet.bottom-sheet-modal {
     @include sheet-tokens.modal;
@@ -178,6 +179,7 @@ $drag-target-size: 48px;
     cursor: grabbing;
   }
 
+  // spec-labels: bottom-sheets/specs, bottom-sheets/guidelines/anatomy, bottom-sheets/specs/measurements
   // The drag handle button. It draws the handle itself, so the focus ring
   // wraps the handle; `::after` extends its target to 48dp.
   .bottom-sheet-drag-handle {

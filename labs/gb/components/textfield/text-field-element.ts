@@ -79,6 +79,7 @@ const baseClass = mixinDelegatesAria(
   ),
 );
 
+// spec-labels: layout-bidirectionality-rtl/tab-1/component-examples/text-fields
 /**
  * A Material Design text field (filled or outlined).
  *
@@ -143,6 +144,7 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --affix-space - Space between the prefix/suffix and the input.
  * @cssprop --density-step - Container height removed per density step.
  */
+// spec-labels: text-fields/specs/filled-text-field, text-fields/specs/outlined-text-field, text-fields/guidelines/anatomy/filled-text-field, text-fields/guidelines/anatomy/outlined-text-field, text-fields/guidelines/anatomy/icons-images, text-fields/guidelines/usage, text-fields/guidelines/anatomy/supporting-text-character-counter, text-fields/specs/filled-text-field/filled-text-field-configurations, text-fields/specs/outlined-text-field/outlined-text-field-configurations
 export class TextFieldElement extends baseClass {
   /** @nocollapse */
   static override shadowRootOptions: ShadowRootInit = {

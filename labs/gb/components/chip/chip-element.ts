@@ -27,6 +27,8 @@ import {
   specChipType,
 } from "./chip.js";
 import { styles as chipStyles } from "./chip.cssresult.js";
+// spec-labels: chips/guidelines/anatomy, chips/guidelines/usage/variants, chips/specs/assist-chip, chips/specs/suggestion-chip, chips/specs/filter-chip, chips/specs/input-chip
+// spec-labels: chips/specs/assist-chip/assist-chip-measurements, chips/specs/suggestion-chip/suggestion-chip-measurements, chips/specs/filter-chip/filter-chip-measurements, chips/specs/input-chip/input-chip-measurements
 
 /**
  * A Material Design chip (`md-gb-chip`): an assist, filter, input or

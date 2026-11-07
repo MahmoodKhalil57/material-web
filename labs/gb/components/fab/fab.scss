@@ -16,6 +16,8 @@
       @include fab-tokens.extended-sm;
     }
 
+    // spec-labels: extended-fab/specs/states, extended-fab/specs/baseline-extended-fab/baseline-states,
+    // spec-labels: floating-action-button/specs/states
     &:is(:hover, .hover) {
       @include fab-tokens.hovered;
     }

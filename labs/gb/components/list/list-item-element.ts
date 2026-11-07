@@ -73,6 +73,10 @@ export function getListItemLabel(item: Element): string {
 // Separate variable needed for closure.
 const baseClass = mixinDelegatesAria(mixinElementInternals(LitElement));
 
+// spec-labels: lists/guidelines/anatomy/selection-controls, lists/guidelines/anatomy, lists/specs/anatomy,
+// spec-labels: lists/specs/anatomy/flexibility-slots/slot-accessibility,
+// spec-labels: lists/guidelines/anatomy/leading-media/primary-secondary-actions,
+// spec-labels: lists/specs/configurations/list-interactions
 /**
  * A Material Design list item component.
  *

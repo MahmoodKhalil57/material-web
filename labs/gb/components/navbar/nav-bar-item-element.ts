@@ -31,6 +31,7 @@ import {navBarItem, type NavBarItemLayout} from './nav-bar.js';
  * @csspart label - The label text container element.
  * @cssstate selected - Whether the navigation bar item is selected.
  */
+// spec-labels: navigation-bar/specs/anatomy, navigation-bar/guidelines/anatomy, navigation-bar/specs/states
 export class NavBarItemElement extends AriaTabElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

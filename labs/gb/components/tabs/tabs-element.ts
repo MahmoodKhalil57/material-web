@@ -35,6 +35,7 @@ import {setupTabs, tabsClasses, type TabsVariant} from './tabs.js';
  * @cssprop --divider-color
  * @cssprop --divider-thickness
  */
+// spec-labels: tabs/specs/primary-tabs, tabs/specs/secondary-tabs, tabs/guidelines/anatomy, tabs/guidelines/usage, tabs/specs/measurements
 export class TabsElement extends AriaTablistElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [tabsStyles];

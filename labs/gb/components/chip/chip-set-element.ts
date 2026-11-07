@@ -7,6 +7,7 @@
 import { CSSResultOrNative, html, isServer, LitElement } from "lit";
 import { property, queryAssignedElements } from "lit/decorators.js";
 import { clampDensity, type Density } from "../shared/density.js";
+import { RovingFocusController } from "../shared/roving-focus.js";
 import { ChipElement } from "./chip-element.js";
 import { styles as chipSetStyles } from "./chip-set.cssresult.js";
 
@@ -74,13 +75,26 @@ export class ChipSetElement extends LitElement {
   /** Index of the focused chip while it is being removed. */
   private removedFocusIndex = -1;
 
+  /**
+   * Left / Right (mirrored in RTL), Home / End, wrapping, one tab stop
+   * (shared RovingFocusController). Moving backwards enters a chip at its
+   * remove button; a chip moves between its own primary action and remove
+   * button itself before the set gets the key.
+   */
+  // spec: chips/accessibility/keyboard-navigation
+  protected readonly rovingFocus = new RovingFocusController(this, {
+    items: () => this.chips,
+    orientation: "horizontal",
+    canFocus: (chip) => this.isFocusable(chip as ChipElement),
+    focusItem: (chip, direction) =>
+      (chip as ChipElement).focus({ trailing: direction < 0 }),
+  });
+
   constructor() {
     super();
     if (!isServer) {
       this.internals.role = "grid";
-      this.addEventListener("focusin", this.updateTabIndices);
-      this.addEventListener("update-focus", this.updateTabIndices);
-      this.addEventListener("keydown", this.handleKeyDown);
+      this.addEventListener("update-focus", () => this.rovingFocus.sync());
       // Capture: record the focused chip before a `remove` listener on the
       // chip itself takes it out of the DOM.
       this.addEventListener("remove", this.handleRemove, { capture: true });
@@ -97,48 +111,8 @@ export class ChipSetElement extends LitElement {
     return !chip.disabled && !chip.hidden;
   }
 
-  private readonly handleKeyDown = (event: KeyboardEvent) => {
-    const isLeft = event.key === "ArrowLeft";
-    const isRight = event.key === "ArrowRight";
-    const isHome = event.key === "Home";
-    const isEnd = event.key === "End";
-    if (!isLeft && !isRight && !isHome && !isEnd) return;
-
-    const focusable = this.chips.filter((chip) => this.isFocusable(chip));
-    if (!focusable.length) return;
-    // Prevent default interactions, such as scrolling.
-    event.preventDefault();
-
-    if (isHome || isEnd) {
-      this.focusChip(isHome ? focusable[0] : focusable[focusable.length - 1]);
-      return;
-    }
-
-    const isRtl = getComputedStyle(this).direction === "rtl";
-    const forwards = isRtl ? isLeft : isRight;
-    const current = focusable.find((chip) => chip.matches(":focus-within"));
-    if (!current) {
-      this.focusChip(
-        forwards ? focusable[0] : focusable[focusable.length - 1],
-        !forwards,
-      );
-      return;
-    }
-    if (focusable.length < 2) return;
-
-    // Wrap around at either end, like the legacy chip set.
-    const index = focusable.indexOf(current);
-    const next =
-      focusable[
-        (index + (forwards ? 1 : -1) + focusable.length) % focusable.length
-      ];
-    // Moving backwards enters a chip at its remove button.
-    this.focusChip(next, !forwards);
-  };
-
-  private focusChip(chip: ChipElement, trailing = false) {
-    chip.focus({ trailing });
-    this.updateTabIndices();
+  private focusChip(chip: ChipElement) {
+    this.rovingFocus.focus(chip);
   }
 
   private readonly handleRemove = (event: Event) => {
@@ -175,31 +149,6 @@ export class ChipSetElement extends LitElement {
         return;
       }
     }
-    this.updateTabIndices();
+    this.rovingFocus.sync();
   }
-
-  /**
-   * The set is one tab stop: the focused chip, else the first focusable
-   * chip, has `tabindex="0"` and every other chip `tabindex="-1"`.
-   */
-  private readonly updateTabIndices = () => {
-    let tabStop: ChipElement | undefined;
-    for (const chip of this.chips) {
-      if (!this.isFocusable(chip)) {
-        chip.tabIndex = -1;
-        continue;
-      }
-      if (chip.matches(":focus-within")) {
-        if (tabStop) tabStop.tabIndex = -1;
-        tabStop = chip;
-        continue;
-      }
-      if (!tabStop) {
-        tabStop = chip;
-        continue;
-      }
-      chip.tabIndex = -1;
-    }
-    if (tabStop) tabStop.tabIndex = 0;
-  };
 }

@@ -63,6 +63,7 @@ import {toolbar, type ToolbarColor, type ToolbarOrientation} from './toolbar.js'
  * @cssprop --selected-label-text-color
  * @cssprop --vertical-container-width
  */
+// spec-labels: toolbars/guidelines/usage, toolbars/guidelines/anatomy, toolbars/specs/anatomy, toolbars/specs/configurations, toolbars/specs/variants, toolbars/specs/variants/baseline-variant
 export class ToolbarElement extends LitElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

@@ -26,6 +26,7 @@ import segmentedButtonStyles from './segmented-button.css' with {type: 'css'}; /
 export type SegmentedButtonMode = 'single' | 'multiple';
 
 // Separate variable needed for closure.
+// spec-labels: segmented-buttons/specs, segmented-buttons/guidelines/anatomy, segmented-buttons/specs/measurements
 const baseClass = mixinDelegatesAria(LitElement);
 
 /**

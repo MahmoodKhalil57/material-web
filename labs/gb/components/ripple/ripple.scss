@@ -4,6 +4,7 @@
  */
 
 @layer md.sys;
+// spec-labels: interaction-states/state-layers/state-layers
 @layer md.comp.ripple {
   @property --ripple-scale {
     syntax: '<percentage>';

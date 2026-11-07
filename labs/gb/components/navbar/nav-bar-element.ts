@@ -53,6 +53,7 @@ import {NavBarItemElement} from './nav-bar-item-element.js';
  * @cssprop --motion-duration
  * @cssprop --motion-easing
  */
+// spec-labels: navigation-bar/specs/variants, navigation-bar/specs/configurations
 export class NavBarElement extends AriaTablistElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

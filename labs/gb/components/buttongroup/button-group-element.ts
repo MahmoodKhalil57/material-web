@@ -13,6 +13,7 @@ import {
 import { adoptStyles } from "../../styles/adopt-styles.js";
 import { type ButtonElement } from "../button/button-element.js";
 import { clampDensity, type Density } from "../shared/density.js";
+import { RovingFocusController } from "../shared/roving-focus.js";
 import { updateClassList } from "../shared/update-class-list.js";
 import {
   buttonGroupClasses,
@@ -28,6 +29,11 @@ import buttonGroupStyles from "./button-group.css" with { type: "css" }; // gith
 // Separate variable needed for closure.
 const baseClass = mixinElementInternals(LitElement);
 
+// spec-labels: button-groups/specs/variants, button-groups/specs/states/connected-button-group,
+// spec-labels: button-groups/specs/configurations, button-groups/specs/anatomy/color,
+// spec-labels: button-groups/specs/states/standard-button-group,
+// spec-labels: button-groups/specs/anatomy/common-layouts, button-groups/specs/anatomy,
+// spec-labels: button-groups/guidelines/anatomy
 /**
  * A Material Design button group component.
  *
@@ -101,9 +107,6 @@ export class ButtonGroupElement extends baseClass {
     };
 
     this.addEventListener("click", handleClick);
-    this.addEventListener("keydown", (event) => {
-      this.handleKeydown(event);
-    });
     this.addEventListener("input", handleInput);
     this.addEventListener("change", handleChange);
   }
@@ -349,34 +352,17 @@ export class ButtonGroupElement extends baseClass {
    * navigation: "Arrow keys | Navigate inside the component"). Left/Right
    * follow the reading direction (mirrored in RTL) and wrap, like the
    * `focusgroup="toolbar wrap inline"` the group also declares (Chromium does
-   * not ship `focusgroup`, so this implements it). Tab still moves between
-   * buttons ("Tab | Navigate between buttons").
+   * not ship `focusgroup`, so the shared RovingFocusController implements it).
+   * Every button stays in the tab order ("Tab | Navigate between buttons").
+   * Disabled buttons are skipped; soft-disabled ones stay focusable.
    */
-  private handleKeydown(event: KeyboardEvent): void {
-    if (event.defaultPrevented) return;
-    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-      return;
-    }
-    const isRtl = this.matches(":dir(rtl)");
-    let step = 0;
-    if (event.key === "ArrowRight") step = isRtl ? -1 : 1;
-    else if (event.key === "ArrowLeft") step = isRtl ? 1 : -1;
-    else return;
-
-    const path = event.composedPath();
-    const buttons = this.buttons;
-    const count = buttons.length;
-    const current = buttons.findIndex((b) => path.includes(b));
-    if (current < 0) return;
-    // Disabled buttons are skipped; soft-disabled ones stay focusable.
-    for (let i = 1; i < count; i++) {
-      const next = buttons[(((current + step * i) % count) + count) % count];
-      if (next.hidden || (next.disabled && !next.softDisabled)) continue;
-      event.preventDefault();
-      next.focus();
-      return;
-    }
-  }
+  // spec: button-groups/accessibility/keyboard-navigation
+  protected readonly rovingFocus = new RovingFocusController(this, {
+    items: () => this.buttons,
+    orientation: "horizontal",
+    homeEnd: false,
+    tabStops: "all",
+  });
 
   protected handleSlotChange(): void {
     this.syncButtonsDisabledAndType();

@@ -57,6 +57,7 @@
     &.btn-outlined:where(.btn-selected, [aria-pressed='true']) {
       @include button-tokens.outlined-selected;
     }
+    // spec-labels: buttons/specs/states/filled-button-states/default, buttons/specs/states/filled-button-states/toggle, buttons/specs/states/tonal-button-states/default, buttons/specs/states/tonal-button-states/toggle, buttons/specs/states/elevated-button-states/default, buttons/specs/states/elevated-button-states/toggle, buttons/specs/states/outlined-button-states/default, buttons/specs/states/outlined-button-states/toggle, buttons/specs/states/text-button-style-states
     &.btn-filled:where(:focus-visible, .focus-visible) {
       @include button-tokens.filled-focused;
     }
@@ -67,6 +68,7 @@
       @include button-tokens.tonal-focused;
     }
 
+    // spec-labels: buttons/specs/measurements, buttons/specs/measurements/corner-sizes
     &.btn-xs {
       @include button-tokens.xs;
       &:where(.btn-selected, [aria-pressed='true']) {
@@ -105,6 +107,7 @@
       --container-shape: var(--container-shape-square);
     }
 
+    // spec-labels: buttons/specs/shape-morph/pressed-state, buttons/specs/shape-morph/when-selected
     // Round and square buttons have the same pressed shape (buttons.md).
     &:is(:active, .active):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
       @include button-tokens.pressed;
@@ -183,6 +186,7 @@
       --md-icon-color: var(--icon-color);
       --md-icon-size: var(--icon-size);
     }
+    // spec-labels: buttons/specs/measurements/target-areas
     // buttons.md accessibility: extra small and small buttons must have a
     // 48x48dp target. The target is centered on the container (centering is
     // the same in LTR and RTL).

@@ -123,6 +123,7 @@ const CLEAR_ICON = html`<svg viewBox="0 0 24 24" aria-hidden="true">
  * @cssprop --max-height - Docked maximum height.
  * @cssprop --scrim-color - Docked scrim color.
  */
+// spec-labels: search/specs/configurations/layout, search/specs/measurements/focused-search/contained-style
 export class SearchViewElement extends LitElement {
   // Layer order is pinned by the `@layer` statement at the top of
   // search-view.scss.

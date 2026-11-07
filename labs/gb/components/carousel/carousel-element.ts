@@ -66,6 +66,7 @@ import carouselStyles from './carousel.css' with {type: 'css'}; // github-only
  * @cssprop --label-scrim-color - Scrim behind item labels.
  * @cssprop --label-padding - Item label padding.
  */
+// spec-labels: carousel/specs, carousel/guidelines/usage, carousel/guidelines/anatomy, carousel/guidelines/anatomy/carousel-items, carousel/specs/color, carousel/specs/multi-browse, carousel/specs/multi-browse/measurements, carousel/specs/uncontained, carousel/specs/uncontained/measurements, carousel/specs/uncontained-mutli-aspect-ratio, carousel/specs/uncontained-mutli-aspect-ratio/measurements, carousel/specs/hero, carousel/specs/hero/measurements, carousel/specs/center-aligned-hero, carousel/specs/center-aligned-hero/measurements, carousel/specs/full-screen, carousel/specs/full-screen/measurements
 export class CarouselElement extends LitElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [carouselStyles];

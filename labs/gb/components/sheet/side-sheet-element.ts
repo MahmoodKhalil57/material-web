@@ -39,6 +39,15 @@ import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-on
 import sideSheetStyles from './side-sheet.css' with {type: 'css'}; // github-only
 // import sideSheetStyles from './side-sheet.cssresult.js'; // google3-only
 
+// spec-labels: side-sheets/guidelines/anatomy/divider-optional,
+// spec-labels: side-sheets/guidelines/anatomy/back-icon-button-optional,
+// spec-labels: side-sheets/specs/modal-side-sheet,
+// spec-labels: side-sheets/specs/standard-side-sheet/standard-side-sheet-measurements,
+// spec-labels: side-sheets/guidelines/anatomy, side-sheets/specs/standard-side-sheet,
+// spec-labels: side-sheets/guidelines, side-sheets/specs/modal-side-sheet/modal-side-sheet-measurements,
+// spec-labels: side-sheets/guidelines/anatomy/close-icon-button-optional,
+// spec-labels: side-sheets/guidelines/anatomy/container,
+// spec-labels: side-sheets/guidelines/anatomy/action-buttons-optional
 /**
  * A Material Design side sheet: supplementary content along the inline end
  * edge of the window (the left edge in right-to-left layouts).

@@ -116,6 +116,7 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 
+    // spec-labels: navigation-rail/specs/states, navigation-rail/specs/baseline-navigation-rail/states
     &:is(:hover, .hover) {
       --md-icon-color: var(--item-inactive-hovered-icon-color);
       color: var(--item-inactive-hovered-icon-color);

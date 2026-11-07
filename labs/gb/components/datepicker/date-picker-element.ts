@@ -276,6 +276,16 @@ const MONTH_LIST_OVERSCAN = 1;
  */
 const DEFAULT_MONTH_HEIGHT = 48 + 6 * 48;
 
+// spec-labels: date-pickers/specs/modal-date-picker,
+// spec-labels: date-pickers/guidelines/anatomy/full-screen-date-picker,
+// spec-labels: date-pickers/guidelines/anatomy/docked-date-picker,
+// spec-labels: date-pickers/specs/modal-date-picker/modal-date-picker-configurations,
+// spec-labels: date-pickers/specs/docked-date-picker,
+// spec-labels: date-pickers/specs/modal-date-input/modal-date-input-configurations,
+// spec-labels: date-pickers/guidelines/anatomy/modal-date-picker,
+// spec-labels: date-pickers/guidelines/anatomy/modal-date-input, date-pickers/guidelines/usage,
+// spec-labels: date-pickers/specs/modal-date-input,
+// spec-labels: date-pickers/specs/docked-date-picker/docked-date-picker-configurations
 /**
  * A Material Design date picker: lets people select a date or a range of
  * dates.

@@ -70,6 +70,11 @@ function matchesFocusVisible(element: Element) {
   }
 }
 
+// spec-labels: tooltips/guidelines/anatomy/rich-tooltip,
+// spec-labels: tooltips/specs/plain-tooltip/plain-tooltip-measurements,
+// spec-labels: tooltips/specs/rich-tooltip/rich-tooltip-configurations, tooltips/guidelines/usage,
+// spec-labels: tooltips/specs/plain-tooltip, tooltips/specs/rich-tooltip,
+// spec-labels: tooltips/guidelines/anatomy/plain-tooltip
 /**
  * A Material Design tooltip: a plain tooltip that labels an element, or a
  * rich tooltip with an optional subhead and text buttons.

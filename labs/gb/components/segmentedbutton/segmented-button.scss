@@ -50,6 +50,7 @@ $reserve: '.segmented-button-with-checkmark.segmented-button-with-label:not(.seg
     z-index: 1;
   }
 
+  // spec-labels: segmented-buttons/specs/states/selected, segmented-buttons/specs/states/unselected
   :host(:is(:hover, :active)),
   .segmented-button-set > .segmented-button:is(:hover, :active) {
     z-index: 2;

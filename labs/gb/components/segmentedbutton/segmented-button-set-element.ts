@@ -17,11 +17,9 @@ import {
   getFormValue,
   mixinFormAssociated,
 } from '../../../behaviors/form-associated.js';
+import {RovingFocusController} from '../shared/roving-focus.js';
 import {
   clampDensity,
-  isNavigationKey,
-  isRtl,
-  nextFocusIndex,
   type SegmentedButtonDensity,
 } from './segmented-button.js';
 import {type SegmentedButtonElement} from './segmented-button-element.js';
@@ -32,6 +30,7 @@ import segmentedButtonSetStyles from './segmented-button-set.css' with {type: 'c
 const SEGMENT_TAG = 'md-gb-segmented-button';
 
 // Separate variable needed for closure.
+// spec-labels: segmented-buttons/guidelines, segmented-buttons/guidelines/usage
 const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
 
 /**
@@ -146,9 +145,6 @@ export class SegmentedButtonSetElement extends baseClass {
     this[internals].role = 'radiogroup';
     this.addEventListener('click', (event) => {
       this.handleClick(event);
-    });
-    this.addEventListener('keydown', (event) => {
-      this.handleKeyDown(event);
     });
     this.addEventListener('focusin', (event) => {
       const segment = this.segmentFromEvent(event);
@@ -318,24 +314,21 @@ export class SegmentedButtonSetElement extends baseClass {
     this.dispatchEvent(new Event('change', {bubbles: true}));
   }
 
-  private handleKeyDown(event: KeyboardEvent) {
-    if (event.defaultPrevented || !isNavigationKey(event.key)) return;
-    const segments = this.navigableSegments();
-    const current = segments.indexOf(this.segmentFromEvent(event)!);
-    if (current < 0) return;
-    const next = nextFocusIndex(
-      segments.length,
-      current,
-      event.key,
-      (i) => !segments[i].effectivelyDisabled,
-      isRtl(this),
-    );
-    if (next < 0) return;
-    event.preventDefault();
-    this.tabStop = segments[next];
-    this.syncSegments();
-    segments[next].focus();
-  }
+  /**
+   * Arrow keys, Home and End move focus between segments (shared
+   * RovingFocusController). The set keeps its own tab stop because a segment
+   * takes focus through its `focusable` property (see syncSegments).
+   */
+  // spec: segmented-buttons/accessibility/use-cases/keyboard-navigation
+  protected readonly rovingFocus = new RovingFocusController(this, {
+    items: () => this.navigableSegments(),
+    canFocus: (segment) => !(segment as SegmentedButtonElement).effectivelyDisabled,
+    setTabStop: () => {},
+    onMove: (segment) => {
+      this.tabStop = segment as SegmentedButtonElement;
+      this.syncSegments();
+    },
+  });
 
   private navigableSegments() {
     return this.segments.filter((segment) => !segment.hidden);

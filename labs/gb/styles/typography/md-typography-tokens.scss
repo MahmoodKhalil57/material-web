@@ -7,6 +7,9 @@
 @use 'internal/typography-tokens';
 // go/keep-sorted end
 
+// spec-labels: typography/type-scale-tokens/customizing-your-type-scale/font-size-units,
+// spec-labels: typography/type-scale-tokens/customizing-your-type-scale/letter-spacing-units,
+// spec-labels: typography/applying-type/typesetting/using-the-baseline
 @layer md.sys.typescale {
   :root {
     @include typography-tokens.emit-custom-properties;

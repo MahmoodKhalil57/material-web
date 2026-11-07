@@ -20,6 +20,7 @@
     inline-size: 280px;
   }
 
+  // spec-labels: sliders/specs/states
   :host(:is(:active, .active):not(:is(:disabled, [disabled], .disabled))) {
     cursor: grabbing;
   }

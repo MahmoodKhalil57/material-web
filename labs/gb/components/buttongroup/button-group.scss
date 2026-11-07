@@ -237,6 +237,7 @@
     color: var(--md-sys-color-inverse-on-surface);
   }
 
+  // spec-labels: button-groups/specs/measurements/minimum-widths
   // Connected XS and SM 48px min-inline-size
   .btn-group-connected > .btn:is(.btn-xs, .btn-sm),
   .btn-group-connected > :is([size='xs'], [size='sm']) {

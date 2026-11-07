@@ -53,6 +53,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   // States. Every rule has the same specificity as the token roots above
   // (two classes) and follows them, so source order decides: error beats
   // hover and focus, and disabled beats everything.
+  // spec-labels: text-fields/specs/filled-text-field/filled-text-field-states, text-fields/specs/filled-text-field/filled-text-field-error-states
   .text-field.text-field-filled {
     &:where(#{$hover}) {
       @include text-field-tokens.filled-hover;
@@ -79,6 +80,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     }
   }
 
+  // spec-labels: text-fields/specs/outlined-text-field/outlined-text-field-states, text-fields/specs/outlined-text-field/outlined-text-field-error-states
   .text-field.text-field-outlined {
     &:where(#{$hover}) {
       @include text-field-tokens.outlined-hover;
@@ -106,6 +108,7 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   }
 
   .text-field {
+    // spec-labels: text-fields/specs/filled-text-field/filled-text-field-measurements, text-fields/specs/outlined-text-field/outlined-text-field-measurements
     // Start/end of the input (and of the resting label), measured from the
     // container edge. A leading/trailing icon sits in a 48px box (24px icon
     // plus 12px on each side) followed by 4px, so the text is 16px from the

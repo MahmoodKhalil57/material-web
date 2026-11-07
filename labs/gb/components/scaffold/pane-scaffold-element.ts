@@ -95,6 +95,14 @@ function deepActiveElement(): HTMLElement | null {
 /** The app scaffold tag; a pane scaffold inside one follows its class. */
 const APP_SCAFFOLD_TAG = 'md-gb-app-scaffold';
 
+// spec-labels: layout-canonical-examples/list-detail/usage/dividing-space,
+// spec-labels: layout-canonical-examples/list-detail/across-breakpoints/medium,
+// spec-labels: layout-canonical-examples/supporting-pane/dividing-space,
+// spec-labels: layout-canonical-examples/feed/across-breakpoints/compact,
+// spec-labels: layout-canonical-examples/list-detail,
+// spec-labels: layout-canonical-examples/list-detail/across-breakpoints/expanded-large-extra-large,
+// spec-labels: layout-canonical-examples/list-detail/across-breakpoints/compact,
+// spec-labels: layout-bidirectionality-rtl/tab-1/canonical-layout-examples/list-detail
 /**
  * A Material Design pane scaffold: one to three panes that adapt to the
  * window size class, with the canonical list-detail, supporting pane and
@@ -168,6 +176,7 @@ const APP_SCAFFOLD_TAG = 'md-gb-app-scaffold';
  * @fires {CustomEvent<PaneResizeDetail>} pane-resize - Fired when the panes
  *     are resized or collapsed with the drag handle. --bubbles --composed
  */
+// spec-labels: layout-scaffold/panes/panes, layout-scaffold/panes/panes/two-pane-layouts
 export class PaneScaffoldElement extends LitElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

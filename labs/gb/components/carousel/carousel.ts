@@ -8,6 +8,7 @@ import {type ClassInfo} from 'lit/directives/class-map.js';
 import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {nextFocusIndex} from '../shared/roving-focus.js';
 import {
   fullScreenKeylineList,
   heroKeylineList,
@@ -939,32 +940,26 @@ export class CarouselController {
         ? 'ArrowRight'
         : 'ArrowLeft'
       : 'ArrowUp';
-    const last = this.items.length - 1;
-    let target = -1;
-    switch (event.key) {
-      case next:
-        target = Math.min(index + 1, last);
-        break;
-      case previous:
-        target = Math.max(index - 1, 0);
-        break;
-      case 'Home':
-        target = 0;
-        break;
-      case 'End':
-        target = last;
-        break;
-      case leaveForward:
-      case leaveBackward:
-        if (this.focusOutside(event.key === leaveForward)) {
-          event.preventDefault();
-        }
-        return;
-      default:
-        return;
+    // Along the carousel: shared roving focus movement, no wrap, RTL-aware.
+    // spec: carousel/accessibility/keyboard-navigation, carousel-3c6fc2, carousel-040924, carousel-15628b
+    const target = nextFocusIndex(this.items.length, index, event.key, {
+      orientation: this.vertical ? 'vertical' : 'horizontal',
+      wrap: false,
+      rtl: this.rtl,
+    });
+    if (target >= 0) {
+      event.preventDefault();
+      this.focusItem(target);
+      return;
     }
-    event.preventDefault();
-    this.focusItem(target);
+    if (event.key === next || event.key === previous) {
+      // At either end: stay, and don't scroll the page.
+      event.preventDefault();
+      return;
+    }
+    if (event.key === leaveForward || event.key === leaveBackward) {
+      if (this.focusOutside(event.key === leaveForward)) event.preventDefault();
+    }
   };
 
   /**

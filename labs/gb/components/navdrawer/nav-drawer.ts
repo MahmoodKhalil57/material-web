@@ -8,6 +8,7 @@ import {type ClassInfo} from 'lit/directives/class-map.js';
 import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
 import {RIPPLE_CLASSES, setupRipple} from '../ripple/ripple.js';
 import {createClassMapDirective} from '../shared/directives.js';
+import {nextFocusIndex} from '../shared/roving-focus.js';
 
 /** Reasons a navigation drawer closes, given in `close`/`closed` events. */
 export const NAV_DRAWER_CLOSE_REASONS = {
@@ -116,22 +117,9 @@ export function getNextNavDrawerItem<T>(
   current: T | null,
   key: string,
 ): T | null {
-  if (!items.length) {
-    return null;
-  }
   const index = current === null ? -1 : items.indexOf(current);
-  switch (key) {
-    case 'ArrowDown':
-      return items[(index + 1) % items.length];
-    case 'ArrowUp':
-      return items[index <= 0 ? items.length - 1 : index - 1];
-    case 'Home':
-      return items[0];
-    case 'End':
-      return items[items.length - 1];
-    default:
-      return null;
-  }
+  const next = nextFocusIndex(items.length, index, key, {orientation: 'vertical'});
+  return next < 0 ? null : items[next];
 }
 
 /**

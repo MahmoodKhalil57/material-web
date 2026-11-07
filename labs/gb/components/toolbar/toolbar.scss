@@ -125,6 +125,7 @@
       --toolbar-label-text-color: var(--label-text-color);
     }
 
+    // spec-labels: toolbars/specs/measurements/docked-toolbar, toolbars/guidelines/adaptive-design/resizing/docked
     &.toolbar-docked {
       @include toolbar-tokens.docked;
 

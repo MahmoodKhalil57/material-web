@@ -22,6 +22,7 @@
     // `.dragged` / `aria-grabbed` raise a card being picked up and moved.
     // Each style: resting tokens, then hover < focus < pressed < dragged
     // (later states win), then disabled.
+    // spec-labels: cards/specs/elevated-card/elevated-card-states, cards/specs/filled-card/filled-card-states, cards/specs/outlined-card/outlined-card-states
     &.card-elevated {
       @include card-tokens.elevated;
 

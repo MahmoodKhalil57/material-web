@@ -40,6 +40,7 @@ export const OPEN_DURATION_MS = 150;
  */
 export const CLOSE_DURATION_MS = 75;
 
+// spec-labels: snackbar/guidelines/anatomy, snackbar/specs, snackbar/specs/configurations
 /**
  * A Material Design snackbar component.
  *

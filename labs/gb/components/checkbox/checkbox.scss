@@ -16,6 +16,7 @@
     }
     @include density.classes('checkbox');
 
+    // spec-labels: checkbox/specs/states
     &:not(:checked, .checked, :indeterminate, .indeterminate) {
       @include checkbox-tokens.unselected;
 

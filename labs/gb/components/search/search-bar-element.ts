@@ -94,6 +94,7 @@ const SEARCH_ICON = html`<svg
  * @cssprop --trailing-icon-label-trailing-icon-space - Divided style space between the input and trailing icon.
  * @cssprop --trailing-space - Divided style trailing space.
  */
+// spec-labels: search/specs/anatomy, search/guidelines/anatomy, search/guidelines/anatomy/icons-icon-buttons/trailing-icons, search/specs/variants, search/specs/states/search-bar, search/specs/measurements/search-bar
 export class SearchBarElement extends LitElement {
   // Layer order is pinned by the `@layer` statement at the top of
   // search-bar.scss.

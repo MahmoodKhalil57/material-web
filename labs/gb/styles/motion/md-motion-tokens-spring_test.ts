@@ -5,6 +5,7 @@
  */
 
 // import 'jasmine'; (google3-only)
+// spec-labels: motion-overview/how-it-works/spring-tokens/speed
 import {adoptStyles} from '../adopt-styles.js';
 import {styles as m3Styles} from '../m3.cssresult.js';
 

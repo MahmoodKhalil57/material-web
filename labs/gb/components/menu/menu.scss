@@ -224,6 +224,7 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       --_bottom-shape: var(--shape);
     }
 
+    // spec-labels: menus/specs/states
     &:where(:hover, .hover) {
       @include menu-tokens.item-standard-hovered;
     }

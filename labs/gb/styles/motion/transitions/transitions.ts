@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// spec-labels: motion-transitions/transition-patterns
 /**
  * @fileoverview M3 transition patterns
  * (m3.material.io/styles/motion/transitions): container transform, forward and

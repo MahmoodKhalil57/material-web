@@ -40,6 +40,8 @@ export interface NavigationChangeDetail {
   navigation: ActiveNavigation;
 }
 
+// spec-labels: layout-breakpoints/expanded/navigation, layout-breakpoints/medium/panes/two-pane-layout,
+// spec-labels: layout-breakpoints/large-extra-large/navigation, layout-breakpoints/medium/navigation
 /**
  * A Material Design app scaffold: the bars and rails around an app's
  * content (spec: foundations/layout/scaffold). It measures its own width as

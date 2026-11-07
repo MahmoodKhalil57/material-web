@@ -52,6 +52,7 @@ interface Action {
 }
 
 // Separate variable needed for closure.
+// spec-labels: sliders/specs/anatomy, sliders/guidelines/anatomy, sliders/specs/variants, sliders/specs/configurations, sliders/specs/measurements
 const baseClass = mixinDelegatesAria(
   mixinFormAssociated(mixinElementInternals(LitElement)),
 );

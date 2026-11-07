@@ -599,6 +599,7 @@ $slide-distance: 20%;
     -webkit-tap-highlight-color: transparent;
   }
 
+  // spec-labels: date-pickers/specs/element-states
   .date-picker-cell[data-date]:not([aria-disabled='true']) {
     cursor: pointer;
   }

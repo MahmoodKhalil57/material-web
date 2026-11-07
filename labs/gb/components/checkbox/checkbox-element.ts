@@ -58,6 +58,7 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --density-step - Size removed per density step.
  * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
+// spec-labels: checkbox/specs/checkbox, checkbox/guidelines/anatomy, checkbox/specs/color, checkbox/specs/measurements
 export class CheckboxElement extends baseClass {
   /** @nocollapse */
   static override shadowRootOptions: ShadowRootInit = {

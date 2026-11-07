@@ -57,6 +57,7 @@ const radioBaseClass = mixinConstraintValidation(
  * @cssprop --density-step - Size removed per density step.
  * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
+// spec-labels: radio-button/specs, radio-button/guidelines/anatomy, radio-button/guidelines/usage
 export class RadioElement extends radioBaseClass {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

@@ -26,6 +26,9 @@ import type {
 } from './icon-button.js';
 import {iconButton} from './icon-button.js';
 
+// spec-labels: icon-buttons/specs/color, icon-buttons/specs/variants, icon-buttons/specs/configurations, icon-buttons/specs/anatomy, icon-buttons/guidelines/anatomy
+// spec-labels: icon-buttons/guidelines/usage/color, icon-buttons/guidelines/usage/size-width, icon-buttons/specs/measurements, icon-buttons/specs/measurements/target-sizes
+// spec-labels: icon-buttons/specs/shape-morph/when-selected, icon-buttons/specs/shape-morph/pressed-state
 const baseClass = mixinDelegatesAria(
   mixinFormSubmitter(mixinFormAssociated(mixinElementInternals(LitElement))),
 );

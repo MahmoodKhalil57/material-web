@@ -62,6 +62,7 @@ import {styles as appBarStyles} from './app-bar.cssresult.js';
  * @cssprop --trailing-icon-color
  * @cssprop --trailing-space
  */
+// spec-labels: app-bars/specs/anatomy, app-bars/guidelines/anatomy, app-bars/guidelines/anatomy/headline, app-bars/guidelines/anatomy/leading-button, app-bars/specs/anatomy/subtitle, app-bars/specs/anatomy/search, app-bars/guidelines/usage, app-bars/specs/variants, app-bars/specs/baseline-app-bars
 export class AppBarElement extends LitElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

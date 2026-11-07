@@ -7,6 +7,10 @@
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {createClassMapDirective} from '../shared/directives.js';
 import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {
+  isRtl as sharedIsRtl,
+  nextFocusIndex as sharedNextFocusIndex,
+} from '../shared/roving-focus.js';
 
 /** Segmented button densities: 0 (default) to -3, 4px shorter per step. */
 export type SegmentedButtonDensity = 0 | -1 | -2 | -3;
@@ -142,41 +146,11 @@ export function nextFocusIndex(
   canFocus: (index: number) => boolean,
   rtl = false,
 ): number {
-  if (!count) return -1;
-  const first = () => {
-    for (let i = 0; i < count; i++) if (canFocus(i)) return i;
-    return -1;
-  };
-  const last = () => {
-    for (let i = count - 1; i >= 0; i--) if (canFocus(i)) return i;
-    return -1;
-  };
-  if (key === 'Home') return first();
-  if (key === 'End') return last();
-
-  let step: number;
-  if (key === 'ArrowDown') step = 1;
-  else if (key === 'ArrowUp') step = -1;
-  else if (key === 'ArrowRight') step = rtl ? -1 : 1;
-  else if (key === 'ArrowLeft') step = rtl ? 1 : -1;
-  else return -1;
-
-  if (current < 0) return step > 0 ? first() : last();
-  for (let n = 1; n <= count; n++) {
-    const i = (((current + step * n) % count) + count) % count;
-    if (canFocus(i)) return i;
-  }
-  return -1;
+  return sharedNextFocusIndex(count, current, key, {canFocus, rtl});
 }
 
 /** Whether an element is laid out right to left. */
-export function isRtl(element: Element): boolean {
-  try {
-    return element.matches(':dir(rtl)');
-  } catch {
-    return getComputedStyle(element).direction === 'rtl';
-  }
-}
+export const isRtl = sharedIsRtl;
 
 /**
  * Sets up arrow-key focus navigation and a roving `tabindex` on a Light DOM

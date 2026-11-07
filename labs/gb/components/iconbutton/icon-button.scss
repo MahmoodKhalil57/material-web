@@ -128,6 +128,10 @@
     &.icon-btn-square {
       --container-shape: var(--container-shape-square);
     }
+    // spec-labels: icon-buttons/specs/states/standard-icon-button-states/default, icon-buttons/specs/states/standard-icon-button-states/toggle
+    // spec-labels: icon-buttons/specs/states/tonal-button-states/default, icon-buttons/specs/states/tonal-button-states/toggle
+    // spec-labels: icon-buttons/specs/states/filled-button-states/default, icon-buttons/specs/states/filled-button-states/toggle
+    // spec-labels: icon-buttons/specs/states/outlined-button-states/default, icon-buttons/specs/states/outlined-button-states/toggle
     // Round and square icon buttons have the same pressed shape.
     &:is(:active, .active):where(:not(:disabled, .disabled, [aria-disabled='true'])) {
       @include icon-button-tokens.pressed;

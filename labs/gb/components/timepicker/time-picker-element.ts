@@ -106,6 +106,10 @@ function currentTime(): TimeOfDay {
   return {hour: now.getHours(), minute: now.getMinutes()};
 }
 
+// spec-labels: time-pickers/guidelines/anatomy, time-pickers/specs/anatomy/time-picker-dial, time-pickers/specs/anatomy/time-picker-input
+// spec-labels: time-pickers/specs/measurements/time-picker-dial-vertical, time-pickers/specs/measurements/time-picker-dial-horizontal, time-pickers/specs/measurements/time-picker-input
+// spec-labels: time-pickers/specs/states, time-pickers/specs/configurations/vertical-orientation-and-horizontal-orientation
+// spec-labels: time-pickers/specs/configurations/12-hour-and-24-hour-time-picker-inputs
 const baseClass = mixinFormAssociated(mixinElementInternals(LitElement));
 
 /**

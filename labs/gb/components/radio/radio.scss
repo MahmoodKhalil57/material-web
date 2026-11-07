@@ -18,6 +18,7 @@
     &:not(:checked, .checked) {
       @include radio-tokens.unselected;
 
+      // spec-labels: radio-button/specs/states
       &:where(:hover, .hover) {
         @include radio-tokens.unselected-hovered;
       }

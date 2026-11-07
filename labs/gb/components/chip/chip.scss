@@ -130,6 +130,8 @@
     }
 
     // Interaction states.
+    // spec-labels: chips/specs/assist-chip/assist-chip-states, chips/specs/suggestion-chip/suggestion-chip-states
+    // spec-labels: chips/specs/filter-chip/filter-chip-states, chips/specs/input-chip/input-chip-states
     &:where(.chip-assist):where(.chip-elevated):where(:hover, .hover) {
       @include chip-tokens.assist-elevated-hovered;
     }

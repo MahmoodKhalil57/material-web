@@ -30,6 +30,7 @@
       }
     }
 
+    // spec-labels: badges/specs, badges/guidelines/usage, badges/guidelines/anatomy, badges/guidelines/container, badges/specs/measurements
     // Large badge (with text)
     &.badge-large {
       @include badge-tokens.lg;

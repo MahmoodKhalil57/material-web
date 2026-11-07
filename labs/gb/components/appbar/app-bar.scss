@@ -50,6 +50,7 @@ $search-bar-max-width: 720px;
     padding-inline: var(--leading-space) var(--trailing-space);
   }
 
+  // spec-labels: app-bars/specs/color/scroll-states
   .app-bar-scrolled {
     background-color: var(--on-scroll-container-color);
     box-shadow: var(--on-scroll-container-elevation);
@@ -192,6 +193,7 @@ $search-bar-max-width: 720px;
     display: none;
   }
 
+  // spec-labels: app-bars/specs/configurations/text-alignment
   // Centered text (app-bars.md, Configurations: text alignment). As in
   // Compose, the title is centered on the whole app bar and only shifts when
   // the leading or trailing content would overlap it.

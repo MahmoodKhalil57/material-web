@@ -39,6 +39,7 @@ import {
  * @cssprop --leading-space
  * @cssprop --trailing-space
  */
+// spec-labels: split-button/specs/anatomy, split-button/guidelines/anatomy, split-button/guidelines/usage, split-button/specs/configurations, split-button/specs/color, split-button/specs/variants
 export class SplitButtonElement extends LitElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

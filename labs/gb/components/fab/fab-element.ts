@@ -27,6 +27,15 @@ import {
 // Separate variable needed for closure.
 const baseClass = mixinDelegatesAria(LitElement);
 
+// spec-labels: extended-fab/specs/anatomy, extended-fab/guidelines/anatomy, extended-fab/specs/variants,
+// spec-labels: extended-fab/specs/baseline-extended-fab,
+// spec-labels: extended-fab/specs/baseline-extended-fab/baseline-measurements,
+// spec-labels: extended-fab/specs/variants/baseline-variants, extended-fab/guidelines/behavior/scrolling,
+// spec-labels: extended-fab/guidelines/responsive-layout/breakpoints,
+// spec-labels: floating-action-button/guidelines/usage,
+// spec-labels: floating-action-button/specs/variants/baseline-variants,
+// spec-labels: floating-action-button/specs/anatomy, floating-action-button/guidelines/anatomy,
+// spec-labels: floating-action-button/specs/variants, floating-action-button/specs/configurations
 /**
  * A Material Design FAB, or an extended FAB when it has a `label`.
  *

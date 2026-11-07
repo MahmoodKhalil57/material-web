@@ -26,8 +26,8 @@ import navDrawerStyles from './nav-drawer.css' with {type: 'css'}; // github-onl
 // import {styles as navDrawerStyles} from './nav-drawer.cssresult.js'; // google3-only
 
 import {DragGesture, settleAnchor} from '../shared/drag-gesture.js';
+import {RovingFocusController} from '../shared/roving-focus.js';
 import {
-  getNextNavDrawerItem,
   NAV_DRAWER_CLASSES,
   NAV_DRAWER_CLOSE_REASONS,
   NAV_DRAWER_POSITIONAL_THRESHOLD,
@@ -43,6 +43,11 @@ const DEFAULT_LABEL = 'Navigation menu';
 // Separate variable needed for closure.
 const baseClass = mixinDelegatesAria(LitElement);
 
+// spec-labels: navigation-drawer/specs/measurements/standard-navigation-drawer,
+// spec-labels: navigation-drawer/guidelines/usage,
+// spec-labels: navigation-drawer/specs/measurements/modal-navigation-drawer,
+// spec-labels: navigation-drawer/guidelines/anatomy,
+// spec-labels: navigation-drawer/guidelines/usage/modal-navigation-drawer, navigation-drawer/specs
 /**
  * A Material Design navigation drawer.
  *
@@ -230,8 +235,6 @@ export class NavDrawerElement extends baseClass {
   constructor() {
     super();
     this.addEventListener('click', this.handleItemClick);
-    this.addEventListener('keydown', this.handleKeyDown);
-    this.addEventListener('focusin', this.handleFocusIn);
   }
 
   override connectedCallback() {
@@ -507,13 +510,24 @@ export class NavDrawerElement extends baseClass {
     );
   }
 
+  /**
+   * Up / Down (wrapping), Home / End and one tab stop (shared
+   * RovingFocusController). Tab enters on the first destination, as the
+   * spec's initial focus rule says, not on the selected one.
+   */
+  // spec: navigation-drawer-943104, navigation-drawer-e712cc, navigation-drawer-054d25, navigation-drawer-b59187
+  protected readonly rovingFocus = new RovingFocusController(this, {
+    items: () => this.items,
+    orientation: 'vertical',
+    canFocus: (item) => !(item as NavDrawerItemElement).disabled,
+    setTabStop: (item, stop) => {
+      (item as NavDrawerItemElement).tabStop = stop;
+    },
+  });
+
   private syncTabStops(focused?: NavDrawerItemElement) {
-    const items = this.items.filter((item) => !item.disabled);
-    const stop =
-      focused ?? items.find((item) => item.selected) ?? items[0] ?? null;
-    for (const item of this.items) {
-      item.tabStop = item === stop;
-    }
+    if (focused) this.rovingFocus.tabStop = focused;
+    else this.rovingFocus.sync();
   }
 
   private handleSlotChange() {
@@ -560,31 +574,6 @@ export class NavDrawerElement extends baseClass {
     this.syncTabStops(item);
     if (this.modal && this.open) {
       this.close(NAV_DRAWER_CLOSE_REASONS.item);
-    }
-  };
-
-  private readonly handleKeyDown = (event: KeyboardEvent) => {
-    if (event.defaultPrevented) {
-      return;
-    }
-    const current = this.findItem(event);
-    if (!current) {
-      return;
-    }
-    const items = this.items.filter((item) => !item.disabled);
-    const next = getNextNavDrawerItem(items, current, event.key);
-    if (!next) {
-      return;
-    }
-    event.preventDefault();
-    this.syncTabStops(next);
-    next.focus();
-  };
-
-  private readonly handleFocusIn = (event: FocusEvent) => {
-    const item = this.findItem(event);
-    if (item && !item.disabled) {
-      this.syncTabStops(item);
     }
   };
 

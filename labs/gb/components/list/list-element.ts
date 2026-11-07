@@ -21,6 +21,7 @@ import {
 import listStyles from "./list.css" with { type: "css" }; // github-only
 // import {styles as listStyles} from './list.cssresult.js'; // google3-only
 
+import { isRtl, nextFocusIndex } from "../shared/roving-focus.js";
 import {
   LIST_ITEM_CLASSES,
   type ListDensity,
@@ -150,6 +151,7 @@ interface LongPress {
 // Separate variable needed for closure.
 const baseClass = mixinElementInternals(LitElement);
 
+// spec-labels: lists/specs/configurations/styles
 /**
  * A Material Design list component.
  *
@@ -408,32 +410,14 @@ export class ListElement extends baseClass {
     const items = this.navigationItems().filter(canFocus);
     const current = items.findIndex((item) => path.includes(item));
     if (current < 0) return;
-    const rtl = getComputedStyle(this).direction === "rtl";
-    let to: number;
-    switch (event.key) {
-      case "ArrowDown":
-        to = current + 1;
-        break;
-      case "ArrowUp":
-        to = current - 1;
-        break;
-      case "ArrowRight":
-        to = current + (rtl ? -1 : 1);
-        break;
-      case "ArrowLeft":
-        to = current + (rtl ? 1 : -1);
-        break;
-      case "Home":
-        to = 0;
-        break;
-      case "End":
-        to = items.length - 1;
-        break;
-      default:
-        return;
-    }
+    // Shared roving focus movement (both axes, wrapping, RTL-aware).
+    // spec: lists/accessibility/keyboard-navigation, lists-35bc03
+    const to = nextFocusIndex(items.length, current, event.key, {
+      rtl: isRtl(this),
+    });
+    if (to < 0) return;
     event.preventDefault();
-    items[(to + items.length) % items.length].focusPrimary();
+    items[to].focusPrimary();
   };
 
   /** Reflects selection mode as `selection-mode` (for styling). */

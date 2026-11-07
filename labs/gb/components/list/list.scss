@@ -111,6 +111,7 @@
     }
 
     &:where(:not(.list-item-static)) {
+      // spec-labels: lists/specs/states/selected-list-items, lists/specs/states/default-list-items
       &:is(:hover, .hover) {
         @include list-tokens.item-hovered;
       }

@@ -39,6 +39,8 @@ const HEADER_TOGGLE_SELECTOR = [
   '[nav-rail-toggle]',
 ].join(', ');
 
+// spec-labels: navigation-rail/specs/anatomy, navigation-rail/guidelines/anatomy, navigation-rail/specs/variants, navigation-rail/specs/baseline-navigation-rail
+// spec-labels: navigation-rail/specs/baseline-navigation-rail/configurations, navigation-rail/specs/variants/baseline-variants
 const HEADER_FAB_SELECTOR = 'md-gb-fab, .fab';
 
 /**

@@ -37,6 +37,10 @@ function getDeepActiveElement(): HTMLElement | null {
 
 const baseClass = mixinDelegatesAria(LitElement);
 
+// spec-labels: dialogs/specs/full-screen-dialogs, dialogs/guidelines/anatomy/full-screen-dialog,
+// spec-labels: dialogs/specs/basic-dialogs/basic-dialog-measurements, dialogs/specs/basic-dialogs,
+// spec-labels: dialogs/guidelines/anatomy/basic-dialog, dialogs/guidelines/usage,
+// spec-labels: dialogs/guidelines/adaptive-design
 /**
  * A Material Design dialog: a modal window in front of app content that
  * provides critical information or asks for a decision. Built on a native

@@ -31,6 +31,7 @@ import {
 } from './fab-menu.js';
 
 // Separate variable needed for closure.
+// spec-labels: fab-menu/specs/anatomy, fab-menu/guidelines/anatomy, fab-menu/specs/variants, fab-menu/specs/configurations
 const baseClass = mixinDelegatesAria(LitElement);
 
 /**

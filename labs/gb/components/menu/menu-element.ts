@@ -14,6 +14,7 @@ import {
 import {mixinFocusable} from '../../../behaviors/focusable.js';
 
 import {clampDensity, type Density} from '../shared/density.js';
+import {nextFocusIndex} from '../shared/roving-focus.js';
 import menuStyles from './menu.css' with {type: 'css'}; // github-only
 // import {styles as menuStyles} from './menu.cssresult.js'; // google3-only
 
@@ -82,6 +83,11 @@ export function closestMenu(node: Element | null): MenuElement | null {
   return (node?.closest('md-gb-menu') as MenuElement | null) ?? null;
 }
 
+// spec-labels: menus/guidelines/anatomy, menus/specs/anatomy/vertical-menus,
+// spec-labels: menus/specs/variants/vertical-menus, menus/specs/configurations/vertical-menus-layout,
+// spec-labels: menus/specs/color, menus/guidelines/flexibility-slots,
+// spec-labels: menus/guidelines/usage/opening-menus, menus/guidelines/usage/menu-groups,
+// spec-labels: menus/guidelines/anatomy/gaps-dividers-optional
 /**
  * A Material Design vertical menu.
  *
@@ -380,21 +386,15 @@ export class MenuElement extends baseClass {
       items[(i + items.length) % items.length].focus();
     };
 
-    switch (event.key) {
-      case 'ArrowDown':
-        focusAt(index === -1 ? 0 : index + 1);
+    // Up / Down (wrapping), Home / End: shared roving focus movement. Disabled
+    // items stay focusable (menus spec: they can be active, not selected).
+    // spec: menus/accessibility/keyboard-navigation
+    if (!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+      const to = nextFocusIndex(items.length, index, event.key, {orientation: 'vertical'});
+      if (to >= 0) {
+        focusAt(to);
         return;
-      case 'ArrowUp':
-        focusAt(index === -1 ? items.length - 1 : index - 1);
-        return;
-      case 'Home':
-        focusAt(0);
-        return;
-      case 'End':
-        focusAt(items.length - 1);
-        return;
-      default:
-        break;
+      }
     }
 
     // Typeahead: "Focus moves to the next menu item starting with letter".

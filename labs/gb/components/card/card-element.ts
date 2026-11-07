@@ -22,6 +22,7 @@ import cardStyles from './card.css' with {type: 'css'}; // github-only
 import {type CardColor, card} from './card.js';
 
 // Separate variable needed for closure.
+// spec-labels: cards/specs/elevated-card, cards/specs/filled-card, cards/specs/outlined-card, cards/guidelines/usage
 const baseClass = mixinDelegatesAria(LitElement);
 
 /**

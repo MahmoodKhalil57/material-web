@@ -74,6 +74,7 @@ const baseClass = mixinDelegatesAria(
  * @cssprop --density-step - State layer size removed per density step.
  * @cssprop --target-size - The minimum touch target size, kept at any density.
  */
+// spec-labels: switch/specs, switch/guidelines/anatomy, switch/guidelines/usage, switch/specs/configurations, switch/specs/measurements
 export class SwitchElement extends baseClass {
   /** @nocollapse */
   static override shadowRootOptions: ShadowRootInit = {

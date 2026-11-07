@@ -70,6 +70,8 @@ import {
  * `--md-sys-color-<role>` custom property names (without the prefix).
  * Must match `internal/_color-tokens.scss`.
  */
+// spec-labels: color-choosing-a-scheme/tab-1, customization/tab-1/custom-color-schemes/color-roles
+// spec-labels: color-system/how-the-system-works/how-dynamic-color-generates-color-schemes/3-the-algorithm-generates-key-colors, color-system/how-the-system-works/it-s-like-paint-by-number
 export const COLOR_ROLES = [
   'primary',
   'on-primary',

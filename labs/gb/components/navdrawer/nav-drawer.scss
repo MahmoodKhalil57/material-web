@@ -255,6 +255,7 @@ $overshoot: 24px;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 
+    // spec-labels: navigation-drawer/specs/states
     &:is(:hover, .hover) {
       --md-icon-color: var(--inactive-hover-icon-color);
       color: var(--inactive-hover-label-text-color);

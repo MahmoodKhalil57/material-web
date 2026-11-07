@@ -27,6 +27,7 @@
     &:not(:checked, .checked, [aria-checked='true']) {
       @include switch-tokens.unselected;
 
+      // spec-labels: switch/specs/states
       &:where(:hover, .hover) {
         @include switch-tokens.unselected-hovered;
       }

@@ -21,6 +21,7 @@ import {
 import {loadingIndicatorClasses} from './loading-indicator.js';
 
 // Separate variable needed for closure.
+// spec-labels: loading-indicator/specs/anatomy, loading-indicator/guidelines/anatomy, loading-indicator/specs/variants, loading-indicator/specs/configurations
 const baseClass = mixinDelegatesAria(LitElement);
 
 /**

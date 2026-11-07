@@ -23,6 +23,7 @@ import {
 import {progressClasses, registerProgressProperties} from './progress.js';
 
 // Separate variable needed for closure.
+// spec-labels: progress-indicators/specs/anatomy, progress-indicators/guidelines/anatomy, progress-indicators/specs/variants, progress-indicators/guidelines/usage, progress-indicators/specs/configurations
 const baseClass = mixinDelegatesAria(LitElement);
 
 /**
