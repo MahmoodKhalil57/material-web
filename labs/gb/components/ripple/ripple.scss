@@ -32,6 +32,17 @@
     initial-value: 50%;
   }
 
+  // Initial values for browsers without `@property`: the same values the
+  // registrations give, so the layers resolve there too (they just change
+  // without animating). `:where()` keeps the specificity at zero.
+  :where(.ripple) {
+    --ripple-scale: 0%;
+    --ripple-hover-opacity: 0%;
+    --ripple-press-opacity: 0%;
+    --ripple-x: 50%;
+    --ripple-y: 50%;
+  }
+
   .ripple {
     --ripple-color: currentColor;
     --ripple-press-transition: --ripple-press-opacity 375ms linear;
@@ -88,10 +99,9 @@
     }
 
     // Dragged: a 16% layer on a component being dragged (states.md, Dragged).
-    // The component, or an ancestor of the ripple, is marked `.dragged` or
-    // `aria-grabbed="true"`.
-    &:is(.dragged, [aria-grabbed='true']),
-    :is(.dragged, [aria-grabbed='true']) > & {
+    // The component, or an ancestor of the ripple, is marked `.dragged`.
+    &:is(.dragged),
+    :is(.dragged) > & {
       --ripple-hover-opacity: 16%;
     }
 

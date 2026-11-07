@@ -46,22 +46,26 @@ export function prop(el: Element, name: string, pseudo?: string): string {
   return getComputedStyle(el, pseudo).getPropertyValue(name).trim();
 }
 
+// The browser's own timers, captured when this module loads: the test
+// `Environment` (testing/environment.ts) installs Jasmine's mock clock and
+// replaces `requestAnimationFrame`, so waiting on the globals at call time
+// could never resolve.
+const realRaf = globalThis.requestAnimationFrame.bind(globalThis);
+const realSetTimeout = globalThis.setTimeout.bind(globalThis);
+
 /**
- * Resolves as soon as `check()` is truthy, checking once per frame, or after
- * `timeout` ms (then the test's own assertion reports the failure). Use it
- * instead of a fixed sleep before checking a state.
- *
- * Each check waits for the next frame or 16ms, whichever comes first: the
- * test `Environment` (testing/environment.ts) replaces `requestAnimationFrame`
- * with a queue it only flushes on demand, so a frame alone could never come.
+ * Resolves as soon as `check()` is truthy, checking once per frame (or every
+ * 16ms when frames are throttled), or after `timeout` ms (then the test's own
+ * assertion reports the failure). Use it instead of a fixed sleep before
+ * checking a state. Works inside `Environment` suites (real timers).
  */
 export async function until(check: () => unknown, {timeout = 1000} = {}): Promise<boolean> {
   const end = performance.now() + timeout;
   while (!check()) {
     if (performance.now() > end) return false;
     await new Promise((r) => {
-      requestAnimationFrame(r);
-      setTimeout(r, 16);
+      realRaf(r);
+      realSetTimeout(r, 16);
     });
   }
   return true;

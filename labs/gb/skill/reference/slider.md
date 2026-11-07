@@ -27,10 +27,10 @@ Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `ariaLabelEnd` | `aria-label-end` | `string` | `''` |  |
-| `ariaLabelStart` | `aria-label-start` | `string` | `''` |  |
-| `ariaValueTextEnd` | `aria-valuetext-end` | `string` | `''` |  |
-| `ariaValueTextStart` | `aria-valuetext-start` | `string` | `''` |  |
+| `ariaLabelEnd` | `label-end` | `string` | `''` |  |
+| `ariaLabelStart` | `label-start` | `string` | `''` |  |
+| `ariaValueTextEnd` | `valuetext-end` | `string` | `''` |  |
+| `ariaValueTextStart` | `valuetext-start` | `string` | `''` |  |
 | `centered` | `centered` (reflects) | `boolean` | `false` |  |
 | `labeled` | `labeled` | `boolean` | `false` |  |
 | `max` | `max` | `number` | `100` |  |

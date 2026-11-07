@@ -76,9 +76,11 @@ export interface OverlayPositionInput {
   /**
    * `center` centers the surface on the anchor; `start` aligns it to the
    * anchor's start edge so it extends toward the end (above / below), or to
-   * the anchor's top edge (start / end).
+   * the anchor's top edge (start / end); `end` aligns it to the anchor's end
+   * edge so it extends toward the start (above / below; a split button's
+   * menu).
    */
-  align?: 'center' | 'start';
+  align?: 'center' | 'start' | 'end';
   /** Gap between the anchor and the surface (including any caret). */
   spacing?: number;
   /** Minimum distance kept from the viewport edges. */
@@ -140,12 +142,13 @@ export function computeOverlayPosition({
   let side: OverlaySide;
 
   if (placement === 'above' || placement === 'below') {
-    if (align === 'start') {
-      // Extend from the anchor's start edge toward its end, else end-align,
+    if (align === 'start' || align === 'end') {
+      // Extend from the anchor's start (or end) edge, else the other edge,
       // else center (Compose `rememberRichTooltipPositionProvider`).
-      x = rtl ? anchor.right - width : anchor.left;
+      const fromStart = (align === 'start') !== rtl;
+      x = fromStart ? anchor.left : anchor.right - width;
       if (x < minX || x > maxX) {
-        x = rtl ? anchor.left : anchor.right - width;
+        x = fromStart ? anchor.right - width : anchor.left;
         if (x < minX || x > maxX) {
           x = anchor.left + (anchorWidth - width) / 2;
         }
@@ -177,7 +180,7 @@ export function computeOverlayPosition({
     }
     x = clamp(side === 'left' ? xLeft : xRight, minX, maxX);
     y = clamp(
-      align === 'start' ? anchor.top : anchor.top + (anchorHeight - height) / 2,
+      align === 'center' ? anchor.top + (anchorHeight - height) / 2 : anchor.top,
       minY,
       maxY,
     );
@@ -215,8 +218,20 @@ export function deepActiveElement(): Element | null {
   return active;
 }
 
+let anchorPositioningOverride: boolean | null = null;
+
+/**
+ * Pretends the browser does (`true`) or does not (`false`) have CSS anchor
+ * positioning, so tests can drive the JS fallback in a browser that has it.
+ * `null` goes back to detecting it. Takes effect when a surface next opens.
+ */
+export function forceAnchorPositioningSupport(value: boolean | null) {
+  anchorPositioningOverride = value;
+}
+
 /** Whether the browser positions elements with CSS anchor positioning. */
 export function supportsAnchorPositioning(): boolean {
+  if (anchorPositioningOverride !== null) return anchorPositioningOverride;
   return (
     typeof CSS !== 'undefined' &&
     !!CSS.supports?.('position-area: block-end span-inline-end')
@@ -226,7 +241,7 @@ export function supportsAnchorPositioning(): boolean {
 /** What the controller needs to place a surface; see {@link AnchoredOverlayOptions.placement}. */
 export interface OverlayPlacementOptions {
   placement: OverlayPlacement;
-  align?: 'center' | 'start';
+  align?: 'center' | 'start' | 'end';
   spacing?: number;
   margin?: number | OverlayMargin;
   caretInset?: number;

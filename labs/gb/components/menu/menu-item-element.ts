@@ -5,7 +5,7 @@
  */
 
 import {consume} from '@lit/context';
-import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
+import {css, CSSResultOrNative, html, LitElement, nothing, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {
   afterDispatch,
@@ -26,6 +26,7 @@ import menuStyles from './menu.css' with {type: 'css'}; // github-only
 // import {styles as menuStyles} from './menu.cssresult.js'; // google3-only
 
 import {
+  MENU_CLASSES,
   menuContext,
   type MenuContext,
   menuItem,
@@ -141,6 +142,17 @@ export class MenuItemElement extends baseClass {
 
   get menu(): HTMLElement | null {
     return this.menuContext?.menu || null;
+  }
+
+  /**
+   * The menu's color as a class on the item's root, for browsers without
+   * style queries (menu.scss).
+   */
+  private syncVibrantClass() {
+    const vibrant = (this.menu as {color?: string} | null)?.color === 'vibrant';
+    this.shadowRoot
+      ?.querySelector('.menu-item')
+      ?.classList.toggle(MENU_CLASSES.menuVibrant, vibrant);
   }
 
   /** The item's submenu, if it has one. */
@@ -294,7 +306,7 @@ export class MenuItemElement extends baseClass {
           name="leading"
           ${hasSlotted()}
           @slotchange=${this.markIconsDecorative}>
-          ${this.checked ? html`<span class="checkmark">check</span>` : nothing}
+          ${this.checked ? html`<span class="checkmark" aria-hidden="true">check</span>` : nothing}
         </slot>
       </span>
       <span class="menu-item-content">
@@ -337,7 +349,13 @@ export class MenuItemElement extends baseClass {
     }
   };
 
-  protected override updated() {
+  protected override willUpdate(changed: PropertyValues<this>) {
+    super.willUpdate(changed);
+    this.syncRole();
+  }
+
+  /** The role and checked state follow the group's `checkable` context. */
+  private syncRole() {
     if (this.hasSubmenu) {
       this[internals].role = 'menuitem';
     } else if (this.checkable === 'single') {
@@ -353,6 +371,11 @@ export class MenuItemElement extends baseClass {
     } else {
       this[internals].ariaChecked = null;
     }
+  }
+
+  protected override updated() {
+    this.syncVibrantClass();
+    this.syncRole();
 
     this[internals].ariaHasPopup = this.hasSubmenu ? 'menu' : null;
     this[internals].ariaExpanded = this.hasSubmenu

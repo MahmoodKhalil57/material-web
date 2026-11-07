@@ -210,9 +210,23 @@
   // there is no room below, then to the side of the button. The trailing
   // button is the menu's invoker, so it is the anchor.
   ::slotted(md-gb-menu:popover-open) {
-    position-area: block-end span-inline-start;
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
     margin: 4px 0;
+  }
+
+  // The same 4dp for the menu's JS placement (no anchor positioning), which
+  // takes the margin to zero and spaces the menu from its anchor itself.
+  ::slotted(md-gb-menu) {
+    --menu-anchor-spacing: 4px;
+    --menu-anchor-align: end;
+  }
+
+  // Without CSS anchor positioning the menu's overlay controller places it in
+  // JS (shared/anchored-overlay.ts).
+  @supports (position-area: end) and (position-try-fallbacks: flip-block) {
+    ::slotted(md-gb-menu:popover-open) {
+      position-area: block-end span-inline-start;
+      position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

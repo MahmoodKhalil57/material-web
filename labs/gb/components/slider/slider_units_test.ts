@@ -48,8 +48,8 @@ describe('<md-gb-slider> spec units', () => {
         labeled
         value-start="20"
         value-end="70"
-        aria-label-start="Start"
-        aria-label-end="End"></md-gb-slider>`);
+        label-start="Start"
+        label-end="End"></md-gb-slider>`);
     const labels = [
       q(els[0], '.slider-handle.slider-start .slider-label'),
       q(els[0], '.slider-handle.slider-end .slider-label'),

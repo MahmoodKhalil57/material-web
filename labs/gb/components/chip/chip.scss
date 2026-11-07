@@ -213,16 +213,16 @@
     }
 
     // Dragged.
-    &:where(.chip-assist):where(.dragged, [aria-grabbed='true']) {
+    &:where(.chip-assist):where(.dragged) {
       @include chip-tokens.assist-dragged;
     }
-    &:where(.chip-suggestion):where(.dragged, [aria-grabbed='true']) {
+    &:where(.chip-suggestion):where(.dragged) {
       @include chip-tokens.suggestion-dragged;
     }
-    &:where(.chip-filter):where(.dragged, [aria-grabbed='true']) {
+    &:where(.chip-filter):where(.dragged) {
       @include chip-tokens.filter-dragged;
     }
-    &:where(.chip-input):where(.dragged, [aria-grabbed='true']) {
+    &:where(.chip-input):where(.dragged) {
       @include chip-tokens.input-dragged;
     }
 
@@ -324,7 +324,12 @@
       font-variation-settings: var(--label-text-axes);
       text-decoration: none;
       -webkit-font-smoothing: antialiased;
-      user-select: none;
+      -webkit-user-select: none;
+      @supports (user-select: none) {
+        & {
+          user-select: none;
+        }
+      }
       white-space: nowrap;
       vertical-align: middle;
       // Elevation changes use the fast effects spring (Compose

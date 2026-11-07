@@ -144,6 +144,9 @@ export class MenuGroupElement extends baseClass {
       class=${classMap({
         [MENU_CLASSES.group]: true,
         [MENU_CLASSES.groupInactive]: this.inactive,
+        // The menu's layout, for browsers without style queries (menu.scss).
+        [MENU_CLASSES.menuGrouped]:
+          (this.menu as {layout?: string} | null)?.layout === 'grouped',
       })}
       part="group"
     >

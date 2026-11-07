@@ -469,7 +469,11 @@ export class DialogElement extends baseClass {
           <div class="dialog-icon" part="icon" aria-hidden="true">
             <slot name="icon" @slotchange=${this.handleSlotChange}></slot>
           </div>
-          <h2 class="dialog-headline" id="headline" part="headline">
+          <h2
+            class="dialog-headline"
+            id="headline"
+            part="headline"
+            aria-hidden="${this.hasHeadline ? nothing : 'true'}">
             <slot name="headline" @slotchange=${this.handleSlotChange}></slot>
           </h2>
           ${this.isFullScreen

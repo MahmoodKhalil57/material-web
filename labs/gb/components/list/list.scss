@@ -22,6 +22,7 @@
     &.list-segmented {
       @include list-tokens.segmented;
       --list-segmented: true;
+      --_segmented-container-color: var(--md-sys-color-surface);
     }
 
     & {
@@ -32,6 +33,7 @@
       list-style: none;
       gap: var(--gap);
       border-radius: var(--container-shape);
+      --_list-radius: var(--container-shape);
     }
 
     > :first-child:not(slot),
@@ -39,6 +41,7 @@
       border-start-start-radius: inherit;
       border-start-end-radius: inherit;
       --first-child: true;
+      --_first-child-radius: var(--_list-radius);
     }
 
     > :last-child:not(slot),
@@ -46,6 +49,7 @@
       border-end-start-radius: inherit;
       border-end-end-radius: inherit;
       --last-child: true;
+      --_last-child-radius: var(--_list-radius);
     }
 
     slot {
@@ -89,11 +93,23 @@
   }
 
   .list-select {
-    &,
-    &::picker(select) {
-      // stylelint-disable-next-line scss/declaration-property-value-no-unknown --
-      // Uses customizable select
-      appearance: base-select;
+    // Customizable select. Browsers without it keep the native select. The
+    // selectors are split: an unknown pseudo-element would drop the whole
+    // selector list.
+    @supports (appearance: base-select) {
+      & {
+        // stylelint-disable-next-line scss/declaration-property-value-no-unknown --
+        // Uses customizable select
+        appearance: base-select;
+      }
+    }
+
+    @supports (appearance: base-select) and selector(::picker(select)) {
+      &::picker(select) {
+        // stylelint-disable-next-line scss/declaration-property-value-no-unknown --
+        // Uses customizable select
+        appearance: base-select;
+      }
     }
 
     border: none;
@@ -104,6 +120,9 @@
   .list-item {
     & {
       @include list-tokens.item;
+      // Without style queries: the segmented list passes the color as a
+      // plain custom property (same value as the style query below).
+      --container-color: var(--_segmented-container-color, transparent);
 
       @container style(--list-segmented: true) {
         @include list-tokens.item-segmented;
@@ -204,7 +223,9 @@
       border: none;
       text-align: unset;
       text-decoration: unset;
-      width: stretch;
+      // `stretch` is not supported everywhere: fill the container instead.
+      width: 100%;
+      width: -webkit-fill-available;
       box-shadow: var(--container-elevation, none);
       // Compose ListItem animates shape and elevation with the fast spatial
       // spring and colors with the default effects spring. The swipe offset
@@ -219,6 +240,20 @@
           var(--md-sys-motion-spring-default-effects),
         translate var(--md-sys-motion-spring-default-spatial-duration)
           var(--md-sys-motion-spring-default-spatial);
+    }
+
+    @supports (width: stretch) {
+      width: stretch;
+    }
+
+    // Without style queries the list passes the same signals as plain custom
+    // properties (`--_segmented-container-color`, `--_first-child-radius`,
+    // `--_last-child-radius`). The style queries below set the same values.
+    & {
+      border-start-start-radius: var(--_first-child-radius, var(--container-shape));
+      border-start-end-radius: var(--_first-child-radius, var(--container-shape));
+      border-end-start-radius: var(--_last-child-radius, var(--container-shape));
+      border-end-end-radius: var(--_last-child-radius, var(--container-shape));
     }
 
     @container style(--first-child: true) {
@@ -371,14 +406,16 @@
       }
     }
 
-    &::checkmark {
-      font: var(--leading-icon-size) var(--md-icon-font);
-      color: var(--leading-icon-color);
-      content: 'check';
-    }
+    @supports selector(::checkmark) {
+      &::checkmark {
+        font: var(--leading-icon-size) var(--md-icon-font);
+        color: var(--leading-icon-color);
+        content: 'check';
+      }
 
-    &:has(.list-item-radio, .list-item-checkbox)::checkmark {
-      display: none;
+      &:has(.list-item-radio, .list-item-checkbox)::checkmark {
+        display: none;
+      }
     }
 
     .list-item-radio,

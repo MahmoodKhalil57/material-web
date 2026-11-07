@@ -23,6 +23,17 @@ $selected: ':is(.selected, [aria-selected="true"], :state(selected))';
 // no modifier class is required.
 $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
 
+// The secondary variant is read from the bar's class, not from a style query
+// on a custom property (`@container style()` is not in every browser we
+// support). `:where()` keeps the specificity the style query had.
+$secondary-bar: ':where(.tabs-secondary)';
+$primary-tab: ':not(:where(.tabs-secondary *))';
+
+// The indicator and the badge are positioned with CSS anchor positioning
+// (`anchor()`). Browsers without it get the static fallbacks under
+// `@supports not ($anchors)`: the selected tab draws its own underline.
+$anchors: '(anchor-name: --a) and (position-anchor: --a) and (left: anchor(--a left))';
+
 @layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.badge;
 @layer md.comp.tabs {
   .tabs {
@@ -30,10 +41,6 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
 
     &.tabs-secondary {
       @include tabs-tokens.secondary;
-      // Published for `.tab` to read with a style query, so "secondary never
-      // stacks" needs no `.tabs-secondary .tab` descendant selector. Same
-      // idiom as `--list-segmented` in list.scss:21.
-      --tabs-secondary: true;
     }
 
     // Density (tabs.md "Avoid applying density by default": opt in only).
@@ -64,8 +71,9 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     // Every bar scrolls once it overflows; there is no `.tabs-scrollable`.
     // The flex items' automatic minimum size floors each tab at min-content,
     // which is what produces the overflow in the first place.
-    overflow-inline: auto;
-    overflow-block: hidden;
+    // (Horizontal only, so the physical axes are the inline and block ones.)
+    overflow-x: auto;
+    overflow-y: hidden;
     overscroll-behavior-inline: contain;
     scrollbar-width: none;
 
@@ -73,14 +81,19 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     // `.tabs` in the tree publishes the same three names and the last one in
     // tree order wins for all of them — measured: with several bars on a
     // page, every indicator resolved against the last bar's selected tab.
-    anchor-scope: --tab, --tab-content-start, --tab-content-end;
+    @supports (anchor-scope: --a) {
+      anchor-scope: --tab, --tab-content-start, --tab-content-end;
+    }
 
     // Wider than compact: the tabs do not stretch across the window. Each is
     // at most as wide as the widest tab and the group is centered (or at the
     // leading edge with align="start"). Hand-authored bars without the
     // attribute keep filling the bar.
     &:not([scrollable])[window-size-class]:not([window-size-class='compact']) {
-      justify-content: safe center;
+      justify-content: center;
+      @supports (justify-content: safe center) {
+        justify-content: safe center;
+      }
 
       > .tab {
         flex: 0 1 var(--tabs-widest, auto);
@@ -100,7 +113,9 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     display: flex;
     // Containing block for the `::before` focus ring and out-of-flow `.tab-badge`.
     position: relative;
-    anchor-scope: --tab-icon;
+    @supports (anchor-scope: --a) {
+      anchor-scope: --tab-icon;
+    }
     // Fixed tabs are equal sections that fill the bar at compact windows and
     // are never narrower than the widest tab (`--tabs-widest`, set by the
     // element); above compact they stop growing at that width (see `.tabs`).
@@ -122,7 +137,12 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     border: none;
     background-color: transparent;
     cursor: pointer;
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
     scroll-margin-inline: var(--tab-scroll-margin, var(--leading-space, 16px));
     // No two-line labels and no truncation.
     white-space: nowrap;
@@ -144,30 +164,41 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     --md-icon-size: var(--icon-size);
   }
 
-  .tab#{$stacked} {
-    // Secondary never stacks, so the whole block is gated on the variant flag
-    // the container publishes rather than on a `.tabs-secondary .tab` selector.
-    // Raising `--container-height` here raises this tab's own min-block-size to
-    // 63dp; the bar then grows to 64dp to contain it.
-    @container not style(--tabs-secondary: true) {
-      @include tabs-tokens.with-icon-and-label-text;
-      flex-direction: column;
-      gap: var(--stacked-icon-label-space);
-    }
+  // Secondary never stacks, so the whole block is gated on the bar's variant
+  // class. Raising `--container-height` here raises this tab's own
+  // min-block-size to 63dp; the bar then grows to 64dp to contain it.
+  .tab#{$stacked}#{$primary-tab} {
+    @include tabs-tokens.with-icon-and-label-text;
+    flex-direction: column;
+    gap: var(--stacked-icon-label-space);
   }
 
-  .tab:has(> .md-icon) {
-    @container not style(--tabs-secondary: true) {
+  // A badge sits on the top trailing corner of the icon. Without anchor
+  // positioning the icon's position is derived from the tab's layout: the
+  // icon is centered in the tab, or the top of a centered icon + label stack.
+  .tab:has(> .md-icon)#{$primary-tab} > .tab-badge {
+    position: absolute;
+    margin-inline-start: 0;
+    inset-inline-start: calc(50% + var(--icon-size) / 2 - var(--icon-badge-inset));
+    inset-block-start: calc(50% - var(--icon-size) / 2);
+  }
+
+  .tab#{$stacked}#{$primary-tab} > .tab-badge {
+    inset-block-start: calc(
+      50% - (var(--icon-size) + var(--stacked-icon-label-space) + 20px) / 2
+    );
+  }
+
+  @supports #{$anchors} {
+    .tab:has(> .md-icon)#{$primary-tab} {
       > .md-icon {
         anchor-name: --tab-icon;
       }
 
       > .tab-badge {
-        position: absolute;
         position-anchor: --tab-icon;
         inset-block-start: anchor(start);
         inset-inline-start: calc(anchor(end) - var(--icon-badge-inset));
-        margin-inline-start: 0;
       }
     }
   }
@@ -193,9 +224,8 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
 
   .tab#{$selected} {
     @include tabs-tokens.selected;
-    anchor-name: --tab;
 
-    @container style(--tabs-secondary: true) {
+    #{$secondary-bar} & {
       @include tabs-tokens.secondary-selected;
     }
   }
@@ -208,7 +238,7 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     .tab:is(:hover, .hover):not(#{$selected}) {
       @include tabs-tokens.hover;
 
-      @container style(--tabs-secondary: true) {
+      #{$secondary-bar} & {
         @include tabs-tokens.secondary-hover;
       }
     }
@@ -216,14 +246,14 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
   .tab:is(:focus-visible, .focus):not(#{$selected}) {
     @include tabs-tokens.focus;
 
-    @container style(--tabs-secondary: true) {
+    #{$secondary-bar} & {
       @include tabs-tokens.secondary-focus;
     }
   }
   .tab:is(:active, .active):not(#{$selected}) {
     @include tabs-tokens.pressed;
 
-    @container style(--tabs-secondary: true) {
+    #{$secondary-bar} & {
       @include tabs-tokens.secondary-pressed;
     }
   }
@@ -282,29 +312,36 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
   // In raw HTML, light-DOM child order must match visual order. In `<md-gb-tab>`,
   // named slots pin the flat-tree render order to `<slot>` (icon),
   // `<slot name="label">`, and `<slot name="badge">`.
-  .tab#{$selected}:not(:has(> .md-icon)) > :first-child {
-    anchor-name: --tab-content-start;
-  }
-  .tab#{$selected}:not(:has(> .md-icon)) > :last-child {
-    anchor-name: --tab-content-end;
-  }
+  @supports (anchor-name: --a) {
+    .tab#{$selected} {
+      anchor-name: --tab;
+    }
 
-  // `anchor-name` is one property, so a lone child matched by both rules above
-  // would keep only the last declaration and lose the start anchor — measured:
-  // the indicator collapsed to 0px wide for every single-child tab.
-  .tab#{$selected}:not(:has(> .md-icon)) > :only-child {
-    anchor-name: --tab-content-start, --tab-content-end;
-  }
+    .tab#{$selected}:not(:has(> .md-icon)) > :first-child {
+      anchor-name: --tab-content-start;
+    }
+    .tab#{$selected}:not(:has(> .md-icon)) > :last-child {
+      anchor-name: --tab-content-end;
+    }
 
-  .tab#{$selected}:not(#{$stacked}) > .md-icon {
-    anchor-name: --tab-icon, --tab-content-start, --tab-content-end;
-  }
+    // `anchor-name` is one property, so a lone child matched by both rules above
+    // would keep only the last declaration and lose the start anchor — measured:
+    // the indicator collapsed to 0px wide for every single-child tab.
+    .tab#{$selected}:not(:has(> .md-icon)) > :only-child {
+      anchor-name: --tab-content-start, --tab-content-end;
+    }
 
-  // A stacked tab puts the icon on its own row, so the label alone defines the
-  // inline extent: image A row 1 has label ink 139-180 and indicator 140-179,
-  // with the 24dp icon above it uncovered.
-  .tab#{$selected}#{$stacked} > :is(.tab-label, [slot='label']) {
-    anchor-name: --tab-content-start, --tab-content-end;
+    .tab#{$selected}:not(#{$stacked}) > .md-icon {
+      anchor-name: --tab-icon, --tab-content-start, --tab-content-end;
+    }
+
+    // A stacked tab puts the icon on its own row, so the label alone defines the
+    // inline extent: image A row 1 has label ink 139-180 and indicator 140-179,
+    // with the 24dp icon above it uncovered.
+    .tab#{$selected}#{$stacked} > :is(.tab-label, [slot='label']) {
+      anchor-name: --tab-content-start, --tab-content-end;
+    }
+
   }
 
   // The shadow-side `<slot name="label" class="tab-label">` must not generate a
@@ -326,26 +363,55 @@ $stacked: ':has(> .md-icon):has(> :is(.tab-label, [slot="label"]))';
     block-size: var(--active-indicator-height);
     background-color: var(--active-indicator-color);
     border-radius: var(--active-indicator-shape);
-
-    // 2dp inset per side. There is no clamp here: the minimum is enforced on
-    // the content box (the `min-inline-size` rule above), which keeps the
-    // floor, the centring and the 2dp padding in one consistent model.
-    inset-inline: calc(
-        anchor(--tab-content-start start) + var(--active-indicator-inset)
-      )
-      calc(anchor(--tab-content-end end) + var(--active-indicator-inset));
-
-    // Compose TabRow animates the indicator with
-    // MotionSchemeKeyTokens.DefaultSpatial.
-    transition: inset var(--md-sys-motion-spring-default-spatial-duration)
-      var(--md-sys-motion-spring-default-spatial);
   }
 
-  // Secondary spans the whole tab (image A rows 3-4: x=121..300 is the entire
-  // first tab of two) and has square corners (Figma 44:44191 carries no radius;
-  // `secondary` overrides `--active-indicator-shape` to 0).
-  .tabs-secondary::after {
-    inset-inline: anchor(--tab start) anchor(--tab end);
+  @supports #{$anchors} {
+    .tabs::after {
+      // 2dp inset per side. There is no clamp here: the minimum is enforced on
+      // the content box (the `min-inline-size` rule above), which keeps the
+      // floor, the centring and the 2dp padding in one consistent model.
+      inset-inline: calc(
+          anchor(--tab-content-start start) + var(--active-indicator-inset)
+        )
+        calc(anchor(--tab-content-end end) + var(--active-indicator-inset));
+
+      // Compose TabRow animates the indicator with
+      // MotionSchemeKeyTokens.DefaultSpatial.
+      transition: inset var(--md-sys-motion-spring-default-spatial-duration)
+        var(--md-sys-motion-spring-default-spatial);
+    }
+
+    // Secondary spans the whole tab (image A rows 3-4: x=121..300 is the
+    // entire first tab of two) and has square corners (Figma 44:44191 carries
+    // no radius; `secondary` overrides `--active-indicator-shape` to 0).
+    .tabs-secondary::after {
+      inset-inline: anchor(--tab start) anchor(--tab end);
+    }
+  }
+
+  // Without anchor positioning the bar's indicator cannot find the selected
+  // tab, so the selected tab draws its own indicator along its bottom edge
+  // (the full tab width less the indicator inset on each side, like the
+  // secondary indicator; square-cornered).
+  @supports not (#{$anchors}) {
+    .tabs::after {
+      display: none;
+    }
+
+    .tab#{$selected} {
+      background-image: linear-gradient(
+        var(--active-indicator-color),
+        var(--active-indicator-color)
+      );
+      background-repeat: no-repeat;
+      background-position: center bottom;
+      background-size: calc(100% - 2 * var(--active-indicator-inset))
+        var(--active-indicator-height);
+    }
+
+    #{$secondary-bar} .tab#{$selected} {
+      background-size: 100% var(--active-indicator-height);
+    }
   }
 
   // With nothing selected the `anchor()` references are invalid at

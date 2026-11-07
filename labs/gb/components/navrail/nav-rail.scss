@@ -31,7 +31,12 @@
     padding-inline: 0;
     position: relative;
     transition: all var(--motion-duration) var(--motion-easing);
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
 
     > :focus-within {
       z-index: 1;
@@ -119,7 +124,12 @@
     transition:
       all var(--motion-duration) var(--motion-easing),
       var(--ripple-transition);
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
     -webkit-tap-highlight-color: transparent;
 
     // spec-labels: navigation-rail/specs/states, navigation-rail/specs/baseline-navigation-rail/states
@@ -214,7 +224,12 @@
     transition:
       all var(--motion-duration) var(--motion-easing),
       var(--ripple-transition);
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
     -webkit-tap-highlight-color: transparent;
 
     @media (hover: hover) {

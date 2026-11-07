@@ -469,8 +469,12 @@ $slide-distance: 20%;
 
   .date-picker-pager-dragging {
     overflow: hidden;
-    user-select: none;
     -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
   }
 
   .date-picker-pager-track {

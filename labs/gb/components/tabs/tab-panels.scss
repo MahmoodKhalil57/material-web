@@ -71,8 +71,12 @@ $settle-easing: linear(
   }
 
   :host(.tab-panels-dragging) {
-    user-select: none;
     -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
   }
 
   // Reduced motion: panels change instantly (the element reads the duration

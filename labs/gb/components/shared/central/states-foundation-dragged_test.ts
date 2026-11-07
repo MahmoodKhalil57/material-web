@@ -70,7 +70,6 @@ describe('dragged state (central)', () => {
     const before = bar.getBoundingClientRect();
     const resting = shadowOf(bar);
     bar.classList.add('dragged');
-    bar.setAttribute('aria-grabbed', 'true');
     await settle(bar);
     const after = bar.getBoundingClientRect();
     expect(after.top).toBe(before.top);

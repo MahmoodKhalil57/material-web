@@ -222,7 +222,12 @@ $window-margin: 24px;
     font: var(--time-selector-separator);
     letter-spacing: var(--time-selector-separator-tracking);
     font-variation-settings: var(--time-selector-separator-axes);
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
   }
 
   .time-picker-separator {
@@ -381,7 +386,12 @@ $window-margin: 24px;
     // The dial is a clock face; it never mirrors.
     direction: ltr;
     touch-action: none;
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
     cursor: pointer;
     outline: none;
   }

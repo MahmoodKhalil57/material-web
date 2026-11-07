@@ -56,7 +56,7 @@ describe('<md-gb-slider> spec behavior', () => {
     const {els, q} = await setup(html`
       <md-gb-slider aria-label="a"></md-gb-slider>
       <md-gb-slider centered aria-label="b"></md-gb-slider>
-      <md-gb-slider range aria-label-start="s" aria-label-end="e" value-start="20" value-end="70"></md-gb-slider>`);
+      <md-gb-slider range label-start="s" label-end="e" value-start="20" value-end="70"></md-gb-slider>`);
     const [standard, centered, range] = els;
     expect(q(standard, '.slider').classList.contains('slider-ticks')).toBeFalse();
     expect(standard.shadowRoot!.querySelectorAll('input').length).toBe(1);

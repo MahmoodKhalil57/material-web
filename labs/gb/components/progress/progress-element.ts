@@ -19,6 +19,9 @@ import {
   CIRCULAR_FLAT_PATH,
   LINEAR_PATH_LENGTH,
   LINEAR_FLAT_PATH,
+  LINEAR_INDETERMINATE_WAVY_PATH,
+  LINEAR_WAVY_PATH,
+  CIRCULAR_WAVY_PATH,
 } from './progress-paths.js';
 import {progressClasses, registerProgressProperties} from './progress.js';
 
@@ -82,16 +85,31 @@ export class ProgressElement extends baseClass {
   protected override render() {
     const determinate = this.value !== undefined && !Number.isNaN(this.value);
     const progress = determinate ? Math.min(1, Math.max(0, this.value!)) : 0;
+    // The `d` attributes are the shapes for browsers without the CSS `d`
+    // property (the CSS value replaces them elsewhere).
+    const linearPath = !this.wavy
+      ? LINEAR_FLAT_PATH
+      : determinate
+        ? LINEAR_WAVY_PATH
+        : LINEAR_INDETERMINATE_WAVY_PATH;
+    const circularPath = this.wavy ? CIRCULAR_WAVY_PATH : CIRCULAR_FLAT_PATH;
+    // The wave is flat at or below 10% and at or above 95% progress. The
+    // class does what the style query on `--_md-progress-wavy` does, for
+    // browsers without style queries.
+    const waveAmplitude = this.wavy && determinate && progress > 0.1 && progress < 0.95;
     // Needed for closure conformance
     const {ariaLabel} = this as ARIAMixinStrict;
     return html`<div
       part="indicator"
       class="${classMap(
-        progressClasses({
-          circular: this.circular,
-          wavy: this.wavy,
-          determinate,
-        }),
+        {
+          ...progressClasses({
+            circular: this.circular,
+            wavy: this.wavy,
+            determinate,
+          }),
+          'progress-wave-amplitude': waveAmplitude,
+        },
       )}"
       style="${styleMap(determinate ? {'--progress': String(progress)} : {})}"
       role="progressbar"
@@ -105,16 +123,16 @@ export class ProgressElement extends baseClass {
         <span class="progress-track progress-track-3"></span>
         ${svg`<svg class="progress-wave"><path
             class="progress-active progress-active-1"
-            d="${LINEAR_FLAT_PATH}"
+            d="${linearPath}"
             pathLength="${LINEAR_PATH_LENGTH}"></path><path
             class="progress-active progress-active-2"
-            d="${LINEAR_FLAT_PATH}"
+            d="${linearPath}"
             pathLength="${LINEAR_PATH_LENGTH}"></path></svg>`}
         <span class="progress-stop"></span>
         ${svg`<svg class="progress-ring" viewBox="${CIRCULAR_VIEW_BOX}"><circle
             class="progress-ring-track"></circle><path
             class="progress-active"
-            d="${CIRCULAR_FLAT_PATH}"
+            d="${circularPath}"
             pathLength="100"></path></svg>`}
       </span>
     </div>`;

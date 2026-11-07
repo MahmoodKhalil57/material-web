@@ -114,7 +114,12 @@ $overshoot: 24px;
 
     &.nav-drawer-dragging {
       transition: none;
-      user-select: none;
+      -webkit-user-select: none;
+      @supports (user-select: none) {
+        & {
+          user-select: none;
+        }
+      }
     }
 
     // A swiped drawer settles closed with the spatial spring (Compose: the
@@ -254,7 +259,12 @@ $overshoot: 24px;
         var(--motion-effects-easing),
       color var(--motion-effects-duration) var(--motion-effects-easing),
       var(--ripple-transition);
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
     -webkit-tap-highlight-color: transparent;
 
     // spec-labels: navigation-drawer/specs/states

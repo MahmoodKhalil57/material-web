@@ -613,9 +613,15 @@ export class ModalSurfaceController implements ReactiveController {
     if (!target?.isConnected) {
       return;
     }
-    // Focus the user already moved elsewhere stays.
+    // Focus the user already moved elsewhere stays. Focus that fell to the
+    // body (closing the dialog can drop it there) counts as no focus.
     const active = deepActiveElement();
-    if (!active || this.host.matches(':focus-within')) {
+    if (
+      !active ||
+      active === document.body ||
+      active === document.documentElement ||
+      this.host.matches(':focus-within')
+    ) {
       target.focus();
     }
   }

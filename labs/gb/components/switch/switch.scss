@@ -106,10 +106,15 @@
       }
 
       &::before {
-        --_handle-size: if(
-          style(--icon: ''): var(--handle-width) ;
-            else: max(var(--handle-width), var(--with-icon-handle-width)) ;
-        );
+        // The larger handle is for an icon. `--_icon-handle-size` is set with
+        // the icon (below); `if()` also follows a `--icon` set directly.
+        --_handle-size: var(--_icon-handle-size, var(--handle-width));
+        @supports (width: #{'if(style(--icon: ""): 1px; else: 2px)'}) {
+          --_handle-size: if(
+            style(--icon: ''): var(--handle-width) ;
+              else: max(var(--handle-width), var(--with-icon-handle-width)) ;
+          );
+        }
         content: var(--icon);
         font: var(--md-icon-size) var(--md-icon-font);
         // Material Symbols axes at the smallest optical size (16px icon).
@@ -172,6 +177,10 @@
 
     &:has(.switch-icon-off:not(slot), .switch-icon-off.has-slotted) {
       --icon: ' '; // Use space to clear CSS icon and update the handle size.
+      --_icon-handle-size: max(
+        var(--handle-width),
+        var(--with-icon-handle-width)
+      );
     }
 
     .switch-icon-off,

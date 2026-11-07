@@ -20,6 +20,17 @@ $fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
 $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
   var(--md-sys-motion-spring-fast-effects);
 
+// The vibrant color and the grouped layout reach items and groups through
+// custom properties the menu publishes (`--menu-vibrant`, `--menu-grouped`),
+// read with `@container style()`. Not every browser we support has style
+// queries, so each such rule is written twice, from one mixin: under the style
+// query, and under these classes. Light DOM items sit under `.menu-vibrant` /
+// `.menu-grouped`; `md-gb-menu-item` and `md-gb-menu-group` put the class on
+// their own root (their menu is outside their shadow tree). `:where()` keeps
+// the specificity the style query had.
+$vibrant: ':where(.menu-vibrant, .menu-vibrant *)';
+$grouped: ':where(.menu-grouped, .menu-grouped *)';
+
 @layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.divider;
 @layer md.comp.menu {
   .menu {
@@ -81,9 +92,17 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       // `position-area` place it (the popover UA style centers it).
       inset: auto;
       margin: 0;
-      position-area: end span-end;
-      position-try-fallbacks: flip-block, flip-inline;
       border: none;
+    }
+
+    // Without CSS anchor positioning the overlay controller places the menu
+    // in JS (shared/anchored-overlay.ts), flipping when there is no room.
+    @supports (position-area: end) and (position-try-fallbacks: flip-block) {
+      &:popover-open,
+      :host(:popover-open):has(&.menu-host) {
+        position-area: end span-end;
+        position-try-fallbacks: flip-block, flip-inline;
+      }
     }
 
     :host(:popover-open):has(&.menu-host) {
@@ -98,18 +117,28 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
     // "Submenus should open next to the parent menu item without
     // overlapping it"), aligned with the item's top edge.
     :host([submenu]:popover-open):has(&.menu-host) {
-      position-area: inline-end span-block-end;
-      position-try-fallbacks: flip-inline, flip-block;
       // Lines the submenu's first item up with the item that opened it.
       @include menu-tokens.root;
       margin-block-start: calc(-1 * var(--group-padding));
     }
 
+    @supports (position-area: end) and (position-try-fallbacks: flip-block) {
+      :host([submenu]:popover-open):has(&.menu-host) {
+        position-area: inline-end span-block-end;
+        position-try-fallbacks: flip-inline, flip-block;
+      }
+    }
+
     // Context menus open at the pointer (`showAt()`), not at an anchor.
     :host([context-menu]:popover-open):has(&.menu-host) {
-      position-area: none;
-      position-try-fallbacks: none;
       margin: 0;
+    }
+
+    @supports (position-area: end) and (position-try-fallbacks: flip-block) {
+      :host([context-menu]:popover-open):has(&.menu-host) {
+        position-area: none;
+        position-try-fallbacks: none;
+      }
     }
 
     &.menu-host {
@@ -138,8 +167,9 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
     display: contents;
   }
 
-  @container style(--menu-grouped: true) {
-    .menu-group {
+  // Grouped layout: each group is a surface.
+  @mixin grouped-group {
+    & {
       // Compose `DropdownMenuGroup`: a Surface in the menu's container color
       // and elevation with `group.padding` above and below its items.
       display: flex;
@@ -161,24 +191,34 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
         background-color $fast-effects;
     }
 
-    .menu-group:first-child:not(:host > *),
-    :host(:first-of-type) > .menu-group {
+    &:first-child:not(:host > *),
+    :host(:first-of-type) > & {
       --_top-shape: var(--container-shape);
     }
 
-    .menu-group:last-child:not(:host > *),
-    :host(:last-of-type) > .menu-group {
+    &:last-child:not(:host > *),
+    :host(:last-of-type) > & {
       --_bottom-shape: var(--container-shape);
     }
 
     // A group the pointer or focus has left after engaging it is inactive
     // (Compose `shapeByInteraction`: `inactiveShape` once hovered and no
     // longer hovered).
-    .menu-group.menu-group-inactive {
+    &.menu-group-inactive {
       @include menu-tokens.inactive;
       --_top-shape: var(--container-shape);
       --_bottom-shape: var(--container-shape);
     }
+  }
+
+  .menu-group {
+    @container style(--menu-grouped: true) {
+      @include grouped-group;
+    }
+  }
+
+  .menu-group#{$grouped} {
+    @include grouped-group;
   }
 
   // Section label (menus.md anatomy "Label text (optional)", Compose
@@ -194,7 +234,29 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
     font: var(--section-label-text);
     letter-spacing: var(--section-label-text-tracking);
     font-variation-settings: var(--section-label-text-axes);
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
+  }
+
+  @mixin vibrant-item {
+    & {
+      @include menu-tokens.item-vibrant;
+    }
+    @media (hover: hover) {
+      &:where(:hover, .hover) {
+        @include menu-tokens.item-vibrant-hovered;
+      }
+    }
+    &:where(:focus-within, .focus) {
+      @include menu-tokens.item-vibrant-focused;
+    }
+    &:where(:active, .active) {
+      @include menu-tokens.item-vibrant-pressed;
+    }
   }
 
   .menu-item {
@@ -247,26 +309,19 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
     }
 
     @container style(--menu-vibrant: true) {
-      & {
-        @include menu-tokens.item-vibrant;
-      }
-      @media (hover: hover) {
-        &:where(:hover, .hover) {
-          @include menu-tokens.item-vibrant-hovered;
-        }
-      }
-      &:where(:focus-within, .focus) {
-        @include menu-tokens.item-vibrant-focused;
-      }
-      &:where(:active, .active) {
-        @include menu-tokens.item-vibrant-pressed;
-      }
+      @include vibrant-item;
+    }
+    &#{$vibrant} {
+      @include vibrant-item;
     }
 
     // An item whose submenu is open keeps its hovered colors.
     &.menu-item-expanded {
       @include menu-tokens.item-standard-hovered;
       @container style(--menu-vibrant: true) {
+        @include menu-tokens.item-vibrant-hovered;
+      }
+      &#{$vibrant} {
         @include menu-tokens.item-vibrant-hovered;
       }
     }
@@ -280,6 +335,9 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       @container style(--menu-vibrant: true) {
         @include menu-tokens.item-vibrant-selected;
       }
+      &#{$vibrant} {
+        @include menu-tokens.item-vibrant-selected;
+      }
     }
 
     &:is(:disabled, .disabled) {
@@ -288,9 +346,15 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       @container style(--menu-vibrant: true) {
         @include menu-tokens.item-vibrant-disabled;
       }
+      &#{$vibrant} {
+        @include menu-tokens.item-vibrant-disabled;
+      }
       &:is(:checked, .checked) {
         @include menu-tokens.item-standard-selected-disabled;
         @container style(--menu-vibrant: true) {
+          @include menu-tokens.item-vibrant-selected-disabled;
+        }
+        &#{$vibrant} {
           @include menu-tokens.item-vibrant-selected-disabled;
         }
       }
@@ -301,7 +365,12 @@ $fast-effects: var(--md-sys-motion-spring-fast-effects-duration)
       isolation: isolate;
       display: flex;
       align-items: center;
-      user-select: none;
+      -webkit-user-select: none;
+      @supports (user-select: none) {
+        & {
+          user-select: none;
+        }
+      }
       box-sizing: border-box;
       gap: var(--between-space);
       // 44dp items with 2dp above and below keep a 48dp target at density

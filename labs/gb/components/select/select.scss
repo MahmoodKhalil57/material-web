@@ -117,12 +117,14 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   }
 
   // The field is the menu's anchor (Compose `menuAnchor`).
-  .select {
-    anchor-scope: --md-select-field;
-  }
+  @supports (anchor-scope: --a) and (anchor-name: --a) {
+    .select {
+      anchor-scope: --md-select-field;
+    }
 
-  .select .text-field-container {
-    anchor-name: --md-select-field;
+    .select .text-field-container {
+      anchor-name: --md-select-field;
+    }
   }
 
   .select:not(.autocomplete, #{$disabled}) .text-field-container {
@@ -135,7 +137,12 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
     text-overflow: ellipsis;
     white-space: nowrap;
     cursor: inherit;
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
   }
 
   // The trailing dropdown arrow rotates while the menu is open (Compose
@@ -159,16 +166,11 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
   // `exposedDropdownSize(matchAnchorWidth = true)`).
   .select-menu {
     position: fixed;
-    position-anchor: --md-select-field;
-    position-area: block-end span-inline-end;
-    position-try-fallbacks: flip-block;
-    position-try-order: most-block-size;
     inset: auto;
     margin: 0;
     border: none;
     padding-inline: 0;
     box-sizing: border-box;
-    inline-size: anchor-size(inline);
     min-inline-size: var(--menu-min-width);
     // Matches the field even when it is wider than a menu's 280dp maximum.
     max-inline-size: none;
@@ -182,6 +184,21 @@ $effects: var(--md-sys-motion-spring-fast-effects-duration)
       opacity $effects,
       display $effects allow-discrete,
       overlay $effects allow-discrete;
+  }
+
+  // Without CSS anchor positioning the overlay controller places the menu in
+  // JS and sets its width to the field's (select-base.ts).
+  @supports (position-anchor: --a) and (position-area: end) and
+    (position-try-order: normal) and (position-try-fallbacks: flip-block) and
+    (inline-size: anchor-size(inline))
+  {
+    .select-menu {
+      position-anchor: --md-select-field;
+      position-area: block-end span-inline-end;
+      position-try-fallbacks: flip-block;
+      position-try-order: most-block-size;
+      inline-size: anchor-size(inline);
+    }
   }
 
   .select-menu:not(:popover-open) {

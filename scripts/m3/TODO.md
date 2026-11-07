@@ -265,3 +265,26 @@ can check. Today (2026-11-07) 4,270 of 15,129 units are tested. The rest:
       corners, CSS scroll lock): optional, same behavior, new mechanism.
 - [ ] Tooling (Lightning CSS, size budgets, agent skill, performance marks,
       axe-core): optional; axe-core would add a check every page gets.
+
+## WAI-ARIA 1.3 (`.m3-specs/Accessible Rich Internet Applications (WAI-ARIA) 1.3.html`)
+
+Rule: where the M3 pages and WAI-ARIA 1.3 disagree, the M3 spec wins. ARIA
+problems are fixed only in ways the M3 accessibility sections allow.
+
+- [x] Role model extracted (`scripts/m3/gen-aria-model.mjs` ->
+      `.m3-specs/aria/`, gitignored) and checked by
+      `shared/central/aria_test.ts` (every subject and open overlay).
+- [x] Fixed: tooltip `aria-haspopup`, slider `aria-*-start/end` attributes
+      renamed (`label-start`, `label-end`, `valuetext-start`, `valuetext-end`),
+      empty dialog and side sheet headlines, disabled list options, deprecated
+      `aria-grabbed` selectors.
+- [ ] Menu check icon in the name, select `aria-activedescendant=""`, date
+      picker headline name, picker controls exposing disabled, menu item role
+      timing (Sonnet agent running).
+- [x] Disagreements, kept as M3 says: navigation bar and rail use
+      `tablist`/`tab` (navigation-drawer.md, navigation-bar.md); basic dialogs
+      use `alertdialog` (dialogs.md); the carousel is a `region` with a
+      roledescription (carousel.md "container" is not an ARIA role); the app
+      bar headline is app content (app-bars.md "Title"). The badge already
+      announces "New notification" as hidden text (badges.md), which ARIA
+      allows.

@@ -299,7 +299,8 @@ export class SideSheetElement extends SheetBase {
               id="headline"
               class="side-sheet-headline focus-ring-outer"
               part="headline"
-              tabindex="0"
+              tabindex=${hasHeadline ? '0' : nothing}
+              aria-hidden=${hasHeadline ? nothing : 'true'}
             >
               <slot name="headline" @slotchange=${this.handleHeadlineSlotChange}
                 >${this.headline}</slot

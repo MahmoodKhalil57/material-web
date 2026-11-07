@@ -495,10 +495,15 @@ export class ListItemElement extends baseClass {
   private syncOptionAria() {
     this[internals].role = this.isOption ? "option" : "listitem";
     this[internals].ariaSelected = this.isOption ? String(this.checked) : null;
+    // An option wraps its (natively disabled) button, whose state is not
+    // exposed to the option's children (presentational): say it on the option.
+    this[internals].ariaDisabled = this.isOption && this.disabled ? "true" : null;
   }
 
   protected override updated(changed: PropertyValues<this>) {
-    if (changed.has("checked") && this.isOption) this.syncOptionAria();
+    if ((changed.has("checked") || changed.has("disabled")) && this.isOption) {
+      this.syncOptionAria();
+    }
     if (changed.has("checked") && changed.get("checked") !== undefined) {
       // Lets the list show or hide the checkboxes of all items.
       this.dispatchEvent(new Event(LIST_ITEM_CHECKED_EVENT, { bubbles: true }));

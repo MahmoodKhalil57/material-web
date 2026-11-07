@@ -19,6 +19,20 @@
   // progress modifiers (scripts/m3/gen-progress.mjs).
   @include motion.keyframes;
 
+  // Initial values for browsers without `@property`, the same values the
+  // registrations give. There the animated values step instead of
+  // interpolating, but the indicator still draws (determinate progress is
+  // exact). `:where()` keeps the specificity at zero.
+  :where(.progress) {
+    --_md-progress-wave: 0;
+    --_md-progress-wavy: 0;
+    --_md-progress-head-1: 0;
+    --_md-progress-tail-1: 0;
+    --_md-progress-head-2: 0;
+    --_md-progress-tail-2: 0;
+    --_md-progress-sweep: 0.1;
+  }
+
   .progress {
     & {
       @include progress-tokens.root;
@@ -393,6 +407,20 @@
       .progress-active {
       d: motion.$circular-wavy-flat-path;
     }
+  }
+
+  // The wave is on while `--_md-progress-wavy` is 1. The element sets
+  // `.progress-wave-amplitude` for the same range, so browsers without style
+  // queries get the same shape; the style query also covers markup that only
+  // sets `--progress`.
+  .progress.progress-determinate.progress-wavy.progress-wave-amplitude
+    .progress-active {
+    d: motion.$linear-wavy-path;
+    transition: d motion.$amplitude-duration motion.$amplitude-increasing-easing;
+  }
+  .progress.progress-circular.progress-determinate.progress-wavy.progress-wave-amplitude
+    .progress-active {
+    d: motion.$circular-wavy-path;
   }
 
   @container style(--_md-progress-wavy: 1) {

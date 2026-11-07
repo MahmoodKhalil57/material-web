@@ -2096,6 +2096,8 @@ export class DatePickerElement extends baseClass {
           <div
             class="date-picker-headline"
             id="headline"
+            role="heading"
+            aria-level="2"
             aria-label="${headlineLabel}"
           >
             ${headline}
@@ -2108,6 +2110,7 @@ export class DatePickerElement extends baseClass {
               classes: {'date-picker-mode-toggle': true},
             })}"
             aria-label="${input ? strings.switchToCalendar : strings.switchToInput}"
+            ?disabled=${this.disabled}
             @click=${this.handleModeToggle}
           >
             ${icon(input ? ICONS.calendar : ICONS.edit)}
@@ -2136,6 +2139,7 @@ export class DatePickerElement extends baseClass {
           classes: {'date-picker-close': true},
         })}"
         aria-label="${strings.close}"
+        ?disabled=${this.disabled}
         @click=${() => {
           this.cancel();
         }}
@@ -2152,6 +2156,7 @@ export class DatePickerElement extends baseClass {
                 size: 'sm',
                 classes: {'date-picker-save': true},
               })}"
+              ?disabled=${this.disabled}
               @click=${() => {
                 this.confirm();
               }}
@@ -2206,7 +2211,7 @@ export class DatePickerElement extends baseClass {
         })}"
         aria-label="${label}"
         aria-keyshortcuts="${shortcut[1]}"
-        ?disabled=${!this.canGoToMonth(offset)}
+        ?disabled=${!this.canGoToMonth(offset) || this.disabled}
         @click=${() => {
           this.navigate(offset);
         }}
@@ -2261,7 +2266,7 @@ export class DatePickerElement extends baseClass {
         aria-label="${label}"
         aria-haspopup="listbox"
         aria-expanded="${expanded ? 'true' : 'false'}"
-        ?disabled=${disabled}
+        ?disabled=${disabled || this.disabled}
         @click=${onClick}
       >
         <span class="date-picker-menu-button-label">${text}</span>
@@ -2592,7 +2597,7 @@ export class DatePickerElement extends baseClass {
       complete &&
       compareDates(date, start!) >= 0 &&
       compareDates(date, end!) <= 0;
-    const disabled = this.isDisabled(date);
+    const disabled = this.isDisabled(date) || this.disabled;
     const focusable = !outside && isSameDate(date, this.focusedDate);
     const descriptions = [];
     if (this.range && isStart) descriptions.push(strings.startDate);
@@ -2703,7 +2708,7 @@ export class DatePickerElement extends baseClass {
     view: View,
     current = false,
   ) {
-    const disabled = this.isListItemDisabled(view, index);
+    const disabled = this.isListItemDisabled(view, index) || this.disabled;
     const yearGrid = this.isModal && view === 'years';
     return html`<div
       class="${classMap({
@@ -2753,6 +2758,7 @@ export class DatePickerElement extends baseClass {
         supporting-text="${pattern}"
         autocomplete="off"
         inputmode="numeric"
+        ?disabled=${this.disabled}
         .value=${live(this.inputTexts[index])}
         ?error=${!!this.inputErrors[index]}
         error-text="${this.inputErrors[index]}"
@@ -2795,6 +2801,7 @@ export class DatePickerElement extends baseClass {
           ? html`<button
               type="button"
               class="${textButton('date-picker-clear')}"
+              ?disabled=${this.disabled}
               @click=${this.handleClear}
             >
               ${strings.clear}
@@ -2805,6 +2812,7 @@ export class DatePickerElement extends baseClass {
       <button
         type="button"
         class="${textButton('date-picker-cancel')}"
+        ?disabled=${this.disabled}
         @click=${() => {
           this.cancel();
         }}
@@ -2814,6 +2822,7 @@ export class DatePickerElement extends baseClass {
       <button
         type="button"
         class="${textButton('date-picker-confirm')}"
+        ?disabled=${this.disabled}
         @click=${() => {
           this.confirm();
         }}

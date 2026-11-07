@@ -426,6 +426,15 @@ export const LINEAR_FLAT_PATH = '${linearWave(LINEAR.wavelength, 0)}';
 /** The flat (default) circular path, used as the \`d\` attribute fallback. */
 export const CIRCULAR_FLAT_PATH = '${flatCircle}';
 
+/** The wavy linear path (determinate): the \`d\` attribute where CSS \`d\` is unsupported. */
+export const LINEAR_WAVY_PATH = '${linearWave(LINEAR.wavelength, LINEAR.amplitude)}';
+
+/** The wavy linear path of the indeterminate indicator (shorter wavelength). */
+export const LINEAR_INDETERMINATE_WAVY_PATH = '${linearWave(LINEAR.indeterminateWavelength, LINEAR.amplitude)}';
+
+/** The wavy circular path: the \`d\` attribute where CSS \`d\` is unsupported. */
+export const CIRCULAR_WAVY_PATH = '${circularWavy}';
+
 /** The circular SVG view box: the wavy container size, centered at 0. */
 export const CIRCULAR_VIEW_BOX = '${-CIRCULAR.waveSize / 2} ${-CIRCULAR.waveSize / 2} ${CIRCULAR.waveSize} ${CIRCULAR.waveSize}';
 

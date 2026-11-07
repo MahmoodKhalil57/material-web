@@ -247,7 +247,13 @@ export class MenuElement extends baseClass {
           }
         : this.hasAttribute('submenu')
           ? {placement: 'end', align: 'start', spacing: 0}
-          : {placement: 'below', align: 'start', spacing: 0},
+          : {
+              placement: 'below',
+              // A split button's menu is end-aligned and 4dp from its button
+              // (CSS: `position-area` and `margin`, which JS placement drops).
+              align: this.cssValue('--menu-anchor-align') === 'end' ? 'end' : 'start',
+              spacing: parseFloat(this.cssValue('--menu-anchor-spacing')) || 0,
+            },
     returnTarget: (source) =>
       this.parentItem ??
       source ??
@@ -327,7 +333,18 @@ export class MenuElement extends baseClass {
     this.invokerAbort = undefined;
   }
 
+  private cssValue(property: string) {
+    return getComputedStyle(this).getPropertyValue(property).trim();
+  }
+
   protected override updated(changed: Map<string, unknown>) {
+    if (changed.has('color') || changed.has('layout')) {
+      // Items and groups mirror the menu's color and layout as classes
+      // (menu.scss, for browsers without style queries).
+      for (const child of this.querySelectorAll('md-gb-menu-item, md-gb-menu-group')) {
+        (child as Partial<LitElement>).requestUpdate?.();
+      }
+    }
     if (changed.has('contextFor')) {
       this.bindContextTarget();
     }

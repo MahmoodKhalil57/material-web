@@ -15,6 +15,7 @@ import {
   composedContains,
   computeOverlayPosition,
   deepActiveElement,
+  forceAnchorPositioningSupport,
   type OverlayPositionInput,
   supportsAnchorPositioning,
 } from './anchored-overlay.js';
@@ -46,6 +47,18 @@ describe('computeOverlayPosition()', () => {
   });
 
   // spec: tooltips-f76779
+  it('aligns to the anchor end edge, extending toward the start', () => {
+    const anchor = rect(300, 300);
+    expect(position({anchor, align: 'end'}).x).toBe(anchor.right - SURFACE.width);
+    expect(position({anchor, align: 'end', rtl: true}).x).toBe(anchor.left);
+    expect(position({anchor, align: 'start'}).x).toBe(anchor.left);
+  });
+
+  it('end-aligned: falls back to the start edge when the end has no room', () => {
+    const anchor = rect(0, 300, 40);
+    expect(position({anchor, align: 'end'}).x).toBe(8);
+  });
+
   it('opens above the anchor when asked', () => {
     const p = position({placement: 'above', spacing: 4});
     expect(p.side).toBe('above');
@@ -740,6 +753,75 @@ describe('AnchoredOverlayController', () => {
       expect(deepActiveElement()).toBe(button);
       f.overlay.close('method');
       expect(document.activeElement).toBe(f.anchor);
+    });
+  });
+
+  describe('without CSS anchor positioning (forced)', () => {
+    // The component asks for CSS positioning (the default); the browser is
+    // made to say it has none, as an older browser does.
+    beforeEach(() => forceAnchorPositioningSupport(false));
+    afterEach(() => forceAnchorPositioningSupport(null));
+
+    const below = {
+      placement: () => ({placement: 'below' as const, spacing: 4}),
+    };
+
+    it('reports no support while forced, and the real answer after', () => {
+      expect(supportsAnchorPositioning()).toBeFalse();
+      forceAnchorPositioningSupport(true);
+      expect(supportsAnchorPositioning()).toBeTrue();
+      forceAnchorPositioningSupport(null);
+      expect(typeof supportsAnchorPositioning()).toBe('boolean');
+    });
+
+    // spec: menus-eb894b
+    it('places the surface in JS, below the anchor', async () => {
+      const f = await mountOverlay(below);
+      f.overlay.open();
+      const a = f.anchor.getBoundingClientRect();
+      const s = f.surface.getBoundingClientRect();
+      expect(f.surface.style.position).toBe('fixed');
+      expect(f.surface.style.getPropertyValue('position-area')).toBe('none');
+      expect(s.top).toBe(a.bottom + 4);
+      expect(f.overlay.side).toBe('below');
+    });
+
+    // spec: menus-74a090
+    it('flips above when there is no room below', async () => {
+      const f = await mountOverlay(below, {anchorStyle: 'top: 560px;'});
+      f.overlay.open();
+      const a = f.anchor.getBoundingClientRect();
+      const s = f.surface.getBoundingClientRect();
+      expect(s.bottom).toBe(a.top - 4);
+      expect(f.overlay.side).toBe('above');
+    });
+
+    it('keeps the surface inside the window', async () => {
+      const f = await mountOverlay(below, {
+        anchorStyle: 'left: 2px; top: 560px;',
+      });
+      f.overlay.open();
+      const s = f.surface.getBoundingClientRect();
+      expect(s.left).toBeGreaterThanOrEqual(8);
+      expect(s.top).toBeGreaterThanOrEqual(8);
+    });
+
+    it('follows the anchor on resize', async () => {
+      const f = await mountOverlay(below);
+      f.overlay.open();
+      f.anchor.style.top = '100px';
+      window.dispatchEvent(new Event('resize'));
+      await frame();
+      await frame();
+      expect(f.surface.getBoundingClientRect().top).toBe(100 + 30 + 4);
+    });
+
+    it('leaves placement to CSS once the browser has anchor positioning', async () => {
+      forceAnchorPositioningSupport(true);
+      const f = await mountOverlay(below);
+      f.overlay.open();
+      expect(f.surface.style.left).toBe('');
+      expect(f.surface.style.top).toBe('');
     });
   });
 

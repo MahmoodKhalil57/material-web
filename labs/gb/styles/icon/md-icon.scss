@@ -8,6 +8,10 @@
 // (`GRAD`, -25 for light icons on dark backgrounds, 0 by default, positive
 // for emphasis) and optical size (`opsz`, 20-48dp).
 //
+// The `var()` fallbacks repeat the registered initial values, so a browser
+// without `@property` (which then ignores the registrations) renders the same
+// icon; only the animated fill change jumps instead of easing.
+//
 // Components set `--md-icon-fill: 1` for selected / active states (filled
 // symbol) and `0` for unselected ones (outlined symbol). The fill animates.
 
@@ -63,27 +67,27 @@
     place-items: center;
     place-content: center;
     overflow: hidden;
-    color: var(--md-icon-color);
-    fill: var(--md-icon-color);
+    color: var(--md-icon-color, currentColor);
+    fill: var(--md-icon-color, currentColor);
     aspect-ratio: 1;
-    min-width: var(--md-icon-size);
-    max-width: var(--md-icon-size);
-    font-size: var(--md-icon-size);
+    min-width: var(--md-icon-size, 24px);
+    max-width: var(--md-icon-size, 24px);
+    font-size: var(--md-icon-size, 24px);
     // icons.md, Using Material Symbols with typography: a symbol next to text
     // shifts its baseline down about 11.5% of the text size. The em here is the
     // symbol's own size, which matches the text beside it.
     vertical-align: -0.115em;
-    font-family: var(--md-icon-font);
+    font-family: var(--md-icon-font, 'Material Symbols');
     font-variation-settings:
       // The size in px as a number (tan(atan2()) divides two lengths).
       'opsz'
         var(
           --md-icon-opsz,
-          clamp(20, tan(atan2(var(--md-icon-size), 1px)), 48)
+          clamp(20, tan(atan2(var(--md-icon-size, 24px), 1px)), 48)
         ),
-      'wght' var(--md-icon-wght),
-      'FILL' var(--md-icon-fill),
-      'GRAD' var(--md-icon-grad);
+      'wght' var(--md-icon-wght, 400),
+      'FILL' var(--md-icon-fill, 0),
+      'GRAD' var(--md-icon-grad, 0);
     -webkit-font-smoothing: antialiased;
     // icons.md Fill: "A fill attribute can be used to convey a state of
     // transition, such as unfilled and filled states." The fast effects

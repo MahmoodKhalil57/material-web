@@ -688,11 +688,36 @@ function colorScheme(dark?: boolean) {
   return dark === undefined ? 'light dark' : dark ? 'dark' : 'light';
 }
 
+/** The condition under which a browser understands `light-dark()`. */
+const LIGHT_DARK_SUPPORTED = '(color: light-dark(#000, #fff))';
+
 function rule(theme: DynamicTheme, selector: string, dark?: boolean) {
-  const declarations = themeProperties(theme, dark)
-    .map(([name, value]) => `${name}: ${value};`)
-    .join(' ');
-  return `${selector} { color-scheme: ${colorScheme(dark)}; ${declarations} }`;
+  const block = (props: Array<[string, string]>) =>
+    props.map(([name, value]) => `${name}: ${value};`).join(' ');
+  if (dark !== undefined) {
+    return `${selector} { color-scheme: ${colorScheme(dark)}; ${block(
+      themeProperties(theme, dark),
+    )} }`;
+  }
+  // Both schemes: `light-dark()` where supported. Other browsers get the
+  // light values, and the dark ones under `prefers-color-scheme: dark`.
+  const light = themeProperties(theme, false);
+  const darkProps = themeProperties(theme, true);
+  const both = themeProperties(theme);
+  const differing = light
+    .map((_, i) => i)
+    .filter((i) => light[i][1] !== darkProps[i][1]);
+  const pick = (props: Array<[string, string]>) => differing.map((i) => props[i]);
+  let css = `${selector} { color-scheme: light dark; ${block(light)} }`;
+  if (differing.length) {
+    css += ` @media (prefers-color-scheme: dark) { ${selector} { ${block(
+      pick(darkProps),
+    )} } }`;
+    css += ` @supports ${LIGHT_DARK_SUPPORTED} { ${selector} { ${block(
+      pick(both),
+    )} } }`;
+  }
+  return css;
 }
 
 function wrapLayer(css: string, layer: string) {
@@ -819,7 +844,13 @@ export function applyThemeToElement(
   dark?: boolean,
 ) {
   clearTheme(element);
-  const properties = themeProperties(theme, dark);
+  // Inline styles cannot be guarded by `@supports`: without `light-dark()`,
+  // resolve the scheme now (`prefers-color-scheme`) instead.
+  const resolved =
+    dark === undefined && !CSS.supports(LIGHT_DARK_SUPPORTED.slice(1, -1))
+      ? matchMedia('(prefers-color-scheme: dark)').matches
+      : dark;
+  const properties = themeProperties(theme, resolved);
   for (const [name, value] of properties) {
     element.style.setProperty(name, value);
   }

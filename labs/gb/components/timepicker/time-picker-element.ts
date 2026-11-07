@@ -1348,6 +1348,7 @@ export class TimePickerElement extends baseClass {
                   size: 'sm',
                   classes: {'time-picker-cancel': true},
                 })}"
+                ?disabled=${this.disabled}
                 @click=${this.cancel}
               >
                 ${this.cancelLabel}

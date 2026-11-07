@@ -133,7 +133,12 @@
 
   .carousel-dragging > .carousel-scroller {
     cursor: grabbing;
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
   }
 
   @include items {

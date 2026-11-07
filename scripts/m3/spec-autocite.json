@@ -1153,7 +1153,6 @@
    "navigation-bar-4dfd16",
    "navigation-bar-553f5f",
    "navigation-bar-66b431",
-   "navigation-bar-73e631",
    "navigation-bar-7d8098",
    "navigation-bar-8092c5",
    "navigation-bar-868b2c",
@@ -1573,7 +1572,6 @@
    "tabs-b1f8f1",
    "tabs-b2a84e",
    "tabs-ba437d",
-   "tabs-f575d9",
    "tabs-feb26e",
    "text-fields-0c0bf7",
    "text-fields-12a888",
@@ -7284,19 +7282,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "date-pickers-072f86": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:15"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "b6fdebd82e66"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "date-pickers-078184": {
    "rule": "llm-review",
    "evidence": [
@@ -7339,22 +7324,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "date-pickers-0e3e1a": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:74",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:42"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "c462fba07c6e",
-    "61f54c089330"
-   ],
-   "final": "agreement"
-  },
   "date-pickers-15075c": {
    "rule": "llm-review",
    "evidence": [
@@ -7371,19 +7340,6 @@
    ],
    "final": "agreement"
   },
-  "date-pickers-19b323": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:29"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "4729934573e3"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "date-pickers-1b2e63": {
    "rule": "llm-review",
    "evidence": [
@@ -7397,22 +7353,6 @@
    "quoteHashes": [
     "25088390b46e",
     "1938649b7adb"
-   ],
-   "final": "agreement"
-  },
-  "date-pickers-1ecb8c": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:13",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "4cb63bbb3cb0",
-    "d34a219e5134"
    ],
    "final": "agreement"
   },
@@ -7558,22 +7498,6 @@
    ],
    "final": "agreement"
   },
-  "date-pickers-31c40f": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/date-picker-element.ts:2270",
-    "labs/gb/components/datepicker/date-picker-element.ts:2270"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "c0a11d305009",
-    "e42849283fe5"
-   ],
-   "final": "agreement"
-  },
   "date-pickers-33355c": {
    "rule": "llm-review",
    "evidence": [
@@ -7605,48 +7529,6 @@
     "7627d30f0ec3"
    ],
    "final": "agreement"
-  },
-  "date-pickers-3e2a84": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:40"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "aeb6d89b362b"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "date-pickers-44f091": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "d34a219e5134",
-    "d34a219e5134"
-   ],
-   "final": "agreement"
-  },
-  "date-pickers-47fff2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:29"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "4729934573e3"
-   ],
-   "final": "claude-opus-5-5"
   },
   "date-pickers-4a2080": {
    "rule": "llm-review",
@@ -7702,22 +7584,6 @@
     "57a79ea26403"
    ],
    "final": "claude-opus-5-5"
-  },
-  "date-pickers-4e3281": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "d34a219e5134",
-    "d34a219e5134"
-   ],
-   "final": "agreement"
   },
   "date-pickers-4eddea": {
    "rule": "llm-review",
@@ -7777,38 +7643,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "date-pickers-577dc4": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:86"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "d34a219e5134",
-    "1f2fcedc4458"
-   ],
-   "final": "agreement"
-  },
-  "date-pickers-58eeec": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:86",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:86"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "1f2fcedc4458",
-    "1f2fcedc4458"
-   ],
-   "final": "agreement"
-  },
   "date-pickers-5dd9f8": {
    "rule": "llm-review",
    "evidence": [
@@ -7851,38 +7685,6 @@
    ],
    "final": "agreement"
   },
-  "date-pickers-6173d0": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:13",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:86"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "4cb63bbb3cb0",
-    "1f2fcedc4458"
-   ],
-   "final": "agreement"
-  },
-  "date-pickers-6540cb": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:60",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:86"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "fb115e09e0fc",
-    "1f2fcedc4458"
-   ],
-   "final": "agreement"
-  },
   "date-pickers-66782a": {
    "rule": "llm-review",
    "evidence": [
@@ -7893,19 +7695,6 @@
    ],
    "quoteHashes": [
     "4a7861af178a"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "date-pickers-6a1a20": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:13"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "4cb63bbb3cb0"
    ],
    "final": "claude-opus-5-5"
   },
@@ -8191,19 +7980,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "date-pickers-9d3b82": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:40"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "aeb6d89b362b"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "date-pickers-9fa6e7": {
    "rule": "llm-review",
    "evidence": [
@@ -8242,22 +8018,6 @@
     "4ce61a9f2903"
    ],
    "final": "claude-opus-5-5"
-  },
-  "date-pickers-a6ad1b": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:29",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:86"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "4729934573e3",
-    "1f2fcedc4458"
-   ],
-   "final": "agreement"
   },
   "date-pickers-a79bc7": {
    "rule": "llm-review",
@@ -8463,38 +8223,6 @@
    ],
    "final": "agreement"
   },
-  "date-pickers-d437e3": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:25",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "2956a734c7df",
-    "d34a219e5134"
-   ],
-   "final": "agreement"
-  },
-  "date-pickers-d554b4": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "d34a219e5134",
-    "d34a219e5134"
-   ],
-   "final": "agreement"
-  },
   "date-pickers-d6162b": {
    "rule": "llm-review",
    "evidence": [
@@ -8534,22 +8262,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "date-pickers-dba9ef": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "d34a219e5134",
-    "d34a219e5134"
-   ],
-   "final": "agreement"
-  },
   "date-pickers-e0ed07": {
    "rule": "llm-review",
    "evidence": [
@@ -8563,22 +8275,6 @@
    "quoteHashes": [
     "4a7861af178a",
     "4a7861af178a"
-   ],
-   "final": "agreement"
-  },
-  "date-pickers-e102e2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/date-picker-element.ts:2271",
-    "labs/gb/components/datepicker/date-picker-element.ts:2270"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "14f2b0b1f594",
-    "e42849283fe5"
    ],
    "final": "agreement"
   },
@@ -8611,19 +8307,6 @@
    ],
    "final": "agreement"
   },
-  "date-pickers-ef720a": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:40"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "aeb6d89b362b"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "date-pickers-efbe09": {
    "rule": "llm-review",
    "evidence": [
@@ -8653,19 +8336,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "date-pickers-f61ed1": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:40"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "aeb6d89b362b"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "date-pickers-fbfaa4": {
    "rule": "llm-review",
    "evidence": [
@@ -8679,22 +8349,6 @@
    "quoteHashes": [
     "152af0ab13dc",
     "152af0ab13dc"
-   ],
-   "final": "agreement"
-  },
-  "date-pickers-fd797e": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:29",
-    "labs/gb/components/datepicker/_date-picker-tokens.scss:24"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "4729934573e3",
-    "d34a219e5134"
    ],
    "final": "agreement"
   },
@@ -11779,22 +11433,6 @@
    ],
    "final": "agreement"
   },
-  "menus-b9c8ac": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/menu/menu-item-element.ts:291",
-    "labs/gb/components/menu/menu.scss:261"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "b9498e27ac1c",
-    "6b6dc1b4eb8c"
-   ],
-   "final": "agreement"
-  },
   "menus-be44f8": {
    "rule": "cluster",
    "via": "app-bars-9a4406"
@@ -12376,19 +12014,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "navigation-bar-12fd90": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/navbar/_nav-bar-tokens.scss:15"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "5a247cb71dd8"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "navigation-bar-1701c6": {
    "rule": "llm-review",
    "evidence": [
@@ -12399,19 +12024,6 @@
    ],
    "quoteHashes": [
     "e12fdd8f6cd2"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "navigation-bar-18b4c8": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/navbar/nav-bar.scss:315"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "3b0ff103134a"
    ],
    "final": "claude-opus-5-5"
   },
@@ -12447,19 +12059,6 @@
    ],
    "final": "agreement"
   },
-  "navigation-bar-426532": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/navbar/nav-bar.scss:315"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "3b0ff103134a"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "navigation-bar-46a54c": {
    "rule": "llm-review",
    "evidence": [
@@ -12472,22 +12071,6 @@
     "b4fb6117dfa9"
    ],
    "final": "claude-opus-5-5"
-  },
-  "navigation-bar-47c5e4": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/navbar/nav-bar.scss:84",
-    "labs/gb/components/navbar/nav-bar.scss:84"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "37ab52c9d67a",
-    "591690d87cdb"
-   ],
-   "final": "agreement"
   },
   "navigation-bar-61c12e": {
    "rule": "llm-review",
@@ -12732,19 +12315,6 @@
    ],
    "final": "agreement"
   },
-  "navigation-bar-de57ee": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/navbar/nav-bar.scss:33"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "499a054bb570"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "navigation-bar-e730b8": {
    "rule": "llm-review",
    "evidence": [
@@ -12783,10 +12353,6 @@
     "f742af6d5820"
    ],
    "final": "claude-opus-5-5"
-  },
-  "navigation-bar-f2e0bf": {
-   "rule": "cluster",
-   "via": "navigation-bar-12fd90"
   },
   "navigation-drawer-08f9b2": {
    "rule": "llm-review",
@@ -15231,19 +14797,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "tabs-17c4c2": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:220"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "ef53e1172e48"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "tabs-199000": {
    "rule": "llm-review",
    "evidence": [
@@ -15318,19 +14871,6 @@
    ],
    "final": "agreement"
   },
-  "tabs-5adb26": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "tabs-62451b": {
    "rule": "llm-review",
    "evidence": [
@@ -15360,19 +14900,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "tabs-691a5a": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:173"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "66caa9c1fdf7"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "tabs-6983fe": {
    "rule": "llm-review",
    "evidence": [
@@ -15388,19 +14915,6 @@
     "782773e4b709"
    ],
    "final": "agreement"
-  },
-  "tabs-699a57": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811"
-   ],
-   "final": "claude-opus-5-5"
   },
   "tabs-6a0fcb": {
    "rule": "llm-review",
@@ -15418,19 +14932,6 @@
    ],
    "final": "agreement"
   },
-  "tabs-6afc51": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "tabs-752f7e": {
    "rule": "llm-review",
    "evidence": [
@@ -15446,19 +14947,6 @@
     "782773e4b709"
    ],
    "final": "agreement"
-  },
-  "tabs-7bb1ac": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811"
-   ],
-   "final": "claude-opus-5-5"
   },
   "tabs-910473": {
    "rule": "llm-review",
@@ -15505,22 +14993,6 @@
    ],
    "final": "agreement"
   },
-  "tabs-a4b627": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:173",
-    "labs/gb/components/tabs/tabs.scss:186"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "66caa9c1fdf7",
-    "70f9adda4966"
-   ],
-   "final": "agreement"
-  },
   "tabs-a6246a": {
    "rule": "llm-review",
    "evidence": [
@@ -15563,19 +15035,6 @@
    ],
    "final": "claude-opus-5-5"
   },
-  "tabs-b6bdad": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "tabs-b87d22": {
    "rule": "llm-review",
    "evidence": [
@@ -15605,22 +15064,6 @@
    "quoteHashes": [
     "f0442b36e294",
     "782773e4b709"
-   ],
-   "final": "agreement"
-  },
-  "tabs-bc73c9": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67",
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811",
-    "0b0946f0d811"
    ],
    "final": "agreement"
   },
@@ -15656,35 +15099,6 @@
    ],
    "final": "agreement"
   },
-  "tabs-d34540": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67",
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-haiku-5-5",
-    "claude-sonnet-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811",
-    "0b0946f0d811"
-   ],
-   "final": "agreement"
-  },
-  "tabs-d4fad5": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tab-panels.scss:50"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "13a5e255c7ef"
-   ],
-   "final": "claude-opus-5-5"
-  },
   "tabs-d717fb": {
    "rule": "llm-review",
    "evidence": [
@@ -15700,19 +15114,6 @@
     "90501388cf61"
    ],
    "final": "agreement"
-  },
-  "tabs-de7100": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:43"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "9a3532edd15c"
-   ],
-   "final": "claude-opus-5-5"
   },
   "tabs-e9494f": {
    "rule": "llm-review",
@@ -15740,19 +15141,6 @@
    ],
    "quoteHashes": [
     "f0442b36e294"
-   ],
-   "final": "claude-opus-5-5"
-  },
-  "tabs-f671f5": {
-   "rule": "llm-review",
-   "evidence": [
-    "labs/gb/components/tabs/tabs.scss:67"
-   ],
-   "models": [
-    "claude-opus-5-5"
-   ],
-   "quoteHashes": [
-    "0b0946f0d811"
    ],
    "final": "claude-opus-5-5"
   },
@@ -23136,80 +22524,25 @@
    "model": "claude-opus-5-5",
    "reason": "These are captions describing demonstration videos, not requirements."
   },
-  "tabs-0b0eec": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Whether tabs stay pinned or scroll with the page is an app layout choice."
-  },
   "tabs-122349": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "Saying the bar feels cramped at five or more tabs is design advice about how many tabs to use, not a component behavior."
-  },
-  "tabs-126ef1": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences are descriptions, example captions, or advice about content and app layout rather than component requirements."
-  },
-  "tabs-24d2a4": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These are video captions and section headings, not requirements."
   },
   "tabs-299fe2": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These sentences advise app authors on writing descriptive accessible label text for ambiguous or icon-only tabs, which is content left to the app rather than component behavior."
   },
-  "tabs-2c6598": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "This is explanatory rationale or design advice, not a component behaviour."
-  },
-  "tabs-2dc9c9": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These are video captions and section headings, not requirements."
-  },
-  "tabs-2fdc76": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These are video captions and section headings, not requirements."
-  },
   "tabs-3b281f": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These sentences are descriptions, example captions, or advice about content and app layout rather than component requirements."
   },
-  "tabs-4371ea": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These are video captions and section headings, not requirements."
-  },
-  "tabs-543063": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Whether tabs stay pinned or scroll with the page is an app layout choice."
-  },
   "tabs-6632ad": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "Where an app puts a secondary tab bar relative to a primary one is a page composition choice, not something a tabs component controls."
-  },
-  "tabs-6ea0d8": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences are descriptions, example captions, or advice about content and app layout rather than component requirements."
-  },
-  "tabs-72543e": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These are video captions and section headings, not requirements."
-  },
-  "tabs-78305b": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Whether tabs stay pinned or scroll with the page is an app layout choice."
   },
   "tabs-7e0fb9": {
    "rule": "llm-review",
@@ -23231,11 +22564,6 @@
    "model": "claude-opus-5-5",
    "reason": "The sentence is layout guidance about where apps may place tabs (app bars, cards, sheets), not a behavior the component must implement."
   },
-  "tabs-b730b5": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "These sentences are descriptions, example captions, or advice about content and app layout rather than component requirements."
-  },
   "tabs-c43d26": {
    "rule": "llm-review",
    "model": "claude-opus-5-5",
@@ -23250,11 +22578,6 @@
    "rule": "llm-review",
    "model": "claude-opus-5-5",
    "reason": "These are captions describing demonstration videos, not requirements."
-  },
-  "tabs-f15a7a": {
-   "rule": "llm-review",
-   "model": "claude-opus-5-5",
-   "reason": "Whether tabs stay pinned or scroll with the page is an app layout choice."
   },
   "text-fields-0f8398": {
    "rule": "llm-review",

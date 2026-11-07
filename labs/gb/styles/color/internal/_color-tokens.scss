@@ -4,6 +4,7 @@
 //
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sass:map';
 @use 'sass:meta';
 @use '../../../../../sass/ext/map_ext';
 @use '../../../../../tokens/versions/latest/sass/md-ref-palette';
@@ -69,6 +70,9 @@
     'shadow',
   );
 
+  $dark-fallback: ();
+  $light-dark: ();
+
   @each $name in $color-tokens {
     $light: map_ext.get-strict($light-vars, $name);
     $dark: map_ext.get-strict($dark-vars, $name);
@@ -79,12 +83,33 @@
       $dark: map_ext.get-strict($dark-meta, '#{$name}--resolved');
     }
 
-    $value: $light;
+    // Browsers without `light-dark()` keep the light value; the dark value
+    // follows `prefers-color-scheme` (an explicit `color-scheme` on a subtree
+    // can only be honored where `light-dark()` exists).
+    --md-sys-color-#{$name}: #{$light};
     @if $light != $dark {
-      $value: light-dark($light, $dark);
+      $dark-fallback: map.set($dark-fallback, $name, $dark);
+      $light-dark: map.set($light-dark, $name, light-dark($light, $dark));
+    }
+  }
+
+  @if length($dark-fallback) > 0 {
+    @media (prefers-color-scheme: dark) {
+      & {
+        @each $name, $value in $dark-fallback {
+          --md-sys-color-#{$name}: #{$value};
+        }
+      }
     }
 
-    --md-sys-color-#{$name}: #{$value};
+    // Supporting browsers get `light-dark()`, which follows `color-scheme`.
+    @supports (color: light-dark(#000, #fff)) {
+      & {
+        @each $name, $value in $light-dark {
+          --md-sys-color-#{$name}: #{$value};
+        }
+      }
+    }
   }
 
   @if $include-palette {

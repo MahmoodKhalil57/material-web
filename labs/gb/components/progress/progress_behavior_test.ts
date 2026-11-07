@@ -71,6 +71,27 @@ describe('<md-gb-progress> spec behavior', () => {
     );
   });
 
+  // Fallbacks for browsers without CSS `d` and style queries: the markup
+  // carries the wavy shape and the element marks the range where it is wavy.
+  it('gives the wavy shape in markup and the amplitude class without CSS d or style queries', async () => {
+    const {els, part} = await setup(html`
+      <md-gb-progress value="0.5" aria-label="a"></md-gb-progress>
+      <md-gb-progress wavy value="0.5" aria-label="b"></md-gb-progress>
+      <md-gb-progress wavy value="0.05" aria-label="c"></md-gb-progress>
+      <md-gb-progress wavy value="1" aria-label="d"></md-gb-progress>
+      <md-gb-progress circular wavy value="0.5" aria-label="e"></md-gb-progress>`);
+    const attr = (e: ProgressElement, selector: string) =>
+      q(e, selector).getAttribute('d')!;
+    const [flat, wavy, low, high, ring] = els;
+    expect(attr(flat, '.progress-active-1')).toContain('q10 0 20 0');
+    expect(attr(wavy, '.progress-active-1')).toContain('q10 6 20 0');
+    expect(attr(ring, '.progress-ring .progress-active')).toContain('C');
+    expect(part(flat).classList.contains('progress-wave-amplitude')).toBeFalse();
+    expect(part(wavy).classList.contains('progress-wave-amplitude')).toBeTrue();
+    expect(part(low).classList.contains('progress-wave-amplitude')).toBeFalse();
+    expect(part(high).classList.contains('progress-wave-amplitude')).toBeFalse();
+  });
+
   // spec: progress-indicators-3dbaa7
   it('fills determinate progress from 0% to 100%', async () => {
     const {els} = await setup(html`

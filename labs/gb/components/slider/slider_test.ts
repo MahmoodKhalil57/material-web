@@ -582,10 +582,10 @@ describe('md-gb-slider', () => {
       const root = env.render(html`
         <md-gb-slider
           range
-          aria-label-start="Minimum temperature"
-          aria-label-end="Maximum temperature"
-          aria-valuetext-start="20 degrees"
-          aria-valuetext-end="80 degrees"
+          label-start="Minimum temperature"
+          label-end="Maximum temperature"
+          valuetext-start="20 degrees"
+          valuetext-end="80 degrees"
           min="0"
           max="100"
           value-start="20"

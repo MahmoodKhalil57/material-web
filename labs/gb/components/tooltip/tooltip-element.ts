@@ -220,6 +220,7 @@ export class TooltipElement extends LitElement {
   private anchorAbort: AbortController | null = null;
   private addedDescribedBy = false;
   private addedExpanded = false;
+  private addedHasPopup = false;
   private showTimer?: number;
   private hideTimer?: number;
   private longPressTimer?: number;
@@ -510,11 +511,21 @@ export class TooltipElement extends LitElement {
       this.addDescribedBy(anchor);
     }
     if (this.isPersistent) {
-      anchor.setAttribute('aria-haspopup', this.isDialog ? 'dialog' : 'true');
+      // aria-haspopup names the role of the popup (ARIA 1.3: menu, listbox,
+      // tree, grid or dialog; `true` means menu). Only the dialog form of the
+      // rich tooltip is such a popup; a tooltip is not.
+      if (this.isDialog) {
+        anchor.setAttribute('aria-haspopup', 'dialog');
+        this.addedHasPopup = true;
+      } else if (this.addedHasPopup) {
+        anchor.removeAttribute('aria-haspopup');
+        this.addedHasPopup = false;
+      }
       this.addedExpanded = true;
       this.syncAnchorExpanded();
     } else if (this.addedExpanded) {
-      anchor.removeAttribute('aria-haspopup');
+      if (this.addedHasPopup) anchor.removeAttribute('aria-haspopup');
+      this.addedHasPopup = false;
       anchor.removeAttribute('aria-expanded');
       this.addedExpanded = false;
     }
@@ -582,7 +593,8 @@ export class TooltipElement extends LitElement {
     if (anchor) {
       this.removeDescribedBy(anchor);
       if (this.addedExpanded) {
-        anchor.removeAttribute('aria-haspopup');
+        if (this.addedHasPopup) anchor.removeAttribute('aria-haspopup');
+        this.addedHasPopup = false;
         anchor.removeAttribute('aria-expanded');
         this.addedExpanded = false;
       }

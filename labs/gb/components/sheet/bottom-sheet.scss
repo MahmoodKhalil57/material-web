@@ -171,8 +171,12 @@ $drag-target-size: 48px;
     );
     cursor: grab;
     touch-action: none;
-    user-select: none;
     -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
   }
 
   .bottom-sheet-dragging .bottom-sheet-drag-area {

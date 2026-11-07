@@ -148,10 +148,12 @@ export class SliderElement extends baseClass {
   @property({attribute: 'value-label'}) valueLabel = '';
   @property({attribute: 'value-label-start'}) valueLabelStart = '';
   @property({attribute: 'value-label-end'}) valueLabelEnd = '';
-  @property({attribute: 'aria-label-start'}) ariaLabelStart = '';
-  @property({attribute: 'aria-label-end'}) ariaLabelEnd = '';
-  @property({attribute: 'aria-valuetext-start'}) ariaValueTextStart = '';
-  @property({attribute: 'aria-valuetext-end'}) ariaValueTextEnd = '';
+  // The attributes are not `aria-*`: ARIA 1.3 defines no `aria-label-start`,
+  // `aria-valuetext-start` and so on, and the prefix is reserved for it.
+  @property({attribute: 'label-start'}) ariaLabelStart = '';
+  @property({attribute: 'label-end'}) ariaLabelEnd = '';
+  @property({attribute: 'valuetext-start'}) ariaValueTextStart = '';
+  @property({attribute: 'valuetext-end'}) ariaValueTextEnd = '';
 
   private readonly formDisabled = new FormDisabledController(this);
 

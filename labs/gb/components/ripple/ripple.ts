@@ -60,7 +60,11 @@ export function setupRipple(
   ripple: HTMLElement,
   opts?: {signal?: AbortSignal},
 ): void {
-  if (!ripplePropertiesRegistered) {
+  if (
+    !ripplePropertiesRegistered &&
+    typeof CSS !== 'undefined' &&
+    typeof CSS.registerProperty === 'function'
+  ) {
     const properties = [
       ['--ripple-scale', '0%'],
       ['--ripple-hover-opacity', '0%'],

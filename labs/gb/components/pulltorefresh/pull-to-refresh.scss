@@ -39,8 +39,13 @@
 
     // At the top, downward touch drags pull instead of scrolling; upward
     // ones still scroll the content.
-    &.pull-to-refresh-at-top {
-      touch-action: pan-x pan-down pinch-zoom;
+    // Browsers without `pan-down` (Safari) keep `touch-action: auto`: the
+    // content scrolls normally and the touch pull gesture stays inactive
+    // (use the refresh alternative the element documents).
+    @supports (touch-action: pan-down) {
+      &.pull-to-refresh-at-top {
+        touch-action: pan-x pan-down pinch-zoom;
+      }
     }
   }
 
@@ -91,7 +96,12 @@
   }
 
   .pull-to-refresh-pulling {
-    user-select: none;
+    -webkit-user-select: none;
+    @supports (user-select: none) {
+      & {
+        user-select: none;
+      }
+    }
   }
 
   // The contained loading indicator takes the indicator colors. Past the
