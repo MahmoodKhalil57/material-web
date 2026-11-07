@@ -44,7 +44,8 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{reason: string`): closed - Fired after the tooltip closes.
+- `close` (`CustomEvent<{reason: string}>`): Fired before the tooltip closes. Cancelable.
+- `closed` (`CustomEvent<{reason: string}>`): Fired after the tooltip closes.
 - `open` (`Event`): Fired before the tooltip opens. Cancelable.
 - `opened` (`Event`): Fired after the tooltip opens.
 

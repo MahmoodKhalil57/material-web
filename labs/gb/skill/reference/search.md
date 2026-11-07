@@ -49,11 +49,13 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{value: string`): search - Fired when a search is executed with Enter in the view.
 - `change` (`Event`): Fired when the search text is committed.
+- `close` (`CustomEvent<{reason: string}>`): Fired when the view begins closing. Cancelable.
+- `closed` (`CustomEvent<{reason: string}>`): Fired when the view has closed.
 - `input` (`InputEvent`): Fired when the search text changes.
 - `open` (`Event`): Fired when the view begins opening. Cancelable.
 - `opened` (`Event`): Fired when the view has opened and animations finished.
+- `search` (`CustomEvent<{value: string}>`): Fired when a search is executed with Enter in the view.
 
 Methods
 
@@ -141,11 +143,13 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{value: string`): search - Fired when a search is executed with Enter.
 - `change` (`Event`): Fired when the input text is committed.
+- `close` (`CustomEvent<{reason: string}>`): Fired when the view begins closing. Cancelable. See `SEARCH_CLOSE_REASONS`.
+- `closed` (`CustomEvent<{reason: string}>`): Fired when the view has closed.
 - `input` (`InputEvent`): Fired when the input text changes.
 - `open` (`Event`): Fired when the view begins opening. Cancelable.
 - `opened` (`Event`): Fired when the view has opened and animations finished.
+- `search` (`CustomEvent<{value: string}>`): Fired when a search is executed with Enter.
 
 Methods
 

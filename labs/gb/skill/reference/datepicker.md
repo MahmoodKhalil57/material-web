@@ -51,9 +51,9 @@ Attributes and properties
 
 Events
 
-- `>}` (`CustomEvent<{reason: string`): close - The popup or dialog began closing; `reason` is `confirm` or `cancel`.
 - `cancel` (`Event`): The selection was dismissed (Cancel, Escape or a click outside). Cancelable: canceling keeps the picker open.
 - `change` (`CustomEvent<DatePickerValueDetail>`): The value was committed (OK, Enter, typing in the docked field, or a pick with `hide-actions`). --bubbles
+- `close` (`CustomEvent<{reason: string}>`): The popup or dialog began closing; `reason` is `confirm` or `cancel`.
 - `input` (`CustomEvent<DatePickerValueDetail>`): The pending selection changed (a date was picked or a valid date typed). --bubbles --composed
 - `open` (`Event`): The popup or dialog opened.
 

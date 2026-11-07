@@ -39,8 +39,9 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{reason: string`): closed - Fired when the drawer has closed and finished animating.
 - `change` (`Event`): Fired when the user selects a different item. --bubbles
+- `close` (`CustomEvent<{reason: string}>`): Fired when the drawer starts closing. --cancelable
+- `closed` (`CustomEvent<{reason: string}>`): Fired when the drawer has closed and finished animating.
 - `open` (`Event`): Fired when the drawer starts opening. --cancelable
 - `opened` (`Event`): Fired when the drawer has opened and finished animating.
 

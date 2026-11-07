@@ -45,7 +45,8 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{reason: string`): closed - Fired after the closing motion.
+- `close` (`CustomEvent<{reason: string}>`): Fired when the sheet begins closing. Cancelable; canceling keeps it open.
+- `closed` (`CustomEvent<{reason: string}>`): Fired after the closing motion.
 - `open` (`Event`): Fired when the sheet begins opening. Cancelable.
 - `opened` (`Event`): Fired after the opening motion.
 - `state-change` (`Event`): Fired when the user moves the sheet to another height (`state`).
@@ -117,8 +118,9 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{reason: string`): closed - Fired after the closing motion.
 - `back` (`Event`): Fired when the back icon button is activated.
+- `close` (`CustomEvent<{reason: string}>`): Fired when the sheet begins closing. Cancelable; canceling keeps it open.
+- `closed` (`CustomEvent<{reason: string}>`): Fired after the closing motion.
 - `open` (`Event`): Fired when the sheet begins opening. Cancelable.
 - `opened` (`Event`): Fired after the opening motion.
 

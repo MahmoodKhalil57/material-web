@@ -43,7 +43,8 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{reason: string`): closed - Fired when the snackbar has closed.
+- `close` (`CustomEvent<{reason: string}>`): Fired when the snackbar begins closing.
+- `closed` (`CustomEvent<{reason: string}>`): Fired when the snackbar has closed.
 - `open` (`Event`): Fired when the snackbar begins opening.
 - `opened` (`Event`): Fired when the snackbar has opened and animations finished.
 
@@ -109,7 +110,8 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{reason: string`): closed - Bubbles from the snackbar when it has closed.
+- `close` (`CustomEvent<{reason: string}>`): Bubbles from the snackbar when it begins closing.
+- `closed` (`CustomEvent<{reason: string}>`): Bubbles from the snackbar when it has closed.
 
 Methods
 

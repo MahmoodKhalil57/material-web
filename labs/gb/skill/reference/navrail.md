@@ -47,8 +47,8 @@ Slots
 
 Events
 
-- `>}` (`CustomEvent<{expanded: boolean, reason?: string`): toggle - Fired when the expanded state is toggled. --bubbles
 - `change` (`Event`): Fired when the selected item changes. --bubbles
+- `toggle` (`CustomEvent<{expanded: boolean, reason?: string}>`): Fired when the expanded state is toggled. --bubbles
 
 Methods
 
