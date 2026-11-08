@@ -81,6 +81,51 @@ function whenActive(fn: () => void) {
   }
 }
 
+// --- Booting -------------------------------------------------------------------
+// The page boots with its motion tokens at 1ms (default.html adds .gb-boot,
+// reduce-motion.css), so components reach their state without transitions
+// as they're defined. Motion comes back once the page has settled: loaded,
+// every md-gb element on it defined, its transition in finished, and, for a
+// prerendered page, shown.
+
+{
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  const loaded = new Promise<void>((resolve) => {
+    if (document.readyState === 'complete') resolve();
+    else addEventListener('load', () => resolve(), {once: true});
+  });
+  let transition: Promise<unknown> = Promise.resolve();
+  addEventListener(
+    'pagereveal',
+    (e) => {
+      const vt = (e as Event & {viewTransition?: {finished: Promise<void>} | null}).viewTransition;
+      if (vt) transition = vt.finished.catch(() => {});
+    },
+    {once: true},
+  );
+  const defined = () => {
+    const tags = new Set(
+      [...document.querySelectorAll(':not(:defined)')]
+        .map((el) => el.localName)
+        .filter((name) => name.startsWith('md-gb-')),
+    );
+    const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
+    return Promise.race([
+      Promise.all([...tags].map((tag) => customElements.whenDefined(tag))),
+      timeout,
+    ]);
+  };
+  whenActive(async () => {
+    await loaded;
+    await defined();
+    // pagereveal has run by the first frame.
+    await frame();
+    await transition;
+    await frame();
+    document.documentElement.classList.remove('gb-boot');
+  });
+}
+
 /** An in-scope (same origin, under /3.0/) page URL, or null. */
 function pageUrl(href: string | null | undefined): URL | null {
   if (!href) return null;

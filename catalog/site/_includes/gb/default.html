@@ -126,6 +126,10 @@
         const root = document.documentElement;
         // Demo cards collapse their code only with JS (gb.css, gb.ts).
         root.classList.add('js');
+        // Booting (reduce-motion.css, navigation.ts): the components'
+        // transitions end at once while they're defined, so the page's first
+        // frames don't animate every rail item into its state.
+        root.classList.add('gb-boot');
         // Reduce motion (the header's toggle, shell.ts; reduce-motion.css):
         // while it's on, prefers-reduced-motion queries from scripts answer
         // "reduce" (asked again on each call, so a toggle takes effect at
@@ -158,7 +162,17 @@
     {#- Same-site links under /3.0/ (the pages pane's links are in shadow
         roots: src/gb/navigation.ts adds rules for those). Hover/press
         prerenders, which makes the click near-instant; prefetch is the cheap
-        step before. -#}
+        step before. Previous and Next are prerendered as soon as the page
+        loads: they're the likeliest next pages, and only two, so a click on
+        either shows a page that's already built. -#}
+    <script type="speculationrules">
+      {
+        "prerender": [{
+          "where": {"selector_matches": ".gb-pager-top a.gb-pager-link[href]"},
+          "eagerness": "immediate"
+        }]
+      }
+    </script>
     <script type="speculationrules">
       {
         "prefetch": [{

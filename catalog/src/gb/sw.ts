@@ -6,7 +6,8 @@
 
 /**
  * Service worker of the /3.0/ pages (scope /3.0/, built to /3.0/sw.js by
- * catalog/esbuild.config.mjs, registered by navigation.ts).
+ * catalog/esbuild.config.mjs, registered by navigation.ts). Its paths come
+ * from its scope, so it works under a base path too (GitHub Pages).
  *
  * - Page navigations: network first with a short timeout, then the cached
  *   copy; offline, the cached page (or the 3.0 start page).
@@ -36,21 +37,29 @@ interface Scope {
   clients: {claim(): Promise<void>};
   addEventListener(type: string, listener: (e: never) => void): void;
 }
-const sw = self as unknown as Scope;
+const sw = self as unknown as Scope & {registration: {scope: string}};
 
 const BUILD = typeof __GB_BUILD_ID__ === 'string' ? __GB_BUILD_ID__ : 'dev';
 const PAGES = `gb-pages-${BUILD}`;
 const ASSETS = `gb-assets-${BUILD}`;
 /** Content-hashed font files: kept across builds. */
 const FONTS = 'gb-fonts-v1';
-const FONT_FILE = /^\/fonts\/gb\/[^/]+\.woff2$/;
-const START = '/3.0/';
+/** The 3.0 start page, from the scope: /3.0/, or under a base path on a
+ * project site (/material-web/3.0/ on GitHub Pages). */
+const START = new URL(sw.registration.scope).pathname;
+/** The site's root: / or the base path. */
+const SITE = START.replace(/3\.0\/$/, '');
+const at = (pattern: string) =>
+  new RegExp('^' + SITE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + pattern);
+const FONT_FILE = at('fonts/gb/[^/]+\\.woff2$');
 /** How long a page may take before the cached copy is used. */
 const NETWORK_TIMEOUT = 3000;
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-const ASSET_PATH = /^\/(js|css|fonts|images)\//;
-const DOWNLOADS =
-  /^\/3\.0\/(skill\/|material-web-3\.0\.mhtml$|custom-elements\.json$|llms-full\.txt$)/;
+/** lib/ is the bundled labs/gb of a static build (scripts/catalog-pages.mjs). */
+const ASSET_PATH = at('(js|css|fonts|images|lib)/');
+const DOWNLOADS = at(
+  '3\\.0/(skill/|material-web-3\\.0\\.mhtml$|custom-elements\\.json$|llms-full\\.txt$)',
+);
 
 sw.addEventListener('install', (e: ExtendableEvent) => {
   e.waitUntil(sw.skipWaiting());
@@ -167,7 +176,7 @@ sw.addEventListener('fetch', (e: FetchEvent) => {
 
   // The search index (search.ts) changes with every build: network first,
   // the cached copy offline.
-  if (url.origin === location.origin && url.pathname === '/3.0/search-index.json') {
+  if (url.origin === location.origin && url.pathname === `${START}search-index.json`) {
     e.respondWith(networkFirst(request, PAGES, NETWORK_TIMEOUT, undefined, e));
     return;
   }

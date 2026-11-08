@@ -23,7 +23,8 @@
  *    and the dev library server (http://localhost:8001/) becomes <base>lib/.
  *    The v2.5 scripts are left alone (their server-rendered templates must
  *    hydrate), and its code playgrounds load the published @material/web
- *    from jsDelivr.
+ *    from jsDelivr. Each 3.0 page gets modulepreload links for the whole
+ *    module graph of the components it imports.
  * 4. Commits the result to --branch (an orphan branch, in a worktree under
  *    the system temp directory, replaced wholesale) with .nojekyll, and with
  *    --push pushes it to --remote. GitHub Pages serves that branch's root.
@@ -94,7 +95,8 @@ const cssAsStylesheet = {
     }));
   },
 };
-await esbuild.build({
+const {metafile} = await esbuild.build({
+  metafile: true,
   entryPoints: sources,
   outbase: ROOT,
   outdir: join(OUT, 'lib'),
@@ -113,6 +115,30 @@ for (const f of (await walk(join(ROOT, 'labs', 'gb'))).filter((f) => f.endsWith(
   await cp(f, to);
 }
 log(`${sources.length} modules`);
+
+// Each output's static imports (esbuild's metafile), by URL under lib/: a
+// page lists the whole graph of the components it imports as modulepreload
+// links, so the browser fetches every chunk at once instead of discovering
+// them one level of imports at a time.
+const libUrl = (out) => `${BASE}lib/${relative(join(OUT, 'lib'), join(ROOT, out)).replaceAll('\\', '/')}`;
+const staticImports = new Map();
+for (const [out, info] of Object.entries(metafile.outputs)) {
+  if (!out.endsWith('.js')) continue;
+  staticImports.set(
+    libUrl(out),
+    info.imports.filter((i) => i.kind === 'import-statement' && !i.external).map((i) => libUrl(i.path)),
+  );
+}
+function moduleGraph(entries) {
+  const seen = new Set();
+  const visit = (url) => {
+    if (seen.has(url) || !staticImports.has(url)) return;
+    seen.add(url);
+    for (const dep of staticImports.get(url)) visit(dep);
+  };
+  entries.forEach(visit);
+  return [...seen];
+}
 
 // --- 3. The base path -------------------------------------------------------------------
 
@@ -138,6 +164,7 @@ const PLAYGROUND = JSON.parse(await readFile('node_modules/playground-elements/p
 // in the pages' HTML, rewritten, which hydration leaves as it is.
 const v25Scripts = (file) => file.startsWith(join(OUT, 'js')) && !file.startsWith(join(OUT, 'js', 'gb'));
 let files = 0;
+let preloaded = 0;
 for (const file of await walk(OUT)) {
   if (!TEXT.has(extname(file)) || file.startsWith(join(OUT, 'lib')) || v25Scripts(file)) continue;
   let text = await readFile(file, 'utf8');
@@ -154,13 +181,23 @@ for (const file of await walk(OUT)) {
     // Links to the root itself: the v2.5 home.
     .replace(/(href=|href=\\?&quot;|assign\()(["'])\/\2/g, `$1$2${BASE}$2`)
     .replace(/href="\/"/g, `href="${BASE}"`);
+  if (file.endsWith('.html')) {
+    const libPrefix = `${BASE}lib/`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const entries = [...text.matchAll(new RegExp(`import\\('(${libPrefix}[^']+\\.js)'\\)`, 'g'))].map((m) => m[1]);
+    const graph = moduleGraph(entries);
+    if (graph.length && text.includes('</head>')) {
+      const links = graph.map((url) => `<link rel="modulepreload" href="${url}">`).join('');
+      text = text.replace('</head>', `${links}</head>`);
+      preloaded++;
+    }
+  }
   if (text !== before) {
     await writeFile(file, text);
     files++;
   }
 }
 await writeFile(join(OUT, '.nojekyll'), '');
-log(`${files} files rewritten`);
+log(`${files} files rewritten, ${preloaded} pages with modulepreload links`);
 
 // --- 4. The branch --------------------------------------------------------------------
 

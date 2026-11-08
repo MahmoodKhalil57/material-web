@@ -17,7 +17,15 @@
      scripted motion (the rail's morph, the pill, the disclosures) takes
      its reduced path, and page transitions are skipped (navigation.ts). */
 
-:root[data-motion='reduce'] {
+/* Booting (default.html adds .gb-boot before the first paint, navigation.ts
+   removes it once the page has settled): the same tokens. Each component
+   reaches its state as it's defined, and with motion each of those changes
+   is a transition: on a page's first frames that's every rail item at once,
+   restyling some 3,000 elements a frame through the page transition (about
+   twice the time to a settled page). Nothing the reader did moved, so
+   nothing animates. */
+:root[data-motion='reduce'],
+:root.gb-boot {
   --md-sys-motion-duration-short1: 1ms;
   --md-sys-motion-duration-short2: 1ms;
   --md-sys-motion-duration-short3: 1ms;
@@ -46,6 +54,8 @@
   --md-sys-motion-curve-fast-effects-duration: 1ms;
   --md-sys-motion-curve-default-effects-duration: 1ms;
   --md-sys-motion-curve-slow-effects-duration: 1ms;
+}
+:root[data-motion='reduce'] {
   scroll-behavior: auto;
 }
 :root[data-motion='reduce'] *,

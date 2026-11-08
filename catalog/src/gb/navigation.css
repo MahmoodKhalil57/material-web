@@ -31,10 +31,16 @@
   navigation: auto;
 }
 
+/* Page to page is the most frequent transition on the site, so it's on the
+   short end of the scale: 300ms in all (the new page fades in from 100ms to
+   300ms, as the slide ends), where 450ms to 550ms felt slow when paging
+   through with Next. The values of the duration tokens short2, short4 and
+   medium2, not the tokens themselves: the page boots with its motion tokens
+   at 1ms (reduce-motion.css, .gb-boot) while this transition plays. */
 :root {
-  --gb-vt-exit: var(--md-sys-motion-duration-short3, 150ms);
-  --gb-vt-enter: var(--md-sys-motion-duration-medium2, 300ms);
-  --gb-vt-slide: var(--md-sys-motion-duration-medium4, 400ms);
+  --gb-vt-exit: 100ms;
+  --gb-vt-enter: 200ms;
+  --gb-vt-slide: 300ms;
   /* The shared x axis: 30dp, like Android's forward and backward. */
   --gb-vt-shift: 30px;
 }
