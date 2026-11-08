@@ -311,12 +311,15 @@ body:has(.gb-shell) {
   inline-size: 40px;
   block-size: 40px;
   border-radius: var(--md-sys-shape-corner-full);
+  /* No container: the logo is drawn in the text color on the header's
+     surface (its SVG fills with currentColor). */
+  color: var(--md-sys-color-on-surface);
 }
 .gb-brand:focus-visible {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;
 }
-.gb-brand img {
+.gb-brand svg {
   display: block;
 }
 
