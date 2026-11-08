@@ -42,6 +42,32 @@ const HEADER_TOGGLE_SELECTOR = [
 // spec-labels: navigation-rail/specs/baseline-navigation-rail/configurations, navigation-rail/specs/variants/baseline-variants
 const HEADER_FAB_SELECTOR = 'md-gb-fab, .fab';
 
+/** A slotted child's box, and a destination's icon and active pill. */
+interface MorphRects {
+  box: DOMRect;
+  icon: DOMRect | null;
+  pill: DOMRect | null;
+}
+
+/**
+ * A destination's icon, label and active pill: the indicator around the
+ * icon in the collapsed (vertical) layout, the pill around icon and label
+ * in the expanded (horizontal) one. Empty for other children.
+ */
+function morphParts(el: Element) {
+  const root = el instanceof NavRailItemElement ? el.shadowRoot : null;
+  const item = root?.querySelector<HTMLElement>('.nav-rail-item');
+  if (!root || !item) return {icon: null, label: null, pill: null};
+  const horizontal = item.classList.contains('nav-rail-item-horizontal');
+  return {
+    icon: root.querySelector<HTMLElement>('.nav-rail-item-icon'),
+    label: root.querySelector<HTMLElement>('.nav-rail-item-label'),
+    pill: root.querySelector<HTMLElement>(
+      horizontal ? '.nav-rail-item-content' : '.nav-rail-item-indicator',
+    ),
+  };
+}
+
 /**
  * Compose AnchoredDraggableDefaults / ModalWideNavigationRail: a modal rail
  * released past half its width, or flung faster than 125dp/s toward its
@@ -369,6 +395,21 @@ export class NavRailElement extends AriaTablistElement {
     this.menuButtonAbortController = null;
   }
 
+  /** Where things were before expanding or collapsing (see `morph`). */
+  private morphFrom: Map<Element, MorphRects> | null = null;
+
+  protected override willUpdate(changedProperties: PropertyValues<this>) {
+    super.willUpdate(changedProperties);
+    if (
+      changedProperties.has('expanded') &&
+      this.hasUpdated &&
+      this.isConnected &&
+      !matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      this.morphFrom = this.measureMorph();
+    }
+  }
+
   protected override updated(changedProperties: PropertyValues<this>) {
     super.updated(changedProperties);
     if (
@@ -377,6 +418,11 @@ export class NavRailElement extends AriaTablistElement {
     ) {
       this.syncItemsLayout();
       this.syncHeaderState();
+    }
+    if (this.morphFrom) {
+      const from = this.morphFrom;
+      this.morphFrom = null;
+      void this.morph(from);
     }
     if (changedProperties.has('collapsible')) {
       this.setupBuiltInMenuButton();
@@ -650,6 +696,88 @@ export class NavRailElement extends AriaTablistElement {
     super.handleSlotChange();
     this.syncRole();
     this.syncItemsLayout();
+  }
+
+  /** The slotted children, and each destination's icon and active pill. */
+  private measureMorph(): Map<Element, MorphRects> {
+    const rects = new Map<Element, MorphRects>();
+    const slot = this.shadowRoot?.querySelector<HTMLSlotElement>('slot:not([name])');
+    for (const el of slot?.assignedElements({flatten: true}) ?? []) {
+      const parts = morphParts(el);
+      rects.set(el, {
+        box: el.getBoundingClientRect(),
+        icon: parts.icon?.getBoundingClientRect() ?? null,
+        pill: parts.pill?.getBoundingClientRect() ?? null,
+      });
+    }
+    return rects;
+  }
+
+  /**
+   * Collapsed and expanded rails transform into each other
+   * (navigation-rail.md: they "match visually and can transition into each
+   * other"; the menu button changes them). The destinations' icons are
+   * persistent: each moves from where it was to where it is now, and the
+   * active indicator stretches between the icon's pill and the pill around
+   * icon and label, on the rail's spatial spring (`--motion-duration`,
+   * `--motion-easing`), while the labels, laid out anew, fade in (default
+   * effects) and destinations shown only now (secondary ones) fade in.
+   * Nothing runs under reduced motion.
+   */
+  private async morph(from: Map<Element, MorphRects>) {
+    const items = [...from.keys()];
+    await Promise.all(
+      items.map((el) => (el as Partial<NavRailItemElement>).updateComplete),
+    );
+    const style = getComputedStyle(this.railElement ?? this);
+    const spatial: KeyframeAnimationOptions = {
+      duration: parseFloat(style.getPropertyValue('--motion-duration')) || 420,
+      easing: style.getPropertyValue('--motion-easing').trim() || 'ease',
+    };
+    const effects: KeyframeAnimationOptions = {
+      duration:
+        parseFloat(style.getPropertyValue('--md-sys-motion-spring-default-effects-duration')) ||
+        220,
+      easing:
+        style.getPropertyValue('--md-sys-motion-spring-default-effects').trim() || 'ease',
+      fill: 'backwards',
+    };
+    for (const el of items) {
+      const before = from.get(el)!;
+      const box = el.getBoundingClientRect();
+      if (!box.width) continue;
+      // Shown only now: fades in where it is.
+      if (!before.box.width) {
+        el.animate({opacity: [0, 1]}, effects);
+        continue;
+      }
+      const parts = morphParts(el);
+      if (parts.icon && before.icon) {
+        const now = parts.icon.getBoundingClientRect();
+        parts.icon.animate(
+          {
+            translate: [
+              `${before.icon.left - now.left}px ${before.icon.top - now.top}px`,
+              '0px 0px',
+            ],
+          },
+          spatial,
+        );
+      }
+      parts.label?.animate({opacity: [0, 1]}, effects);
+      if (parts.pill && before.pill && (el as NavRailItemElement).selected) {
+        const now = parts.pill.getBoundingClientRect();
+        parts.pill.animate(
+          {
+            inset: [
+              `${before.pill.top - now.top}px ${now.right - before.pill.right}px ${now.bottom - before.pill.bottom}px ${before.pill.left - now.left}px`,
+              '0px',
+            ],
+          },
+          {...spatial, pseudoElement: '::before'},
+        );
+      }
+    }
   }
 
   private syncItemsLayout() {

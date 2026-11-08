@@ -122,7 +122,6 @@ async function swapWithFade(targets: () => Element[], change: () => void) {
 interface RailElement extends HTMLElement {
   expanded: boolean;
   modal: boolean;
-  toggle(): boolean;
 }
 
 interface DrawerElement extends HTMLElement {
@@ -160,24 +159,9 @@ if (rail) {
   };
   place();
   expanded.addEventListener('change', place);
-  // The menu button: the rail's contents swap with a clean fade while it
-  // resizes (the button itself stays). Caught on the way down, before the
-  // button toggles the rail at once.
-  rail.addEventListener(
-    'click',
-    (e) => {
-      const onButton = e
-        .composedPath()
-        .some((node) => node instanceof Element && node.part?.contains('menu-button'));
-      if (!onButton) return;
-      e.stopPropagation();
-      void swapWithFade(
-        () => [...rail.children].filter((el) => !(el as HTMLElement).hidden && el.localName !== 'script'),
-        () => rail.toggle(),
-      );
-    },
-    {capture: true},
-  );
+  // Expanding and collapsing morph in the rail itself (md-gb-nav-rail): the
+  // icons stay, the active pill stretches, the labels fade in; the column
+  // reveals or clips it (shell.css).
   rail.addEventListener('toggle', () => {
     if (expanded.matches) {
       if (rail.expanded) delete root.dataset['rail'];
