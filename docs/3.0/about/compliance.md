@@ -219,14 +219,14 @@ to its web-features Baseline status. A feature that is not widely available
 must sit inside a matching `@supports` guard or be listed with a reason in
 `scripts/gb-baseline-allow.json`; anything else fails the run.
 
-- CSS: 19,252 feature uses in 62 files; 51 features are not widely available, used 754 times (478 guarded, 276 allowed with a reason, **0 unguarded**). Result: passes.
+- CSS: 19,541 feature uses in 62 files; 51 features are not widely available, used 754 times (478 guarded, 276 allowed with a reason, **0 unguarded**). Result: passes.
 - JavaScript (report only): 31 tracked Web API members in 207 source files; 6 are not widely available, 3 of them with at least one use that is not feature-detected.
 
 ## Size budgets
 
 Each component has a Brotli size budget for JavaScript and CSS in
 `scripts/size/gb-budgets.json`: the measured size plus 10% headroom, enforced by
-the size check. Totals across 37 components: 345,176 bytes of JavaScript and 76,295 bytes of CSS.
+the size check. Totals across 37 components: 345,176 bytes of JavaScript and 77,248 bytes of CSS.
 
 | Component | JS budget (bytes) | CSS budget (bytes) |
 | --- | ---: | ---: |
@@ -251,13 +251,13 @@ the size check. Totals across 37 components: 345,176 bytes of JavaScript and 76,
 | `navdrawer` | 9,919 | 2,299 |
 | `navrail` | 13,559 | 2,501 |
 | `progress` | 3,237 | 3,364 |
-| `pulltorefresh` | 6,695 | 1,086 |
+| `pulltorefresh` | 6,695 | 1,280 |
 | `radio` | 5,224 | 763 |
-| `scaffold` | 12,783 | 2,401 |
+| `scaffold` | 12,783 | 2,735 |
 | `search` | 12,816 | 2,435 |
 | `segmentedbutton` | 7,856 | 1,557 |
-| `select` | 12,916 | 1,818 |
-| `sheet` | 12,922 | 2,147 |
+| `select` | 12,916 | 2,023 |
+| `sheet` | 12,922 | 2,367 |
 | `slider` | 8,179 | 3,101 |
 | `snackbar` | 7,853 | 1,817 |
 | `splitbutton` | 3,015 | 986 |

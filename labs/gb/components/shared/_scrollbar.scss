@@ -14,8 +14,15 @@
 //   need 3:1 non-text contrast) and a transparent track, darkening to
 //   `on-surface-variant` while the container is hovered.
 //
-// All three properties are ignored where unsupported (Baseline allow list),
-// leaving the platform scrollbar.
+// Chromium and WebKit draw it with ::-webkit-scrollbar: the standard
+// properties can't remove the arrow buttons Chrome shows on Windows, inset
+// the thumb or keep the track clear of rounded corners, and setting them
+// turns the ::-webkit-scrollbar styles off. So the standard properties are
+// for the other browsers (Firefox) only. The bar is 10px wide (Chrome's thin
+// scrollbar), the thumb a 6px pill inset 2px, the track ends inset by
+// `--scrollbar-track-inset` (default 4px; a rounded container sets its
+// corner radius). All of it is ignored where unsupported (Baseline allow
+// list), leaving the platform scrollbar.
 //
 // Where scrollbars take layout space (Windows and Linux desktops), a stable
 // gutter is reserved even when nothing scrolls. Containers whose spec
@@ -28,10 +35,37 @@
 /// @param {Boolean} $gutter - Whether to reserve the gutter by default.
 @mixin scroller($gutter: true) {
   scrollbar-gutter: var(--scrollbar-gutter, #{if($gutter, stable, auto)});
-  scrollbar-width: thin;
-  scrollbar-color: var(--md-sys-color-outline) transparent;
 
-  &:hover {
-    scrollbar-color: var(--md-sys-color-on-surface-variant) transparent;
+  @supports not selector(::-webkit-scrollbar) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--md-sys-color-outline) transparent;
+
+    &:hover {
+      scrollbar-color: var(--md-sys-color-on-surface-variant) transparent;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-track {
+    margin: var(--scrollbar-track-inset, 4px);
+  }
+  &::-webkit-scrollbar-thumb {
+    min-height: 40px;
+    border: 2px solid transparent;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-outline) padding-box;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: var(--md-sys-color-on-surface-variant);
   }
 }

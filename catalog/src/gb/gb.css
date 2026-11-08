@@ -36,45 +36,70 @@
 }
 
 /* Scrollbars, global and local (reasoning in
-   labs/gb/components/shared/_scrollbar.scss: M3 has no scrollbar visuals,
-   so thin, the thumb in `outline` for 3:1 contrast, a transparent track).
-   Width and colors inherit, into component shadow roots too;
-   scrollbar-gutter does not, so each vertical scroller in the page reserves
-   its own, and a scrollbar that appears never moves the content. (Not a
-   universal rule: overflow: hidden elements would reserve an empty gutter,
-   and the gutter does nothing for horizontal scrollers like code blocks.) */
-:root {
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  scrollbar-color: var(--md-sys-color-outline) transparent;
+   labs/gb/components/shared/_scrollbar.scss: M3 has no scrollbar visuals, so
+   the thumb in `outline` for 3:1 contrast, `on-surface-variant` on hover,
+   a transparent track). Chromium and WebKit use ::-webkit-scrollbar (no
+   arrow buttons, an inset pill thumb, track ends clear of rounded corners);
+   the standard properties, which would turn those styles off, are for the
+   other browsers. scrollbar-gutter is not inherited, so each vertical
+   scroller in the page reserves its own, and a scrollbar that appears never
+   moves the content. (Not a universal rule: overflow: hidden elements would
+   reserve an empty gutter, and the gutter does nothing for horizontal
+   scrollers like code blocks.) */
+@supports not selector(::-webkit-scrollbar) {
+  :root {
+    scrollbar-width: thin;
+    scrollbar-color: var(--md-sys-color-outline) transparent;
+  }
+}
+/* The pseudo-element reads physical sizes only. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-track {
+  margin: var(--scrollbar-track-inset, 4px);
+}
+::-webkit-scrollbar-thumb {
+  min-height: 40px;
+  border: 2px solid transparent;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-outline) padding-box;
+}
+:hover::-webkit-scrollbar-thumb {
+  background-color: var(--md-sys-color-on-surface-variant);
 }
 .gb-content-pane,
 .gb-outline-body,
 .gb-search-body {
   scrollbar-gutter: stable;
 }
-/* The pages pane: its scrollbar comes and goes as groups collapse. */
+/* The rounded panels (corner-xl): the thumb sits 4px in from the edge, and
+   the track ends clear of the corners. */
+.gb-content-pane::-webkit-scrollbar,
+.gb-outline-body::-webkit-scrollbar {
+  width: 14px;
+}
+.gb-content-pane::-webkit-scrollbar-thumb,
+.gb-outline-body::-webkit-scrollbar-thumb {
+  border-width: 4px;
+}
+.gb-content-pane::-webkit-scrollbar-track {
+  margin-block: var(--md-sys-space-300);
+}
+/* The pages pane: its scrollbar comes and goes as groups collapse. Its
+   scroller is in the drawer's shadow root (the shared scroller mixin); the
+   custom properties reach it. */
 .gb-drawer {
   --scrollbar-gutter: stable;
-}
-/* WebKit without scrollbar-color (Safari before 26): the same look. */
-@supports not (scrollbar-color: auto) {
-  /* The pseudo-element reads physical sizes only. */
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    border: 2px solid transparent;
-    border-radius: var(--md-sys-shape-corner-full);
-    background: var(--md-sys-color-outline) padding-box;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--md-sys-color-on-surface-variant);
-  }
+  --scrollbar-track-inset: var(--md-sys-space-200);
 }
 
 html {
