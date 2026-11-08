@@ -15167,6 +15167,21 @@ addEventListener("keydown", (e11) => {
   }
 });
 var GROUPS_KEY = "gb-groups";
+var AUTO_KEY = "gb-rail-auto";
+function savedAuto() {
+  try {
+    const auto = JSON.parse(localStorage.getItem(AUTO_KEY) || "{}");
+    return { sections: auto.sections ?? [], groups: auto.groups ?? [] };
+  } catch {
+    return { sections: [], groups: [] };
+  }
+}
+function claimFromAuto(kind, id) {
+  const auto = savedAuto();
+  if (!auto[kind].includes(id)) return;
+  auto[kind] = auto[kind].filter((x2) => x2 !== id);
+  store2(AUTO_KEY, JSON.stringify(auto));
+}
 function savedGroups() {
   try {
     return JSON.parse(localStorage.getItem(GROUPS_KEY) || "{}");
@@ -15202,6 +15217,7 @@ function handleGroupToggle(e11) {
   const saved = savedGroups();
   saved[id] = open;
   store2(GROUPS_KEY, JSON.stringify(saved));
+  claimFromAuto("groups", id);
   if (list === rail2) applyRail();
   else setGroup(list, id, open);
 }
@@ -15285,8 +15301,10 @@ rail2?.addEventListener("click", (e11) => {
     saved = JSON.parse(localStorage.getItem(SECTIONS_KEY) || "{}");
   } catch {
   }
-  saved[toggle.dataset["sectionToggle"] ?? ""] = toggle.getAttribute("aria-expanded") !== "true";
+  const id = toggle.dataset["sectionToggle"] ?? "";
+  saved[id] = toggle.getAttribute("aria-expanded") !== "true";
   store2(SECTIONS_KEY, JSON.stringify(saved));
+  claimFromAuto("sections", id);
   applyRail();
 });
 var REVEAL_AFTER = 1e3;
@@ -15302,14 +15320,36 @@ function revealCurrentPage() {
   const group = groupToggle2 ? groupOf(groupToggle2) : "";
   const groups = savedGroups();
   const closed = sectionToggle?.getAttribute("aria-expanded") === "false" || groupToggle2?.getAttribute("aria-expanded") === "false";
-  sections[currentSection] = true;
-  store2(SECTIONS_KEY, JSON.stringify(sections));
-  if (group) {
-    groups[group] = true;
-    store2(GROUPS_KEY, JSON.stringify(groups));
+  const auto = savedAuto();
+  let closedOthers = false;
+  for (const id of auto.sections) {
+    if (id !== currentSection && id in sections) {
+      delete sections[id];
+      closedOthers = true;
+    }
   }
-  if (!closed) return;
+  for (const id of auto.groups) {
+    if (id !== group && id in groups) {
+      delete groups[id];
+      closedOthers = true;
+    }
+  }
+  auto.sections = auto.sections.filter((id) => id === currentSection);
+  auto.groups = auto.groups.filter((id) => id === group);
+  if (sections[currentSection] !== true && !auto.sections.includes(currentSection)) {
+    auto.sections.push(currentSection);
+  }
+  if (group && groups[group] !== true && !auto.groups.includes(group)) {
+    auto.groups.push(group);
+  }
+  sections[currentSection] = true;
+  if (group) groups[group] = true;
+  store2(SECTIONS_KEY, JSON.stringify(sections));
+  store2(GROUPS_KEY, JSON.stringify(groups));
+  store2(AUTO_KEY, JSON.stringify(auto));
+  if (!closed && !closedOthers) return;
   applyRail();
+  if (!closed) return;
   if (!rail2.expanded || !pageItem || pageItem.hidden) return;
   if (sectionItem) movePill(sectionItem, pageItem);
   centerInRail(pageItem, { always: true, smooth: true });

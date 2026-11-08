@@ -1,6 +1,6 @@
 // src/gb/sw.ts
 var sw = self;
-var BUILD = true ? "mw8deb3h" : "dev";
+var BUILD = true ? "mw8e8m3k" : "dev";
 var PAGES = `gb-pages-${BUILD}`;
 var ASSETS = `gb-assets-${BUILD}`;
 var FONTS = "gb-fonts-v1";
