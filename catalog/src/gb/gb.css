@@ -355,46 +355,6 @@ body {
   color: var(--md-sys-color-tertiary);
 }
 
-/* On this page. */
-.gb-toc summary {
-  font: var(--md-sys-typescale-title-sm);
-  font-variation-settings: var(--md-sys-typescale-title-sm-axes);
-  cursor: pointer;
-  padding-block: var(--md-sys-space-100);
-}
-.gb-toc summary:focus-visible {
-  outline: 2px solid var(--md-sys-color-primary);
-  outline-offset: 2px;
-}
-.gb-toc ol,
-.gb-toc ul {
-  list-style: none;
-  margin: 0;
-  padding-inline-start: var(--md-sys-space-200);
-}
-.gb-toc .toc > ol,
-.gb-toc .toc > ul {
-  padding-inline-start: 0;
-}
-.gb-toc a,
-.gb-toc-top {
-  display: block;
-  padding-block: var(--md-sys-space-50);
-  color: var(--md-sys-color-on-surface-variant);
-  font: var(--md-sys-typescale-body-sm);
-  text-decoration: none;
-}
-.gb-toc-top {
-  padding-inline: 0;
-}
-.gb-toc a:hover {
-  color: var(--md-sys-color-on-surface);
-}
-.gb-toc a[aria-current='location'] {
-  color: var(--md-sys-color-primary);
-  font-weight: 500;
-}
-
 /* /3.0/all/ (site/gb-all.11ty.cjs): every page on one page, no shell. */
 .gb-all-title {
   margin: 0 0 var(--md-sys-space-100);

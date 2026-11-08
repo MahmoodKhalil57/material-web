@@ -242,25 +242,26 @@ body:has(.gb-shell) {
 .gb-rail-area:has(> .gb-rail[modal][expanded]) {
   z-index: 40;
 }
-/* The components' groups (Buttons, Date & time pickers, ...): labels above
-   their pages in the expanded rail, title-small on-surface-variant like a
-   navigation section's label. Not destinations: the rail skips them. */
-.gb-rail-group {
+/* The components' groups (Buttons, Date & time pickers, ...) in the
+   expanded rail: disclosure buttons (the pane rows' styles below) as tall
+   as a destination, their label where the sections' labels start, that
+   show or hide the group's pages. Not destinations: arrow keys skip them,
+   Tab reaches them. */
+.gb-rail > .gb-rail-group {
   display: none;
-  margin: var(--md-sys-space-200) 0 var(--md-sys-space-50);
-  padding-inline: var(--md-sys-space-200);
-  color: var(--md-sys-color-on-surface-variant);
-  font: var(--md-sys-typescale-title-sm);
-  font-variation-settings: var(--md-sys-typescale-title-sm-axes);
+  flex: none;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: var(--active-indicator-height, 56px);
 }
 .gb-rail[expanded] > .gb-rail-group {
-  display: block;
+  display: flex;
 }
-/* A section's pages (secondary destinations, no icon): their labels start
-   under the section's label. */
-.gb-rail > md-gb-nav-rail-item[secondary] {
-  --item-icon-size: 0px;
+.gb-rail > md-gb-nav-rail-item[hidden] {
+  display: none;
 }
+/* A section's pages (secondary destinations) have no icon; the icon's
+   space stays, so their labels start under the sections' labels. */
 
 /* The logo at the start of the header, linking to the docs home. The rail's
    own menu button expands it (a logo must not look like that button). */
@@ -401,9 +402,8 @@ md-gb-nav-drawer-item[data-group] {
     flex-direction: column;
     min-inline-size: 0;
     min-block-size: 0;
+    /* On the page's surface, like the rail: no panel of its own. */
     margin: 0 var(--md-sys-space-150) var(--md-sys-space-150) 0;
-    border-radius: var(--md-sys-shape-corner-xl);
-    background: var(--md-sys-color-surface);
     overflow: hidden;
   }
   /* Closed, the strip takes the column. */
@@ -429,17 +429,41 @@ md-gb-nav-drawer-item[data-group] {
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 var(--md-sys-space-150) var(--md-sys-space-200) var(--md-sys-space-200);
+  padding-block-end: var(--md-sys-space-200);
 }
-/* Headings wrap (element names like <md-gb-split-button> break anywhere),
-   and the tree stops at two levels. */
-.gb-outline-body a,
-.gb-sheet-outline a {
+/* The headings as an expanded navigation rail's destinations: no fill, no
+   top space, no icons, as wide as the column; the panel scrolls it. An h3
+   starts one step in from its h2. */
+.gb-outline-rail {
+  display: flex;
+  block-size: auto;
+}
+.gb-outline-rail::part(nav-rail) {
+  --expanded-container-color: transparent;
+  --expanded-top-space: 0px;
+  --expanded-container-width-minimum: 100%;
+  --expanded-container-width-maximum: 100%;
+  /* The labels line up with the panel's title. */
+  --item-outer-space: 0px;
+}
+.gb-outline-rail > md-gb-nav-rail-item {
+  /* Element names like <md-gb-split-button> break anywhere. */
   overflow-wrap: anywhere;
 }
-.gb-outline-body :is(ol, ul) :is(ol, ul) :is(ol, ul),
-.gb-sheet-outline :is(ol, ul) :is(ol, ul) :is(ol, ul) {
+/* No icon, and no space kept for one (set inside the item, so through its
+   part). */
+.gb-outline-rail > md-gb-nav-rail-item::part(nav-rail-item) {
+  --item-icon-size: 0px;
+  --item-horizontal-icon-label-space: 0px;
+}
+.gb-outline-rail > md-gb-nav-rail-item[data-depth='2'] {
+  margin-inline-start: var(--md-sys-space-200);
+}
+.gb-outline-rail > md-gb-nav-rail-item[data-depth='3'] {
   display: none;
+}
+.gb-outline-rail:not(:defined) {
+  visibility: hidden;
 }
 
 /* The strip (840px and up, outline closed): the button that opens it, at the
@@ -489,15 +513,6 @@ md-gb-nav-drawer-item[data-group] {
   font: var(--md-sys-typescale-title-md);
   font-variation-settings: var(--md-sys-typescale-title-md-axes);
   letter-spacing: var(--md-sys-typescale-title-md-tracking);
-}
-/* Touch targets in the sheet (more specific than gb.css's .gb-toc a). */
-.gb-toc.gb-sheet-outline a {
-  display: flex;
-  align-items: center;
-  min-block-size: 48px;
-  padding-block: 0;
-  font: var(--md-sys-typescale-body-lg);
-  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
 }
 
 /* --- Previous / next pages --------------------------------------------------------- */

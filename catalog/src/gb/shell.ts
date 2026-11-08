@@ -182,15 +182,16 @@ outlineFab?.addEventListener('click', () => {
   void outlineSheet.show();
 });
 outlineSheet?.addEventListener('click', (e) => {
-  const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
-  if (!link) return;
+  const item = (e.target as Element).closest<HTMLElement>('md-gb-nav-rail-item[href^="#"]');
+  if (!item) return;
   e.preventDefault();
-  const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+  const hash = item.getAttribute('href') ?? '';
+  const target = document.getElementById(decodeURIComponent(hash.slice(1)));
   // The FAB keeps focus after the sheet; the heading is where to read next.
   returnFocus.set(outlineSheet, null);
   void outlineSheet.close().then(() => {
     target?.scrollIntoView({block: 'start'});
-    history.replaceState(null, '', link.hash);
+    history.replaceState(null, '', hash);
   });
 });
 outlineSheet?.addEventListener('closed', () => {
@@ -227,8 +228,8 @@ addEventListener('keydown', (e) => {
 
 // --- Component groups: split rows that collapse their pages ------------------------
 
-// In the pages sheet of compact windows (the expanded rail lists every
-// component under its group's label).
+// In the expanded rail and in the pages sheet of compact windows; the same
+// choices apply to both.
 const GROUPS_KEY = 'gb-groups';
 
 function savedGroups(): Record<string, boolean> {
@@ -239,12 +240,26 @@ function savedGroups(): Record<string, boolean> {
   }
 }
 
+/**
+ * A group's disclosure button: in the rail, the button itself (it's
+ * slotted); in the sheet's drawer, the button in the group's row.
+ */
+const groupToggle = (list: ParentNode, id: string) =>
+  list.querySelector<HTMLElement>(
+    `.gb-rail-group[data-group-toggle="${id}"], .gb-pane-group[data-group="${id}"] .gb-pane-group-toggle`,
+  );
+
+/** The group a disclosure button shows or hides. */
+const groupOf = (toggle: HTMLElement) =>
+  toggle.dataset['groupToggle'] ??
+  toggle.closest<HTMLElement>('.gb-pane-group')?.dataset['group'] ??
+  '';
+
 /** Shows or hides a group's pages in `list` and updates its toggle. */
 function setGroup(list: ParentNode, id: string, open: boolean) {
-  const row = list.querySelector<HTMLElement>(`.gb-pane-group[data-group="${id}"]`);
-  row?.querySelector('.gb-pane-group-toggle')?.setAttribute('aria-expanded', String(open));
+  groupToggle(list, id)?.setAttribute('aria-expanded', String(open));
   for (const item of list.querySelectorAll<HTMLElement>(
-    `md-gb-nav-drawer-item[data-group="${id}"]`,
+    `md-gb-nav-drawer-item[data-group="${id}"], md-gb-nav-rail-item[data-group="${id}"]`,
   )) {
     item.hidden = !open;
   }
@@ -259,13 +274,12 @@ function applySavedGroups(list: ParentNode) {
   }
 }
 
-/** Toggles a group from its row in the pages sheet. */
+/** Toggles a group from its button in the rail or the pages sheet. */
 function handleGroupToggle(e: Event) {
   const toggle = (e.target as Element).closest<HTMLElement>('.gb-pane-group-toggle');
-  const row = toggle?.closest<HTMLElement>('.gb-pane-group');
-  const list = row?.parentElement;
-  if (!toggle || !row || !list) return;
-  const id = row.dataset['group'] ?? '';
+  const list = toggle?.closest('md-gb-nav-rail, md-gb-nav-drawer');
+  if (!toggle || !list) return;
+  const id = groupOf(toggle);
   const open = toggle.getAttribute('aria-expanded') !== 'true';
   setGroup(list, id, open);
   const saved = savedGroups();
@@ -278,6 +292,7 @@ function handleGroupToggle(e: Event) {
 const pagesSheet = $<SheetElement>('gb-pages-sheet');
 const pagesFoot = $('gb-pages-foot');
 pagesSheet?.addEventListener('click', handleGroupToggle);
+rail?.addEventListener('click', handleGroupToggle);
 
 function openPagesSheet(trigger: HTMLElement) {
   if (!pagesSheet) return;

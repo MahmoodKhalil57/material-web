@@ -71,13 +71,17 @@
 {%- endif %}
 {%- endmacro -%}
 {#- The pages of the current section as secondary destinations of the
-    expanded rail (the components under their groups' labels). -#}
-{%- macro railPages(sec, groups, pages, url) -%}
+    expanded rail. The components are in their groups, each under a
+    disclosure button that shows or hides its pages (src/gb/shell.ts); the
+    current page's group starts expanded, the others as the reader left
+    them (applied before first paint, below the rail). -#}
+{%- macro railPages(sec, groups, pages, url, currentGroup) -%}
 {%- if sec.id == 'components' %}
 {%- for group in groups %}
-<p class="gb-rail-group">{{ group.label }}</p>
+{%- set collapsed = currentGroup and group.id != currentGroup %}
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-group-toggle="{{ group.id }}"{% if group.id == currentGroup %} data-current{% endif %} aria-expanded="{{ 'false' if collapsed else 'true' }}" aria-label="{{ group.label }}"><span class="gb-pane-group-label">{{ group.label }}</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
 {%- for file in pages %}{% if file.data.section == 'components' and file.data.category == group.id %}
-<md-gb-nav-rail-item secondary href="{{ file.url }}"{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="{{ file.url }}" data-group="{{ group.id }}"{% if collapsed %} hidden{% endif %}{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
 {%- endif %}{% endfor %}
 {%- endfor %}
 {%- else %}
@@ -243,15 +247,29 @@
             <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
           </md-gb-nav-rail-item>
           {%- if sec.id == gbCurrent %}
-          {{ railPages(sec, gbGroups, gbPages, page.url) | safe }}
+          {{ railPages(sec, gbGroups, gbPages, page.url, category if section == 'components' else '') | safe }}
           {%- endif %}
           {%- endfor %}
         </md-gb-nav-rail>
         <script>
-          // Before first paint: expanded from 840px unless the reader
-          // collapsed it, with the current page as the active destination.
+          // Before first paint: the groups the reader expanded or collapsed
+          // (src/gb/shell.ts saves them; the current page's stays open), and
+          // expanded from 840px unless the reader collapsed it, with the
+          // current page as the active destination.
           (() => {
             const rail = document.getElementById('gb-rail');
+            let saved = {};
+            try {
+              saved = JSON.parse(localStorage.getItem('gb-groups') || '{}');
+            } catch (e) {}
+            for (const toggle of rail.querySelectorAll('.gb-rail-group')) {
+              const id = toggle.dataset.groupToggle;
+              if (!(id in saved) || toggle.hasAttribute('data-current')) continue;
+              toggle.setAttribute('aria-expanded', String(!!saved[id]));
+              for (const item of rail.querySelectorAll(`md-gb-nav-rail-item[data-group="${id}"]`)) {
+                item.hidden = !saved[id];
+              }
+            }
             const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
             const page = rail.querySelector('md-gb-nav-rail-item[secondary][data-current]');
             if (!open) return;
@@ -298,9 +316,14 @@
             <md-gb-icon>close</md-gb-icon>
           </md-gb-icon-button>
         </div>
+        {#- The headings as the destinations of an expanded navigation rail
+            (no icons, no menu, no fill), like the site's rail; the one being
+            read is the active destination (src/gb/gb.ts). -#}
         <div class="gb-toc gb-outline-body">
-          <a class="gb-toc-top" href="#main">(Top)</a>
-          {{ content | toc | filterToc | safe }}
+          <md-gb-nav-rail class="gb-outline-rail" expanded role="none">
+            <md-gb-nav-rail-item href="#main" data-depth="1">(Top)</md-gb-nav-rail-item>
+            {{ content | toc | filterToc | gbOutline | safe }}
+          </md-gb-nav-rail>
         </div>
       </aside>
       {#- Shown in the outline's column while the outline is closed. -#}

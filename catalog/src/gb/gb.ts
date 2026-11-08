@@ -285,27 +285,36 @@ addEventListener('click', (event) => {
 
 // --- Table of contents ---------------------------------------------------
 
-// The outline is in two places (the panel on the right, and inline below
-// 840px); both mark the section being read with aria-current="location".
+// The outline (a navigation rail's destinations, default.html) shows the
+// section being read as the active destination: `selected` for the active
+// indicator, and aria-current="location" (a place in this page, not the
+// item's own "page").
 {
-  const targets = new Map<Element, HTMLAnchorElement[]>();
-  for (const link of document.querySelectorAll<HTMLAnchorElement>(
-    '.gb-toc a[href^="#"]',
+  const targets = new Map<Element, HTMLElement[]>();
+  for (const item of document.querySelectorAll<HTMLElement>(
+    '.gb-toc md-gb-nav-rail-item[href^="#"]',
   )) {
-    const el = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-    if (el) targets.set(el, [...(targets.get(el) ?? []), link]);
+    const id = decodeURIComponent((item.getAttribute('href') ?? '').slice(1));
+    const el = document.getElementById(id);
+    if (el) targets.set(el, [...(targets.get(el) ?? []), item]);
   }
   if (targets.size && 'IntersectionObserver' in window) {
-    let current: HTMLAnchorElement[] = [];
+    let current: HTMLElement[] = [];
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          const links = targets.get(entry.target);
-          if (!links || links === current) continue;
-          for (const link of current) link.removeAttribute('aria-current');
-          for (const link of links) link.setAttribute('aria-current', 'location');
-          current = links;
+          const items = targets.get(entry.target);
+          if (!items || items === current) continue;
+          for (const item of current) {
+            item.removeAttribute('selected');
+            item.removeAttribute('aria-current');
+          }
+          for (const item of items) {
+            item.setAttribute('selected', '');
+            item.setAttribute('aria-current', 'location');
+          }
+          current = items;
         }
       },
       // The content scrolls in its own pane below the header.
