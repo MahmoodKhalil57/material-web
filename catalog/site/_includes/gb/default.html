@@ -122,7 +122,17 @@
         const root = document.documentElement;
         // Demo cards collapse their code only with JS (gb.css, gb.ts).
         root.classList.add('js');
+        // Reduce motion (the header's toggle, shell.ts; reduce-motion.css):
+        // while it's on, prefers-reduced-motion queries from scripts answer
+        // "reduce" (asked again on each call, so a toggle takes effect at
+        // once), and the components take their reduced-motion paths.
+        const matchMedia = window.matchMedia.bind(window);
+        window.matchMedia = (query) =>
+          root.dataset.motion === 'reduce' && /prefers-reduced-motion/.test(query)
+            ? matchMedia(/no-preference/.test(query) ? 'not all' : 'all')
+            : matchMedia(query);
         try {
+          if (localStorage.getItem('gb-reduce-motion') === '1') root.dataset.motion = 'reduce';
           const mode = localStorage.getItem('color-mode') || 'auto';
           root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
           if (localStorage.getItem('gb-rail') === 'collapsed') root.dataset.rail = 'collapsed';
@@ -191,6 +201,10 @@
           </button>
           <md-gb-icon-button slot="trailing" id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
             <md-gb-icon>brightness_auto</md-gb-icon>
+          </md-gb-icon-button>
+          {#- Reduce motion: a toggle (shell.ts), on when selected. -#}
+          <md-gb-icon-button slot="trailing" id="gb-motion" type="toggle" tooltip aria-label="Reduce motion">
+            <md-gb-icon>motion_photos_off</md-gb-icon>
           </md-gb-icon-button>
           <md-gb-icon-button slot="trailing" tooltip data-tool="theme" aria-label="Customize theme">
             <md-gb-icon>palette</md-gb-icon>

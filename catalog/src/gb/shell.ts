@@ -739,6 +739,34 @@ appBar?.addEventListener('overflowchange', (e) => {
   mirrorOverflow((e as CustomEvent<{overflowed: Element[]}>).detail.overflowed);
 });
 
+// --- Reduce motion ---------------------------------------------------------------
+// The header's toggle (and the search action, which presses it): on, the
+// page's motion ends at once (reduce-motion.css) and scripts see reduced
+// motion (the layout's matchMedia); remembered. The button owns no state:
+// a click, real or from the overflow menu, flips the page's, and the
+// button shows it.
+
+const MOTION_KEY = 'gb-reduce-motion';
+const motionButton = $<HTMLElement & {selected: boolean}>('gb-motion');
+
+function syncMotionButton() {
+  if (!motionButton) return;
+  const reduced = root.dataset['motion'] === 'reduce';
+  motionButton.selected = reduced;
+  motionButton.setAttribute('aria-pressed', String(reduced));
+}
+
+motionButton?.addEventListener('click', () => {
+  const reduce = root.dataset['motion'] !== 'reduce';
+  if (reduce) root.dataset['motion'] = 'reduce';
+  else delete root.dataset['motion'];
+  store(MOTION_KEY, reduce ? '1' : null);
+  // After the button's own toggle, if it ran (later in this click's
+  // dispatch than a microtask would wait).
+  setTimeout(syncMotionButton);
+});
+void customElements.whenDefined('md-gb-icon-button').then(syncMotionButton);
+
 // --- Rail footer: links, Send feedback, version ------------------------------------
 
 const railFoot = document.querySelector<HTMLElement>('.gb-rail-foot');

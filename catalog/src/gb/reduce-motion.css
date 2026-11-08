@@ -1,0 +1,60 @@
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Reduce motion (the header's toggle and the search action, shell.ts;
+   :root[data-motion="reduce"], set before first paint by the layout): for
+   readers who want less motion than their system setting gives, or a slow
+   device. A page can't change prefers-reduced-motion, so:
+
+   - the motion tokens become 1ms (not 0: scripts that read them fall back
+     on 0), which reaches the components' shadow trees (inherited);
+   - the page's own animations and transitions end at once, and so does
+     smooth scrolling;
+   - the layout's script makes matchMedia report reduced motion, so the
+     scripted motion (the rail's morph, the pill, the disclosures) takes
+     its reduced path, and page transitions are skipped (navigation.ts). */
+
+:root[data-motion='reduce'] {
+  --md-sys-motion-duration-short1: 1ms;
+  --md-sys-motion-duration-short2: 1ms;
+  --md-sys-motion-duration-short3: 1ms;
+  --md-sys-motion-duration-short4: 1ms;
+  --md-sys-motion-duration-medium1: 1ms;
+  --md-sys-motion-duration-medium2: 1ms;
+  --md-sys-motion-duration-medium3: 1ms;
+  --md-sys-motion-duration-medium4: 1ms;
+  --md-sys-motion-duration-long1: 1ms;
+  --md-sys-motion-duration-long2: 1ms;
+  --md-sys-motion-duration-long3: 1ms;
+  --md-sys-motion-duration-long4: 1ms;
+  --md-sys-motion-duration-extra-long1: 1ms;
+  --md-sys-motion-duration-extra-long2: 1ms;
+  --md-sys-motion-duration-extra-long3: 1ms;
+  --md-sys-motion-duration-extra-long4: 1ms;
+  --md-sys-motion-spring-fast-spatial-duration: 1ms;
+  --md-sys-motion-spring-default-spatial-duration: 1ms;
+  --md-sys-motion-spring-slow-spatial-duration: 1ms;
+  --md-sys-motion-spring-fast-effects-duration: 1ms;
+  --md-sys-motion-spring-default-effects-duration: 1ms;
+  --md-sys-motion-spring-slow-effects-duration: 1ms;
+  --md-sys-motion-curve-fast-spatial-duration: 1ms;
+  --md-sys-motion-curve-default-spatial-duration: 1ms;
+  --md-sys-motion-curve-slow-spatial-duration: 1ms;
+  --md-sys-motion-curve-fast-effects-duration: 1ms;
+  --md-sys-motion-curve-default-effects-duration: 1ms;
+  --md-sys-motion-curve-slow-effects-duration: 1ms;
+  scroll-behavior: auto;
+}
+:root[data-motion='reduce'] *,
+:root[data-motion='reduce'] *::before,
+:root[data-motion='reduce'] *::after {
+  animation-duration: 1ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 1ms !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
