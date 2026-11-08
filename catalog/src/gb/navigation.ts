@@ -270,6 +270,37 @@ addEventListener('pageswap', (e) => {
   if (event.viewTransition && event.activation?.navigationType === 'reload') {
     event.viewTransition.skipTransition();
   }
+  // Reduce motion (the header's toggle): no page transitions.
+  if (event.viewTransition && document.documentElement.dataset['motion'] === 'reduce') {
+    event.viewTransition.skipTransition();
+  }
+  // The scrollbars stay out of the snapshots (navigation.css).
+  if (event.viewTransition) document.documentElement.classList.add('gb-vt');
+});
+addEventListener('pageshow', (e) => {
+  if (e.persisted) document.documentElement.classList.remove('gb-vt');
+});
+
+// The top Previous and Next cards carry over to the next page
+// (navigation.css), unless they're scrolled out of view here: their
+// snapshots would show outside the panel, over the header.
+addEventListener('pageswap', () => {
+  const pager = document.querySelector<HTMLElement>('.gb-pager-top');
+  const pane = document.getElementById('gb-content-pane');
+  if (!pager) return;
+  const r = pager.getBoundingClientRect();
+  const view = pane?.getBoundingClientRect() ?? {top: 0, bottom: innerHeight};
+  if (r.top >= view.top && r.bottom <= view.bottom) return;
+  for (const el of pager.querySelectorAll<HTMLElement>('.gb-pager-link, .gb-pager-title')) {
+    el.style.viewTransitionName = 'none';
+  }
+});
+// Back from the back/forward cache: the cards carry over again.
+addEventListener('pageshow', (e) => {
+  if (!e.persisted) return;
+  for (const el of document.querySelectorAll<HTMLElement>('.gb-pager-top .gb-pager-link, .gb-pager-top .gb-pager-title')) {
+    el.style.viewTransitionName = '';
+  }
 });
 
 /** A page's path without its trailing slash, for comparing URLs. */
@@ -320,8 +351,18 @@ addEventListener('pagereveal', (e) => {
   const transition = (e as Event & {viewTransition?: PageTransition | null})
     .viewTransition;
   if (!transition) return;
+  // Reduce motion (the header's toggle): no page transitions.
+  if (document.documentElement.dataset['motion'] === 'reduce') {
+    transition.skipTransition();
+    return;
+  }
   const type = transitionType();
   if (type) transition.types?.add(type);
+  // The scrollbars show once the page has settled (navigation.css).
+  const root = document.documentElement;
+  root.classList.add('gb-vt');
+  const settled = () => root.classList.remove('gb-vt');
+  void transition.finished.then(settled, settled);
   // The browser drops a transition whose new page took over 4s from the
   // click to show, without a word: say so while debugging.
   transition.finished.catch((error: Error) => {

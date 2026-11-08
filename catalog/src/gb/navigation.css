@@ -55,7 +55,19 @@
 }
 .gb-toc {
   view-transition-name: gb-toc;
-  view-transition-class: page;
+  view-transition-class: outline;
+}
+/* The panel's and the outline's scrollbars aren't part of what changes:
+   while a transition runs (root.gb-vt, navigation.ts) they're transparent,
+   keeping their width, so the snapshots hold only the content, and the
+   page's own bar shows once it has settled. */
+.gb-vt :is(.gb-content-pane, .gb-outline-body)::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .gb-vt :is(.gb-content-pane, .gb-outline-body) {
+    scrollbar-color: transparent transparent;
+  }
 }
 /* The shell: the header, the rail and the navigation bar are the same on
    every page and don't move; the new one replaces the old at once, so they
@@ -72,6 +84,28 @@
   view-transition-name: gb-bar;
   view-transition-class: persistent;
 }
+/* The top Previous and Next cards are on almost every page, at the same
+   place: the cards (border, arrow, "Previous" / "Next") stay, like the
+   shell, and only their page titles change, with the page (fade through,
+   and the slide forward or backward). A card only one of the pages has
+   fades out or in. Out of view on the page left, they aren't carried over
+   (navigation.ts). */
+.gb-pager-top .gb-pager-prev {
+  view-transition-name: gb-pager-prev;
+  view-transition-class: persistent pager;
+}
+.gb-pager-top .gb-pager-next {
+  view-transition-name: gb-pager-next;
+  view-transition-class: persistent pager;
+}
+.gb-pager-top .gb-pager-prev .gb-pager-title {
+  view-transition-name: gb-pager-prev-title;
+  view-transition-class: page;
+}
+.gb-pager-top .gb-pager-next .gb-pager-title {
+  view-transition-name: gb-pager-next-title;
+  view-transition-class: page;
+}
 ::view-transition-old(*.persistent) {
   display: none;
 }
@@ -81,6 +115,34 @@
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
+}
+/* The cards' titles: each at its own size (not stretched to the other's
+   box), where the card aligns it: the previous one at its start, the next
+   one at its end. Their place doesn't move; they only fade and slide. */
+::view-transition-group(gb-pager-prev-title),
+::view-transition-group(gb-pager-next-title) {
+  animation: none;
+}
+::view-transition-old(gb-pager-prev-title),
+::view-transition-new(gb-pager-prev-title),
+::view-transition-old(gb-pager-next-title),
+::view-transition-new(gb-pager-next-title) {
+  inline-size: auto;
+  block-size: auto;
+}
+::view-transition-old(gb-pager-next-title),
+::view-transition-new(gb-pager-next-title) {
+  inset-inline: auto 0;
+}
+/* A card only one of the pages has (after the rule above). */
+::view-transition-old(*.pager):only-child {
+  display: block;
+  animation: gb-vt-fade-out var(--gb-vt-exit)
+    var(--md-sys-motion-easing-emphasized-accelerate, ease-in) both;
+}
+::view-transition-new(*.pager):only-child {
+  animation: gb-vt-fade-in var(--gb-vt-enter)
+    var(--md-sys-motion-easing-emphasized-decelerate, ease-out) var(--gb-vt-exit) both;
 }
 
 /* The content panel stays: its surface (the snapshots' own background
@@ -96,6 +158,43 @@
   /* Compact windows: the panel is the window, square (shell.css). */
   ::view-transition-group(gb-page) {
     border-radius: 0;
+  }
+}
+
+/* The outline: enter and exit (motion transitions.md, Enter and exit,
+   within screen bounds: components "expand and collapse along the x or y
+   axis"; no sliding, whatever the navigation). The old headings collapse
+   up as they fade out, then the new ones expand down as they fade in. */
+::view-transition-group(*.outline) {
+  animation-duration: var(--gb-vt-enter);
+}
+::view-transition-old(*.outline) {
+  animation:
+    gb-vt-fade-out var(--gb-vt-exit) var(--md-sys-motion-easing-emphasized-accelerate, ease-in) both,
+    gb-vt-collapse var(--gb-vt-exit) var(--md-sys-motion-easing-emphasized-accelerate, ease-in) both;
+}
+::view-transition-new(*.outline) {
+  animation:
+    gb-vt-fade-in var(--gb-vt-enter) var(--md-sys-motion-easing-emphasized-decelerate, ease-out) var(--gb-vt-exit) both,
+    gb-vt-expand var(--gb-vt-enter) var(--md-sys-motion-easing-emphasized-decelerate, ease-out) var(--gb-vt-exit) both;
+}
+@keyframes gb-vt-collapse {
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+@keyframes gb-vt-expand {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Fades only. */
+  ::view-transition-old(*.outline) {
+    animation: gb-vt-fade-out var(--gb-vt-exit) linear both;
+  }
+  ::view-transition-new(*.outline) {
+    animation: gb-vt-fade-in var(--gb-vt-enter) linear var(--gb-vt-exit) both;
   }
 }
 
