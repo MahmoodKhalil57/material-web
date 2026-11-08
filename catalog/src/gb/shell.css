@@ -163,11 +163,16 @@ md-gb-nav-drawer .nav-drawer-section-label {
    the section page, the chevron shows or hides its pages. Outer corners are
    full, inner corners small, with a 2px gap; a quiet container so six rows
    don't compete with the destinations. */
+/* Same size and spacing as a destination: the drawer's 12dp inset, the
+   item height and the item's label inset. */
 .gb-pane-group {
   display: flex;
   gap: 2px;
-  block-size: 40px;
-  margin: var(--md-sys-space-150) var(--md-sys-space-150) var(--md-sys-space-50);
+  block-size: var(--active-indicator-height, 56px);
+}
+/* A group's pages: the active indicator starts one step further in. */
+md-gb-nav-drawer-item[data-group] {
+  margin-inline-start: var(--md-sys-space-150);
 }
 .gb-pane-group-link,
 .gb-pane-group-toggle {
@@ -175,7 +180,7 @@ md-gb-nav-drawer .nav-drawer-section-label {
   display: flex;
   align-items: center;
   border: 0;
-  background: var(--md-sys-color-surface-container-high);
+  background: none;
   color: var(--md-sys-color-on-surface-variant);
   font: var(--md-sys-typescale-label-lg);
   font-variation-settings: var(--md-sys-typescale-label-lg-axes);
@@ -231,11 +236,6 @@ md-gb-nav-drawer .nav-drawer-section-label {
 .gb-pane-group-toggle:focus-visible {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;
-}
-/* The group of the current page reads as the active one. */
-.gb-pane-group[data-current] :is(.gb-pane-group-link, .gb-pane-group-toggle) {
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
 }
 .gb-pane-group-toggle md-gb-icon {
   transition: rotate var(--md-sys-motion-spring-fast-spatial-duration, 200ms)
