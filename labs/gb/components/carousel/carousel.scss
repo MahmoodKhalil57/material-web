@@ -44,6 +44,11 @@
   :host {
     display: block;
     block-size: var(--height);
+    // The items are laid out from the carousel's width, so that width never
+    // comes from the items: in a shrink-to-fit parent (a centering flex
+    // row) it would loop, each layout resizing the carousel for the next.
+    // Give the carousel a width there (`inline-size: 100%`, or flex).
+    contain: inline-size;
   }
 
   // The inner container inherits the host's tokens so values set on the
