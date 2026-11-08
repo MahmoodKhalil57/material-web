@@ -1,8 +1,9 @@
 {#-
   Layout `gb`: the shell of every /3.0/ page, built from labs/gb (md-gb-*)
-  components only, modelled on m3.material.io: a navigation rail (a nav bar
-  below 600px), a pages pane and a rounded content pane. There is no top app
-  bar. Data: title, description, section, page.url, content,
+  components only: an M3 search app bar across the top, a navigation rail
+  (a nav bar below 600px), a pages pane and a rounded content pane, with
+  previous / next links at the top and end of the page. Data: title,
+  description, section, page.url, content,
   collections.gb3 (data.section / data.order / data.title / data.category),
   and the `toc` filter. Behaviour: src/gb/shell.ts; styles: src/gb/shell.css.
 -#}
@@ -22,6 +23,30 @@
 ] -%}
 {%- set gbCurrent = section or 'about' -%}
 {%- set gbPages = collections.gb3 | filtersort('data.order') -%}
+{%- set gbNav = collections.gb3 | gbPager(page.url, gbSections) -%}
+{#- Previous / next links in sidebar order (eleventy-helpers/filters/gb-pager.cjs).
+    The end of the page has the landmark; the top is a group, so there is one
+    navigation landmark of that name. -#}
+{%- macro pager(nav, where) -%}
+{%- if nav.prev or nav.next %}
+{%- if where == 'end' %}
+<nav class="gb-pager gb-pager-end" aria-label="Previous and next pages">
+{%- else %}
+<div class="gb-pager gb-pager-top" role="group" aria-label="Previous and next pages">
+{%- endif %}
+{%- if nav.prev %}
+<a class="gb-pager-link gb-pager-prev" href="{{ nav.prev.url }}" rel="prev"><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_back</md-gb-icon></span><span class="gb-pager-text"><span class="gb-pager-label">Previous</span> <span class="gb-pager-title">{{ nav.prev.title }}</span></span></a>
+{%- endif %}
+{%- if nav.next %}
+<a class="gb-pager-link gb-pager-next" href="{{ nav.next.url }}" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">{{ nav.next.title }}</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+{%- endif %}
+{%- if where == 'end' %}
+</nav>
+{%- else %}
+</div>
+{%- endif %}
+{%- endif %}
+{%- endmacro -%}
 {#- The pages of a section as the children of an md-gb-nav-drawer: a heading
     linking to the section's index page, then the pages (components in their
     groups). -#}
@@ -231,12 +256,14 @@
       <div class="gb-content-pane" id="gb-content-pane">
         <div class="gb-body{% if gbIndex %} gb-layout-index{% endif %}">
           <main class="gb-main" id="main" tabindex="-1">
+            {{ pager(gbNav, 'top') | safe }}
             {%- if not gbIndex %}
             <h1>{{ title }}</h1>
             {% if description %}<p class="gb-lede">{{ description }}</p>{% endif %}
             <p class="gb-md-link"><a href="{% if page.url == '/3.0/' %}/3.0/index.md{% else %}{{ page.url | replace(r/\/$/, '') }}.md{% endif %}" type="text/markdown">View as Markdown</a></p>
             {%- endif %}
             <div class="gb-content">{{ content | safe }}</div>
+            {{ pager(gbNav, 'end') | safe }}
           </main>
 
           {#- A section's index page (gb-sections.11ty.cjs) has no outline. #}

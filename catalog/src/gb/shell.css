@@ -70,6 +70,12 @@ body:has(.gb-shell) {
   --container-color: transparent;
   --search-container-color: var(--md-sys-color-surface-container-high);
 }
+/* The search variant sets its own container color on the inner element;
+   the part rule (outer styles win) makes the bar blend into the page. */
+.gb-appbar::part(app-bar) {
+  --container-color: transparent;
+  --on-scroll-container-color: transparent;
+}
 .gb-appbar:not(:defined) {
   visibility: hidden;
 }
@@ -369,6 +375,121 @@ md-gb-nav-drawer-item[data-group] {
   .gb-toc summary::-webkit-details-marker {
     display: none;
   }
+}
+
+/* --- Previous / next pages --------------------------------------------------------- */
+
+.gb-pager {
+  display: flex;
+  gap: var(--md-sys-space-200);
+}
+.gb-pager-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-space-100);
+  min-inline-size: 0;
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+  isolation: isolate;
+}
+.gb-pager-next {
+  margin-inline-start: auto;
+  text-align: end;
+}
+.gb-pager-text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.gb-pager-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gb-pager-icon {
+  display: inline-flex;
+  flex: none;
+}
+/* State layer (interaction-states: hover 8%, focus and pressed 10%). */
+.gb-pager-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+}
+.gb-pager-link:hover::before {
+  opacity: 0.08;
+}
+.gb-pager-link:focus-visible::before,
+.gb-pager-link:active::before {
+  opacity: 0.1;
+}
+.gb-pager-link:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+/* Top: text buttons with the page title; "Previous" / "Next" are read out. */
+.gb-pager-top {
+  justify-content: space-between;
+  margin-block: var(--md-sys-space-200) var(--md-sys-space-100);
+}
+.gb-pager-top .gb-pager-link {
+  block-size: 40px;
+  max-inline-size: 50%;
+  padding-inline: var(--md-sys-space-150) var(--md-sys-space-200);
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-primary);
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+}
+.gb-pager-top .gb-pager-next {
+  padding-inline: var(--md-sys-space-200) var(--md-sys-space-150);
+}
+.gb-pager-top .gb-pager-label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.gb-pager-top .gb-pager-icon md-gb-icon {
+  --md-icon-size: 18px;
+  font-size: 18px;
+}
+/* End: two outlined cards. */
+.gb-pager-end {
+  margin-block-start: var(--md-sys-space-600);
+  padding-block-start: var(--md-sys-space-300);
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+}
+.gb-pager-end .gb-pager-link {
+  flex: 1 1 0;
+  max-inline-size: calc(50% - var(--md-sys-space-100));
+  gap: var(--md-sys-space-200);
+  min-block-size: 80px;
+  padding: var(--md-sys-space-200) var(--md-sys-space-300);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-lg);
+}
+.gb-pager-end .gb-pager-label {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-label-md);
+  font-variation-settings: var(--md-sys-typescale-label-md-axes);
+}
+.gb-pager-end .gb-pager-title {
+  font: var(--md-sys-typescale-title-md);
+  font-variation-settings: var(--md-sys-typescale-title-md-axes);
+}
+.gb-pager-end .gb-pager-next {
+  justify-content: flex-end;
+}
+.gb-pager-end .gb-pager-icon {
+  color: var(--md-sys-color-primary);
 }
 
 /* --- Compact: navigation bar ------------------------------------------------------- */

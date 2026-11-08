@@ -69,6 +69,7 @@ module.exports = function (eleventyConfig) {
   playgroundExample(eleventyConfig);
   gbShortcodes(eleventyConfig);
   require('./eleventy-helpers/shortcodes/gb-shadcn.cjs')(eleventyConfig);
+  require('./eleventy-helpers/filters/gb-pager.cjs')(eleventyConfig);
   // /3.0/ site metadata: gbAll collection, gbhead shortcode.
   gbSite(eleventyConfig);
 
