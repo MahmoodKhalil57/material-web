@@ -80,9 +80,13 @@ await cp(args.src, OUT, {recursive: true});
 // --- 2. labs/gb as static modules -------------------------------------------------
 
 log('bundling labs/gb into lib/');
-const sources = (await walk(join(ROOT, 'labs', 'gb'))).filter(
-  (f) => f.endsWith('.js') && !/(_test|\.stories|[\\/]demo[\\/]|[\\/]skill[\\/])/.test(f) && !f.includes('node_modules'),
-);
+const sources = [
+  ...(await walk(join(ROOT, 'labs', 'gb'))).filter(
+    (f) => f.endsWith('.js') && !/(_test|\.stories|[\\/]demo[\\/]|[\\/]skill[\\/])/.test(f) && !f.includes('node_modules'),
+  ),
+  // The ARIA elements the pages use beside labs/gb (md-aria-tabpanel).
+  ...(await walk(join(ROOT, 'labs', 'aria'))).filter((f) => /[\\/]md-aria-[a-z0-9-]+\.js$/.test(f) && !f.includes('_test')),
+];
 const cssAsStylesheet = {
   name: 'css-modules-as-stylesheets',
   setup(build) {

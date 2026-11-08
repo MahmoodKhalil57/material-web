@@ -622,3 +622,53 @@ md-gb-time-picker:not(:defined)[mode='input'][density='-3']:not([modal]) {
 .gb-content figure :not(:defined) {
   visibility: hidden;
 }
+
+/* Skeleton loaders (M3 motion, transition patterns: "Skeleton loaders"):
+   while a preview's components are still loading (an element in it isn't
+   defined, or its demo frame hasn't reported its content, gb.ts), its
+   reserved space shows a subtle pulse that moves from the top left to the
+   bottom right; once they're ready the skeleton fades out and the content
+   shows in place. Nothing moves: the space was kept from the first paint. */
+@keyframes gb-skeleton-pulse {
+  from {
+    background-position: 100% 100%;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+.gb-demo-preview,
+.gb-content figure.gb-demo-figure {
+  position: relative;
+}
+.gb-demo-preview::after,
+.gb-content figure.gb-demo-figure::after,
+.gb-card-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: var(--md-sys-color-surface-container);
+  background-image: linear-gradient(
+    135deg,
+    transparent 40%,
+    hsl(from var(--md-sys-color-on-surface) h s l / 6%) 50%,
+    transparent 60%
+  );
+  background-size: 300% 300%;
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short3, 150ms) linear;
+}
+:is(.gb-demo-preview, .gb-content figure.gb-demo-figure, .gb-card-stage):is(
+    :has(:not(:defined)),
+    :has(> .gb-demo-frame:not([data-ready]))
+  )::after {
+  opacity: 1;
+  animation: gb-skeleton-pulse 1.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.gb-demo-preview, .gb-content figure.gb-demo-figure, .gb-card-stage)::after {
+    animation: none !important;
+  }
+}

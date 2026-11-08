@@ -475,9 +475,17 @@ if (frames.length) {
     if (e.data?.type === 'gb-demo-height') {
       const min = Number(frame.dataset['min']) || 0;
       frame.style.blockSize = Math.max(min, e.data.height) + 'px';
+      // Its content has rendered: the skeleton fades out (gb.css).
+      frame.dataset['ready'] = '';
     }
   });
-  for (const frame of frames) frame.addEventListener('load', () => send(frame));
+  for (const frame of frames) {
+    frame.addEventListener('load', () => {
+      send(frame);
+      // A frame that never reports its height still stops loading.
+      setTimeout(() => (frame.dataset['ready'] = ''), 1000);
+    });
+  }
   const broadcast = () => frames.forEach(send);
   new MutationObserver(broadcast).observe(document.head, {
     childList: true,

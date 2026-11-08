@@ -67,13 +67,15 @@ function loadTagModules() {
       if (!existsSync(dir)) return;
       for (const entry of readdirSync(dir, {withFileTypes: true})) {
         if (entry.isDirectory()) scan(join(dir, entry.name), `${base}/${entry.name}`);
-        else if (/^md-gb-[a-z0-9-]+\.js$/.test(entry.name)) {
+        else if (/^md-(gb|aria)-[a-z0-9-]+\.js$/.test(entry.name)) {
           tagModules.set(entry.name.slice(0, -3), `${base}/${entry.name}`);
         }
       }
     };
     scan(join(ROOT, 'labs', 'gb', 'components'), 'labs/gb/components');
     scan(join(ROOT, 'labs', 'gb', 'styles'), 'labs/gb/styles');
+    // The ARIA elements the gb ones pair with (md-aria-tabpanel for tabs).
+    scan(join(ROOT, 'labs', 'aria'), 'labs/aria');
   }
   return tagModules;
 }
@@ -267,7 +269,7 @@ const FRAME_BOOT = `(() => {
  */
 function frameDoc({id, html, css, js, lib}) {
   const modules = loadTagModules();
-  const tags = new Set(html.match(/(?<=<)md-gb-[a-z0-9-]+/g) ?? []);
+  const tags = new Set(html.match(/(?<=<)md-(?:gb|aria)-[a-z0-9-]+/g) ?? []);
   const imports = lib
     ? [...tags]
         .map((t) => modules.get(t))

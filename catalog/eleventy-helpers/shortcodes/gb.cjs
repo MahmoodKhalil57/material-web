@@ -166,7 +166,7 @@ ${html}
     const lib = process.env.MWC_GB_LIB;
     if (!lib) return '';
     const modules = loadTagModules();
-    const tags = new Set(String(html).match(/(?<=<)md-gb-[a-z0-9-]+/g) ?? []);
+    const tags = new Set(String(html).match(/(?<=<)md-(?:gb|aria)-[a-z0-9-]+/g) ?? []);
     const paths = [...tags].map((t) => modules.get(t)).filter(Boolean);
     if (!paths.length) return '';
     return (
