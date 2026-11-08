@@ -378,7 +378,9 @@ md-gb-nav-drawer-item[data-group] {
   position: relative;
   min-inline-size: 0;
   min-block-size: 0;
-  margin: 0 var(--md-sys-space-150) var(--md-sys-space-150) 0;
+  /* Set off from the rail by the gap it keeps from the window's edge and the
+     outline; the pages pane, when it's a column, sets it off instead. */
+  margin: 0 var(--md-sys-space-150) var(--md-sys-space-150);
   border-radius: var(--md-sys-shape-corner-xl);
   background: var(--md-sys-color-surface);
   overflow-y: auto;
@@ -386,6 +388,11 @@ md-gb-nav-drawer-item[data-group] {
   scroll-padding-block-start: var(--md-sys-space-200);
   /* The top previous / next links measure from the panel (100cqi). */
   container-type: inline-size;
+}
+@media (min-width: 840px) {
+  :root:not([data-pane='closed']) .gb-content-pane {
+    margin-inline-start: 0;
+  }
 }
 .gb-main {
   padding-block-end: var(--md-sys-space-800);
