@@ -198,41 +198,15 @@
           <md-gb-icon-button slot="trailing" tooltip data-tool="download" aria-label="Download and copy">
             <md-gb-icon>download</md-gb-icon>
           </md-gb-icon-button>
-          <md-gb-icon-button slot="trailing" id="gb-more" tooltip popovertarget="gb-more-menu" aria-label="More">
-            <md-gb-icon>more_vert</md-gb-icon>
-          </md-gb-icon-button>
-          <md-gb-icon-button slot="overflow" id="gb-overflow" tooltip popovertarget="gb-more-menu" aria-label="More">
+          {#- Shown by the app bar only when actions don't fit (medium
+              windows: Download). -#}
+          <md-gb-icon-button slot="overflow" id="gb-overflow" tooltip popovertarget="gb-overflow-menu" aria-label="More actions">
             <md-gb-icon>more_vert</md-gb-icon>
           </md-gb-icon-button>
         </md-gb-app-bar>
         {#- The menu is a popover (top layer); it stays in the banner landmark.
-            Hidden actions are added above the version (src/gb/shell.ts). -#}
-        <md-gb-menu id="gb-more-menu" aria-label="More">
-          <md-gb-menu-item data-version="3.0">
-            <md-gb-icon slot="leading">check</md-gb-icon>
-            v3.0-Alpha
-          </md-gb-menu-item>
-          <md-gb-menu-item data-version="2.5">
-            <md-gb-icon slot="leading"></md-gb-icon>
-            v2.5.0 Current - Latest
-          </md-gb-menu-item>
-          <md-gb-divider></md-gb-divider>
-          <md-gb-menu-item data-open="https://github.com/material-components/material-web">
-            <md-gb-icon slot="leading">code</md-gb-icon>
-            GitHub
-            <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
-          </md-gb-menu-item>
-          <md-gb-menu-item data-open="https://www.npmjs.com/package/@material/web">
-            <md-gb-icon slot="leading">deployed_code</md-gb-icon>
-            npm
-            <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
-          </md-gb-menu-item>
-          <md-gb-divider></md-gb-divider>
-          <md-gb-menu-item data-tool="feedback">
-            <md-gb-icon slot="leading">feedback</md-gb-icon>
-            Send feedback
-          </md-gb-menu-item>
-        </md-gb-menu>
+            It holds the actions the app bar hides (src/gb/shell.ts). -#}
+        <md-gb-menu id="gb-overflow-menu" aria-label="More actions"></md-gb-menu>
       </header>
 
       {#- The navigation rail (600px and up; navigation-rail.md, M3
@@ -303,6 +277,27 @@
             }
           })();
         </script>
+        {#- Always visible at the bottom of the rail, below its scrolling
+            destinations: the links, Send feedback, and the version (3.0 or
+            the v2.5.0 site at the root). Stacked in the collapsed rail, in a
+            row in the expanded one (shell.css). -#}
+        <div class="gb-rail-foot">
+          <div class="gb-rail-links" role="group" aria-label="Project">
+            <md-gb-icon-button tooltip href="https://github.com/material-components/material-web" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)">
+              <md-gb-icon>code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener" aria-label="npm (opens in a new tab)">
+              <md-gb-icon>deployed_code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip data-tool="feedback" aria-label="Send feedback">
+              <md-gb-icon>feedback</md-gb-icon>
+            </md-gb-icon-button>
+          </div>
+          <md-gb-segmented-button-set class="gb-version" id="gb-version" required aria-label="Version">
+            <md-gb-segmented-button value="3.0" selected no-checkmark>3.0</md-gb-segmented-button>
+            <md-gb-segmented-button value="2.5" no-checkmark>2.5</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </div>
       </nav>
 
       <div class="gb-content-pane" id="gb-content-pane">
@@ -356,12 +351,13 @@
         </md-gb-icon-button>
       </aside>
 
-      {#- Below 600px: the sections as a navigation bar. Selecting the current
-          one opens its pages in a bottom sheet. -#}
+      {#- Below 600px: the sections as a navigation bar. A section opens its
+          pages (its overview first) in a bottom sheet (src/gb/shell.ts); the
+          links still lead to the overviews without the script. -#}
       <nav class="gb-bar-area" aria-label="Sections">
         <md-gb-nav-bar class="gb-bar" id="gb-bar" role="none">
           {%- for sec in gbSections %}
-          <md-gb-nav-bar-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} active{% endif %}>
+          <md-gb-nav-bar-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}" aria-haspopup="dialog"{% if sec.id == gbCurrent %} active{% endif %}>
             <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
           </md-gb-nav-bar-item>
           {%- endfor %}
@@ -370,11 +366,12 @@
 
     </div>
 
-    {#- The current section's pages for the pages sheet of compact windows,
-        opened from the navigation bar (src/gb/shell.ts). -#}
-    {%- for sec in gbSections %}{% if sec.id == gbCurrent %}
-    <template data-pages="{{ sec.id }}" data-label="{{ sec.label }}">{{ pageItems(sec, gbGroups, gbPages, page.url, category if section == 'components' else '') | safe }}</template>
-    {%- endif %}{% endfor %}
+    {#- Each section's pages (its overview first) for the pages sheet of
+        compact windows: a navigation bar destination opens its section's
+        (src/gb/shell.ts). -#}
+    {%- for sec in gbSections %}
+    <template data-pages="{{ sec.id }}" data-label="{{ sec.label }}">{{ pageItems(sec, gbGroups, gbPages, page.url, category if (section == 'components' and sec.id == gbCurrent) else '') | safe }}</template>
+    {%- endfor %}
 
     {#- The sheets. One side sheet (600px and up) and one bottom sheet (below
         600px) show the tool bodies below, which move into whichever opens. -#}

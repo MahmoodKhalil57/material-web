@@ -127,8 +127,7 @@ body:has(.gb-shell) {
    from expanded) and shows its overflow button. The same here from the first
    frame, so the header doesn't change once the script has run. */
 @media (max-width: 839px) {
-  .gb-appbar > [data-tool='download'],
-  .gb-appbar > #gb-more {
+  .gb-appbar > [data-tool='download'] {
     display: none;
   }
 }
@@ -301,6 +300,40 @@ body:has(.gb-shell) {
 .gb-rail > md-gb-nav-rail-item[secondary]::part(nav-rail-item) {
   --item-icon-size: 0px;
   --item-horizontal-icon-label-space: 0px;
+}
+
+/* The rail's footer, always visible below its scrolling destinations: the
+   links and Send feedback (icon buttons), and the version (a segmented
+   button). Stacked and centered in the collapsed rail; in the expanded
+   (standard) rail, the links in a row at the destinations' inset with the
+   version at its end. It takes the rail's width at once, like the rail, and
+   the column reveals or clips it. */
+.gb-rail-foot {
+  flex: none;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--md-sys-space-100);
+  inline-size: var(--gb-rail-w);
+  padding-block: var(--md-sys-space-100) var(--md-sys-space-200);
+}
+.gb-rail-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--md-sys-space-50);
+}
+.gb-rail-area:has(> .gb-rail[expanded]:not([modal])) .gb-rail-foot {
+  flex-direction: row;
+  justify-content: space-between;
+  padding-inline: var(--md-sys-space-250, 20px);
+}
+.gb-rail-area:has(> .gb-rail[expanded]:not([modal])) .gb-rail-links {
+  flex-direction: row;
+}
+.gb-rail-foot :not(:defined) {
+  visibility: hidden;
 }
 
 /* The logo at the start of the header, linking to the docs home. The rail's

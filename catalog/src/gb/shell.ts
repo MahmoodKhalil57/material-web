@@ -16,7 +16,7 @@
  *   rail is beside the content, expanded unless the reader collapsed it
  *   (remembered); below, it expands modal over the content.
  * - Compact windows (below 600px): a navigation bar with the sections.
- *   Selecting the current one again opens its pages in a bottom sheet.
+ *   A section opens its pages (its overview first) in a bottom sheet.
  * - All sizes: the header's actions, Download & copy (download.ts) and
  *   Customize theme in a side sheet (a bottom sheet when compact), and Send
  *   feedback in a dialog that opens a prefilled GitHub issue.
@@ -475,9 +475,10 @@ const pagesFoot = $('gb-pages-foot');
 pagesSheet?.addEventListener('click', handleGroupToggle);
 rail?.addEventListener('click', handleGroupToggle);
 
-function openPagesSheet(trigger: HTMLElement) {
+/** Opens a section's pages (its overview first) in the pages sheet. */
+function openPagesSheet(trigger: HTMLElement, section = currentSection) {
   if (!pagesSheet) return;
-  const pages = pagesOf(currentSection);
+  const pages = pagesOf(section);
   if (!pages) return;
   const list = document.createElement('md-gb-nav-drawer') as DrawerElement;
   list.className = 'gb-sheet-drawer';
@@ -499,42 +500,36 @@ pagesSheet?.addEventListener('closed', () => {
   returnFocus.get(pagesSheet)?.focus();
 });
 
+// Compact windows: a navigation bar destination opens its section's pages
+// in the sheet (the section's overview is the first of them); the page is
+// chosen there.
 addEventListener(
   'click',
   (e) => {
     const item = (e.target as Element | null)?.closest<HTMLElement>('md-gb-nav-bar-item');
     if (!item || !compact.matches || e.defaultPrevented) return;
-    if (sectionOf(item) !== currentSection) return;
     e.preventDefault();
-    openPagesSheet(item);
+    openPagesSheet(item, sectionOf(item));
   },
   true,
 );
 
-// --- Header: the more menu, and the actions that don't fit ---------------------------
+// --- Header: the actions that don't fit -----------------------------------------------
 
 const appBar = $('gb-appbar');
-const moreMenu = $('gb-more-menu');
-const moreButton = $('gb-more');
+const overflowMenu = $('gb-overflow-menu');
 const overflowButton = $('gb-overflow');
-
-/** The visible button that opened the more menu (focus returns there). */
-const moreInvoker = () =>
-  moreButton && !moreButton.hidden ? moreButton : overflowButton;
 
 /**
  * The trailing actions the app bar hides at the current window size class
- * (2 up to medium, 4 from expanded) appear at the top of the more menu.
+ * (2 up to medium, 4 from expanded) are the overflow menu's items; the app
+ * bar shows its overflow button only then.
  */
 function mirrorOverflow(actions: Element[]) {
-  if (!moreMenu) return;
-  for (const old of moreMenu.querySelectorAll('[data-mirror]')) old.remove();
-  const mirrored = actions.filter((a) => a !== moreButton) as HTMLElement[];
-  if (!mirrored.length) return;
-  const first = moreMenu.firstElementChild;
-  for (const action of mirrored) {
+  if (!overflowMenu) return;
+  overflowMenu.replaceChildren();
+  for (const action of actions as HTMLElement[]) {
     const item = document.createElement('md-gb-menu-item');
-    item.dataset['mirror'] = '';
     const icon = document.createElement('md-gb-icon');
     icon.slot = 'leading';
     icon.textContent = action.querySelector('md-gb-icon')?.textContent ?? '';
@@ -543,29 +538,28 @@ function mirrorOverflow(actions: Element[]) {
       // The menu closes first, then the hidden action runs as if pressed.
       setTimeout(() => action.click(), 0);
     });
-    moreMenu.insertBefore(item, first);
+    overflowMenu.append(item);
   }
-  const divider = document.createElement('md-gb-divider');
-  divider.dataset['mirror'] = '';
-  moreMenu.insertBefore(divider, first);
 }
 
 appBar?.addEventListener('overflowchange', (e) => {
   mirrorOverflow((e as CustomEvent<{overflowed: Element[]}>).detail.overflowed);
 });
 
-moreMenu?.addEventListener('click', (e) => {
-  const item = (e.target as Element).closest<HTMLElement>('md-gb-menu-item');
-  if (!item) return;
-  if (item.dataset['version'] === '2.5') {
-    // v2.5.0 is the site root; 3.0 stays under /3.0/.
-    location.assign('/');
-  } else if (item.dataset['open']) {
-    window.open(item.dataset['open'], '_blank', 'noopener');
-  } else if (item.dataset['tool'] === 'feedback') {
-    // The menu is closing and returns focus to its button.
-    setTimeout(() => openFeedback(moreInvoker()), 0);
-  }
+// --- Rail footer: links, Send feedback, version ------------------------------------
+
+const railFoot = document.querySelector<HTMLElement>('.gb-rail-foot');
+railFoot?.addEventListener('click', (e) => {
+  const button = (e.target as Element).closest<HTMLElement>('[data-tool="feedback"]');
+  if (button) openFeedback(button);
+});
+// 2.5 is the v2.5.0 site at the root; 3.0 stays under /3.0/.
+$('gb-version')?.addEventListener('change', (e) => {
+  const set = e.currentTarget as HTMLElement & {value?: string};
+  const picked = set.querySelector<HTMLElement & {selected: boolean; value: string}>(
+    'md-gb-segmented-button[selected]',
+  );
+  if ((picked?.value ?? set.value) === '2.5') location.assign('/');
 });
 
 // --- Sheets: download & copy and customize theme ---------------------------------------
@@ -612,14 +606,13 @@ addEventListener('gb-tools-close', () => {
   void toolsSheet?.close();
 });
 
-// The header's tool buttons (and their copies in the more menu).
+// The header's tool buttons (and their copies in the overflow menu).
 appBar?.addEventListener('click', (e) => {
   const button = (e.target as Element).closest<HTMLElement>('[data-tool]');
   const tool = button?.dataset['tool'];
   if (!button || !tool || button.closest('md-gb-menu')) return;
-  if (tool === 'feedback') openFeedback(button);
-  // A hidden button (moved to the more menu) returns focus to that menu's button.
-  else openToolSheet(tool, button.hidden ? moreInvoker() : button);
+  // A hidden button (in the overflow menu) returns focus to that menu's button.
+  openToolSheet(tool, button.hidden ? overflowButton : button);
 });
 
 // Send feedback from the pages sheet footer.
