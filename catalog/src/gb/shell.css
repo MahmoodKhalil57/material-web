@@ -33,8 +33,12 @@
   /* Wide enough for most headings, which wrap beyond it. */
   --gb-outline-open-w: clamp(12.5rem, 18vw, 15rem);
   --gb-bar-h: 80px;
-  --gb-rail-motion: var(--md-sys-motion-spring-default-spatial-duration, 420ms)
-    var(--md-sys-motion-spring-default-spatial, ease);
+  /* The rail and the outline change size by 160-200px and carry the
+     content pane along: large elements, the slow spatial spring (motion
+     overview.md: "larger elements may use slow"). Their contents fade
+     (shell.ts swapWithFade). */
+  --gb-rail-motion: var(--md-sys-motion-spring-slow-spatial-duration, 570ms)
+    var(--md-sys-motion-spring-slow-spatial, ease);
 }
 @media (min-width: 600px) {
   :root {
@@ -193,7 +197,8 @@ body:has(.gb-shell) {
   z-index: 20;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* At the start edge, so the rail doesn't slide while the column resizes. */
+  align-items: flex-start;
   block-size: calc(100dvh - var(--gb-top-h));
   min-inline-size: 0;
   color: var(--md-sys-color-on-surface);
@@ -203,6 +208,16 @@ body:has(.gb-shell) {
   .gb-rail-area {
     display: none;
   }
+}
+/* A stable layout while the column resizes (motion transitions.md,
+   Applying transitions): the standard rail takes its new width at once and
+   the column reveals or clips it, so its labels don't reflow frame by
+   frame. The modal rail opens over the content, unclipped. */
+.gb-rail-area:not(:has(> .gb-rail[modal])) {
+  overflow: clip;
+}
+.gb-rail:not([modal])::part(nav-rail) {
+  transition: none;
 }
 .gb-rail {
   flex: 1 1 auto;
@@ -410,6 +425,11 @@ md-gb-nav-drawer-item[data-group] {
   :root[data-outline='closed'] .gb-outline {
     display: none;
   }
+}
+/* The outline keeps its open width while the column resizes, clipped (no
+   reflow), like the rail. */
+.gb-outline > * {
+  min-inline-size: calc(var(--gb-outline-open-w) - var(--md-sys-space-150));
 }
 .gb-outline-head {
   display: flex;

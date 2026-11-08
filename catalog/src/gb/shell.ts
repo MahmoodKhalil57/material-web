@@ -71,11 +71,58 @@ function sectionOf(el: Element): string {
   return (el as HTMLElement).dataset['section'] ?? '';
 }
 
+// --- Transitions -------------------------------------------------------------------
+
+/** A motion token's value: a duration in ms, or an easing. */
+function token(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+let swapping = false;
+
+/**
+ * Changes a panel between two states with a clean fade (motion
+ * transitions.md, Applying transitions: "Fully fade out content before
+ * fading new content in"): `targets` fade out (fast effects), `change` runs
+ * (the panel's size then moves on its spatial spring, in CSS), and the new
+ * `targets` fade in (default effects) while it settles. Under reduced motion
+ * the fades stay ("subtle fades instead of ... sliding"); CSS drops the size
+ * change's motion.
+ */
+async function swapWithFade(targets: () => Element[], change: () => void) {
+  if (swapping) return;
+  swapping = true;
+  try {
+    const out = targets().map((el) =>
+      el.animate(
+        {opacity: [1, 0]},
+        {
+          duration: parseFloat(token('--md-sys-motion-spring-fast-effects-duration')) || 140,
+          easing: token('--md-sys-motion-spring-fast-effects') || 'ease',
+          fill: 'forwards',
+        },
+      ),
+    );
+    await Promise.all(out.map((a) => a.finished.catch(() => {})));
+    change();
+    const fadeIn = {
+      duration: parseFloat(token('--md-sys-motion-spring-default-effects-duration')) || 220,
+      easing: token('--md-sys-motion-spring-default-effects') || 'ease',
+      fill: 'backwards' as FillMode,
+    };
+    for (const el of targets()) el.animate({opacity: [0, 1]}, fadeIn);
+    for (const a of out) a.cancel();
+  } finally {
+    swapping = false;
+  }
+}
+
 // --- Navigation rail: collapsed and expanded -----------------------------------------
 
 interface RailElement extends HTMLElement {
   expanded: boolean;
   modal: boolean;
+  toggle(): boolean;
 }
 
 interface DrawerElement extends HTMLElement {
@@ -113,6 +160,24 @@ if (rail) {
   };
   place();
   expanded.addEventListener('change', place);
+  // The menu button: the rail's contents swap with a clean fade while it
+  // resizes (the button itself stays). Caught on the way down, before the
+  // button toggles the rail at once.
+  rail.addEventListener(
+    'click',
+    (e) => {
+      const onButton = e
+        .composedPath()
+        .some((node) => node instanceof Element && node.part?.contains('menu-button'));
+      if (!onButton) return;
+      e.stopPropagation();
+      void swapWithFade(
+        () => [...rail.children].filter((el) => !(el as HTMLElement).hidden && el.localName !== 'script'),
+        () => rail.toggle(),
+      );
+    },
+    {capture: true},
+  );
   rail.addEventListener('toggle', () => {
     if (expanded.matches) {
       if (rail.expanded) delete root.dataset['rail'];
@@ -156,13 +221,15 @@ function setOutline(open: boolean) {
 
 if (outline) {
   outlineOpenButton?.setAttribute('aria-expanded', String(outlineOpen()));
+  // The outline and the strip swap with a clean fade while the column
+  // resizes.
+  const strip = outlineOpenButton?.closest('.gb-outline-strip');
+  const showing = () => [outlineOpen() ? outline : strip].filter((el): el is Element => !!el);
   outlineClose?.addEventListener('click', () => {
-    setOutline(false);
-    outlineOpenButton?.focus();
+    void swapWithFade(showing, () => setOutline(false)).then(() => outlineOpenButton?.focus());
   });
   outlineOpenButton?.addEventListener('click', () => {
-    setOutline(true);
-    outlineClose?.focus();
+    void swapWithFade(showing, () => setOutline(true)).then(() => outlineClose?.focus());
   });
 }
 
