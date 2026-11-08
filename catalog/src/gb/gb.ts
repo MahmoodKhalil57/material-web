@@ -13,6 +13,11 @@
  * of demo cards. The layout (rail, pages pane, sheets, FAB menu) is shell.ts.
  */
 
+// First: the shell's components are rendered at build time (ssr/ssr-gb.ts),
+// and hydrate the shadow roots they arrive with instead of rendering again.
+// Lit only picks this up if it's loaded before any LitElement.
+import '@lit-labs/ssr-client/lit-element-hydrate-support.js';
+
 import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/divider/md-gb-divider.js';
 import '@material/web/labs/gb/components/iconbutton/md-gb-icon-button.js';
@@ -32,6 +37,20 @@ import {
   themeToCss,
   type SchemeVariant,
 } from '@material/web/labs/gb/styles/color/dynamic-color.js';
+
+// Components rendered at build time arrive with their children already
+// assigned to their slots, so `slotchange` never fires for them, and the
+// components that lay out their children from it (the rail its items' layout)
+// would keep the build-time state. Once each has hydrated, its slots report
+// a change, as they would have on a first render in the browser.
+for (const el of document.querySelectorAll<HTMLElement & {updateComplete?: Promise<unknown>}>('*')) {
+  if (!el.localName.startsWith('md-gb-') || !el.shadowRoot || !el.updateComplete) continue;
+  void el.updateComplete.then(() => {
+    for (const slot of el.shadowRoot!.querySelectorAll('slot')) {
+      slot.dispatchEvent(new Event('slotchange', {bubbles: true}));
+    }
+  });
+}
 
 const DEFAULT_SEED = '#6750a4';
 const DEFAULT_VARIANT: SchemeVariant = 'tonal-spot';

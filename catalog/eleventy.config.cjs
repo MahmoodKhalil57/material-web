@@ -57,7 +57,8 @@ module.exports = function (eleventyConfig) {
   // add the lit-ssr plugin
   eleventyConfig.addPlugin(litPlugin, {
     mode: 'worker',
-    componentModules: [`./${jsDir}/ssr.js`],
+    // ssr.js: the v2.5 components; gb/ssr/ssr-gb.js: the 3.0 shell's.
+    componentModules: [`./${jsDir}/ssr.js`, `./${jsDir}/gb/ssr/ssr-gb.js`],
   });
 
   // Add this for 11ty's --watch flag

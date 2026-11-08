@@ -169,7 +169,48 @@ const gbBuild = esbuild
                     })
                     .catch(() => process.exit(1));
 
-await Promise.all([componentsBuild, ssrBuild, inlineBuild, gbBuild]);
+// The 3.0 shell's components for build-time rendering (src/gb/ssr/ssr-gb.ts,
+// loaded by the Lit eleventy plugin): Lit's server build, and the styles as
+// CSSResults, which the server renders into each shadow root (a constructed
+// stylesheet has no text there). The compiled `.cssresult.js` modules export
+// `styles.styleSheet`, a constructed stylesheet too: they export the result.
+const cssResultPlugin = {
+  name: 'css-modules-as-cssresults',
+  setup(build) {
+    build.onResolve({filter: /\.css$/}, (args) => {
+      if (args.with?.type !== 'css') return;
+      return {path: join(args.resolveDir, args.path), namespace: 'css-result'};
+    });
+    build.onLoad({filter: /.*/, namespace: 'css-result'}, async (args) => ({
+      contents:
+          `import {unsafeCSS} from 'lit';\n` +
+          `export default unsafeCSS(${JSON.stringify(await readFile(args.path, 'utf8'))});\n`,
+      loader: 'js',
+      resolveDir: process.cwd(),
+    }));
+    build.onLoad({filter: /\.cssresult\.js$/}, async (args) => ({
+      contents: (await readFile(args.path, 'utf8'))
+                    .replace('export default styles.styleSheet;', 'export default styles;'),
+      loader: 'js',
+    }));
+  },
+};
+const gbSsrBuild = esbuild
+                       .build({
+                         ...config,
+                         format: 'iife',
+                         splitting: false,
+                         sourcemap: false,
+                         // Lit's exports list the browser build first: the
+                         // node platform drops that condition.
+                         platform: 'node',
+                         plugins: [cssResultPlugin],
+                         entryPoints: ['src/gb/ssr/ssr-gb.ts'],
+                         outbase: 'src',
+                       })
+                       .catch(() => process.exit(1));
+
+await Promise.all([componentsBuild, ssrBuild, inlineBuild, gbBuild, gbSsrBuild]);
 
 // Copy the playground-elements worker to the build folder
 const require = createRequire(import.meta.url);
