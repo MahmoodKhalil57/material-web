@@ -257,18 +257,24 @@
       <div class="gb-content-pane" id="gb-content-pane">
         <div class="gb-body{% if gbIndex %} gb-layout-index{% endif %}">
           <main class="gb-main" id="main" tabindex="-1">
+            {%- if not gbIndex %}
+            {#- Opening the page outline: from 840px, a button at the top end of
+                the content while the outline panel is closed; below 840px, a
+                FAB that opens it in a bottom sheet (src/gb/shell.ts). -#}
+            <div class="gb-outline-open">
+              <md-gb-icon-button id="gb-outline-toggle" color="tonal" tooltip aria-label="Show page outline" aria-controls="gb-outline" aria-expanded="true">
+                <md-gb-icon>toc</md-gb-icon>
+              </md-gb-icon-button>
+            </div>
+            <md-gb-fab id="gb-outline-fab" class="gb-outline-fab" color="secondary-container" aria-label="Page outline" aria-haspopup="dialog">
+              <md-gb-icon>toc</md-gb-icon>
+            </md-gb-fab>
+            {%- endif %}
             {{ pager(gbNav, 'top') | safe }}
             {%- if not gbIndex %}
             <h1>{{ title }}</h1>
             {% if description %}<p class="gb-lede">{{ description }}</p>{% endif %}
             <p class="gb-md-link"><a href="{% if page.url == '/3.0/' %}/3.0/index.md{% else %}{{ page.url | replace(r/\/$/, '') }}.md{% endif %}" type="text/markdown">View as Markdown</a></p>
-            {#- Below 840px the outline is here, collapsed; from 840px it is
-                the panel on the right. -#}
-            <details class="gb-toc gb-toc-inline">
-              <summary>On this page</summary>
-              <a class="gb-toc-top" href="#main">(Top)</a>
-              {{ content | toc | filterToc | safe }}
-            </details>
             {%- endif %}
             <div class="gb-content">{{ content | safe }}</div>
             {{ pager(gbNav, 'end') | safe }}
@@ -276,10 +282,11 @@
         </div>
       </div>
 
-      {#- The page outline (840px and up): a panel on the right, like a side
-          panel in Gmail, closed with its close button and opened from the
-          strip beside it. A column from 1200px (remembered), over the content
-          below that. A section's index page has no outline. -#}
+      {#- The page outline (840px and up): a column on the right, open by
+          default. Its close button widens the content, and the choice is
+          remembered; the button at the top end of the content opens it
+          again. Below 840px its links open in a bottom sheet from the FAB.
+          A section's index page has no outline. -#}
       {%- if not gbIndex %}
       <aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
         <div class="gb-outline-head">
@@ -292,11 +299,6 @@
           <a class="gb-toc-top" href="#main">(Top)</a>
           {{ content | toc | filterToc | safe }}
         </div>
-      </aside>
-      <aside class="gb-strip" aria-label="Page panels">
-        <md-gb-icon-button id="gb-outline-toggle" tooltip aria-label="Page outline" aria-controls="gb-outline" aria-expanded="true">
-          <md-gb-icon>toc</md-gb-icon>
-        </md-gb-icon-button>
       </aside>
       {%- endif %}
 
@@ -325,6 +327,7 @@
     <md-gb-side-sheet id="gb-side-sheet" class="gb-side-sheet" modal></md-gb-side-sheet>
     <md-gb-bottom-sheet id="gb-tools-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page tools"></md-gb-bottom-sheet>
     <md-gb-bottom-sheet id="gb-pages-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Pages"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-outline-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page outline"></md-gb-bottom-sheet>
 
     <div class="gb-tools" id="gb-tools" hidden>
       {#- Download & copy (src/gb/download.ts). -#}

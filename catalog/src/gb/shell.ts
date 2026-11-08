@@ -32,6 +32,7 @@
 import '@material/web/labs/gb/components/appbar/md-gb-app-bar.js';
 import '@material/web/labs/gb/components/dialog/md-gb-dialog.js';
 import '@material/web/labs/gb/components/divider/md-gb-divider.js';
+import '@material/web/labs/gb/components/fab/md-gb-fab.js';
 // The menu first: items find it through a context, which only reaches those
 // upgraded after it is defined.
 import '@material/web/labs/gb/components/menu/md-gb-menu.js';
@@ -289,62 +290,68 @@ if (rail && drawer) {
 }
 
 
-// --- Page outline panel ---------------------------------------------------------------
+// --- Page outline ----------------------------------------------------------------------
 
 const OUTLINE_KEY = 'gb-outline';
-const large = matchMedia('(min-width: 1200px)');
 const outline = $('gb-outline');
-const outlineToggle = $('gb-outline-toggle');
+const outlineOpenButton = $('gb-outline-toggle');
 const outlineClose = $('gb-outline-close');
+const outlineFab = $('gb-outline-fab');
+const outlineSheet = $<SheetElement>('gb-outline-sheet');
 
-/** A remembered column from 1200px; a panel over the content below that. */
-const outlineOpen = () =>
-  large.matches
-    ? root.dataset['outline'] !== 'closed'
-    : root.hasAttribute('data-outline-over');
-
-function syncOutline() {
-  outlineToggle?.setAttribute('aria-expanded', String(outlineOpen()));
-}
+/** From 840px: a column, open unless the reader closed it (remembered). */
+const outlineOpen = () => root.dataset['outline'] !== 'closed';
 
 function setOutline(open: boolean) {
-  if (large.matches) {
-    if (open) delete root.dataset['outline'];
-    else root.dataset['outline'] = 'closed';
-    store(OUTLINE_KEY, open ? null : 'closed');
-  } else {
-    root.toggleAttribute('data-outline-over', open);
-  }
-  syncOutline();
+  if (open) delete root.dataset['outline'];
+  else root.dataset['outline'] = 'closed';
+  store(OUTLINE_KEY, open ? null : 'closed');
+  outlineOpenButton?.setAttribute('aria-expanded', String(open));
 }
 
-if (outline && outlineToggle) {
-  outlineToggle.addEventListener('click', () => setOutline(!outlineOpen()));
+if (outline) {
+  outlineOpenButton?.setAttribute('aria-expanded', String(outlineOpen()));
   outlineClose?.addEventListener('click', () => {
     setOutline(false);
-    outlineToggle.focus();
+    outlineOpenButton?.focus();
   });
-  // Over the content: Escape, a click outside or choosing a heading closes it.
-  outline.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape' || large.matches || !outlineOpen()) return;
-    e.stopPropagation();
-    setOutline(false);
-    outlineToggle.focus();
+  outlineOpenButton?.addEventListener('click', () => {
+    setOutline(true);
+    outlineClose?.focus();
   });
-  outline.addEventListener('click', (e) => {
-    if (!large.matches && (e.target as Element).closest('a')) setOutline(false);
-  });
-  document.addEventListener('pointerdown', (e) => {
-    if (large.matches || !outlineOpen()) return;
-    const target = e.target as Node;
-    if (!outline.contains(target) && !outlineToggle.contains(target)) setOutline(false);
-  });
-  large.addEventListener('change', () => {
-    root.removeAttribute('data-outline-over');
-    syncOutline();
-  });
-  syncOutline();
 }
+
+// Below 840px: the FAB opens the outline in a bottom sheet; a heading closes
+// it and scrolls there.
+outlineFab?.addEventListener('click', () => {
+  const body = outline?.querySelector('.gb-outline-body');
+  if (!outlineSheet || !body) return;
+  const list = body.cloneNode(true) as HTMLElement;
+  list.classList.add('gb-sheet-outline');
+  const title = document.createElement('h2');
+  title.className = 'gb-sheet-title';
+  title.textContent = 'On this page';
+  list.prepend(title);
+  outlineSheet.replaceChildren(list);
+  returnFocus.set(outlineSheet, outlineFab);
+  void outlineSheet.show();
+});
+outlineSheet?.addEventListener('click', (e) => {
+  const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+  if (!link) return;
+  e.preventDefault();
+  const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+  // The FAB keeps focus after the sheet; the heading is where to read next.
+  returnFocus.set(outlineSheet, null);
+  void outlineSheet.close().then(() => {
+    target?.scrollIntoView({block: 'start'});
+    history.replaceState(null, '', link.hash);
+  });
+});
+outlineSheet?.addEventListener('closed', () => {
+  returnFocus.get(outlineSheet)?.focus();
+  outlineSheet.replaceChildren();
+});
 
 // --- Keyboard scrolling --------------------------------------------------------------
 

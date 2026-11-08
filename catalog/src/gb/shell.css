@@ -23,8 +23,8 @@
   --gb-pane-w: 0px;
   --gb-pane-open-w: 280px;
   --gb-outline-w: 0px;
-  --gb-outline-open-w: 280px;
-  --gb-strip-w: 0px;
+  /* Wide enough for most headings, which wrap beyond it. */
+  --gb-outline-open-w: clamp(12.5rem, 18vw, 15rem);
   --gb-bar-h: 80px;
   --gb-pane-motion: var(--md-sys-motion-spring-default-spatial-duration, 420ms)
     var(--md-sys-motion-spring-default-spatial, ease);
@@ -41,14 +41,7 @@
   :root[data-pane='closed'] {
     --gb-pane-w: 0px;
   }
-  /* The strip that opens the page outline. */
-  :root {
-    --gb-strip-w: 56px;
-  }
-}
-/* The page outline is a column from 1200px (it floats over the content below
-   that), unless closed. */
-@media (min-width: 1200px) {
+  /* The page outline is a column, open unless the reader closed it. */
   :root {
     --gb-outline-w: var(--gb-outline-open-w);
   }
@@ -75,8 +68,7 @@ body:has(.gb-shell) {
 .gb-shell {
   display: grid;
   grid-template-columns:
-    var(--gb-rail-w) var(--gb-pane-w) minmax(0, 1fr)
-    var(--gb-outline-w) var(--gb-strip-w);
+    var(--gb-rail-w) var(--gb-pane-w) minmax(0, 1fr) var(--gb-outline-w);
   grid-template-rows: var(--gb-top-h) minmax(0, 1fr);
   block-size: 100dvh;
   transition: grid-template-columns var(--gb-pane-motion);
@@ -84,7 +76,6 @@ body:has(.gb-shell) {
 /* A section's index page has no outline. */
 .gb-shell-index {
   --gb-outline-w: 0px;
-  --gb-strip-w: 0px;
 }
 
 /* --- Header: the search app bar ------------------------------------------------- */
@@ -378,21 +369,10 @@ md-gb-nav-drawer-item[data-group] {
     padding-inline: var(--md-sys-space-400);
   }
 }
-/* Below 840px the outline is inline, collapsed, under the description. */
-.gb-toc-inline {
-  margin-block: var(--md-sys-space-100) var(--md-sys-space-200);
-  padding: 0;
-}
-@media (min-width: 840px) {
-  .gb-toc-inline {
-    display: none;
-  }
-}
 
-/* --- Page outline panel and its strip ----------------------------------------------- */
+/* --- Page outline ---------------------------------------------------------------------- */
 
-.gb-outline,
-.gb-strip {
+.gb-outline {
   display: none;
 }
 @media (min-width: 840px) {
@@ -403,79 +383,111 @@ md-gb-nav-drawer-item[data-group] {
     flex-direction: column;
     min-inline-size: 0;
     min-block-size: 0;
-    margin: 0 0 var(--md-sys-space-150);
+    margin: 0 var(--md-sys-space-150) var(--md-sys-space-150) 0;
     border-radius: var(--md-sys-shape-corner-xl);
     background: var(--md-sys-color-surface);
     overflow: hidden;
   }
-  .gb-strip {
-    grid-column: 5;
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-block-start: var(--md-sys-space-50);
-  }
-  .gb-strip > :not(:defined) {
-    visibility: hidden;
-  }
-}
-/* From 1200px: a column; closed, the column has no width. */
-@media (min-width: 1200px) {
+  /* Closed, the column has no width (and its content is out of reach). */
   :root[data-outline='closed'] .gb-outline {
     visibility: hidden;
     transition: visibility 0s var(--md-sys-motion-spring-default-spatial-duration, 420ms);
-  }
-}
-/* 840 to 1199px: over the content at the end edge, when opened. */
-@media (min-width: 840px) and (max-width: 1199px) {
-  .gb-outline {
-    position: fixed;
-    z-index: 25;
-    inset-block: var(--gb-top-h) var(--md-sys-space-150);
-    inset-inline-end: var(--gb-strip-w);
-    inline-size: var(--gb-outline-open-w);
-    box-shadow: var(--md-sys-elevation-shadow-3);
-    visibility: hidden;
-    opacity: 0;
-    translate: var(--md-sys-space-200) 0;
-  }
-  :root[data-outline-over] .gb-outline {
-    visibility: visible;
-    opacity: 1;
-    translate: 0 0;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .gb-outline {
-      transition:
-        opacity var(--md-sys-motion-spring-fast-effects-duration, 150ms) var(--md-sys-motion-spring-fast-effects, ease),
-        translate var(--md-sys-motion-spring-default-spatial-duration, 420ms) var(--md-sys-motion-spring-default-spatial, ease),
-        visibility 0s var(--md-sys-motion-spring-default-spatial-duration, 420ms);
-    }
-    :root[data-outline-over] .gb-outline {
-      transition-delay: 0s;
-    }
   }
 }
 .gb-outline-head {
   display: flex;
   align-items: center;
   gap: var(--md-sys-space-100);
-  padding: var(--md-sys-space-150) var(--md-sys-space-100) var(--md-sys-space-100) var(--md-sys-space-250, 20px);
+  padding: var(--md-sys-space-150) var(--md-sys-space-100) var(--md-sys-space-50) var(--md-sys-space-200);
 }
 .gb-outline-title {
   flex: 1;
   margin: 0;
-  font: var(--md-sys-typescale-title-md);
-  font-variation-settings: var(--md-sys-typescale-title-md-axes);
-  letter-spacing: var(--md-sys-typescale-title-md-tracking);
+  font: var(--md-sys-typescale-title-sm);
+  font-variation-settings: var(--md-sys-typescale-title-sm-axes);
+  letter-spacing: var(--md-sys-typescale-title-sm-tracking);
 }
 .gb-outline-body {
   flex: 1;
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 var(--md-sys-space-200) var(--md-sys-space-200) var(--md-sys-space-250, 20px);
+  padding: 0 var(--md-sys-space-150) var(--md-sys-space-200) var(--md-sys-space-200);
+}
+/* Headings wrap (element names like <md-gb-split-button> break anywhere),
+   and the tree stops at two levels. */
+.gb-outline-body a,
+.gb-sheet-outline a {
+  overflow-wrap: anywhere;
+}
+.gb-outline-body :is(ol, ul) :is(ol, ul) :is(ol, ul),
+.gb-sheet-outline :is(ol, ul) :is(ol, ul) :is(ol, ul) {
+  display: none;
+}
+
+/* Opening it again (840px and up): a button at the top end of the content,
+   level with the previous / next row (which leaves room for it), that stays
+   there while the content scrolls. */
+.gb-outline-open {
+  display: none;
+}
+@media (min-width: 840px) {
+  :root[data-outline='closed'] .gb-outline-open {
+    display: flex;
+    justify-content: flex-end;
+    /* The row has no height; the button keeps its own. */
+    align-items: flex-start;
+    position: sticky;
+    inset-block-start: var(--md-sys-space-200);
+    z-index: 5;
+    block-size: 0;
+    margin-inline-end: calc(-1 * var(--md-sys-space-200));
+  }
+  :root[data-outline='closed'] .gb-pager-top {
+    padding-inline-end: var(--md-sys-space-500);
+  }
+}
+.gb-outline-open > :not(:defined) {
+  visibility: hidden;
+}
+
+/* Below 840px: a FAB that opens the outline in a bottom sheet. */
+.gb-outline-fab {
+  position: fixed;
+  inset-inline-end: var(--md-sys-space-200);
+  inset-block-end: var(--md-sys-space-200);
+  z-index: 15;
+}
+.gb-outline-fab:not(:defined) {
+  visibility: hidden;
+}
+@media (max-width: 599px) {
+  .gb-outline-fab {
+    inset-block-end: calc(var(--gb-bar-h) + var(--md-sys-space-200));
+  }
+}
+@media (min-width: 840px) {
+  .gb-outline-fab {
+    display: none;
+  }
+}
+.gb-sheet-outline {
+  padding: 0 var(--md-sys-space-200) var(--md-sys-space-300);
+}
+.gb-sheet-title {
+  margin: 0 0 var(--md-sys-space-100);
+  font: var(--md-sys-typescale-title-md);
+  font-variation-settings: var(--md-sys-typescale-title-md-axes);
+  letter-spacing: var(--md-sys-typescale-title-md-tracking);
+}
+/* Touch targets in the sheet (more specific than gb.css's .gb-toc a). */
+.gb-toc.gb-sheet-outline a {
+  display: flex;
+  align-items: center;
+  min-block-size: 48px;
+  padding-block: 0;
+  font: var(--md-sys-typescale-body-lg);
+  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
 }
 
 /* --- Previous / next pages --------------------------------------------------------- */
@@ -849,7 +861,8 @@ md-gb-bottom-sheet .gb-tool {
     margin: 0;
   }
   .gb-outline,
-  .gb-strip {
+  .gb-outline-open,
+  .gb-outline-fab {
     display: none;
   }
 }
