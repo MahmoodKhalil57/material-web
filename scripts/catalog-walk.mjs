@@ -6,19 +6,36 @@
 
 // Walks the /3.0/ docs the way a reader pages through them: opens the home
 // page in headless Chromium and clicks the top "Next" link until a page has
-// none. Reports every stop, the time each navigation took, and where the
-// Next link sat, flagging any page where it moved (paging through should
-// need no mouse movement). Exits 1 on a loop, a failed navigation or a
-// moved link.
+// none. Per page it reports:
+//
+// - the time from the click to the page being ready to click again;
+// - where the Next link sat (it should never move: paging through needs no
+//   mouse movement);
+// - the Core Web Vitals of the visit (scripts/catalog-vitals.mjs): LCP, CLS
+//   and INP, the walker's click on Next being the interaction.
+//
+// With --shots it saves a screenshot of every page and layers them into a
+// heatmap of what stays the same and what changes (scripts/catalog-heatmap.mjs).
+//
+// Exits 1 on a loop, a dead Next link, a link that moved, or a vital past
+// "good" (LCP 2.5 s, CLS 0.1, INP 200 ms; web.dev/articles/vitals).
 //
 //   node scripts/catalog-walk.mjs [--url http://localhost:8000/3.0/]
-//                                 [--width 1300] [--height 900] [--headed]
-//                                 [--motion]
+//     [--width 1300] [--height 900] [--headed] [--motion]
+//     [--shots] [--out <dir>] [--rare 0.1]
 //
-// The dev server must be running (npm run catalog:dev).
+// --motion keeps the view transitions between pages (slower; reduced motion
+// turns them off). --out is where the screenshots and the heatmap go (a
+// temporary directory by default). The dev server must be running
+// (npm run catalog:dev).
 
 import {chromium} from 'playwright';
+import {mkdirSync, rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {parseArgs} from 'node:util';
+import {buildHeatmap} from './catalog-heatmap.mjs';
+import {collectVitals} from './catalog-vitals.mjs';
 
 const {values: args} = parseArgs({
   options: {
@@ -27,19 +44,38 @@ const {values: args} = parseArgs({
     height: {type: 'string', default: '900'},
     headed: {type: 'boolean', default: false},
     motion: {type: 'boolean', default: false},
+    shots: {type: 'boolean', default: false},
+    out: {type: 'string', default: join(tmpdir(), 'catalog-walk')},
+    rare: {type: 'string', default: '0.1'},
   },
 });
 
+const GOOD = {lcp: 2500, cls: 0.1, inp: 200};
 const NEXT = '.gb-pager-top .gb-pager-next';
+const LAYOUT_CSS = `
+  .gb-content { visibility: hidden !important; }
+  *, *::before, *::after { color: transparent !important; text-shadow: none !important; }
+  /* Inherited into the components' shadow roots, which set their own color. */
+  :root { -webkit-text-fill-color: transparent !important; }
+  img, svg, video, canvas { visibility: hidden !important; }
+`;
+const shotsDir = join(args.out, `${args.width}x${args.height}`);
+if (args.shots) {
+  rmSync(shotsDir, {recursive: true, force: true});
+  mkdirSync(join(shotsDir, 'page'), {recursive: true});
+  mkdirSync(join(shotsDir, 'layout'), {recursive: true});
+}
+
 const browser = await chromium.launch({headless: !args.headed});
 const page = await browser.newPage({
   viewport: {width: Number(args.width), height: Number(args.height)},
-  // No view transitions between pages (the site honors reduced motion), so
-  // each page can be clicked as soon as it's there. --motion keeps them.
   reducedMotion: args.motion ? 'no-preference' : 'reduce',
 });
+await page.addInitScript(collectVitals);
 
 const stops = [];
+const shots = [];
+const layoutShots = [];
 const problems = [];
 const seen = new Set();
 const started = performance.now();
@@ -59,13 +95,33 @@ for (;;) {
   const next = page.locator(NEXT);
   const box = (await next.count()) ? await next.boundingBox() : null;
   stops.push({url, ms: Math.round(performance.now() - t), box});
-  if (!box) break;
+  // The pointer rests on the link's arrow, as a reader's would.
+  const pointer = box ? {x: box.x + box.width - 12, y: box.y + box.height / 2} : null;
+  if (args.shots) {
+    await page.evaluate(() => document.fonts.ready);
+    if (pointer) await page.mouse.move(pointer.x, pointer.y);
+    const name = `${String(stops.length).padStart(3, '0')}${url.replace(/\/$/, '').replace(/\//g, '-') || '-home'}.png`;
+    const shot = {animations: 'disabled', caret: 'hide'};
+    await page.screenshot({...shot, path: join(shotsDir, 'page', name)});
+    shots.push(join(shotsDir, 'page', name));
+    // The layout alone: the page's content hidden and all text transparent,
+    // leaving the boxes (backgrounds, borders, indicators, state layers).
+    await page.evaluate((css) => {
+      const style = document.createElement('style');
+      style.id = 'catalog-walk-layout';
+      style.textContent = css;
+      document.head.append(style);
+    }, LAYOUT_CSS);
+    await page.screenshot({...shot, path: join(shotsDir, 'layout', name)});
+    layoutShots.push(join(shotsDir, 'layout', name));
+    await page.evaluate(() => document.getElementById('catalog-walk-layout')?.remove());
+  }
+  if (!pointer) break;
   t = performance.now();
   try {
     await Promise.all([
       page.waitForURL((u) => u.pathname !== url, {waitUntil: 'domcontentloaded', timeout: 15000}),
-      // The arrow at the link's end: where the pointer rests while paging.
-      page.mouse.click(box.x + box.width - 12, box.y + box.height / 2),
+      page.mouse.click(pointer.x, pointer.y),
     ]);
   } catch (error) {
     problems.push(`${url}: Next didn't navigate (${error.message.split('\n')[0]})`);
@@ -74,18 +130,58 @@ for (;;) {
 }
 const total = Math.round(performance.now() - started);
 
+// The vitals of the pages left (saved on pagehide) and of the last one.
+const vitals = new Map(
+  (await page.evaluate(() => [...JSON.parse(sessionStorage.getItem('catalog-walk-vitals') || '[]'), window.__walkVitals?.()]))
+    .filter(Boolean)
+    .map((v) => [v.url, v]),
+);
+
 // Where the Next link's end (its arrow) sits: the same on every page.
-const ends = stops.filter((s) => s.box).map((s) => `${Math.round(s.box.x + s.box.width)},${Math.round(s.box.y)}`);
+const endOf = (box) => `${Math.round(box.x + box.width)},${Math.round(box.y)}`;
+const ends = stops.filter((s) => s.box).map((s) => endOf(s.box));
 const usual = [...ends.reduce((m, e) => m.set(e, (m.get(e) ?? 0) + 1), new Map())].sort((a, b) => b[1] - a[1])[0]?.[0];
 
+const flag = (value, limit) => (value != null && value > limit ? '!' : ' ');
+console.log('  #  ready ms  next at      LCP ms     CLS  INP ms  page');
 for (const [i, s] of stops.entries()) {
-  const end = s.box ? `${Math.round(s.box.x + s.box.width)},${Math.round(s.box.y)}` : 'end';
+  const end = s.box ? endOf(s.box) : 'end';
   const moved = s.box && end !== usual;
   if (moved) problems.push(`${s.url}: Next link at ${end}, elsewhere ${usual}`);
-  console.log(`${String(i + 1).padStart(3)}  ${String(s.ms).padStart(5)} ms  ${end.padEnd(9)}${moved ? ' MOVED' : '      '}  ${s.url}`);
+  const v = {...vitals.get(s.url)};
+  // Event Timing reports interactions of 16 ms and longer only; the click
+  // on Next happened, so no entry means a shorter one.
+  if (v.inp == null && s.box) v.inp = '<16';
+  for (const key of ['lcp', 'cls', 'inp']) {
+    if (v[key] != null && v[key] > GOOD[key]) problems.push(`${s.url}: ${key.toUpperCase()} ${v[key]} (good: ${GOOD[key]})`);
+  }
+  console.log(
+    `${String(i + 1).padStart(3)}  ${String(s.ms).padStart(8)}  ${end.padEnd(9)}${moved ? '!' : ' '}  ` +
+      `${String(v.lcp ?? '-').padStart(6)}${flag(v.lcp, GOOD.lcp)} ${String(v.cls ?? '-').padStart(6)}${flag(v.cls, GOOD.cls)} ` +
+      `${String(v.inp ?? '-').padStart(6)}${flag(v.inp, GOOD.inp)} ${s.url}`,
+  );
 }
-console.log(`\n${stops.length} pages in ${total} ms; Next link end at ${usual ?? '-'}`);
-for (const p of problems) console.log(`problem: ${p}`);
+
+// The worst page for each vital, with what it measured.
+const all = [...vitals.values()];
+const worst = (key) => all.filter((v) => v[key] != null).sort((a, b) => b[key] - a[key])[0];
+console.log(`\n${stops.length} pages in ${total} ms (${args.motion ? 'with' : 'without'} view transitions); Next link end at ${usual ?? '-'}`);
+const lcp = worst('lcp');
+const cls = worst('cls');
+const inp = worst('inp');
+if (lcp) console.log(`worst LCP ${lcp.lcp} ms   ${lcp.url}  ${lcp.lcpElement}`);
+if (cls) console.log(`worst CLS ${cls.cls}   ${cls.url}  ${cls.clsSources.join(', ')}`);
+if (inp) console.log(`worst INP ${inp.inp} ms   ${inp.url}  ${inp.inpEvent}`);
+console.log(`INP: ${all.length - 1 - all.filter((v) => v.inp != null).length} clicks under 16 ms (not reported by the browser)`);
 
 await browser.close();
+
+if (args.shots) {
+  console.log('\nwhole pages:');
+  buildHeatmap(shots, join(shotsDir, 'heatmap-page'), {rare: Number(args.rare)});
+  console.log('\nlayout only (content hidden, text transparent):');
+  buildHeatmap(layoutShots, join(shotsDir, 'heatmap-layout'), {rare: Number(args.rare), tolerance: 2});
+}
+
+for (const p of problems) console.log(`problem: ${p}`);
 process.exitCode = problems.length ? 1 : 0;
