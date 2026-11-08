@@ -22,6 +22,9 @@
   --gb-rail-w: 0px;
   --gb-pane-w: 0px;
   --gb-pane-open-w: 280px;
+  --gb-outline-w: 0px;
+  --gb-outline-open-w: 280px;
+  --gb-strip-w: 0px;
   --gb-bar-h: 80px;
   --gb-pane-motion: var(--md-sys-motion-spring-default-spatial-duration, 420ms)
     var(--md-sys-motion-spring-default-spatial, ease);
@@ -38,6 +41,31 @@
   :root[data-pane='closed'] {
     --gb-pane-w: 0px;
   }
+  /* The strip that opens the page outline. */
+  :root {
+    --gb-strip-w: 56px;
+  }
+}
+/* The page outline is a column from 1200px (it floats over the content below
+   that), unless closed. */
+@media (min-width: 1200px) {
+  :root {
+    --gb-outline-w: var(--gb-outline-open-w);
+  }
+  :root[data-outline='closed'] {
+    --gb-outline-w: 0px;
+  }
+}
+
+/* One screen high, like Gmail: the document never scrolls; the pages pane,
+   the content and the outline scroll in their own panels. */
+html:has(.gb-shell),
+html:has(.gb-shell) body {
+  block-size: 100dvh;
+  overflow: hidden;
+}
+html:has(.gb-shell) {
+  scrollbar-gutter: auto;
 }
 
 body:has(.gb-shell) {
@@ -46,10 +74,17 @@ body:has(.gb-shell) {
 
 .gb-shell {
   display: grid;
-  grid-template-columns: var(--gb-rail-w) var(--gb-pane-w) minmax(0, 1fr);
-  grid-template-rows: var(--gb-top-h) auto;
-  min-block-size: 100dvh;
+  grid-template-columns:
+    var(--gb-rail-w) var(--gb-pane-w) minmax(0, 1fr)
+    var(--gb-outline-w) var(--gb-strip-w);
+  grid-template-rows: var(--gb-top-h) minmax(0, 1fr);
+  block-size: 100dvh;
   transition: grid-template-columns var(--gb-pane-motion);
+}
+/* A section's index page has no outline. */
+.gb-shell-index {
+  --gb-outline-w: 0px;
+  --gb-strip-w: 0px;
 }
 
 /* --- Header: the search app bar ------------------------------------------------- */
@@ -327,54 +362,120 @@ md-gb-nav-drawer-item[data-group] {
   grid-row: 2;
   position: relative;
   min-inline-size: 0;
+  min-block-size: 0;
   margin: 0 var(--md-sys-space-150) var(--md-sys-space-150) 0;
   border-radius: var(--md-sys-shape-corner-xl);
   background: var(--md-sys-color-surface);
-  overflow: clip;
-  min-block-size: calc(100dvh - var(--gb-top-h) - var(--md-sys-space-150));
-}
-.gb-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-block-start: var(--md-sys-space-200);
 }
 .gb-main {
-  padding-block-end: 120px;
-}
-.gb-toc {
-  padding: 0 var(--md-sys-space-200) var(--md-sys-space-200);
+  padding-block-end: var(--md-sys-space-800);
 }
 @media (min-width: 840px) {
   .gb-main {
     padding-inline: var(--md-sys-space-400);
   }
-  .gb-toc {
-    padding-inline: var(--md-sys-space-400);
-  }
 }
-/* The outline is a column beside the text, always open. */
-@media (min-width: 1200px) {
-  .gb-body:not(.gb-layout-index) {
-    grid-template-columns: minmax(0, 1fr) var(--gb-toc-width);
-  }
-  .gb-toc {
-    grid-column: 2;
-    grid-row: 1;
-    position: sticky;
-    inset-block-start: calc(var(--gb-top-h) + var(--md-sys-space-300));
-    max-block-size: calc(100dvh - var(--gb-top-h) - var(--md-sys-space-150) - 2 * var(--md-sys-space-300));
-    overflow-y: auto;
-    margin-block-start: var(--md-sys-space-300);
-    padding-inline: 0 var(--md-sys-space-300);
-  }
-  .gb-toc summary {
-    pointer-events: none;
-    cursor: default;
-    list-style: none;
-  }
-  .gb-toc summary::-webkit-details-marker {
+/* Below 840px the outline is inline, collapsed, under the description. */
+.gb-toc-inline {
+  margin-block: var(--md-sys-space-100) var(--md-sys-space-200);
+  padding: 0;
+}
+@media (min-width: 840px) {
+  .gb-toc-inline {
     display: none;
   }
+}
+
+/* --- Page outline panel and its strip ----------------------------------------------- */
+
+.gb-outline,
+.gb-strip {
+  display: none;
+}
+@media (min-width: 840px) {
+  .gb-outline {
+    grid-column: 4;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    min-block-size: 0;
+    margin: 0 0 var(--md-sys-space-150);
+    border-radius: var(--md-sys-shape-corner-xl);
+    background: var(--md-sys-color-surface);
+    overflow: hidden;
+  }
+  .gb-strip {
+    grid-column: 5;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block-start: var(--md-sys-space-50);
+  }
+  .gb-strip > :not(:defined) {
+    visibility: hidden;
+  }
+}
+/* From 1200px: a column; closed, the column has no width. */
+@media (min-width: 1200px) {
+  :root[data-outline='closed'] .gb-outline {
+    visibility: hidden;
+    transition: visibility 0s var(--md-sys-motion-spring-default-spatial-duration, 420ms);
+  }
+}
+/* 840 to 1199px: over the content at the end edge, when opened. */
+@media (min-width: 840px) and (max-width: 1199px) {
+  .gb-outline {
+    position: fixed;
+    z-index: 25;
+    inset-block: var(--gb-top-h) var(--md-sys-space-150);
+    inset-inline-end: var(--gb-strip-w);
+    inline-size: var(--gb-outline-open-w);
+    box-shadow: var(--md-sys-elevation-shadow-3);
+    visibility: hidden;
+    opacity: 0;
+    translate: var(--md-sys-space-200) 0;
+  }
+  :root[data-outline-over] .gb-outline {
+    visibility: visible;
+    opacity: 1;
+    translate: 0 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .gb-outline {
+      transition:
+        opacity var(--md-sys-motion-spring-fast-effects-duration, 150ms) var(--md-sys-motion-spring-fast-effects, ease),
+        translate var(--md-sys-motion-spring-default-spatial-duration, 420ms) var(--md-sys-motion-spring-default-spatial, ease),
+        visibility 0s var(--md-sys-motion-spring-default-spatial-duration, 420ms);
+    }
+    :root[data-outline-over] .gb-outline {
+      transition-delay: 0s;
+    }
+  }
+}
+.gb-outline-head {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-space-100);
+  padding: var(--md-sys-space-150) var(--md-sys-space-100) var(--md-sys-space-100) var(--md-sys-space-250, 20px);
+}
+.gb-outline-title {
+  flex: 1;
+  margin: 0;
+  font: var(--md-sys-typescale-title-md);
+  font-variation-settings: var(--md-sys-typescale-title-md-axes);
+  letter-spacing: var(--md-sys-typescale-title-md-tracking);
+}
+.gb-outline-body {
+  flex: 1;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--md-sys-space-200) var(--md-sys-space-200) var(--md-sys-space-250, 20px);
 }
 
 /* --- Previous / next pages --------------------------------------------------------- */
@@ -506,7 +607,6 @@ md-gb-nav-drawer-item[data-group] {
     grid-column: 1;
     margin: 0;
     border-radius: 0;
-    min-block-size: calc(100dvh - var(--gb-top-h));
     padding-block-end: var(--gb-bar-h);
   }
   .gb-bar-area {
@@ -733,6 +833,25 @@ md-gb-bottom-sheet .gb-tool {
   color: var(--md-sys-color-on-surface-variant);
   font: var(--md-sys-typescale-body-sm);
   font-variation-settings: var(--md-sys-typescale-body-sm-axes);
+}
+
+/* Print: the pages in normal flow, without the panels. */
+@media print {
+  html:has(.gb-shell),
+  html:has(.gb-shell) body,
+  .gb-shell {
+    display: block;
+    block-size: auto;
+    overflow: visible;
+  }
+  .gb-content-pane {
+    overflow: visible;
+    margin: 0;
+  }
+  .gb-outline,
+  .gb-strip {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

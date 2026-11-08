@@ -289,6 +289,90 @@ if (rail && drawer) {
 }
 
 
+// --- Page outline panel ---------------------------------------------------------------
+
+const OUTLINE_KEY = 'gb-outline';
+const large = matchMedia('(min-width: 1200px)');
+const outline = $('gb-outline');
+const outlineToggle = $('gb-outline-toggle');
+const outlineClose = $('gb-outline-close');
+
+/** A remembered column from 1200px; a panel over the content below that. */
+const outlineOpen = () =>
+  large.matches
+    ? root.dataset['outline'] !== 'closed'
+    : root.hasAttribute('data-outline-over');
+
+function syncOutline() {
+  outlineToggle?.setAttribute('aria-expanded', String(outlineOpen()));
+}
+
+function setOutline(open: boolean) {
+  if (large.matches) {
+    if (open) delete root.dataset['outline'];
+    else root.dataset['outline'] = 'closed';
+    store(OUTLINE_KEY, open ? null : 'closed');
+  } else {
+    root.toggleAttribute('data-outline-over', open);
+  }
+  syncOutline();
+}
+
+if (outline && outlineToggle) {
+  outlineToggle.addEventListener('click', () => setOutline(!outlineOpen()));
+  outlineClose?.addEventListener('click', () => {
+    setOutline(false);
+    outlineToggle.focus();
+  });
+  // Over the content: Escape, a click outside or choosing a heading closes it.
+  outline.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || large.matches || !outlineOpen()) return;
+    e.stopPropagation();
+    setOutline(false);
+    outlineToggle.focus();
+  });
+  outline.addEventListener('click', (e) => {
+    if (!large.matches && (e.target as Element).closest('a')) setOutline(false);
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if (large.matches || !outlineOpen()) return;
+    const target = e.target as Node;
+    if (!outline.contains(target) && !outlineToggle.contains(target)) setOutline(false);
+  });
+  large.addEventListener('change', () => {
+    root.removeAttribute('data-outline-over');
+    syncOutline();
+  });
+  syncOutline();
+}
+
+// --- Keyboard scrolling --------------------------------------------------------------
+
+// The page is one screen high and the content scrolls in its own pane, so the
+// scrolling keys pressed with nothing focused scroll that pane (they would
+// scroll the document, which doesn't scroll).
+const contentPane = $('gb-content-pane');
+addEventListener('keydown', (e) => {
+  if (!contentPane || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+  const active = document.activeElement;
+  if (active && active !== document.body && active !== document.documentElement) return;
+  const page = contentPane.clientHeight * 0.9;
+  const steps: Record<string, number> = {
+    PageDown: page,
+    PageUp: -page,
+    ' ': e.shiftKey ? -page : page,
+    ArrowDown: 40,
+    ArrowUp: -40,
+  };
+  if (e.key === 'Home' || e.key === 'End') {
+    e.preventDefault();
+    contentPane.scrollTo({top: e.key === 'Home' ? 0 : contentPane.scrollHeight});
+  } else if (e.key in steps) {
+    e.preventDefault();
+    contentPane.scrollBy({top: steps[e.key]});
+  }
+});
+
 // --- Component groups: split rows that collapse their pages ------------------------
 
 const GROUPS_KEY = 'gb-groups';

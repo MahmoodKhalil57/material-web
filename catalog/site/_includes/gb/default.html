@@ -104,6 +104,7 @@
           const mode = localStorage.getItem('color-mode') || 'auto';
           root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
           if (localStorage.getItem('gb-pane') === 'closed') root.dataset.pane = 'closed';
+          if (localStorage.getItem('gb-outline') === 'closed') root.dataset.outline = 'closed';
           const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
           const seed = localStorage.getItem('gb-seed-color');
           const key = [seed, localStorage.getItem('gb-scheme-variant') || 'tonal-spot', localStorage.getItem('gb-contrast') || 'standard'].join('|');
@@ -261,23 +262,43 @@
             <h1>{{ title }}</h1>
             {% if description %}<p class="gb-lede">{{ description }}</p>{% endif %}
             <p class="gb-md-link"><a href="{% if page.url == '/3.0/' %}/3.0/index.md{% else %}{{ page.url | replace(r/\/$/, '') }}.md{% endif %}" type="text/markdown">View as Markdown</a></p>
-            {%- endif %}
-            <div class="gb-content">{{ content | safe }}</div>
-            {{ pager(gbNav, 'end') | safe }}
-          </main>
-
-          {#- A section's index page (gb-sections.11ty.cjs) has no outline. #}
-          {%- if not gbIndex %}
-          <aside class="gb-toc" aria-label="Page outline">
-            <details id="gb-toc-details" open>
+            {#- Below 840px the outline is here, collapsed; from 840px it is
+                the panel on the right. -#}
+            <details class="gb-toc gb-toc-inline">
               <summary>On this page</summary>
               <a class="gb-toc-top" href="#main">(Top)</a>
               {{ content | toc | filterToc | safe }}
             </details>
-          </aside>
-          {%- endif %}
+            {%- endif %}
+            <div class="gb-content">{{ content | safe }}</div>
+            {{ pager(gbNav, 'end') | safe }}
+          </main>
         </div>
       </div>
+
+      {#- The page outline (840px and up): a panel on the right, like a side
+          panel in Gmail, closed with its close button and opened from the
+          strip beside it. A column from 1200px (remembered), over the content
+          below that. A section's index page has no outline. -#}
+      {%- if not gbIndex %}
+      <aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
+        <div class="gb-outline-head">
+          <h2 class="gb-outline-title" id="gb-outline-title">On this page</h2>
+          <md-gb-icon-button id="gb-outline-close" tooltip aria-label="Hide page outline">
+            <md-gb-icon>close</md-gb-icon>
+          </md-gb-icon-button>
+        </div>
+        <div class="gb-toc gb-outline-body">
+          <a class="gb-toc-top" href="#main">(Top)</a>
+          {{ content | toc | filterToc | safe }}
+        </div>
+      </aside>
+      <aside class="gb-strip" aria-label="Page panels">
+        <md-gb-icon-button id="gb-outline-toggle" tooltip aria-label="Page outline" aria-controls="gb-outline" aria-expanded="true">
+          <md-gb-icon>toc</md-gb-icon>
+        </md-gb-icon-button>
+      </aside>
+      {%- endif %}
 
       {#- Below 600px: the sections as a navigation bar. Selecting the current
           one opens its pages in a bottom sheet. -#}

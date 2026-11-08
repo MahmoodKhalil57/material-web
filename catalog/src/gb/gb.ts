@@ -285,35 +285,31 @@ addEventListener('click', (event) => {
 
 // --- Table of contents ---------------------------------------------------
 
-const tocDetails = document.getElementById(
-  'gb-toc-details',
-) as HTMLDetailsElement | null;
-if (tocDetails) {
-  // A column on large windows (always open); collapsible above the text below.
-  const large = matchMedia('(min-width: 1200px)');
-  tocDetails.open = large.matches;
-  large.addEventListener('change', () => (tocDetails.open = large.matches));
-  const targets = new Map<Element, HTMLAnchorElement>();
-  for (const link of tocDetails.querySelectorAll<HTMLAnchorElement>(
-    'a[href^="#"]',
+// The outline is in two places (the panel on the right, and inline below
+// 840px); both mark the section being read with aria-current="location".
+{
+  const targets = new Map<Element, HTMLAnchorElement[]>();
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    '.gb-toc a[href^="#"]',
   )) {
     const el = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-    if (el) targets.set(el, link);
+    if (el) targets.set(el, [...(targets.get(el) ?? []), link]);
   }
   if (targets.size && 'IntersectionObserver' in window) {
-    let current: HTMLAnchorElement | undefined;
+    let current: HTMLAnchorElement[] = [];
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          const link = targets.get(entry.target);
-          if (!link || link === current) continue;
-          current?.removeAttribute('aria-current');
-          link.setAttribute('aria-current', 'location');
-          current = link;
+          const links = targets.get(entry.target);
+          if (!links || links === current) continue;
+          for (const link of current) link.removeAttribute('aria-current');
+          for (const link of links) link.setAttribute('aria-current', 'location');
+          current = links;
         }
       },
-      {rootMargin: '-72px 0px -70% 0px'},
+      // The content scrolls in its own pane below the header.
+      {rootMargin: '-80px 0px -70% 0px'},
     );
     for (const el of targets.keys()) observer.observe(el);
   }

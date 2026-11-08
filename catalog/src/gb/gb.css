@@ -48,7 +48,8 @@
   scrollbar-width: thin;
   scrollbar-color: var(--md-sys-color-outline) transparent;
 }
-.gb-toc,
+.gb-content-pane,
+.gb-outline-body,
 .gb-search-body {
   scrollbar-gutter: stable;
 }
@@ -337,9 +338,6 @@ body {
 }
 
 /* On this page. */
-.gb-toc {
-  padding: 0 var(--md-sys-space-200) var(--md-sys-space-200);
-}
 .gb-toc summary {
   font: var(--md-sys-typescale-title-sm);
   font-variation-settings: var(--md-sys-typescale-title-sm-axes);

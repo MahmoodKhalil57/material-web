@@ -37,10 +37,12 @@ for (const file of pages) {
   p.on('pageerror', (e) => errs.push(String(e).slice(0, 120)));
   p.on('console', (m) => m.type() === 'error' && errs.push(m.text().slice(0, 120)));
   const res = await p.goto(url, {waitUntil: 'networkidle'});
-  // Scroll through so lazy demo iframes load.
+  // Scroll through so lazy demo iframes load. The content scrolls in its own
+  // pane (the document is one screen high).
   await p.evaluate(async () => {
-    for (let y = 0; y < document.body.scrollHeight; y += 700) {
-      window.scrollTo(0, y);
+    const scroller = document.getElementById('gb-content-pane') ?? document.scrollingElement;
+    for (let y = 0; y < scroller.scrollHeight; y += 700) {
+      scroller.scrollTo(0, y);
       await new Promise((r) => setTimeout(r, 60));
     }
   });
