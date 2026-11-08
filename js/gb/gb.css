@@ -2054,9 +2054,9 @@
   navigation: auto;
 }
 :root {
-  --gb-vt-exit: var(--md-sys-motion-duration-short2, 100ms);
-  --gb-vt-enter: var(--md-sys-motion-duration-short4, 200ms);
-  --gb-vt-slide: var(--md-sys-motion-duration-medium2, 300ms);
+  --gb-vt-exit: 100ms;
+  --gb-vt-enter: 200ms;
+  --gb-vt-slide: 300ms;
   --gb-vt-shift: 30px;
 }
 :root:dir(rtl) {
@@ -4138,7 +4138,8 @@ md-gb-nav-drawer .nav-drawer-section-label a:focus-visible {
 }
 
 /* src/gb/reduce-motion.css */
-:root[data-motion=reduce] {
+:root[data-motion=reduce],
+:root.gb-boot {
   --md-sys-motion-duration-short1: 1ms;
   --md-sys-motion-duration-short2: 1ms;
   --md-sys-motion-duration-short3: 1ms;
@@ -4167,6 +4168,8 @@ md-gb-nav-drawer .nav-drawer-section-label a:focus-visible {
   --md-sys-motion-curve-fast-effects-duration: 1ms;
   --md-sys-motion-curve-default-effects-duration: 1ms;
   --md-sys-motion-curve-slow-effects-duration: 1ms;
+}
+:root[data-motion=reduce] {
   scroll-behavior: auto;
 }
 :root[data-motion=reduce] *,

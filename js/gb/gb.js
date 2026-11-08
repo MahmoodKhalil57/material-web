@@ -14440,6 +14440,41 @@ function whenActive(fn) {
     fn();
   }
 }
+{
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  const loaded2 = new Promise((resolve) => {
+    if (document.readyState === "complete") resolve();
+    else addEventListener("load", () => resolve(), { once: true });
+  });
+  let transition = Promise.resolve();
+  addEventListener(
+    "pagereveal",
+    (e11) => {
+      const vt = e11.viewTransition;
+      if (vt) transition = vt.finished.catch(() => {
+      });
+    },
+    { once: true }
+  );
+  const defined = () => {
+    const tags = new Set(
+      [...document.querySelectorAll(":not(:defined)")].map((el2) => el2.localName).filter((name) => name.startsWith("md-gb-"))
+    );
+    const timeout = new Promise((resolve) => setTimeout(resolve, 3e3));
+    return Promise.race([
+      Promise.all([...tags].map((tag) => customElements.whenDefined(tag))),
+      timeout
+    ]);
+  };
+  whenActive(async () => {
+    await loaded2;
+    await defined();
+    await frame();
+    await transition;
+    await frame();
+    document.documentElement.classList.remove("gb-boot");
+  });
+}
 function pageUrl(href) {
   if (!href) return null;
   let url;
