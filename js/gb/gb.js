@@ -23257,9 +23257,15 @@ if (frames.length) {
     if (e11.data?.type === "gb-demo-height") {
       const min = Number(frame.dataset["min"]) || 0;
       frame.style.blockSize = Math.max(min, e11.data.height) + "px";
+      frame.dataset["ready"] = "";
     }
   });
-  for (const frame of frames) frame.addEventListener("load", () => send(frame));
+  for (const frame of frames) {
+    frame.addEventListener("load", () => {
+      send(frame);
+      setTimeout(() => frame.dataset["ready"] = "", 1e3);
+    });
+  }
   const broadcast = () => frames.forEach(send);
   new MutationObserver(broadcast).observe(document.head, {
     childList: true,
