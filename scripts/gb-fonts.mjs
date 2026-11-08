@@ -17,7 +17,8 @@
  *
  * Icons used: the text of <md-gb-icon> in docs/3.0, the layout, the site
  * scripts and labs/gb (components and their demos), `icon:` front matter,
- * ligatures in component styles (content: 'arrow_drop_down'), and quoted
+ * ligatures in component styles (content: 'arrow_drop_down', or an icon
+ * custom property it reads: --icon: 'radio_button_checked'), and quoted
  * strings in the site scripts and components that are Material Symbols
  * names (icons chosen in code, e.g. the theme toggle's). Candidates are
  * matched against Google's list of Material Symbols names.
@@ -98,17 +99,26 @@ async function collect() {
   // The layout's section icons are a Nunjucks list: icon: 'info'.
   const layout = await readFile('catalog/site/_includes/gb/default.html', 'utf8');
   for (const m of layout.matchAll(/\bicon:\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);
+  // Ligatures in component styles: content: 'arrow_drop_down', or a custom
+  // property the content reads (--icon: 'radio_button_checked').
   for (const file of await walk('labs/gb', (n) => n.endsWith('.scss'))) {
     const text = await readFile(file, 'utf8');
-    for (const m of text.matchAll(/content:\s*['"]([a-z][a-z0-9_]*)['"]/g)) certain.add(m[1]);
+    for (const m of text.matchAll(/(?:\bcontent|--[\w-]*icon[\w-]*):\s*['"]([a-z][a-z0-9_]*)['"]/g)) certain.add(m[1]);
   }
-  // Icons chosen in code sit on lines about icons (MODE_ICON = {...},
-  // <md-gb-icon>${...}</md-gb-icon>, icon.textContent = ...); other quoted
-  // words that happen to be icon names (css, title, width) are not icons.
+  // Icons chosen in code sit on lines about icons (<md-gb-icon>${...}
+  // </md-gb-icon>, icon.textContent = ...) or in a block that opens on one
+  // (MODE_ICON = {auto: 'brightness_auto', light: 'light_mode', ...}, its
+  // values on the lines below); other quoted words that happen to be icon
+  // names (css, title, width) are not icons.
   for (const file of await codeFiles()) {
     const text = await readFile(file, 'utf8');
+    let depth = 0;
     for (const line of text.split('\n')) {
-      if (!/icon/i.test(line)) continue;
+      const opens = (line.match(/[{[]/g) ?? []).length;
+      const closes = (line.match(/[}\]]/g) ?? []).length;
+      if (depth === 0 && /icon/i.test(line) && opens > closes) depth = opens - closes;
+      else if (depth > 0) depth = Math.max(0, depth + opens - closes);
+      if (depth === 0 && !/icon/i.test(line)) continue;
       for (const m of line.matchAll(/['"`]([a-z][a-z0-9_]{1,40})['"`]/g)) maybe.add(m[1]);
     }
   }
@@ -189,6 +199,10 @@ const css = [
   '',
   ...roboto.css,
   ...symbols.css,
+  // md-gb-icon's font (labs/gb/styles/icon: 'Material Symbols' by default)
+  // is this family wherever the fonts are loaded: the site, and the
+  // documents without its stylesheet (demo frames, component test pages).
+  ":root {\n  --md-icon-font: 'Material Symbols Outlined';\n}",
   '',
 ].join('\n\n');
 await writeFile(join(OUT, 'fonts.css'), css.replace(/\n{3,}/g, '\n\n'));

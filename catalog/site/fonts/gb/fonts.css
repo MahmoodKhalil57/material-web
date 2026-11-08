@@ -75,6 +75,10 @@
   font-style: normal;
   font-weight: 100 700;
   font-display: block;
-  src: url(./material-symbols-outlined-002e621c6519.woff2) format('woff2');
+  src: url(./material-symbols-outlined-ef785a494cef.woff2) format('woff2');
+}
+
+:root {
+  --md-icon-font: 'Material Symbols Outlined';
 }
 

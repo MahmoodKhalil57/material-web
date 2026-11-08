@@ -2,7 +2,7 @@
   "stylesheet": "/fonts/gb/fonts.css",
   "preload": [
     "/fonts/gb/roboto-flex-6ccf7a9846bd.woff2",
-    "/fonts/gb/material-symbols-outlined-002e621c6519.woff2"
+    "/fonts/gb/material-symbols-outlined-ef785a494cef.woff2"
   ],
   "icons": [
     "accessibility_new",
@@ -19,6 +19,7 @@
     "arrow_upward",
     "attach_file",
     "auto_awesome",
+    "badge",
     "block",
     "bolt",
     "bookmark",
@@ -47,6 +48,7 @@
     "content_cut",
     "content_paste",
     "css",
+    "dark_mode",
     "dashboard",
     "data_object",
     "data_usage",
@@ -98,6 +100,7 @@
     "language",
     "layers",
     "library_music",
+    "light_mode",
     "link",
     "local_shipping",
     "local_taxi",
@@ -115,6 +118,7 @@
     "moon_stars",
     "more",
     "more_vert",
+    "motion_photos_off",
     "navigation",
     "notes",
     "notifications",
@@ -131,8 +135,11 @@
     "priority_high",
     "public",
     "radio",
+    "radio_button_checked",
+    "radio_button_unchecked",
     "redo",
     "refresh",
+    "remove",
     "report",
     "restart_alt",
     "restaurant",
