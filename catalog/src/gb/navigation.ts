@@ -156,9 +156,16 @@ const rail = document.getElementById('gb-rail') as Rail | null;
 const scroller = () =>
   rail?.shadowRoot?.querySelector<HTMLElement>('.nav-rail-items') ?? null;
 let scrollRestored = false;
+/**
+ * The rail's scroll position as of its last scroll event (programmatic
+ * scrolls included). Leaving the page saves this rather than reading
+ * scrollTop: at pageswap the page's styles are dirty, and the read would
+ * force a style and layout pass of the whole page while the next one waits.
+ */
+let lastRailTop: number | undefined;
 
 function saveRailScroll() {
-  const top = scroller()?.scrollTop;
+  const top = lastRailTop;
   if (top === undefined) return;
   try {
     store()?.setItem(
@@ -238,9 +245,14 @@ if (rail) {
   let saveTimer: number | undefined;
   customElements.whenDefined('md-gb-nav-rail').then(async () => {
     await rail.updateComplete;
-    scroller()?.addEventListener(
+    const el = scroller();
+    if (!el) return;
+    // Read once here, where nothing waits on it; then from scroll events.
+    requestAnimationFrame(() => (lastRailTop ??= el.scrollTop));
+    el.addEventListener(
       'scroll',
       () => {
+        lastRailTop = el.scrollTop;
         clearTimeout(saveTimer);
         saveTimer = window.setTimeout(saveRailScroll, 100);
       },
@@ -328,18 +340,29 @@ addEventListener('pageshow', (e) => {
 
 // The top Previous and Next cards carry over to the next page
 // (navigation.css), unless they're scrolled out of view here: their
-// snapshots would show outside the panel, over the header.
-addEventListener('pageswap', () => {
+// snapshots would show outside the panel, over the header. Whether they're
+// fully in view is tracked as the page scrolls: at pageswap the page's styles
+// are dirty, and measuring there would force a style and layout pass of the
+// whole page while the next one waits.
+{
   const pager = document.querySelector<HTMLElement>('.gb-pager-top');
   const pane = document.getElementById('gb-content-pane');
-  if (!pager) return;
-  const r = pager.getBoundingClientRect();
-  const view = pane?.getBoundingClientRect() ?? {top: 0, bottom: innerHeight};
-  if (r.top >= view.top && r.bottom <= view.bottom) return;
-  for (const el of pager.querySelectorAll<HTMLElement>('.gb-pager-link, .gb-pager-title')) {
-    el.style.viewTransitionName = 'none';
+  let pagerInView = true;
+  if (pager && 'IntersectionObserver' in window) {
+    new IntersectionObserver(
+      ([entry]) => {
+        pagerInView = entry.isIntersecting && entry.intersectionRatio > 0.99;
+      },
+      {root: pane, threshold: [0, 1]},
+    ).observe(pager);
   }
-});
+  addEventListener('pageswap', () => {
+    if (!pager || pagerInView) return;
+    for (const el of pager.querySelectorAll<HTMLElement>('.gb-pager-link, .gb-pager-title')) {
+      el.style.viewTransitionName = 'none';
+    }
+  });
+}
 // Back from the back/forward cache: the cards carry over again.
 addEventListener('pageshow', (e) => {
   if (!e.persisted) return;

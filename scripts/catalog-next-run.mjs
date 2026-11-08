@@ -16,7 +16,9 @@
 // land on the page rather than the transition).
 //
 //   node scripts/catalog-next-run.mjs [url] [--runs 3] [--headed]
-//     [--reduce-motion] [--json out.json]
+//     [--reduce-motion] [--no-sw] [--json out.json]
+//
+// --no-sw blocks the site's service worker, to compare with it.
 //
 // url defaults to https://mahmoodkhalil57.github.io/material-web/3.0/
 
@@ -121,6 +123,7 @@ try {
     const context = await browser.newContext({
       viewport: {width: 1440, height: 900},
       reducedMotion: flag('--reduce-motion') ? 'reduce' : 'no-preference',
+      serviceWorkers: flag('--no-sw') ? 'block' : 'allow',
     });
     await context.addInitScript(watchTransition);
     const page = await context.newPage();
