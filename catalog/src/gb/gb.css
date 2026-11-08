@@ -485,6 +485,46 @@ md-gb-carousel:not(:defined) {
   block-size: var(--height, 221px);
   visibility: hidden;
 }
+/* An inline time picker has a fixed size per layout (the dial below or
+   beside the selectors, or the input fields), reserved before it's defined.
+   Each density step takes 8px off the dial below the selectors and 4px off
+   the fields; the dial beside them keeps its size. A modal one takes no
+   space. */
+md-gb-time-picker:not(:defined):not([modal]) {
+  display: block;
+  inline-size: 304px;
+  block-size: 520px;
+  visibility: hidden;
+}
+md-gb-time-picker:not(:defined)[density='-1']:not([modal]) {
+  inline-size: 300px;
+  block-size: 512px;
+}
+md-gb-time-picker:not(:defined)[density='-2']:not([modal]) {
+  inline-size: 300px;
+  block-size: 504px;
+}
+md-gb-time-picker:not(:defined)[density='-3']:not([modal]) {
+  inline-size: 300px;
+  block-size: 496px;
+}
+md-gb-time-picker:not(:defined)[orientation='horizontal']:not([modal]) {
+  inline-size: 556px;
+  block-size: 404px;
+}
+md-gb-time-picker:not(:defined)[mode='input']:not([modal]) {
+  inline-size: 264px;
+  block-size: 243px;
+}
+md-gb-time-picker:not(:defined)[mode='input'][density='-1']:not([modal]) {
+  block-size: 239px;
+}
+md-gb-time-picker:not(:defined)[mode='input'][density='-2']:not([modal]) {
+  block-size: 235px;
+}
+md-gb-time-picker:not(:defined)[mode='input'][density='-3']:not([modal]) {
+  block-size: 231px;
+}
 /* A demo with a script is an iframe that fills the preview; it reserves the
    author's height (or 12rem) and only grows when its content is taller
    (gb.ts). */
