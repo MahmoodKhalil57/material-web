@@ -393,6 +393,31 @@ addEventListener('keydown', (e) => {
 // In the expanded rail and in the pages sheet of compact windows; the same
 // choices apply to both.
 const GROUPS_KEY = 'gb-groups';
+/**
+ * The sections and groups that navigation opened (revealCurrentPage), not
+ * the reader: they close again once the reader stays on a page elsewhere, so
+ * the rail follows where they are instead of ending with everything open.
+ * A reader's own toggle takes one off this list (and keeps it as they set
+ * it); a reload clears it with the rest (default.html).
+ */
+const AUTO_KEY = 'gb-rail-auto';
+
+function savedAuto(): {sections: string[]; groups: string[]} {
+  try {
+    const auto = JSON.parse(localStorage.getItem(AUTO_KEY) || '{}');
+    return {sections: auto.sections ?? [], groups: auto.groups ?? []};
+  } catch {
+    return {sections: [], groups: []};
+  }
+}
+
+/** The reader toggled a section or group: it's theirs now. */
+function claimFromAuto(kind: 'sections' | 'groups', id: string) {
+  const auto = savedAuto();
+  if (!auto[kind].includes(id)) return;
+  auto[kind] = auto[kind].filter((x) => x !== id);
+  store(AUTO_KEY, JSON.stringify(auto));
+}
 
 function savedGroups(): Record<string, boolean> {
   try {
@@ -446,6 +471,7 @@ function handleGroupToggle(e: Event) {
   const saved = savedGroups();
   saved[id] = open;
   store(GROUPS_KEY, JSON.stringify(saved));
+  claimFromAuto('groups', id);
   // The rail applies sections and groups together (default.html).
   if (list === rail) applyRail();
   else setGroup(list, id, open);
@@ -578,8 +604,10 @@ rail?.addEventListener('click', (e) => {
   } catch {
     // A broken entry starts over.
   }
-  saved[toggle.dataset['sectionToggle'] ?? ''] = toggle.getAttribute('aria-expanded') !== 'true';
+  const id = toggle.dataset['sectionToggle'] ?? '';
+  saved[id] = toggle.getAttribute('aria-expanded') !== 'true';
   store(SECTIONS_KEY, JSON.stringify(saved));
+  claimFromAuto('sections', id);
   applyRail();
 });
 
@@ -589,9 +617,12 @@ rail?.addEventListener('click', (e) => {
 // the reader left them, so the list doesn't change while they page through.
 // Once they stay a moment (REVEAL_AFTER), a closed section or group holding
 // the page opens (with its motion), and the pill moves from the section down
-// to the page, in the middle of the rail. A reload instead starts with only
-// the current section open (default.html). Anything the reader does in the
-// rail first cancels it.
+// to the page, in the middle of the rail. What navigation opened on earlier
+// pages closes then (AUTO_KEY), so the rail follows the reader instead of
+// ending with every section open (and some 50 rail items to style on every
+// page); what the reader opened or closed themselves stays. A reload instead
+// starts with only the current section open (default.html). Anything the
+// reader does in the rail first cancels it.
 
 const REVEAL_AFTER = 1000;
 
@@ -610,14 +641,39 @@ function revealCurrentPage() {
   const closed =
     sectionToggle?.getAttribute('aria-expanded') === 'false' ||
     groupToggle?.getAttribute('aria-expanded') === 'false';
-  sections[currentSection] = true;
-  store(SECTIONS_KEY, JSON.stringify(sections));
-  if (group) {
-    groups[group] = true;
-    store(GROUPS_KEY, JSON.stringify(groups));
+  // What navigation opened on earlier pages closes, unless it holds this
+  // one (back to its default: closed, for a section that isn't current).
+  const auto = savedAuto();
+  let closedOthers = false;
+  for (const id of auto.sections) {
+    if (id !== currentSection && id in sections) {
+      delete sections[id];
+      closedOthers = true;
+    }
   }
-  if (!closed) return;
+  for (const id of auto.groups) {
+    if (id !== group && id in groups) {
+      delete groups[id];
+      closedOthers = true;
+    }
+  }
+  auto.sections = auto.sections.filter((id) => id === currentSection);
+  auto.groups = auto.groups.filter((id) => id === group);
+  // Opened here by navigation, unless the reader had it open already.
+  if (sections[currentSection] !== true && !auto.sections.includes(currentSection)) {
+    auto.sections.push(currentSection);
+  }
+  if (group && groups[group] !== true && !auto.groups.includes(group)) {
+    auto.groups.push(group);
+  }
+  sections[currentSection] = true;
+  if (group) groups[group] = true;
+  store(SECTIONS_KEY, JSON.stringify(sections));
+  store(GROUPS_KEY, JSON.stringify(groups));
+  store(AUTO_KEY, JSON.stringify(auto));
+  if (!closed && !closedOthers) return;
   applyRail();
+  if (!closed) return;
   if (!rail.expanded || !pageItem || pageItem.hidden) return;
   if (sectionItem) movePill(sectionItem, pageItem);
   centerInRail(pageItem, {always: true, smooth: true});
