@@ -1113,7 +1113,7 @@ var TopAppBar = class extends SignalElement(s) {
               <md-icon>menu_open</md-icon>
             </md-icon-button>
             <md-icon-button
-              href="/material-web/"
+              href="/"
               class="home-button"
               title="Home"
               aria-label="Home">
@@ -1121,7 +1121,7 @@ var TopAppBar = class extends SignalElement(s) {
             </md-icon-button>
           </section>
 
-          <a href="/material-web/" id="home-link">
+          <a href="/" id="home-link">
             Material Web
             <md-focus-ring for="home-link"></md-focus-ring>
           </a>
@@ -1135,7 +1135,7 @@ var TopAppBar = class extends SignalElement(s) {
             <slot name="end"></slot>
             <lit-island
               on:interaction="pointerenter,focusin,pointerdown"
-              import="/material-web/js/hydration-entrypoints/menu.js"
+              import="/js/hydration-entrypoints/menu.js"
               id="menu-island">
               <md-icon-button
                 title="GitHub repository"
