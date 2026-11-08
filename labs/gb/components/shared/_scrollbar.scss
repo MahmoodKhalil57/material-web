@@ -1,0 +1,37 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// Scrollbars of the components' scroll containers. The M3 spec has no
+// scrollbar visuals; it only says menus that scroll show a persistent
+// scrollbar (components/menus.md, Scrolling) and cards don't scroll inside
+// on mobile (components/cards.md). These are the tokens' answer:
+//
+// - `scrollbar-gutter: stable` reserves the gutter, so a scrollbar that
+//   appears (content grows, a menu fills up) doesn't move the content.
+// - Thin, with the thumb in `outline` (the role M3 gives boundaries that
+//   need 3:1 non-text contrast) and a transparent track, darkening to
+//   `on-surface-variant` while the container is hovered.
+//
+// All three properties are ignored where unsupported (Baseline allow list),
+// leaving the platform scrollbar.
+//
+// Where scrollbars take layout space (Windows and Linux desktops), a stable
+// gutter is reserved even when nothing scrolls. Containers whose spec
+// measurements run to their edge (the navigation drawer's 12dp indicator
+// padding, the app and pane scaffolds' pane widths and centered spacer)
+// default to no gutter;
+// `--scrollbar-gutter: stable` on them opts in.
+
+/// Styles a scroll container's scrollbar (use inside its rule).
+/// @param {Boolean} $gutter - Whether to reserve the gutter by default.
+@mixin scroller($gutter: true) {
+  scrollbar-gutter: var(--scrollbar-gutter, #{if($gutter, stable, auto)});
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-sys-color-outline) transparent;
+
+  &:hover {
+    scrollbar-color: var(--md-sys-color-on-surface-variant) transparent;
+  }
+}

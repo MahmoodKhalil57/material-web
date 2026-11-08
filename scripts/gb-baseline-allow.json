@@ -4,6 +4,7 @@
   {"feature":"overscroll-behavior","reason":"Ignored where unsupported: scroll chaining at the edge of the scroller is not contained; nothing else changes."},
   {"feature":"scrollbar-width","reason":"Ignored where unsupported: the platform scrollbar stays visible/regular; content size is unaffected inside overlay or reserved gutters."},
   {"feature":"scrollbar-gutter","reason":"Ignored where unsupported: no reserved gutter, a small layout shift when a scrollbar appears; content stays reachable."},
+  {"feature":"scrollbar-color","reason":"Ignored where unsupported: the platform's scrollbar colors are used; size and behavior unchanged."},
   {"feature":"interpolate-size","reason":"Ignored where unsupported: size changes to/from intrinsic keywords jump instead of animating; end states unchanged."},
   {"feature":"field-sizing","reason":"Ignored where unsupported: the textarea keeps its fixed rows height and scrolls; it stays usable."},
   {"feature":"transition-behavior","reason":"Ignored where unsupported: discrete properties (display, overlay) change at once instead of transitioning; end states unchanged."},

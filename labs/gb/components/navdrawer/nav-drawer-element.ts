@@ -128,6 +128,9 @@ const baseClass = mixinDelegatesAria(LitElement);
  * @cssprop --scrim-color
  * @cssprop --section-label-height
  * @cssprop --section-label-leading-space
+ * @cssprop --scrollbar-gutter - `stable` reserves the scrollbar gutter, so a
+ *     scrollbar that appears doesn't move the items (default `auto`: where
+ *     scrollbars take space it would narrow the 12dp indicator padding).
  */
 export class NavDrawerElement extends baseClass {
   /** @nocollapse */

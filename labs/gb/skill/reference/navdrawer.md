@@ -28,6 +28,7 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `gesturesDisabled` | `gestures-disabled` (reflects) | `boolean` | `false` | Whether swiping a modal drawer closed is turned off (Compose `gesturesEnabled = false`). Escape, the scrim and `close()` still close it. |
+| `label` | `label` | `string` | `''` | The accessible name of the navigation landmark. Use it instead of `aria-label` when the host sits outside any landmark: the host's `aria-label` moves to a data attribute that checkers (axe `region`) still read as a name on a host that has no landmark role. |
 | `modal` | `modal` (reflects) | `boolean` | `false` | Whether the drawer is modal: it opens over a scrim that blocks the rest of the app, instead of sitting next to the content. |
 | `open` | `open` (reflects) | `boolean` |  | Whether the drawer is open. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Whether to skip the open and close transitions. |
@@ -115,6 +116,7 @@ CSS custom properties
 - `--motion-open-duration`
 - `--motion-open-easing`
 - `--scrim-color`
+- `--scrollbar-gutter`: `stable` reserves the scrollbar gutter, so a scrollbar that appears doesn't move the items (default `auto`: where scrollbars take space it would narrow the 12dp indicator padding).
 - `--section-label-height`
 - `--section-label-leading-space`
 

@@ -5,6 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'sheet-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // The drag handle's touch target (spec Accessibility: the top 48dp).
@@ -236,6 +237,7 @@ $drag-target-size: 48px;
     flex: 1 1 auto;
     min-block-size: 0;
     overflow-y: auto;
+    @include scrollbar.scroller;
     overscroll-behavior: contain;
   }
 

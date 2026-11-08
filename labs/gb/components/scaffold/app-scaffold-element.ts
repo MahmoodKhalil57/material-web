@@ -75,6 +75,9 @@ export interface NavigationChangeDetail {
  * @csspart top-app-bar - The top app bar region.
  * @csspart body - The content region (content, FAB and snackbar).
  * @csspart content - The scrolling content container.
+ * @cssprop --scrollbar-gutter - `stable` reserves the content's scrollbar
+ *     gutter, so a scrollbar that appears doesn't move the content (default
+ *     `auto`: the pane widths are measured to the edges).
  * @csspart navigation-bar - The navigation bar region.
  * @cssprop --container-color - Scaffold background.
  * @cssprop --content-color - Scaffold content color.

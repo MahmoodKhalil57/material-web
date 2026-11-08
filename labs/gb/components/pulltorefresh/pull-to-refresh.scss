@@ -5,6 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'pull-to-refresh-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 @layer md.sys;
@@ -34,6 +35,7 @@
     block-size: 100%;
     box-sizing: border-box;
     overflow-y: auto;
+    @include scrollbar.scroller;
     // The page does not scroll or refresh once the content reaches its top.
     overscroll-behavior-y: contain;
 

@@ -5,6 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use '../../styles/layout/md-layout';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // Compose Scaffold: the FAB sits 16dp from the end edge and above the bottom
@@ -78,6 +79,9 @@ $_fab-spacing: var(--md-sys-space-200);
     flex: 1;
     min-block-size: 0;
     overflow: auto;
+    // A layout container measured to its edges (pane widths, the centered
+    // spacer): no gutter unless --scrollbar-gutter opts in.
+    @include scrollbar.scroller($gutter: false);
   }
 
   .app-scaffold-bar {

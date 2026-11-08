@@ -5,6 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'dialog-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // Spec page "Basic dialog measurements" and Compose AlertDialogContent.
@@ -223,6 +224,7 @@ $action-overhang: 12px;
     flex: 1 1 auto;
     min-block-size: 0;
     overflow-y: auto;
+    @include scrollbar.scroller;
     overscroll-behavior: contain;
   }
 

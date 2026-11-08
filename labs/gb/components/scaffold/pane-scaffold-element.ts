@@ -185,6 +185,9 @@ const APP_SCAFFOLD_TAG = 'md-gb-app-scaffold';
  *     window. Set by `md-gb-app-scaffold`.
  * @cssprop --md-gb-scaffold-companion-inline-size - Width of a companion rail
  *     on the trailing side of the scaffold. Set by `md-gb-app-scaffold`.
+ * @cssprop --scrollbar-gutter - `stable` reserves the panes' scrollbar
+ *     gutters, so a scrollbar that appears doesn't move their content
+ *     (default `auto`: the spacer is centered on the pane edges).
  * @fires {CustomEvent<WindowClassChangeDetail>} window-class-change - Fired
  *     when the window size class changes. --bubbles --composed
  * @fires {CustomEvent<WindowHeightClassChangeDetail>} window-height-class-change

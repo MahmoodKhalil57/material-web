@@ -6,6 +6,7 @@
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use '../shared/density';
 @use 'time-picker-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // Compose TimePicker.kt / TimePickerDialog.kt layout constants.
@@ -103,6 +104,7 @@ $window-margin: 24px;
     max-inline-size: calc(100% - 2 * $window-margin);
     max-block-size: calc(100% - 2 * $window-margin);
     overflow: auto;
+    @include scrollbar.scroller;
     box-shadow: var(--container-elevation);
     outline: none;
     opacity: 1;

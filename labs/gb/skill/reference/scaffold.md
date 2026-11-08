@@ -57,6 +57,7 @@ CSS custom properties
 
 - `--container-color`: Scaffold background.
 - `--content-color`: Scaffold content color.
+- `--scrollbar-gutter`: `stable` reserves the content's scrollbar gutter, so a scrollbar that appears doesn't move the content (default `auto`: the pane widths are measured to the edges).
 
 ### `<md-gb-pane-scaffold>`
 
@@ -135,3 +136,4 @@ CSS custom properties
 - `--md-gb-scaffold-nav-inline-size`: Width of a navigation rail beside the scaffold, so split panes keep the spacer centered in the window. Set by `md-gb-app-scaffold`.
 - `--pane-container-color`: Pane background (transparent: panes blend with the background, implicit grouping).
 - `--pane-container-shape`: Pane corner radius.
+- `--scrollbar-gutter`: `stable` reserves the panes' scrollbar gutters, so a scrollbar that appears doesn't move their content (default `auto`: the spacer is centered on the pane edges).

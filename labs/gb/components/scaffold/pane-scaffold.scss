@@ -8,6 +8,7 @@
 @use '../../styles/layout/md-layout';
 @use 'drag-handle-tokens';
 @use 'levitated-pane-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // Feed columns: the feed grid uses half of the layout grid's columns (one
@@ -95,6 +96,7 @@ $_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
     min-inline-size: 0;
     outline: none;
     overflow: auto;
+    @include scrollbar.scroller($gutter: false);
     transition:
       flex-basis #{$_spatial},
       flex-grow #{$_spatial},
@@ -143,6 +145,7 @@ $_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
   .pane-scaffold-stacked {
     flex-direction: column;
     overflow-y: auto;
+    @include scrollbar.scroller($gutter: false);
   }
 
   .pane-scaffold-stacked .pane {
@@ -220,6 +223,7 @@ $_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
   .pane-scaffold-fold-horizontal > .pane {
     min-block-size: 0;
     overflow: auto;
+    @include scrollbar.scroller($gutter: false);
   }
 
   // Levitate: the secondary pane is elevated above the primary pane, as a

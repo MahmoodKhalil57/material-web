@@ -6,6 +6,7 @@
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use '../../../../tokens/versions/latest/sass/md-sys-state-focus-indicator';
 @use 'search-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // The icon buttons in the header are 40dp `.icon-btn`s centered in 48dp tap
@@ -269,6 +270,7 @@ $icon-btn-size: 40px;
     flex: 1 1 auto;
     min-block-size: 0;
     overflow: auto;
+    @include scrollbar.scroller;
     overscroll-behavior: contain;
   }
 

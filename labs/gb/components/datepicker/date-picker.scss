@@ -5,6 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'date-picker-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // Compose YearPickerMenuButton is a TextButton (12dp leading padding) with a
@@ -150,6 +151,7 @@ $slide-distance: 20%;
   .date-picker-dialog .date-picker {
     max-block-size: calc(100dvh - 2 * $window-margin);
     overflow-y: auto;
+    @include scrollbar.scroller;
   }
 
   @starting-style {
@@ -520,6 +522,7 @@ $slide-distance: 20%;
   .date-picker-months {
     padding-inline: var(--padding-inline);
     scrollbar-gutter: stable;
+    @include scrollbar.scroller;
   }
 
   .date-picker-scrolling-weekdays {
@@ -681,6 +684,7 @@ $slide-distance: 20%;
     box-sizing: border-box;
     block-size: var(--menu-list-height);
     overflow-y: auto;
+    @include scrollbar.scroller;
     padding-block: 8px;
     overscroll-behavior: contain;
   }

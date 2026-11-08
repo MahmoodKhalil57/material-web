@@ -5,6 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'nav-drawer-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // How far the container paints past its start edge, so an overshooting open
@@ -58,6 +59,7 @@ $overshoot: 24px;
     min-inline-size: min(var(--container-width-minimum), 100%);
     overflow-x: hidden;
     overflow-y: auto;
+    @include scrollbar.scroller($gutter: false);
     overscroll-behavior: contain;
     padding-block: var(--container-padding-block);
     padding-inline: var(--container-padding-inline);

@@ -219,7 +219,7 @@ to its web-features Baseline status. A feature that is not widely available
 must sit inside a matching `@supports` guard or be listed with a reason in
 `scripts/gb-baseline-allow.json`; anything else fails the run.
 
-- CSS: 19,123 feature uses in 62 files; 50 features are not widely available, used 690 times (478 guarded, 212 allowed with a reason, **0 unguarded**). Result: passes.
+- CSS: 19,252 feature uses in 62 files; 51 features are not widely available, used 754 times (478 guarded, 276 allowed with a reason, **0 unguarded**). Result: passes.
 - JavaScript (report only): 31 tracked Web API members in 207 source files; 6 are not widely available, 3 of them with at least one use that is not feature-detected.
 
 ## Size budgets

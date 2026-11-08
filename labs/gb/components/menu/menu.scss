@@ -6,6 +6,7 @@
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use '../shared/density';
 @use 'menu-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 // Motion: container and group corners morph with the default spatial spring
@@ -144,6 +145,7 @@ $grouped: ':where(.menu-grouped, .menu-grouped *)';
 
     &.menu-host {
       overflow: auto;
+      @include scrollbar.scroller;
     }
 
     &.menu-host.menu-grouped {
