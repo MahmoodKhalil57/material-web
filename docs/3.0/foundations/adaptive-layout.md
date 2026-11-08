@@ -6,12 +6,10 @@ icon: devices
 description: Pages and components change with the window.
 ---
 
-## Adaptive layout
+labs/gb uses the M3 window size classes to pick the navigation, the number
+of panes and how dialogs open.
 
-Pages and components change with the window. labs/gb uses the M3 window size
-classes to pick the navigation, the number of panes and how dialogs open.
-
-### Window size classes
+## Window size classes
 
 | Class | Width (CSS px) |
 | --- | --- |
@@ -61,7 +59,7 @@ controllers.forEach((c) => c.hostConnected?.());
 ```
 {% enddemo %}
 
-### App scaffold
+## App scaffold
 
 `md-gb-app-scaffold` lays out the bars and rails around the app's content:
 
@@ -114,7 +112,7 @@ Provide both a `md-gb-nav-bar` and a `md-gb-nav-rail` with the same
 destinations, and keep their selection in sync. The scaffold shows only one of
 them.
 
-### Panes
+## Panes
 
 `md-gb-pane-scaffold` shows one, two or three panes. The default slot is the
 primary (flexible) pane, `secondary` is the list of a list-detail layout, and
@@ -122,14 +120,14 @@ primary (flexible) pane, `secondary` is the list of a list-detail layout, and
 `placeholder` is shown in the primary pane of a two-pane layout with nothing
 selected.
 
-### Safe areas
+## Safe areas
 
 The scaffold keeps its bars away from the device safe areas. It reads
 `--md-gb-scaffold-safe-top`, `-right`, `-bottom` and `-left`, which default to
 `env(safe-area-inset-*)`. Keep primary content out of those edges. To change
 the insets, set the custom properties on the scaffold.
 
-### Full-screen dialogs
+## Full-screen dialogs
 
 A full-screen dialog is for compact windows only. Set `full-screen` on
 `md-gb-dialog`: at compact it fills the window, and at medium and larger it

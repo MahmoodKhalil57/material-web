@@ -5,14 +5,13 @@ order: 4
 icon: category
 description: Shape can direct attention, communicate state, and express brand.
 ---
-## Shape
 
 M3 Expressive uses a
 [corner radius scale](https://m3.material.io/styles/shape/corner-radius-scale)
 from straight to fully round, with larger steps, "increased" values, and shape
 morphing between states.
 
-### Tokens
+## Tokens
 
 Tokens follow the naming convention `--md-sys-shape-corner-<step>`.
 

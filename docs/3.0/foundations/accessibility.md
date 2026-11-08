@@ -6,13 +6,9 @@ icon: accessibility_new
 description: Every labs/gb component works with a keyboard, a screen reader and reduced motion.
 ---
 
-## Accessibility
+The rules below are the ones the components follow and the tests check.
 
-Every labs/gb component works with a keyboard, a screen reader and reduced
-motion. The rules below are the ones the components follow and the tests
-check.
-
-### Keyboard
+## Keyboard
 
 Composite components (button groups, chip sets, lists, menus, tabs, navigation,
 pickers) share one roving focus model in `labs/gb/components/shared/roving-focus.ts`:
@@ -58,7 +54,7 @@ dialog.addEventListener('cancel', (event) => {
 ```
 {% enddemo %}
 
-### Focus ring
+## Focus ring
 
 The focus ring is drawn with `outline`, using the `--focus-ring-outline` and
 `--focus-ring-offset` variables from `labs/gb/components/focus/focus-ring.scss`.
@@ -66,7 +62,7 @@ The thickness, color and offsets come from the state focus indicator tokens, so
 a theme changes them in one place. Do not remove the outline with CSS unless
 you draw a replacement that passes the same tests.
 
-### Screen readers and ARIA
+## Screen readers and ARIA
 
 Components use WAI-ARIA 1.3 roles, states and properties. The model of the
 draft and the checks that report misuse live in
@@ -78,7 +74,7 @@ Material Design 3 wins where it and WAI-ARIA 1.3 disagree. In every other case
 the ARIA rules apply as written. When you add a component, follow the M3 page
 for its behavior first, then check the ARIA role and attributes it uses.
 
-### Reduced motion
+## Reduced motion
 
 Motion respects `prefers-reduced-motion: reduce`. The motion helpers in
 `labs/gb/components/shared/motion.ts` resolve to 0 ms under that setting and
