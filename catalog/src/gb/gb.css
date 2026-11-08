@@ -11,6 +11,10 @@
 @import './search.css';
 @import './shell.css';
 @import './sections.css';
+@import './home.css';
+@import './morph.css';
+@import './reduce-motion.css';
+@import './compat.css';
 
 /* While Roboto Flex loads (font-display: swap), text is set in Arial scaled
    to Roboto's vertical metrics, so the swap moves little (CLS). */

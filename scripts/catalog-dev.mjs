@@ -309,11 +309,14 @@ async function copyGbDocs() {
       2,
     ) + '\n',
   );
-  const intro = await readFile(join(dest, 'about', 'intro.md'), 'utf8');
-  await writeFile(
-    join(dest, 'index.md'),
-    intro.replace(/^---\n/, '---\npermalink: /3.0/\neleventyExcludeFromCollections: true\n'),
-  );
+  // /3.0/ is docs/3.0/index.md (the home page), else the intro page.
+  if (!existsSync(join(ROOT, 'docs', '3.0', 'index.md'))) {
+    const intro = await readFile(join(dest, 'about', 'intro.md'), 'utf8');
+    await writeFile(
+      join(dest, 'index.md'),
+      intro.replace(/^---\n/, '---\npermalink: /3.0/\neleventyExcludeFromCollections: true\n'),
+    );
+  }
   return (await walk(join(ROOT, 'docs', '3.0'))).filter((f) => f.endsWith('.md') && !f.endsWith('README.md')).length;
 }
 

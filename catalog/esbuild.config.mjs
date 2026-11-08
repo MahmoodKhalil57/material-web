@@ -159,7 +159,9 @@ const gbBuild = esbuild
                       ...config,
                       splitting: false,
                       plugins: [...(config.plugins ?? []), cssModulePlugin],
-                      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css', 'src/gb/sw.ts'],
+                      // shape-morphs.css: the morph paths (scripts/gb-shape-morphs.mjs),
+                      // linked by the pages with morphing shapes only.
+                      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css', 'src/gb/shape-morphs.css', 'src/gb/sw.ts'],
                       outbase: 'src',
                       // Names the service worker's caches: every build is a new
                       // worker, which replaces the old one and its caches.

@@ -1,0 +1,334 @@
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* The /3.0/ home page (docs/3.0/index.md): an expressive hero (the
+   headline beside a composition of M3 shapes around the loading
+   indicator), a carousel of the system's styles, and cards built from live
+   components, each with a shape of its own. Colors, type, shape and motion
+   are --md-sys-* tokens only; the shapes are the M3 Expressive library
+   (eleventy-helpers/gb-shapes.cjs). */
+
+/* Container roles of the shapes and tiles. */
+:is(.gb-home-blob, .gb-home-tile, .gb-home-decor, .gb-home-art-small)[data-tone='primary'] {
+  --gb-tone: var(--md-sys-color-primary-container);
+  --gb-on-tone: var(--md-sys-color-on-primary-container);
+}
+:is(.gb-home-blob, .gb-home-tile, .gb-home-decor, .gb-home-art-small)[data-tone='secondary'] {
+  --gb-tone: var(--md-sys-color-secondary-container);
+  --gb-on-tone: var(--md-sys-color-on-secondary-container);
+}
+:is(.gb-home-blob, .gb-home-tile, .gb-home-decor, .gb-home-art-small)[data-tone='tertiary'] {
+  --gb-tone: var(--md-sys-color-tertiary-container);
+  --gb-on-tone: var(--md-sys-color-on-tertiary-container);
+}
+.gb-home-hero .gb-shape,
+.gb-home-section .gb-shape {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: currentColor;
+}
+
+/* --- Hero ------------------------------------------------------------------ */
+
+.gb-home-hero {
+  display: grid;
+  gap: var(--md-sys-space-400);
+  align-items: center;
+  padding-block: var(--md-sys-space-400) var(--md-sys-space-600);
+}
+/* Beside each other when the text column has room (.gb-body is the size
+   container). */
+@container (min-width: 640px) {
+  .gb-home-hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}
+.gb-home-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--md-sys-space-300);
+}
+.gb-home-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--md-sys-space-100);
+  min-block-size: 32px;
+  padding-inline: var(--md-sys-space-200) var(--md-sys-space-150);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+  text-decoration: none;
+}
+.gb-home-chip md-gb-icon {
+  --md-icon-size: 18px;
+}
+.gb-home-chip:hover {
+  background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+}
+.gb-home-chip:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+.gb-home-title {
+  margin: 0;
+  font: var(--md-sys-typescale-display-lg);
+  font-variation-settings: var(--md-sys-typescale-display-lg-axes);
+  letter-spacing: var(--md-sys-typescale-display-lg-tracking);
+  text-wrap: balance;
+}
+.gb-home-lede {
+  margin: 0;
+  max-inline-size: 36rem;
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-lg);
+  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
+  text-wrap: pretty;
+}
+.gb-home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--md-sys-space-150);
+}
+
+/* The shapes around the loading indicator, in the container roles. */
+.gb-home-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  inline-size: min(100%, 26rem);
+  justify-self: center;
+}
+.gb-home-blob {
+  position: absolute;
+  color: var(--gb-tone);
+}
+.gb-home-blob[data-pos='main'] {
+  inset: 12%;
+  animation: gb-home-turn 60s linear infinite;
+}
+.gb-home-blob[data-pos='a'] {
+  inset-block-start: 0;
+  inset-inline-end: 2%;
+  inline-size: 34%;
+  aspect-ratio: 1;
+  animation: gb-home-turn 40s linear infinite reverse;
+}
+.gb-home-blob[data-pos='b'] {
+  inset-block-end: 2%;
+  inset-inline-start: 0;
+  inline-size: 30%;
+  aspect-ratio: 1;
+  animation: gb-home-turn 50s linear infinite;
+}
+.gb-home-blob[data-pos='c'] {
+  inset-block-end: 6%;
+  inset-inline-end: 4%;
+  inline-size: 30%;
+  aspect-ratio: 2;
+  rotate: -30deg;
+}
+.gb-home-blob[data-pos='d'] {
+  inset-block-start: 4%;
+  inset-inline-start: 6%;
+  inline-size: 16%;
+  aspect-ratio: 1;
+  animation: gb-home-turn 30s linear infinite reverse;
+}
+/* In the middle of the big shape, at its own size (a grid item). */
+.gb-home-spinner {
+  position: relative;
+  --size: 120px;
+}
+@keyframes gb-home-turn {
+  to {
+    rotate: 1turn;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gb-home-blob {
+    animation: none;
+  }
+}
+
+/* --- Sections ---------------------------------------------------------------- */
+
+.gb-home-section {
+  margin-block-start: var(--md-sys-space-600);
+}
+.gb-home-heading {
+  margin: 0 0 var(--md-sys-space-300);
+  font: var(--md-sys-typescale-headline-md);
+  font-variation-settings: var(--md-sys-typescale-headline-md-axes);
+}
+
+/* The carousel's tiles: a big shape with the topic's icon. */
+.gb-home-carousel {
+  --height: 260px;
+  --item-width: 220px;
+}
+.gb-home-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+  background: var(--gb-tone);
+  color: var(--gb-on-tone);
+  overflow: hidden;
+}
+.gb-home-tile-shape {
+  position: absolute;
+  inset: 14% 10%;
+  inline-size: auto !important;
+  block-size: auto !important;
+  color: color-mix(in srgb, var(--gb-on-tone) 14%, var(--gb-tone));
+}
+.gb-home-tile-icon {
+  position: relative;
+  --md-icon-size: 64px;
+}
+
+/* --- Cards: live components, each with a shape of its own --------------------- */
+
+.gb-home-cards {
+  columns: 2 20rem;
+  column-gap: var(--md-sys-space-200);
+}
+.gb-home-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-space-200);
+  margin-block-end: var(--md-sys-space-200);
+  padding: var(--md-sys-space-300);
+  border-radius: var(--md-sys-shape-corner-xl);
+  background: var(--md-sys-color-surface-container-low);
+  overflow: hidden;
+  break-inside: avoid;
+  isolation: isolate;
+}
+/* The M3 corner scale, mixed: one corner larger than the rest. */
+.gb-home-card[data-corners='a'] {
+  border-start-end-radius: var(--md-sys-shape-corner-xxl);
+}
+.gb-home-card[data-corners='b'] {
+  border-radius: var(--md-sys-shape-corner-xl-increased);
+  border-end-start-radius: var(--md-sys-shape-corner-xxl);
+}
+.gb-home-card[data-corners='c'] {
+  border-radius: var(--md-sys-shape-corner-lg-increased);
+  border-start-start-radius: var(--md-sys-shape-corner-xxl);
+}
+/* The card's shape, peeking in from its top end corner, behind the
+   content. */
+.gb-home-decor {
+  position: absolute;
+  inset-block-start: -2.5rem;
+  inset-inline-end: -2.5rem;
+  z-index: -1;
+  inline-size: 8.5rem;
+  aspect-ratio: 1;
+  color: var(--gb-tone);
+  opacity: 0.7;
+}
+/* Where the card's top is busy (a row of buttons): its bottom end. */
+.gb-home-decor[data-place='bottom'] {
+  inset-block: auto -2.5rem;
+}
+.gb-home-card-title {
+  margin: 0;
+  font: var(--md-sys-typescale-title-lg);
+  font-variation-settings: var(--md-sys-typescale-title-lg-axes);
+}
+.gb-home-card p {
+  margin: 0;
+}
+.gb-home-card md-gb-text-field,
+.gb-home-card md-gb-slider,
+.gb-home-card md-gb-progress,
+.gb-home-wide {
+  inline-size: 100%;
+}
+.gb-home-card md-gb-list {
+  margin-inline: calc(-1 * var(--md-sys-space-300));
+  background: transparent;
+}
+.gb-home-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--md-sys-space-100);
+}
+.gb-home-spread {
+  justify-content: space-between;
+}
+.gb-home-center {
+  justify-content: center;
+}
+.gb-home-end {
+  justify-content: flex-end;
+}
+.gb-home-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-space-50);
+}
+.gb-home-muted {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-md);
+  font-variation-settings: var(--md-sys-typescale-body-md-axes);
+}
+.gb-home-label {
+  font: var(--md-sys-typescale-body-md);
+  cursor: pointer;
+}
+.gb-home-media {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-space-200);
+}
+/* A shape as the album art. */
+.gb-home-art-small {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 72px;
+  aspect-ratio: 1;
+  color: var(--gb-tone);
+}
+.gb-home-art-small .gb-shape {
+  position: absolute;
+  inset: 0;
+}
+.gb-home-art-small md-gb-icon {
+  position: relative;
+  color: var(--gb-on-tone);
+}
+.gb-home-goal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-space-100);
+  padding: var(--md-sys-space-200);
+  border-radius: var(--md-sys-shape-corner-lg);
+  background: var(--md-sys-color-surface-container);
+}
+.gb-home-overline {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-label-md);
+  font-variation-settings: var(--md-sys-typescale-label-md-axes);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.gb-home-figure {
+  font: var(--md-sys-typescale-headline-lg);
+  font-variation-settings: var(--md-sys-typescale-headline-lg-axes);
+}

@@ -113,6 +113,10 @@
     {%- endfor %}
     <link rel="stylesheet" href="{{ gbFonts.stylesheet }}" />
     <link rel="stylesheet" href="/js/gb/gb.css" />
+    {%- if gbIndex %}
+    {#- The section and home pages' morphing shapes (src/gb/morph.css). -#}
+    <link rel="stylesheet" href="/js/gb/shape-morphs.css" />
+    {%- endif %}
     <script>
       // Before first paint: color-scheme from the saved mode, the dynamic
       // color CSS generated for the saved theme (cached by gb.js), and

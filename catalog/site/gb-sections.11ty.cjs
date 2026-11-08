@@ -22,28 +22,13 @@
  */
 
 const {readFileSync} = require('node:fs');
-const {join} = require('node:path');
 const {COMPONENT_GROUPS, SECTIONS, sectionPages} = require('../eleventy-helpers/gb-site.cjs');
 const {parseDemo, dedent, escapeHtml} = require('../eleventy-helpers/shortcodes/gb-demo.cjs');
 
-const ROOT = join(__dirname, '..', '..');
-
 // ---------------------------------------------------------------------------
-// Shapes (labs/gb/styles/shape/material-shapes.ts: paths in a 0..1 box).
+// Shapes (eleventy-helpers/gb-shapes.cjs).
 
-let shapePaths;
-function shapePath(name) {
-  if (!shapePaths) {
-    const src = readFileSync(join(ROOT, 'labs', 'gb', 'styles', 'shape', 'material-shapes.ts'), 'utf8');
-    shapePaths = Object.fromEntries([...src.matchAll(/^\s+(\w+): '([^']+)',?$/gm)].map((m) => [m[1], m[2]]));
-  }
-  if (!shapePaths[name]) throw new Error(`gb-sections: no shape "${name}"`);
-  return shapePaths[name];
-}
-
-/** An inline SVG of a Material shape (filled with currentColor). */
-const shapeSvg = (name, cls = '') =>
-  `<svg class="gb-shape ${cls}" viewBox="0 0 1 1" aria-hidden="true" focusable="false"><path d="${shapePath(name)}"/></svg>`;
+const {shapeSvg} = require('../eleventy-helpers/gb-shapes.cjs');
 
 // Shapes of the card illustrations, and the container roles they cycle.
 const SHAPES = ['cookie9Sided', 'clover4Leaf', 'sunny', 'flower', 'puffy', 'cookie6Sided', 'softBurst', 'pill', 'pentagon', 'cookie12Sided', 'gem', 'burst'];
@@ -108,7 +93,8 @@ function illustration(index, icon) {
   const tone = TONES[index % TONES.length];
   return (
     `<div class="gb-card-media gb-card-art" data-tone="${tone}" aria-hidden="true">` +
-    shapeSvg(SHAPES[index % SHAPES.length], 'gb-card-shape') +
+    // Hovered or focused, the card's shape morphs into the next card's.
+    shapeSvg(SHAPES[index % SHAPES.length], 'gb-card-shape', {to: SHAPES[(index + 1) % SHAPES.length]}) +
     `<md-gb-icon class="gb-card-icon">${escapeHtml(icon)}</md-gb-icon>` +
     '</div>'
   );
@@ -134,14 +120,18 @@ const preview = (html, zoom = 1) =>
 // Page.
 
 function hero(section, count) {
-  // Shapes behind the headline: M3 Expressive shapes in the container roles.
+  // Shapes behind the headline: M3 Expressive shapes in the container roles,
+  // each morphing into another and back, in turn (morph.css).
   const decor = [
-    ['cookie9Sided', 'primary', 'a'],
-    ['clover4Leaf', 'tertiary', 'b'],
-    ['sunny', 'secondary', 'c'],
-    ['pill', 'primary', 'd'],
+    ['cookie9Sided', 'flower', 'primary', 'a'],
+    ['clover4Leaf', 'clover8Leaf', 'tertiary', 'b'],
+    ['sunny', 'softBurst', 'secondary', 'c'],
+    ['pill', 'oval', 'primary', 'd'],
   ]
-    .map(([shape, tone, pos]) => `<span class="gb-hero-shape" data-tone="${tone}" data-pos="${pos}">${shapeSvg(shape)}</span>`)
+    .map(
+      ([shape, to, tone, pos], delay) =>
+        `<span class="gb-hero-shape" data-tone="${tone}" data-pos="${pos}">${shapeSvg(shape, '', {to, loop: true, delay})}</span>`,
+    )
     .join('');
   return (
     `<header class="gb-hero"><div class="gb-hero-art" aria-hidden="true">${decor}</div>` +

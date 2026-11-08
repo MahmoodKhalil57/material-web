@@ -160,7 +160,9 @@ function sourceOf(item) {
   if (item.data?.gbIndex) return resolve(String(item.inputPath));
   const inputPath = resolve(String(item.inputPath));
   const rel = inputPath.replace(/\\/g, '/').replace(/^.*\/site\/3\.0\//, '');
-  return join(ROOT, 'docs', '3.0', rel === 'index.md' ? 'about/intro.md' : rel);
+  // /3.0/ is docs/3.0/index.md (the home page), else a copy of the intro.
+  const home = rel === 'index.md' && !existsSync(join(ROOT, 'docs', '3.0', 'index.md'));
+  return join(ROOT, 'docs', '3.0', home ? 'about/intro.md' : rel);
 }
 
 const dates = new Map();

@@ -209,6 +209,8 @@
       // buttons.md: label text is never truncated or wrapped; it stays fully
       // visible on a single line.
       white-space: nowrap;
+      // A link button (`href`) is an <a>: no link underline on its label.
+      text-decoration: none;
       // md.comp.button.pressed.container.corner-size.motion.spring is the
       // fast spatial spring (scripts/m3/gen-motion.mjs).
       transition:
