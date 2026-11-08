@@ -23,6 +23,7 @@ import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 import './shell.js';
 import './download.js';
 import './navigation.js';
+import {movePill} from './pill.js';
 import './search.js';
 import './webmcp.js';
 
@@ -288,41 +289,79 @@ addEventListener('click', (event) => {
 // The outline (a navigation rail's destinations, default.html) shows the
 // section being read as the active destination: `selected` for the active
 // indicator, and aria-current="location" (a place in this page, not the
-// item's own "page").
+// item's own "page"). (Top) at the top of the page, the last heading at the
+// bottom, else the last heading above a line 30% down the view. The pill
+// moves from the last section to the new one rather than fading out and in.
 {
-  const targets = new Map<Element, HTMLElement[]>();
+  const targets: {el: HTMLElement; items: HTMLElement[]}[] = [];
   for (const item of document.querySelectorAll<HTMLElement>(
     '.gb-toc md-gb-nav-rail-item[href^="#"]',
   )) {
     const id = decodeURIComponent((item.getAttribute('href') ?? '').slice(1));
     const el = document.getElementById(id);
-    if (el) targets.set(el, [...(targets.get(el) ?? []), item]);
+    if (!el) continue;
+    const known = targets.find((t) => t.el === el);
+    if (known) known.items.push(item);
+    else targets.push({el, items: [item]});
   }
-  if (targets.size && 'IntersectionObserver' in window) {
-    let current: HTMLElement[] = [];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const items = targets.get(entry.target);
-          if (!items || items === current) continue;
-          for (const item of current) {
-            item.removeAttribute('selected');
-            item.removeAttribute('aria-current');
-          }
-          for (const item of items) {
-            item.setAttribute('selected', '');
-            item.setAttribute('aria-current', 'location');
-          }
-          current = items;
-        }
-      },
-      // The content scrolls in its own pane below the header.
-      {rootMargin: '-80px 0px -70% 0px'},
-    );
-    for (const el of targets.keys()) observer.observe(el);
+  const top = targets.find((t) => t.el.id === 'main');
+  const headings = targets.filter((t) => t !== top);
+  const pane = document.getElementById('gb-content-pane');
+  // The pane scrolls from the medium window class; below it, the document.
+  const scroller = () =>
+    pane && pane.scrollHeight > pane.clientHeight && getComputedStyle(pane).overflowY !== 'visible'
+      ? pane
+      : document.scrollingElement ?? document.documentElement;
+  let current: (typeof targets)[number] | undefined;
+  let frame = 0;
+
+  const activeTarget = () => {
+    const box = scroller();
+    const view =
+      box === pane
+        ? box.getBoundingClientRect()
+        : {top: 0, height: window.innerHeight};
+    if (box.scrollTop <= 1) return top ?? headings[0];
+    if (box.scrollTop + box.clientHeight >= box.scrollHeight - 1) return headings.at(-1);
+    const line = view.top + view.height * 0.3;
+    let found = top ?? headings[0];
+    for (const t of headings) {
+      if (t.el.getBoundingClientRect().top <= line) found = t;
+      else break;
+    }
+    return found;
+  };
+
+  const update = () => {
+    frame = 0;
+    const next = activeTarget();
+    if (!next || next === current) return;
+    const previous = current;
+    for (const item of previous?.items ?? []) {
+      item.removeAttribute('selected');
+      item.removeAttribute('aria-current');
+    }
+    for (const item of next.items) {
+      item.setAttribute('selected', '');
+      item.setAttribute('aria-current', 'location');
+    }
+    current = next;
+    previous?.items.forEach((from, i) => {
+      const to = next.items[i];
+      if (to) movePill(from, to);
+    });
+  };
+  const schedule = () => {
+    frame ||= requestAnimationFrame(update);
+  };
+  if (targets.length) {
+    pane?.addEventListener('scroll', schedule, {passive: true});
+    window.addEventListener('scroll', schedule, {passive: true});
+    window.addEventListener('resize', schedule, {passive: true});
+    update();
   }
 }
+
 
 // --- Copy buttons --------------------------------------------------------
 

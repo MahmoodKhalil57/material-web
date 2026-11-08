@@ -47,6 +47,8 @@ interface MorphRects {
   box: DOMRect;
   icon: DOMRect | null;
   pill: DOMRect | null;
+  /** Whether it was the active destination. */
+  selected: boolean;
 }
 
 /**
@@ -140,6 +142,9 @@ export const NAV_RAIL_VELOCITY_THRESHOLD_PX_PER_S = 125;
  * @cssprop --item-full-width-leading-space
  * @cssprop --item-full-width-trailing-space
  * @cssprop --item-horizontal-active-indicator-height
+ * @cssprop --item-horizontal-active-indicator-width - The expanded
+ *   destinations' pill width: `fit-content` (default) hugs the icon and
+ *   label; `100%` takes the destination's width.
  * @cssprop --item-horizontal-icon-label-space
  * @cssprop --item-icon-size
  * @cssprop --item-inactive-focused-icon-color
@@ -352,6 +357,12 @@ export class NavRailElement extends AriaTablistElement {
     if (this.expanded === nextExpanded) {
       return this.expanded;
     }
+    // Where things are, before `toggle` listeners change the page (the
+    // active destination, the layout around the rail): the morph starts
+    // here, and layout is still clean, so measuring is cheap.
+    if (this.hasUpdated && this.isConnected && !this.morphFrom) {
+      this.morphFrom = this.measureMorph();
+    }
     this.expanded = nextExpanded;
     const reason = this.collapseReason;
     this.collapseReason = undefined;
@@ -400,7 +411,13 @@ export class NavRailElement extends AriaTablistElement {
 
   protected override willUpdate(changedProperties: PropertyValues<this>) {
     super.willUpdate(changedProperties);
-    if (changedProperties.has('expanded') && this.hasUpdated && this.isConnected) {
+    // Measured in toggle(), or here when `expanded` was set directly.
+    if (
+      changedProperties.has('expanded') &&
+      this.hasUpdated &&
+      this.isConnected &&
+      !this.morphFrom
+    ) {
       this.morphFrom = this.measureMorph();
     }
   }
@@ -703,6 +720,7 @@ export class NavRailElement extends AriaTablistElement {
         box: el.getBoundingClientRect(),
         icon: parts.icon?.getBoundingClientRect() ?? null,
         pill: parts.pill?.getBoundingClientRect() ?? null,
+        selected: el instanceof NavRailItemElement && el.selected,
       });
     }
     return rects;
@@ -769,12 +787,15 @@ export class NavRailElement extends AriaTablistElement {
             : '--container-width',
       ),
     );
+    // Only the width is held (the list keeps its height, and scrolls), and
+    // the icons' moves don't add to its scrollable overflow (no scrollbar
+    // for a moment).
     if (width > 0) {
       list.style.inlineSize = `${width}px`;
-      list.style.flex = 'none';
+      list.style.overflowX = 'hidden';
       rail.style.overflow = 'clip';
     }
-    const view = rail.getBoundingClientRect();
+    const view = list.getBoundingClientRect();
     const inView = (r: DOMRect) => r.bottom > view.top && r.top < view.bottom;
 
     for (const el of items) {
@@ -789,15 +810,32 @@ export class NavRailElement extends AriaTablistElement {
       const parts = morphParts(el);
       parts.label?.animate({opacity: [0, 1]}, effects);
       if (reduced) continue;
-      if (parts.icon && before.icon) {
-        const now = parts.icon.getBoundingClientRect();
+      // A destination that stays about where it was (the rows change height
+      // by a few pixels) moves there; one that was out of view, or far away
+      // (pages shown between it and the top, or the list scrolled), fades in
+      // where it is instead of sliding in across the rail.
+      const now = parts.icon?.getBoundingClientRect();
+      const stays =
+        !!now &&
+        !!before.icon &&
+        inView(before.icon) &&
+        Math.abs(before.icon.top - now.top) <= box.height;
+      if (parts.icon && now && before.icon && !stays) {
+        parts.icon.animate({opacity: [0, 1]}, effects);
+      } else if (parts.icon && now && before.icon) {
         const dx = before.icon.left - now.left;
         const dy = before.icon.top - now.top;
         if (dx || dy) {
           parts.icon.animate({translate: [`${dx}px ${dy}px`, '0px 0px']}, spatial);
         }
       }
-      if (parts.pill && before.pill && (el as NavRailItemElement).selected) {
+      // The active pill stretches between its shapes when the destination
+      // stays active; one that becomes active now (the section when the
+      // rail collapses on one of its pages) has its pill fade in.
+      const active = (el as NavRailItemElement).selected;
+      if (parts.pill && active && (!stays || !before.selected)) {
+        parts.pill.animate({opacity: [0, 1]}, {...effects, pseudoElement: '::before'});
+      } else if (parts.pill && before.pill && active) {
         const now = parts.pill.getBoundingClientRect();
         parts.pill.animate(
           {
@@ -816,7 +854,7 @@ export class NavRailElement extends AriaTablistElement {
       setTimeout(resolve, reduced ? 0 : Number(spatial.duration) + 50),
     );
     list.style.inlineSize = '';
-    list.style.flex = '';
+    list.style.overflowX = '';
     rail.style.overflow = '';
     for (const part of snapped) part.style.transition = '';
   }

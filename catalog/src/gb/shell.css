@@ -315,8 +315,7 @@
   display: none;
 }
 /* A section's pages (secondary destinations): no icon and no space kept for
-   one (set inside the item, so through its part), the pill 32px in so it
-   hugs the label. */
+   one (set inside the item, so through its part), the pill 32px in. */
 .gb-rail > md-gb-nav-rail-item[secondary] {
   /* The rest of the width, not the full width plus the indent. */
   inline-size: auto;
@@ -325,6 +324,22 @@
 .gb-rail > md-gb-nav-rail-item[secondary]::part(nav-rail-item) {
   --item-icon-size: 0px;
   --item-horizontal-icon-label-space: 0px;
+}
+/* Every pill in the expanded rail ends at one edge, 16px in from the
+   rail's, with the sections' chevrons and the groups' toggles; where it
+   starts says its level (section, group, page), not its label's length. */
+.gb-rail[expanded] > md-gb-nav-rail-item {
+  inline-size: auto;
+  margin-inline-end: var(--md-sys-space-200);
+}
+/* A section is a split button: its pill (the overview) ends where its
+   chevron (its pages) starts, with the split button's 2px between them
+   (split-button tokens, between-space), so the two stay separate targets. */
+.gb-rail[expanded] > md-gb-nav-rail-item[data-section] {
+  margin-inline-end: calc(var(--md-sys-space-200) + 56px + var(--md-sys-space-25));
+}
+.gb-rail > md-gb-nav-rail-item::part(nav-rail-item) {
+  --item-horizontal-active-indicator-width: 100%;
 }
 
 /* The rail's footer, always visible below its scrolling destinations: the
@@ -600,10 +615,12 @@ md-gb-nav-drawer-item[data-group] {
   overflow-wrap: anywhere;
 }
 /* No icon, and no space kept for one (set inside the item, so through its
-   part). */
+   part). The pills end at the column's edge, an h3's starting one step
+   in. */
 .gb-outline-rail > md-gb-nav-rail-item::part(nav-rail-item) {
   --item-icon-size: 0px;
   --item-horizontal-icon-label-space: 0px;
+  --item-horizontal-active-indicator-width: 100%;
 }
 .gb-outline-rail > md-gb-nav-rail-item[data-depth='2'] {
   /* The rest of the width, not the full width plus the indent. */

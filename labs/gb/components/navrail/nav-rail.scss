@@ -421,7 +421,9 @@
       display: inline-flex;
       flex-direction: row;
       gap: var(--item-horizontal-icon-label-space);
-      inline-size: fit-content;
+      // Hugs the icon and label (Compose WideNavigationRailItem); an app
+      // can stretch the pills to a common edge (100%).
+      inline-size: var(--item-horizontal-active-indicator-width, fit-content);
       isolation: isolate;
       justify-content: flex-start;
       max-inline-size: 100%;
