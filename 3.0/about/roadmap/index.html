@@ -70,6 +70,14 @@
       })();
     </script><script type="speculationrules">
       {
+        "prerender": [{
+          "where": {"selector_matches": ".gb-pager-top a.gb-pager-link[href]"},
+          "eagerness": "immediate"
+        }]
+      }
+    </script>
+    <script type="speculationrules">
+      {
         "prefetch": [{
           "where": {"and": [
             {"href_matches": "/material-web/3.0/*"},

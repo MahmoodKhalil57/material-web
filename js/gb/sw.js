@@ -1,15 +1,19 @@
 // src/gb/sw.ts
 var sw = self;
-var BUILD = true ? "mw7zvfl4" : "dev";
+var BUILD = true ? "mw87ykw6" : "dev";
 var PAGES = `gb-pages-${BUILD}`;
 var ASSETS = `gb-assets-${BUILD}`;
 var FONTS = "gb-fonts-v1";
-var FONT_FILE = /^\/fonts\/gb\/[^/]+\.woff2$/;
-var START = "/material-web/3.0/";
+var START = new URL(sw.registration.scope).pathname;
+var SITE = START.replace(/3\.0\/$/, "");
+var at = (pattern) => new RegExp("^" + SITE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + pattern);
+var FONT_FILE = at("fonts/gb/[^/]+\\.woff2$");
 var NETWORK_TIMEOUT = 3e3;
 var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-var ASSET_PATH = /^\/(js|css|fonts|images)\//;
-var DOWNLOADS = /^\/3\.0\/(skill\/|material-web-3\.0\.mhtml$|custom-elements\.json$|llms-full\.txt$)/;
+var ASSET_PATH = at("(js|css|fonts|images|lib)/");
+var DOWNLOADS = at(
+  "3\\.0/(skill/|material-web-3\\.0\\.mhtml$|custom-elements\\.json$|llms-full\\.txt$)"
+);
 sw.addEventListener("install", (e) => {
   e.waitUntil(sw.skipWaiting());
 });
@@ -97,7 +101,7 @@ sw.addEventListener("fetch", (e) => {
     );
     return;
   }
-  if (url.origin === location.origin && url.pathname === "/material-web/3.0/search-index.json") {
+  if (url.origin === location.origin && url.pathname === `${START}search-index.json`) {
     e.respondWith(networkFirst(request, PAGES, NETWORK_TIMEOUT, void 0, e));
     return;
   }

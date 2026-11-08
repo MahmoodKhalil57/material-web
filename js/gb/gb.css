@@ -2054,9 +2054,9 @@
   navigation: auto;
 }
 :root {
-  --gb-vt-exit: var(--md-sys-motion-duration-short3, 150ms);
-  --gb-vt-enter: var(--md-sys-motion-duration-medium2, 300ms);
-  --gb-vt-slide: var(--md-sys-motion-duration-medium4, 400ms);
+  --gb-vt-exit: var(--md-sys-motion-duration-short2, 100ms);
+  --gb-vt-enter: var(--md-sys-motion-duration-short4, 200ms);
+  --gb-vt-slide: var(--md-sys-motion-duration-medium2, 300ms);
   --gb-vt-shift: 30px;
 }
 :root:dir(rtl) {
