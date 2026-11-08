@@ -83,6 +83,22 @@
   animation: none;
 }
 
+/* The content panel stays: its surface (the snapshots' own background
+   fades with them, and between the two the page's darker background would
+   flash through) and its shape, clipping the pages that slide inside it.
+   Only its content fades through. */
+::view-transition-group(gb-page) {
+  overflow: clip;
+  border-radius: var(--md-sys-shape-corner-xl);
+  background-color: var(--md-sys-color-surface);
+}
+@media (max-width: 599px) {
+  /* Compact windows: the panel is the window, square (shell.css). */
+  ::view-transition-group(gb-page) {
+    border-radius: 0;
+  }
+}
+
 /* Top level: fade through. */
 ::view-transition-group(*.page) {
   animation-duration: var(--gb-vt-enter);
