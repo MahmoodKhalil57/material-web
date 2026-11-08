@@ -257,16 +257,21 @@ body:has(.gb-shell) {
 .gb-rail-area:has(> .gb-rail[modal][expanded]) {
   z-index: 40;
 }
-/* The components' groups (Buttons, Date & time pickers, ...) in the
-   expanded rail: disclosure buttons (the pane rows' styles below) as tall
-   as a destination, their label where the sections' labels start, that
-   show or hide the group's pages. Not destinations: arrow keys skip them,
-   Tab reaches them. */
+/* The expanded rail's levels step in 16px at a time: a section's pill at
+   the rail's inset (its icon, then its label at 68px), a group's toggle
+   16px in (label at 52px), a page's pill 32px in (label at 68px, under the
+   sections' labels). */
+
+/* The components' groups (Buttons, Date & time pickers, ...): disclosure
+   buttons (the pane rows' styles below) as tall as a destination, 16px in
+   from both sides of the rail, that show or hide the group's pages. Not
+   destinations: arrow keys skip them, Tab reaches them. */
 .gb-rail > .gb-rail-group {
   display: none;
   flex: none;
   box-sizing: border-box;
-  inline-size: 100%;
+  inline-size: auto;
+  margin-inline: var(--md-sys-space-200);
   block-size: var(--active-indicator-height, 56px);
 }
 .gb-rail[expanded] > .gb-rail-group {
@@ -275,8 +280,18 @@ body:has(.gb-shell) {
 .gb-rail > md-gb-nav-rail-item[hidden] {
   display: none;
 }
-/* A section's pages (secondary destinations) have no icon; the icon's
-   space stays, so their labels start under the sections' labels. */
+/* A section's pages (secondary destinations): no icon and no space kept for
+   one (set inside the item, so through its part), the pill 32px in so it
+   hugs the label. */
+.gb-rail > md-gb-nav-rail-item[secondary] {
+  /* The rest of the width, not the full width plus the indent. */
+  inline-size: auto;
+  margin-inline-start: var(--md-sys-space-400);
+}
+.gb-rail > md-gb-nav-rail-item[secondary]::part(nav-rail-item) {
+  --item-icon-size: 0px;
+  --item-horizontal-icon-label-space: 0px;
+}
 
 /* The logo at the start of the header, linking to the docs home. The rail's
    own menu button expands it (a logo must not look like that button). */
@@ -447,6 +462,8 @@ md-gb-nav-drawer-item[data-group] {
 .gb-outline-body {
   flex: 1;
   min-block-size: 0;
+  /* Vertical only: the headings wrap, they never scroll sideways. */
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-block-end: var(--md-sys-space-200);
@@ -477,6 +494,8 @@ md-gb-nav-drawer-item[data-group] {
   --item-horizontal-icon-label-space: 0px;
 }
 .gb-outline-rail > md-gb-nav-rail-item[data-depth='2'] {
+  /* The rest of the width, not the full width plus the indent. */
+  inline-size: auto;
   margin-inline-start: var(--md-sys-space-200);
 }
 .gb-outline-rail > md-gb-nav-rail-item[data-depth='3'] {
