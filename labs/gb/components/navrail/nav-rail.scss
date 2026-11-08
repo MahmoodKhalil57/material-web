@@ -500,12 +500,23 @@
   }
 
   .nav-rail-scrim {
+    // Fades in as the modal rail expands (effects: no overshoot); the
+    // backwards fill leaves the swipe's inline opacity in charge after it.
+    animation: nav-rail-scrim-in
+      var(--md-sys-motion-spring-default-effects-duration)
+      var(--md-sys-motion-spring-default-effects) backwards;
     background-color: var(--modal-scrim-color);
     inset: 0;
     position: fixed;
     transition: opacity var(--md-sys-motion-spring-default-effects-duration)
       var(--md-sys-motion-spring-default-effects);
     z-index: 1;
+  }
+
+  @keyframes nav-rail-scrim-in {
+    from {
+      opacity: 0;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

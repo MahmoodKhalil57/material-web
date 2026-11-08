@@ -400,12 +400,7 @@ export class NavRailElement extends AriaTablistElement {
 
   protected override willUpdate(changedProperties: PropertyValues<this>) {
     super.willUpdate(changedProperties);
-    if (
-      changedProperties.has('expanded') &&
-      this.hasUpdated &&
-      this.isConnected &&
-      !matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
+    if (changedProperties.has('expanded') && this.hasUpdated && this.isConnected) {
       this.morphFrom = this.measureMorph();
     }
   }
@@ -722,14 +717,24 @@ export class NavRailElement extends AriaTablistElement {
    * icon and label, on the rail's spatial spring (`--motion-duration`,
    * `--motion-easing`), while the labels, laid out anew, fade in (default
    * effects) and destinations shown only now (secondary ones) fade in.
-   * Nothing runs under reduced motion.
+   *
+   * The destinations take their new layout at once (their own layout
+   * transitions are snapped: the morph is their motion), and are held at
+   * the rail's final width while the rail's width moves, clipped, so they
+   * don't reflow on every frame. Only what's in view animates. Under reduced
+   * motion only the fades run (motion transitions.md: "subtle fades
+   * instead of ... sliding").
    */
   private async morph(from: Map<Element, MorphRects>) {
     const items = [...from.keys()];
     await Promise.all(
       items.map((el) => (el as Partial<NavRailItemElement>).updateComplete),
     );
-    const style = getComputedStyle(this.railElement ?? this);
+    const rail = this.railElement;
+    const list = this.shadowRoot?.querySelector<HTMLElement>('.nav-rail-items');
+    if (!rail || !list) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const style = getComputedStyle(rail);
     const spatial: KeyframeAnimationOptions = {
       duration: parseFloat(style.getPropertyValue('--motion-duration')) || 420,
       easing: style.getPropertyValue('--motion-easing').trim() || 'ease',
@@ -742,29 +747,56 @@ export class NavRailElement extends AriaTablistElement {
         style.getPropertyValue('--md-sys-motion-spring-default-effects').trim() || 'ease',
       fill: 'backwards',
     };
+
+    // The final layout at once: the items' own layout transitions end now.
+    const snapped: HTMLElement[] = [list];
+    for (const el of items) {
+      const root = el instanceof NavRailItemElement ? el.shadowRoot : null;
+      snapped.push(
+        ...(root?.querySelectorAll<HTMLElement>(
+          '.nav-rail-item, .nav-rail-item-content, .nav-rail-item-indicator, .nav-rail-item-icon, .nav-rail-item-label',
+        ) ?? []),
+      );
+    }
+    for (const part of snapped) part.style.transition = 'none';
+    // The items at the rail's final width while its width moves (clipped).
+    const width = parseFloat(
+      style.getPropertyValue(
+        this.expanded
+          ? '--expanded-container-width-minimum'
+          : this.narrow
+            ? '--collapsed-narrow-container-width'
+            : '--container-width',
+      ),
+    );
+    if (width > 0) {
+      list.style.inlineSize = `${width}px`;
+      list.style.flex = 'none';
+      rail.style.overflow = 'clip';
+    }
+    const view = rail.getBoundingClientRect();
+    const inView = (r: DOMRect) => r.bottom > view.top && r.top < view.bottom;
+
     for (const el of items) {
       const before = from.get(el)!;
       const box = el.getBoundingClientRect();
-      if (!box.width) continue;
+      if (!box.width || !inView(box)) continue;
       // Shown only now: fades in where it is.
       if (!before.box.width) {
         el.animate({opacity: [0, 1]}, effects);
         continue;
       }
       const parts = morphParts(el);
+      parts.label?.animate({opacity: [0, 1]}, effects);
+      if (reduced) continue;
       if (parts.icon && before.icon) {
         const now = parts.icon.getBoundingClientRect();
-        parts.icon.animate(
-          {
-            translate: [
-              `${before.icon.left - now.left}px ${before.icon.top - now.top}px`,
-              '0px 0px',
-            ],
-          },
-          spatial,
-        );
+        const dx = before.icon.left - now.left;
+        const dy = before.icon.top - now.top;
+        if (dx || dy) {
+          parts.icon.animate({translate: [`${dx}px ${dy}px`, '0px 0px']}, spatial);
+        }
       }
-      parts.label?.animate({opacity: [0, 1]}, effects);
       if (parts.pill && before.pill && (el as NavRailItemElement).selected) {
         const now = parts.pill.getBoundingClientRect();
         parts.pill.animate(
@@ -778,6 +810,15 @@ export class NavRailElement extends AriaTablistElement {
         );
       }
     }
+
+    // Once the rail's width has settled: its usual layout and transitions.
+    await new Promise((resolve) =>
+      setTimeout(resolve, reduced ? 0 : Number(spatial.duration) + 50),
+    );
+    list.style.inlineSize = '';
+    list.style.flex = '';
+    rail.style.overflow = '';
+    for (const part of snapped) part.style.transition = '';
   }
 
   private syncItemsLayout() {
