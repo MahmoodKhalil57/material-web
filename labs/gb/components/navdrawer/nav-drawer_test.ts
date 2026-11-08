@@ -220,6 +220,17 @@ describe('<md-gb-nav-drawer>', () => {
         .toBeFalse();
     });
 
+    it('names the landmark with `label`, which wins over aria-label', async () => {
+      const {drawer} = await setupTest(
+        html`<md-gb-nav-drawer label="Pages" aria-label="Mail"></md-gb-nav-drawer>`,
+      );
+      const nav = drawer.shadowRoot!.querySelector('nav')!;
+      expect(nav.getAttribute('aria-label')).toBe('Pages');
+      drawer.label = 'Docs';
+      await env.waitForStability();
+      expect(nav.getAttribute('aria-label')).toBe('Docs');
+    });
+
     it('defaults the landmark label to "Navigation menu"', async () => {
       const {drawer} = await setupTest(
         html`<md-gb-nav-drawer></md-gb-nav-drawer>`,

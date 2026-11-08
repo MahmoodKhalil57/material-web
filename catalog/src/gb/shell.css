@@ -1,0 +1,572 @@
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* The layout of the /3.0/ pages (shell.ts, site/_includes/gb/default.html),
+   modelled on m3.material.io: a navigation rail, a pages pane and a rounded
+   content pane (M3 Expressive navigation rail, canonical list-detail: the
+   pages pane is the list, the content pane the detail). Colors, type, shape
+   and motion come from --md-sys-* tokens only.
+
+   Window size classes: compact below 600px (navigation bar, no rail), medium
+   from 600px (rail, modal pages pane), expanded from 840px (rail, standard
+   pages pane), and the page outline beside the text from 1200px. The widths
+   of the rail and the pane are reserved here, before the elements are
+   defined, so nothing moves when the script runs. */
+
+:root {
+  --gb-rail-w: 0px;
+  --gb-pane-w: 0px;
+  --gb-pane-open-w: 280px;
+  --gb-bar-h: 80px;
+  --gb-pane-motion: var(--md-sys-motion-spring-default-spatial-duration, 420ms)
+    var(--md-sys-motion-spring-default-spatial, ease);
+}
+@media (min-width: 600px) {
+  :root {
+    --gb-rail-w: 80px;
+  }
+}
+@media (min-width: 840px) {
+  :root {
+    --gb-pane-w: var(--gb-pane-open-w);
+  }
+  :root[data-pane='closed'] {
+    --gb-pane-w: 0px;
+  }
+}
+
+body:has(.gb-shell) {
+  background: var(--md-sys-color-surface-container);
+}
+
+.gb-shell {
+  display: grid;
+  grid-template-columns: var(--gb-rail-w) var(--gb-pane-w) minmax(0, 1fr);
+  min-block-size: 100dvh;
+  transition: grid-template-columns var(--gb-pane-motion);
+}
+
+/* --- Rail ------------------------------------------------------------------ */
+
+.gb-rail-area {
+  grid-column: 1;
+  grid-row: 1;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  block-size: 100dvh;
+  min-inline-size: 0;
+  color: var(--md-sys-color-on-surface);
+}
+/* Compact windows have no rail: only the skip link stays. */
+@media (max-width: 599px) {
+  .gb-rail-area {
+    position: static;
+    block-size: 0;
+  }
+  .gb-rail-area > :not(.gb-skip) {
+    display: none;
+  }
+}
+.gb-rail {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  inline-size: var(--gb-rail-w);
+}
+/* The rail sits on the page's surface container, like the pane. */
+.gb-rail::part(nav-rail) {
+  --container-color: transparent;
+  --collapsed-top-space: 16px;
+}
+.gb-rail:not(:defined) {
+  display: block;
+  visibility: hidden;
+}
+.gb-rail-foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--md-sys-space-100);
+  block-size: 168px;
+  padding-block: var(--md-sys-space-100) var(--md-sys-space-200);
+}
+.gb-rail-foot > :not(:defined) {
+  visibility: hidden;
+}
+.gb-version {
+  min-inline-size: 48px;
+}
+
+/* --- Pages pane ------------------------------------------------------------- */
+
+.gb-pane-cell {
+  grid-column: 2;
+  grid-row: 1;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+  block-size: 100dvh;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+/* Hidden (and inert, shell.ts) once the column has closed. */
+:root[data-pane='closed'] .gb-pane-cell {
+  visibility: hidden;
+  transition: visibility 0s var(--md-sys-motion-spring-default-spatial-duration, 420ms);
+}
+/* Below expanded the pane is modal (a dialog in the top layer): no column. */
+@media (max-width: 839px) {
+  .gb-pane-cell {
+    inline-size: 0;
+  }
+}
+@media (max-width: 599px) {
+  .gb-pane-cell {
+    display: none;
+  }
+}
+.gb-drawer {
+  block-size: 100%;
+  --container-width: var(--gb-pane-open-w);
+}
+.gb-drawer:not([modal]) {
+  --container-color: transparent;
+}
+.gb-drawer:not(:defined) {
+  display: none;
+}
+@media (min-width: 840px) {
+  .gb-drawer:not(:defined) {
+    display: block;
+    inline-size: var(--gb-pane-open-w);
+    visibility: hidden;
+  }
+}
+/* Section labels of the pane: title-small on-surface-variant (the drawer
+   styles them), shorter than a destination and set off from the items. */
+md-gb-nav-drawer {
+  --section-label-height: 48px;
+}
+md-gb-nav-drawer .nav-drawer-section-label {
+  align-items: flex-end;
+  padding-block-end: var(--md-sys-space-100);
+}
+/* The groups of the components (Buttons, Date & time pickers, ...): small
+   labels over their pages. */
+md-gb-nav-drawer .gb-group-label {
+  font: var(--md-sys-typescale-label-md);
+  font-variation-settings: var(--md-sys-typescale-label-md-axes);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* --- Flyout: another section's pages over the content ---------------------------- */
+
+.gb-flyout {
+  position: fixed;
+  inset: 0 auto 0 var(--gb-rail-w);
+  inline-size: var(--gb-pane-open-w);
+  block-size: 100dvh;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+  border-start-end-radius: var(--md-sys-shape-corner-xl);
+  border-end-end-radius: var(--md-sys-shape-corner-xl);
+  box-shadow: var(--md-sys-elevation-shadow-3);
+  opacity: 0;
+  translate: -24px 0;
+}
+.gb-flyout:popover-open {
+  opacity: 1;
+  translate: 0 0;
+}
+.gb-flyout md-gb-nav-drawer {
+  block-size: 100%;
+  --container-width: 100%;
+  --container-color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gb-flyout {
+    transition:
+      opacity var(--md-sys-motion-spring-fast-effects-duration, 140ms) var(--md-sys-motion-spring-fast-effects, ease),
+      translate var(--md-sys-motion-spring-default-spatial-duration, 420ms) var(--md-sys-motion-spring-default-spatial, ease),
+      display var(--md-sys-motion-spring-default-spatial-duration, 420ms) allow-discrete,
+      overlay var(--md-sys-motion-spring-default-spatial-duration, 420ms) allow-discrete;
+  }
+  @starting-style {
+    .gb-flyout:popover-open {
+      opacity: 0;
+      translate: -24px 0;
+    }
+  }
+}
+@media (max-width: 599px) {
+  .gb-flyout {
+    display: none !important;
+  }
+}
+
+/* --- Content pane ---------------------------------------------------------------- */
+
+.gb-content-pane {
+  grid-column: 3;
+  grid-row: 1;
+  position: relative;
+  min-inline-size: 0;
+  margin: var(--md-sys-space-150) var(--md-sys-space-150) var(--md-sys-space-150) 0;
+  border-radius: var(--md-sys-shape-corner-xl);
+  background: var(--md-sys-color-surface);
+  overflow: clip;
+  min-block-size: calc(100dvh - 2 * var(--md-sys-space-150));
+}
+.gb-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+.gb-main {
+  padding-block-end: 120px;
+}
+.gb-toc {
+  padding: 0 var(--md-sys-space-200) var(--md-sys-space-200);
+}
+@media (min-width: 840px) {
+  .gb-main {
+    padding-inline: var(--md-sys-space-400);
+  }
+  .gb-toc {
+    padding-inline: var(--md-sys-space-400);
+  }
+}
+/* The outline is a column beside the text, always open. */
+@media (min-width: 1200px) {
+  .gb-body:not(.gb-layout-index) {
+    grid-template-columns: minmax(0, 1fr) var(--gb-toc-width);
+  }
+  .gb-toc {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    inset-block-start: var(--md-sys-space-300);
+    max-block-size: calc(100dvh - 2 * var(--md-sys-space-150) - 2 * var(--md-sys-space-300));
+    overflow-y: auto;
+    margin-block-start: var(--md-sys-space-300);
+    padding-inline: 0 var(--md-sys-space-300);
+  }
+  .gb-toc summary {
+    pointer-events: none;
+    cursor: default;
+    list-style: none;
+  }
+  .gb-toc summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+/* --- Compact: navigation bar, floating search --------------------------------------- */
+
+.gb-bar-area,
+.gb-bar {
+  display: none;
+}
+.gb-search-compact {
+  display: none;
+}
+@media (max-width: 599px) {
+  .gb-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .gb-content-pane {
+    grid-column: 1;
+    margin: 0;
+    border-radius: 0;
+    min-block-size: 100dvh;
+    padding-block-end: var(--gb-bar-h);
+  }
+  .gb-bar-area {
+    display: contents;
+  }
+  .gb-bar {
+    display: flex;
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 15;
+  }
+  .gb-bar:not(:defined) {
+    display: block;
+    block-size: var(--gb-bar-h);
+    visibility: hidden;
+  }
+  .gb-search-compact {
+    display: inline-flex;
+    position: fixed;
+    inset-block-start: var(--md-sys-space-150);
+    inset-inline-end: var(--md-sys-space-150);
+    z-index: 15;
+  }
+  .gb-search-compact:not(:defined) {
+    visibility: hidden;
+  }
+  /* Follows the scroll: hides when scrolling down, shows when scrolling up
+     (the spatial spring; none under reduced motion). */
+  .gb-search-compact {
+    transition: translate var(--md-sys-motion-spring-default-spatial-duration, 420ms)
+      var(--md-sys-motion-spring-default-spatial, ease);
+  }
+  .gb-search-compact[data-hidden] {
+    translate: 0 calc(-100% - var(--md-sys-space-300));
+  }
+}
+
+/* --- FAB menu ------------------------------------------------------------------------ */
+
+/* Landmarks (page tools, search) around fixed controls: no box of their own. */
+.gb-tools-area {
+  display: contents;
+}
+
+.gb-fab-menu {
+  position: fixed;
+  inset-inline-end: var(--md-sys-space-300);
+  inset-block-end: var(--md-sys-space-300);
+  z-index: 15;
+}
+.gb-fab-menu:not(:defined) {
+  visibility: hidden;
+}
+@media (max-width: 599px) {
+  .gb-fab-menu {
+    inset-inline-end: var(--md-sys-space-200);
+    inset-block-end: calc(var(--gb-bar-h) + var(--md-sys-space-200));
+  }
+}
+
+/* --- Sheets and their tools --------------------------------------------------------------- */
+
+.gb-tools {
+  display: none;
+}
+.gb-side-sheet {
+  --container-width: 360px;
+}
+.gb-tool {
+  padding-block-end: var(--md-sys-space-300);
+}
+.gb-tool-title {
+  margin: 0 0 var(--md-sys-space-150);
+  font: var(--md-sys-typescale-headline-sm);
+  font-variation-settings: var(--md-sys-typescale-headline-sm-axes);
+}
+/* The side sheet has the title as its headline. */
+md-gb-side-sheet .gb-tool-title {
+  display: none;
+}
+md-gb-bottom-sheet .gb-tool {
+  padding-inline: var(--md-sys-space-200);
+}
+.gb-tool-group {
+  margin: var(--md-sys-space-200) 0 var(--md-sys-space-50);
+  font: var(--md-sys-typescale-title-sm);
+  font-variation-settings: var(--md-sys-typescale-title-sm-axes);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.gb-tool-note {
+  margin: 0 0 var(--md-sys-space-200);
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-md);
+  font-variation-settings: var(--md-sys-typescale-body-md-axes);
+}
+
+/* Download & copy: the rows of a list. */
+.gb-actions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.gb-actions li[hidden] {
+  display: none;
+}
+.gb-action {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-space-200);
+  inline-size: 100%;
+  min-block-size: 72px;
+  margin: 0;
+  padding: var(--md-sys-space-100) var(--md-sys-space-150);
+  border: 0;
+  border-radius: var(--md-sys-shape-corner-md);
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--md-sys-motion-duration-short3, 150ms);
+}
+.gb-action:hover {
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+}
+.gb-action:active {
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent);
+}
+.gb-action:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: -3px;
+}
+.gb-action > md-gb-icon {
+  flex: none;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.gb-action-text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.gb-action-label {
+  font: var(--md-sys-typescale-body-lg);
+  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
+}
+.gb-action-support {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-md);
+  font-variation-settings: var(--md-sys-typescale-body-md-axes);
+  overflow-wrap: anywhere;
+}
+
+/* Customize theme. */
+.gb-field {
+  min-inline-size: 0;
+  margin: 0 0 var(--md-sys-space-300);
+  padding: 0;
+  border: 0;
+}
+.gb-field > legend {
+  padding: 0;
+  margin-block-end: var(--md-sys-space-100);
+  font: var(--md-sys-typescale-title-sm);
+  font-variation-settings: var(--md-sys-typescale-title-sm-axes);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.gb-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+  gap: var(--md-sys-space-150);
+}
+.gb-swatch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--md-sys-space-50);
+  padding: var(--md-sys-space-100) 0;
+  cursor: pointer;
+}
+.gb-swatch input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.gb-swatch-chip {
+  display: block;
+  inline-size: 48px;
+  block-size: 48px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--gb-swatch);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-outline-variant);
+}
+.gb-swatch input:checked + .gb-swatch-chip {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 3px;
+}
+.gb-swatch input:focus-visible + .gb-swatch-chip {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 3px;
+}
+.gb-swatch-name {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-label-md);
+  font-variation-settings: var(--md-sys-typescale-label-md-axes);
+}
+.gb-custom-color {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-space-150);
+  margin-block-start: var(--md-sys-space-150);
+  font: var(--md-sys-typescale-body-lg);
+  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
+}
+.gb-custom-color input {
+  inline-size: 48px;
+  block-size: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: none;
+  cursor: pointer;
+}
+.gb-custom-color input:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 3px;
+}
+.gb-custom-color output {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: ui-monospace, 'Roboto Mono', Menlo, Consolas, monospace;
+  font-size: var(--md-sys-typescale-body-md-size, 0.875rem);
+}
+.gb-tool-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* The pages sheet: the pages, and the settings below them. */
+.gb-sheet-drawer {
+  --container-width: 100%;
+  --container-color: transparent;
+  /* The pages scroll in a part of the sheet, so the settings below them show. */
+  block-size: 52dvh;
+  display: block;
+  padding-inline: var(--md-sys-space-100);
+}
+.gb-pages-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--md-sys-space-50) var(--md-sys-space-100);
+  padding: var(--md-sys-space-150) var(--md-sys-space-200) var(--md-sys-space-300);
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Send feedback. */
+.gb-feedback {
+  display: grid;
+  gap: var(--md-sys-space-200);
+  min-inline-size: min(28rem, 100%);
+}
+.gb-feedback-note {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-sm);
+  font-variation-settings: var(--md-sys-typescale-body-sm-axes);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gb-shell,
+  .gb-pane-cell,
+  .gb-action,
+  .gb-search-compact {
+    transition: none;
+  }
+}

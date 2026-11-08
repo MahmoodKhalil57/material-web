@@ -9,11 +9,22 @@
 @import '../../../labs/gb/styles/m3.css';
 @import './navigation.css';
 @import './search.css';
+@import './shell.css';
 @import './sections.css';
 
+/* While Roboto Flex loads (font-display: swap), text is set in Arial scaled
+   to Roboto's vertical metrics, so the swap moves little (CLS). */
+@font-face {
+  font-family: 'Roboto Flex Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 99%;
+  ascent-override: 92.8%;
+  descent-override: 24.4%;
+  line-gap-override: 0%;
+}
+
 :root {
-  --gb-header-height: 64px;
-  --gb-drawer-width: 320px;
+  --md-ref-typeface-plain: 'Roboto Flex', 'Roboto Flex Fallback', Roboto, 'Noto Sans', system-ui, sans-serif;
   --gb-toc-width: 240px;
   --md-icon-font: 'Material Symbols Outlined';
 }
@@ -25,7 +36,7 @@
 }
 
 html {
-  scroll-padding-block-start: calc(var(--gb-header-height) + 16px);
+  scroll-padding-block-start: 16px;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -56,77 +67,6 @@ body {
   translate: 0 0;
   outline: 3px solid var(--md-sys-color-tertiary);
   outline-offset: 2px;
-}
-
-.gb-header {
-  /* Fixed, so the app bar's upgrade doesn't move the page. */
-  block-size: var(--gb-header-height);
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 20;
-  background: var(--md-sys-color-surface);
-}
-.gb-header md-gb-app-bar {
-  --container-color: var(--md-sys-color-surface);
-}
-.gb-brand {
-  color: inherit;
-  text-decoration: none;
-}
-/* Section headlines of the drawer: title-small on-surface-variant (the drawer
-   styles them), shorter than a destination and set off from the items. */
-.gb-drawer {
-  --section-label-height: 48px;
-}
-.gb-drawer .nav-drawer-section-label {
-  align-items: flex-end;
-  padding-block-end: var(--md-sys-space-100);
-}
-.gb-drawer md-gb-divider {
-  margin-block-start: var(--md-sys-space-100);
-}
-.gb-version {
-  min-inline-size: 13rem;
-  margin-inline-end: var(--md-sys-space-100);
-}
-.gb-gh {
-  fill: currentColor;
-  inline-size: 24px;
-  block-size: 24px;
-}
-
-.gb-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
-}
-/* Shell elements keep their space but stay invisible until defined, so
-   neither their raw text (icon names, option labels) nor their upgrade shows.
-   Below expanded the drawer is modal: out of the flow until opened. */
-.gb-header md-gb-app-bar:not(:defined) {
-  display: block;
-  block-size: var(--gb-header-height);
-  visibility: hidden;
-}
-md-gb-nav-drawer:not(:defined) {
-  display: none;
-}
-@media (min-width: 840px) {
-  md-gb-nav-drawer:not(:defined) {
-    display: block;
-    inline-size: var(--gb-drawer-width);
-    visibility: hidden;
-  }
-}
-.gb-drawer {
-  position: sticky;
-  inset-block-start: var(--gb-header-height);
-  block-size: calc(100dvh - var(--gb-header-height));
-  --container-width: var(--gb-drawer-width);
-}
-.gb-drawer[modal] {
-  position: static;
-  block-size: auto;
 }
 
 .gb-main {
@@ -398,69 +338,6 @@ md-gb-nav-drawer:not(:defined) {
   font-weight: 500;
 }
 
-/* Expanded and up (840px): the drawer is standard, beside the content. */
-@media (min-width: 840px) {
-  .gb-layout {
-    grid-template-columns: var(--gb-drawer-width) minmax(0, 1fr);
-  }
-  .gb-main {
-    padding-inline: var(--md-sys-space-400);
-  }
-  .gb-toc {
-    grid-column: 2;
-    padding-inline: var(--md-sys-space-400);
-  }
-}
-
-/* Large (1200px) and up: the table of contents is a column beside the text. */
-@media (min-width: 1200px) {
-  .gb-layout {
-    grid-template-columns: var(--gb-drawer-width) minmax(0, 1fr) var(--gb-toc-width);
-  }
-  .gb-toc {
-    grid-column: 3;
-    grid-row: 1;
-    position: sticky;
-    inset-block-start: calc(var(--gb-header-height) + 16px);
-    max-block-size: calc(100dvh - var(--gb-header-height) - 32px);
-    overflow-y: auto;
-    padding-inline: 0 var(--md-sys-space-300);
-  }
-  .gb-toc summary {
-    pointer-events: none;
-    cursor: default;
-    list-style: none;
-  }
-  .gb-toc summary::-webkit-details-marker {
-    display: none;
-  }
-}
-
-@media (max-width: 599px) {
-  .gb-version {
-    min-inline-size: 0;
-    inline-size: 9.5rem;
-  }
-}
-
-/* Compact (below 480px): the menu button, the version select and the
-   buttons share the bar, so the brand text is hidden (the select names the
-   product and the logo link keeps its accessible name). */
-@media (max-width: 479px) {
-  .gb-brand {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  .gb-version {
-    inline-size: 11rem;
-    margin-inline-end: 0;
-  }
-}
-
 /* /3.0/all/ (site/gb-all.11ty.cjs): every page on one page, no shell. */
 .gb-all-title {
   margin: 0 0 var(--md-sys-space-100);
@@ -518,8 +395,11 @@ md-gb-nav-drawer:not(:defined) {
   .gb-demo {
     break-inside: avoid;
   }
-  .gb-header,
-  .gb-drawer,
+  .gb-rail-area,
+  .gb-pane-cell,
+  .gb-bar,
+  .gb-fab-menu,
+  .gb-search-compact,
   .gb-toc,
   .gb-copy,
   .gb-skip,

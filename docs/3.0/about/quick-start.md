@@ -18,7 +18,7 @@ The quickest start is one script. `labs/gb/all.js` defines every `md-gb-*`
 element and adopts the M3 styles into the page. It loads every component, so use
 it for prototypes only. The import map is optional here; it lets you also import
 single files by path later. The script tags have no visible effect, so they are
-a plain block (the Download menu in the app bar copies them):
+a plain block (Download & copy in the page tools menu copies them):
 
 ```html
 <script type="importmap">

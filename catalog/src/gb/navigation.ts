@@ -7,7 +7,7 @@
 /**
  * Smooth page-to-page navigation inside /3.0/ (imported by gb.ts):
  *
- * - keeps the navigation drawer's scroll position across pages (view
+ * - keeps the pages pane's (navigation drawer) scroll position across pages (view
  *   transitions themselves are CSS: navigation.css);
  * - speculation rules for links the document rules in the layout cannot see
  *   (the drawer's links are in shadow roots) and for links in the viewport,
@@ -219,7 +219,12 @@ const saveData = () =>
 function linkTarget(path: EventTarget[]): {el: Element; url: URL} | null {
   for (const node of path) {
     if (!(node instanceof Element)) continue;
-    if (node.localName !== 'a' && node.localName !== 'md-gb-nav-drawer-item') {
+    if (
+      node.localName !== 'a' &&
+      node.localName !== 'md-gb-nav-drawer-item' &&
+      node.localName !== 'md-gb-nav-rail-item' &&
+      node.localName !== 'md-gb-nav-bar-item'
+    ) {
       continue;
     }
     if (node.hasAttribute('download')) continue;
@@ -318,7 +323,7 @@ function setUpSpeculation() {
     }, 150);
   });
   for (const el of document.querySelectorAll(
-    'md-gb-nav-drawer-item[href], .gb-main a[href]',
+    'md-gb-nav-drawer-item[href], md-gb-nav-rail-item[href], .gb-main a[href]',
   )) {
     if (linkTarget([el])) observer.observe(el);
   }
@@ -358,8 +363,8 @@ function render(stage: Stage) {
   if (!indicator) {
     indicator = document.createElement('div');
     indicator.className = 'gb-route';
-    // Inside the banner landmark, so no content sits outside a region.
-    (document.querySelector('.gb-header') ?? document.body).append(indicator);
+    // At the top edge of the content pane (inside its landmarks).
+    (document.querySelector('.gb-content-pane') ?? document.body).prepend(indicator);
   }
   indicator.removeAttribute('data-out');
   indicator.dataset['stage'] = stage;

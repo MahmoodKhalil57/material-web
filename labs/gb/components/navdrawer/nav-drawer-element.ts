@@ -186,6 +186,14 @@ export class NavDrawerElement extends baseClass {
   @property({type: Boolean, reflect: true}) quick = false;
 
   /**
+   * The accessible name of the navigation landmark. Use it instead of
+   * `aria-label` when the host sits outside any landmark: the host's
+   * `aria-label` moves to a data attribute that checkers (axe `region`) still
+   * read as a name on a host that has no landmark role.
+   */
+  @property() label = '';
+
+  /**
    * Whether swiping a modal drawer closed is turned off (Compose
    * `gesturesEnabled = false`). Escape, the scrim and `close()` still close
    * it.
@@ -295,7 +303,7 @@ export class NavDrawerElement extends baseClass {
   protected override render() {
     // Needed for closure conformance
     const {ariaLabel} = this as ARIAMixinStrict;
-    const label = ariaLabel || DEFAULT_LABEL;
+    const label = this.label || ariaLabel || DEFAULT_LABEL;
     const dragging = this.modal && this.dragOffset !== null;
     const sheetStyle = dragging
       ? {translate: `${-this.dragDirection * this.dragOffset!}px 0`}

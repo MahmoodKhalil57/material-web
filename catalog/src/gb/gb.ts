@@ -6,25 +6,21 @@
 
 /**
  * Client script of the /3.0/ site shell (site/_includes/gb/default.html):
- * registers the labs/gb components it uses, switches the navigation drawer
- * between modal and standard, wires the version select and theme button,
- * keeps the dynamic color theme, marks the current section in the table of
- * contents, adds copy buttons to code blocks and collapses the code of demo
- * cards.
+ * registers the labs/gb components it uses, keeps the dynamic color theme
+ * (seed, scheme variant, contrast and color mode: `window.gbTheme`, the
+ * customize theme sheet is in shell.ts), marks the current section in the
+ * table of contents, adds copy buttons to code blocks and collapses the code
+ * of demo cards. The layout (rail, pages pane, sheets, FAB menu) is shell.ts.
  */
 
-import '@material/web/labs/gb/components/appbar/md-gb-app-bar.js';
 import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/divider/md-gb-divider.js';
 import '@material/web/labs/gb/components/iconbutton/md-gb-icon-button.js';
-import '@material/web/labs/gb/components/navdrawer/md-gb-nav-drawer-item.js';
-import '@material/web/labs/gb/components/navdrawer/md-gb-nav-drawer.js';
-import '@material/web/labs/gb/components/select/md-gb-select-option.js';
-import '@material/web/labs/gb/components/select/md-gb-select.js';
 import '@material/web/labs/gb/components/tabs/md-gb-tab.js';
 import '@material/web/labs/gb/components/tabs/md-gb-tabs.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
 
+import './shell.js';
 import './download.js';
 import './navigation.js';
 import './search.js';
@@ -33,21 +29,39 @@ import './webmcp.js';
 import {
   themeFromSource,
   themeToCss,
+  type SchemeVariant,
 } from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
 const DEFAULT_SEED = '#6750a4';
+const DEFAULT_VARIANT: SchemeVariant = 'tonal-spot';
 /**
- * Bump when themeToCss output changes: the pre-paint script in
- * catalog/site/_includes/gb/default.html ignores caches of other versions.
+ * Bump when themeToCss output or the cache key changes: the pre-paint script
+ * in catalog/site/_includes/gb/default.html ignores caches of other versions.
  */
-const THEME_CACHE_VERSION = 2;
+const THEME_CACHE_VERSION = 3;
 /**
  * The 3.0 site's own seed key: the v2.5 site saves its default seed under
  * `seed-color` on first visit, which would recolor 3.0 without a choice.
  */
 const SEED_KEY = 'gb-seed-color';
+const VARIANT_KEY = 'gb-scheme-variant';
+const CONTRAST_KEY = 'gb-contrast';
+const MODE_KEY = 'color-mode';
 const MODES = ['auto', 'light', 'dark'] as const;
 type Mode = (typeof MODES)[number];
+const CONTRASTS = ['standard', 'medium', 'high'] as const;
+type Contrast = (typeof CONTRASTS)[number];
+const VARIANTS: readonly SchemeVariant[] = [
+  'tonal-spot',
+  'neutral',
+  'vibrant',
+  'expressive',
+  'fidelity',
+  'content',
+  'monochrome',
+  'rainbow',
+  'fruit-salad',
+];
 const MODE_ICON: Record<Mode, string> = {
   auto: 'brightness_auto',
   light: 'light_mode',
@@ -75,6 +89,14 @@ function write(key: string, value: string) {
   }
 }
 
+function remove(key: string) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // Ignore.
+  }
+}
+
 function announce(message: string) {
   const status = document.getElementById('gb-status');
   if (!status) return;
@@ -85,134 +107,180 @@ function announce(message: string) {
 
 // --- Theme ---------------------------------------------------------------
 
+export interface GbThemeState {
+  seed: string;
+  variant: SchemeVariant;
+  contrast: Contrast;
+  mode: Mode;
+}
+
 function getMode(): Mode {
-  const mode = read('color-mode');
+  const mode = read(MODE_KEY);
   return (MODES as readonly string[]).includes(mode ?? '')
     ? (mode as Mode)
     : 'auto';
 }
 
+function getSeed(): string {
+  const seed = read(SEED_KEY);
+  return seed && /^#[0-9a-f]{6}$/i.test(seed) ? seed.toLowerCase() : DEFAULT_SEED;
+}
+
+function getVariant(): SchemeVariant {
+  const variant = read(VARIANT_KEY);
+  return (VARIANTS as readonly string[]).includes(variant ?? '')
+    ? (variant as SchemeVariant)
+    : DEFAULT_VARIANT;
+}
+
+function getContrast(): Contrast {
+  const contrast = read(CONTRAST_KEY);
+  return (CONTRASTS as readonly string[]).includes(contrast ?? '')
+    ? (contrast as Contrast)
+    : 'standard';
+}
+
+function state(): GbThemeState {
+  return {
+    seed: getSeed(),
+    variant: getVariant(),
+    contrast: getContrast(),
+    mode: getMode(),
+  };
+}
+
+/** Every control that cycles the color mode (the rail's and the sheet's). */
+const toggles = () =>
+  document.querySelectorAll<HTMLElement>('#gb-theme, [data-theme-toggle]');
+
 function applyMode(mode: Mode) {
   document.documentElement.style.colorScheme =
     mode === 'auto' ? 'light dark' : mode;
-  const button = document.getElementById('gb-theme');
-  if (!button) return;
   const next = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
-  button.dataset['mode'] = mode;
-  button.setAttribute(
-    'aria-label',
-    `Color theme: ${MODE_NAME[mode]}. Change to ${MODE_NAME[next]}`,
-  );
-  const icon = button.querySelector('md-gb-icon');
-  if (icon) icon.textContent = MODE_ICON[mode];
+  for (const button of toggles()) {
+    button.dataset['mode'] = mode;
+    const label = `Color theme: ${MODE_NAME[mode]}. Change to ${MODE_NAME[next]}`;
+    button.setAttribute('aria-label', label);
+    const icon = button.querySelector('md-gb-icon');
+    if (icon) icon.textContent = MODE_ICON[mode];
+    const text = button.querySelector('.gb-theme-toggle-label');
+    if (text) text.textContent = `Theme: ${MODE_NAME[mode]}`;
+  }
 }
 
 /**
- * Generates the dynamic color CSS for a seed (light-dark() values, so it
- * follows color-scheme; high contrast under prefers-contrast: more) and
- * applies and caches it.
+ * Generates the dynamic color CSS for a theme (light-dark() values, so it
+ * follows color-scheme; standard contrast also gets the high contrast values
+ * under prefers-contrast: more) and applies and caches it. The baseline
+ * tokens are the default theme's, which needs no generated CSS.
  */
-function applySeed(seed: string) {
+function applyTheme() {
+  const {seed, variant, contrast} = state();
+  const style = document.getElementById('gb-theme-style');
+  if (seed === DEFAULT_SEED && variant === DEFAULT_VARIANT && contrast === 'standard') {
+    style?.remove();
+    remove('gb-theme-css');
+    return;
+  }
+  const key = [seed, variant, contrast].join('|');
   const cached = read('gb-theme-css');
   let css = '';
   try {
     const parsed = cached ? JSON.parse(cached) : null;
-    if (parsed?.v === THEME_CACHE_VERSION && parsed.seed === seed) css = parsed.css;
+    if (parsed?.v === THEME_CACHE_VERSION && parsed.key === key) css = parsed.css;
   } catch {
     // Regenerate below.
   }
   if (!css) {
     // Unlayered, so it wins over the baseline tokens (layer md.sys.color)
     // that demos adopt into the document after this style element.
-    const standard = themeToCss(themeFromSource({source: seed}), {layer: ''});
-    const high = themeToCss(themeFromSource({source: seed, contrast: 'high'}), {
-      layer: '',
-    });
-    css = `${standard}@media (prefers-contrast: more){${high}}`;
-    write('gb-theme-css', JSON.stringify({v: THEME_CACHE_VERSION, seed, css}));
+    const make = (level: Contrast) =>
+      themeToCss(themeFromSource({source: seed, variant, contrast: level}), {
+        layer: '',
+      });
+    css =
+      contrast === 'standard'
+        ? `${make('standard')}@media (prefers-contrast: more){${make('high')}}`
+        : make(contrast);
+    write('gb-theme-css', JSON.stringify({v: THEME_CACHE_VERSION, key, css}));
   }
-  let style = document.getElementById('gb-theme-style');
-  if (!style) {
-    style = document.createElement('style');
-    style.id = 'gb-theme-style';
-    document.head.append(style);
+  let el = style;
+  if (!el) {
+    el = document.createElement('style');
+    el.id = 'gb-theme-style';
+    document.head.append(el);
   }
-  style.textContent = css;
+  el.textContent = css;
 }
 
-const seed = read(SEED_KEY) || DEFAULT_SEED;
-// The baseline tokens are the default seed's; others need generating.
-if (seed.toLowerCase() !== DEFAULT_SEED) {
+function safeApplyTheme() {
   try {
-    applySeed(seed);
+    applyTheme();
   } catch (e) {
-    console.warn('Could not generate the theme from', seed, e);
+    console.warn('Could not generate the theme', e);
   }
-} else {
-  // The baseline needs no generated CSS: drop any applied before paint.
-  document.getElementById('gb-theme-style')?.remove();
 }
 
-/** Sets the seed color of the dynamic theme and remembers it. */
-(window as unknown as {gbTheme: object}).gbTheme = {
+function changed() {
+  window.dispatchEvent(new CustomEvent('gb-theme-change', {detail: state()}));
+}
+
+safeApplyTheme();
+
+/**
+ * The theme of the site, for the customize theme sheet (shell.ts), WebMCP
+ * and scripts. Every change applies at once, is remembered (localStorage) and
+ * reaches the demo iframes. `gb-theme-change` is fired on window.
+ */
+const gbTheme = {
+  get(): GbThemeState {
+    return state();
+  },
+  /** Sets the seed color of the dynamic theme and remembers it. */
   setSeed(hex: string) {
-    write(SEED_KEY, hex);
-    applySeed(hex);
+    write(SEED_KEY, hex.toLowerCase());
+    safeApplyTheme();
+    changed();
+  },
+  setVariant(variant: SchemeVariant) {
+    // The seed is always saved with a customized theme (the pre-paint cache).
+    write(SEED_KEY, getSeed());
+    write(VARIANT_KEY, variant);
+    safeApplyTheme();
+    changed();
+  },
+  setContrast(contrast: Contrast) {
+    write(SEED_KEY, getSeed());
+    write(CONTRAST_KEY, contrast);
+    safeApplyTheme();
+    changed();
+  },
+  setMode(mode: Mode) {
+    write(MODE_KEY, mode);
+    applyMode(mode);
+    announce(`Color theme: ${MODE_NAME[mode]}`);
+    changed();
+  },
+  /** Back to the baseline theme and the system color mode. */
+  reset() {
+    for (const key of [SEED_KEY, VARIANT_KEY, CONTRAST_KEY, MODE_KEY, 'gb-theme-css']) {
+      remove(key);
+    }
+    safeApplyTheme();
+    applyMode('auto');
+    announce('Theme reset');
+    changed();
   },
 };
+(window as unknown as {gbTheme: typeof gbTheme}).gbTheme = gbTheme;
 
 applyMode(getMode());
-document.getElementById('gb-theme')?.addEventListener('click', () => {
-  const mode = MODES[(MODES.indexOf(getMode()) + 1) % MODES.length];
-  write('color-mode', mode);
-  applyMode(mode);
-  announce(`Color theme: ${MODE_NAME[mode]}`);
-});
-
-// --- Navigation drawer ---------------------------------------------------
-
-interface DrawerElement extends HTMLElement {
-  open: boolean;
-  modal: boolean;
-  quick: boolean;
-}
-
-const drawer = document.getElementById('gb-drawer') as DrawerElement | null;
-const menu = document.getElementById('gb-menu');
-const expanded = matchMedia('(min-width: 840px)');
-
-function syncMenu() {
-  if (drawer && menu) menu.setAttribute('aria-expanded', String(drawer.open));
-}
-
-if (drawer) {
-  // Standard and open at expanded and up; modal and closed below.
-  const place = () => {
-    drawer.quick = true;
-    drawer.modal = !expanded.matches;
-    drawer.open = expanded.matches;
-    syncMenu();
-    requestAnimationFrame(() => (drawer.quick = false));
-  };
-  place();
-  expanded.addEventListener('change', place);
-  menu?.addEventListener('click', () => {
-    drawer.open = !drawer.open;
-    syncMenu();
-  });
-  for (const type of ['opened', 'closed', 'open']) {
-    drawer.addEventListener(type, syncMenu);
-  }
-}
-
-// --- Version select ------------------------------------------------------
-
-const version = document.getElementById('gb-version') as
-  | (HTMLElement & {value: string})
-  | null;
-version?.addEventListener('change', () => {
-  // v2.5.0 is the site root; 3.0 stays under /3.0/.
-  if (version.value === '2.5') location.assign('/');
+addEventListener('click', (event) => {
+  const button = (event.target as Element | null)?.closest?.(
+    '#gb-theme, [data-theme-toggle]',
+  );
+  if (!button) return;
+  gbTheme.setMode(MODES[(MODES.indexOf(getMode()) + 1) % MODES.length]);
 });
 
 // --- Table of contents ---------------------------------------------------

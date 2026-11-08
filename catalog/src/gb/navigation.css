@@ -17,74 +17,91 @@
   }
 }
 
-/* The shell stays put while the page cross-fades. Named elements leave the
-   root snapshot, which then holds only the main content. */
-.gb-header {
-  view-transition-name: gb-header;
+/* The shell stays put while the page cross-fades: the rail, the nav bar, the
+   FAB menu and the search button are identical on every page. Named elements
+   leave the root snapshot, which then holds the content pane. */
+.gb-rail-area {
+  view-transition-name: gb-rail;
 }
-.gb-drawer {
-  view-transition-name: gb-drawer;
+.gb-pane-cell {
+  view-transition-name: gb-pane;
 }
 .gb-toc {
   view-transition-name: gb-toc;
 }
+.gb-bar {
+  view-transition-name: gb-bar;
+}
+.gb-fab-menu {
+  view-transition-name: gb-fab;
+}
+.gb-search-compact {
+  view-transition-name: gb-search;
+}
 
 ::view-transition-group(root),
 ::view-transition-group(gb-toc),
-::view-transition-group(gb-drawer),
+::view-transition-group(gb-pane),
 ::view-transition-old(root),
 ::view-transition-new(root),
 ::view-transition-old(gb-toc),
 ::view-transition-new(gb-toc),
-::view-transition-old(gb-drawer),
-::view-transition-new(gb-drawer) {
+::view-transition-old(gb-pane),
+::view-transition-new(gb-pane) {
   animation-duration: var(--md-sys-motion-duration-medium1, 250ms);
   animation-timing-function: var(--md-sys-motion-easing-standard, ease);
 }
-/* The app bar is identical on every page: the new one replaces the old at
-   once, so it never dims mid-fade. */
-::view-transition-old(gb-header) {
+/* These are identical on every page: the new one replaces the old at once,
+   so they never dim mid-fade. */
+::view-transition-old(gb-rail),
+::view-transition-old(gb-bar),
+::view-transition-old(gb-fab),
+::view-transition-old(gb-search) {
   display: none;
 }
-::view-transition-new(gb-header),
-::view-transition-group(gb-header) {
+::view-transition-new(gb-rail),
+::view-transition-group(gb-rail),
+::view-transition-new(gb-bar),
+::view-transition-group(gb-bar),
+::view-transition-new(gb-fab),
+::view-transition-group(gb-fab),
+::view-transition-new(gb-search),
+::view-transition-group(gb-search) {
   animation: none;
 }
 
 /* Route progress indicator. One element, so its transition name is unique:
    the next page renders it again and it stays still across the transition.
-   The loading indicator sits at the top center of the content pane, the
-   linear indicator along the top edge of the page under the app bar. */
+   It is the first child of the content pane: the loading indicator sits at
+   the top center of the pane, the linear indicator along its top edge. */
 .gb-route {
-  position: fixed;
+  position: sticky;
+  inset-block-start: 0;
   z-index: 19;
+  block-size: 0;
   pointer-events: none;
   view-transition-name: gb-route;
   opacity: 1;
-  transition: opacity var(--md-sys-motion-duration-short3, 200ms)
+  transition: opacity var(--md-sys-motion-duration-short4, 200ms)
     var(--md-sys-motion-easing-standard, ease);
 }
 .gb-route[data-out] {
   opacity: 0;
 }
-.gb-route[data-stage='loading'] {
-  inset-block-start: calc(var(--gb-header-height) + var(--md-sys-space-100, 8px));
+.gb-route[data-stage='loading'] > * {
+  position: absolute;
+  inset-block-start: var(--md-sys-space-100, 8px);
   inset-inline-start: 50%;
   translate: -50% 0;
 }
-.gb-route[data-stage='linear'] {
-  inset-block-start: var(--gb-header-height);
+.gb-route[data-stage='linear'] > * {
+  position: absolute;
+  inset-block-start: 0;
   inset-inline: 0;
 }
 .gb-route md-gb-progress {
   display: block;
   inline-size: 100%;
-}
-@media (min-width: 840px) {
-  /* Centered over the content pane, beside the standard drawer. */
-  .gb-route[data-stage='loading'] {
-    inset-inline-start: calc(50% + var(--gb-drawer-width) / 2);
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .gb-route {

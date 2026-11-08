@@ -9,7 +9,7 @@
  * copied to /3.0/skill/ by scripts/gb-site-assets.mjs), each with its path
  * inside the skill folder, its absolute URL and its size. An agent installs
  * the skill by downloading every listed file to its path (see "Copy agent
- * prompt" in the app bar's Download menu, and docs/3.0/about/ai-agents.md).
+ * prompt" in the Download & copy sheet, and docs/3.0/about/ai-agents.md).
  */
 
 const {readdirSync, readFileSync, statSync} = require('node:fs');

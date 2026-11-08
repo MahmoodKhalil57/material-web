@@ -126,7 +126,7 @@ sw.addEventListener('fetch', (e: FetchEvent) => {
   // Files that are downloaded, not read offline: the single-file site
   // (.mhtml, many MB), custom-elements.json, the agent skill files,
   // llms-full.txt. Large and rebuilt with the docs, so they always come from
-  // the network (the page lists them; the app bar's Download menu).
+  // the network (the page lists them; the Download & copy sheet).
   if (url.origin === location.origin && DOWNLOADS.test(url.pathname)) return;
 
   if (request.mode === 'navigate') {

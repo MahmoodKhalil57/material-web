@@ -831,6 +831,10 @@ function setUpTriggers() {
     const keys = button.querySelector('.gb-search-hint');
     if (keys) keys.textContent = hint;
     button.setAttribute('aria-keyshortcuts', isMac ? 'Meta+K /' : 'Control+K /');
+    // The tooltip of an icon button shows its label: add the shortcut to it.
+    if (button.hasAttribute('data-gb-search-tip')) {
+      button.setAttribute('aria-label', `Search docs (${hint})`);
+    }
     button.addEventListener('click', () => void dialog.open());
     // Warm the index before the click.
     button.addEventListener('pointerenter', () => void loadIndex(), {once: true});

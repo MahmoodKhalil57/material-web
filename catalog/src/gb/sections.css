@@ -8,29 +8,25 @@
    a large hero with M3 Expressive shapes, and a grid of cards. Colors, type,
    shape and motion come from --md-sys-* tokens only. */
 
-/* No outline column on these pages: the cards get the width. */
-@media (min-width: 1200px) {
-  .gb-layout.gb-layout-index {
-    grid-template-columns: var(--gb-drawer-width) minmax(0, 1fr);
-  }
-}
+/* No outline column on these pages (shell.css): the cards get the width. */
 .gb-layout-index .gb-main {
   max-inline-size: 80rem;
 }
 
-/* The drawer's section labels link to the index pages. */
-.gb-drawer .nav-drawer-section-label a {
+/* The pages pane's overview links (in the pane, the flyout and the sheet)
+   lead to the index pages. */
+md-gb-nav-drawer .nav-drawer-section-label a {
   color: inherit;
   text-decoration: none;
   border-radius: var(--md-sys-shape-corner-xs);
 }
-.gb-drawer .nav-drawer-section-label a:hover {
+md-gb-nav-drawer .nav-drawer-section-label a:hover {
   text-decoration: underline;
 }
-.gb-drawer .nav-drawer-section-label a[aria-current='page'] {
+md-gb-nav-drawer .nav-drawer-section-label a[aria-current='page'] {
   color: var(--md-sys-color-on-surface);
 }
-.gb-drawer .nav-drawer-section-label a:focus-visible {
+md-gb-nav-drawer .nav-drawer-section-label a:focus-visible {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;
 }

@@ -28,8 +28,9 @@ CSS that use `md-gb-*` elements.
 
 ### Install it from this site
 
-Without a checkout, the skill files are published at `/3.0/skill/`. The Download
-menu in the app bar has Copy agent prompt: paste it into your agent and it
+Without a checkout, the skill files are published at `/3.0/skill/`. The page tools
+button (bottom end of every page) opens Download & copy, which has Copy agent
+prompt: paste it into your agent and it
 creates the skills folder, downloads `SKILL.md` and every `reference/*.md` file
 listed in `/3.0/skill/index.json`, installs `@material/web`, and checks the
 result.

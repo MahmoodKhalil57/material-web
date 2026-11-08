@@ -5,34 +5,30 @@
  */
 
 /**
- * The "Download and copy" menu of the app bar (imported by gb.ts; markup in
- * site/_includes/gb/default.html):
+ * The "Download & copy" items of the FAB menu's side or bottom sheet
+ * (imported by gb.ts; markup in site/_includes/gb/default.html, the sheets
+ * are shell.ts):
  *
  * - Install app: the PWA install prompt (`beforeinstallprompt`), hidden once
  *   the app is installed or running as one. Where the browser never offers
  *   the prompt (Safari, Firefox) the item opens a dialog with the steps of
  *   each browser instead.
  * - Downloads (the single-file site, llms-full.txt, custom-elements.json):
- *   a temporary `<a download>` is clicked, since menu items are not links.
- *   The size of each file shows in its supporting text; the first time the
- *   menu opens it asks the server (HEAD), and an item whose file is missing
- *   is hidden.
+ *   a temporary `<a download>` is clicked, since the items are buttons. The
+ *   size of each file shows in its supporting text; the first time the sheet
+ *   opens it asks the server (HEAD), and an item whose file is missing is
+ *   hidden.
  * - Copy items: the text goes to the clipboard (`navigator.clipboard`, else a
- *   hidden textarea and `execCommand('copy')`), and an `md-gb-snackbar`
- *   confirms it; the snackbar announces its message in a polite live region.
+ *   hidden textarea and `execCommand('copy')`), the sheet closes, and an
+ *   `md-gb-snackbar` confirms it; the snackbar announces its message in a
+ *   polite live region.
  *
- * Nothing runs until the menu is opened or an item is chosen, so a prerendered
- * page does no clipboard, network or install work.
+ * Nothing runs until the sheet is opened (`gb-tool-open`) or an item is
+ * chosen, so a prerendered page does no clipboard, network or install work.
  */
 
 import '@material/web/labs/gb/components/button/md-gb-button.js';
 import '@material/web/labs/gb/components/dialog/md-gb-dialog.js';
-import '@material/web/labs/gb/components/divider/md-gb-divider.js';
-// The menu first: items and groups find it through a context, which only
-// reaches those upgraded after it is defined.
-import '@material/web/labs/gb/components/menu/md-gb-menu.js';
-import '@material/web/labs/gb/components/menu/md-gb-menu-group.js';
-import '@material/web/labs/gb/components/menu/md-gb-menu-item.js';
 import '@material/web/labs/gb/components/snackbar/md-gb-snackbar.js';
 
 interface InstallPromptEvent extends Event {
@@ -49,7 +45,8 @@ interface Snackbar extends HTMLElement {
   show(): Promise<void> | void;
 }
 
-const menu = document.getElementById('gb-download-menu');
+/** The Download & copy body: it moves between the side and bottom sheets. */
+const body = document.getElementById('gb-download-body');
 
 /** The text of a copy item, built when it is chosen. */
 function copyText(id: string, site: string): string {
@@ -135,7 +132,7 @@ function download(href: string, name: string) {
 // --- Install ---------------------------------------------------------------
 
 let installPrompt: InstallPromptEvent | null = null;
-const installItem = document.getElementById('gb-install');
+const installItem = document.getElementById('gb-install')?.closest('li') ?? null;
 
 const installedModes = [
   '(display-mode: standalone)',
@@ -203,7 +200,7 @@ function showInstallSteps() {
 
 syncInstall();
 
-// --- Menu ------------------------------------------------------------------
+// --- Items -----------------------------------------------------------------
 
 function formatSize(bytes: number): string {
   if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)} MB`;
@@ -212,15 +209,15 @@ function formatSize(bytes: number): string {
 
 /** Fills in the sizes of the downloads and hides the ones that are not built. */
 async function loadDownloads() {
-  const items = menu?.querySelectorAll<HTMLElement>('[data-download]') ?? [];
+  const items = body?.querySelectorAll<HTMLElement>('[data-download]') ?? [];
   await Promise.all(
     [...items].map(async (item) => {
       const href = item.dataset['download']!;
-      const text = item.querySelector<HTMLElement>('[slot="supporting-text"]');
+      const text = item.querySelector<HTMLElement>('.gb-action-support');
       try {
         const response = await fetch(href, {method: 'HEAD'});
         if (!response.ok) {
-          item.hidden = true;
+          (item.closest('li') ?? item).hidden = true;
           return;
         }
         const length = Number(response.headers.get('content-length'));
@@ -235,26 +232,32 @@ async function loadDownloads() {
 }
 
 let loaded = false;
-menu?.addEventListener('toggle', (event) => {
-  if ((event as ToggleEvent).newState !== 'open' || event.target !== menu) return;
+// shell.ts fires this when the sheet opens with a tool's body.
+addEventListener('gb-tool-open', (event) => {
+  if ((event as CustomEvent<string>).detail !== 'download') return;
   syncInstall();
   if (loaded) return;
   loaded = true;
   void loadDownloads();
 });
 
-menu?.addEventListener('click', (event) => {
-  const item = (event.target as Element).closest<HTMLElement>('md-gb-menu-item');
-  if (!item || !menu.contains(item)) return;
-  const site = menu.dataset['siteUrl'] ?? location.origin;
+/** Asks the shell to close the sheet (the snackbar sits under its scrim). */
+const closeSheet = () => dispatchEvent(new Event('gb-tools-close'));
+
+body?.addEventListener('click', (event) => {
+  const item = (event.target as Element).closest<HTMLElement>('.gb-action');
+  if (!item || !body.contains(item)) return;
+  const site = body.dataset['siteUrl'] ?? location.origin;
   if (item.dataset['action'] === 'install') {
+    closeSheet();
     void install();
   } else if (item.dataset['download']) {
     download(item.dataset['download'], item.dataset['filename'] ?? '');
   } else if (item.dataset['copy']) {
     const text = copyText(item.dataset['copy'], site);
-    void copy(text).then((ok) =>
-      notify(ok ? (item.dataset['copied'] ?? 'Copied') : 'Could not copy. Select the text on the page instead'),
-    );
+    void copy(text).then((ok) => {
+      closeSheet();
+      notify(ok ? (item.dataset['copied'] ?? 'Copied') : 'Could not copy. Select the text on the page instead');
+    });
   }
 });

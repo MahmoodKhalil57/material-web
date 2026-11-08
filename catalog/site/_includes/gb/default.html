@@ -1,15 +1,45 @@
 {#-
   Layout `gb`: the shell of every /3.0/ page, built from labs/gb (md-gb-*)
-  components only. Data: title, description, page.url, content,
-  collections.gb3 (data.section / data.order / data.title), and the `toc`
-  filter.
+  components only, modelled on m3.material.io: a navigation rail (a nav bar
+  below 600px), a pages pane and a rounded content pane. There is no top app
+  bar. Data: title, description, section, page.url, content,
+  collections.gb3 (data.section / data.order / data.title / data.category),
+  and the `toc` filter. Behaviour: src/gb/shell.ts; styles: src/gb/shell.css.
 -#}
 {%- set gbSections = [
-  {id: 'about', label: 'About'},
-  {id: 'foundations', label: 'Foundations'},
-  {id: 'styles', label: 'Styles'},
-  {id: 'components', label: 'Components'}
+  {id: 'about', label: 'About', icon: 'info'},
+  {id: 'foundations', label: 'Foundations', icon: 'foundation'},
+  {id: 'styles', label: 'Styles', icon: 'palette'},
+  {id: 'components', label: 'Components', icon: 'widgets'}
 ] -%}
+{%- set gbGroups = [
+  {id: 'buttons', label: 'Buttons'},
+  {id: 'pickers', label: 'Date & time pickers'},
+  {id: 'progress', label: 'Loading & progress'},
+  {id: 'navigation', label: 'Navigation'},
+  {id: 'sheets', label: 'Sheets'},
+  {id: 'other', label: 'All other components'}
+] -%}
+{%- set gbCurrent = section or 'about' -%}
+{%- set gbPages = collections.gb3 | filtersort('data.order') -%}
+{#- The pages of a section as the children of an md-gb-nav-drawer: a heading
+    linking to the section's index page, then the pages (components in their
+    groups). -#}
+{%- macro pageItems(sec, groups, pages, url) -%}
+<h2 class="nav-drawer-section-label"><a href="/3.0/{{ sec.id }}/"{% if url == '/3.0/' + sec.id + '/' %} aria-current="page"{% endif %}>{{ sec.label }} overview</a></h2>
+{%- if sec.id == 'components' %}
+{%- for group in groups %}
+<h2 class="nav-drawer-section-label gb-group-label">{{ group.label }}</h2>
+{%- for file in pages %}{% if file.data.section == 'components' and file.data.category == group.id %}
+<md-gb-nav-drawer-item href="{{ file.url }}"{% if file.url == url %} selected{% endif %}>{{ file.data.title }}</md-gb-nav-drawer-item>
+{%- endif %}{% endfor %}
+{%- endfor %}
+{%- else %}
+{%- for file in pages %}{% if file.data.section == sec.id %}
+<md-gb-nav-drawer-item href="{{ file.url }}"{% if file.url == url %} selected{% endif %}>{{ file.data.title }}</md-gb-nav-drawer-item>
+{%- endif %}{% endfor %}
+{%- endif %}
+{%- endmacro -%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -22,11 +52,20 @@
     {#- Canonical, Markdown alternate, manifest, theme-color, Open Graph,
         Twitter Card and JSON-LD (eleventy-helpers/gb-site.cjs). -#}
     {% gbhead title, description, section, page.url %}
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;family=Material+Symbols+Outlined&amp;display=swap" />
+    {#- Roboto Flex is `optional`: text starts in a fallback of the same
+        metrics (gb.css) and only uses the font when it arrives in time (it
+        is cached for the next page), so a late font never moves the text.
+        Material Symbols is `block`: icons stay invisible, in their fixed
+        boxes, instead of showing their names. -#}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=optional" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;display=block" />
     <link rel="stylesheet" href="/js/gb/gb.css" />
     <script>
-      // Theme before first paint: color-scheme from the saved mode, and the
-      // dynamic color CSS generated for the saved seed (cached by gb.js).
+      // Before first paint: color-scheme from the saved mode, the dynamic
+      // color CSS generated for the saved theme (cached by gb.js), and
+      // whether the pages pane is open, so nothing moves when the script runs.
       (() => {
         const root = document.documentElement;
         // Demo cards collapse their code only with JS (gb.css, gb.ts).
@@ -34,11 +73,13 @@
         try {
           const mode = localStorage.getItem('color-mode') || 'auto';
           root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
+          if (localStorage.getItem('gb-pane') === 'closed') root.dataset.pane = 'closed';
           const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
           const seed = localStorage.getItem('gb-seed-color');
-          // Only a cache for the saved seed, written by this version of gb.js
+          const key = [seed, localStorage.getItem('gb-scheme-variant') || 'tonal-spot', localStorage.getItem('gb-contrast') || 'standard'].join('|');
+          // Only a cache for the saved theme, written by this version of gb.js
           // (THEME_CACHE_VERSION in catalog/src/gb/gb.ts).
-          if (cache && cache.v === 2 && cache.css && seed && cache.seed === seed) {
+          if (cache && cache.v === 3 && cache.css && seed && cache.key === key) {
             const style = document.createElement('style');
             style.id = 'gb-theme-style';
             style.textContent = cache.css;
@@ -47,9 +88,10 @@
         } catch (e) {}
       })();
     </script>
-    {#- Same-site links under /3.0/ (the drawer's links are in shadow roots:
-        src/gb/navigation.ts adds rules for those). Hover/press prerenders,
-        which makes the click near-instant; prefetch is the cheap step before. -#}
+    {#- Same-site links under /3.0/ (the pages pane's links are in shadow
+        roots: src/gb/navigation.ts adds rules for those). Hover/press
+        prerenders, which makes the click near-instant; prefetch is the cheap
+        step before. -#}
     <script type="speculationrules">
       {
         "prefetch": [{
@@ -70,87 +112,255 @@
         }]
       }
     </script>
-    {#- Render-blocking, so the shell (drawer, app bar) is defined before the
+    {#- Render-blocking, so the shell (rail, pane) is defined before the
         first frame and cross-document view transitions capture it. -#}
     <script type="module" src="/js/gb/gb.js" blocking="render"></script>
   </head>
   <body>
-    <header class="gb-header">
-      <a class="gb-skip" href="#main">Skip to main content</a>
-      <md-gb-app-bar>
-        <md-gb-icon-button slot="leading" id="gb-menu" aria-label="Menu" aria-controls="gb-drawer" aria-expanded="false">
-          <md-gb-icon>menu</md-gb-icon>
-        </md-gb-icon-button>
-        <a class="gb-brand" href="/3.0/">Material Web</a>
-        {#- Docs search (src/gb/search.ts): a field-like button on wide windows, an icon button below. -#}
-        <button type="button" slot="trailing" class="gb-search-field" data-gb-search aria-label="Search docs">
-          <md-gb-icon aria-hidden="true">search</md-gb-icon>
-          <span class="gb-search-field-label" aria-hidden="true">Search docs</span>
-          <kbd class="gb-search-hint" aria-hidden="true">Ctrl K</kbd>
-        </button>
-        <md-gb-icon-button slot="trailing" class="gb-search-icon" data-gb-search aria-label="Search docs">
+    <div class="gb-shell{% if gbIndex %} gb-shell-index{% endif %}">
+      {#- The navigation rail (600px and up): the menu button that toggles the
+          pages pane, the search FAB, the four sections, and below them the
+          theme, version and more menus. -#}
+      <header class="gb-rail-area">
+        <a class="gb-skip" href="#main">Skip to main content</a>
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" narrow aria-label="Sections">
+          <md-gb-icon-button slot="header" id="gb-menu" class="gb-menu" tooltip data-nav-rail-no-toggle aria-label="Pages" aria-controls="gb-drawer" aria-expanded="false">
+            <md-gb-icon>menu</md-gb-icon>
+          </md-gb-icon-button>
+          {#- Docs search (src/gb/search.ts) opens from here and from Ctrl/Cmd+K and "/". -#}
+          <md-gb-fab slot="header" id="gb-search-fab" class="gb-search-fab" color="tertiary-container" data-gb-search data-gb-search-tip aria-label="Search docs">
+            <md-gb-icon>search</md-gb-icon>
+          </md-gb-fab>
+          {%- for sec in gbSections %}
+          <md-gb-nav-rail-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} selected{% endif %}>
+            <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
+          </md-gb-nav-rail-item>
+          {%- endfor %}
+        </md-gb-nav-rail>
+        <div class="gb-rail-foot" role="group" aria-label="Site settings">
+          <md-gb-icon-button id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
+            <md-gb-icon>brightness_auto</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-button id="gb-version" class="gb-version" color="text" size="xs" popovertarget="gb-version-menu" aria-label="Material Web version 3.0">3.0</md-gb-button>
+          <md-gb-icon-button id="gb-more" tooltip popovertarget="gb-more-menu" aria-label="More">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+          {#- The menus are popovers (top layer); they stay in the banner landmark. -#}
+          <md-gb-menu id="gb-version-menu" aria-label="Material Web version">
+            <md-gb-menu-item data-version="3.0">
+              <md-gb-icon slot="leading">check</md-gb-icon>
+              v3.0-Alpha
+            </md-gb-menu-item>
+            <md-gb-menu-item data-version="2.5">
+              <md-gb-icon slot="leading"></md-gb-icon>
+              v2.5.0 Current - Latest
+            </md-gb-menu-item>
+          </md-gb-menu>
+          <md-gb-menu id="gb-more-menu" aria-label="More">
+            <md-gb-menu-item data-open="https://github.com/material-components/material-web">
+              <md-gb-icon slot="leading">code</md-gb-icon>
+              GitHub
+              <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
+            </md-gb-menu-item>
+            <md-gb-menu-item data-open="https://www.npmjs.com/package/@material/web">
+              <md-gb-icon slot="leading">deployed_code</md-gb-icon>
+              npm
+              <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
+            </md-gb-menu-item>
+            <md-gb-divider></md-gb-divider>
+            <md-gb-menu-item data-tool="feedback">
+              <md-gb-icon slot="leading">feedback</md-gb-icon>
+              Send feedback
+            </md-gb-menu-item>
+          </md-gb-menu>
+        </div>
+      </header>
+
+      {#- The pages pane: the current section's pages. Standard beside the
+          rail from 840px, modal below it (src/gb/shell.ts). -#}
+      <div class="gb-pane-cell">
+        <md-gb-nav-drawer class="gb-drawer" id="gb-drawer" label="{% for sec in gbSections %}{% if sec.id == gbCurrent %}{{ sec.label }}{% endif %}{% endfor %} pages" data-section="{{ gbCurrent }}">
+          {%- for sec in gbSections %}{% if sec.id == gbCurrent %}
+          {{ pageItems(sec, gbGroups, gbPages, page.url) | safe }}
+          {%- endif %}{% endfor %}
+        </md-gb-nav-drawer>
+      </div>
+
+      <div class="gb-content-pane" id="gb-content-pane">
+        <div class="gb-body{% if gbIndex %} gb-layout-index{% endif %}">
+          <main class="gb-main" id="main" tabindex="-1">
+            {%- if not gbIndex %}
+            <h1>{{ title }}</h1>
+            {% if description %}<p class="gb-lede">{{ description }}</p>{% endif %}
+            <p class="gb-md-link"><a href="{% if page.url == '/3.0/' %}/3.0/index.md{% else %}{{ page.url | replace(r/\/$/, '') }}.md{% endif %}" type="text/markdown">View as Markdown</a></p>
+            {%- endif %}
+            <div class="gb-content">{{ content | safe }}</div>
+          </main>
+
+          {#- A section's index page (gb-sections.11ty.cjs) has no outline. #}
+          {%- if not gbIndex %}
+          <aside class="gb-toc" aria-label="Page outline">
+            <details id="gb-toc-details" open>
+              <summary>On this page</summary>
+              <a class="gb-toc-top" href="#main">(Top)</a>
+              {{ content | toc | filterToc | safe }}
+            </details>
+          </aside>
+          {%- endif %}
+        </div>
+      </div>
+
+      {#- Below 600px: the sections as a navigation bar. Selecting the current
+          one opens its pages in a bottom sheet. -#}
+      <nav class="gb-bar-area" aria-label="Sections">
+        <md-gb-nav-bar class="gb-bar" id="gb-bar" role="none">
+          {%- for sec in gbSections %}
+          <md-gb-nav-bar-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} active{% endif %}>
+            <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
+          </md-gb-nav-bar-item>
+          {%- endfor %}
+        </md-gb-nav-bar>
+      </nav>
+
+      {#- Below 600px: search floats at the top end and hides while scrolling down. -#}
+      <div class="gb-tools-area" role="search" aria-label="Docs">
+        <md-gb-icon-button id="gb-search-compact" class="gb-search-compact" color="tonal" tooltip data-gb-search data-gb-search-tip aria-label="Search docs">
           <md-gb-icon>search</md-gb-icon>
         </md-gb-icon-button>
-        <md-gb-select slot="trailing" class="gb-version" id="gb-version" aria-label="Material Web version" value="3.0">
-          <md-gb-select-option value="2.5">v2.5.0 Current - Latest</md-gb-select-option>
-          <md-gb-select-option value="3.0" selected>v3.0-Alpha</md-gb-select-option>
-        </md-gb-select>
-        {#- Download and copy menu (src/gb/download.ts). -#}
-        <md-gb-icon-button slot="trailing" id="gb-download" class="gb-download" aria-label="Download and copy" popovertarget="gb-download-menu">
-          <md-gb-icon>download</md-gb-icon>
-        </md-gb-icon-button>
-        <md-gb-icon-button slot="trailing" id="gb-theme"aria-label="Color theme: system. Change to light" data-mode="auto">
-          <md-gb-icon>brightness_auto</md-gb-icon>
-        </md-gb-icon-button>
-        <md-gb-icon-button slot="trailing" href="https://github.com/material-components/material-web" target="_blank" rel="noopener" aria-label="Material Web on GitHub (opens in a new tab)">
-          <svg class="gb-gh" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
-        </md-gb-icon-button>
-      </md-gb-app-bar>
+      </div>
 
-    <md-gb-menu id="gb-download-menu" aria-label="Download and copy" data-site-url="{{ gbSite.url }}">
-      <md-gb-menu-group label="Download">
-        <md-gb-menu-item id="gb-install" data-action="install">
-          <md-gb-icon slot="leading">install_desktop</md-gb-icon>
-          Install app
-          <span slot="supporting-text">Add Material Web 3.0 to your device</span>
-        </md-gb-menu-item>
-        <md-gb-menu-item data-download="/3.0/material-web-3.0.mhtml" data-filename="material-web-3.0.mhtml">
-          <md-gb-icon slot="leading">web</md-gb-icon>
-          Website (MHTML, single file)
-          <span slot="supporting-text" data-base="All pages in one file, for offline reading">All pages in one file, for offline reading</span>
-        </md-gb-menu-item>
-        <md-gb-menu-item data-download="/3.0/llms-full.txt" data-filename="llms-full.txt">
-          <md-gb-icon slot="leading">description</md-gb-icon>
-          Docs for LLMs (llms-full.txt)
-          <span slot="supporting-text" data-base="All pages as Markdown text">All pages as Markdown text</span>
-        </md-gb-menu-item>
-        <md-gb-menu-item data-download="/3.0/custom-elements.json" data-filename="custom-elements.json">
-          <md-gb-icon slot="leading">data_object</md-gb-icon>
-          API (custom-elements.json)
-          <span slot="supporting-text" data-base="Every element, as a Custom Elements Manifest">Every element, as a Custom Elements Manifest</span>
-        </md-gb-menu-item>
-      </md-gb-menu-group>
-      <md-gb-divider></md-gb-divider>
-      <md-gb-menu-group label="Copy">
-        <md-gb-menu-item data-copy="agent-prompt" data-copied="Copied agent prompt">
-          <md-gb-icon slot="leading">smart_toy</md-gb-icon>
-          Copy agent prompt
-          <span slot="supporting-text">Tells an AI agent to install the md-gb skill</span>
-        </md-gb-menu-item>
-        <md-gb-menu-item data-copy="npm" data-copied="Copied npm install command">
-          <md-gb-icon slot="leading">terminal</md-gb-icon>
-          Copy npm install
-          <span slot="supporting-text">npm install @material/web</span>
-        </md-gb-menu-item>
-        <md-gb-menu-item data-copy="cdn" data-copied="Copied CDN script tag">
-          <md-gb-icon slot="leading">code</md-gb-icon>
-          Copy CDN script tag
-          <span slot="supporting-text">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span>
-        </md-gb-menu-item>
-      </md-gb-menu-group>
-    </md-gb-menu>
+      {#- Page tools: download and copy, theme and feedback. -#}
+      <aside class="gb-tools-area" aria-label="Page tools">
+        <md-gb-fab-menu class="gb-fab-menu" id="gb-fab-menu" aria-label="Page tools">
+          <md-gb-fab-menu-item data-tool="download"><md-gb-icon slot="icon">download</md-gb-icon>Download &amp; copy</md-gb-fab-menu-item>
+          <md-gb-fab-menu-item data-tool="theme"><md-gb-icon slot="icon">palette</md-gb-icon>Customize theme</md-gb-fab-menu-item>
+          <md-gb-fab-menu-item data-tool="feedback"><md-gb-icon slot="icon">feedback</md-gb-icon>Send feedback</md-gb-fab-menu-item>
+          <md-gb-icon slot="icon">build</md-gb-icon>
+        </md-gb-fab-menu>
+      </aside>
+    </div>
 
-    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000"></md-gb-snackbar>
+    {#- The other sections' pages, for the flyout of the rail (src/gb/shell.ts
+        puts them in #gb-flyout). -#}
+    {%- for sec in gbSections %}{% if sec.id != gbCurrent %}
+    <template data-pages="{{ sec.id }}" data-label="{{ sec.label }}">{{ pageItems(sec, gbGroups, gbPages, page.url) | safe }}</template>
+    {%- endif %}{% endfor %}
+    <div class="gb-flyout" id="gb-flyout" popover="manual">
+      <md-gb-nav-drawer class="gb-flyout-drawer" id="gb-flyout-drawer" label="Pages"></md-gb-nav-drawer>
+    </div>
+
+    {#- The sheets. One side sheet (600px and up) and one bottom sheet (below
+        600px) show the tool bodies below, which move into whichever opens. -#}
+    <md-gb-side-sheet id="gb-side-sheet" class="gb-side-sheet" modal></md-gb-side-sheet>
+    <md-gb-bottom-sheet id="gb-tools-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page tools"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-pages-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Pages"></md-gb-bottom-sheet>
+
+    <div class="gb-tools" id="gb-tools" hidden>
+      {#- Download & copy (src/gb/download.ts). -#}
+      <section class="gb-tool" id="gb-download-body" data-tool="download" data-title="Download &amp; copy" data-site-url="{{ gbSite.url }}" aria-labelledby="gb-download-title">
+        <h2 class="gb-tool-title" id="gb-download-title">Download &amp; copy</h2>
+        <h3 class="gb-tool-group">Download</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" id="gb-install" data-action="install">
+            <md-gb-icon aria-hidden="true">install_desktop</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Install app</span><span class="gb-action-support">Add Material Web 3.0 to your device</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/3.0/material-web-3.0.mhtml" data-filename="material-web-3.0.mhtml">
+            <md-gb-icon aria-hidden="true">web</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Website (MHTML, single file)</span><span class="gb-action-support" data-base="All pages in one file, for offline reading">All pages in one file, for offline reading</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/3.0/llms-full.txt" data-filename="llms-full.txt">
+            <md-gb-icon aria-hidden="true">description</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Docs for LLMs (llms-full.txt)</span><span class="gb-action-support" data-base="All pages as Markdown text">All pages as Markdown text</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/3.0/custom-elements.json" data-filename="custom-elements.json">
+            <md-gb-icon aria-hidden="true">data_object</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">API (custom-elements.json)</span><span class="gb-action-support" data-base="Every element, as a Custom Elements Manifest">Every element, as a Custom Elements Manifest</span></span>
+          </button></li>
+        </ul>
+        <h3 class="gb-tool-group">Copy</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="agent-prompt" data-copied="Copied agent prompt">
+            <md-gb-icon aria-hidden="true">smart_toy</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy agent prompt</span><span class="gb-action-support">Tells an AI agent to install the md-gb skill</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="npm" data-copied="Copied npm install command">
+            <md-gb-icon aria-hidden="true">terminal</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy npm install</span><span class="gb-action-support">npm install @material/web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="cdn" data-copied="Copied CDN script tag">
+            <md-gb-icon aria-hidden="true">code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy CDN script tag</span><span class="gb-action-support">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span></span>
+          </button></li>
+        </ul>
+      </section>
+
+      {#- Customize theme (src/gb/shell.ts). -#}
+      <section class="gb-tool" id="gb-theme-body" data-tool="theme" data-title="Customize theme" aria-labelledby="gb-theme-title">
+        <h2 class="gb-tool-title" id="gb-theme-title">Customize theme</h2>
+        <p class="gb-tool-note">Changes apply to this site and its demos, and are remembered in this browser.</p>
+        <fieldset class="gb-field">
+          <legend>Seed color</legend>
+          <div class="gb-swatches" id="gb-swatches">
+            <label class="gb-swatch" style="--gb-swatch: #6750a4"><input type="radio" name="gb-seed" value="#6750a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Purple</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #0061a4"><input type="radio" name="gb-seed" value="#0061a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Blue</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #006a6a"><input type="radio" name="gb-seed" value="#006a6a" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Teal</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #386a20"><input type="radio" name="gb-seed" value="#386a20" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Green</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #9c4300"><input type="radio" name="gb-seed" value="#9c4300" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Orange</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #b3261e"><input type="radio" name="gb-seed" value="#b3261e" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Red</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #8b4a62"><input type="radio" name="gb-seed" value="#8b4a62" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Pink</span></label>
+          </div>
+          <label class="gb-custom-color">
+            <span>Custom color</span>
+            <input type="color" id="gb-seed-input" value="#6750a4" />
+            <output id="gb-seed-hex" for="gb-seed-input">#6750a4</output>
+          </label>
+        </fieldset>
+        <div class="gb-field">
+          <md-gb-select id="gb-variant" label="Scheme variant" value="tonal-spot">
+            <md-gb-select-option value="tonal-spot" selected>Tonal spot</md-gb-select-option>
+            <md-gb-select-option value="neutral">Neutral</md-gb-select-option>
+            <md-gb-select-option value="vibrant">Vibrant</md-gb-select-option>
+            <md-gb-select-option value="expressive">Expressive</md-gb-select-option>
+            <md-gb-select-option value="fidelity">Fidelity</md-gb-select-option>
+            <md-gb-select-option value="content">Content</md-gb-select-option>
+            <md-gb-select-option value="monochrome">Monochrome</md-gb-select-option>
+            <md-gb-select-option value="rainbow">Rainbow</md-gb-select-option>
+            <md-gb-select-option value="fruit-salad">Fruit salad</md-gb-select-option>
+          </md-gb-select>
+        </div>
+        <fieldset class="gb-field">
+          <legend>Color mode</legend>
+          <md-gb-segmented-button-set id="gb-mode" required aria-label="Color mode">
+            <md-gb-segmented-button value="auto" no-checkmark selected>System</md-gb-segmented-button>
+            <md-gb-segmented-button value="light" no-checkmark>Light</md-gb-segmented-button>
+            <md-gb-segmented-button value="dark" no-checkmark>Dark</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <fieldset class="gb-field">
+          <legend>Contrast</legend>
+          <md-gb-segmented-button-set id="gb-contrast" required aria-label="Contrast">
+            <md-gb-segmented-button value="standard" no-checkmark selected>Standard</md-gb-segmented-button>
+            <md-gb-segmented-button value="medium" no-checkmark>Medium</md-gb-segmented-button>
+            <md-gb-segmented-button value="high" no-checkmark>High</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <div class="gb-tool-actions">
+          <md-gb-button id="gb-theme-reset" color="tonal">Reset</md-gb-button>
+        </div>
+      </section>
+
+      {#- Footer of the pages sheet (below 600px). -#}
+      <div class="gb-pages-foot" id="gb-pages-foot" role="group" aria-label="Site settings">
+        <md-gb-button color="text" data-theme-toggle><md-gb-icon slot="icon">brightness_auto</md-gb-icon><span class="gb-theme-toggle-label">Theme: system</span></md-gb-button>
+        <md-gb-button color="text" href="/"><md-gb-icon slot="icon">history</md-gb-icon>v2.5.0 (current)</md-gb-button>
+        <md-gb-button color="text" href="https://github.com/material-components/material-web" target="_blank" rel="noopener"><md-gb-icon slot="icon">code</md-gb-icon>GitHub<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener"><md-gb-icon slot="icon">deployed_code</md-gb-icon>npm<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" data-tool="feedback"><md-gb-icon slot="icon">feedback</md-gb-icon>Send feedback</md-gb-button>
+      </div>
+    </div>
+
+    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000" anchor="gb-fab-menu"></md-gb-snackbar>
 
     <md-gb-dialog id="gb-install-dialog">
       <span slot="headline">Install Material Web 3.0</span>
@@ -164,42 +374,23 @@
       <form id="gb-install-form" method="dialog"></form>
       <md-gb-button slot="actions" form="gb-install-form" value="close">Close</md-gb-button>
     </md-gb-dialog>
-    </header>
 
-    <div class="gb-layout{% if gbIndex %} gb-layout-index{% endif %}">
-      <md-gb-nav-drawer class="gb-drawer"  id="gb-drawer">
-        {%- set pages = collections.gb3 | filtersort('data.order') %}
-        {%- for sec in gbSections %}
-        {%- if not loop.first %}
-        <md-gb-divider></md-gb-divider>{% endif %}
-        {#- The label links to the section's index page. #}
-        <h2 class="nav-drawer-section-label"><a href="/3.0/{{ sec.id }}/"{% if page.url == '/3.0/' + sec.id + '/' %} aria-current="page"{% endif %}>{{ sec.label }}</a></h2>
-        {%- for file in pages %}{% if file.data.section == sec.id %}
-        <md-gb-nav-drawer-item href="{{ file.url }}"{% if file.url == page.url %} selected{% endif %}>{{ file.data.title }}</md-gb-nav-drawer-item>
-        {%- endif %}{% endfor %}
-        {%- endfor %}
-      </md-gb-nav-drawer>
-
-      <main class="gb-main" id="main" tabindex="-1">
-        {%- if not gbIndex %}
-        <h1>{{ title }}</h1>
-        {% if description %}<p class="gb-lede">{{ description }}</p>{% endif %}
-        <p class="gb-md-link"><a href="{% if page.url == '/3.0/' %}/3.0/index.md{% else %}{{ page.url | replace(r/\/$/, '') }}.md{% endif %}" type="text/markdown">View as Markdown</a></p>
-        {%- endif %}
-        <div class="gb-content">{{ content | safe }}</div>
-      </main>
-
-      {#- A section's index page (gb-sections.11ty.cjs) has no outline. #}
-      {%- if not gbIndex %}
-      <aside class="gb-toc" aria-label="Page outline">
-        <details id="gb-toc-details" open>
-          <summary>On this page</summary>
-          <a class="gb-toc-top" href="#main">(Top)</a>
-          {{ content | toc | filterToc | safe }}
-        </details>
-      </aside>
-      {%- endif %}
-    </div>
+    {#- Send feedback: opens a prefilled GitHub issue (no backend). -#}
+    <md-gb-dialog id="gb-feedback-dialog">
+      <span slot="headline">Send feedback</span>
+      <form id="gb-feedback-form" class="gb-feedback" novalidate>
+        <md-gb-text-field id="gb-feedback-page" label="Page" value=""></md-gb-text-field>
+        <md-gb-select id="gb-feedback-type" label="Type" value="bug">
+          <md-gb-select-option value="bug" selected>Bug</md-gb-select-option>
+          <md-gb-select-option value="docs">Documentation</md-gb-select-option>
+          <md-gb-select-option value="idea">Idea</md-gb-select-option>
+        </md-gb-select>
+        <md-gb-text-field id="gb-feedback-message" type="textarea" rows="4" label="Message" required error-text="Add a message" value=""></md-gb-text-field>
+        <p class="gb-feedback-note">Opens a new GitHub issue for material-components/material-web in a new tab, with this filled in.</p>
+      </form>
+      <md-gb-button slot="actions" color="text" id="gb-feedback-cancel">Cancel</md-gb-button>
+      <md-gb-button slot="actions" id="gb-feedback-submit">Open issue</md-gb-button>
+    </md-gb-dialog>
 
     {{ content | gbcomponents | safe }}
 

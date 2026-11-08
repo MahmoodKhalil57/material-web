@@ -4,43 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* Docs search (search.ts): the trigger in the app bar and the M3 search view
-   dialog. Full-screen on compact windows; docked and modal over a scrim from
+/* Docs search (search.ts): the M3 search view dialog (the triggers are the
+   rail's FAB and the compact search button: shell.css). Full-screen on compact windows; docked and modal over a scrim from
    600px up. Colors, type and shape come from --md-sys-* tokens only. */
 
-/* --- Trigger ------------------------------------------------------------ */
-
-.gb-search-field {
-  display: none;
-  align-items: center;
-  gap: var(--md-sys-space-150);
-  min-inline-size: 15rem;
-  block-size: 40px;
-  margin-inline-end: var(--md-sys-space-100);
-  padding-inline: var(--md-sys-space-200) var(--md-sys-space-150);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-full);
-  background: var(--md-sys-color-surface-container);
-  color: var(--md-sys-color-on-surface-variant);
-  font: var(--md-sys-typescale-body-lg);
-  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
-  cursor: pointer;
-}
-.gb-search-field:hover {
-  background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, var(--md-sys-color-surface-container));
-}
-.gb-search-field:focus-visible {
-  outline: 3px solid var(--md-sys-color-secondary);
-  outline-offset: 2px;
-}
-.gb-search-field-label {
-  flex: 1;
-  text-align: start;
-}
-.gb-search-field md-gb-icon {
-  --md-icon-size: 20px;
-}
-.gb-search-hint,
 .gb-search-keys kbd {
   padding: 2px 6px;
   border: 1px solid var(--md-sys-color-outline-variant);
@@ -49,14 +16,6 @@
   font-variation-settings: var(--md-sys-typescale-label-md-axes);
   color: var(--md-sys-color-on-surface-variant);
   white-space: nowrap;
-}
-@media (min-width: 840px) {
-  .gb-search-field {
-    display: inline-flex;
-  }
-  .gb-search-icon {
-    display: none;
-  }
 }
 
 /* --- Dialog -------------------------------------------------------------- */
