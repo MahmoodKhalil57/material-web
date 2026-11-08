@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-badge",
+  "type": "registry:ui",
+  "title": "Badge",
+  "description": "MdBadge: React wrappers for <md-gb-badge> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-badge.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/badge/md-gb-badge.js';\nimport {BadgeElement} from '@material/web/labs/gb/components/badge/badge-element.js';\n\n/**\n * A Material Design badge component. Wraps <md-gb-badge>.\n * Docs: https://material-web.dev/3.0/components/badge/\n */\nexport const MdBadge = createComponent({\n  react: React,\n  tagName: 'md-gb-badge',\n  elementClass: BadgeElement,\n});\n\nexport type MdBadgeProps = React.ComponentProps<typeof MdBadge>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/badge/",
+  "meta": {
+    "tags": [
+      "md-gb-badge"
+    ],
+    "docs": "https://material-web.dev/3.0/components/badge/"
+  }
+}

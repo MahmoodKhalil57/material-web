@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-sheet",
+  "type": "registry:ui",
+  "title": "Sheet",
+  "description": "MdBottomSheet, MdSideSheet: React wrappers for <md-gb-bottom-sheet>, <md-gb-side-sheet> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-sheet.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/sheet/md-gb-bottom-sheet.js';\nimport '@material/web/labs/gb/components/sheet/md-gb-side-sheet.js';\nimport {BottomSheetElement} from '@material/web/labs/gb/components/sheet/bottom-sheet-element.js';\nimport {SideSheetElement} from '@material/web/labs/gb/components/sheet/side-sheet-element.js';\n\n/**\n * A Material Design bottom sheet. Wraps <md-gb-bottom-sheet>.\n * Docs: https://material-web.dev/3.0/components/sheets/\n */\nexport const MdBottomSheet = createComponent({\n  react: React,\n  tagName: 'md-gb-bottom-sheet',\n  elementClass: BottomSheetElement,\n  events: {\n    onClose: 'close' as EventName<CustomEvent<{reason: string}>>,\n    onClosed: 'closed' as EventName<CustomEvent<{reason: string}>>,\n    onOpen: 'open' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n    onStateChange: 'state-change' as EventName<Event>,\n  },\n});\n\nexport type MdBottomSheetProps = React.ComponentProps<typeof MdBottomSheet>;\n\n/**\n * A Material Design side sheet. Wraps <md-gb-side-sheet>.\n * Docs: https://material-web.dev/3.0/components/sheets/\n */\nexport const MdSideSheet = createComponent({\n  react: React,\n  tagName: 'md-gb-side-sheet',\n  elementClass: SideSheetElement,\n  events: {\n    onBack: 'back' as EventName<Event>,\n    onClose: 'close' as EventName<CustomEvent<{reason: string}>>,\n    onClosed: 'closed' as EventName<CustomEvent<{reason: string}>>,\n    onOpen: 'open' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n  },\n});\n\nexport type MdSideSheetProps = React.ComponentProps<typeof MdSideSheet>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/sheets/",
+  "meta": {
+    "tags": [
+      "md-gb-bottom-sheet",
+      "md-gb-side-sheet"
+    ],
+    "docs": "https://material-web.dev/3.0/components/sheets/"
+  }
+}

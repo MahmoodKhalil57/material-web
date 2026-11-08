@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-button-group",
+  "type": "registry:ui",
+  "title": "Button Group",
+  "description": "MdButtonGroup: React wrappers for <md-gb-button-group> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-button-group.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/buttongroup/md-gb-button-group.js';\nimport {ButtonGroupElement} from '@material/web/labs/gb/components/buttongroup/button-group-element.js';\n\n/**\n * A Material Design button group. Wraps <md-gb-button-group>.\n * Docs: https://material-web.dev/3.0/components/button-group/\n */\nexport const MdButtonGroup = createComponent({\n  react: React,\n  tagName: 'md-gb-button-group',\n  elementClass: ButtonGroupElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n  },\n});\n\nexport type MdButtonGroupProps = React.ComponentProps<typeof MdButtonGroup>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/button-group/",
+  "meta": {
+    "tags": [
+      "md-gb-button-group"
+    ],
+    "docs": "https://material-web.dev/3.0/components/button-group/"
+  }
+}

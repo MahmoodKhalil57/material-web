@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-chip",
+  "type": "registry:ui",
+  "title": "Chip",
+  "description": "MdChip, MdChipSet: React wrappers for <md-gb-chip>, <md-gb-chip-set> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-chip.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/chip/md-gb-chip.js';\nimport '@material/web/labs/gb/components/chip/md-gb-chip-set.js';\nimport {ChipElement} from '@material/web/labs/gb/components/chip/chip-element.js';\nimport {ChipSetElement} from '@material/web/labs/gb/components/chip/chip-set-element.js';\n\n/**\n * A Material Design Expressive Chip component. Wraps <md-gb-chip>.\n * Docs: https://material-web.dev/3.0/components/chip/\n */\nexport const MdChip = createComponent({\n  react: React,\n  tagName: 'md-gb-chip',\n  elementClass: ChipElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onEdit: 'edit' as EventName<CustomEvent>,\n    onInput: 'input' as EventName<InputEvent>,\n    onRemove: 'remove' as EventName<Event>,\n    onUpdateFocus: 'update-focus' as EventName<Event>,\n  },\n});\n\nexport type MdChipProps = React.ComponentProps<typeof MdChip>;\n\n/**\n * A Material Design Expressive chip set. Wraps <md-gb-chip-set>.\n * Docs: https://material-web.dev/3.0/components/chip/\n */\nexport const MdChipSet = createComponent({\n  react: React,\n  tagName: 'md-gb-chip-set',\n  elementClass: ChipSetElement,\n});\n\nexport type MdChipSetProps = React.ComponentProps<typeof MdChipSet>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/chip/",
+  "meta": {
+    "tags": [
+      "md-gb-chip",
+      "md-gb-chip-set"
+    ],
+    "docs": "https://material-web.dev/3.0/components/chip/"
+  }
+}

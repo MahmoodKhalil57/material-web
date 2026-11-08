@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-fab-menu",
+  "type": "registry:ui",
+  "title": "Fab Menu",
+  "description": "MdFabMenu, MdFabMenuItem: React wrappers for <md-gb-fab-menu>, <md-gb-fab-menu-item> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-fab-menu.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/fabmenu/md-gb-fab-menu.js';\nimport '@material/web/labs/gb/components/fabmenu/md-gb-fab-menu-item.js';\nimport {FabMenuElement} from '@material/web/labs/gb/components/fabmenu/fab-menu-element.js';\nimport {FabMenuItemElement} from '@material/web/labs/gb/components/fabmenu/fab-menu-item-element.js';\nimport type {FabMenuActivateDetail} from '@material/web/labs/gb/components/fabmenu/fab-menu.js';\n\n/**\n * A Material Design component. Wraps <md-gb-fab-menu>.\n * Docs: https://material-web.dev/3.0/components/fab-menu/\n */\nexport const MdFabMenu = createComponent({\n  react: React,\n  tagName: 'md-gb-fab-menu',\n  elementClass: FabMenuElement,\n  events: {\n    onActivate: 'activate' as EventName<CustomEvent<FabMenuActivateDetail>>,\n    onToggle: 'toggle' as EventName<ToggleEvent>,\n  },\n});\n\nexport type MdFabMenuProps = React.ComponentProps<typeof MdFabMenu>;\n\n/**\n * A Material Design component. Wraps <md-gb-fab-menu-item>.\n * Docs: https://material-web.dev/3.0/components/fab-menu/\n */\nexport const MdFabMenuItem = createComponent({\n  react: React,\n  tagName: 'md-gb-fab-menu-item',\n  elementClass: FabMenuItemElement,\n});\n\nexport type MdFabMenuItemProps = React.ComponentProps<typeof MdFabMenuItem>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/fab-menu/",
+  "meta": {
+    "tags": [
+      "md-gb-fab-menu",
+      "md-gb-fab-menu-item"
+    ],
+    "docs": "https://material-web.dev/3.0/components/fab-menu/"
+  }
+}

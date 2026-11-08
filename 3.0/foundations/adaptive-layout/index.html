@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en" class="gb-shell-root">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Adaptive layout - Material Web 3.0</title>
+    <meta name="description" content="Pages and components change with the window." />
+    <meta name="color-scheme" content="light dark" />
+    <link href="/material-web/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" /><link rel="canonical" href="https://material-web.dev/3.0/foundations/adaptive-layout/" />
+    <link rel="alternate" type="text/markdown" href="/material-web/3.0/foundations/adaptive-layout.md" title="Adaptive layout as Markdown" />
+    <link rel="alternate" type="text/plain" href="/material-web/3.0/llms.txt" title="llms.txt" />
+    <link rel="manifest" href="/material-web/3.0/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/material-web/3.0/icons/icon-192.png" />
+    <meta name="theme-color" content="#fef7ff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141218" media="(prefers-color-scheme: dark)" />
+    <meta property="og:site_name" content="Material Web 3.0" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Adaptive layout - Material Web 3.0" />
+    <meta property="og:description" content="Pages and components change with the window." />
+    <meta property="og:url" content="https://material-web.dev/3.0/foundations/adaptive-layout/" />
+    <meta property="og:image" content="https://material-web.dev/3.0/og/foundations-adaptive-layout.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Adaptive layout - Material Web 3.0" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Adaptive layout - Material Web 3.0" />
+    <meta name="twitter:description" content="Pages and components change with the window." />
+    <meta name="twitter:image" content="https://material-web.dev/3.0/og/foundations-adaptive-layout.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://material-web.dev/3.0/#website","name":"Material Web 3.0","url":"https://material-web.dev/3.0/","inLanguage":"en","description":"Material Web 3.0: Material 3 Expressive components, styles and foundations built as web components.","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://material-web.dev/3.0/?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@type":"TechArticle","@id":"https://material-web.dev/3.0/foundations/adaptive-layout/#article","headline":"Adaptive layout","description":"Pages and components change with the window.","url":"https://material-web.dev/3.0/foundations/adaptive-layout/","mainEntityOfPage":"https://material-web.dev/3.0/foundations/adaptive-layout/","image":"https://material-web.dev/3.0/og/foundations-adaptive-layout.png","inLanguage":"en","articleSection":"Foundations","dateModified":"2026-11-08T02:21:09Z","isPartOf":{"@id":"https://material-web.dev/3.0/#website"},"publisher":{"@type":"Organization","name":"Material Web","url":"https://material-web.dev"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Material Web 3.0","item":"https://material-web.dev/3.0/"},{"@type":"ListItem","position":2,"name":"Foundations","item":"https://material-web.dev/3.0/foundations/"},{"@type":"ListItem","position":3,"name":"Adaptive layout","item":"https://material-web.dev/3.0/foundations/adaptive-layout/"}]}]}</script>
+    <link rel="preload" href="/material-web/fonts/gb/roboto-flex-6ccf7a9846bd.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/material-web/fonts/gb/material-symbols-outlined-ef785a494cef.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/material-web/fonts/gb/fonts.css" />
+    <link rel="stylesheet" href="/material-web/js/gb/gb.css" />
+    <script>
+      // Before first paint: color-scheme from the saved mode, the dynamic
+      // color CSS generated for the saved theme (cached by gb.js), and
+      // whether the reader collapsed the rail, so nothing moves when the
+      // script runs.
+      (() => {
+        const root = document.documentElement;
+        // Demo cards collapse their code only with JS (gb.css, gb.ts).
+        root.classList.add('js');
+        // Reduce motion (the header's toggle, shell.ts; reduce-motion.css):
+        // while it's on, prefers-reduced-motion queries from scripts answer
+        // "reduce" (asked again on each call, so a toggle takes effect at
+        // once), and the components take their reduced-motion paths.
+        const matchMedia = window.matchMedia.bind(window);
+        window.matchMedia = (query) =>
+          root.dataset.motion === 'reduce' && /prefers-reduced-motion/.test(query)
+            ? matchMedia(/no-preference/.test(query) ? 'not all' : 'all')
+            : matchMedia(query);
+        try {
+          if (localStorage.getItem('gb-reduce-motion') === '1') root.dataset.motion = 'reduce';
+          const mode = localStorage.getItem('color-mode') || 'auto';
+          root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
+          if (localStorage.getItem('gb-rail') === 'collapsed') root.dataset.rail = 'collapsed';
+          if (localStorage.getItem('gb-outline') === 'closed') root.dataset.outline = 'closed';
+          const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
+          const seed = localStorage.getItem('gb-seed-color');
+          const key = [seed, localStorage.getItem('gb-scheme-variant') || 'tonal-spot', localStorage.getItem('gb-contrast') || 'standard'].join('|');
+          // Only a cache for the saved theme, written by this version of gb.js
+          // (THEME_CACHE_VERSION in catalog/src/gb/gb.ts).
+          if (cache && cache.v === 3 && cache.css && seed && cache.key === key) {
+            const style = document.createElement('style');
+            style.id = 'gb-theme-style';
+            style.textContent = cache.css;
+            document.head.append(style);
+          }
+        } catch (e) {}
+      })();
+    </script><script type="speculationrules">
+      {
+        "prefetch": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }],
+        "prerender": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }]
+      }
+    </script><script type="module" src="/material-web/js/gb/gb.js" blocking="render"></script>
+  </head>
+  <body>
+    <div class="gb-shell"><header class="gb-top">
+        <a class="gb-skip" href="#main">Skip to main content</a>
+        <md-gb-app-bar class="gb-appbar" id="gb-appbar" variant="search"><a slot="leading" class="gb-brand" href="/material-web/3.0/" aria-label="Material Web 3.0 home">
+            <svg viewBox="0 96 960 960" width="32" height="32" fill="currentColor" aria-hidden="true" focusable="false"><path d="M480 1016q-91 0-171-34.5T169 887q-60-60-94.5-140T40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q91 0 171 34.5T791 265q60 60 94.5 140T920 576q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM200 802V351q-38 47-59 104t-21 121q0 65 21 122t59 104Zm54-506h452q-47-38-104-59t-122-21q-65 0-122 21t-104 59Zm226 381 151-301H330l150 301Zm40 99h160V456L520 776Zm-240 0h160L280 456v320Zm200 160q64 0 121.5-21T706 856H254q47 38 104.5 59T480 936Zm280-134q38-47 59-104t21-122q0-64-21-121t-59-104v451Z"/></svg>
+          </a>
+          <button slot="search" type="button" class="gb-searchbar" data-gb-search>
+            <span class="gb-searchbar-icon" aria-hidden="true"><md-gb-icon>search</md-gb-icon></span>
+            <span class="gb-searchbar-text">Search Material Web</span>
+            <kbd class="gb-search-hint" aria-hidden="true"></kbd>
+          </button>
+          <md-gb-icon-button slot="trailing" id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
+            <md-gb-icon>brightness_auto</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="trailing" id="gb-motion" type="toggle" tooltip aria-label="Reduce motion">
+            <md-gb-icon>motion_photos_off</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="theme" aria-label="Customize theme">
+            <md-gb-icon>palette</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="download" aria-label="Download and copy">
+            <md-gb-icon>download</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="overflow" id="gb-overflow" tooltip popovertarget="gb-overflow-menu" aria-label="More actions">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+        </md-gb-app-bar><md-gb-menu id="gb-overflow-menu" aria-label="More actions"></md-gb-menu>
+      </header><nav class="gb-rail-area" aria-label="Site">
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" collapsible role="none">
+          <md-gb-nav-rail-item href="/material-web/3.0/about/" data-section="about">
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="about" data-default-open="false" aria-expanded="true" aria-label="About pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/intro/" data-in-section="about">Introduction</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/compliance/" data-in-section="about">Spec compliance</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/quick-start/" data-in-section="about">Quick Start</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/migration/" data-in-section="about">Migration</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/roadmap/" data-in-section="about">Roadmap</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/support/" data-in-section="about">Support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/size/" data-in-section="about">Bundle Sizes</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/browser-support/" data-in-section="about">Browser support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/ai-agents/" data-in-section="about">AI agents</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/debugging/" data-in-section="about">Debugging</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/shadcn/" data-in-section="about">Use with shadcn/ui</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/foundations/" data-section="foundations" selected data-current>
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="foundations" data-default-open="true" aria-expanded="true" aria-label="Foundations pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/design-tokens/" data-in-section="foundations">Theming</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/interaction-states/" data-in-section="foundations">Interaction States</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/accessibility/" data-in-section="foundations">Accessibility</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/adaptive-layout/" data-in-section="foundations" data-current>Adaptive layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/density/" data-in-section="foundations">Density</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/layout/" data-in-section="foundations">Layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/scaffold/" data-in-section="foundations">Scaffold</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/styles/" data-section="styles">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="styles" data-default-open="false" aria-expanded="true" aria-label="Styles pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/color/" data-in-section="styles">Color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/dynamic-color/" data-in-section="styles">Dynamic color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/typography/" data-in-section="styles">Typography</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/shape/" data-in-section="styles">Shape</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/elevation/" data-in-section="styles">Elevation</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/icons/" data-in-section="styles">Icons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/material-symbols/" data-in-section="styles">Material Symbols</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion/" data-in-section="styles">Motion</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion-transitions/" data-in-section="styles">Transitions</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/spacing/" data-in-section="styles">Spacing</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/components/" data-section="components">
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="components" data-default-open="false" aria-expanded="true" aria-label="Components pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="buttons" data-default-open="true" aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button-group/" data-in-section="components" data-group="buttons">Button Group</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button/" data-in-section="components" data-group="buttons">Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab-menu/" data-in-section="components" data-group="buttons">FAB menu</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab/" data-in-section="components" data-group="buttons">Floating action button (FAB)</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/icon-button/" data-in-section="components" data-group="buttons">Icon Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/segmented-button/" data-in-section="components" data-group="buttons">Segmented button</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/split-button/" data-in-section="components" data-group="buttons">Split button</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="pickers" data-default-open="true" aria-expanded="true" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/date-picker/" data-in-section="components" data-group="pickers">Date picker</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/time-picker/" data-in-section="components" data-group="pickers">Time picker</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="progress" data-default-open="true" aria-expanded="true" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/loading-indicator/" data-in-section="components" data-group="progress">Loading indicator</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/progress/" data-in-section="components" data-group="progress">Progress indicators</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/pull-to-refresh/" data-in-section="components" data-group="progress">Pull to refresh</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="navigation" data-default-open="true" aria-expanded="true" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-bar/" data-in-section="components" data-group="navigation">Navigation Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-drawer/" data-in-section="components" data-group="navigation">Navigation Drawer</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-rail/" data-in-section="components" data-group="navigation">Navigation Rail</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="sheets" data-default-open="true" aria-expanded="true" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/sheets/" data-in-section="components" data-group="sheets">Sheets</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="other" data-default-open="true" aria-expanded="true" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/app-bar/" data-in-section="components" data-group="other">App Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/badge/" data-in-section="components" data-group="other">Badge</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/card/" data-in-section="components" data-group="other">Card</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/carousel/" data-in-section="components" data-group="other">Carousel</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/checkbox/" data-in-section="components" data-group="other">Checkbox</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/chip/" data-in-section="components" data-group="other">Chips</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/dialog/" data-in-section="components" data-group="other">Dialogs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/divider/" data-in-section="components" data-group="other">Divider</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/list/" data-in-section="components" data-group="other">Lists</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/menu/" data-in-section="components" data-group="other">Menus</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/radio/" data-in-section="components" data-group="other">Radio</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/search/" data-in-section="components" data-group="other">Search</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/select/" data-in-section="components" data-group="other">Select</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/slider/" data-in-section="components" data-group="other">Sliders</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/snackbar/" data-in-section="components" data-group="other">Snackbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/switch/" data-in-section="components" data-group="other">Switch</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tabs/" data-in-section="components" data-group="other">Tabs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/text-field/" data-in-section="components" data-group="other">Text field</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/toolbar/" data-in-section="components" data-group="other">Toolbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tooltip/" data-in-section="components" data-group="other">Tooltip</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+        <script>
+          // Which sections and groups are open: the reader's choices
+          // (src/gb/shell.ts saves them), else the defaults in the markup; the
+          // current page's group stays open. A closed section hides its
+          // pages and groups; a closed group its pages. Runs here before
+          // first paint, and again on every toggle (shell.ts). With
+          // deferHiding, the shown pages that close stay shown and are
+          // returned, for shell.ts to fade out before hiding them.
+          window.gbRailApply = (deferHiding) => {
+            const leaving = [];
+            const rail = document.getElementById('gb-rail');
+            const read = (key) => {
+              try {
+                return JSON.parse(localStorage.getItem(key) || '{}');
+              } catch (e) {
+                return {};
+              }
+            };
+            const sections = read('gb-rail-sections');
+            const groups = read('gb-groups');
+            const open = (toggle, saved, id) =>
+              toggle.hasAttribute('data-current') || !(id in saved) ? toggle.dataset.defaultOpen === 'true' : !!saved[id];
+            const openGroups = {};
+            for (const toggle of rail.querySelectorAll('[data-group-toggle]')) {
+              const id = toggle.dataset.groupToggle;
+              openGroups[id] = toggle.hasAttribute('data-current') || open(toggle, groups, id);
+              toggle.setAttribute('aria-expanded', String(openGroups[id]));
+            }
+            for (const toggle of rail.querySelectorAll('[data-section-toggle]')) {
+              const id = toggle.dataset.sectionToggle;
+              const shown = open(toggle, sections, id);
+              toggle.setAttribute('aria-expanded', String(shown));
+              for (const el of rail.querySelectorAll(`[data-in-section="${id}"]`)) {
+                const hide = !shown || (el.dataset.group ? !openGroups[el.dataset.group] : false);
+                if (hide && !el.hidden && deferHiding) leaving.push(el);
+                else el.hidden = hide;
+              }
+            }
+            return leaving;
+          };
+          // Before first paint: expanded from 840px unless the reader
+          // collapsed it, with the current page (if its section is open) as
+          // the active destination. A reload starts over: only the current
+          // section open, with all its groups (the defaults).
+          (() => {
+            if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+              try {
+                localStorage.removeItem('gb-rail-sections');
+                localStorage.removeItem('gb-groups');
+              } catch (e) {
+                // Storage can be blocked; the defaults apply anyway.
+              }
+            }
+            window.gbRailApply();
+            const rail = document.getElementById('gb-rail');
+            const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
+            const page = rail.querySelector('md-gb-nav-rail-item[secondary][data-current]');
+            if (!open) return;
+            rail.setAttribute('expanded', '');
+            if (page && !page.hidden) {
+              rail.querySelector('md-gb-nav-rail-item[data-section][data-current]').removeAttribute('selected');
+              page.setAttribute('selected', '');
+            }
+          })();
+        </script><div class="gb-rail-foot">
+          <div class="gb-rail-links" role="group" aria-label="Project">
+            <md-gb-icon-button tooltip href="https://github.com/material-components/material-web" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)">
+              <md-gb-icon>code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener" aria-label="npm (opens in a new tab)">
+              <md-gb-icon>deployed_code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip data-tool="feedback" aria-label="Send feedback">
+              <md-gb-icon>feedback</md-gb-icon>
+            </md-gb-icon-button>
+          </div><label class="gb-version">
+            <span class="gb-version-label" aria-hidden="true">3.0</span>
+            <md-gb-switch id="gb-version" selected aria-label="Material Web 3.0 (off for 2.5)"></md-gb-switch>
+          </label>
+        </div>
+      </nav>
+
+      <div class="gb-content-pane" id="gb-content-pane">
+        <div class="gb-body">
+          <main class="gb-main" id="main" tabindex="-1"><md-gb-fab id="gb-outline-fab" class="gb-outline-fab" color="secondary-container" aria-label="Page outline" aria-haspopup="dialog">
+              <md-gb-icon>toc</md-gb-icon>
+            </md-gb-fab>
+            
+<div class="gb-pager gb-pager-top" role="group" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-prev" href="/material-web/3.0/foundations/accessibility/" rel="prev"><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_back</md-gb-icon></span><span class="gb-pager-text"><span class="gb-pager-label">Previous</span> <span class="gb-pager-title">Accessibility</span></span></a>
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/foundations/density/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">Density</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</div>
+            <h1>Adaptive layout</h1>
+            <p class="gb-lede">Pages and components change with the window.</p>
+            <p class="gb-md-link"><a href="/material-web/3.0/foundations/adaptive-layout.md" type="text/markdown">View as Markdown</a></p>
+            <div class="gb-content"><p>labs/gb uses the M3 window size classes to pick the navigation, the number
+of panes and how dialogs open.</p>
+<div class="heading h2">
+<h2 id="window-size-classes" tabindex="-1">Window size classes</h2>
+<a class="anchor" href="#window-size-classes"><span class="offscreen">Link to “Window size classes”</span> <span aria-hidden="true">#</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Width (CSS px)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>compact</td>
+<td>below 600</td>
+</tr>
+<tr>
+<td>medium</td>
+<td>600 to 839</td>
+</tr>
+<tr>
+<td>expanded</td>
+<td>840 to 1199</td>
+</tr>
+<tr>
+<td>large</td>
+<td>1200 to 1599</td>
+</tr>
+<tr>
+<td>extra-large</td>
+<td>1600 and up</td>
+</tr>
+</tbody>
+</table>
+<p>Height classes are compact (below 480), medium (480 to 899) and expanded (900
+and up). Most layouts scroll, so only use the height class when a component
+needs it.</p>
+<p>A component gets its class from <code>AdaptiveController</code> in
+<code>labs/gb/components/shared/adaptive.ts</code>. The controller sets the
+<code>window-size-class</code> attribute on the host, so CSS can match it. Options are
+keyed by class and apply from that class up. Match the attribute in CSS and
+use <code>atLeast('expanded')</code> in code. Do not read the window width directly.</p>
+<p>In a Lit element, create the controller as a field and read <code>options</code> in
+<code>render()</code>. This sample uses a plain element as the host, so it runs without
+Lit:</p>
+<figure class="gb-demo" aria-label="The number of actions for the window size class" id="gbd-255899">
+<div class="gb-demo-preview" data-frame style="--gb-demo-height: 140px">
+<iframe class="gb-demo-frame" data-id="gbd-255899" data-min="140" title="The number of actions for the window size class preview" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/material-web/fonts/gb/fonts.css&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/material-web/lib/labs/gb/styles/m3.css&quot;&gt;&lt;script type=&quot;importmap&quot;&gt;{&quot;imports&quot;:{&quot;@material/web/labs/gb/&quot;:&quot;/material-web/lib/labs/gb/&quot;,&quot;lit&quot;:&quot;/material-web/lib/node_modules/lit/index.js&quot;,&quot;lit/&quot;:&quot;/material-web/lib/node_modules/lit/&quot;}}&lt;/script&gt;&lt;style&gt;&#10;:root { color-scheme: light dark; }&#10;html:not([data-themed]) body { visibility: hidden; }&#10;body { margin: 0; box-sizing: border-box; min-block-size: 100vh; padding: 24px; display: grid; place-items: center;&#10;  background: var(--md-sys-color-surface-container-lowest, canvas); color: var(--md-sys-color-on-surface, canvastext);&#10;  font: 400 1rem/1.5 'Roboto Flex', Roboto, system-ui, sans-serif; }&#10;#root { box-sizing: border-box; inline-size: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }&#10;#gb-error { margin: 12px 0 0; font-size: .75rem; line-height: 1.4; color: var(--md-sys-color-error, red); font-family: ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; }&#10;&lt;/style&gt;&lt;style id=&quot;gb-demo-css&quot;&gt;&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=&quot;root&quot;&gt;&lt;div id=&quot;bar&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;(() =&gt; {&#10;  const id = 'gbd-255899';&#10;  const html = document.documentElement;&#10;  const ro = new ResizeObserver(() =&gt; post());&#10;  const error = (text) =&gt; {&#10;    let el = document.getElementById('gb-error');&#10;    if (!el) {&#10;      el = document.createElement('p');&#10;      el.id = 'gb-error';&#10;      el.setAttribute('role', 'alert');&#10;      document.body.append(el);&#10;      ro.observe(el);&#10;    }&#10;    el.textContent += (el.textContent ? '\n' : '') + text;&#10;  };&#10;  addEventListener('error', (e) =&gt; error(e.message || 'Script error'));&#10;  addEventListener('unhandledrejection', (e) =&gt; error('Unhandled rejection: ' + (e.reason?.message ?? e.reason)));&#10;  document.addEventListener('error', (e) =&gt; {&#10;    const t = e.target;&#10;    if (t &amp;&amp; t !== window &amp;&amp; (t.src || t.href)) error('Could not load ' + (t.src || t.href));&#10;  }, true);&#10;  function post() {&#10;    const root = document.getElementById('root');&#10;    const err = document.getElementById('gb-error');&#10;    const h = Math.ceil(root.getBoundingClientRect().height + (err ? err.getBoundingClientRect().height + 12 : 0)) + 48;&#10;    parent.postMessage({type: 'gb-demo-height', id, height: h}, '*');&#10;  }&#10;  ro.observe(document.getElementById('root'));&#10;  let sheet;&#10;  addEventListener('message', (e) =&gt; {&#10;    if (e.source !== parent || e.data?.type !== 'gb-demo-theme') return;&#10;    if (!sheet) {&#10;      sheet = document.createElement('style');&#10;      // Before the demo's own CSS, in the layer of the baseline tokens, so a&#10;      // theme the script applies still wins.&#10;      document.getElementById('gb-demo-css').before(sheet);&#10;    }&#10;    sheet.textContent = e.data.css ? '@layer md.sys.color{' + e.data.css + '}' : '';&#10;    html.style.colorScheme = e.data.colorScheme || 'light dark';&#10;    html.dataset.themed = '';&#10;  });&#10;  parent.postMessage({type: 'gb-demo-ready', id}, '*');&#10;  setTimeout(() =&gt; { html.dataset.themed = ''; post(); }, 1500);&#10;})();&lt;/script&gt;&lt;script type=&quot;module&quot;&gt;import { AdaptiveController } from &quot;@material/web/labs/gb/components/shared/adaptive.js&quot;;&#10;const bar = document.querySelector(&quot;#bar&quot;);&#10;const controllers = [];&#10;const host = Object.assign(bar, {&#10;  addController: (c) =&gt; controllers.push(c),&#10;  removeController: () =&gt; {&#10;  },&#10;  requestUpdate: () =&gt; {&#10;    controllers.forEach((c) =&gt; c.hostUpdate?.());&#10;    bar.textContent = `${adaptive.options.actions} actions`;&#10;  }&#10;});&#10;const adaptive = new AdaptiveController(host, {&#10;  options: { compact: { actions: 2 }, expanded: { actions: 4 } }&#10;});&#10;controllers.forEach((c) =&gt; c.hostConnected?.());&#10;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+</div>
+<div class="gb-demo-code">
+<md-gb-tabs class="gb-demo-tabs" aria-label="The number of actions for the window size class files"><md-gb-tab tabpanel="gbd-255899-html" selected><span slot="label">HTML</span></md-gb-tab><md-gb-tab tabpanel="gbd-255899-ts"><span slot="label">TS</span></md-gb-tab></md-gb-tabs>
+<div class="gb-code" role="tabpanel" id="gbd-255899-html"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>bar<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></code></pre></div>
+<div class="gb-code" role="tabpanel" id="gbd-255899-ts" hidden><pre class="language-ts" data-file="TS"><code class="language-ts"><span class="token keyword">import</span> <span class="token punctuation">{</span>AdaptiveController<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@material/web/labs/gb/components/shared/adaptive.js'</span><span class="token punctuation">;</span>&#10;&#10;<span class="token keyword">const</span> bar <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token generic-function"><span class="token function">querySelector</span><span class="token generic class-name"><span class="token operator">&lt;</span>HTMLElement<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token string">'#bar'</span><span class="token punctuation">)</span><span class="token operator">!</span><span class="token punctuation">;</span>&#10;<span class="token keyword">const</span> controllers<span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>&#10;<span class="token keyword">const</span> host <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">assign</span><span class="token punctuation">(</span>bar<span class="token punctuation">,</span> <span class="token punctuation">{</span>&#10;  <span class="token function-variable function">addController</span><span class="token operator">:</span> <span class="token punctuation">(</span>c<span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">)</span> <span class="token operator">=></span> controllers<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">,</span>&#10;  <span class="token function-variable function">removeController</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>&#10;  <span class="token function-variable function">requestUpdate</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>&#10;    controllers<span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span> <span class="token operator">=></span> c<span class="token punctuation">.</span>hostUpdate<span class="token operator">?.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>&#10;    bar<span class="token punctuation">.</span>textContent <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>adaptive<span class="token punctuation">.</span>options<span class="token punctuation">.</span>actions<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> actions</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>&#10;  <span class="token punctuation">}</span><span class="token punctuation">,</span>&#10;<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>&#10;&#10;<span class="token comment">// 2 actions at compact and medium, 4 from expanded up.</span>&#10;<span class="token keyword">const</span> adaptive <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AdaptiveController<span class="token operator">&lt;</span><span class="token punctuation">{</span>actions<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">}</span><span class="token operator">></span></span><span class="token punctuation">(</span>host <span class="token keyword">as</span> <span class="token builtin">any</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>&#10;  options<span class="token operator">:</span> <span class="token punctuation">{</span>compact<span class="token operator">:</span> <span class="token punctuation">{</span>actions<span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">}</span><span class="token punctuation">,</span> expanded<span class="token operator">:</span> <span class="token punctuation">{</span>actions<span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">,</span>&#10;<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>&#10;controllers<span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span> <span class="token operator">=></span> c<span class="token punctuation">.</span>hostConnected<span class="token operator">?.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
+</div>
+</figure>
+<div class="heading h2">
+<h2 id="app-scaffold" tabindex="-1">App scaffold</h2>
+<a class="anchor" href="#app-scaffold"><span class="offscreen">Link to “App scaffold”</span> <span aria-hidden="true">#</span></a></div>
+<p><code>md-gb-app-scaffold</code> lays out the bars and rails around the app's content:</p>
+<ul>
+<li>A navigation bar at compact, a navigation rail at medium and larger.</li>
+<li>At medium, a navigation bar is used instead when a nested
+<code>md-gb-pane-scaffold</code> shows two panes, unless the window height is compact.</li>
+<li>A companion rail sits on the trailing side at large and extra-large.</li>
+<li>A toolbar floats in the bottom rail region at compact.</li>
+<li>The FAB sits 16 px from the trailing and bottom edges of the content, and the
+snackbar sits above it.</li>
+</ul>
+<figure class="gb-demo" aria-label="An app scaffold with an app bar, both navigation components and a pane scaffold" id="gbd-3eda4e">
+<div class="gb-demo-preview" data-frame style="--gb-demo-height: 360px">
+<iframe class="gb-demo-frame" data-id="gbd-3eda4e" data-min="360" title="An app scaffold with an app bar, both navigation components and a pane scaffold preview" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/material-web/fonts/gb/fonts.css&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/material-web/lib/labs/gb/styles/m3.css&quot;&gt;&lt;script type=&quot;importmap&quot;&gt;{&quot;imports&quot;:{&quot;@material/web/labs/gb/&quot;:&quot;/material-web/lib/labs/gb/&quot;,&quot;lit&quot;:&quot;/material-web/lib/node_modules/lit/index.js&quot;,&quot;lit/&quot;:&quot;/material-web/lib/node_modules/lit/&quot;}}&lt;/script&gt;&lt;style&gt;&#10;:root { color-scheme: light dark; }&#10;html:not([data-themed]) body { visibility: hidden; }&#10;body { margin: 0; box-sizing: border-box; min-block-size: 100vh; padding: 24px; display: grid; place-items: center;&#10;  background: var(--md-sys-color-surface-container-lowest, canvas); color: var(--md-sys-color-on-surface, canvastext);&#10;  font: 400 1rem/1.5 'Roboto Flex', Roboto, system-ui, sans-serif; }&#10;#root { box-sizing: border-box; inline-size: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }&#10;#gb-error { margin: 12px 0 0; font-size: .75rem; line-height: 1.4; color: var(--md-sys-color-error, red); font-family: ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; }&#10;&lt;/style&gt;&lt;style id=&quot;gb-demo-css&quot;&gt;&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=&quot;root&quot;&gt;&lt;md-gb-app-scaffold style=&quot;inline-size: 100%; block-size: 360px&quot;&gt;&#10;  &lt;md-gb-app-bar slot=&quot;top-app-bar&quot;&gt;Mail&lt;/md-gb-app-bar&gt;&#10;  &lt;md-gb-nav-bar slot=&quot;navigation-bar&quot; aria-label=&quot;Primary&quot;&gt;&#10;    &lt;md-gb-nav-bar-item active&gt;&#10;      &lt;md-gb-icon slot=&quot;icon&quot;&gt;inbox&lt;/md-gb-icon&gt;&#10;      Inbox&#10;    &lt;/md-gb-nav-bar-item&gt;&#10;    &lt;md-gb-nav-bar-item&gt;&#10;      &lt;md-gb-icon slot=&quot;icon&quot;&gt;send&lt;/md-gb-icon&gt;&#10;      Sent&#10;    &lt;/md-gb-nav-bar-item&gt;&#10;  &lt;/md-gb-nav-bar&gt;&#10;  &lt;md-gb-nav-rail slot=&quot;navigation-rail&quot; aria-label=&quot;Primary&quot;&gt;&#10;    &lt;md-gb-nav-rail-item selected&gt;&#10;      &lt;md-gb-icon slot=&quot;icon&quot;&gt;inbox&lt;/md-gb-icon&gt;&#10;      Inbox&#10;    &lt;/md-gb-nav-rail-item&gt;&#10;    &lt;md-gb-nav-rail-item&gt;&#10;      &lt;md-gb-icon slot=&quot;icon&quot;&gt;send&lt;/md-gb-icon&gt;&#10;      Sent&#10;    &lt;/md-gb-nav-rail-item&gt;&#10;  &lt;/md-gb-nav-rail&gt;&#10;  &lt;md-gb-pane-scaffold&gt;&#10;    &lt;md-gb-list slot=&quot;secondary&quot; aria-label=&quot;Conversations&quot;&gt;&#10;      &lt;md-gb-list-item&gt;Ali Connors&lt;/md-gb-list-item&gt;&#10;      &lt;md-gb-list-item&gt;Sandra Adams&lt;/md-gb-list-item&gt;&#10;    &lt;/md-gb-list&gt;&#10;    &lt;article&gt;&#10;      &lt;h2&gt;Brunch this weekend?&lt;/h2&gt;&#10;      &lt;p&gt;From Ali Connors&lt;/p&gt;&#10;    &lt;/article&gt;&#10;    &lt;p slot=&quot;placeholder&quot;&gt;Select a conversation&lt;/p&gt;&#10;  &lt;/md-gb-pane-scaffold&gt;&#10;&lt;/md-gb-app-scaffold&gt;&lt;/div&gt;&lt;script&gt;(() =&gt; {&#10;  const id = 'gbd-3eda4e';&#10;  const html = document.documentElement;&#10;  const ro = new ResizeObserver(() =&gt; post());&#10;  const error = (text) =&gt; {&#10;    let el = document.getElementById('gb-error');&#10;    if (!el) {&#10;      el = document.createElement('p');&#10;      el.id = 'gb-error';&#10;      el.setAttribute('role', 'alert');&#10;      document.body.append(el);&#10;      ro.observe(el);&#10;    }&#10;    el.textContent += (el.textContent ? '\n' : '') + text;&#10;  };&#10;  addEventListener('error', (e) =&gt; error(e.message || 'Script error'));&#10;  addEventListener('unhandledrejection', (e) =&gt; error('Unhandled rejection: ' + (e.reason?.message ?? e.reason)));&#10;  document.addEventListener('error', (e) =&gt; {&#10;    const t = e.target;&#10;    if (t &amp;&amp; t !== window &amp;&amp; (t.src || t.href)) error('Could not load ' + (t.src || t.href));&#10;  }, true);&#10;  function post() {&#10;    const root = document.getElementById('root');&#10;    const err = document.getElementById('gb-error');&#10;    const h = Math.ceil(root.getBoundingClientRect().height + (err ? err.getBoundingClientRect().height + 12 : 0)) + 48;&#10;    parent.postMessage({type: 'gb-demo-height', id, height: h}, '*');&#10;  }&#10;  ro.observe(document.getElementById('root'));&#10;  let sheet;&#10;  addEventListener('message', (e) =&gt; {&#10;    if (e.source !== parent || e.data?.type !== 'gb-demo-theme') return;&#10;    if (!sheet) {&#10;      sheet = document.createElement('style');&#10;      // Before the demo's own CSS, in the layer of the baseline tokens, so a&#10;      // theme the script applies still wins.&#10;      document.getElementById('gb-demo-css').before(sheet);&#10;    }&#10;    sheet.textContent = e.data.css ? '@layer md.sys.color{' + e.data.css + '}' : '';&#10;    html.style.colorScheme = e.data.colorScheme || 'light dark';&#10;    html.dataset.themed = '';&#10;  });&#10;  parent.postMessage({type: 'gb-demo-ready', id}, '*');&#10;  setTimeout(() =&gt; { html.dataset.themed = ''; post(); }, 1500);&#10;})();&lt;/script&gt;&lt;script type=&quot;module&quot;&gt;import '/material-web/lib/labs/gb/components/scaffold/md-gb-app-scaffold.js';import '/material-web/lib/labs/gb/components/appbar/md-gb-app-bar.js';import '/material-web/lib/labs/gb/components/navbar/md-gb-nav-bar.js';import '/material-web/lib/labs/gb/components/navbar/md-gb-nav-bar-item.js';import '/material-web/lib/labs/gb/styles/icon/md-gb-icon.js';import '/material-web/lib/labs/gb/components/navrail/md-gb-nav-rail.js';import '/material-web/lib/labs/gb/components/navrail/md-gb-nav-rail-item.js';import '/material-web/lib/labs/gb/components/scaffold/md-gb-pane-scaffold.js';import '/material-web/lib/labs/gb/components/list/md-gb-list.js';import '/material-web/lib/labs/gb/components/list/md-gb-list-item.js';&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-app-scaffold</span> <span class="token special-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token value css language-css"><span class="token property">inline-size</span><span class="token punctuation">:</span> 100%<span class="token punctuation">;</span> <span class="token property">block-size</span><span class="token punctuation">:</span> 360px</span><span class="token punctuation">"</span></span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-app-bar</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>top-app-bar<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Mail<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-app-bar</span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-nav-bar</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>navigation-bar<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Primary<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-nav-bar-item</span> <span class="token attr-name">active</span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>icon<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>inbox<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;      Inbox&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-nav-bar-item</span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-nav-bar-item</span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>icon<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>send<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;      Sent&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-nav-bar-item</span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-nav-bar</span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-nav-rail</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>navigation-rail<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Primary<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-nav-rail-item</span> <span class="token attr-name">selected</span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>icon<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>inbox<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;      Inbox&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-nav-rail-item</span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-nav-rail-item</span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>icon<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>send<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;      Sent&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-nav-rail-item</span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-nav-rail</span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-pane-scaffold</span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-list</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>secondary<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Conversations<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-list-item</span><span class="token punctuation">></span></span>Ali Connors<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-list-item</span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-list-item</span><span class="token punctuation">></span></span>Sandra Adams<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-list-item</span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-list</span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>article</span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">></span></span>Brunch this weekend?<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">></span></span>&#10;      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">></span></span>From Ali Connors<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>article</span><span class="token punctuation">></span></span>&#10;    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>placeholder<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Select a conversation<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-pane-scaffold</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-app-scaffold</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<p>Provide both a <code>md-gb-nav-bar</code> and a <code>md-gb-nav-rail</code> with the same
+destinations, and keep their selection in sync. The scaffold shows only one of
+them.</p>
+<div class="heading h2">
+<h2 id="panes" tabindex="-1">Panes</h2>
+<a class="anchor" href="#panes"><span class="offscreen">Link to “Panes”</span> <span aria-hidden="true">#</span></a></div>
+<p><code>md-gb-pane-scaffold</code> shows one, two or three panes. The default slot is the
+primary (flexible) pane, <code>secondary</code> is the list of a list-detail layout, and
+<code>tertiary</code> is an optional third pane, such as a standard side sheet.
+<code>placeholder</code> is shown in the primary pane of a two-pane layout with nothing
+selected.</p>
+<div class="heading h2">
+<h2 id="safe-areas" tabindex="-1">Safe areas</h2>
+<a class="anchor" href="#safe-areas"><span class="offscreen">Link to “Safe areas”</span> <span aria-hidden="true">#</span></a></div>
+<p>The scaffold keeps its bars away from the device safe areas. It reads
+<code>--md-gb-scaffold-safe-top</code>, <code>-right</code>, <code>-bottom</code> and <code>-left</code>, which default to
+<code>env(safe-area-inset-*)</code>. Keep primary content out of those edges. To change
+the insets, set the custom properties on the scaffold.</p>
+<div class="heading h2">
+<h2 id="full-screen-dialogs" tabindex="-1">Full-screen dialogs</h2>
+<a class="anchor" href="#full-screen-dialogs"><span class="offscreen">Link to “Full-screen dialogs”</span> <span aria-hidden="true">#</span></a></div>
+<p>A full-screen dialog is for compact windows only. Set <code>full-screen</code> on
+<code>md-gb-dialog</code>: at compact it fills the window, and at medium and larger it
+falls back to a basic dialog with the same slots. Set <code>always-full-screen</code>
+to keep the full-screen variant at every size, if the task needs it.</p>
+</div>
+            
+<nav class="gb-pager gb-pager-end" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-prev" href="/material-web/3.0/foundations/accessibility/" rel="prev"><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_back</md-gb-icon></span><span class="gb-pager-text"><span class="gb-pager-label">Previous</span> <span class="gb-pager-title">Accessibility</span></span></a>
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/foundations/density/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">Density</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</nav>
+          </main>
+        </div>
+      </div><aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
+        <div class="gb-outline-head">
+          <h2 class="gb-outline-title" id="gb-outline-title">On this page</h2>
+          <md-gb-icon-button id="gb-outline-close" tooltip aria-label="Hide page outline">
+            <md-gb-icon>close</md-gb-icon>
+          </md-gb-icon-button>
+        </div><div class="gb-toc gb-outline-body">
+          <md-gb-nav-rail class="gb-outline-rail" expanded role="none">
+            <md-gb-nav-rail-item href="#main" data-depth="1">(Top)</md-gb-nav-rail-item>
+            <md-gb-nav-rail-item href="#window-size-classes" data-depth="1">Window size classes</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#app-scaffold" data-depth="1">App scaffold</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#panes" data-depth="1">Panes</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#safe-areas" data-depth="1">Safe areas</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#full-screen-dialogs" data-depth="1">Full-screen dialogs</md-gb-nav-rail-item>
+          </md-gb-nav-rail>
+        </div>
+      </aside><aside class="gb-outline-strip" aria-label="Page outline">
+        <md-gb-icon-button id="gb-outline-toggle" tooltip aria-label="Show page outline" aria-controls="gb-outline" aria-expanded="true">
+          <md-gb-icon>toc</md-gb-icon>
+        </md-gb-icon-button>
+      </aside><nav class="gb-bar-area" aria-label="Sections">
+        <md-gb-nav-bar class="gb-bar" id="gb-bar" role="none">
+          <md-gb-nav-bar-item href="/material-web/3.0/about/" data-section="about" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/foundations/" data-section="foundations" aria-haspopup="dialog" active>
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/styles/" data-section="styles" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/components/" data-section="components" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-bar-item>
+        </md-gb-nav-bar>
+      </nav>
+
+    </div>
+    <template data-pages="about" data-label="About"><md-gb-nav-drawer-item href="/material-web/3.0/about/"><md-gb-icon slot="icon">info</md-gb-icon>About overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/intro/">Introduction</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/compliance/">Spec compliance</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/quick-start/">Quick Start</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/migration/">Migration</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/roadmap/">Roadmap</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/support/">Support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/size/">Bundle Sizes</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/browser-support/">Browser support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/ai-agents/">AI agents</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/debugging/">Debugging</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/shadcn/">Use with shadcn/ui</md-gb-nav-drawer-item></template>
+    <template data-pages="foundations" data-label="Foundations"><md-gb-nav-drawer-item href="/material-web/3.0/foundations/"><md-gb-icon slot="icon">foundation</md-gb-icon>Foundations overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/design-tokens/">Theming</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/interaction-states/">Interaction States</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/accessibility/">Accessibility</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/adaptive-layout/" selected>Adaptive layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/density/">Density</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/layout/">Layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/scaffold/">Scaffold</md-gb-nav-drawer-item></template>
+    <template data-pages="styles" data-label="Styles"><md-gb-nav-drawer-item href="/material-web/3.0/styles/"><md-gb-icon slot="icon">palette</md-gb-icon>Styles overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/color/">Color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/dynamic-color/">Dynamic color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/typography/">Typography</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/shape/">Shape</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/elevation/">Elevation</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/icons/">Icons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/material-symbols/">Material Symbols</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion/">Motion</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion-transitions/">Transitions</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/spacing/">Spacing</md-gb-nav-drawer-item></template>
+    <template data-pages="components" data-label="Components"><md-gb-nav-drawer-item href="/material-web/3.0/components/"><md-gb-icon slot="icon">widgets</md-gb-icon>Components overview</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="buttons">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button-group/" data-group="buttons">Button Group</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button/" data-group="buttons">Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab-menu/" data-group="buttons">FAB menu</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab/" data-group="buttons">Floating action button (FAB)</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/icon-button/" data-group="buttons">Icon Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/segmented-button/" data-group="buttons">Segmented button</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/split-button/" data-group="buttons">Split button</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="pickers">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/date-picker/" data-group="pickers">Date picker</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/time-picker/" data-group="pickers">Time picker</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="progress">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/loading-indicator/" data-group="progress">Loading indicator</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/progress/" data-group="progress">Progress indicators</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/pull-to-refresh/" data-group="progress">Pull to refresh</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="navigation">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-bar/" data-group="navigation">Navigation Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-drawer/" data-group="navigation">Navigation Drawer</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-rail/" data-group="navigation">Navigation Rail</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="sheets">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/sheets/" data-group="sheets">Sheets</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="other">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/app-bar/" data-group="other">App Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/badge/" data-group="other">Badge</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/card/" data-group="other">Card</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/carousel/" data-group="other">Carousel</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/checkbox/" data-group="other">Checkbox</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/chip/" data-group="other">Chips</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/dialog/" data-group="other">Dialogs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/divider/" data-group="other">Divider</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/list/" data-group="other">Lists</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/menu/" data-group="other">Menus</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/radio/" data-group="other">Radio</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/search/" data-group="other">Search</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/select/" data-group="other">Select</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/slider/" data-group="other">Sliders</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/snackbar/" data-group="other">Snackbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/switch/" data-group="other">Switch</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tabs/" data-group="other">Tabs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/text-field/" data-group="other">Text field</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/toolbar/" data-group="other">Toolbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tooltip/" data-group="other">Tooltip</md-gb-nav-drawer-item></template><md-gb-side-sheet id="gb-side-sheet" class="gb-side-sheet" modal></md-gb-side-sheet>
+    <md-gb-bottom-sheet id="gb-tools-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page tools"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-pages-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Pages"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-outline-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page outline"></md-gb-bottom-sheet>
+
+    <div class="gb-tools" id="gb-tools" hidden><section class="gb-tool" id="gb-download-body" data-tool="download" data-title="Download &amp; copy" data-site-url="https://material-web.dev" aria-labelledby="gb-download-title">
+        <h2 class="gb-tool-title" id="gb-download-title">Download &amp; copy</h2>
+        <h3 class="gb-tool-group">Download</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" id="gb-install" data-action="install">
+            <md-gb-icon aria-hidden="true">install_desktop</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Install app</span><span class="gb-action-support">Add Material Web 3.0 to your device</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/material-web-3.0.mhtml" data-filename="material-web-3.0.mhtml">
+            <md-gb-icon aria-hidden="true">web</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Website (MHTML, single file)</span><span class="gb-action-support" data-base="All pages in one file, for offline reading">All pages in one file, for offline reading</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/llms-full.txt" data-filename="llms-full.txt">
+            <md-gb-icon aria-hidden="true">description</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Docs for LLMs (llms-full.txt)</span><span class="gb-action-support" data-base="All pages as Markdown text">All pages as Markdown text</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/custom-elements.json" data-filename="custom-elements.json">
+            <md-gb-icon aria-hidden="true">data_object</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">API (custom-elements.json)</span><span class="gb-action-support" data-base="Every element, as a Custom Elements Manifest">Every element, as a Custom Elements Manifest</span></span>
+          </button></li>
+        </ul><h3 class="gb-tool-group">Copy</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="agent-prompt" data-copied="Copied agent prompt">
+            <md-gb-icon aria-hidden="true">smart_toy</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy agent prompt</span><span class="gb-action-support">Tells an AI agent to install the md-gb skill</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="cdn" data-copied="Copied CDN script tag">
+            <md-gb-icon aria-hidden="true">code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy CDN script tag</span><span class="gb-action-support">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span></span>
+          </button></li>
+        </ul>
+        <md-gb-divider class="gb-actions-divider"></md-gb-divider>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="github" data-copied="Copied GitHub link">
+            <md-gb-icon aria-hidden="true">link</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy GitHub link</span><span class="gb-action-support">github.com/material-components/material-web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="npm" data-copied="Copied npm install command">
+            <md-gb-icon aria-hidden="true">terminal</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy npm install</span><span class="gb-action-support">npm install @material/web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="shadcn" data-copied="Copied shadcn setup command">
+            <md-gb-icon aria-hidden="true">deployed_code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy shadcn npx setup</span><span class="gb-action-support">npx shadcn@latest add &hellip;/md-theme.json</span></span>
+          </button></li>
+        </ul>
+      </section><section class="gb-tool" id="gb-theme-body" data-tool="theme" data-title="Customize theme" aria-labelledby="gb-theme-title">
+        <h2 class="gb-tool-title" id="gb-theme-title">Customize theme</h2>
+        <p class="gb-tool-note">Changes apply to this site and its demos, and are remembered in this browser.</p>
+        <fieldset class="gb-field">
+          <legend>Seed color</legend>
+          <div class="gb-swatches" id="gb-swatches">
+            <label class="gb-swatch" style="--gb-swatch: #6750a4"><input type="radio" name="gb-seed" value="#6750a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Purple</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #0061a4"><input type="radio" name="gb-seed" value="#0061a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Blue</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #006a6a"><input type="radio" name="gb-seed" value="#006a6a" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Teal</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #386a20"><input type="radio" name="gb-seed" value="#386a20" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Green</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #9c4300"><input type="radio" name="gb-seed" value="#9c4300" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Orange</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #b3261e"><input type="radio" name="gb-seed" value="#b3261e" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Red</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #8b4a62"><input type="radio" name="gb-seed" value="#8b4a62" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Pink</span></label>
+          </div>
+          <label class="gb-custom-color">
+            <span>Custom color</span>
+            <input type="color" id="gb-seed-input" value="#6750a4" />
+            <output id="gb-seed-hex" for="gb-seed-input">#6750a4</output>
+          </label>
+        </fieldset>
+        <div class="gb-field">
+          <md-gb-select id="gb-variant" label="Scheme variant" value="tonal-spot">
+            <md-gb-select-option value="tonal-spot" selected>Tonal spot</md-gb-select-option>
+            <md-gb-select-option value="neutral">Neutral</md-gb-select-option>
+            <md-gb-select-option value="vibrant">Vibrant</md-gb-select-option>
+            <md-gb-select-option value="expressive">Expressive</md-gb-select-option>
+            <md-gb-select-option value="fidelity">Fidelity</md-gb-select-option>
+            <md-gb-select-option value="content">Content</md-gb-select-option>
+            <md-gb-select-option value="monochrome">Monochrome</md-gb-select-option>
+            <md-gb-select-option value="rainbow">Rainbow</md-gb-select-option>
+            <md-gb-select-option value="fruit-salad">Fruit salad</md-gb-select-option>
+          </md-gb-select>
+        </div>
+        <fieldset class="gb-field">
+          <legend>Color mode</legend>
+          <md-gb-segmented-button-set id="gb-mode" required aria-label="Color mode">
+            <md-gb-segmented-button value="auto" no-checkmark selected>System</md-gb-segmented-button>
+            <md-gb-segmented-button value="light" no-checkmark>Light</md-gb-segmented-button>
+            <md-gb-segmented-button value="dark" no-checkmark>Dark</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <fieldset class="gb-field">
+          <legend>Contrast</legend>
+          <md-gb-segmented-button-set id="gb-contrast" required aria-label="Contrast">
+            <md-gb-segmented-button value="standard" no-checkmark selected>Standard</md-gb-segmented-button>
+            <md-gb-segmented-button value="medium" no-checkmark>Medium</md-gb-segmented-button>
+            <md-gb-segmented-button value="high" no-checkmark>High</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <div class="gb-tool-actions">
+          <md-gb-button id="gb-theme-reset" color="tonal">Reset</md-gb-button>
+        </div>
+      </section><div class="gb-pages-foot" id="gb-pages-foot" role="group" aria-label="Site settings">
+        <md-gb-button color="text" data-theme-toggle><md-gb-icon slot="icon">brightness_auto</md-gb-icon><span class="gb-theme-toggle-label">Theme: system</span></md-gb-button>
+        <md-gb-button color="text" href="/material-web/"><md-gb-icon slot="icon">history</md-gb-icon>v2.5.0 (current)</md-gb-button>
+        <md-gb-button color="text" href="https://github.com/material-components/material-web" target="_blank" rel="noopener"><md-gb-icon slot="icon">code</md-gb-icon>GitHub<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener"><md-gb-icon slot="icon">deployed_code</md-gb-icon>npm<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" data-tool="feedback"><md-gb-icon slot="icon">feedback</md-gb-icon>Send feedback</md-gb-button>
+      </div>
+    </div>
+
+    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000"></md-gb-snackbar>
+
+    <md-gb-dialog id="gb-install-dialog">
+      <span slot="headline">Install Material Web 3.0</span>
+      <p>Your browser did not offer to install the docs as an app. Install them from the browser instead:</p>
+      <ul data-install-steps>
+        <li data-browser="chromium"><strong>Chrome and Edge:</strong> open the browser menu and choose Install Material Web 3.0 (Chrome: Cast, save and share, Install page as app), or use the install icon in the address bar.</li>
+        <li data-browser="safari"><strong>Safari on Mac:</strong> choose File, then Add to Dock.</li>
+        <li data-browser="ios"><strong>Safari on iPhone and iPad:</strong> tap Share, then Add to Home Screen.</li>
+        <li data-browser="firefox"><strong>Firefox:</strong> Firefox on Android has Install in its menu. Firefox on desktop cannot install web apps; bookmark this page instead.</li>
+      </ul>
+      <form id="gb-install-form" method="dialog"></form>
+      <md-gb-button slot="actions" form="gb-install-form" value="close">Close</md-gb-button>
+    </md-gb-dialog><md-gb-dialog id="gb-feedback-dialog">
+      <span slot="headline">Send feedback</span>
+      <form id="gb-feedback-form" class="gb-feedback" novalidate>
+        <md-gb-text-field id="gb-feedback-page" label="Page" value=""></md-gb-text-field>
+        <md-gb-select id="gb-feedback-type" label="Type" value="bug">
+          <md-gb-select-option value="bug" selected>Bug</md-gb-select-option>
+          <md-gb-select-option value="docs">Documentation</md-gb-select-option>
+          <md-gb-select-option value="idea">Idea</md-gb-select-option>
+        </md-gb-select>
+        <md-gb-text-field id="gb-feedback-message" type="textarea" rows="4" label="Message" required error-text="Add a message" value=""></md-gb-text-field>
+        <p class="gb-feedback-note">Opens a new GitHub issue for material-components/material-web in a new tab, with this filled in.</p>
+      </form>
+      <md-gb-button slot="actions" color="text" id="gb-feedback-cancel">Cancel</md-gb-button>
+      <md-gb-button slot="actions" id="gb-feedback-submit">Open issue</md-gb-button>
+    </md-gb-dialog>
+
+    <script type="module">const define = customElements.define.bind(customElements);customElements.define = (name, ctor, options) => { if (!customElements.get(name)) define(name, ctor, options); };import('/material-web/lib/labs/gb/components/tabs/md-gb-tabs.js');import('/material-web/lib/labs/gb/components/tabs/md-gb-tab.js');</script>
+
+    <div id="gb-status" role="status" aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></div>
+  </body>
+</html>

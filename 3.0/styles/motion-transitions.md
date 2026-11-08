@@ -1,0 +1,34 @@
+# Transitions
+
+Transition patterns connect elements and views, and skeleton loaders hold space while content loads.
+
+The six transition patterns (container transform, forward and backward,
+lateral, top level, enter and exit, and skeleton loaders) are helper functions
+and classes. See [Motion](/material-web/3.0/styles/motion/#transitions) for the helpers.
+
+## Skeleton loaders
+
+A skeleton hints at where content will appear and holds its space while it
+loads. Set `loading` and clear it when the content is ready.
+
+**Example: A text skeleton and a skeleton that holds a paragraph**
+
+*HTML*
+
+```html
+<md-gb-skeleton loading shape="text"></md-gb-skeleton>
+<md-gb-skeleton id="card" loading>
+  <p>Content that loads.</p>
+</md-gb-skeleton>
+<md-gb-button id="done" color="tonal">Finish loading</md-gb-button>
+```
+
+*JavaScript*
+
+```js
+import '@material/web/labs/gb/styles/motion/transitions/md-gb-skeleton.js';
+
+document.querySelector('#done').addEventListener('click', () => {
+  document.querySelector('#card').loading = false;
+});
+```

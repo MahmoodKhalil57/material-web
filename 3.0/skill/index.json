@@ -1,0 +1,203 @@
+{
+  "name": "md-gb",
+  "description": "Use when writing or reviewing HTML, Lit templates or CSS that uses the md-gb-* Material 3 Expressive web components from labs/gb (buttons, FABs, app bars, dialogs, sheets, lists, menus, text fields, tabs, navigation, sliders, pickers and more): which tag to pick, its attributes, slots, events, CSS parts and custom properties, and what the app must provide itself.",
+  "site": "https://material-web.dev",
+  "install": "Save each file to <skills folder>/md-gb/<path>, for example ~/.claude/skills/md-gb/SKILL.md.",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "url": "https://material-web.dev/3.0/skill/SKILL.md",
+      "bytes": 7697
+    },
+    {
+      "path": "reference/app-owned.md",
+      "url": "https://material-web.dev/3.0/skill/reference/app-owned.md",
+      "bytes": 4525
+    },
+    {
+      "path": "reference/appbar.md",
+      "url": "https://material-web.dev/3.0/skill/reference/appbar.md",
+      "bytes": 2372
+    },
+    {
+      "path": "reference/badge.md",
+      "url": "https://material-web.dev/3.0/skill/reference/badge.md",
+      "bytes": 1416
+    },
+    {
+      "path": "reference/button.md",
+      "url": "https://material-web.dev/3.0/skill/reference/button.md",
+      "bytes": 3862
+    },
+    {
+      "path": "reference/buttongroup.md",
+      "url": "https://material-web.dev/3.0/skill/reference/buttongroup.md",
+      "bytes": 3805
+    },
+    {
+      "path": "reference/card.md",
+      "url": "https://material-web.dev/3.0/skill/reference/card.md",
+      "bytes": 2507
+    },
+    {
+      "path": "reference/carousel.md",
+      "url": "https://material-web.dev/3.0/skill/reference/carousel.md",
+      "bytes": 4503
+    },
+    {
+      "path": "reference/checkbox.md",
+      "url": "https://material-web.dev/3.0/skill/reference/checkbox.md",
+      "bytes": 4833
+    },
+    {
+      "path": "reference/chip.md",
+      "url": "https://material-web.dev/3.0/skill/reference/chip.md",
+      "bytes": 7628
+    },
+    {
+      "path": "reference/datepicker.md",
+      "url": "https://material-web.dev/3.0/skill/reference/datepicker.md",
+      "bytes": 10154
+    },
+    {
+      "path": "reference/dialog.md",
+      "url": "https://material-web.dev/3.0/skill/reference/dialog.md",
+      "bytes": 7180
+    },
+    {
+      "path": "reference/divider.md",
+      "url": "https://material-web.dev/3.0/skill/reference/divider.md",
+      "bytes": 1126
+    },
+    {
+      "path": "reference/fab.md",
+      "url": "https://material-web.dev/3.0/skill/reference/fab.md",
+      "bytes": 3696
+    },
+    {
+      "path": "reference/fabmenu.md",
+      "url": "https://material-web.dev/3.0/skill/reference/fabmenu.md",
+      "bytes": 4357
+    },
+    {
+      "path": "reference/iconbutton.md",
+      "url": "https://material-web.dev/3.0/skill/reference/iconbutton.md",
+      "bytes": 4013
+    },
+    {
+      "path": "reference/list.md",
+      "url": "https://material-web.dev/3.0/skill/reference/list.md",
+      "bytes": 10014
+    },
+    {
+      "path": "reference/loadingindicator.md",
+      "url": "https://material-web.dev/3.0/skill/reference/loadingindicator.md",
+      "bytes": 1171
+    },
+    {
+      "path": "reference/menu.md",
+      "url": "https://material-web.dev/3.0/skill/reference/menu.md",
+      "bytes": 9362
+    },
+    {
+      "path": "reference/navbar.md",
+      "url": "https://material-web.dev/3.0/skill/reference/navbar.md",
+      "bytes": 6569
+    },
+    {
+      "path": "reference/navdrawer.md",
+      "url": "https://material-web.dev/3.0/skill/reference/navdrawer.md",
+      "bytes": 8308
+    },
+    {
+      "path": "reference/navrail.md",
+      "url": "https://material-web.dev/3.0/skill/reference/navrail.md",
+      "bytes": 11043
+    },
+    {
+      "path": "reference/progress.md",
+      "url": "https://material-web.dev/3.0/skill/reference/progress.md",
+      "bytes": 1463
+    },
+    {
+      "path": "reference/pulltorefresh.md",
+      "url": "https://material-web.dev/3.0/skill/reference/pulltorefresh.md",
+      "bytes": 3300
+    },
+    {
+      "path": "reference/radio.md",
+      "url": "https://material-web.dev/3.0/skill/reference/radio.md",
+      "bytes": 3068
+    },
+    {
+      "path": "reference/scaffold.md",
+      "url": "https://material-web.dev/3.0/skill/reference/scaffold.md",
+      "bytes": 14357
+    },
+    {
+      "path": "reference/search.md",
+      "url": "https://material-web.dev/3.0/skill/reference/search.md",
+      "bytes": 12732
+    },
+    {
+      "path": "reference/segmentedbutton.md",
+      "url": "https://material-web.dev/3.0/skill/reference/segmentedbutton.md",
+      "bytes": 6423
+    },
+    {
+      "path": "reference/select.md",
+      "url": "https://material-web.dev/3.0/skill/reference/select.md",
+      "bytes": 12697
+    },
+    {
+      "path": "reference/sheet.md",
+      "url": "https://material-web.dev/3.0/skill/reference/sheet.md",
+      "bytes": 11479
+    },
+    {
+      "path": "reference/slider.md",
+      "url": "https://material-web.dev/3.0/skill/reference/slider.md",
+      "bytes": 4826
+    },
+    {
+      "path": "reference/snackbar.md",
+      "url": "https://material-web.dev/3.0/skill/reference/snackbar.md",
+      "bytes": 9839
+    },
+    {
+      "path": "reference/splitbutton.md",
+      "url": "https://material-web.dev/3.0/skill/reference/splitbutton.md",
+      "bytes": 1302
+    },
+    {
+      "path": "reference/switch.md",
+      "url": "https://material-web.dev/3.0/skill/reference/switch.md",
+      "bytes": 4920
+    },
+    {
+      "path": "reference/tabs.md",
+      "url": "https://material-web.dev/3.0/skill/reference/tabs.md",
+      "bytes": 7909
+    },
+    {
+      "path": "reference/textfield.md",
+      "url": "https://material-web.dev/3.0/skill/reference/textfield.md",
+      "bytes": 11050
+    },
+    {
+      "path": "reference/timepicker.md",
+      "url": "https://material-web.dev/3.0/skill/reference/timepicker.md",
+      "bytes": 10798
+    },
+    {
+      "path": "reference/toolbar.md",
+      "url": "https://material-web.dev/3.0/skill/reference/toolbar.md",
+      "bytes": 3889
+    },
+    {
+      "path": "reference/tooltip.md",
+      "url": "https://material-web.dev/3.0/skill/reference/tooltip.md",
+      "bytes": 5846
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-split-button",
+  "type": "registry:ui",
+  "title": "Split Button",
+  "description": "MdSplitButton: React wrappers for <md-gb-split-button> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-split-button.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/splitbutton/md-gb-split-button.js';\nimport {SplitButtonElement} from '@material/web/labs/gb/components/splitbutton/split-button-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-split-button>.\n * Docs: https://material-web.dev/3.0/components/split-button/\n */\nexport const MdSplitButton = createComponent({\n  react: React,\n  tagName: 'md-gb-split-button',\n  elementClass: SplitButtonElement,\n});\n\nexport type MdSplitButtonProps = React.ComponentProps<typeof MdSplitButton>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/split-button/",
+  "meta": {
+    "tags": [
+      "md-gb-split-button"
+    ],
+    "docs": "https://material-web.dev/3.0/components/split-button/"
+  }
+}

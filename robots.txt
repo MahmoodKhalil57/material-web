@@ -1,0 +1,6 @@
+# The 3.0 docs (/material-web/3.0/) also publish Markdown at each page URL plus .md,
+# https://material-web.dev/3.0/llms.txt and https://material-web.dev/3.0/llms-full.txt.
+User-agent: *
+Allow: /
+
+Sitemap: https://material-web.dev/3.0/sitemap.xml

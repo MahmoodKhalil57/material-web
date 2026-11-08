@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-card",
+  "type": "registry:ui",
+  "title": "Card",
+  "description": "MdCard: React wrappers for <md-gb-card> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-card.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/card/md-gb-card.js';\nimport {CardElement} from '@material/web/labs/gb/components/card/card-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-card>.\n * Docs: https://material-web.dev/3.0/components/card/\n */\nexport const MdCard = createComponent({\n  react: React,\n  tagName: 'md-gb-card',\n  elementClass: CardElement,\n});\n\nexport type MdCardProps = React.ComponentProps<typeof MdCard>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/card/",
+  "meta": {
+    "tags": [
+      "md-gb-card"
+    ],
+    "docs": "https://material-web.dev/3.0/components/card/"
+  }
+}

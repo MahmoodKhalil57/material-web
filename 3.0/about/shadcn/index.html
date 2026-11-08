@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en" class="gb-shell-root">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Use with shadcn/ui - Material Web 3.0</title>
+    <meta name="description" content="Install the md-gb elements as React components with the shadcn CLI, themed by your shadcn variables." />
+    <meta name="color-scheme" content="light dark" />
+    <link href="/material-web/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" /><link rel="canonical" href="https://material-web.dev/3.0/about/shadcn/" />
+    <link rel="alternate" type="text/markdown" href="/material-web/3.0/about/shadcn.md" title="Use with shadcn/ui as Markdown" />
+    <link rel="alternate" type="text/plain" href="/material-web/3.0/llms.txt" title="llms.txt" />
+    <link rel="manifest" href="/material-web/3.0/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/material-web/3.0/icons/icon-192.png" />
+    <meta name="theme-color" content="#fef7ff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141218" media="(prefers-color-scheme: dark)" />
+    <meta property="og:site_name" content="Material Web 3.0" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Use with shadcn/ui - Material Web 3.0" />
+    <meta property="og:description" content="Install the md-gb elements as React components with the shadcn CLI, themed by your shadcn variables." />
+    <meta property="og:url" content="https://material-web.dev/3.0/about/shadcn/" />
+    <meta property="og:image" content="https://material-web.dev/3.0/og/about-shadcn.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Use with shadcn/ui - Material Web 3.0" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Use with shadcn/ui - Material Web 3.0" />
+    <meta name="twitter:description" content="Install the md-gb elements as React components with the shadcn CLI, themed by your shadcn variables." />
+    <meta name="twitter:image" content="https://material-web.dev/3.0/og/about-shadcn.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://material-web.dev/3.0/#website","name":"Material Web 3.0","url":"https://material-web.dev/3.0/","inLanguage":"en","description":"Material Web 3.0: Material 3 Expressive components, styles and foundations built as web components.","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://material-web.dev/3.0/?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@type":"TechArticle","@id":"https://material-web.dev/3.0/about/shadcn/#article","headline":"Use with shadcn/ui","description":"Install the md-gb elements as React components with the shadcn CLI, themed by your shadcn variables.","url":"https://material-web.dev/3.0/about/shadcn/","mainEntityOfPage":"https://material-web.dev/3.0/about/shadcn/","image":"https://material-web.dev/3.0/og/about-shadcn.png","inLanguage":"en","articleSection":"About","dateModified":"2026-11-08T00:04:59Z","isPartOf":{"@id":"https://material-web.dev/3.0/#website"},"publisher":{"@type":"Organization","name":"Material Web","url":"https://material-web.dev"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Material Web 3.0","item":"https://material-web.dev/3.0/"},{"@type":"ListItem","position":2,"name":"About","item":"https://material-web.dev/3.0/about/"},{"@type":"ListItem","position":3,"name":"Use with shadcn/ui","item":"https://material-web.dev/3.0/about/shadcn/"}]}]}</script>
+    <link rel="preload" href="/material-web/fonts/gb/roboto-flex-6ccf7a9846bd.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/material-web/fonts/gb/material-symbols-outlined-ef785a494cef.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/material-web/fonts/gb/fonts.css" />
+    <link rel="stylesheet" href="/material-web/js/gb/gb.css" />
+    <script>
+      // Before first paint: color-scheme from the saved mode, the dynamic
+      // color CSS generated for the saved theme (cached by gb.js), and
+      // whether the reader collapsed the rail, so nothing moves when the
+      // script runs.
+      (() => {
+        const root = document.documentElement;
+        // Demo cards collapse their code only with JS (gb.css, gb.ts).
+        root.classList.add('js');
+        // Reduce motion (the header's toggle, shell.ts; reduce-motion.css):
+        // while it's on, prefers-reduced-motion queries from scripts answer
+        // "reduce" (asked again on each call, so a toggle takes effect at
+        // once), and the components take their reduced-motion paths.
+        const matchMedia = window.matchMedia.bind(window);
+        window.matchMedia = (query) =>
+          root.dataset.motion === 'reduce' && /prefers-reduced-motion/.test(query)
+            ? matchMedia(/no-preference/.test(query) ? 'not all' : 'all')
+            : matchMedia(query);
+        try {
+          if (localStorage.getItem('gb-reduce-motion') === '1') root.dataset.motion = 'reduce';
+          const mode = localStorage.getItem('color-mode') || 'auto';
+          root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
+          if (localStorage.getItem('gb-rail') === 'collapsed') root.dataset.rail = 'collapsed';
+          if (localStorage.getItem('gb-outline') === 'closed') root.dataset.outline = 'closed';
+          const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
+          const seed = localStorage.getItem('gb-seed-color');
+          const key = [seed, localStorage.getItem('gb-scheme-variant') || 'tonal-spot', localStorage.getItem('gb-contrast') || 'standard'].join('|');
+          // Only a cache for the saved theme, written by this version of gb.js
+          // (THEME_CACHE_VERSION in catalog/src/gb/gb.ts).
+          if (cache && cache.v === 3 && cache.css && seed && cache.key === key) {
+            const style = document.createElement('style');
+            style.id = 'gb-theme-style';
+            style.textContent = cache.css;
+            document.head.append(style);
+          }
+        } catch (e) {}
+      })();
+    </script><script type="speculationrules">
+      {
+        "prefetch": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }],
+        "prerender": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }]
+      }
+    </script><script type="module" src="/material-web/js/gb/gb.js" blocking="render"></script>
+  </head>
+  <body>
+    <div class="gb-shell"><header class="gb-top">
+        <a class="gb-skip" href="#main">Skip to main content</a>
+        <md-gb-app-bar class="gb-appbar" id="gb-appbar" variant="search"><a slot="leading" class="gb-brand" href="/material-web/3.0/" aria-label="Material Web 3.0 home">
+            <svg viewBox="0 96 960 960" width="32" height="32" fill="currentColor" aria-hidden="true" focusable="false"><path d="M480 1016q-91 0-171-34.5T169 887q-60-60-94.5-140T40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q91 0 171 34.5T791 265q60 60 94.5 140T920 576q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM200 802V351q-38 47-59 104t-21 121q0 65 21 122t59 104Zm54-506h452q-47-38-104-59t-122-21q-65 0-122 21t-104 59Zm226 381 151-301H330l150 301Zm40 99h160V456L520 776Zm-240 0h160L280 456v320Zm200 160q64 0 121.5-21T706 856H254q47 38 104.5 59T480 936Zm280-134q38-47 59-104t21-122q0-64-21-121t-59-104v451Z"/></svg>
+          </a>
+          <button slot="search" type="button" class="gb-searchbar" data-gb-search>
+            <span class="gb-searchbar-icon" aria-hidden="true"><md-gb-icon>search</md-gb-icon></span>
+            <span class="gb-searchbar-text">Search Material Web</span>
+            <kbd class="gb-search-hint" aria-hidden="true"></kbd>
+          </button>
+          <md-gb-icon-button slot="trailing" id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
+            <md-gb-icon>brightness_auto</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="trailing" id="gb-motion" type="toggle" tooltip aria-label="Reduce motion">
+            <md-gb-icon>motion_photos_off</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="theme" aria-label="Customize theme">
+            <md-gb-icon>palette</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="download" aria-label="Download and copy">
+            <md-gb-icon>download</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="overflow" id="gb-overflow" tooltip popovertarget="gb-overflow-menu" aria-label="More actions">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+        </md-gb-app-bar><md-gb-menu id="gb-overflow-menu" aria-label="More actions"></md-gb-menu>
+      </header><nav class="gb-rail-area" aria-label="Site">
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" collapsible role="none">
+          <md-gb-nav-rail-item href="/material-web/3.0/about/" data-section="about" selected data-current>
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="about" data-default-open="true" aria-expanded="true" aria-label="About pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/intro/" data-in-section="about">Introduction</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/compliance/" data-in-section="about">Spec compliance</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/quick-start/" data-in-section="about">Quick Start</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/migration/" data-in-section="about">Migration</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/roadmap/" data-in-section="about">Roadmap</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/support/" data-in-section="about">Support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/size/" data-in-section="about">Bundle Sizes</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/browser-support/" data-in-section="about">Browser support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/ai-agents/" data-in-section="about">AI agents</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/debugging/" data-in-section="about">Debugging</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/shadcn/" data-in-section="about" data-current>Use with shadcn/ui</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/foundations/" data-section="foundations">
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="foundations" data-default-open="false" aria-expanded="true" aria-label="Foundations pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/design-tokens/" data-in-section="foundations">Theming</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/interaction-states/" data-in-section="foundations">Interaction States</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/accessibility/" data-in-section="foundations">Accessibility</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/adaptive-layout/" data-in-section="foundations">Adaptive layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/density/" data-in-section="foundations">Density</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/layout/" data-in-section="foundations">Layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/scaffold/" data-in-section="foundations">Scaffold</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/styles/" data-section="styles">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="styles" data-default-open="false" aria-expanded="true" aria-label="Styles pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/color/" data-in-section="styles">Color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/dynamic-color/" data-in-section="styles">Dynamic color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/typography/" data-in-section="styles">Typography</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/shape/" data-in-section="styles">Shape</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/elevation/" data-in-section="styles">Elevation</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/icons/" data-in-section="styles">Icons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/material-symbols/" data-in-section="styles">Material Symbols</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion/" data-in-section="styles">Motion</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion-transitions/" data-in-section="styles">Transitions</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/spacing/" data-in-section="styles">Spacing</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/components/" data-section="components">
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="components" data-default-open="false" aria-expanded="true" aria-label="Components pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="buttons" data-default-open="true" aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button-group/" data-in-section="components" data-group="buttons">Button Group</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button/" data-in-section="components" data-group="buttons">Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab-menu/" data-in-section="components" data-group="buttons">FAB menu</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab/" data-in-section="components" data-group="buttons">Floating action button (FAB)</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/icon-button/" data-in-section="components" data-group="buttons">Icon Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/segmented-button/" data-in-section="components" data-group="buttons">Segmented button</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/split-button/" data-in-section="components" data-group="buttons">Split button</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="pickers" data-default-open="true" aria-expanded="true" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/date-picker/" data-in-section="components" data-group="pickers">Date picker</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/time-picker/" data-in-section="components" data-group="pickers">Time picker</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="progress" data-default-open="true" aria-expanded="true" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/loading-indicator/" data-in-section="components" data-group="progress">Loading indicator</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/progress/" data-in-section="components" data-group="progress">Progress indicators</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/pull-to-refresh/" data-in-section="components" data-group="progress">Pull to refresh</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="navigation" data-default-open="true" aria-expanded="true" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-bar/" data-in-section="components" data-group="navigation">Navigation Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-drawer/" data-in-section="components" data-group="navigation">Navigation Drawer</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-rail/" data-in-section="components" data-group="navigation">Navigation Rail</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="sheets" data-default-open="true" aria-expanded="true" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/sheets/" data-in-section="components" data-group="sheets">Sheets</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="other" data-default-open="true" aria-expanded="true" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/app-bar/" data-in-section="components" data-group="other">App Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/badge/" data-in-section="components" data-group="other">Badge</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/card/" data-in-section="components" data-group="other">Card</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/carousel/" data-in-section="components" data-group="other">Carousel</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/checkbox/" data-in-section="components" data-group="other">Checkbox</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/chip/" data-in-section="components" data-group="other">Chips</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/dialog/" data-in-section="components" data-group="other">Dialogs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/divider/" data-in-section="components" data-group="other">Divider</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/list/" data-in-section="components" data-group="other">Lists</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/menu/" data-in-section="components" data-group="other">Menus</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/radio/" data-in-section="components" data-group="other">Radio</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/search/" data-in-section="components" data-group="other">Search</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/select/" data-in-section="components" data-group="other">Select</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/slider/" data-in-section="components" data-group="other">Sliders</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/snackbar/" data-in-section="components" data-group="other">Snackbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/switch/" data-in-section="components" data-group="other">Switch</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tabs/" data-in-section="components" data-group="other">Tabs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/text-field/" data-in-section="components" data-group="other">Text field</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/toolbar/" data-in-section="components" data-group="other">Toolbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tooltip/" data-in-section="components" data-group="other">Tooltip</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+        <script>
+          // Which sections and groups are open: the reader's choices
+          // (src/gb/shell.ts saves them), else the defaults in the markup; the
+          // current page's group stays open. A closed section hides its
+          // pages and groups; a closed group its pages. Runs here before
+          // first paint, and again on every toggle (shell.ts). With
+          // deferHiding, the shown pages that close stay shown and are
+          // returned, for shell.ts to fade out before hiding them.
+          window.gbRailApply = (deferHiding) => {
+            const leaving = [];
+            const rail = document.getElementById('gb-rail');
+            const read = (key) => {
+              try {
+                return JSON.parse(localStorage.getItem(key) || '{}');
+              } catch (e) {
+                return {};
+              }
+            };
+            const sections = read('gb-rail-sections');
+            const groups = read('gb-groups');
+            const open = (toggle, saved, id) =>
+              toggle.hasAttribute('data-current') || !(id in saved) ? toggle.dataset.defaultOpen === 'true' : !!saved[id];
+            const openGroups = {};
+            for (const toggle of rail.querySelectorAll('[data-group-toggle]')) {
+              const id = toggle.dataset.groupToggle;
+              openGroups[id] = toggle.hasAttribute('data-current') || open(toggle, groups, id);
+              toggle.setAttribute('aria-expanded', String(openGroups[id]));
+            }
+            for (const toggle of rail.querySelectorAll('[data-section-toggle]')) {
+              const id = toggle.dataset.sectionToggle;
+              const shown = open(toggle, sections, id);
+              toggle.setAttribute('aria-expanded', String(shown));
+              for (const el of rail.querySelectorAll(`[data-in-section="${id}"]`)) {
+                const hide = !shown || (el.dataset.group ? !openGroups[el.dataset.group] : false);
+                if (hide && !el.hidden && deferHiding) leaving.push(el);
+                else el.hidden = hide;
+              }
+            }
+            return leaving;
+          };
+          // Before first paint: expanded from 840px unless the reader
+          // collapsed it, with the current page (if its section is open) as
+          // the active destination. A reload starts over: only the current
+          // section open, with all its groups (the defaults).
+          (() => {
+            if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+              try {
+                localStorage.removeItem('gb-rail-sections');
+                localStorage.removeItem('gb-groups');
+              } catch (e) {
+                // Storage can be blocked; the defaults apply anyway.
+              }
+            }
+            window.gbRailApply();
+            const rail = document.getElementById('gb-rail');
+            const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
+            const page = rail.querySelector('md-gb-nav-rail-item[secondary][data-current]');
+            if (!open) return;
+            rail.setAttribute('expanded', '');
+            if (page && !page.hidden) {
+              rail.querySelector('md-gb-nav-rail-item[data-section][data-current]').removeAttribute('selected');
+              page.setAttribute('selected', '');
+            }
+          })();
+        </script><div class="gb-rail-foot">
+          <div class="gb-rail-links" role="group" aria-label="Project">
+            <md-gb-icon-button tooltip href="https://github.com/material-components/material-web" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)">
+              <md-gb-icon>code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener" aria-label="npm (opens in a new tab)">
+              <md-gb-icon>deployed_code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip data-tool="feedback" aria-label="Send feedback">
+              <md-gb-icon>feedback</md-gb-icon>
+            </md-gb-icon-button>
+          </div><label class="gb-version">
+            <span class="gb-version-label" aria-hidden="true">3.0</span>
+            <md-gb-switch id="gb-version" selected aria-label="Material Web 3.0 (off for 2.5)"></md-gb-switch>
+          </label>
+        </div>
+      </nav>
+
+      <div class="gb-content-pane" id="gb-content-pane">
+        <div class="gb-body">
+          <main class="gb-main" id="main" tabindex="-1"><md-gb-fab id="gb-outline-fab" class="gb-outline-fab" color="secondary-container" aria-label="Page outline" aria-haspopup="dialog">
+              <md-gb-icon>toc</md-gb-icon>
+            </md-gb-fab>
+            
+<div class="gb-pager gb-pager-top" role="group" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-prev" href="/material-web/3.0/about/debugging/" rel="prev"><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_back</md-gb-icon></span><span class="gb-pager-text"><span class="gb-pager-label">Previous</span> <span class="gb-pager-title">Debugging</span></span></a>
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/foundations/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">Foundations overview</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</div>
+            <h1>Use with shadcn/ui</h1>
+            <p class="gb-lede">Install the md-gb elements as React components with the shadcn CLI, themed by your shadcn variables.</p>
+            <p class="gb-md-link"><a href="/material-web/3.0/about/shadcn.md" type="text/markdown">View as Markdown</a></p>
+            <div class="gb-content"><div class="heading h2">
+<h2 id="what-you-get" tabindex="-1">What you get</h2>
+<a class="anchor" href="#what-you-get"><span class="offscreen">Link to “What you get”</span> <span aria-hidden="true">#</span></a></div>
+<p>This site is a <a href="https://ui.shadcn.com/docs/registry">shadcn registry</a> at
+<code>/3.0/r/</code>. <code>npx shadcn@latest add</code> copies a file into your project, adds the
+npm dependencies, and merges the theme:</p>
+<ul>
+<li><strong>A React wrapper per component family</strong>, such as <code>md-button</code> or <code>md-menu</code>
+(a menu with its group and item). The file is
+<code>components/ui/md-&lt;name&gt;.tsx</code>. It registers the <code>md-gb-*</code> elements and wraps
+each one with <a href="https://lit.dev/docs/frameworks/react/"><code>@lit/react</code></a>:
+typed props from the element class, and the events as <code>onChange</code>,
+<code>onClose</code> and so on.</li>
+<li><strong><code>md-theme</code></strong>, installed with every item: it loads the M3 styles and maps
+your shadcn variables to the M3 color and shape roles.</li>
+<li><strong><code>md-theme-m3</code></strong>, optional: the reverse, the M3 baseline as shadcn
+variables, so shadcn components match the md-gb elements.</li>
+</ul>
+<p>The registry lists every item in
+<a href="https://material-web.dev/3.0/r/registry.json"><code>registry.json</code></a>.</p>
+<div class="heading h2">
+<h2 id="add-a-component" tabindex="-1">Add a component</h2>
+<a class="anchor" href="#add-a-component"><span class="offscreen">Link to “Add a component”</span> <span aria-hidden="true">#</span></a></div>
+<p>The plain URL form needs no setup:</p>
+
+<lit-island
+    import="/material-web/js/hydration-entrypoints/copy-code-button.js"
+    on:interaction="focusin,pointerenter,touchstart">
+  <copy-code-button><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      position: relative;
+      --_border-radius: calc(var(--catalog-code-block-border-radius) / 4);
+    }
+
+    md-icon-button {
+      color: red;
+      position: absolute;
+      inset: var(
+        --catalog-copy-code-button-inset,
+        var(--_border-radius) var(--_border-radius) auto auto
+      );
+      --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface);
+      --md-sys-color-primary: var(--md-sys-color-on-surface);
+    }
+  </style><!--lit-part QD79OaZjHPk=-->
+      <slot></slot>
+      <!--lit-node 1--><md-icon-button
+        
+        
+        
+        
+        
+        
+         toggle title="Copy code" aria-label="Copy code" aria-label-selected="Copy successful" value defer-hydration><template shadowroot="open" shadowrootmode="open" shadowrootdelegatesfocus><style>:host{display:inline-flex;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);height:var(--_container-height);width:var(--_container-width);justify-content:center}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_container-height))/2) max(0px,(48px - var(--_container-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_container-shape-start-start);--md-focus-ring-shape-start-end: var(--_container-shape-start-end);--md-focus-ring-shape-end-end: var(--_container-shape-end-end);--md-focus-ring-shape-end-start: var(--_container-shape-end-start)}:host(:is([disabled],[soft-disabled])){pointer-events:none}.icon-button{place-items:center;background:none;border:none;box-sizing:border-box;cursor:pointer;display:flex;place-content:center;outline:none;padding:0;position:relative;text-decoration:none;user-select:none;z-index:0;flex:1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.icon ::slotted(*){font-size:var(--_icon-size);height:var(--_icon-size);width:var(--_icon-size);font-weight:inherit}md-ripple{z-index:-1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.flip-icon .icon{transform:scaleX(-1)}.icon{display:inline-flex}.link{display:grid;height:100%;outline:none;place-items:center;position:absolute;width:100%}.touch{position:absolute;height:max(48px,100%);width:max(48px,100%)}:host([touch-target=none]) .touch{display:none}@media(forced-colors: active){:host(:is([disabled],[soft-disabled])){--_disabled-icon-color: GrayText;--_disabled-icon-opacity: 1}}
+:host{--_disabled-icon-color: var(--md-icon-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));--_disabled-icon-opacity: var(--md-icon-button-disabled-icon-opacity, 0.38);--_icon-size: var(--md-icon-button-icon-size, 24px);--_selected-focus-icon-color: var(--md-icon-button-selected-focus-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-icon-color: var(--md-icon-button-selected-hover-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-color: var(--md-icon-button-selected-hover-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-opacity: var(--md-icon-button-selected-hover-state-layer-opacity, 0.08);--_selected-icon-color: var(--md-icon-button-selected-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-icon-color: var(--md-icon-button-selected-pressed-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-color: var(--md-icon-button-selected-pressed-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-opacity: var(--md-icon-button-selected-pressed-state-layer-opacity, 0.12);--_state-layer-height: var(--md-icon-button-state-layer-height, 40px);--_state-layer-shape: var(--md-icon-button-state-layer-shape, var(--md-sys-shape-corner-full, 9999px));--_state-layer-width: var(--md-icon-button-state-layer-width, 40px);--_focus-icon-color: var(--md-icon-button-focus-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-icon-color: var(--md-icon-button-hover-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-color: var(--md-icon-button-hover-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-opacity: var(--md-icon-button-hover-state-layer-opacity, 0.08);--_icon-color: var(--md-icon-button-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-icon-color: var(--md-icon-button-pressed-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-color: var(--md-icon-button-pressed-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);--_container-shape-start-start: 0;--_container-shape-start-end: 0;--_container-shape-end-end: 0;--_container-shape-end-start: 0;--_container-height: 0;--_container-width: 0;height:var(--_state-layer-height);width:var(--_state-layer-width)}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_state-layer-height))/2) max(0px,(48px - var(--_state-layer-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_state-layer-shape);--md-focus-ring-shape-start-end: var(--_state-layer-shape);--md-focus-ring-shape-end-end: var(--_state-layer-shape);--md-focus-ring-shape-end-start: var(--_state-layer-shape)}.standard{background-color:rgba(0,0,0,0);color:var(--_icon-color);--md-ripple-hover-color: var(--_hover-state-layer-color);--md-ripple-hover-opacity: var(--_hover-state-layer-opacity);--md-ripple-pressed-color: var(--_pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity)}.standard:hover{color:var(--_hover-icon-color)}.standard:focus{color:var(--_focus-icon-color)}.standard:active{color:var(--_pressed-icon-color)}.standard:is(:disabled,[aria-disabled=true]){color:var(--_disabled-icon-color)}md-ripple{border-radius:var(--_state-layer-shape)}.standard:is(:disabled,[aria-disabled=true]){opacity:var(--_disabled-icon-opacity)}.selected:not(:disabled,[aria-disabled=true]){color:var(--_selected-icon-color)}.selected:not(:disabled,[aria-disabled=true]):hover{color:var(--_selected-hover-icon-color)}.selected:not(:disabled,[aria-disabled=true]):focus{color:var(--_selected-focus-icon-color)}.selected:not(:disabled,[aria-disabled=true]):active{color:var(--_selected-pressed-icon-color)}.selected{--md-ripple-hover-color: var(--_selected-hover-state-layer-color);--md-ripple-hover-opacity: var(--_selected-hover-state-layer-opacity);--md-ripple-pressed-color: var(--_selected-pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_selected-pressed-state-layer-opacity)}
+</style><!--lit-part 1EKHqiDp/II=--><!--lit-node 0--><button
+        class="icon-button  standard "
+        id="button"
+        
+        
+        
+        aria-pressed="false"
+        
+        >
+        <!--lit-part 6m96Vvo80oc=--><!--lit-node 0--><md-focus-ring
+      
+       part="focus-ring" for="button" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{animation-delay:0s,calc(var(--md-focus-ring-duration, 600ms)*.25);animation-duration:calc(var(--md-focus-ring-duration, 600ms)*.25),calc(var(--md-focus-ring-duration, 600ms)*.75);animation-timing-function:cubic-bezier(0.2, 0, 0, 1);box-sizing:border-box;color:var(--md-focus-ring-color, var(--md-sys-color-secondary, #625b71));display:none;pointer-events:none;position:absolute}:host([visible]){display:flex}:host(:not([inward])){animation-name:outward-grow,outward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));inset:calc(-1*var(--md-focus-ring-outward-offset, 2px));outline:var(--md-focus-ring-width, 3px) solid currentColor}:host([inward]){animation-name:inward-grow,inward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border:var(--md-focus-ring-width, 3px) solid currentColor;inset:var(--md-focus-ring-inward-offset, 0px)}@keyframes outward-grow{from{outline-width:0}to{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes outward-shrink{from{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-grow{from{border-width:0}to{border-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-shrink{from{border-width:var(--md-focus-ring-active-width, 8px)}}@media(prefers-reduced-motion){:host{animation:none}}
+</style><!--lit-part--><!--/lit-part--></template></md-focus-ring><!--/lit-part-->
+        <!--lit-part bhYDOHX6jZM=--><!--lit-node 0--><md-ripple
+      
+       defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{display:flex;margin:auto;pointer-events:none}:host([disabled]){display:none}@media(forced-colors: active){:host{display:none}}:host,.surface{border-radius:inherit;position:absolute;inset:0;overflow:hidden}.surface{-webkit-tap-highlight-color:rgba(0,0,0,0)}.surface::before,.surface::after{content:"";opacity:0;position:absolute}.surface::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));inset:0;transition:opacity 15ms linear,background-color 15ms linear}.surface::after{background:radial-gradient(closest-side, var(--md-ripple-pressed-color, var(--md-sys-color-on-surface, #1d1b20)) max(100% - 70px, 65%), transparent 100%);transform-origin:center center;transition:opacity 375ms linear}.hovered::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));opacity:var(--md-ripple-hover-opacity, 0.08)}.pressed::after{opacity:var(--md-ripple-pressed-opacity, 0.12);transition-duration:105ms}
+</style><!--lit-part +6XefrKkp+4=--><!--lit-node 0--><div class="surface   "></div><!--/lit-part--></template></md-ripple><!--/lit-part-->
+        <!--lit-part Inteaxr+EBE=--><span class="icon"><slot></slot></span><!--/lit-part-->
+        <!--lit-part--><!--/lit-part-->
+        <!--lit-part qvRyIvO9Hnk=--><span class="touch"></span><!--/lit-part-->
+  </button><!--/lit-part--></template>
+        <!--lit-node 2--><md-icon defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>content_copy</md-icon>
+        <!--lit-node 3--><md-icon  slot="selected" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>check</md-icon>
+      </md-icon-button>
+    <!--/lit-part--></template>
+    <pre class="language-sh"><code class="language-sh">npx shadcn@latest <span class="token function">add</span> https://material-web.dev/3.0/r/md-button.json</code></pre>
+
+  </copy-code-button>
+</lit-island>
+<p>To use the short form, add the registry to <code>components.json</code> once. The keys of
+<code>registries</code> start with <code>@</code>, and <code>{name}</code> is the item:</p>
+
+<lit-island
+    import="/material-web/js/hydration-entrypoints/copy-code-button.js"
+    on:interaction="focusin,pointerenter,touchstart">
+  <copy-code-button><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      position: relative;
+      --_border-radius: calc(var(--catalog-code-block-border-radius) / 4);
+    }
+
+    md-icon-button {
+      color: red;
+      position: absolute;
+      inset: var(
+        --catalog-copy-code-button-inset,
+        var(--_border-radius) var(--_border-radius) auto auto
+      );
+      --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface);
+      --md-sys-color-primary: var(--md-sys-color-on-surface);
+    }
+  </style><!--lit-part QD79OaZjHPk=-->
+      <slot></slot>
+      <!--lit-node 1--><md-icon-button
+        
+        
+        
+        
+        
+        
+         toggle title="Copy code" aria-label="Copy code" aria-label-selected="Copy successful" value defer-hydration><template shadowroot="open" shadowrootmode="open" shadowrootdelegatesfocus><style>:host{display:inline-flex;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);height:var(--_container-height);width:var(--_container-width);justify-content:center}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_container-height))/2) max(0px,(48px - var(--_container-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_container-shape-start-start);--md-focus-ring-shape-start-end: var(--_container-shape-start-end);--md-focus-ring-shape-end-end: var(--_container-shape-end-end);--md-focus-ring-shape-end-start: var(--_container-shape-end-start)}:host(:is([disabled],[soft-disabled])){pointer-events:none}.icon-button{place-items:center;background:none;border:none;box-sizing:border-box;cursor:pointer;display:flex;place-content:center;outline:none;padding:0;position:relative;text-decoration:none;user-select:none;z-index:0;flex:1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.icon ::slotted(*){font-size:var(--_icon-size);height:var(--_icon-size);width:var(--_icon-size);font-weight:inherit}md-ripple{z-index:-1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.flip-icon .icon{transform:scaleX(-1)}.icon{display:inline-flex}.link{display:grid;height:100%;outline:none;place-items:center;position:absolute;width:100%}.touch{position:absolute;height:max(48px,100%);width:max(48px,100%)}:host([touch-target=none]) .touch{display:none}@media(forced-colors: active){:host(:is([disabled],[soft-disabled])){--_disabled-icon-color: GrayText;--_disabled-icon-opacity: 1}}
+:host{--_disabled-icon-color: var(--md-icon-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));--_disabled-icon-opacity: var(--md-icon-button-disabled-icon-opacity, 0.38);--_icon-size: var(--md-icon-button-icon-size, 24px);--_selected-focus-icon-color: var(--md-icon-button-selected-focus-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-icon-color: var(--md-icon-button-selected-hover-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-color: var(--md-icon-button-selected-hover-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-opacity: var(--md-icon-button-selected-hover-state-layer-opacity, 0.08);--_selected-icon-color: var(--md-icon-button-selected-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-icon-color: var(--md-icon-button-selected-pressed-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-color: var(--md-icon-button-selected-pressed-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-opacity: var(--md-icon-button-selected-pressed-state-layer-opacity, 0.12);--_state-layer-height: var(--md-icon-button-state-layer-height, 40px);--_state-layer-shape: var(--md-icon-button-state-layer-shape, var(--md-sys-shape-corner-full, 9999px));--_state-layer-width: var(--md-icon-button-state-layer-width, 40px);--_focus-icon-color: var(--md-icon-button-focus-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-icon-color: var(--md-icon-button-hover-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-color: var(--md-icon-button-hover-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-opacity: var(--md-icon-button-hover-state-layer-opacity, 0.08);--_icon-color: var(--md-icon-button-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-icon-color: var(--md-icon-button-pressed-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-color: var(--md-icon-button-pressed-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);--_container-shape-start-start: 0;--_container-shape-start-end: 0;--_container-shape-end-end: 0;--_container-shape-end-start: 0;--_container-height: 0;--_container-width: 0;height:var(--_state-layer-height);width:var(--_state-layer-width)}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_state-layer-height))/2) max(0px,(48px - var(--_state-layer-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_state-layer-shape);--md-focus-ring-shape-start-end: var(--_state-layer-shape);--md-focus-ring-shape-end-end: var(--_state-layer-shape);--md-focus-ring-shape-end-start: var(--_state-layer-shape)}.standard{background-color:rgba(0,0,0,0);color:var(--_icon-color);--md-ripple-hover-color: var(--_hover-state-layer-color);--md-ripple-hover-opacity: var(--_hover-state-layer-opacity);--md-ripple-pressed-color: var(--_pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity)}.standard:hover{color:var(--_hover-icon-color)}.standard:focus{color:var(--_focus-icon-color)}.standard:active{color:var(--_pressed-icon-color)}.standard:is(:disabled,[aria-disabled=true]){color:var(--_disabled-icon-color)}md-ripple{border-radius:var(--_state-layer-shape)}.standard:is(:disabled,[aria-disabled=true]){opacity:var(--_disabled-icon-opacity)}.selected:not(:disabled,[aria-disabled=true]){color:var(--_selected-icon-color)}.selected:not(:disabled,[aria-disabled=true]):hover{color:var(--_selected-hover-icon-color)}.selected:not(:disabled,[aria-disabled=true]):focus{color:var(--_selected-focus-icon-color)}.selected:not(:disabled,[aria-disabled=true]):active{color:var(--_selected-pressed-icon-color)}.selected{--md-ripple-hover-color: var(--_selected-hover-state-layer-color);--md-ripple-hover-opacity: var(--_selected-hover-state-layer-opacity);--md-ripple-pressed-color: var(--_selected-pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_selected-pressed-state-layer-opacity)}
+</style><!--lit-part 1EKHqiDp/II=--><!--lit-node 0--><button
+        class="icon-button  standard "
+        id="button"
+        
+        
+        
+        aria-pressed="false"
+        
+        >
+        <!--lit-part 6m96Vvo80oc=--><!--lit-node 0--><md-focus-ring
+      
+       part="focus-ring" for="button" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{animation-delay:0s,calc(var(--md-focus-ring-duration, 600ms)*.25);animation-duration:calc(var(--md-focus-ring-duration, 600ms)*.25),calc(var(--md-focus-ring-duration, 600ms)*.75);animation-timing-function:cubic-bezier(0.2, 0, 0, 1);box-sizing:border-box;color:var(--md-focus-ring-color, var(--md-sys-color-secondary, #625b71));display:none;pointer-events:none;position:absolute}:host([visible]){display:flex}:host(:not([inward])){animation-name:outward-grow,outward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));inset:calc(-1*var(--md-focus-ring-outward-offset, 2px));outline:var(--md-focus-ring-width, 3px) solid currentColor}:host([inward]){animation-name:inward-grow,inward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border:var(--md-focus-ring-width, 3px) solid currentColor;inset:var(--md-focus-ring-inward-offset, 0px)}@keyframes outward-grow{from{outline-width:0}to{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes outward-shrink{from{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-grow{from{border-width:0}to{border-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-shrink{from{border-width:var(--md-focus-ring-active-width, 8px)}}@media(prefers-reduced-motion){:host{animation:none}}
+</style><!--lit-part--><!--/lit-part--></template></md-focus-ring><!--/lit-part-->
+        <!--lit-part bhYDOHX6jZM=--><!--lit-node 0--><md-ripple
+      
+       defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{display:flex;margin:auto;pointer-events:none}:host([disabled]){display:none}@media(forced-colors: active){:host{display:none}}:host,.surface{border-radius:inherit;position:absolute;inset:0;overflow:hidden}.surface{-webkit-tap-highlight-color:rgba(0,0,0,0)}.surface::before,.surface::after{content:"";opacity:0;position:absolute}.surface::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));inset:0;transition:opacity 15ms linear,background-color 15ms linear}.surface::after{background:radial-gradient(closest-side, var(--md-ripple-pressed-color, var(--md-sys-color-on-surface, #1d1b20)) max(100% - 70px, 65%), transparent 100%);transform-origin:center center;transition:opacity 375ms linear}.hovered::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));opacity:var(--md-ripple-hover-opacity, 0.08)}.pressed::after{opacity:var(--md-ripple-pressed-opacity, 0.12);transition-duration:105ms}
+</style><!--lit-part +6XefrKkp+4=--><!--lit-node 0--><div class="surface   "></div><!--/lit-part--></template></md-ripple><!--/lit-part-->
+        <!--lit-part Inteaxr+EBE=--><span class="icon"><slot></slot></span><!--/lit-part-->
+        <!--lit-part--><!--/lit-part-->
+        <!--lit-part qvRyIvO9Hnk=--><span class="touch"></span><!--/lit-part-->
+  </button><!--/lit-part--></template>
+        <!--lit-node 2--><md-icon defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>content_copy</md-icon>
+        <!--lit-node 3--><md-icon  slot="selected" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>check</md-icon>
+      </md-icon-button>
+    <!--/lit-part--></template>
+    <pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"registries"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"@material-web"</span><span class="token operator">:</span> <span class="token string">"https://material-web.dev/3.0/r/{name}.json"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+
+  </copy-code-button>
+</lit-island>
+
+<lit-island
+    import="/material-web/js/hydration-entrypoints/copy-code-button.js"
+    on:interaction="focusin,pointerenter,touchstart">
+  <copy-code-button><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      position: relative;
+      --_border-radius: calc(var(--catalog-code-block-border-radius) / 4);
+    }
+
+    md-icon-button {
+      color: red;
+      position: absolute;
+      inset: var(
+        --catalog-copy-code-button-inset,
+        var(--_border-radius) var(--_border-radius) auto auto
+      );
+      --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface);
+      --md-sys-color-primary: var(--md-sys-color-on-surface);
+    }
+  </style><!--lit-part QD79OaZjHPk=-->
+      <slot></slot>
+      <!--lit-node 1--><md-icon-button
+        
+        
+        
+        
+        
+        
+         toggle title="Copy code" aria-label="Copy code" aria-label-selected="Copy successful" value defer-hydration><template shadowroot="open" shadowrootmode="open" shadowrootdelegatesfocus><style>:host{display:inline-flex;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);height:var(--_container-height);width:var(--_container-width);justify-content:center}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_container-height))/2) max(0px,(48px - var(--_container-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_container-shape-start-start);--md-focus-ring-shape-start-end: var(--_container-shape-start-end);--md-focus-ring-shape-end-end: var(--_container-shape-end-end);--md-focus-ring-shape-end-start: var(--_container-shape-end-start)}:host(:is([disabled],[soft-disabled])){pointer-events:none}.icon-button{place-items:center;background:none;border:none;box-sizing:border-box;cursor:pointer;display:flex;place-content:center;outline:none;padding:0;position:relative;text-decoration:none;user-select:none;z-index:0;flex:1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.icon ::slotted(*){font-size:var(--_icon-size);height:var(--_icon-size);width:var(--_icon-size);font-weight:inherit}md-ripple{z-index:-1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.flip-icon .icon{transform:scaleX(-1)}.icon{display:inline-flex}.link{display:grid;height:100%;outline:none;place-items:center;position:absolute;width:100%}.touch{position:absolute;height:max(48px,100%);width:max(48px,100%)}:host([touch-target=none]) .touch{display:none}@media(forced-colors: active){:host(:is([disabled],[soft-disabled])){--_disabled-icon-color: GrayText;--_disabled-icon-opacity: 1}}
+:host{--_disabled-icon-color: var(--md-icon-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));--_disabled-icon-opacity: var(--md-icon-button-disabled-icon-opacity, 0.38);--_icon-size: var(--md-icon-button-icon-size, 24px);--_selected-focus-icon-color: var(--md-icon-button-selected-focus-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-icon-color: var(--md-icon-button-selected-hover-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-color: var(--md-icon-button-selected-hover-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-opacity: var(--md-icon-button-selected-hover-state-layer-opacity, 0.08);--_selected-icon-color: var(--md-icon-button-selected-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-icon-color: var(--md-icon-button-selected-pressed-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-color: var(--md-icon-button-selected-pressed-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-opacity: var(--md-icon-button-selected-pressed-state-layer-opacity, 0.12);--_state-layer-height: var(--md-icon-button-state-layer-height, 40px);--_state-layer-shape: var(--md-icon-button-state-layer-shape, var(--md-sys-shape-corner-full, 9999px));--_state-layer-width: var(--md-icon-button-state-layer-width, 40px);--_focus-icon-color: var(--md-icon-button-focus-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-icon-color: var(--md-icon-button-hover-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-color: var(--md-icon-button-hover-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-opacity: var(--md-icon-button-hover-state-layer-opacity, 0.08);--_icon-color: var(--md-icon-button-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-icon-color: var(--md-icon-button-pressed-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-color: var(--md-icon-button-pressed-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);--_container-shape-start-start: 0;--_container-shape-start-end: 0;--_container-shape-end-end: 0;--_container-shape-end-start: 0;--_container-height: 0;--_container-width: 0;height:var(--_state-layer-height);width:var(--_state-layer-width)}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_state-layer-height))/2) max(0px,(48px - var(--_state-layer-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_state-layer-shape);--md-focus-ring-shape-start-end: var(--_state-layer-shape);--md-focus-ring-shape-end-end: var(--_state-layer-shape);--md-focus-ring-shape-end-start: var(--_state-layer-shape)}.standard{background-color:rgba(0,0,0,0);color:var(--_icon-color);--md-ripple-hover-color: var(--_hover-state-layer-color);--md-ripple-hover-opacity: var(--_hover-state-layer-opacity);--md-ripple-pressed-color: var(--_pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity)}.standard:hover{color:var(--_hover-icon-color)}.standard:focus{color:var(--_focus-icon-color)}.standard:active{color:var(--_pressed-icon-color)}.standard:is(:disabled,[aria-disabled=true]){color:var(--_disabled-icon-color)}md-ripple{border-radius:var(--_state-layer-shape)}.standard:is(:disabled,[aria-disabled=true]){opacity:var(--_disabled-icon-opacity)}.selected:not(:disabled,[aria-disabled=true]){color:var(--_selected-icon-color)}.selected:not(:disabled,[aria-disabled=true]):hover{color:var(--_selected-hover-icon-color)}.selected:not(:disabled,[aria-disabled=true]):focus{color:var(--_selected-focus-icon-color)}.selected:not(:disabled,[aria-disabled=true]):active{color:var(--_selected-pressed-icon-color)}.selected{--md-ripple-hover-color: var(--_selected-hover-state-layer-color);--md-ripple-hover-opacity: var(--_selected-hover-state-layer-opacity);--md-ripple-pressed-color: var(--_selected-pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_selected-pressed-state-layer-opacity)}
+</style><!--lit-part 1EKHqiDp/II=--><!--lit-node 0--><button
+        class="icon-button  standard "
+        id="button"
+        
+        
+        
+        aria-pressed="false"
+        
+        >
+        <!--lit-part 6m96Vvo80oc=--><!--lit-node 0--><md-focus-ring
+      
+       part="focus-ring" for="button" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{animation-delay:0s,calc(var(--md-focus-ring-duration, 600ms)*.25);animation-duration:calc(var(--md-focus-ring-duration, 600ms)*.25),calc(var(--md-focus-ring-duration, 600ms)*.75);animation-timing-function:cubic-bezier(0.2, 0, 0, 1);box-sizing:border-box;color:var(--md-focus-ring-color, var(--md-sys-color-secondary, #625b71));display:none;pointer-events:none;position:absolute}:host([visible]){display:flex}:host(:not([inward])){animation-name:outward-grow,outward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));inset:calc(-1*var(--md-focus-ring-outward-offset, 2px));outline:var(--md-focus-ring-width, 3px) solid currentColor}:host([inward]){animation-name:inward-grow,inward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border:var(--md-focus-ring-width, 3px) solid currentColor;inset:var(--md-focus-ring-inward-offset, 0px)}@keyframes outward-grow{from{outline-width:0}to{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes outward-shrink{from{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-grow{from{border-width:0}to{border-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-shrink{from{border-width:var(--md-focus-ring-active-width, 8px)}}@media(prefers-reduced-motion){:host{animation:none}}
+</style><!--lit-part--><!--/lit-part--></template></md-focus-ring><!--/lit-part-->
+        <!--lit-part bhYDOHX6jZM=--><!--lit-node 0--><md-ripple
+      
+       defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{display:flex;margin:auto;pointer-events:none}:host([disabled]){display:none}@media(forced-colors: active){:host{display:none}}:host,.surface{border-radius:inherit;position:absolute;inset:0;overflow:hidden}.surface{-webkit-tap-highlight-color:rgba(0,0,0,0)}.surface::before,.surface::after{content:"";opacity:0;position:absolute}.surface::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));inset:0;transition:opacity 15ms linear,background-color 15ms linear}.surface::after{background:radial-gradient(closest-side, var(--md-ripple-pressed-color, var(--md-sys-color-on-surface, #1d1b20)) max(100% - 70px, 65%), transparent 100%);transform-origin:center center;transition:opacity 375ms linear}.hovered::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));opacity:var(--md-ripple-hover-opacity, 0.08)}.pressed::after{opacity:var(--md-ripple-pressed-opacity, 0.12);transition-duration:105ms}
+</style><!--lit-part +6XefrKkp+4=--><!--lit-node 0--><div class="surface   "></div><!--/lit-part--></template></md-ripple><!--/lit-part-->
+        <!--lit-part Inteaxr+EBE=--><span class="icon"><slot></slot></span><!--/lit-part-->
+        <!--lit-part--><!--/lit-part-->
+        <!--lit-part qvRyIvO9Hnk=--><span class="touch"></span><!--/lit-part-->
+  </button><!--/lit-part--></template>
+        <!--lit-node 2--><md-icon defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>content_copy</md-icon>
+        <!--lit-node 3--><md-icon  slot="selected" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>check</md-icon>
+      </md-icon-button>
+    <!--/lit-part--></template>
+    <pre class="language-sh"><code class="language-sh">npx shadcn@latest <span class="token function">add</span> @material-web/md-button @material-web/md-menu</code></pre>
+
+  </copy-code-button>
+</lit-island>
+<p>The command installs <code>@material/web</code> and <code>@lit/react</code> with your package
+manager. Each component page has this command after its first example.</p>
+<p>Use the component like any other. The JSON and TSX blocks on this page are
+plain blocks and not live demos: the TSX needs React, which this page does not
+load, and the JSON is configuration with no visible effect.</p>
+
+<lit-island
+    import="/material-web/js/hydration-entrypoints/copy-code-button.js"
+    on:interaction="focusin,pointerenter,touchstart">
+  <copy-code-button><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      position: relative;
+      --_border-radius: calc(var(--catalog-code-block-border-radius) / 4);
+    }
+
+    md-icon-button {
+      color: red;
+      position: absolute;
+      inset: var(
+        --catalog-copy-code-button-inset,
+        var(--_border-radius) var(--_border-radius) auto auto
+      );
+      --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface);
+      --md-sys-color-primary: var(--md-sys-color-on-surface);
+    }
+  </style><!--lit-part QD79OaZjHPk=-->
+      <slot></slot>
+      <!--lit-node 1--><md-icon-button
+        
+        
+        
+        
+        
+        
+         toggle title="Copy code" aria-label="Copy code" aria-label-selected="Copy successful" value defer-hydration><template shadowroot="open" shadowrootmode="open" shadowrootdelegatesfocus><style>:host{display:inline-flex;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);height:var(--_container-height);width:var(--_container-width);justify-content:center}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_container-height))/2) max(0px,(48px - var(--_container-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_container-shape-start-start);--md-focus-ring-shape-start-end: var(--_container-shape-start-end);--md-focus-ring-shape-end-end: var(--_container-shape-end-end);--md-focus-ring-shape-end-start: var(--_container-shape-end-start)}:host(:is([disabled],[soft-disabled])){pointer-events:none}.icon-button{place-items:center;background:none;border:none;box-sizing:border-box;cursor:pointer;display:flex;place-content:center;outline:none;padding:0;position:relative;text-decoration:none;user-select:none;z-index:0;flex:1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.icon ::slotted(*){font-size:var(--_icon-size);height:var(--_icon-size);width:var(--_icon-size);font-weight:inherit}md-ripple{z-index:-1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.flip-icon .icon{transform:scaleX(-1)}.icon{display:inline-flex}.link{display:grid;height:100%;outline:none;place-items:center;position:absolute;width:100%}.touch{position:absolute;height:max(48px,100%);width:max(48px,100%)}:host([touch-target=none]) .touch{display:none}@media(forced-colors: active){:host(:is([disabled],[soft-disabled])){--_disabled-icon-color: GrayText;--_disabled-icon-opacity: 1}}
+:host{--_disabled-icon-color: var(--md-icon-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));--_disabled-icon-opacity: var(--md-icon-button-disabled-icon-opacity, 0.38);--_icon-size: var(--md-icon-button-icon-size, 24px);--_selected-focus-icon-color: var(--md-icon-button-selected-focus-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-icon-color: var(--md-icon-button-selected-hover-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-color: var(--md-icon-button-selected-hover-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-opacity: var(--md-icon-button-selected-hover-state-layer-opacity, 0.08);--_selected-icon-color: var(--md-icon-button-selected-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-icon-color: var(--md-icon-button-selected-pressed-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-color: var(--md-icon-button-selected-pressed-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-opacity: var(--md-icon-button-selected-pressed-state-layer-opacity, 0.12);--_state-layer-height: var(--md-icon-button-state-layer-height, 40px);--_state-layer-shape: var(--md-icon-button-state-layer-shape, var(--md-sys-shape-corner-full, 9999px));--_state-layer-width: var(--md-icon-button-state-layer-width, 40px);--_focus-icon-color: var(--md-icon-button-focus-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-icon-color: var(--md-icon-button-hover-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-color: var(--md-icon-button-hover-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-opacity: var(--md-icon-button-hover-state-layer-opacity, 0.08);--_icon-color: var(--md-icon-button-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-icon-color: var(--md-icon-button-pressed-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-color: var(--md-icon-button-pressed-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);--_container-shape-start-start: 0;--_container-shape-start-end: 0;--_container-shape-end-end: 0;--_container-shape-end-start: 0;--_container-height: 0;--_container-width: 0;height:var(--_state-layer-height);width:var(--_state-layer-width)}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_state-layer-height))/2) max(0px,(48px - var(--_state-layer-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_state-layer-shape);--md-focus-ring-shape-start-end: var(--_state-layer-shape);--md-focus-ring-shape-end-end: var(--_state-layer-shape);--md-focus-ring-shape-end-start: var(--_state-layer-shape)}.standard{background-color:rgba(0,0,0,0);color:var(--_icon-color);--md-ripple-hover-color: var(--_hover-state-layer-color);--md-ripple-hover-opacity: var(--_hover-state-layer-opacity);--md-ripple-pressed-color: var(--_pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity)}.standard:hover{color:var(--_hover-icon-color)}.standard:focus{color:var(--_focus-icon-color)}.standard:active{color:var(--_pressed-icon-color)}.standard:is(:disabled,[aria-disabled=true]){color:var(--_disabled-icon-color)}md-ripple{border-radius:var(--_state-layer-shape)}.standard:is(:disabled,[aria-disabled=true]){opacity:var(--_disabled-icon-opacity)}.selected:not(:disabled,[aria-disabled=true]){color:var(--_selected-icon-color)}.selected:not(:disabled,[aria-disabled=true]):hover{color:var(--_selected-hover-icon-color)}.selected:not(:disabled,[aria-disabled=true]):focus{color:var(--_selected-focus-icon-color)}.selected:not(:disabled,[aria-disabled=true]):active{color:var(--_selected-pressed-icon-color)}.selected{--md-ripple-hover-color: var(--_selected-hover-state-layer-color);--md-ripple-hover-opacity: var(--_selected-hover-state-layer-opacity);--md-ripple-pressed-color: var(--_selected-pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_selected-pressed-state-layer-opacity)}
+</style><!--lit-part 1EKHqiDp/II=--><!--lit-node 0--><button
+        class="icon-button  standard "
+        id="button"
+        
+        
+        
+        aria-pressed="false"
+        
+        >
+        <!--lit-part 6m96Vvo80oc=--><!--lit-node 0--><md-focus-ring
+      
+       part="focus-ring" for="button" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{animation-delay:0s,calc(var(--md-focus-ring-duration, 600ms)*.25);animation-duration:calc(var(--md-focus-ring-duration, 600ms)*.25),calc(var(--md-focus-ring-duration, 600ms)*.75);animation-timing-function:cubic-bezier(0.2, 0, 0, 1);box-sizing:border-box;color:var(--md-focus-ring-color, var(--md-sys-color-secondary, #625b71));display:none;pointer-events:none;position:absolute}:host([visible]){display:flex}:host(:not([inward])){animation-name:outward-grow,outward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));inset:calc(-1*var(--md-focus-ring-outward-offset, 2px));outline:var(--md-focus-ring-width, 3px) solid currentColor}:host([inward]){animation-name:inward-grow,inward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border:var(--md-focus-ring-width, 3px) solid currentColor;inset:var(--md-focus-ring-inward-offset, 0px)}@keyframes outward-grow{from{outline-width:0}to{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes outward-shrink{from{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-grow{from{border-width:0}to{border-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-shrink{from{border-width:var(--md-focus-ring-active-width, 8px)}}@media(prefers-reduced-motion){:host{animation:none}}
+</style><!--lit-part--><!--/lit-part--></template></md-focus-ring><!--/lit-part-->
+        <!--lit-part bhYDOHX6jZM=--><!--lit-node 0--><md-ripple
+      
+       defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{display:flex;margin:auto;pointer-events:none}:host([disabled]){display:none}@media(forced-colors: active){:host{display:none}}:host,.surface{border-radius:inherit;position:absolute;inset:0;overflow:hidden}.surface{-webkit-tap-highlight-color:rgba(0,0,0,0)}.surface::before,.surface::after{content:"";opacity:0;position:absolute}.surface::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));inset:0;transition:opacity 15ms linear,background-color 15ms linear}.surface::after{background:radial-gradient(closest-side, var(--md-ripple-pressed-color, var(--md-sys-color-on-surface, #1d1b20)) max(100% - 70px, 65%), transparent 100%);transform-origin:center center;transition:opacity 375ms linear}.hovered::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));opacity:var(--md-ripple-hover-opacity, 0.08)}.pressed::after{opacity:var(--md-ripple-pressed-opacity, 0.12);transition-duration:105ms}
+</style><!--lit-part +6XefrKkp+4=--><!--lit-node 0--><div class="surface   "></div><!--/lit-part--></template></md-ripple><!--/lit-part-->
+        <!--lit-part Inteaxr+EBE=--><span class="icon"><slot></slot></span><!--/lit-part-->
+        <!--lit-part--><!--/lit-part-->
+        <!--lit-part qvRyIvO9Hnk=--><span class="touch"></span><!--/lit-part-->
+  </button><!--/lit-part--></template>
+        <!--lit-node 2--><md-icon defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>content_copy</md-icon>
+        <!--lit-node 3--><md-icon  slot="selected" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>check</md-icon>
+      </md-icon-button>
+    <!--/lit-part--></template>
+    <pre class="language-tsx"><code class="language-tsx"><span class="token keyword">import</span> <span class="token punctuation">{</span>MdButton<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@/components/ui/md-button'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span>MdMenu<span class="token punctuation">,</span> MdMenuItem<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@/components/ui/md-menu'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">Actions</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span></span><span class="token punctuation">></span></span><span class="token plain-text">
+      </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">MdButton</span></span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">popoverTarget</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>file-menu<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token plain-text">
+        File
+      </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token class-name">MdButton</span></span><span class="token punctuation">></span></span><span class="token plain-text">
+      </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">MdMenu</span></span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>file-menu<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token plain-text">
+        </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">MdMenuItem</span></span> <span class="token attr-name">onChange</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span>event<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>type<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token punctuation">></span></span><span class="token plain-text">Open</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token class-name">MdMenuItem</span></span><span class="token punctuation">></span></span><span class="token plain-text">
+      </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token class-name">MdMenu</span></span><span class="token punctuation">></span></span><span class="token plain-text">
+    </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span></span><span class="token punctuation">></span></span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+
+  </copy-code-button>
+</lit-island>
+<div class="heading h2">
+<h2 id="the-theme-bridge" tabindex="-1">The theme bridge</h2>
+<a class="anchor" href="#the-theme-bridge"><span class="offscreen">Link to “The theme bridge”</span> <span aria-hidden="true">#</span></a></div>
+<p><code>md-theme</code> adds <code>@import &quot;@material/web/labs/gb/styles/m3.css&quot;</code> to your global
+CSS, then declares the <code>--md-sys-*</code> variables in <code>:root</code> and in <code>.dark</code> from
+your shadcn variables. The M3 styles are in a cascade layer and the bridge is
+not, so the bridge wins regardless of the order of the imports. Change your
+shadcn theme, or toggle <code>.dark</code>, and the elements follow. It also sets
+<code>color-scheme</code> for <code>:root</code> and <code>.dark</code>.</p>
+<p>Containers stay with their <code>on-</code> colors: each pair maps to a pair that shadcn
+already keeps readable together. The *-fixed roles, <code>scrim</code> and <code>shadow</code> keep
+the M3 baseline.</p>
+<table>
+<thead>
+<tr>
+<th>M3 role</th>
+<th>shadcn value</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--md-sys-color-primary</code></td>
+<td><code>var(--primary)</code></td>
+<td>Same role.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-primary</code></td>
+<td><code>var(--primary-foreground)</code></td>
+<td>Same pair.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-primary-container</code></td>
+<td><code>var(--accent)</code></td>
+<td>shadcn has no primary container; accent is its tinted fill.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-primary-container</code></td>
+<td><code>var(--accent-foreground)</code></td>
+<td>Pairs with accent.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-secondary</code></td>
+<td><code>var(--muted-foreground)</code></td>
+<td>The mid-tone solid; text on it is --background.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-secondary</code></td>
+<td><code>var(--background)</code></td>
+<td>Pairs with the solid above.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-secondary-container</code></td>
+<td><code>var(--secondary)</code></td>
+<td>shadcn secondary is a tonal fill, like an M3 container.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-secondary-container</code></td>
+<td><code>var(--secondary-foreground)</code></td>
+<td>Pairs with secondary.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-tertiary</code></td>
+<td><code>var(--primary)</code></td>
+<td>shadcn has no tertiary; it follows primary.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-tertiary</code></td>
+<td><code>var(--primary-foreground)</code></td>
+<td>Pairs with primary.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-tertiary-container</code></td>
+<td><code>var(--accent)</code></td>
+<td>Follows the primary container.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-tertiary-container</code></td>
+<td><code>var(--accent-foreground)</code></td>
+<td>Pairs with accent.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-error</code></td>
+<td><code>var(--destructive)</code></td>
+<td>Same role.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-error</code></td>
+<td><code>var(--destructive-foreground, oklch(1 0 0))</code></td>
+<td>shadcn v4 has no destructive-foreground; white.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-error-container</code></td>
+<td><code>color-mix(in oklab, var(--destructive) 14%, var(--background))</code></td>
+<td>A tint of destructive on the background.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-error-container</code></td>
+<td><code>var(--destructive)</code></td>
+<td>Destructive on its tint.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-background</code></td>
+<td><code>var(--background)</code></td>
+<td>Same role.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-background</code></td>
+<td><code>var(--foreground)</code></td>
+<td>Same pair.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface</code></td>
+<td><code>var(--background)</code></td>
+<td>The page surface.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-surface</code></td>
+<td><code>var(--foreground)</code></td>
+<td>Same pair.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-variant</code></td>
+<td><code>var(--muted)</code></td>
+<td>Muted fill.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-on-surface-variant</code></td>
+<td><code>var(--muted-foreground)</code></td>
+<td>Muted text.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-tint</code></td>
+<td><code>var(--primary)</code></td>
+<td>Same as primary.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-dim</code></td>
+<td><code>var(--muted)</code></td>
+<td>Muted fill.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-bright</code></td>
+<td><code>var(--background)</code></td>
+<td>The page surface.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-container-lowest</code></td>
+<td><code>var(--background)</code></td>
+<td>Lowest tone: the page.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-container-low</code></td>
+<td><code>var(--card)</code></td>
+<td>Cards.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-container</code></td>
+<td><code>var(--popover)</code></td>
+<td>Menus and popovers.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-container-high</code></td>
+<td><code>var(--muted)</code></td>
+<td>Muted fill.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-surface-container-highest</code></td>
+<td><code>var(--accent)</code></td>
+<td>Accent fill (the highest tone in both schemes).</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-outline</code></td>
+<td><code>var(--muted-foreground)</code></td>
+<td>M3 needs 3:1 against the surface; shadcn --border is too faint for field and button outlines.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-outline-variant</code></td>
+<td><code>var(--border)</code></td>
+<td>Dividers and decorative borders.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-inverse-surface</code></td>
+<td><code>var(--foreground)</code></td>
+<td>Inverse of the page.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-inverse-on-surface</code></td>
+<td><code>var(--background)</code></td>
+<td>Pairs with the inverse surface.</td>
+</tr>
+<tr>
+<td><code>--md-sys-color-inverse-primary</code></td>
+<td><code>var(--primary-foreground)</code></td>
+<td>Primary-side color that reads on the inverse surface.</td>
+</tr>
+</tbody>
+</table>
+<p>Corners follow <code>--radius</code> (the px values are the M3 ones at shadcn's default <code>0.625rem</code>). <code>--md-sys-shape-corner-value-*</code> get the same values.</p>
+<table>
+<thead>
+<tr>
+<th>M3 corner</th>
+<th>shadcn value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--md-sys-shape-corner-xs</code></td>
+<td><code>calc(var(--radius) * 0.4)</code></td>
+</tr>
+<tr>
+<td><code>--md-sys-shape-corner-sm</code></td>
+<td><code>calc(var(--radius) * 0.8)</code></td>
+</tr>
+<tr>
+<td><code>--md-sys-shape-corner-md</code></td>
+<td><code>calc(var(--radius) * 1.2)</code></td>
+</tr>
+<tr>
+<td><code>--md-sys-shape-corner-lg</code></td>
+<td><code>calc(var(--radius) * 1.6)</code></td>
+</tr>
+<tr>
+<td><code>--md-sys-shape-corner-lg-increased</code></td>
+<td><code>calc(var(--radius) * 2)</code></td>
+</tr>
+<tr>
+<td><code>--md-sys-shape-corner-xl</code></td>
+<td><code>calc(var(--radius) * 2.8)</code></td>
+</tr>
+<tr>
+<td><code>--md-sys-shape-corner-xl-increased</code></td>
+<td><code>calc(var(--radius) * 3.2)</code></td>
+</tr>
+<tr>
+<td><code>--md-sys-shape-corner-xxl</code></td>
+<td><code>calc(var(--radius) * 4.8)</code></td>
+</tr>
+</tbody>
+</table>
+<p>shadcn has no tertiary role, so it follows primary. <code>outline</code> is the muted
+foreground and not <code>--border</code>, because M3 needs 3:1 against the surface for the
+outline of a field or an outlined button; <code>--border</code> is the <code>outline-variant</code>
+(dividers).</p>
+<div class="heading h3">
+<h3 id="match-shadcn-to-the-m3-baseline" tabindex="-1">Match shadcn to the M3 baseline</h3>
+<a class="anchor" href="#match-shadcn-to-the-m3-baseline"><span class="offscreen">Link to “Match shadcn to the M3 baseline”</span> <span aria-hidden="true">#</span></a></div>
+<p><code>md-theme-m3</code> goes the other way. It writes the baseline colors of M3 (light
+and dark) into the shadcn variables:</p>
+
+<lit-island
+    import="/material-web/js/hydration-entrypoints/copy-code-button.js"
+    on:interaction="focusin,pointerenter,touchstart">
+  <copy-code-button><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      position: relative;
+      --_border-radius: calc(var(--catalog-code-block-border-radius) / 4);
+    }
+
+    md-icon-button {
+      color: red;
+      position: absolute;
+      inset: var(
+        --catalog-copy-code-button-inset,
+        var(--_border-radius) var(--_border-radius) auto auto
+      );
+      --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface);
+      --md-sys-color-primary: var(--md-sys-color-on-surface);
+    }
+  </style><!--lit-part QD79OaZjHPk=-->
+      <slot></slot>
+      <!--lit-node 1--><md-icon-button
+        
+        
+        
+        
+        
+        
+         toggle title="Copy code" aria-label="Copy code" aria-label-selected="Copy successful" value defer-hydration><template shadowroot="open" shadowrootmode="open" shadowrootdelegatesfocus><style>:host{display:inline-flex;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);height:var(--_container-height);width:var(--_container-width);justify-content:center}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_container-height))/2) max(0px,(48px - var(--_container-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_container-shape-start-start);--md-focus-ring-shape-start-end: var(--_container-shape-start-end);--md-focus-ring-shape-end-end: var(--_container-shape-end-end);--md-focus-ring-shape-end-start: var(--_container-shape-end-start)}:host(:is([disabled],[soft-disabled])){pointer-events:none}.icon-button{place-items:center;background:none;border:none;box-sizing:border-box;cursor:pointer;display:flex;place-content:center;outline:none;padding:0;position:relative;text-decoration:none;user-select:none;z-index:0;flex:1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.icon ::slotted(*){font-size:var(--_icon-size);height:var(--_icon-size);width:var(--_icon-size);font-weight:inherit}md-ripple{z-index:-1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.flip-icon .icon{transform:scaleX(-1)}.icon{display:inline-flex}.link{display:grid;height:100%;outline:none;place-items:center;position:absolute;width:100%}.touch{position:absolute;height:max(48px,100%);width:max(48px,100%)}:host([touch-target=none]) .touch{display:none}@media(forced-colors: active){:host(:is([disabled],[soft-disabled])){--_disabled-icon-color: GrayText;--_disabled-icon-opacity: 1}}
+:host{--_disabled-icon-color: var(--md-icon-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));--_disabled-icon-opacity: var(--md-icon-button-disabled-icon-opacity, 0.38);--_icon-size: var(--md-icon-button-icon-size, 24px);--_selected-focus-icon-color: var(--md-icon-button-selected-focus-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-icon-color: var(--md-icon-button-selected-hover-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-color: var(--md-icon-button-selected-hover-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-opacity: var(--md-icon-button-selected-hover-state-layer-opacity, 0.08);--_selected-icon-color: var(--md-icon-button-selected-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-icon-color: var(--md-icon-button-selected-pressed-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-color: var(--md-icon-button-selected-pressed-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-opacity: var(--md-icon-button-selected-pressed-state-layer-opacity, 0.12);--_state-layer-height: var(--md-icon-button-state-layer-height, 40px);--_state-layer-shape: var(--md-icon-button-state-layer-shape, var(--md-sys-shape-corner-full, 9999px));--_state-layer-width: var(--md-icon-button-state-layer-width, 40px);--_focus-icon-color: var(--md-icon-button-focus-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-icon-color: var(--md-icon-button-hover-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-color: var(--md-icon-button-hover-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-opacity: var(--md-icon-button-hover-state-layer-opacity, 0.08);--_icon-color: var(--md-icon-button-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-icon-color: var(--md-icon-button-pressed-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-color: var(--md-icon-button-pressed-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);--_container-shape-start-start: 0;--_container-shape-start-end: 0;--_container-shape-end-end: 0;--_container-shape-end-start: 0;--_container-height: 0;--_container-width: 0;height:var(--_state-layer-height);width:var(--_state-layer-width)}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_state-layer-height))/2) max(0px,(48px - var(--_state-layer-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_state-layer-shape);--md-focus-ring-shape-start-end: var(--_state-layer-shape);--md-focus-ring-shape-end-end: var(--_state-layer-shape);--md-focus-ring-shape-end-start: var(--_state-layer-shape)}.standard{background-color:rgba(0,0,0,0);color:var(--_icon-color);--md-ripple-hover-color: var(--_hover-state-layer-color);--md-ripple-hover-opacity: var(--_hover-state-layer-opacity);--md-ripple-pressed-color: var(--_pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity)}.standard:hover{color:var(--_hover-icon-color)}.standard:focus{color:var(--_focus-icon-color)}.standard:active{color:var(--_pressed-icon-color)}.standard:is(:disabled,[aria-disabled=true]){color:var(--_disabled-icon-color)}md-ripple{border-radius:var(--_state-layer-shape)}.standard:is(:disabled,[aria-disabled=true]){opacity:var(--_disabled-icon-opacity)}.selected:not(:disabled,[aria-disabled=true]){color:var(--_selected-icon-color)}.selected:not(:disabled,[aria-disabled=true]):hover{color:var(--_selected-hover-icon-color)}.selected:not(:disabled,[aria-disabled=true]):focus{color:var(--_selected-focus-icon-color)}.selected:not(:disabled,[aria-disabled=true]):active{color:var(--_selected-pressed-icon-color)}.selected{--md-ripple-hover-color: var(--_selected-hover-state-layer-color);--md-ripple-hover-opacity: var(--_selected-hover-state-layer-opacity);--md-ripple-pressed-color: var(--_selected-pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_selected-pressed-state-layer-opacity)}
+</style><!--lit-part 1EKHqiDp/II=--><!--lit-node 0--><button
+        class="icon-button  standard "
+        id="button"
+        
+        
+        
+        aria-pressed="false"
+        
+        >
+        <!--lit-part 6m96Vvo80oc=--><!--lit-node 0--><md-focus-ring
+      
+       part="focus-ring" for="button" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{animation-delay:0s,calc(var(--md-focus-ring-duration, 600ms)*.25);animation-duration:calc(var(--md-focus-ring-duration, 600ms)*.25),calc(var(--md-focus-ring-duration, 600ms)*.75);animation-timing-function:cubic-bezier(0.2, 0, 0, 1);box-sizing:border-box;color:var(--md-focus-ring-color, var(--md-sys-color-secondary, #625b71));display:none;pointer-events:none;position:absolute}:host([visible]){display:flex}:host(:not([inward])){animation-name:outward-grow,outward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));inset:calc(-1*var(--md-focus-ring-outward-offset, 2px));outline:var(--md-focus-ring-width, 3px) solid currentColor}:host([inward]){animation-name:inward-grow,inward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border:var(--md-focus-ring-width, 3px) solid currentColor;inset:var(--md-focus-ring-inward-offset, 0px)}@keyframes outward-grow{from{outline-width:0}to{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes outward-shrink{from{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-grow{from{border-width:0}to{border-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-shrink{from{border-width:var(--md-focus-ring-active-width, 8px)}}@media(prefers-reduced-motion){:host{animation:none}}
+</style><!--lit-part--><!--/lit-part--></template></md-focus-ring><!--/lit-part-->
+        <!--lit-part bhYDOHX6jZM=--><!--lit-node 0--><md-ripple
+      
+       defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{display:flex;margin:auto;pointer-events:none}:host([disabled]){display:none}@media(forced-colors: active){:host{display:none}}:host,.surface{border-radius:inherit;position:absolute;inset:0;overflow:hidden}.surface{-webkit-tap-highlight-color:rgba(0,0,0,0)}.surface::before,.surface::after{content:"";opacity:0;position:absolute}.surface::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));inset:0;transition:opacity 15ms linear,background-color 15ms linear}.surface::after{background:radial-gradient(closest-side, var(--md-ripple-pressed-color, var(--md-sys-color-on-surface, #1d1b20)) max(100% - 70px, 65%), transparent 100%);transform-origin:center center;transition:opacity 375ms linear}.hovered::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));opacity:var(--md-ripple-hover-opacity, 0.08)}.pressed::after{opacity:var(--md-ripple-pressed-opacity, 0.12);transition-duration:105ms}
+</style><!--lit-part +6XefrKkp+4=--><!--lit-node 0--><div class="surface   "></div><!--/lit-part--></template></md-ripple><!--/lit-part-->
+        <!--lit-part Inteaxr+EBE=--><span class="icon"><slot></slot></span><!--/lit-part-->
+        <!--lit-part--><!--/lit-part-->
+        <!--lit-part qvRyIvO9Hnk=--><span class="touch"></span><!--/lit-part-->
+  </button><!--/lit-part--></template>
+        <!--lit-node 2--><md-icon defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>content_copy</md-icon>
+        <!--lit-node 3--><md-icon  slot="selected" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>check</md-icon>
+      </md-icon-button>
+    <!--/lit-part--></template>
+    <pre class="language-sh"><code class="language-sh">npx shadcn@latest <span class="token function">add</span> https://material-web.dev/3.0/r/md-theme-m3.json</code></pre>
+
+  </copy-code-button>
+</lit-island>
+<table>
+<thead>
+<tr>
+<th>shadcn variable</th>
+<th>M3 baseline role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--background</code></td>
+<td><code>--md-sys-color-surface</code></td>
+</tr>
+<tr>
+<td><code>--foreground</code></td>
+<td><code>--md-sys-color-on-surface</code></td>
+</tr>
+<tr>
+<td><code>--card</code></td>
+<td><code>--md-sys-color-surface-container-low</code></td>
+</tr>
+<tr>
+<td><code>--card-foreground</code></td>
+<td><code>--md-sys-color-on-surface</code></td>
+</tr>
+<tr>
+<td><code>--popover</code></td>
+<td><code>--md-sys-color-surface-container</code></td>
+</tr>
+<tr>
+<td><code>--popover-foreground</code></td>
+<td><code>--md-sys-color-on-surface</code></td>
+</tr>
+<tr>
+<td><code>--primary</code></td>
+<td><code>--md-sys-color-primary</code></td>
+</tr>
+<tr>
+<td><code>--primary-foreground</code></td>
+<td><code>--md-sys-color-on-primary</code></td>
+</tr>
+<tr>
+<td><code>--secondary</code></td>
+<td><code>--md-sys-color-secondary-container</code></td>
+</tr>
+<tr>
+<td><code>--secondary-foreground</code></td>
+<td><code>--md-sys-color-on-secondary-container</code></td>
+</tr>
+<tr>
+<td><code>--muted</code></td>
+<td><code>--md-sys-color-surface-container-high</code></td>
+</tr>
+<tr>
+<td><code>--muted-foreground</code></td>
+<td><code>--md-sys-color-on-surface-variant</code></td>
+</tr>
+<tr>
+<td><code>--accent</code></td>
+<td><code>--md-sys-color-surface-container-highest</code></td>
+</tr>
+<tr>
+<td><code>--accent-foreground</code></td>
+<td><code>--md-sys-color-on-surface</code></td>
+</tr>
+<tr>
+<td><code>--destructive</code></td>
+<td><code>--md-sys-color-error</code></td>
+</tr>
+<tr>
+<td><code>--border</code></td>
+<td><code>--md-sys-color-outline-variant</code></td>
+</tr>
+<tr>
+<td><code>--input</code></td>
+<td><code>--md-sys-color-outline</code></td>
+</tr>
+<tr>
+<td><code>--ring</code></td>
+<td><code>--md-sys-color-primary</code></td>
+</tr>
+<tr>
+<td><code>--chart-1</code></td>
+<td><code>--md-sys-color-primary</code></td>
+</tr>
+<tr>
+<td><code>--chart-2</code></td>
+<td><code>--md-sys-color-tertiary</code></td>
+</tr>
+<tr>
+<td><code>--chart-3</code></td>
+<td><code>--md-sys-color-secondary</code></td>
+</tr>
+<tr>
+<td><code>--chart-4</code></td>
+<td><code>--md-sys-color-primary-fixed-dim</code></td>
+</tr>
+<tr>
+<td><code>--chart-5</code></td>
+<td><code>--md-sys-color-tertiary-fixed-dim</code></td>
+</tr>
+<tr>
+<td><code>--sidebar</code></td>
+<td><code>--md-sys-color-surface-container-low</code></td>
+</tr>
+<tr>
+<td><code>--sidebar-foreground</code></td>
+<td><code>--md-sys-color-on-surface</code></td>
+</tr>
+<tr>
+<td><code>--sidebar-primary</code></td>
+<td><code>--md-sys-color-primary</code></td>
+</tr>
+<tr>
+<td><code>--sidebar-primary-foreground</code></td>
+<td><code>--md-sys-color-on-primary</code></td>
+</tr>
+<tr>
+<td><code>--sidebar-accent</code></td>
+<td><code>--md-sys-color-secondary-container</code></td>
+</tr>
+<tr>
+<td><code>--sidebar-accent-foreground</code></td>
+<td><code>--md-sys-color-on-secondary-container</code></td>
+</tr>
+<tr>
+<td><code>--sidebar-border</code></td>
+<td><code>--md-sys-color-outline-variant</code></td>
+</tr>
+<tr>
+<td><code>--sidebar-ring</code></td>
+<td><code>--md-sys-color-primary</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>--radius</code> is <code>0.75rem</code>, the M3 medium corner.</p>
+<p>It is independent of <code>md-theme</code>. With both installed, the bridge points the M3
+roles at shadcn variables that now hold the M3 colors, so the two agree.</p>
+<div class="heading h2">
+<h2 id="bundler-setup" tabindex="-1">Bundler setup</h2>
+<a class="anchor" href="#bundler-setup"><span class="offscreen">Link to “Bundler setup”</span> <span aria-hidden="true">#</span></a></div>
+<p>The elements import their styles as CSS module scripts
+(<code>import styles from './menu.css' with {type: 'css'}</code>). Browsers support that,
+but Vite, webpack and Node do not without help, and the build fails with
+<code>&quot;default&quot; is not exported by &quot;…/focus-ring.css&quot;</code>. Every stylesheet ships next
+to a Lit <code>CSSResult</code> module (<code>menu.cssresult.js</code>), so a one-time plugin that
+points the imports there is enough. For Vite (a plain block; it is
+configuration with no visible effect):</p>
+
+<lit-island
+    import="/material-web/js/hydration-entrypoints/copy-code-button.js"
+    on:interaction="focusin,pointerenter,touchstart">
+  <copy-code-button><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      position: relative;
+      --_border-radius: calc(var(--catalog-code-block-border-radius) / 4);
+    }
+
+    md-icon-button {
+      color: red;
+      position: absolute;
+      inset: var(
+        --catalog-copy-code-button-inset,
+        var(--_border-radius) var(--_border-radius) auto auto
+      );
+      --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface);
+      --md-sys-color-primary: var(--md-sys-color-on-surface);
+    }
+  </style><!--lit-part QD79OaZjHPk=-->
+      <slot></slot>
+      <!--lit-node 1--><md-icon-button
+        
+        
+        
+        
+        
+        
+         toggle title="Copy code" aria-label="Copy code" aria-label-selected="Copy successful" value defer-hydration><template shadowroot="open" shadowrootmode="open" shadowrootdelegatesfocus><style>:host{display:inline-flex;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);height:var(--_container-height);width:var(--_container-width);justify-content:center}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_container-height))/2) max(0px,(48px - var(--_container-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_container-shape-start-start);--md-focus-ring-shape-start-end: var(--_container-shape-start-end);--md-focus-ring-shape-end-end: var(--_container-shape-end-end);--md-focus-ring-shape-end-start: var(--_container-shape-end-start)}:host(:is([disabled],[soft-disabled])){pointer-events:none}.icon-button{place-items:center;background:none;border:none;box-sizing:border-box;cursor:pointer;display:flex;place-content:center;outline:none;padding:0;position:relative;text-decoration:none;user-select:none;z-index:0;flex:1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.icon ::slotted(*){font-size:var(--_icon-size);height:var(--_icon-size);width:var(--_icon-size);font-weight:inherit}md-ripple{z-index:-1;border-start-start-radius:var(--_container-shape-start-start);border-start-end-radius:var(--_container-shape-start-end);border-end-start-radius:var(--_container-shape-end-start);border-end-end-radius:var(--_container-shape-end-end)}.flip-icon .icon{transform:scaleX(-1)}.icon{display:inline-flex}.link{display:grid;height:100%;outline:none;place-items:center;position:absolute;width:100%}.touch{position:absolute;height:max(48px,100%);width:max(48px,100%)}:host([touch-target=none]) .touch{display:none}@media(forced-colors: active){:host(:is([disabled],[soft-disabled])){--_disabled-icon-color: GrayText;--_disabled-icon-opacity: 1}}
+:host{--_disabled-icon-color: var(--md-icon-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));--_disabled-icon-opacity: var(--md-icon-button-disabled-icon-opacity, 0.38);--_icon-size: var(--md-icon-button-icon-size, 24px);--_selected-focus-icon-color: var(--md-icon-button-selected-focus-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-icon-color: var(--md-icon-button-selected-hover-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-color: var(--md-icon-button-selected-hover-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-hover-state-layer-opacity: var(--md-icon-button-selected-hover-state-layer-opacity, 0.08);--_selected-icon-color: var(--md-icon-button-selected-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-icon-color: var(--md-icon-button-selected-pressed-icon-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-color: var(--md-icon-button-selected-pressed-state-layer-color, var(--md-sys-color-primary, #6750a4));--_selected-pressed-state-layer-opacity: var(--md-icon-button-selected-pressed-state-layer-opacity, 0.12);--_state-layer-height: var(--md-icon-button-state-layer-height, 40px);--_state-layer-shape: var(--md-icon-button-state-layer-shape, var(--md-sys-shape-corner-full, 9999px));--_state-layer-width: var(--md-icon-button-state-layer-width, 40px);--_focus-icon-color: var(--md-icon-button-focus-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-icon-color: var(--md-icon-button-hover-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-color: var(--md-icon-button-hover-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_hover-state-layer-opacity: var(--md-icon-button-hover-state-layer-opacity, 0.08);--_icon-color: var(--md-icon-button-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-icon-color: var(--md-icon-button-pressed-icon-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-color: var(--md-icon-button-pressed-state-layer-color, var(--md-sys-color-on-surface-variant, #49454f));--_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);--_container-shape-start-start: 0;--_container-shape-start-end: 0;--_container-shape-end-end: 0;--_container-shape-end-start: 0;--_container-height: 0;--_container-width: 0;height:var(--_state-layer-height);width:var(--_state-layer-width)}:host([touch-target=wrapper]){margin:max(0px,(48px - var(--_state-layer-height))/2) max(0px,(48px - var(--_state-layer-width))/2)}md-focus-ring{--md-focus-ring-shape-start-start: var(--_state-layer-shape);--md-focus-ring-shape-start-end: var(--_state-layer-shape);--md-focus-ring-shape-end-end: var(--_state-layer-shape);--md-focus-ring-shape-end-start: var(--_state-layer-shape)}.standard{background-color:rgba(0,0,0,0);color:var(--_icon-color);--md-ripple-hover-color: var(--_hover-state-layer-color);--md-ripple-hover-opacity: var(--_hover-state-layer-opacity);--md-ripple-pressed-color: var(--_pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity)}.standard:hover{color:var(--_hover-icon-color)}.standard:focus{color:var(--_focus-icon-color)}.standard:active{color:var(--_pressed-icon-color)}.standard:is(:disabled,[aria-disabled=true]){color:var(--_disabled-icon-color)}md-ripple{border-radius:var(--_state-layer-shape)}.standard:is(:disabled,[aria-disabled=true]){opacity:var(--_disabled-icon-opacity)}.selected:not(:disabled,[aria-disabled=true]){color:var(--_selected-icon-color)}.selected:not(:disabled,[aria-disabled=true]):hover{color:var(--_selected-hover-icon-color)}.selected:not(:disabled,[aria-disabled=true]):focus{color:var(--_selected-focus-icon-color)}.selected:not(:disabled,[aria-disabled=true]):active{color:var(--_selected-pressed-icon-color)}.selected{--md-ripple-hover-color: var(--_selected-hover-state-layer-color);--md-ripple-hover-opacity: var(--_selected-hover-state-layer-opacity);--md-ripple-pressed-color: var(--_selected-pressed-state-layer-color);--md-ripple-pressed-opacity: var(--_selected-pressed-state-layer-opacity)}
+</style><!--lit-part 1EKHqiDp/II=--><!--lit-node 0--><button
+        class="icon-button  standard "
+        id="button"
+        
+        
+        
+        aria-pressed="false"
+        
+        >
+        <!--lit-part 6m96Vvo80oc=--><!--lit-node 0--><md-focus-ring
+      
+       part="focus-ring" for="button" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{animation-delay:0s,calc(var(--md-focus-ring-duration, 600ms)*.25);animation-duration:calc(var(--md-focus-ring-duration, 600ms)*.25),calc(var(--md-focus-ring-duration, 600ms)*.75);animation-timing-function:cubic-bezier(0.2, 0, 0, 1);box-sizing:border-box;color:var(--md-focus-ring-color, var(--md-sys-color-secondary, #625b71));display:none;pointer-events:none;position:absolute}:host([visible]){display:flex}:host(:not([inward])){animation-name:outward-grow,outward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) + var(--md-focus-ring-outward-offset, 2px));inset:calc(-1*var(--md-focus-ring-outward-offset, 2px));outline:var(--md-focus-ring-width, 3px) solid currentColor}:host([inward]){animation-name:inward-grow,inward-shrink;border-end-end-radius:calc(var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-end-start-radius:calc(var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-end-radius:calc(var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border-start-start-radius:calc(var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(--md-focus-ring-inward-offset, 0px));border:var(--md-focus-ring-width, 3px) solid currentColor;inset:var(--md-focus-ring-inward-offset, 0px)}@keyframes outward-grow{from{outline-width:0}to{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes outward-shrink{from{outline-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-grow{from{border-width:0}to{border-width:var(--md-focus-ring-active-width, 8px)}}@keyframes inward-shrink{from{border-width:var(--md-focus-ring-active-width, 8px)}}@media(prefers-reduced-motion){:host{animation:none}}
+</style><!--lit-part--><!--/lit-part--></template></md-focus-ring><!--/lit-part-->
+        <!--lit-part bhYDOHX6jZM=--><!--lit-node 0--><md-ripple
+      
+       defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{display:flex;margin:auto;pointer-events:none}:host([disabled]){display:none}@media(forced-colors: active){:host{display:none}}:host,.surface{border-radius:inherit;position:absolute;inset:0;overflow:hidden}.surface{-webkit-tap-highlight-color:rgba(0,0,0,0)}.surface::before,.surface::after{content:"";opacity:0;position:absolute}.surface::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));inset:0;transition:opacity 15ms linear,background-color 15ms linear}.surface::after{background:radial-gradient(closest-side, var(--md-ripple-pressed-color, var(--md-sys-color-on-surface, #1d1b20)) max(100% - 70px, 65%), transparent 100%);transform-origin:center center;transition:opacity 375ms linear}.hovered::before{background-color:var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));opacity:var(--md-ripple-hover-opacity, 0.08)}.pressed::after{opacity:var(--md-ripple-pressed-opacity, 0.12);transition-duration:105ms}
+</style><!--lit-part +6XefrKkp+4=--><!--lit-node 0--><div class="surface   "></div><!--/lit-part--></template></md-ripple><!--/lit-part-->
+        <!--lit-part Inteaxr+EBE=--><span class="icon"><slot></slot></span><!--/lit-part-->
+        <!--lit-part--><!--/lit-part-->
+        <!--lit-part qvRyIvO9Hnk=--><span class="touch"></span><!--/lit-part-->
+  </button><!--/lit-part--></template>
+        <!--lit-node 2--><md-icon defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>content_copy</md-icon>
+        <!--lit-node 3--><md-icon  slot="selected" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>check</md-icon>
+      </md-icon-button>
+    <!--/lit-part--></template>
+    <pre class="language-ts"><code class="language-ts"><span class="token comment">// vite.config.ts</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span>defineConfig<span class="token punctuation">,</span> <span class="token keyword">type</span> <span class="token class-name">Plugin</span><span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'vite'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">mdGbCssModules</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> Plugin <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    name<span class="token operator">:</span> <span class="token string">'md-gb-css-modules'</span><span class="token punctuation">,</span>
+    enforce<span class="token operator">:</span> <span class="token string">'pre'</span><span class="token punctuation">,</span>
+    <span class="token function">transform</span><span class="token punctuation">(</span>code<span class="token punctuation">,</span> id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">[\\/]@material[\\/]web[\\/]</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">.</span><span class="token function">test</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token operator">!</span>id<span class="token punctuation">.</span><span class="token function">endsWith</span><span class="token punctuation">(</span><span class="token string">'.js'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> code<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span>
+        <span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">import\s+(\w+)\s+from\s+'(\.[^']*)\.css'\s+with\s*\{\s*type:\s*'css'\s*\};?</span><span class="token regex-delimiter">/</span><span class="token regex-flags">g</span></span><span class="token punctuation">,</span>
+        <span class="token string">"import {styles as $1} from '$2.cssresult.js';"</span><span class="token punctuation">,</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">defineConfig</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  plugins<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token function">mdGbCssModules</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">/* , react(), tailwindcss() */</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  optimizeDeps<span class="token operator">:</span> <span class="token punctuation">{</span>exclude<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'@material/web'</span><span class="token punctuation">]</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+  </copy-code-button>
+</lit-island>
+<div class="heading h2">
+<h2 id="limits" tabindex="-1">Limits</h2>
+<a class="anchor" href="#limits"><span class="offscreen">Link to “Limits”</span> <span aria-hidden="true">#</span></a></div>
+<ul>
+<li><strong>Tailwind classes style only the host.</strong> The elements use shadow DOM, so
+<code>className=&quot;bg-red-500&quot;</code> colors the <code>&lt;md-gb-button&gt;</code> box, not its inside.
+Customize with the <code>--md-*</code> custom properties and <code>::part()</code> selectors
+listed in each component's API reference. They work in a plain CSS file or in
+Tailwind's arbitrary properties, such as <code>[--container-color:red]</code>.</li>
+<li><strong>Client only.</strong> The wrappers start with <code>'use client'</code>, and the elements
+cannot be imported in Node (they use CSS module scripts, <code>customElements</code>
+and <code>document</code>). In Next.js the server renders client components too, so
+import the file with
+<code>next/dynamic(() =&gt; import('...'), {ssr: false})</code> or render it after mount,
+unless you set up <a href="https://lit.dev/docs/ssr/overview/">Lit SSR</a>.</li>
+<li><strong>Labs.</strong> The elements come from <code>@material/web/labs/gb/</code>. The registry
+keeps <code>@material/web</code> as the dependency, and the path needs a version that
+ships <code>labs/gb</code>.</li>
+<li><strong>Typography, motion and icons</strong> are not bridged. Load the Material
+Symbols font as in the <a href="/material-web/3.0/about/quick-start/">quick start</a>.</li>
+<li><strong>Local testing.</strong> When this site runs from the dev server the registry
+files point to <code>http://localhost:8000</code>. Set <code>MWC_REGISTRY_URL</code> to build
+them for another origin.</li>
+</ul>
+<p>The registry files are generated by <code>scripts/m3/gb-shadcn.mjs</code> from the element
+sources, so the props and events match the API reference. For agents, the same
+information is in <a href="/material-web/3.0/llms.txt"><code>llms.txt</code></a> and
+<a href="/material-web/3.0/custom-elements.json"><code>custom-elements.json</code></a>.</p>
+</div>
+            
+<nav class="gb-pager gb-pager-end" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-prev" href="/material-web/3.0/about/debugging/" rel="prev"><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_back</md-gb-icon></span><span class="gb-pager-text"><span class="gb-pager-label">Previous</span> <span class="gb-pager-title">Debugging</span></span></a>
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/foundations/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">Foundations overview</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</nav>
+          </main>
+        </div>
+      </div><aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
+        <div class="gb-outline-head">
+          <h2 class="gb-outline-title" id="gb-outline-title">On this page</h2>
+          <md-gb-icon-button id="gb-outline-close" tooltip aria-label="Hide page outline">
+            <md-gb-icon>close</md-gb-icon>
+          </md-gb-icon-button>
+        </div><div class="gb-toc gb-outline-body">
+          <md-gb-nav-rail class="gb-outline-rail" expanded role="none">
+            <md-gb-nav-rail-item href="#main" data-depth="1">(Top)</md-gb-nav-rail-item>
+            <md-gb-nav-rail-item href="#what-you-get" data-depth="1">What you get</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#add-a-component" data-depth="1">Add a component</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#the-theme-bridge" data-depth="1">The theme bridge</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#match-shadcn-to-the-m3-baseline" data-depth="2">Match shadcn to the M3 baseline</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#bundler-setup" data-depth="1">Bundler setup</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#limits" data-depth="1">Limits</md-gb-nav-rail-item>
+          </md-gb-nav-rail>
+        </div>
+      </aside><aside class="gb-outline-strip" aria-label="Page outline">
+        <md-gb-icon-button id="gb-outline-toggle" tooltip aria-label="Show page outline" aria-controls="gb-outline" aria-expanded="true">
+          <md-gb-icon>toc</md-gb-icon>
+        </md-gb-icon-button>
+      </aside><nav class="gb-bar-area" aria-label="Sections">
+        <md-gb-nav-bar class="gb-bar" id="gb-bar" role="none">
+          <md-gb-nav-bar-item href="/material-web/3.0/about/" data-section="about" aria-haspopup="dialog" active>
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/foundations/" data-section="foundations" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/styles/" data-section="styles" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/components/" data-section="components" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-bar-item>
+        </md-gb-nav-bar>
+      </nav>
+
+    </div>
+    <template data-pages="about" data-label="About"><md-gb-nav-drawer-item href="/material-web/3.0/about/"><md-gb-icon slot="icon">info</md-gb-icon>About overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/intro/">Introduction</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/compliance/">Spec compliance</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/quick-start/">Quick Start</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/migration/">Migration</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/roadmap/">Roadmap</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/support/">Support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/size/">Bundle Sizes</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/browser-support/">Browser support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/ai-agents/">AI agents</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/debugging/">Debugging</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/shadcn/" selected>Use with shadcn/ui</md-gb-nav-drawer-item></template>
+    <template data-pages="foundations" data-label="Foundations"><md-gb-nav-drawer-item href="/material-web/3.0/foundations/"><md-gb-icon slot="icon">foundation</md-gb-icon>Foundations overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/design-tokens/">Theming</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/interaction-states/">Interaction States</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/accessibility/">Accessibility</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/adaptive-layout/">Adaptive layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/density/">Density</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/layout/">Layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/scaffold/">Scaffold</md-gb-nav-drawer-item></template>
+    <template data-pages="styles" data-label="Styles"><md-gb-nav-drawer-item href="/material-web/3.0/styles/"><md-gb-icon slot="icon">palette</md-gb-icon>Styles overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/color/">Color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/dynamic-color/">Dynamic color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/typography/">Typography</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/shape/">Shape</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/elevation/">Elevation</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/icons/">Icons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/material-symbols/">Material Symbols</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion/">Motion</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion-transitions/">Transitions</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/spacing/">Spacing</md-gb-nav-drawer-item></template>
+    <template data-pages="components" data-label="Components"><md-gb-nav-drawer-item href="/material-web/3.0/components/"><md-gb-icon slot="icon">widgets</md-gb-icon>Components overview</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="buttons">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button-group/" data-group="buttons">Button Group</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button/" data-group="buttons">Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab-menu/" data-group="buttons">FAB menu</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab/" data-group="buttons">Floating action button (FAB)</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/icon-button/" data-group="buttons">Icon Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/segmented-button/" data-group="buttons">Segmented button</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/split-button/" data-group="buttons">Split button</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="pickers">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/date-picker/" data-group="pickers">Date picker</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/time-picker/" data-group="pickers">Time picker</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="progress">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/loading-indicator/" data-group="progress">Loading indicator</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/progress/" data-group="progress">Progress indicators</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/pull-to-refresh/" data-group="progress">Pull to refresh</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="navigation">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-bar/" data-group="navigation">Navigation Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-drawer/" data-group="navigation">Navigation Drawer</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-rail/" data-group="navigation">Navigation Rail</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="sheets">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/sheets/" data-group="sheets">Sheets</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="other">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/app-bar/" data-group="other">App Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/badge/" data-group="other">Badge</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/card/" data-group="other">Card</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/carousel/" data-group="other">Carousel</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/checkbox/" data-group="other">Checkbox</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/chip/" data-group="other">Chips</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/dialog/" data-group="other">Dialogs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/divider/" data-group="other">Divider</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/list/" data-group="other">Lists</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/menu/" data-group="other">Menus</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/radio/" data-group="other">Radio</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/search/" data-group="other">Search</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/select/" data-group="other">Select</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/slider/" data-group="other">Sliders</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/snackbar/" data-group="other">Snackbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/switch/" data-group="other">Switch</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tabs/" data-group="other">Tabs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/text-field/" data-group="other">Text field</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/toolbar/" data-group="other">Toolbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tooltip/" data-group="other">Tooltip</md-gb-nav-drawer-item></template><md-gb-side-sheet id="gb-side-sheet" class="gb-side-sheet" modal></md-gb-side-sheet>
+    <md-gb-bottom-sheet id="gb-tools-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page tools"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-pages-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Pages"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-outline-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page outline"></md-gb-bottom-sheet>
+
+    <div class="gb-tools" id="gb-tools" hidden><section class="gb-tool" id="gb-download-body" data-tool="download" data-title="Download &amp; copy" data-site-url="https://material-web.dev" aria-labelledby="gb-download-title">
+        <h2 class="gb-tool-title" id="gb-download-title">Download &amp; copy</h2>
+        <h3 class="gb-tool-group">Download</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" id="gb-install" data-action="install">
+            <md-gb-icon aria-hidden="true">install_desktop</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Install app</span><span class="gb-action-support">Add Material Web 3.0 to your device</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/material-web-3.0.mhtml" data-filename="material-web-3.0.mhtml">
+            <md-gb-icon aria-hidden="true">web</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Website (MHTML, single file)</span><span class="gb-action-support" data-base="All pages in one file, for offline reading">All pages in one file, for offline reading</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/llms-full.txt" data-filename="llms-full.txt">
+            <md-gb-icon aria-hidden="true">description</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Docs for LLMs (llms-full.txt)</span><span class="gb-action-support" data-base="All pages as Markdown text">All pages as Markdown text</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/custom-elements.json" data-filename="custom-elements.json">
+            <md-gb-icon aria-hidden="true">data_object</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">API (custom-elements.json)</span><span class="gb-action-support" data-base="Every element, as a Custom Elements Manifest">Every element, as a Custom Elements Manifest</span></span>
+          </button></li>
+        </ul><h3 class="gb-tool-group">Copy</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="agent-prompt" data-copied="Copied agent prompt">
+            <md-gb-icon aria-hidden="true">smart_toy</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy agent prompt</span><span class="gb-action-support">Tells an AI agent to install the md-gb skill</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="cdn" data-copied="Copied CDN script tag">
+            <md-gb-icon aria-hidden="true">code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy CDN script tag</span><span class="gb-action-support">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span></span>
+          </button></li>
+        </ul>
+        <md-gb-divider class="gb-actions-divider"></md-gb-divider>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="github" data-copied="Copied GitHub link">
+            <md-gb-icon aria-hidden="true">link</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy GitHub link</span><span class="gb-action-support">github.com/material-components/material-web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="npm" data-copied="Copied npm install command">
+            <md-gb-icon aria-hidden="true">terminal</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy npm install</span><span class="gb-action-support">npm install @material/web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="shadcn" data-copied="Copied shadcn setup command">
+            <md-gb-icon aria-hidden="true">deployed_code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy shadcn npx setup</span><span class="gb-action-support">npx shadcn@latest add &hellip;/md-theme.json</span></span>
+          </button></li>
+        </ul>
+      </section><section class="gb-tool" id="gb-theme-body" data-tool="theme" data-title="Customize theme" aria-labelledby="gb-theme-title">
+        <h2 class="gb-tool-title" id="gb-theme-title">Customize theme</h2>
+        <p class="gb-tool-note">Changes apply to this site and its demos, and are remembered in this browser.</p>
+        <fieldset class="gb-field">
+          <legend>Seed color</legend>
+          <div class="gb-swatches" id="gb-swatches">
+            <label class="gb-swatch" style="--gb-swatch: #6750a4"><input type="radio" name="gb-seed" value="#6750a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Purple</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #0061a4"><input type="radio" name="gb-seed" value="#0061a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Blue</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #006a6a"><input type="radio" name="gb-seed" value="#006a6a" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Teal</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #386a20"><input type="radio" name="gb-seed" value="#386a20" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Green</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #9c4300"><input type="radio" name="gb-seed" value="#9c4300" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Orange</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #b3261e"><input type="radio" name="gb-seed" value="#b3261e" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Red</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #8b4a62"><input type="radio" name="gb-seed" value="#8b4a62" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Pink</span></label>
+          </div>
+          <label class="gb-custom-color">
+            <span>Custom color</span>
+            <input type="color" id="gb-seed-input" value="#6750a4" />
+            <output id="gb-seed-hex" for="gb-seed-input">#6750a4</output>
+          </label>
+        </fieldset>
+        <div class="gb-field">
+          <md-gb-select id="gb-variant" label="Scheme variant" value="tonal-spot">
+            <md-gb-select-option value="tonal-spot" selected>Tonal spot</md-gb-select-option>
+            <md-gb-select-option value="neutral">Neutral</md-gb-select-option>
+            <md-gb-select-option value="vibrant">Vibrant</md-gb-select-option>
+            <md-gb-select-option value="expressive">Expressive</md-gb-select-option>
+            <md-gb-select-option value="fidelity">Fidelity</md-gb-select-option>
+            <md-gb-select-option value="content">Content</md-gb-select-option>
+            <md-gb-select-option value="monochrome">Monochrome</md-gb-select-option>
+            <md-gb-select-option value="rainbow">Rainbow</md-gb-select-option>
+            <md-gb-select-option value="fruit-salad">Fruit salad</md-gb-select-option>
+          </md-gb-select>
+        </div>
+        <fieldset class="gb-field">
+          <legend>Color mode</legend>
+          <md-gb-segmented-button-set id="gb-mode" required aria-label="Color mode">
+            <md-gb-segmented-button value="auto" no-checkmark selected>System</md-gb-segmented-button>
+            <md-gb-segmented-button value="light" no-checkmark>Light</md-gb-segmented-button>
+            <md-gb-segmented-button value="dark" no-checkmark>Dark</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <fieldset class="gb-field">
+          <legend>Contrast</legend>
+          <md-gb-segmented-button-set id="gb-contrast" required aria-label="Contrast">
+            <md-gb-segmented-button value="standard" no-checkmark selected>Standard</md-gb-segmented-button>
+            <md-gb-segmented-button value="medium" no-checkmark>Medium</md-gb-segmented-button>
+            <md-gb-segmented-button value="high" no-checkmark>High</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <div class="gb-tool-actions">
+          <md-gb-button id="gb-theme-reset" color="tonal">Reset</md-gb-button>
+        </div>
+      </section><div class="gb-pages-foot" id="gb-pages-foot" role="group" aria-label="Site settings">
+        <md-gb-button color="text" data-theme-toggle><md-gb-icon slot="icon">brightness_auto</md-gb-icon><span class="gb-theme-toggle-label">Theme: system</span></md-gb-button>
+        <md-gb-button color="text" href="/material-web/"><md-gb-icon slot="icon">history</md-gb-icon>v2.5.0 (current)</md-gb-button>
+        <md-gb-button color="text" href="https://github.com/material-components/material-web" target="_blank" rel="noopener"><md-gb-icon slot="icon">code</md-gb-icon>GitHub<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener"><md-gb-icon slot="icon">deployed_code</md-gb-icon>npm<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" data-tool="feedback"><md-gb-icon slot="icon">feedback</md-gb-icon>Send feedback</md-gb-button>
+      </div>
+    </div>
+
+    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000"></md-gb-snackbar>
+
+    <md-gb-dialog id="gb-install-dialog">
+      <span slot="headline">Install Material Web 3.0</span>
+      <p>Your browser did not offer to install the docs as an app. Install them from the browser instead:</p>
+      <ul data-install-steps>
+        <li data-browser="chromium"><strong>Chrome and Edge:</strong> open the browser menu and choose Install Material Web 3.0 (Chrome: Cast, save and share, Install page as app), or use the install icon in the address bar.</li>
+        <li data-browser="safari"><strong>Safari on Mac:</strong> choose File, then Add to Dock.</li>
+        <li data-browser="ios"><strong>Safari on iPhone and iPad:</strong> tap Share, then Add to Home Screen.</li>
+        <li data-browser="firefox"><strong>Firefox:</strong> Firefox on Android has Install in its menu. Firefox on desktop cannot install web apps; bookmark this page instead.</li>
+      </ul>
+      <form id="gb-install-form" method="dialog"></form>
+      <md-gb-button slot="actions" form="gb-install-form" value="close">Close</md-gb-button>
+    </md-gb-dialog><md-gb-dialog id="gb-feedback-dialog">
+      <span slot="headline">Send feedback</span>
+      <form id="gb-feedback-form" class="gb-feedback" novalidate>
+        <md-gb-text-field id="gb-feedback-page" label="Page" value=""></md-gb-text-field>
+        <md-gb-select id="gb-feedback-type" label="Type" value="bug">
+          <md-gb-select-option value="bug" selected>Bug</md-gb-select-option>
+          <md-gb-select-option value="docs">Documentation</md-gb-select-option>
+          <md-gb-select-option value="idea">Idea</md-gb-select-option>
+        </md-gb-select>
+        <md-gb-text-field id="gb-feedback-message" type="textarea" rows="4" label="Message" required error-text="Add a message" value=""></md-gb-text-field>
+        <p class="gb-feedback-note">Opens a new GitHub issue for material-components/material-web in a new tab, with this filled in.</p>
+      </form>
+      <md-gb-button slot="actions" color="text" id="gb-feedback-cancel">Cancel</md-gb-button>
+      <md-gb-button slot="actions" id="gb-feedback-submit">Open issue</md-gb-button>
+    </md-gb-dialog>
+
+    
+
+    <div id="gb-status" role="status" aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></div>
+  </body>
+</html>

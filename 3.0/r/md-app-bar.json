@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-app-bar",
+  "type": "registry:ui",
+  "title": "App Bar",
+  "description": "MdAppBar: React wrappers for <md-gb-app-bar> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-app-bar.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/appbar/md-gb-app-bar.js';\nimport {AppBarElement} from '@material/web/labs/gb/components/appbar/app-bar-element.js';\n\n/**\n * A Material Design app bar component. Wraps <md-gb-app-bar>.\n * Docs: https://material-web.dev/3.0/components/app-bar/\n */\nexport const MdAppBar = createComponent({\n  react: React,\n  tagName: 'md-gb-app-bar',\n  elementClass: AppBarElement,\n});\n\nexport type MdAppBarProps = React.ComponentProps<typeof MdAppBar>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/app-bar/",
+  "meta": {
+    "tags": [
+      "md-gb-app-bar"
+    ],
+    "docs": "https://material-web.dev/3.0/components/app-bar/"
+  }
+}

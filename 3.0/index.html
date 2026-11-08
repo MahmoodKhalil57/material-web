@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" class="gb-shell-root">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home - Material Web 3.0</title>
+    <meta name="description" content="Material Web 3.0 is a library of web components that follow Material 3 Expressive, Google&#39;s design system, for any framework or none." />
+    <meta name="color-scheme" content="light dark" />
+    <link href="/material-web/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" /><link rel="canonical" href="https://material-web.dev/3.0/" />
+    <link rel="alternate" type="text/markdown" href="/material-web/3.0/index.md" title="Home as Markdown" />
+    <link rel="alternate" type="text/plain" href="/material-web/3.0/llms.txt" title="llms.txt" />
+    <link rel="manifest" href="/material-web/3.0/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/material-web/3.0/icons/icon-192.png" />
+    <meta name="theme-color" content="#fef7ff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141218" media="(prefers-color-scheme: dark)" />
+    <meta property="og:site_name" content="Material Web 3.0" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Home - Material Web 3.0" />
+    <meta property="og:description" content="Material Web 3.0 is a library of web components that follow Material 3 Expressive, Google's design system, for any framework or none." />
+    <meta property="og:url" content="https://material-web.dev/3.0/" />
+    <meta property="og:image" content="https://material-web.dev/3.0/og/about-intro.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Home - Material Web 3.0" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Home - Material Web 3.0" />
+    <meta name="twitter:description" content="Material Web 3.0 is a library of web components that follow Material 3 Expressive, Google's design system, for any framework or none." />
+    <meta name="twitter:image" content="https://material-web.dev/3.0/og/about-intro.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://material-web.dev/3.0/#website","name":"Material Web 3.0","url":"https://material-web.dev/3.0/","inLanguage":"en","description":"Material Web 3.0: Material 3 Expressive components, styles and foundations built as web components.","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://material-web.dev/3.0/?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@type":"TechArticle","@id":"https://material-web.dev/3.0/#article","headline":"Home","description":"Material Web 3.0 is a library of web components that follow Material 3 Expressive, Google's design system, for any framework or none.","url":"https://material-web.dev/3.0/","mainEntityOfPage":"https://material-web.dev/3.0/","image":"https://material-web.dev/3.0/og/about-intro.png","inLanguage":"en","articleSection":"About","dateModified":"2026-11-08T15:35:30.010Z","isPartOf":{"@id":"https://material-web.dev/3.0/#website"},"publisher":{"@type":"Organization","name":"Material Web","url":"https://material-web.dev"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Material Web 3.0","item":"https://material-web.dev/3.0/"},{"@type":"ListItem","position":2,"name":"About","item":"https://material-web.dev/3.0/about/"},{"@type":"ListItem","position":3,"name":"Home","item":"https://material-web.dev/3.0/"}]}]}</script>
+    <link rel="preload" href="/material-web/fonts/gb/roboto-flex-6ccf7a9846bd.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/material-web/fonts/gb/material-symbols-outlined-ef785a494cef.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/material-web/fonts/gb/fonts.css" />
+    <link rel="stylesheet" href="/material-web/js/gb/gb.css" /><link rel="stylesheet" href="/material-web/js/gb/shape-morphs.css" />
+    <script>
+      // Before first paint: color-scheme from the saved mode, the dynamic
+      // color CSS generated for the saved theme (cached by gb.js), and
+      // whether the reader collapsed the rail, so nothing moves when the
+      // script runs.
+      (() => {
+        const root = document.documentElement;
+        // Demo cards collapse their code only with JS (gb.css, gb.ts).
+        root.classList.add('js');
+        // Reduce motion (the header's toggle, shell.ts; reduce-motion.css):
+        // while it's on, prefers-reduced-motion queries from scripts answer
+        // "reduce" (asked again on each call, so a toggle takes effect at
+        // once), and the components take their reduced-motion paths.
+        const matchMedia = window.matchMedia.bind(window);
+        window.matchMedia = (query) =>
+          root.dataset.motion === 'reduce' && /prefers-reduced-motion/.test(query)
+            ? matchMedia(/no-preference/.test(query) ? 'not all' : 'all')
+            : matchMedia(query);
+        try {
+          if (localStorage.getItem('gb-reduce-motion') === '1') root.dataset.motion = 'reduce';
+          const mode = localStorage.getItem('color-mode') || 'auto';
+          root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
+          if (localStorage.getItem('gb-rail') === 'collapsed') root.dataset.rail = 'collapsed';
+          if (localStorage.getItem('gb-outline') === 'closed') root.dataset.outline = 'closed';
+          const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
+          const seed = localStorage.getItem('gb-seed-color');
+          const key = [seed, localStorage.getItem('gb-scheme-variant') || 'tonal-spot', localStorage.getItem('gb-contrast') || 'standard'].join('|');
+          // Only a cache for the saved theme, written by this version of gb.js
+          // (THEME_CACHE_VERSION in catalog/src/gb/gb.ts).
+          if (cache && cache.v === 3 && cache.css && seed && cache.key === key) {
+            const style = document.createElement('style');
+            style.id = 'gb-theme-style';
+            style.textContent = cache.css;
+            document.head.append(style);
+          }
+        } catch (e) {}
+      })();
+    </script><script type="speculationrules">
+      {
+        "prefetch": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }],
+        "prerender": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }]
+      }
+    </script><script type="module" src="/material-web/js/gb/gb.js" blocking="render"></script>
+  </head>
+  <body>
+    <div class="gb-shell"><header class="gb-top">
+        <a class="gb-skip" href="#main">Skip to main content</a>
+        <md-gb-app-bar class="gb-appbar" id="gb-appbar" variant="search"><a slot="leading" class="gb-brand" href="/material-web/3.0/" aria-label="Material Web 3.0 home">
+            <svg viewBox="0 96 960 960" width="32" height="32" fill="currentColor" aria-hidden="true" focusable="false"><path d="M480 1016q-91 0-171-34.5T169 887q-60-60-94.5-140T40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q91 0 171 34.5T791 265q60 60 94.5 140T920 576q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM200 802V351q-38 47-59 104t-21 121q0 65 21 122t59 104Zm54-506h452q-47-38-104-59t-122-21q-65 0-122 21t-104 59Zm226 381 151-301H330l150 301Zm40 99h160V456L520 776Zm-240 0h160L280 456v320Zm200 160q64 0 121.5-21T706 856H254q47 38 104.5 59T480 936Zm280-134q38-47 59-104t21-122q0-64-21-121t-59-104v451Z"/></svg>
+          </a>
+          <button slot="search" type="button" class="gb-searchbar" data-gb-search>
+            <span class="gb-searchbar-icon" aria-hidden="true"><md-gb-icon>search</md-gb-icon></span>
+            <span class="gb-searchbar-text">Search Material Web</span>
+            <kbd class="gb-search-hint" aria-hidden="true"></kbd>
+          </button>
+          <md-gb-icon-button slot="trailing" id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
+            <md-gb-icon>brightness_auto</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="trailing" id="gb-motion" type="toggle" tooltip aria-label="Reduce motion">
+            <md-gb-icon>motion_photos_off</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="theme" aria-label="Customize theme">
+            <md-gb-icon>palette</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="download" aria-label="Download and copy">
+            <md-gb-icon>download</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="overflow" id="gb-overflow" tooltip popovertarget="gb-overflow-menu" aria-label="More actions">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+        </md-gb-app-bar><md-gb-menu id="gb-overflow-menu" aria-label="More actions"></md-gb-menu>
+      </header><nav class="gb-rail-area" aria-label="Site">
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" collapsible role="none">
+          <md-gb-nav-rail-item href="/material-web/3.0/about/" data-section="about" selected data-current>
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="about" data-default-open="true" aria-expanded="true" aria-label="About pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/intro/" data-in-section="about">Introduction</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/compliance/" data-in-section="about">Spec compliance</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/quick-start/" data-in-section="about">Quick Start</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/migration/" data-in-section="about">Migration</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/roadmap/" data-in-section="about">Roadmap</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/support/" data-in-section="about">Support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/size/" data-in-section="about">Bundle Sizes</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/browser-support/" data-in-section="about">Browser support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/ai-agents/" data-in-section="about">AI agents</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/debugging/" data-in-section="about">Debugging</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/shadcn/" data-in-section="about">Use with shadcn/ui</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/foundations/" data-section="foundations">
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="foundations" data-default-open="false" aria-expanded="true" aria-label="Foundations pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/design-tokens/" data-in-section="foundations">Theming</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/interaction-states/" data-in-section="foundations">Interaction States</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/accessibility/" data-in-section="foundations">Accessibility</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/adaptive-layout/" data-in-section="foundations">Adaptive layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/density/" data-in-section="foundations">Density</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/layout/" data-in-section="foundations">Layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/scaffold/" data-in-section="foundations">Scaffold</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/styles/" data-section="styles">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="styles" data-default-open="false" aria-expanded="true" aria-label="Styles pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/color/" data-in-section="styles">Color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/dynamic-color/" data-in-section="styles">Dynamic color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/typography/" data-in-section="styles">Typography</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/shape/" data-in-section="styles">Shape</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/elevation/" data-in-section="styles">Elevation</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/icons/" data-in-section="styles">Icons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/material-symbols/" data-in-section="styles">Material Symbols</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion/" data-in-section="styles">Motion</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion-transitions/" data-in-section="styles">Transitions</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/spacing/" data-in-section="styles">Spacing</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/components/" data-section="components">
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="components" data-default-open="false" aria-expanded="true" aria-label="Components pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="buttons" data-default-open="true" aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button-group/" data-in-section="components" data-group="buttons">Button Group</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button/" data-in-section="components" data-group="buttons">Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab-menu/" data-in-section="components" data-group="buttons">FAB menu</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab/" data-in-section="components" data-group="buttons">Floating action button (FAB)</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/icon-button/" data-in-section="components" data-group="buttons">Icon Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/segmented-button/" data-in-section="components" data-group="buttons">Segmented button</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/split-button/" data-in-section="components" data-group="buttons">Split button</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="pickers" data-default-open="true" aria-expanded="true" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/date-picker/" data-in-section="components" data-group="pickers">Date picker</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/time-picker/" data-in-section="components" data-group="pickers">Time picker</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="progress" data-default-open="true" aria-expanded="true" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/loading-indicator/" data-in-section="components" data-group="progress">Loading indicator</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/progress/" data-in-section="components" data-group="progress">Progress indicators</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/pull-to-refresh/" data-in-section="components" data-group="progress">Pull to refresh</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="navigation" data-default-open="true" aria-expanded="true" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-bar/" data-in-section="components" data-group="navigation">Navigation Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-drawer/" data-in-section="components" data-group="navigation">Navigation Drawer</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-rail/" data-in-section="components" data-group="navigation">Navigation Rail</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="sheets" data-default-open="true" aria-expanded="true" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/sheets/" data-in-section="components" data-group="sheets">Sheets</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="other" data-default-open="true" aria-expanded="true" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/app-bar/" data-in-section="components" data-group="other">App Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/badge/" data-in-section="components" data-group="other">Badge</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/card/" data-in-section="components" data-group="other">Card</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/carousel/" data-in-section="components" data-group="other">Carousel</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/checkbox/" data-in-section="components" data-group="other">Checkbox</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/chip/" data-in-section="components" data-group="other">Chips</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/dialog/" data-in-section="components" data-group="other">Dialogs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/divider/" data-in-section="components" data-group="other">Divider</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/list/" data-in-section="components" data-group="other">Lists</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/menu/" data-in-section="components" data-group="other">Menus</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/radio/" data-in-section="components" data-group="other">Radio</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/search/" data-in-section="components" data-group="other">Search</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/select/" data-in-section="components" data-group="other">Select</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/slider/" data-in-section="components" data-group="other">Sliders</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/snackbar/" data-in-section="components" data-group="other">Snackbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/switch/" data-in-section="components" data-group="other">Switch</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tabs/" data-in-section="components" data-group="other">Tabs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/text-field/" data-in-section="components" data-group="other">Text field</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/toolbar/" data-in-section="components" data-group="other">Toolbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tooltip/" data-in-section="components" data-group="other">Tooltip</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+        <script>
+          // Which sections and groups are open: the reader's choices
+          // (src/gb/shell.ts saves them), else the defaults in the markup; the
+          // current page's group stays open. A closed section hides its
+          // pages and groups; a closed group its pages. Runs here before
+          // first paint, and again on every toggle (shell.ts). With
+          // deferHiding, the shown pages that close stay shown and are
+          // returned, for shell.ts to fade out before hiding them.
+          window.gbRailApply = (deferHiding) => {
+            const leaving = [];
+            const rail = document.getElementById('gb-rail');
+            const read = (key) => {
+              try {
+                return JSON.parse(localStorage.getItem(key) || '{}');
+              } catch (e) {
+                return {};
+              }
+            };
+            const sections = read('gb-rail-sections');
+            const groups = read('gb-groups');
+            const open = (toggle, saved, id) =>
+              toggle.hasAttribute('data-current') || !(id in saved) ? toggle.dataset.defaultOpen === 'true' : !!saved[id];
+            const openGroups = {};
+            for (const toggle of rail.querySelectorAll('[data-group-toggle]')) {
+              const id = toggle.dataset.groupToggle;
+              openGroups[id] = toggle.hasAttribute('data-current') || open(toggle, groups, id);
+              toggle.setAttribute('aria-expanded', String(openGroups[id]));
+            }
+            for (const toggle of rail.querySelectorAll('[data-section-toggle]')) {
+              const id = toggle.dataset.sectionToggle;
+              const shown = open(toggle, sections, id);
+              toggle.setAttribute('aria-expanded', String(shown));
+              for (const el of rail.querySelectorAll(`[data-in-section="${id}"]`)) {
+                const hide = !shown || (el.dataset.group ? !openGroups[el.dataset.group] : false);
+                if (hide && !el.hidden && deferHiding) leaving.push(el);
+                else el.hidden = hide;
+              }
+            }
+            return leaving;
+          };
+          // Before first paint: expanded from 840px unless the reader
+          // collapsed it, with the current page (if its section is open) as
+          // the active destination. A reload starts over: only the current
+          // section open, with all its groups (the defaults).
+          (() => {
+            if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+              try {
+                localStorage.removeItem('gb-rail-sections');
+                localStorage.removeItem('gb-groups');
+              } catch (e) {
+                // Storage can be blocked; the defaults apply anyway.
+              }
+            }
+            window.gbRailApply();
+            const rail = document.getElementById('gb-rail');
+            const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
+            const page = rail.querySelector('md-gb-nav-rail-item[secondary][data-current]');
+            if (!open) return;
+            rail.setAttribute('expanded', '');
+            if (page && !page.hidden) {
+              rail.querySelector('md-gb-nav-rail-item[data-section][data-current]').removeAttribute('selected');
+              page.setAttribute('selected', '');
+            }
+          })();
+        </script><div class="gb-rail-foot">
+          <div class="gb-rail-links" role="group" aria-label="Project">
+            <md-gb-icon-button tooltip href="https://github.com/material-components/material-web" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)">
+              <md-gb-icon>code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener" aria-label="npm (opens in a new tab)">
+              <md-gb-icon>deployed_code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip data-tool="feedback" aria-label="Send feedback">
+              <md-gb-icon>feedback</md-gb-icon>
+            </md-gb-icon-button>
+          </div><label class="gb-version">
+            <span class="gb-version-label" aria-hidden="true">3.0</span>
+            <md-gb-switch id="gb-version" selected aria-label="Material Web 3.0 (off for 2.5)"></md-gb-switch>
+          </label>
+        </div>
+      </nav>
+
+      <div class="gb-content-pane" id="gb-content-pane">
+        <div class="gb-body gb-layout-index">
+          <main class="gb-main" id="main" tabindex="-1"><md-gb-fab id="gb-outline-fab" class="gb-outline-fab" color="secondary-container" aria-label="Page outline" aria-haspopup="dialog">
+              <md-gb-icon>toc</md-gb-icon>
+            </md-gb-fab>
+            
+<div class="gb-pager gb-pager-top" role="group" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/about/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">About overview</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</div>
+            <div class="gb-content"><header class="gb-home-hero">
+<div class="gb-home-intro">
+<a class="gb-home-chip" href="/material-web/3.0/about/intro/">Material 3 Expressive, as web components<md-gb-icon aria-hidden="true">arrow_forward</md-gb-icon></a>
+<h1 class="gb-home-title">Material Design for the web</h1>
+<p class="gb-home-lede">Accessible components that follow Material 3 Expressive, for any framework or none. Shapes that morph, motion on springs, color from a single seed.</p>
+<div class="gb-home-actions">
+<md-gb-button color="filled" size="md" href="/material-web/3.0/about/quick-start/">Get started</md-gb-button>
+<md-gb-button color="tonal" size="md" href="/material-web/3.0/components/">View components</md-gb-button>
+</div>
+</div>
+<div class="gb-home-art" aria-hidden="true" inert>
+<span class="gb-home-blob" data-tone="primary" data-pos="main"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="cookie12Sided:cookie9Sided" data-morph-mode="loop"><path d="M 0.5 0.0052 C 0.5256 0.0052 0.5512 0.0155 0.57 0.0361 C 0.5949 0.0634 0.6335 0.0738 0.6688 0.0625 C 0.7219 0.0456 0.7781 0.0781 0.79 0.1325 C 0.7979 0.1687 0.8262 0.1969 0.8623 0.2048 C 0.9168 0.2167 0.9492 0.2729 0.9323 0.3261 C 0.9211 0.3613 0.9314 0.3999 0.9588 0.4248 C 1 0.4624 1 0.5273 0.9588 0.5649 C 0.9314 0.5898 0.9211 0.6283 0.9323 0.6636 C 0.9492 0.7167 0.9168 0.7729 0.8623 0.7849 C 0.8262 0.7928 0.7979 0.821 0.79 0.8571 C 0.7781 0.9116 0.7219 0.9441 0.6688 0.9272 C 0.6335 0.9159 0.5949 0.9263 0.57 0.9536 C 0.5324 0.9948 0.4676 0.9948 0.43 0.9536 C 0.4051 0.9263 0.3665 0.9159 0.3312 0.9272 C 0.2781 0.9441 0.2219 0.9116 0.21 0.8571 C 0.2021 0.821 0.1738 0.7928 0.1377 0.7849 C 0.0832 0.7729 0.0508 0.7167 0.0677 0.6636 C 0.0789 0.6283 0.0686 0.5898 0.0412 0.5649 C 0 0.5273 0 0.4624 0.0412 0.4248 C 0.0686 0.3999 0.0789 0.3613 0.0677 0.3261 C 0.0508 0.2729 0.0832 0.2167 0.1377 0.2048 C 0.1738 0.1969 0.2021 0.1687 0.21 0.1325 C 0.2219 0.0781 0.2781 0.0456 0.3312 0.0625 C 0.3665 0.0738 0.4051 0.0634 0.43 0.0361 C 0.4488 0.0155 0.4744 0.0052 0.5 0.0052 Z"/></svg></span>
+<span class="gb-home-blob" data-tone="tertiary" data-pos="a"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="clover4Leaf:puffy" data-morph-mode="loop" data-delay="1"><path d="M 0.5 0.0981 C 0.5048 0.0944 0.5097 0.0907 0.5145 0.087 C 0.6276 0 0.7877 0.0104 0.8887 0.1113 C 0.9896 0.2123 1 0.3724 0.913 0.4855 C 0.9093 0.4903 0.9056 0.4952 0.9019 0.5 C 0.9056 0.5048 0.9093 0.5097 0.913 0.5145 C 1 0.6276 0.9896 0.7877 0.8887 0.8887 C 0.7877 0.9896 0.6276 1 0.5145 0.913 C 0.5097 0.9093 0.5048 0.9056 0.5 0.9019 C 0.4952 0.9056 0.4903 0.9093 0.4855 0.913 C 0.3724 1 0.2123 0.9896 0.1113 0.8887 C 0.0104 0.7877 0 0.6276 0.087 0.5145 C 0.0907 0.5097 0.0944 0.5048 0.0981 0.5 C 0.0944 0.4952 0.0907 0.4903 0.087 0.4855 C 0 0.3724 0.0104 0.2123 0.1113 0.1113 C 0.2123 0.0104 0.3724 0 0.4855 0.087 C 0.4903 0.0907 0.4952 0.0944 0.5 0.0981 Z"/></svg></span>
+<span class="gb-home-blob" data-tone="secondary" data-pos="b"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="sunny:verySunny" data-morph-mode="loop" data-delay="2"><path d="M 0.9969 0.5 C 0.9969 0.5179 0.9907 0.5359 0.9783 0.5504 C 0.953 0.5801 0.9277 0.6098 0.9024 0.6395 C 0.8918 0.6519 0.8854 0.6674 0.8841 0.6837 C 0.881 0.7226 0.8779 0.7615 0.8748 0.8004 C 0.8718 0.8384 0.8415 0.8687 0.8035 0.8717 C 0.7646 0.8748 0.7257 0.8779 0.6868 0.881 C 0.6705 0.8823 0.655 0.8887 0.6426 0.8993 C 0.6129 0.9246 0.5832 0.9499 0.5535 0.9752 C 0.5245 1 0.4817 1 0.4527 0.9752 C 0.423 0.9499 0.3933 0.9246 0.3636 0.8993 C 0.3511 0.8887 0.3357 0.8823 0.3194 0.881 C 0.2805 0.8779 0.2416 0.8748 0.2027 0.8717 C 0.1646 0.8687 0.1344 0.8384 0.1314 0.8004 C 0.1283 0.7615 0.1252 0.7226 0.1221 0.6837 C 0.1208 0.6674 0.1144 0.6519 0.1038 0.6395 C 0.0785 0.6098 0.0532 0.5801 0.0279 0.5504 C 0.0031 0.5214 0.0031 0.4786 0.0279 0.4496 C 0.0532 0.4199 0.0785 0.3902 0.1038 0.3605 C 0.1144 0.3481 0.1208 0.3326 0.1221 0.3163 C 0.1252 0.2774 0.1283 0.2385 0.1314 0.1996 C 0.1344 0.1616 0.1646 0.1313 0.2027 0.1283 C 0.2416 0.1252 0.2805 0.1221 0.3194 0.119 C 0.3357 0.1177 0.3511 0.1113 0.3636 0.1007 C 0.3933 0.0754 0.423 0.0501 0.4527 0.0248 C 0.4817 0 0.5245 0 0.5535 0.0248 C 0.5832 0.0501 0.6129 0.0754 0.6426 0.1007 C 0.655 0.1113 0.6705 0.1177 0.6868 0.119 C 0.7257 0.1221 0.7646 0.1252 0.8035 0.1283 C 0.8415 0.1313 0.8718 0.1616 0.8748 0.1996 C 0.8779 0.2385 0.881 0.2774 0.8841 0.3163 C 0.8854 0.3326 0.8918 0.3481 0.9024 0.3605 C 0.9277 0.3902 0.953 0.4199 0.9783 0.4496 C 0.9907 0.4641 0.9969 0.4821 0.9969 0.5 Z"/></svg></span>
+<span class="gb-home-blob" data-tone="tertiary" data-pos="c"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="pill:oval" data-morph-mode="loop" data-delay="3"><path d="M 0.8732 0.1268 C 0.9404 0.1941 0.9852 0.2838 0.9955 0.384 C 0.997 0.3987 0.9985 0.4134 1 0.4281 C 0.9994 0.5439 0.9531 0.6547 0.8713 0.7365 C 0.8264 0.7814 0.7814 0.8264 0.7365 0.8713 C 0.6547 0.9531 0.5439 0.9994 0.4281 1 C 0.4134 0.9985 0.3987 0.997 0.384 0.9955 C 0.1836 0.9749 0.0251 0.8164 0.0045 0.616 C 0.003 0.6013 0.0015 0.5866 0 0.5719 C 0.0006 0.4561 0.0469 0.3453 0.1287 0.2635 C 0.1736 0.2186 0.2186 0.1736 0.2635 0.1287 C 0.3453 0.0469 0.4561 0.0006 0.5719 0 C 0.5866 0.0015 0.6013 0.003 0.616 0.0045 C 0.7162 0.0148 0.8059 0.0596 0.8732 0.1268 Z"/></svg></span>
+<span class="gb-home-blob" data-tone="secondary" data-pos="d"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="softBurst:burst" data-morph-mode="loop" data-delay="1"><path d="M 0.1866 0.2724 C 0.1936 0.2628 0.1973 0.2507 0.1963 0.2381 C 0.194 0.2081 0.1917 0.1782 0.1894 0.1483 C 0.1865 0.1099 0.225 0.0818 0.2607 0.0963 C 0.2887 0.1077 0.3166 0.1191 0.3446 0.1304 C 0.3681 0.14 0.395 0.1312 0.4083 0.1096 C 0.424 0.084 0.4398 0.0585 0.4555 0.0329 C 0.4757 0.0001 0.5234 0 0.5437 0.0327 C 0.5596 0.0584 0.5756 0.084 0.5915 0.1097 C 0.6049 0.1312 0.6318 0.1399 0.6553 0.1302 C 0.683 0.1188 0.7108 0.1074 0.7386 0.096 C 0.7742 0.0813 0.8128 0.1092 0.81 0.1476 C 0.8078 0.1778 0.8056 0.2079 0.8035 0.238 C 0.8016 0.2633 0.8183 0.2862 0.843 0.2921 C 0.8721 0.2992 0.9013 0.3063 0.9305 0.3133 C 0.9679 0.3224 0.9827 0.3677 0.9579 0.3972 C 0.9384 0.4202 0.919 0.4433 0.8995 0.4664 C 0.8832 0.4858 0.8832 0.5141 0.8996 0.5334 C 0.9191 0.5563 0.9385 0.5792 0.958 0.602 C 0.9829 0.6314 0.9683 0.6767 0.9309 0.686 C 0.9016 0.6932 0.8723 0.7004 0.843 0.7076 C 0.8184 0.7137 0.8017 0.7367 0.8037 0.7619 C 0.806 0.7919 0.8083 0.8218 0.8106 0.8517 C 0.8135 0.8901 0.775 0.9182 0.7393 0.9037 C 0.7113 0.8923 0.6834 0.8809 0.6554 0.8696 C 0.6319 0.86 0.605 0.8688 0.5917 0.8904 C 0.576 0.916 0.5602 0.9415 0.5445 0.9671 C 0.5243 0.9999 0.4766 1 0.4563 0.9673 C 0.4404 0.9416 0.4244 0.916 0.4085 0.8903 C 0.3951 0.8688 0.3682 0.8601 0.3447 0.8698 C 0.317 0.8812 0.2892 0.8926 0.2614 0.904 C 0.2258 0.9187 0.1872 0.8908 0.19 0.8524 C 0.1922 0.8222 0.1944 0.7921 0.1965 0.762 C 0.1984 0.7367 0.1817 0.7138 0.157 0.7079 C 0.1279 0.7008 0.0987 0.6937 0.0695 0.6867 C 0.0321 0.6776 0.0173 0.6323 0.0421 0.6028 C 0.0616 0.5798 0.081 0.5567 0.1005 0.5336 C 0.1168 0.5142 0.1168 0.4859 0.1004 0.4666 C 0.0809 0.4437 0.0615 0.4208 0.042 0.398 C 0.0171 0.3686 0.0317 0.3233 0.0691 0.314 C 0.0984 0.3068 0.1277 0.2996 0.157 0.2924 C 0.1693 0.2893 0.1796 0.2821 0.1866 0.2724 Z"/></svg></span>
+<md-gb-loading-indicator class="gb-home-spinner" contained aria-label="Loading"></md-gb-loading-indicator>
+</div>
+</header>
+<section class="gb-home-section" aria-labelledby="gb-home-explore">
+<h2 class="gb-home-heading" id="gb-home-explore">Explore the system</h2>
+<md-gb-carousel class="gb-home-carousel" aria-label="Explore the system">
+<md-gb-carousel-item href="/material-web/3.0/styles/color/" label="Color">
+<div class="gb-home-tile" data-tone="primary"><svg class="gb-shape gb-home-tile-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="cookie9Sided:flower"><path d="M 0.5 0.0142 C 0.5365 0.0142 0.573 0.0273 0.6019 0.0535 C 0.6313 0.0801 0.67 0.0942 0.7096 0.0927 C 0.7876 0.0897 0.8551 0.1463 0.8657 0.2237 C 0.8711 0.263 0.8916 0.2986 0.923 0.3229 C 0.9847 0.3708 1 0.4576 0.9584 0.5236 C 0.9372 0.5572 0.9301 0.5977 0.9385 0.6365 C 0.955 0.7128 0.9109 0.7891 0.8366 0.813 C 0.7988 0.8251 0.7673 0.8515 0.7488 0.8867 C 0.7124 0.9557 0.6296 0.9858 0.5573 0.9563 C 0.5206 0.9413 0.4794 0.9413 0.4427 0.9563 C 0.3704 0.9858 0.2876 0.9557 0.2512 0.8867 C 0.2327 0.8515 0.2012 0.8251 0.1634 0.813 C 0.0891 0.7891 0.045 0.7128 0.0615 0.6365 C 0.0699 0.5977 0.0628 0.5572 0.0416 0.5236 C 0 0.4576 0.0153 0.3708 0.077 0.3229 C 0.1084 0.2986 0.1289 0.263 0.1343 0.2237 C 0.1449 0.1463 0.2124 0.0897 0.2904 0.0927 C 0.33 0.0942 0.3687 0.0801 0.3981 0.0535 C 0.427 0.0273 0.4635 0.0142 0.5 0.0142 Z"/></svg><md-gb-icon class="gb-home-tile-icon">palette</md-gb-icon></div>
+<span slot="label">Color</span>
+</md-gb-carousel-item>
+<md-gb-carousel-item href="/material-web/3.0/styles/shape/" label="Shape">
+<div class="gb-home-tile" data-tone="tertiary"><svg class="gb-shape gb-home-tile-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="clover8Leaf:clover4Leaf"><path d="M 0.5 0.0713 C 0.5073 0.0674 0.5145 0.0636 0.5218 0.0597 C 0.6322 0.0011 0.7683 0.0612 0.7994 0.1822 C 0.8006 0.1871 0.8019 0.192 0.8031 0.1969 C 0.811 0.1993 0.8189 0.2017 0.8267 0.2041 C 0.9462 0.2407 1 0.3794 0.9364 0.487 C 0.9338 0.4913 0.9313 0.4957 0.9287 0.5 C 0.9326 0.5073 0.9364 0.5145 0.9403 0.5218 C 0.9989 0.6322 0.9388 0.7683 0.8178 0.7994 C 0.8129 0.8006 0.808 0.8019 0.8031 0.8031 C 0.8007 0.811 0.7983 0.8189 0.7959 0.8267 C 0.7593 0.9462 0.6206 1 0.513 0.9364 C 0.5087 0.9338 0.5043 0.9313 0.5 0.9287 C 0.4927 0.9326 0.4855 0.9364 0.4782 0.9403 C 0.3678 0.9989 0.2317 0.9388 0.2006 0.8178 C 0.1994 0.8129 0.1981 0.808 0.1969 0.8031 C 0.189 0.8007 0.1811 0.7983 0.1733 0.7959 C 0.0538 0.7593 0 0.6206 0.0636 0.513 C 0.0662 0.5087 0.0687 0.5043 0.0713 0.5 C 0.0674 0.4927 0.0636 0.4855 0.0597 0.4782 C 0.0011 0.3678 0.0612 0.2317 0.1822 0.2006 C 0.1871 0.1994 0.192 0.1981 0.1969 0.1969 C 0.1993 0.189 0.2017 0.1811 0.2041 0.1733 C 0.2407 0.0538 0.3794 0 0.487 0.0636 C 0.4913 0.0662 0.4957 0.0687 0.5 0.0713 Z"/></svg><md-gb-icon class="gb-home-tile-icon">category</md-gb-icon></div>
+<span slot="label">Shape</span>
+</md-gb-carousel-item>
+<md-gb-carousel-item href="/material-web/3.0/styles/motion/" label="Motion">
+<div class="gb-home-tile" data-tone="secondary"><svg class="gb-shape gb-home-tile-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="burst:softBurst"><path d="M 0.5 0.0005 C 0.5021 0.0005 0.5041 0.0015 0.5052 0.0036 C 0.5331 0.0533 0.561 0.1029 0.5889 0.1526 C 0.5905 0.1556 0.5943 0.1566 0.5972 0.1548 C 0.6459 0.1257 0.6947 0.0966 0.7434 0.0674 C 0.7475 0.065 0.7526 0.068 0.7525 0.0726 C 0.7518 0.1296 0.7511 0.1866 0.7504 0.2435 C 0.7503 0.2469 0.7531 0.2496 0.7565 0.2496 C 0.8133 0.2487 0.8701 0.2479 0.9269 0.247 C 0.9315 0.247 0.9345 0.252 0.9321 0.2561 C 0.903 0.305 0.8739 0.354 0.8448 0.403 C 0.8431 0.4059 0.8441 0.4097 0.8471 0.4113 C 0.8967 0.439 0.9463 0.4666 0.9959 0.4943 C 1 0.4966 1 0.5024 0.9959 0.5047 C 0.9462 0.5326 0.8966 0.5605 0.8469 0.5883 C 0.8439 0.59 0.8429 0.5937 0.8447 0.5966 C 0.8738 0.6454 0.9029 0.6942 0.9321 0.7429 C 0.9345 0.7469 0.9315 0.752 0.9269 0.752 C 0.8699 0.7513 0.8129 0.7506 0.756 0.7499 C 0.7526 0.7498 0.7499 0.7526 0.7499 0.756 C 0.7508 0.8127 0.7516 0.8695 0.7525 0.9263 C 0.7525 0.931 0.7474 0.934 0.7434 0.9316 C 0.6944 0.9025 0.6455 0.8734 0.5965 0.8443 C 0.5936 0.8426 0.5898 0.8436 0.5882 0.8465 C 0.5605 0.8962 0.5329 0.9458 0.5052 0.9954 C 0.5029 0.9995 0.4971 0.9995 0.4948 0.9954 C 0.4669 0.9457 0.439 0.896 0.4111 0.8464 C 0.4095 0.8434 0.4057 0.8424 0.4028 0.8441 C 0.3541 0.8733 0.3053 0.9024 0.2566 0.9316 C 0.2525 0.934 0.2474 0.931 0.2475 0.9263 C 0.2482 0.8694 0.2489 0.8124 0.2496 0.7555 C 0.2497 0.7521 0.2469 0.7493 0.2435 0.7494 C 0.1867 0.7502 0.1299 0.7511 0.0731 0.752 C 0.0685 0.752 0.0655 0.7469 0.0679 0.7429 C 0.097 0.6939 0.1261 0.645 0.1552 0.596 C 0.1569 0.5931 0.1559 0.5893 0.1529 0.5877 C 0.1033 0.56 0.0537 0.5324 0.0041 0.5047 C 0 0.5024 0 0.4965 0.0041 0.4942 C 0.0538 0.4664 0.1034 0.4385 0.1531 0.4106 C 0.1561 0.409 0.1571 0.4052 0.1553 0.4023 C 0.1262 0.3536 0.0971 0.3048 0.0679 0.2561 C 0.0655 0.252 0.0685 0.2469 0.0731 0.247 C 0.1301 0.2477 0.1871 0.2484 0.244 0.2491 C 0.2474 0.2491 0.2501 0.2464 0.2501 0.243 C 0.2492 0.1862 0.2484 0.1294 0.2475 0.0726 C 0.2475 0.0679 0.2526 0.065 0.2566 0.0674 C 0.3056 0.0965 0.3545 0.1256 0.4035 0.1547 C 0.4064 0.1564 0.4102 0.1554 0.4118 0.1524 C 0.4395 0.1028 0.4671 0.0532 0.4948 0.0036 C 0.4959 0.0015 0.498 0.0005 0.5 0.0005 Z"/></svg><md-gb-icon class="gb-home-tile-icon">animation</md-gb-icon></div>
+<span slot="label">Motion</span>
+</md-gb-carousel-item>
+<md-gb-carousel-item href="/material-web/3.0/styles/typography/" label="Typography">
+<div class="gb-home-tile" data-tone="primary"><svg class="gb-shape gb-home-tile-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="flower:cookie9Sided"><path d="M 0.3697 0.1864 C 0.3785 0.16 0.3873 0.1337 0.3961 0.1073 C 0.409 0.0687 0.4331 0.035 0.4654 0.0103 C 0.4742 0.0037 0.4849 0 0.496 0 C 0.4983 0 0.5007 0 0.5031 0 C 0.5141 0 0.5248 0.0036 0.5336 0.0103 C 0.566 0.0348 0.5902 0.0686 0.6031 0.1071 C 0.612 0.1334 0.6208 0.1598 0.6297 0.1861 C 0.6545 0.1737 0.6794 0.1613 0.7042 0.1489 C 0.7406 0.1307 0.7815 0.1239 0.8218 0.1293 C 0.8327 0.1308 0.8429 0.1358 0.8507 0.1436 C 0.8524 0.1453 0.854 0.147 0.8557 0.1486 C 0.8635 0.1564 0.8686 0.1666 0.8701 0.1775 C 0.8756 0.2177 0.8689 0.2587 0.8508 0.2951 C 0.8384 0.32 0.826 0.3449 0.8136 0.3697 C 0.84 0.3785 0.8663 0.3873 0.8927 0.3961 C 0.9313 0.409 0.965 0.4331 0.9897 0.4654 C 0.9963 0.4742 1 0.4849 1 0.496 C 1 0.4983 1 0.5007 1 0.5031 C 1 0.5141 0.9964 0.5248 0.9897 0.5336 C 0.9652 0.566 0.9314 0.5902 0.8929 0.6031 C 0.8666 0.612 0.8402 0.6208 0.8139 0.6297 C 0.8263 0.6545 0.8387 0.6794 0.8511 0.7042 C 0.8693 0.7406 0.8761 0.7815 0.8707 0.8218 C 0.8692 0.8327 0.8642 0.8429 0.8564 0.8507 C 0.8547 0.8524 0.853 0.854 0.8514 0.8557 C 0.8436 0.8635 0.8334 0.8686 0.8225 0.8701 C 0.7823 0.8756 0.7413 0.8689 0.7049 0.8508 C 0.68 0.8384 0.6551 0.826 0.6303 0.8136 C 0.6215 0.84 0.6127 0.8663 0.6039 0.8927 C 0.591 0.9313 0.5669 0.965 0.5346 0.9897 C 0.5258 0.9963 0.5151 1 0.504 1 C 0.5017 1 0.4993 1 0.4969 1 C 0.4859 1 0.4752 0.9964 0.4664 0.9897 C 0.434 0.9652 0.4098 0.9314 0.3969 0.8929 C 0.388 0.8666 0.3792 0.8402 0.3703 0.8139 C 0.3455 0.8263 0.3206 0.8387 0.2958 0.8511 C 0.2594 0.8693 0.2185 0.8761 0.1782 0.8707 C 0.1673 0.8692 0.1571 0.8642 0.1493 0.8564 C 0.1476 0.8547 0.146 0.853 0.1443 0.8514 C 0.1365 0.8436 0.1314 0.8334 0.1299 0.8225 C 0.1244 0.7823 0.1311 0.7413 0.1492 0.7049 C 0.1616 0.68 0.174 0.6551 0.1864 0.6303 C 0.16 0.6215 0.1337 0.6127 0.1073 0.6039 C 0.0687 0.591 0.035 0.5669 0.0103 0.5346 C 0.0037 0.5258 0 0.5151 0 0.504 C 0 0.5017 0 0.4993 0 0.4969 C 0 0.4859 0.0036 0.4752 0.0103 0.4664 C 0.0348 0.434 0.0686 0.4098 0.1071 0.3969 C 0.1334 0.388 0.1598 0.3792 0.1861 0.3703 C 0.1737 0.3455 0.1613 0.3206 0.1489 0.2958 C 0.1307 0.2594 0.1239 0.2185 0.1293 0.1782 C 0.1308 0.1673 0.1358 0.1571 0.1436 0.1493 C 0.1453 0.1476 0.147 0.146 0.1486 0.1443 C 0.1564 0.1365 0.1666 0.1314 0.1775 0.1299 C 0.2177 0.1244 0.2587 0.1311 0.2951 0.1492 C 0.32 0.1616 0.3449 0.174 0.3697 0.1864 Z"/></svg><md-gb-icon class="gb-home-tile-icon">text_fields</md-gb-icon></div>
+<span slot="label">Typography</span>
+</md-gb-carousel-item>
+<md-gb-carousel-item href="/material-web/3.0/components/" label="Components">
+<div class="gb-home-tile" data-tone="tertiary"><svg class="gb-shape gb-home-tile-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="puffy:puffyDiamond"><path d="M 0.5 0.1703 C 0.5058 0.1614 0.5116 0.1526 0.5174 0.1437 C 0.534 0.1182 0.5694 0.1024 0.6075 0.1036 C 0.6453 0.1047 0.679 0.1214 0.6949 0.1468 C 0.6974 0.1508 0.6999 0.1548 0.7024 0.1587 C 0.7112 0.1727 0.7166 0.1878 0.7182 0.2031 C 0.719 0.2106 0.7199 0.2181 0.7207 0.2256 C 0.7465 0.1817 0.8245 0.1718 0.8685 0.2069 C 0.8695 0.2077 0.8706 0.2085 0.8716 0.2093 C 0.8975 0.2299 0.9133 0.2564 0.9165 0.2844 C 0.9168 0.2866 0.917 0.2888 0.9173 0.291 C 0.9213 0.3253 0.9075 0.3594 0.8787 0.3864 C 0.8808 0.3864 0.8828 0.3863 0.8848 0.3863 C 0.9175 0.3854 0.9485 0.3971 0.9669 0.4172 C 0.9885 0.4409 1 0.4688 1 0.4974 C 1 0.4991 1 0.5009 1 0.5026 C 1 0.5312 0.9885 0.5591 0.9669 0.5828 C 0.9485 0.6029 0.9175 0.6146 0.8848 0.6137 C 0.8828 0.6137 0.8808 0.6136 0.8787 0.6136 C 0.9075 0.6406 0.9213 0.6747 0.9173 0.709 C 0.917 0.7112 0.9168 0.7134 0.9165 0.7156 C 0.9133 0.7436 0.8975 0.7701 0.8716 0.7907 C 0.8706 0.7915 0.8695 0.7923 0.8685 0.7931 C 0.8245 0.8282 0.7465 0.8183 0.7207 0.7744 C 0.7199 0.7819 0.719 0.7894 0.7182 0.7969 C 0.7166 0.8122 0.7112 0.8273 0.7024 0.8413 C 0.6999 0.8452 0.6974 0.8492 0.6949 0.8532 C 0.679 0.8786 0.6453 0.8953 0.6075 0.8964 C 0.5694 0.8976 0.534 0.8818 0.5174 0.8563 C 0.5116 0.8474 0.5058 0.8386 0.5 0.8297 C 0.4942 0.8386 0.4884 0.8474 0.4826 0.8563 C 0.466 0.8818 0.4306 0.8976 0.3925 0.8964 C 0.3547 0.8953 0.321 0.8786 0.3051 0.8532 C 0.3026 0.8492 0.3001 0.8452 0.2976 0.8413 C 0.2888 0.8273 0.2834 0.8122 0.2818 0.7969 C 0.281 0.7894 0.2801 0.7819 0.2793 0.7744 C 0.2535 0.8183 0.1755 0.8282 0.1315 0.7931 C 0.1305 0.7923 0.1294 0.7915 0.1284 0.7907 C 0.1025 0.7701 0.0867 0.7436 0.0835 0.7156 C 0.0832 0.7134 0.083 0.7112 0.0827 0.709 C 0.0787 0.6747 0.0925 0.6406 0.1213 0.6136 C 0.1192 0.6136 0.1172 0.6137 0.1152 0.6137 C 0.0825 0.6146 0.0515 0.6029 0.0331 0.5828 C 0.0115 0.5591 0 0.5312 0 0.5026 C 0 0.5009 0 0.4991 0 0.4974 C 0 0.4688 0.0115 0.4409 0.0331 0.4172 C 0.0515 0.3971 0.0825 0.3854 0.1152 0.3863 C 0.1172 0.3863 0.1192 0.3864 0.1213 0.3864 C 0.0925 0.3594 0.0787 0.3253 0.0827 0.291 C 0.083 0.2888 0.0832 0.2866 0.0835 0.2844 C 0.0867 0.2564 0.1025 0.2299 0.1284 0.2093 C 0.1294 0.2085 0.1305 0.2077 0.1315 0.2069 C 0.1755 0.1718 0.2535 0.1817 0.2793 0.2256 C 0.2801 0.2181 0.281 0.2106 0.2818 0.2031 C 0.2834 0.1878 0.2888 0.1727 0.2976 0.1587 C 0.3001 0.1548 0.3026 0.1508 0.3051 0.1468 C 0.321 0.1214 0.3547 0.1047 0.3925 0.1036 C 0.4306 0.1024 0.466 0.1182 0.4826 0.1437 C 0.4884 0.1526 0.4942 0.1614 0.5 0.1703 Z"/></svg><md-gb-icon class="gb-home-tile-icon">widgets</md-gb-icon></div>
+<span slot="label">Components</span>
+</md-gb-carousel-item>
+<md-gb-carousel-item href="/material-web/3.0/foundations/accessibility/" label="Accessibility">
+<div class="gb-home-tile" data-tone="secondary"><svg class="gb-shape gb-home-tile-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="gem:pentagon"><path d="M 0.4995 1 C 0.4914 1 0.4833 0.9995 0.4752 0.9987 C 0.4356 0.9946 0.3976 0.9772 0.3216 0.9424 C 0.26 0.9142 0.1984 0.8859 0.1368 0.8577 C 0.0527 0.8191 0.0042 0.7298 0.0175 0.6383 C 0.0314 0.5436 0.0452 0.4489 0.059 0.3542 C 0.068 0.2928 0.1015 0.2378 0.1519 0.2017 C 0.2273 0.1476 0.3027 0.0936 0.3781 0.0396 C 0.414 0.0138 0.4572 0 0.5014 0.0001 C 0.5456 0.0002 0.5887 0.0141 0.6245 0.04 C 0.6997 0.0944 0.7749 0.1487 0.8501 0.203 C 0.9004 0.2393 0.9337 0.2945 0.9424 0.3559 C 0.9559 0.4506 0.9693 0.5454 0.9828 0.6402 C 0.9958 0.7317 0.9469 0.8209 0.8627 0.8591 C 0.801 0.8871 0.7393 0.9151 0.6775 0.9431 C 0.6014 0.9776 0.5634 0.9949 0.5238 0.9988 C 0.5157 0.9996 0.5076 1 0.4995 1 Z"/></svg><md-gb-icon class="gb-home-tile-icon">accessibility_new</md-gb-icon></div>
+<span slot="label">Accessibility</span>
+</md-gb-carousel-item>
+</md-gb-carousel>
+</section>
+<section class="gb-home-section" aria-labelledby="gb-home-built">
+<h2 class="gb-home-heading" id="gb-home-built">Built from the components</h2>
+<div class="gb-home-cards">
+<div class="gb-home-card" data-corners="a" role="group" aria-label="Controls">
+<span class="gb-home-decor" data-tone="primary" data-place="bottom"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="cookie6Sided:cookie9Sided"><path d="M 0.7165 0.8729 C 0.6996 0.8826 0.684 0.8944 0.6698 0.908 C 0.6693 0.9085 0.6688 0.909 0.6683 0.9095 C 0.5744 1 0.4257 0.9999 0.332 0.9092 C 0.3037 0.8819 0.2693 0.8619 0.2316 0.8511 C 0.2309 0.8509 0.2302 0.8507 0.2296 0.8505 C 0.1042 0.8145 0.0299 0.6856 0.0616 0.5591 C 0.0712 0.521 0.0712 0.4812 0.0617 0.4431 C 0.0616 0.4424 0.0614 0.4417 0.0612 0.441 C 0.0298 0.3145 0.1043 0.1857 0.2297 0.1499 C 0.2674 0.1391 0.3019 0.1192 0.3302 0.092 C 0.3307 0.0915 0.3312 0.091 0.3317 0.0905 C 0.4256 0 0.5743 0.0001 0.668 0.0908 C 0.6963 0.1181 0.7307 0.1381 0.7684 0.1489 C 0.7691 0.1491 0.7698 0.1493 0.7704 0.1495 C 0.8958 0.1855 0.9701 0.3144 0.9384 0.4409 C 0.9288 0.479 0.9288 0.5188 0.9383 0.5569 C 0.9384 0.5576 0.9386 0.5583 0.9388 0.559 C 0.9702 0.6855 0.8957 0.8143 0.7703 0.8501 C 0.7515 0.8555 0.7334 0.8632 0.7165 0.8729 Z"/></svg></span>
+<div class="gb-home-row">
+<md-gb-button color="filled">Button<md-gb-icon slot="icon">arrow_forward</md-gb-icon></md-gb-button>
+<md-gb-button color="tonal">Tonal</md-gb-button>
+<md-gb-button color="outlined">Outlined</md-gb-button>
+</div>
+<md-gb-text-field label="Name" variant="outlined"><md-gb-icon slot="leading-icon">search</md-gb-icon></md-gb-text-field>
+<md-gb-text-field label="Message" variant="outlined" type="textarea" rows="3"></md-gb-text-field>
+<div class="gb-home-row gb-home-spread">
+<md-gb-chip-set aria-label="Topics">
+<md-gb-chip type="filter" selected>Design</md-gb-chip>
+<md-gb-chip type="filter">Code</md-gb-chip>
+</md-gb-chip-set>
+<div class="gb-home-row">
+<md-gb-radio name="gb-home-plan" value="a" checked aria-label="Option A"></md-gb-radio>
+<md-gb-checkbox checked aria-label="Subscribe"></md-gb-checkbox>
+<md-gb-switch selected aria-label="Notifications"></md-gb-switch>
+</div>
+</div>
+<md-gb-button-group aria-label="Text alignment">
+<md-gb-button color="tonal">Left</md-gb-button>
+<md-gb-button color="tonal">Center</md-gb-button>
+<md-gb-button color="tonal">Right</md-gb-button>
+</md-gb-button-group>
+</div>
+<div class="gb-home-card" data-corners="b" role="group" aria-labelledby="gb-home-player">
+<span class="gb-home-decor" data-tone="tertiary"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="sunny:verySunny"><path d="M 0.9969 0.5 C 0.9969 0.5179 0.9907 0.5359 0.9783 0.5504 C 0.953 0.5801 0.9277 0.6098 0.9024 0.6395 C 0.8918 0.6519 0.8854 0.6674 0.8841 0.6837 C 0.881 0.7226 0.8779 0.7615 0.8748 0.8004 C 0.8718 0.8384 0.8415 0.8687 0.8035 0.8717 C 0.7646 0.8748 0.7257 0.8779 0.6868 0.881 C 0.6705 0.8823 0.655 0.8887 0.6426 0.8993 C 0.6129 0.9246 0.5832 0.9499 0.5535 0.9752 C 0.5245 1 0.4817 1 0.4527 0.9752 C 0.423 0.9499 0.3933 0.9246 0.3636 0.8993 C 0.3511 0.8887 0.3357 0.8823 0.3194 0.881 C 0.2805 0.8779 0.2416 0.8748 0.2027 0.8717 C 0.1646 0.8687 0.1344 0.8384 0.1314 0.8004 C 0.1283 0.7615 0.1252 0.7226 0.1221 0.6837 C 0.1208 0.6674 0.1144 0.6519 0.1038 0.6395 C 0.0785 0.6098 0.0532 0.5801 0.0279 0.5504 C 0.0031 0.5214 0.0031 0.4786 0.0279 0.4496 C 0.0532 0.4199 0.0785 0.3902 0.1038 0.3605 C 0.1144 0.3481 0.1208 0.3326 0.1221 0.3163 C 0.1252 0.2774 0.1283 0.2385 0.1314 0.1996 C 0.1344 0.1616 0.1646 0.1313 0.2027 0.1283 C 0.2416 0.1252 0.2805 0.1221 0.3194 0.119 C 0.3357 0.1177 0.3511 0.1113 0.3636 0.1007 C 0.3933 0.0754 0.423 0.0501 0.4527 0.0248 C 0.4817 0 0.5245 0 0.5535 0.0248 C 0.5832 0.0501 0.6129 0.0754 0.6426 0.1007 C 0.655 0.1113 0.6705 0.1177 0.6868 0.119 C 0.7257 0.1221 0.7646 0.1252 0.8035 0.1283 C 0.8415 0.1313 0.8718 0.1616 0.8748 0.1996 C 0.8779 0.2385 0.881 0.2774 0.8841 0.3163 C 0.8854 0.3326 0.8918 0.3481 0.9024 0.3605 C 0.9277 0.3902 0.953 0.4199 0.9783 0.4496 C 0.9907 0.4641 0.9969 0.4821 0.9969 0.5 Z"/></svg></span>
+<div class="gb-home-media">
+<div class="gb-home-art-small" data-tone="tertiary" aria-hidden="true"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="cookie9Sided:flower"><path d="M 0.5 0.0142 C 0.5365 0.0142 0.573 0.0273 0.6019 0.0535 C 0.6313 0.0801 0.67 0.0942 0.7096 0.0927 C 0.7876 0.0897 0.8551 0.1463 0.8657 0.2237 C 0.8711 0.263 0.8916 0.2986 0.923 0.3229 C 0.9847 0.3708 1 0.4576 0.9584 0.5236 C 0.9372 0.5572 0.9301 0.5977 0.9385 0.6365 C 0.955 0.7128 0.9109 0.7891 0.8366 0.813 C 0.7988 0.8251 0.7673 0.8515 0.7488 0.8867 C 0.7124 0.9557 0.6296 0.9858 0.5573 0.9563 C 0.5206 0.9413 0.4794 0.9413 0.4427 0.9563 C 0.3704 0.9858 0.2876 0.9557 0.2512 0.8867 C 0.2327 0.8515 0.2012 0.8251 0.1634 0.813 C 0.0891 0.7891 0.045 0.7128 0.0615 0.6365 C 0.0699 0.5977 0.0628 0.5572 0.0416 0.5236 C 0 0.4576 0.0153 0.3708 0.077 0.3229 C 0.1084 0.2986 0.1289 0.263 0.1343 0.2237 C 0.1449 0.1463 0.2124 0.0897 0.2904 0.0927 C 0.33 0.0942 0.3687 0.0801 0.3981 0.0535 C 0.427 0.0273 0.4635 0.0142 0.5 0.0142 Z"/></svg><md-gb-icon>library_music</md-gb-icon></div>
+<div class="gb-home-stack">
+<h3 class="gb-home-card-title" id="gb-home-player">Golden hour</h3>
+<p class="gb-home-muted">The Tonal Palettes</p>
+</div>
+</div>
+<md-gb-slider aria-label="Position" value="35"></md-gb-slider>
+<div class="gb-home-row gb-home-center">
+<md-gb-icon-button aria-label="Favorite"><md-gb-icon>favorite</md-gb-icon></md-gb-icon-button>
+<md-gb-icon-button color="filled" aria-label="Pause"><md-gb-icon>pause</md-gb-icon></md-gb-icon-button>
+<md-gb-icon-button aria-label="Share"><md-gb-icon>share</md-gb-icon></md-gb-icon-button>
+</div>
+<md-gb-slider aria-label="Volume" value="60"><md-gb-icon slot="icon">volume_up</md-gb-icon></md-gb-slider>
+</div>
+<div class="gb-home-card" data-corners="c" role="group" aria-labelledby="gb-home-signup">
+<span class="gb-home-decor" data-tone="secondary"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="clover4Leaf:clover8Leaf"><path d="M 0.5 0.0981 C 0.5048 0.0944 0.5097 0.0907 0.5145 0.087 C 0.6276 0 0.7877 0.0104 0.8887 0.1113 C 0.9896 0.2123 1 0.3724 0.913 0.4855 C 0.9093 0.4903 0.9056 0.4952 0.9019 0.5 C 0.9056 0.5048 0.9093 0.5097 0.913 0.5145 C 1 0.6276 0.9896 0.7877 0.8887 0.8887 C 0.7877 0.9896 0.6276 1 0.5145 0.913 C 0.5097 0.9093 0.5048 0.9056 0.5 0.9019 C 0.4952 0.9056 0.4903 0.9093 0.4855 0.913 C 0.3724 1 0.2123 0.9896 0.1113 0.8887 C 0.0104 0.7877 0 0.6276 0.087 0.5145 C 0.0907 0.5097 0.0944 0.5048 0.0981 0.5 C 0.0944 0.4952 0.0907 0.4903 0.087 0.4855 C 0 0.3724 0.0104 0.2123 0.1113 0.1113 C 0.2123 0.0104 0.3724 0 0.4855 0.087 C 0.4903 0.0907 0.4952 0.0944 0.5 0.0981 Z"/></svg></span>
+<div class="gb-home-stack">
+<h3 class="gb-home-card-title" id="gb-home-signup">Create an account</h3>
+<p class="gb-home-muted">Start building with Material Web in minutes.</p>
+</div>
+<md-gb-text-field label="Email" type="email" variant="outlined"></md-gb-text-field>
+<md-gb-text-field label="Password" type="password" variant="outlined" supporting-text="At least 8 characters"></md-gb-text-field>
+<label class="gb-home-row gb-home-label"><md-gb-checkbox checked></md-gb-checkbox>Send me product updates</label>
+<md-gb-button color="filled" size="md" class="gb-home-wide">Create account</md-gb-button>
+</div>
+<div class="gb-home-card" data-corners="a" role="group" aria-labelledby="gb-home-settings">
+<span class="gb-home-decor" data-tone="primary"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="puffyDiamond:puffy"><path d="M 0.7789 0.2211 C 0.8126 0.2547 0.83 0.3044 0.818 0.3569 C 0.818 0.3569 0.818 0.357 0.818 0.357 C 0.8232 0.3563 0.8284 0.3556 0.8336 0.3549 C 0.9216 0.3428 1 0.4112 1 0.5 C 1 0.5888 0.9216 0.6572 0.8336 0.6451 C 0.8284 0.6444 0.8232 0.6437 0.818 0.643 C 0.818 0.643 0.818 0.6431 0.818 0.6431 C 0.8421 0.7481 0.7481 0.8421 0.6431 0.818 C 0.6431 0.818 0.643 0.818 0.643 0.818 C 0.6437 0.8232 0.6444 0.8284 0.6451 0.8336 C 0.6572 0.9216 0.5888 1 0.5 1 C 0.4112 1 0.3428 0.9216 0.3549 0.8336 C 0.3556 0.8284 0.3563 0.8232 0.357 0.818 C 0.357 0.818 0.3569 0.818 0.3569 0.818 C 0.2519 0.8421 0.1579 0.7481 0.182 0.6431 C 0.182 0.6431 0.182 0.643 0.182 0.643 C 0.1768 0.6437 0.1716 0.6444 0.1664 0.6451 C 0.0784 0.6572 0 0.5888 0 0.5 C 0 0.4112 0.0784 0.3428 0.1664 0.3549 C 0.1716 0.3556 0.1768 0.3563 0.182 0.357 C 0.182 0.357 0.182 0.3569 0.182 0.3569 C 0.1579 0.2519 0.2519 0.1579 0.3569 0.182 C 0.3569 0.182 0.357 0.182 0.357 0.182 C 0.3563 0.1768 0.3556 0.1716 0.3549 0.1664 C 0.3428 0.0784 0.4112 0 0.5 0 C 0.5888 0 0.6572 0.0784 0.6451 0.1664 C 0.6444 0.1716 0.6437 0.1768 0.643 0.182 C 0.643 0.182 0.6431 0.182 0.6431 0.182 C 0.6956 0.17 0.7453 0.1874 0.7789 0.2211 Z"/></svg></span>
+<h3 class="gb-home-card-title" id="gb-home-settings">Settings</h3>
+<md-gb-list>
+<md-gb-list-item static>
+<md-gb-icon slot="leading">notifications</md-gb-icon>
+Notifications
+<span slot="supporting-text">Alerts and badges</span>
+<md-gb-switch slot="trailing" selected aria-label="Notifications"></md-gb-switch>
+</md-gb-list-item>
+<md-gb-list-item static>
+<md-gb-icon slot="leading">dark_mode</md-gb-icon>
+Dark theme
+<span slot="supporting-text">Follows the system</span>
+<md-gb-switch slot="trailing" aria-label="Dark theme"></md-gb-switch>
+</md-gb-list-item>
+<md-gb-list-item static>
+<md-gb-icon slot="leading">language</md-gb-icon>
+Language
+<span slot="trailing-text">English</span>
+</md-gb-list-item>
+</md-gb-list>
+</div>
+<div class="gb-home-card" data-corners="b" role="group" aria-labelledby="gb-home-savings">
+<span class="gb-home-decor" data-tone="secondary"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="cookie4Sided:cookie6Sided"><path d="M 0.8714 0.8708 C 0.8105 0.9318 0.7159 0.9591 0.622 0.9186 C 0.6084 0.9127 0.5948 0.9069 0.5812 0.901 C 0.5295 0.8787 0.4709 0.8787 0.4192 0.9011 C 0.4058 0.907 0.3923 0.9128 0.3789 0.9186 C 0.1911 1 0.0005 0.8097 0.0816 0.6218 C 0.0874 0.6082 0.0933 0.5946 0.0992 0.581 C 0.1215 0.5293 0.1214 0.4707 0.099 0.419 C 0.0932 0.4056 0.0874 0.3921 0.0816 0.3787 C 0.0002 0.1909 0.1904 0.0003 0.3783 0.0814 C 0.3919 0.0873 0.4055 0.0931 0.4191 0.099 C 0.4708 0.1213 0.5295 0.1213 0.5811 0.0989 C 0.5946 0.093 0.608 0.0872 0.6215 0.0814 C 0.8093 0 0.9998 0.1903 0.9188 0.3782 C 0.9129 0.3918 0.907 0.4054 0.9012 0.419 C 0.8788 0.4707 0.8789 0.5293 0.9013 0.581 C 0.9071 0.5944 0.9129 0.6079 0.9188 0.6213 C 0.9595 0.7152 0.9322 0.8098 0.8714 0.8708 Z"/></svg></span>
+<div class="gb-home-stack">
+<h3 class="gb-home-card-title" id="gb-home-savings">Savings targets</h3>
+<p class="gb-home-muted">How close each goal is this year.</p>
+</div>
+<div class="gb-home-goal">
+<p class="gb-home-overline">Travel</p>
+<p class="gb-home-figure">$4,200</p>
+<md-gb-progress value="0.65" aria-label="Travel: 65% of the target"></md-gb-progress>
+<p class="gb-home-row gb-home-spread gb-home-muted"><span>65% achieved</span><span>$2,730</span></p>
+</div>
+<div class="gb-home-goal">
+<p class="gb-home-overline">New laptop</p>
+<p class="gb-home-figure">$1,800</p>
+<md-gb-progress value="0.32" aria-label="New laptop: 32% of the target"></md-gb-progress>
+<p class="gb-home-row gb-home-spread gb-home-muted"><span>32% achieved</span><span>$576</span></p>
+</div>
+</div>
+<div class="gb-home-card" data-corners="c" role="group" aria-labelledby="gb-home-table">
+<span class="gb-home-decor" data-tone="tertiary"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="flower:puffy"><path d="M 0.3697 0.1864 C 0.3785 0.16 0.3873 0.1337 0.3961 0.1073 C 0.409 0.0687 0.4331 0.035 0.4654 0.0103 C 0.4742 0.0037 0.4849 0 0.496 0 C 0.4983 0 0.5007 0 0.5031 0 C 0.5141 0 0.5248 0.0036 0.5336 0.0103 C 0.566 0.0348 0.5902 0.0686 0.6031 0.1071 C 0.612 0.1334 0.6208 0.1598 0.6297 0.1861 C 0.6545 0.1737 0.6794 0.1613 0.7042 0.1489 C 0.7406 0.1307 0.7815 0.1239 0.8218 0.1293 C 0.8327 0.1308 0.8429 0.1358 0.8507 0.1436 C 0.8524 0.1453 0.854 0.147 0.8557 0.1486 C 0.8635 0.1564 0.8686 0.1666 0.8701 0.1775 C 0.8756 0.2177 0.8689 0.2587 0.8508 0.2951 C 0.8384 0.32 0.826 0.3449 0.8136 0.3697 C 0.84 0.3785 0.8663 0.3873 0.8927 0.3961 C 0.9313 0.409 0.965 0.4331 0.9897 0.4654 C 0.9963 0.4742 1 0.4849 1 0.496 C 1 0.4983 1 0.5007 1 0.5031 C 1 0.5141 0.9964 0.5248 0.9897 0.5336 C 0.9652 0.566 0.9314 0.5902 0.8929 0.6031 C 0.8666 0.612 0.8402 0.6208 0.8139 0.6297 C 0.8263 0.6545 0.8387 0.6794 0.8511 0.7042 C 0.8693 0.7406 0.8761 0.7815 0.8707 0.8218 C 0.8692 0.8327 0.8642 0.8429 0.8564 0.8507 C 0.8547 0.8524 0.853 0.854 0.8514 0.8557 C 0.8436 0.8635 0.8334 0.8686 0.8225 0.8701 C 0.7823 0.8756 0.7413 0.8689 0.7049 0.8508 C 0.68 0.8384 0.6551 0.826 0.6303 0.8136 C 0.6215 0.84 0.6127 0.8663 0.6039 0.8927 C 0.591 0.9313 0.5669 0.965 0.5346 0.9897 C 0.5258 0.9963 0.5151 1 0.504 1 C 0.5017 1 0.4993 1 0.4969 1 C 0.4859 1 0.4752 0.9964 0.4664 0.9897 C 0.434 0.9652 0.4098 0.9314 0.3969 0.8929 C 0.388 0.8666 0.3792 0.8402 0.3703 0.8139 C 0.3455 0.8263 0.3206 0.8387 0.2958 0.8511 C 0.2594 0.8693 0.2185 0.8761 0.1782 0.8707 C 0.1673 0.8692 0.1571 0.8642 0.1493 0.8564 C 0.1476 0.8547 0.146 0.853 0.1443 0.8514 C 0.1365 0.8436 0.1314 0.8334 0.1299 0.8225 C 0.1244 0.7823 0.1311 0.7413 0.1492 0.7049 C 0.1616 0.68 0.174 0.6551 0.1864 0.6303 C 0.16 0.6215 0.1337 0.6127 0.1073 0.6039 C 0.0687 0.591 0.035 0.5669 0.0103 0.5346 C 0.0037 0.5258 0 0.5151 0 0.504 C 0 0.5017 0 0.4993 0 0.4969 C 0 0.4859 0.0036 0.4752 0.0103 0.4664 C 0.0348 0.434 0.0686 0.4098 0.1071 0.3969 C 0.1334 0.388 0.1598 0.3792 0.1861 0.3703 C 0.1737 0.3455 0.1613 0.3206 0.1489 0.2958 C 0.1307 0.2594 0.1239 0.2185 0.1293 0.1782 C 0.1308 0.1673 0.1358 0.1571 0.1436 0.1493 C 0.1453 0.1476 0.147 0.146 0.1486 0.1443 C 0.1564 0.1365 0.1666 0.1314 0.1775 0.1299 C 0.2177 0.1244 0.2587 0.1311 0.2951 0.1492 C 0.32 0.1616 0.3449 0.174 0.3697 0.1864 Z"/></svg></span>
+<div class="gb-home-stack">
+<h3 class="gb-home-card-title" id="gb-home-table">Book a table</h3>
+<p class="gb-home-muted">Friday, for two</p>
+</div>
+<md-gb-segmented-button-set aria-label="Meal">
+<md-gb-segmented-button value="lunch">Lunch</md-gb-segmented-button>
+<md-gb-segmented-button value="dinner" selected>Dinner</md-gb-segmented-button>
+</md-gb-segmented-button-set>
+<md-gb-chip-set aria-label="Times">
+<md-gb-chip type="filter">18:00</md-gb-chip>
+<md-gb-chip type="filter" selected>19:30</md-gb-chip>
+<md-gb-chip type="filter">21:00</md-gb-chip>
+</md-gb-chip-set>
+<div class="gb-home-row gb-home-end">
+<md-gb-button color="text">Cancel</md-gb-button>
+<md-gb-button color="filled">Reserve</md-gb-button>
+</div>
+</div>
+<div class="gb-home-card" data-corners="a" role="group" aria-labelledby="gb-home-compose">
+<span class="gb-home-decor" data-tone="primary"><svg class="gb-shape " viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-morph="softBoom:boom"><path d="M 0.7339 0.4538 C 0.7537 0.4506 0.7734 0.4475 0.7932 0.4443 C 0.8245 0.4393 0.8563 0.4385 0.8879 0.4419 C 0.8996 0.4432 0.9113 0.4445 0.9231 0.4458 C 0.9414 0.4478 0.959 0.4536 0.9748 0.463 C 0.9767 0.4641 0.9785 0.4652 0.9804 0.4663 C 0.9925 0.4735 1 0.4866 1 0.5007 C 1 0.5148 0.9925 0.5279 0.9803 0.5351 C 0.9784 0.5362 0.9766 0.5373 0.9747 0.5383 C 0.9589 0.5477 0.9412 0.5535 0.9229 0.5554 C 0.9112 0.5567 0.8994 0.5579 0.8877 0.5592 C 0.8562 0.5625 0.8243 0.5616 0.793 0.5565 C 0.7733 0.5533 0.7535 0.5501 0.7338 0.5469 C 0.7533 0.5515 0.7727 0.5561 0.7922 0.5607 C 0.823 0.5681 0.8528 0.5795 0.8806 0.5948 C 0.8909 0.6005 0.9013 0.6061 0.9116 0.6118 C 0.9277 0.6206 0.9418 0.6328 0.9529 0.6475 C 0.9541 0.6493 0.9554 0.651 0.9567 0.6527 C 0.9652 0.664 0.9671 0.6789 0.9616 0.692 C 0.9562 0.705 0.9443 0.7143 0.9303 0.7162 C 0.9282 0.7165 0.9261 0.7168 0.9239 0.7171 C 0.9057 0.7196 0.8871 0.7183 0.8695 0.7131 C 0.8582 0.7097 0.8469 0.7064 0.8356 0.703 C 0.8051 0.6941 0.776 0.6811 0.7491 0.6644 C 0.7321 0.6538 0.7151 0.6433 0.6981 0.6328 C 0.7143 0.6445 0.7305 0.6562 0.7467 0.6679 C 0.7724 0.6865 0.7955 0.7085 0.8153 0.7332 C 0.8227 0.7424 0.8301 0.7516 0.8375 0.7608 C 0.849 0.7751 0.8573 0.7918 0.8619 0.8096 C 0.8625 0.8117 0.863 0.8138 0.8635 0.8159 C 0.867 0.8295 0.863 0.8441 0.853 0.854 C 0.843 0.864 0.8285 0.868 0.8148 0.8644 C 0.8127 0.8639 0.8107 0.8633 0.8086 0.8628 C 0.7908 0.8582 0.7741 0.8498 0.7598 0.8382 C 0.7507 0.8308 0.7415 0.8234 0.7323 0.816 C 0.7076 0.7961 0.6857 0.7729 0.6672 0.7472 C 0.6555 0.7309 0.6439 0.7147 0.6322 0.6985 C 0.6427 0.7155 0.6532 0.7325 0.6636 0.7496 C 0.6803 0.7766 0.6932 0.8057 0.7021 0.8361 C 0.7054 0.8475 0.7087 0.8588 0.712 0.8701 C 0.7172 0.8878 0.7185 0.9063 0.7159 0.9245 C 0.7156 0.9267 0.7153 0.9288 0.715 0.9309 C 0.713 0.9449 0.7037 0.9568 0.6907 0.9622 C 0.6776 0.9676 0.6627 0.9657 0.6514 0.9572 C 0.6497 0.9559 0.648 0.9546 0.6462 0.9533 C 0.6316 0.9422 0.6194 0.9281 0.6106 0.9119 C 0.605 0.9016 0.5993 0.8912 0.5937 0.8808 C 0.5785 0.853 0.5672 0.8232 0.5599 0.7923 C 0.5553 0.7729 0.5508 0.7534 0.5462 0.7339 C 0.5494 0.7537 0.5525 0.7734 0.5557 0.7932 C 0.5607 0.8245 0.5615 0.8563 0.5581 0.8879 C 0.5568 0.8996 0.5555 0.9113 0.5542 0.9231 C 0.5522 0.9414 0.5464 0.959 0.537 0.9748 C 0.5359 0.9767 0.5348 0.9785 0.5337 0.9804 C 0.5265 0.9925 0.5134 1 0.4993 1 C 0.4852 1 0.4721 0.9925 0.4649 0.9803 C 0.4638 0.9784 0.4627 0.9766 0.4617 0.9747 C 0.4523 0.9589 0.4465 0.9412 0.4446 0.9229 C 0.4433 0.9112 0.4421 0.8994 0.4408 0.8877 C 0.4375 0.8562 0.4384 0.8243 0.4435 0.793 C 0.4467 0.7733 0.4499 0.7535 0.4531 0.7338 C 0.4485 0.7533 0.4439 0.7727 0.4393 0.7922 C 0.4319 0.823 0.4205 0.8528 0.4052 0.8806 C 0.3995 0.8909 0.3939 0.9013 0.3882 0.9116 C 0.3794 0.9277 0.3672 0.9418 0.3525 0.9529 C 0.3507 0.9541 0.349 0.9554 0.3473 0.9567 C 0.336 0.9652 0.3211 0.9671 0.308 0.9616 C 0.295 0.9562 0.2857 0.9443 0.2838 0.9303 C 0.2835 0.9282 0.2832 0.9261 0.2829 0.9239 C 0.2804 0.9057 0.2817 0.8871 0.2869 0.8695 C 0.2903 0.8582 0.2936 0.8469 0.297 0.8356 C 0.3059 0.8051 0.3189 0.776 0.3356 0.7491 C 0.3462 0.7321 0.3567 0.7151 0.3672 0.6981 C 0.3555 0.7143 0.3438 0.7305 0.3321 0.7467 C 0.3135 0.7724 0.2915 0.7955 0.2668 0.8153 C 0.2576 0.8227 0.2484 0.8301 0.2392 0.8375 C 0.2249 0.849 0.2082 0.8573 0.1904 0.8619 C 0.1883 0.8625 0.1862 0.863 0.1841 0.8635 C 0.1705 0.867 0.1559 0.863 0.146 0.853 C 0.136 0.843 0.132 0.8285 0.1356 0.8148 C 0.1361 0.8127 0.1367 0.8107 0.1372 0.8086 C 0.1418 0.7908 0.1502 0.7741 0.1618 0.7598 C 0.1692 0.7507 0.1766 0.7415 0.184 0.7323 C 0.2039 0.7076 0.2271 0.6857 0.2528 0.6672 C 0.2691 0.6555 0.2853 0.6439 0.3015 0.6322 C 0.2845 0.6427 0.2675 0.6532 0.2504 0.6636 C 0.2234 0.6803 0.1943 0.6932 0.1639 0.7021 C 0.1525 0.7054 0.1412 0.7087 0.1299 0.712 C 0.1122 0.7172 0.0937 0.7185 0.0755 0.7159 C 0.0733 0.7156 0.0712 0.7153 0.0691 0.715 C 0.0551 0.713 0.0432 0.7037 0.0378 0.6907 C 0.0324 0.6776 0.0343 0.6627 0.0428 0.6514 C 0.0441 0.6497 0.0454 0.648 0.0467 0.6462 C 0.0578 0.6316 0.0719 0.6194 0.0881 0.6106 C 0.0984 0.605 0.1088 0.5993 0.1192 0.5937 C 0.147 0.5785 0.1768 0.5672 0.2077 0.5599 C 0.2271 0.5553 0.2466 0.5508 0.2661 0.5462 C 0.2463 0.5494 0.2266 0.5525 0.2068 0.5557 C 0.1755 0.5607 0.1437 0.5615 0.1121 0.5581 C 0.1004 0.5568 0.0887 0.5555 0.0769 0.5542 C 0.0586 0.5522 0.041 0.5464 0.0252 0.537 C 0.0233 0.5359 0.0215 0.5348 0.0196 0.5337 C 0.0075 0.5265 0 0.5134 0 0.4993 C 0 0.4852 0.0075 0.4721 0.0197 0.4649 C 0.0216 0.4638 0.0234 0.4627 0.0253 0.4617 C 0.0411 0.4523 0.0588 0.4465 0.0771 0.4446 C 0.0888 0.4433 0.1006 0.4421 0.1123 0.4408 C 0.1438 0.4375 0.1757 0.4384 0.207 0.4435 C 0.2267 0.4467 0.2465 0.4499 0.2662 0.4531 C 0.2467 0.4485 0.2273 0.4439 0.2078 0.4393 C 0.177 0.4319 0.1472 0.4205 0.1194 0.4052 C 0.1091 0.3995 0.0987 0.3939 0.0884 0.3882 C 0.0723 0.3794 0.0582 0.3672 0.0471 0.3525 C 0.0459 0.3507 0.0446 0.349 0.0433 0.3473 C 0.0348 0.336 0.0329 0.3211 0.0384 0.308 C 0.0438 0.295 0.0557 0.2857 0.0697 0.2838 C 0.0718 0.2835 0.0739 0.2832 0.0761 0.2829 C 0.0943 0.2804 0.1129 0.2817 0.1305 0.2869 C 0.1418 0.2903 0.1531 0.2936 0.1644 0.297 C 0.1949 0.3059 0.224 0.3189 0.2509 0.3356 C 0.2679 0.3462 0.2849 0.3567 0.3019 0.3672 C 0.2857 0.3555 0.2695 0.3438 0.2533 0.3321 C 0.2276 0.3135 0.2045 0.2915 0.1847 0.2668 C 0.1773 0.2576 0.1699 0.2484 0.1625 0.2392 C 0.151 0.2249 0.1427 0.2082 0.1381 0.1904 C 0.1375 0.1883 0.137 0.1862 0.1365 0.1841 C 0.133 0.1705 0.137 0.1559 0.147 0.146 C 0.157 0.136 0.1715 0.132 0.1852 0.1356 C 0.1873 0.1361 0.1893 0.1367 0.1914 0.1372 C 0.2092 0.1418 0.2259 0.1502 0.2402 0.1618 C 0.2493 0.1692 0.2585 0.1766 0.2677 0.184 C 0.2924 0.2039 0.3143 0.2271 0.3328 0.2528 C 0.3445 0.2691 0.3561 0.2853 0.3678 0.3015 C 0.3573 0.2845 0.3468 0.2675 0.3364 0.2504 C 0.3197 0.2234 0.3068 0.1943 0.2979 0.1639 C 0.2946 0.1525 0.2913 0.1412 0.288 0.1299 C 0.2828 0.1122 0.2815 0.0937 0.2841 0.0755 C 0.2844 0.0733 0.2847 0.0712 0.285 0.0691 C 0.287 0.0551 0.2963 0.0432 0.3093 0.0378 C 0.3224 0.0324 0.3373 0.0343 0.3486 0.0428 C 0.3503 0.0441 0.352 0.0454 0.3538 0.0467 C 0.3684 0.0578 0.3806 0.0719 0.3894 0.0881 C 0.395 0.0984 0.4007 0.1088 0.4063 0.1192 C 0.4215 0.147 0.4328 0.1768 0.4401 0.2077 C 0.4447 0.2271 0.4492 0.2466 0.4538 0.2661 C 0.4506 0.2463 0.4475 0.2266 0.4443 0.2068 C 0.4393 0.1755 0.4385 0.1437 0.4419 0.1121 C 0.4432 0.1004 0.4445 0.0887 0.4458 0.0769 C 0.4478 0.0586 0.4536 0.041 0.463 0.0252 C 0.4641 0.0233 0.4652 0.0215 0.4663 0.0196 C 0.4735 0.0075 0.4866 0 0.5007 0 C 0.5148 0 0.5279 0.0075 0.5351 0.0197 C 0.5362 0.0216 0.5373 0.0234 0.5383 0.0253 C 0.5477 0.0411 0.5535 0.0588 0.5554 0.0771 C 0.5567 0.0888 0.5579 0.1006 0.5592 0.1123 C 0.5625 0.1438 0.5616 0.1757 0.5565 0.207 C 0.5533 0.2267 0.5501 0.2465 0.5469 0.2662 C 0.5515 0.2467 0.5561 0.2273 0.5607 0.2078 C 0.5681 0.177 0.5795 0.1472 0.5948 0.1194 C 0.6005 0.1091 0.6061 0.0987 0.6118 0.0884 C 0.6206 0.0723 0.6328 0.0582 0.6475 0.0471 C 0.6493 0.0459 0.651 0.0446 0.6527 0.0433 C 0.664 0.0348 0.6789 0.0329 0.692 0.0384 C 0.705 0.0438 0.7143 0.0557 0.7162 0.0697 C 0.7165 0.0718 0.7168 0.0739 0.7171 0.0761 C 0.7196 0.0943 0.7183 0.1129 0.7131 0.1305 C 0.7097 0.1418 0.7064 0.1531 0.703 0.1644 C 0.6941 0.1949 0.6811 0.224 0.6644 0.2509 C 0.6538 0.2679 0.6433 0.2849 0.6328 0.3019 C 0.6445 0.2857 0.6562 0.2695 0.6679 0.2533 C 0.6865 0.2276 0.7085 0.2045 0.7332 0.1847 C 0.7424 0.1773 0.7516 0.1699 0.7608 0.1625 C 0.7751 0.151 0.7918 0.1427 0.8096 0.1381 C 0.8117 0.1375 0.8138 0.137 0.8159 0.1365 C 0.8295 0.133 0.8441 0.137 0.854 0.147 C 0.864 0.157 0.868 0.1715 0.8644 0.1852 C 0.8639 0.1873 0.8633 0.1893 0.8628 0.1914 C 0.8582 0.2092 0.8498 0.2259 0.8382 0.2402 C 0.8308 0.2493 0.8234 0.2585 0.816 0.2677 C 0.7961 0.2924 0.7729 0.3143 0.7472 0.3328 C 0.7309 0.3445 0.7147 0.3561 0.6985 0.3678 C 0.7155 0.3573 0.7325 0.3468 0.7496 0.3364 C 0.7766 0.3197 0.8057 0.3068 0.8361 0.2979 C 0.8475 0.2946 0.8588 0.2913 0.8701 0.288 C 0.8878 0.2828 0.9063 0.2815 0.9245 0.2841 C 0.9267 0.2844 0.9288 0.2847 0.9309 0.285 C 0.9449 0.287 0.9568 0.2963 0.9622 0.3093 C 0.9676 0.3224 0.9657 0.3373 0.9572 0.3486 C 0.9559 0.3503 0.9546 0.352 0.9533 0.3538 C 0.9422 0.3684 0.9281 0.3806 0.9119 0.3894 C 0.9016 0.395 0.8912 0.4007 0.8808 0.4063 C 0.853 0.4215 0.8232 0.4328 0.7923 0.4401 C 0.7729 0.4447 0.7534 0.4492 0.7339 0.4538 Z"/></svg></span>
+<h3 class="gb-home-card-title" id="gb-home-compose">New message</h3>
+<md-gb-text-field label="Message" variant="outlined" type="textarea" rows="3" value="The scroll keeps jumping when new messages arrive. Any idea how to keep it at the bottom?"></md-gb-text-field>
+<div class="gb-home-row gb-home-spread">
+<div class="gb-home-row">
+<md-gb-icon-button aria-label="Attach a file"><md-gb-icon>attach_file</md-gb-icon></md-gb-icon-button>
+<md-gb-icon-button aria-label="Add an image"><md-gb-icon>image</md-gb-icon></md-gb-icon-button>
+</div>
+<md-gb-fab size="small" aria-label="Send"><md-gb-icon>send</md-gb-icon></md-gb-fab>
+</div>
+</div>
+</div>
+</section>
+</div>
+            
+<nav class="gb-pager gb-pager-end" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/about/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">About overview</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</nav>
+          </main>
+        </div>
+      </div><aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
+        <div class="gb-outline-head">
+          <h2 class="gb-outline-title" id="gb-outline-title">On this page</h2>
+          <md-gb-icon-button id="gb-outline-close" tooltip aria-label="Hide page outline">
+            <md-gb-icon>close</md-gb-icon>
+          </md-gb-icon-button>
+        </div><div class="gb-toc gb-outline-body">
+          <md-gb-nav-rail class="gb-outline-rail" expanded role="none">
+            <md-gb-nav-rail-item href="#main" data-depth="1">(Top)</md-gb-nav-rail-item>
+            <md-gb-nav-rail-item href="#gb-home-explore" data-depth="1">Explore the system</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#gb-home-built" data-depth="1">Built from the components</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#gb-home-player" data-depth="2">Golden hour</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#gb-home-signup" data-depth="2">Create an account</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#gb-home-settings" data-depth="2">Settings</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#gb-home-savings" data-depth="2">Savings targets</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#gb-home-table" data-depth="2">Book a table</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#gb-home-compose" data-depth="2">New message</md-gb-nav-rail-item>
+          </md-gb-nav-rail>
+        </div>
+      </aside><aside class="gb-outline-strip" aria-label="Page outline">
+        <md-gb-icon-button id="gb-outline-toggle" tooltip aria-label="Show page outline" aria-controls="gb-outline" aria-expanded="true">
+          <md-gb-icon>toc</md-gb-icon>
+        </md-gb-icon-button>
+      </aside><nav class="gb-bar-area" aria-label="Sections">
+        <md-gb-nav-bar class="gb-bar" id="gb-bar" role="none">
+          <md-gb-nav-bar-item href="/material-web/3.0/about/" data-section="about" aria-haspopup="dialog" active>
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/foundations/" data-section="foundations" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/styles/" data-section="styles" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/components/" data-section="components" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-bar-item>
+        </md-gb-nav-bar>
+      </nav>
+
+    </div>
+    <template data-pages="about" data-label="About"><md-gb-nav-drawer-item href="/material-web/3.0/about/"><md-gb-icon slot="icon">info</md-gb-icon>About overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/intro/">Introduction</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/compliance/">Spec compliance</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/quick-start/">Quick Start</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/migration/">Migration</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/roadmap/">Roadmap</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/support/">Support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/size/">Bundle Sizes</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/browser-support/">Browser support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/ai-agents/">AI agents</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/debugging/">Debugging</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/shadcn/">Use with shadcn/ui</md-gb-nav-drawer-item></template>
+    <template data-pages="foundations" data-label="Foundations"><md-gb-nav-drawer-item href="/material-web/3.0/foundations/"><md-gb-icon slot="icon">foundation</md-gb-icon>Foundations overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/design-tokens/">Theming</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/interaction-states/">Interaction States</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/accessibility/">Accessibility</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/adaptive-layout/">Adaptive layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/density/">Density</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/layout/">Layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/scaffold/">Scaffold</md-gb-nav-drawer-item></template>
+    <template data-pages="styles" data-label="Styles"><md-gb-nav-drawer-item href="/material-web/3.0/styles/"><md-gb-icon slot="icon">palette</md-gb-icon>Styles overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/color/">Color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/dynamic-color/">Dynamic color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/typography/">Typography</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/shape/">Shape</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/elevation/">Elevation</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/icons/">Icons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/material-symbols/">Material Symbols</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion/">Motion</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion-transitions/">Transitions</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/spacing/">Spacing</md-gb-nav-drawer-item></template>
+    <template data-pages="components" data-label="Components"><md-gb-nav-drawer-item href="/material-web/3.0/components/"><md-gb-icon slot="icon">widgets</md-gb-icon>Components overview</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="buttons">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button-group/" data-group="buttons">Button Group</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button/" data-group="buttons">Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab-menu/" data-group="buttons">FAB menu</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab/" data-group="buttons">Floating action button (FAB)</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/icon-button/" data-group="buttons">Icon Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/segmented-button/" data-group="buttons">Segmented button</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/split-button/" data-group="buttons">Split button</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="pickers">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/date-picker/" data-group="pickers">Date picker</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/time-picker/" data-group="pickers">Time picker</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="progress">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/loading-indicator/" data-group="progress">Loading indicator</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/progress/" data-group="progress">Progress indicators</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/pull-to-refresh/" data-group="progress">Pull to refresh</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="navigation">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-bar/" data-group="navigation">Navigation Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-drawer/" data-group="navigation">Navigation Drawer</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-rail/" data-group="navigation">Navigation Rail</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="sheets">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/sheets/" data-group="sheets">Sheets</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="other">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/app-bar/" data-group="other">App Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/badge/" data-group="other">Badge</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/card/" data-group="other">Card</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/carousel/" data-group="other">Carousel</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/checkbox/" data-group="other">Checkbox</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/chip/" data-group="other">Chips</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/dialog/" data-group="other">Dialogs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/divider/" data-group="other">Divider</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/list/" data-group="other">Lists</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/menu/" data-group="other">Menus</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/radio/" data-group="other">Radio</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/search/" data-group="other">Search</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/select/" data-group="other">Select</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/slider/" data-group="other">Sliders</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/snackbar/" data-group="other">Snackbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/switch/" data-group="other">Switch</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tabs/" data-group="other">Tabs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/text-field/" data-group="other">Text field</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/toolbar/" data-group="other">Toolbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tooltip/" data-group="other">Tooltip</md-gb-nav-drawer-item></template><md-gb-side-sheet id="gb-side-sheet" class="gb-side-sheet" modal></md-gb-side-sheet>
+    <md-gb-bottom-sheet id="gb-tools-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page tools"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-pages-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Pages"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-outline-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page outline"></md-gb-bottom-sheet>
+
+    <div class="gb-tools" id="gb-tools" hidden><section class="gb-tool" id="gb-download-body" data-tool="download" data-title="Download &amp; copy" data-site-url="https://material-web.dev" aria-labelledby="gb-download-title">
+        <h2 class="gb-tool-title" id="gb-download-title">Download &amp; copy</h2>
+        <h3 class="gb-tool-group">Download</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" id="gb-install" data-action="install">
+            <md-gb-icon aria-hidden="true">install_desktop</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Install app</span><span class="gb-action-support">Add Material Web 3.0 to your device</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/material-web-3.0.mhtml" data-filename="material-web-3.0.mhtml">
+            <md-gb-icon aria-hidden="true">web</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Website (MHTML, single file)</span><span class="gb-action-support" data-base="All pages in one file, for offline reading">All pages in one file, for offline reading</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/llms-full.txt" data-filename="llms-full.txt">
+            <md-gb-icon aria-hidden="true">description</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Docs for LLMs (llms-full.txt)</span><span class="gb-action-support" data-base="All pages as Markdown text">All pages as Markdown text</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/custom-elements.json" data-filename="custom-elements.json">
+            <md-gb-icon aria-hidden="true">data_object</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">API (custom-elements.json)</span><span class="gb-action-support" data-base="Every element, as a Custom Elements Manifest">Every element, as a Custom Elements Manifest</span></span>
+          </button></li>
+        </ul><h3 class="gb-tool-group">Copy</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="agent-prompt" data-copied="Copied agent prompt">
+            <md-gb-icon aria-hidden="true">smart_toy</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy agent prompt</span><span class="gb-action-support">Tells an AI agent to install the md-gb skill</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="cdn" data-copied="Copied CDN script tag">
+            <md-gb-icon aria-hidden="true">code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy CDN script tag</span><span class="gb-action-support">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span></span>
+          </button></li>
+        </ul>
+        <md-gb-divider class="gb-actions-divider"></md-gb-divider>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="github" data-copied="Copied GitHub link">
+            <md-gb-icon aria-hidden="true">link</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy GitHub link</span><span class="gb-action-support">github.com/material-components/material-web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="npm" data-copied="Copied npm install command">
+            <md-gb-icon aria-hidden="true">terminal</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy npm install</span><span class="gb-action-support">npm install @material/web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="shadcn" data-copied="Copied shadcn setup command">
+            <md-gb-icon aria-hidden="true">deployed_code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy shadcn npx setup</span><span class="gb-action-support">npx shadcn@latest add &hellip;/md-theme.json</span></span>
+          </button></li>
+        </ul>
+      </section><section class="gb-tool" id="gb-theme-body" data-tool="theme" data-title="Customize theme" aria-labelledby="gb-theme-title">
+        <h2 class="gb-tool-title" id="gb-theme-title">Customize theme</h2>
+        <p class="gb-tool-note">Changes apply to this site and its demos, and are remembered in this browser.</p>
+        <fieldset class="gb-field">
+          <legend>Seed color</legend>
+          <div class="gb-swatches" id="gb-swatches">
+            <label class="gb-swatch" style="--gb-swatch: #6750a4"><input type="radio" name="gb-seed" value="#6750a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Purple</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #0061a4"><input type="radio" name="gb-seed" value="#0061a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Blue</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #006a6a"><input type="radio" name="gb-seed" value="#006a6a" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Teal</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #386a20"><input type="radio" name="gb-seed" value="#386a20" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Green</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #9c4300"><input type="radio" name="gb-seed" value="#9c4300" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Orange</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #b3261e"><input type="radio" name="gb-seed" value="#b3261e" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Red</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #8b4a62"><input type="radio" name="gb-seed" value="#8b4a62" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Pink</span></label>
+          </div>
+          <label class="gb-custom-color">
+            <span>Custom color</span>
+            <input type="color" id="gb-seed-input" value="#6750a4" />
+            <output id="gb-seed-hex" for="gb-seed-input">#6750a4</output>
+          </label>
+        </fieldset>
+        <div class="gb-field">
+          <md-gb-select id="gb-variant" label="Scheme variant" value="tonal-spot">
+            <md-gb-select-option value="tonal-spot" selected>Tonal spot</md-gb-select-option>
+            <md-gb-select-option value="neutral">Neutral</md-gb-select-option>
+            <md-gb-select-option value="vibrant">Vibrant</md-gb-select-option>
+            <md-gb-select-option value="expressive">Expressive</md-gb-select-option>
+            <md-gb-select-option value="fidelity">Fidelity</md-gb-select-option>
+            <md-gb-select-option value="content">Content</md-gb-select-option>
+            <md-gb-select-option value="monochrome">Monochrome</md-gb-select-option>
+            <md-gb-select-option value="rainbow">Rainbow</md-gb-select-option>
+            <md-gb-select-option value="fruit-salad">Fruit salad</md-gb-select-option>
+          </md-gb-select>
+        </div>
+        <fieldset class="gb-field">
+          <legend>Color mode</legend>
+          <md-gb-segmented-button-set id="gb-mode" required aria-label="Color mode">
+            <md-gb-segmented-button value="auto" no-checkmark selected>System</md-gb-segmented-button>
+            <md-gb-segmented-button value="light" no-checkmark>Light</md-gb-segmented-button>
+            <md-gb-segmented-button value="dark" no-checkmark>Dark</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <fieldset class="gb-field">
+          <legend>Contrast</legend>
+          <md-gb-segmented-button-set id="gb-contrast" required aria-label="Contrast">
+            <md-gb-segmented-button value="standard" no-checkmark selected>Standard</md-gb-segmented-button>
+            <md-gb-segmented-button value="medium" no-checkmark>Medium</md-gb-segmented-button>
+            <md-gb-segmented-button value="high" no-checkmark>High</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <div class="gb-tool-actions">
+          <md-gb-button id="gb-theme-reset" color="tonal">Reset</md-gb-button>
+        </div>
+      </section><div class="gb-pages-foot" id="gb-pages-foot" role="group" aria-label="Site settings">
+        <md-gb-button color="text" data-theme-toggle><md-gb-icon slot="icon">brightness_auto</md-gb-icon><span class="gb-theme-toggle-label">Theme: system</span></md-gb-button>
+        <md-gb-button color="text" href="/material-web/"><md-gb-icon slot="icon">history</md-gb-icon>v2.5.0 (current)</md-gb-button>
+        <md-gb-button color="text" href="https://github.com/material-components/material-web" target="_blank" rel="noopener"><md-gb-icon slot="icon">code</md-gb-icon>GitHub<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener"><md-gb-icon slot="icon">deployed_code</md-gb-icon>npm<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" data-tool="feedback"><md-gb-icon slot="icon">feedback</md-gb-icon>Send feedback</md-gb-button>
+      </div>
+    </div>
+
+    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000"></md-gb-snackbar>
+
+    <md-gb-dialog id="gb-install-dialog">
+      <span slot="headline">Install Material Web 3.0</span>
+      <p>Your browser did not offer to install the docs as an app. Install them from the browser instead:</p>
+      <ul data-install-steps>
+        <li data-browser="chromium"><strong>Chrome and Edge:</strong> open the browser menu and choose Install Material Web 3.0 (Chrome: Cast, save and share, Install page as app), or use the install icon in the address bar.</li>
+        <li data-browser="safari"><strong>Safari on Mac:</strong> choose File, then Add to Dock.</li>
+        <li data-browser="ios"><strong>Safari on iPhone and iPad:</strong> tap Share, then Add to Home Screen.</li>
+        <li data-browser="firefox"><strong>Firefox:</strong> Firefox on Android has Install in its menu. Firefox on desktop cannot install web apps; bookmark this page instead.</li>
+      </ul>
+      <form id="gb-install-form" method="dialog"></form>
+      <md-gb-button slot="actions" form="gb-install-form" value="close">Close</md-gb-button>
+    </md-gb-dialog><md-gb-dialog id="gb-feedback-dialog">
+      <span slot="headline">Send feedback</span>
+      <form id="gb-feedback-form" class="gb-feedback" novalidate>
+        <md-gb-text-field id="gb-feedback-page" label="Page" value=""></md-gb-text-field>
+        <md-gb-select id="gb-feedback-type" label="Type" value="bug">
+          <md-gb-select-option value="bug" selected>Bug</md-gb-select-option>
+          <md-gb-select-option value="docs">Documentation</md-gb-select-option>
+          <md-gb-select-option value="idea">Idea</md-gb-select-option>
+        </md-gb-select>
+        <md-gb-text-field id="gb-feedback-message" type="textarea" rows="4" label="Message" required error-text="Add a message" value=""></md-gb-text-field>
+        <p class="gb-feedback-note">Opens a new GitHub issue for material-components/material-web in a new tab, with this filled in.</p>
+      </form>
+      <md-gb-button slot="actions" color="text" id="gb-feedback-cancel">Cancel</md-gb-button>
+      <md-gb-button slot="actions" id="gb-feedback-submit">Open issue</md-gb-button>
+    </md-gb-dialog>
+
+    <script type="module">const define = customElements.define.bind(customElements);customElements.define = (name, ctor, options) => { if (!customElements.get(name)) define(name, ctor, options); };import('/material-web/lib/labs/gb/styles/icon/md-gb-icon.js');import('/material-web/lib/labs/gb/components/button/md-gb-button.js');import('/material-web/lib/labs/gb/components/loadingindicator/md-gb-loading-indicator.js');import('/material-web/lib/labs/gb/components/carousel/md-gb-carousel.js');import('/material-web/lib/labs/gb/components/carousel/md-gb-carousel-item.js');import('/material-web/lib/labs/gb/components/textfield/md-gb-text-field.js');import('/material-web/lib/labs/gb/components/chip/md-gb-chip-set.js');import('/material-web/lib/labs/gb/components/chip/md-gb-chip.js');import('/material-web/lib/labs/gb/components/radio/md-gb-radio.js');import('/material-web/lib/labs/gb/components/checkbox/md-gb-checkbox.js');import('/material-web/lib/labs/gb/components/switch/md-gb-switch.js');import('/material-web/lib/labs/gb/components/buttongroup/md-gb-button-group.js');import('/material-web/lib/labs/gb/components/slider/md-gb-slider.js');import('/material-web/lib/labs/gb/components/iconbutton/md-gb-icon-button.js');import('/material-web/lib/labs/gb/components/list/md-gb-list.js');import('/material-web/lib/labs/gb/components/list/md-gb-list-item.js');import('/material-web/lib/labs/gb/components/progress/md-gb-progress.js');import('/material-web/lib/labs/gb/components/segmentedbutton/md-gb-segmented-button-set.js');import('/material-web/lib/labs/gb/components/segmentedbutton/md-gb-segmented-button.js');import('/material-web/lib/labs/gb/components/fab/md-gb-fab.js');</script>
+
+    <div id="gb-status" role="status" aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></div>
+  </body>
+</html>

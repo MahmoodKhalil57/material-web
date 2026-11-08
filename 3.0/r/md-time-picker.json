@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-time-picker",
+  "type": "registry:ui",
+  "title": "Time Picker",
+  "description": "MdTimePicker: React wrappers for <md-gb-time-picker> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-time-picker.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/timepicker/md-gb-time-picker.js';\nimport {TimePickerElement} from '@material/web/labs/gb/components/timepicker/time-picker-element.js';\n\n/**\n * A Material Design time picker component. Wraps <md-gb-time-picker>.\n * Docs: https://material-web.dev/3.0/components/time-picker/\n */\nexport const MdTimePicker = createComponent({\n  react: React,\n  tagName: 'md-gb-time-picker',\n  elementClass: TimePickerElement,\n  events: {\n    onCancel: 'cancel' as EventName<Event>,\n    onChange: 'change' as EventName<Event>,\n    onClose: 'close' as EventName<Event>,\n    onInput: 'input' as EventName<Event>,\n    onOpen: 'open' as EventName<Event>,\n  },\n});\n\nexport type MdTimePickerProps = React.ComponentProps<typeof MdTimePicker>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/time-picker/",
+  "meta": {
+    "tags": [
+      "md-gb-time-picker"
+    ],
+    "docs": "https://material-web.dev/3.0/components/time-picker/"
+  }
+}

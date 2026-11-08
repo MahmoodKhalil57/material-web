@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-divider",
+  "type": "registry:ui",
+  "title": "Divider",
+  "description": "MdDivider: React wrappers for <md-gb-divider> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-divider.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/divider/md-gb-divider.js';\nimport {DividerElement} from '@material/web/labs/gb/components/divider/divider-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-divider>.\n * Docs: https://material-web.dev/3.0/components/divider/\n */\nexport const MdDivider = createComponent({\n  react: React,\n  tagName: 'md-gb-divider',\n  elementClass: DividerElement,\n});\n\nexport type MdDividerProps = React.ComponentProps<typeof MdDivider>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/divider/",
+  "meta": {
+    "tags": [
+      "md-gb-divider"
+    ],
+    "docs": "https://material-web.dev/3.0/components/divider/"
+  }
+}

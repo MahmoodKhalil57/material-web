@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-toolbar",
+  "type": "registry:ui",
+  "title": "Toolbar",
+  "description": "MdToolbar: React wrappers for <md-gb-toolbar> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-toolbar.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/toolbar/md-gb-toolbar.js';\nimport {ToolbarElement} from '@material/web/labs/gb/components/toolbar/toolbar-element.js';\n\n/**\n * A Material Design gBreeze toolbar custom element. Wraps <md-gb-toolbar>.\n * Docs: https://material-web.dev/3.0/components/toolbar/\n */\nexport const MdToolbar = createComponent({\n  react: React,\n  tagName: 'md-gb-toolbar',\n  elementClass: ToolbarElement,\n});\n\nexport type MdToolbarProps = React.ComponentProps<typeof MdToolbar>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/toolbar/",
+  "meta": {
+    "tags": [
+      "md-gb-toolbar"
+    ],
+    "docs": "https://material-web.dev/3.0/components/toolbar/"
+  }
+}

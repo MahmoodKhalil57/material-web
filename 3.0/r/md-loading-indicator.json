@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-loading-indicator",
+  "type": "registry:ui",
+  "title": "Loading Indicator",
+  "description": "MdLoadingIndicator: React wrappers for <md-gb-loading-indicator> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-loading-indicator.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/loadingindicator/md-gb-loading-indicator.js';\nimport {LoadingIndicatorElement} from '@material/web/labs/gb/components/loadingindicator/loading-indicator-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-loading-indicator>.\n * Docs: https://material-web.dev/3.0/components/loading-indicator/\n */\nexport const MdLoadingIndicator = createComponent({\n  react: React,\n  tagName: 'md-gb-loading-indicator',\n  elementClass: LoadingIndicatorElement,\n});\n\nexport type MdLoadingIndicatorProps = React.ComponentProps<typeof MdLoadingIndicator>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/loading-indicator/",
+  "meta": {
+    "tags": [
+      "md-gb-loading-indicator"
+    ],
+    "docs": "https://material-web.dev/3.0/components/loading-indicator/"
+  }
+}

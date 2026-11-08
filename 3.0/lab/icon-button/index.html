@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Icon Buttons: component test page - Material Web 3.0</title>
+<meta name="description" content="The Icon Buttons component of Material Web 3.0 on its own, in its first example, for audits.">
+<link href="/material-web/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml">
+<link rel="stylesheet" href="/material-web/fonts/gb/fonts.css">
+<link rel="stylesheet" href="/material-web/lib/labs/gb/styles/m3.css">
+<script type="importmap">{"imports":{"@material/web/labs/gb/":"/material-web/lib/labs/gb/","lit":"/material-web/lib/node_modules/lit/index.js","lit/":"/material-web/lib/node_modules/lit/"}}</script>
+<style>
+body {
+  margin: 0;
+  padding: 24px;
+  background: var(--md-sys-color-surface, Canvas);
+  color: var(--md-sys-color-on-surface, CanvasText);
+  font: var(--md-sys-typescale-body-lg, 16px/1.5 sans-serif);
+}
+h1 {
+  margin: 0 0 24px;
+  font: var(--md-sys-typescale-title-lg, 600 22px/1.3 sans-serif);
+}
+main > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+</style>
+</head>
+<body>
+<main>
+<h1>Icon Buttons</h1>
+<div>
+<md-gb-icon-button color="filled" aria-label="Favorite">
+  <md-gb-icon>favorite</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="outlined" aria-label="Settings">
+  <md-gb-icon>settings</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button aria-label="More options">
+  <md-gb-icon>more_vert</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</main>
+<script type="module">
+import '/material-web/lib/labs/gb/components/iconbutton/md-gb-icon-button.js';
+import '/material-web/lib/labs/gb/styles/icon/md-gb-icon.js';
+</script>
+
+</body>
+</html>

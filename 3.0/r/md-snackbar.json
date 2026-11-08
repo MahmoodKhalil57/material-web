@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-snackbar",
+  "type": "registry:ui",
+  "title": "Snackbar",
+  "description": "MdSnackbar, MdSnackbarHost: React wrappers for <md-gb-snackbar>, <md-gb-snackbar-host> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-snackbar.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/snackbar/md-gb-snackbar.js';\nimport '@material/web/labs/gb/components/snackbar/md-gb-snackbar-host.js';\nimport {SnackbarElement} from '@material/web/labs/gb/components/snackbar/snackbar-element.js';\nimport {SnackbarHostElement} from '@material/web/labs/gb/components/snackbar/snackbar-host-element.js';\n\n/**\n * A Material Design snackbar component. Wraps <md-gb-snackbar>.\n * Docs: https://material-web.dev/3.0/components/snackbar/\n */\nexport const MdSnackbar = createComponent({\n  react: React,\n  tagName: 'md-gb-snackbar',\n  elementClass: SnackbarElement,\n  events: {\n    onClose: 'close' as EventName<CustomEvent<{reason: string}>>,\n    onClosed: 'closed' as EventName<CustomEvent<{reason: string}>>,\n    onOpen: 'open' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n  },\n});\n\nexport type MdSnackbarProps = React.ComponentProps<typeof MdSnackbar>;\n\n/**\n * Shows queued snackbars one at a time. Wraps <md-gb-snackbar-host>.\n * Docs: https://material-web.dev/3.0/components/snackbar/\n */\nexport const MdSnackbarHost = createComponent({\n  react: React,\n  tagName: 'md-gb-snackbar-host',\n  elementClass: SnackbarHostElement,\n  events: {\n    onClose: 'close' as EventName<CustomEvent<{reason: string}>>,\n    onClosed: 'closed' as EventName<CustomEvent<{reason: string}>>,\n  },\n});\n\nexport type MdSnackbarHostProps = React.ComponentProps<typeof MdSnackbarHost>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/snackbar/",
+  "meta": {
+    "tags": [
+      "md-gb-snackbar",
+      "md-gb-snackbar-host"
+    ],
+    "docs": "https://material-web.dev/3.0/components/snackbar/"
+  }
+}

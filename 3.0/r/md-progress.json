@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-progress",
+  "type": "registry:ui",
+  "title": "Progress",
+  "description": "MdProgress: React wrappers for <md-gb-progress> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-progress.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/progress/md-gb-progress.js';\nimport {ProgressElement} from '@material/web/labs/gb/components/progress/progress-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-progress>.\n * Docs: https://material-web.dev/3.0/components/progress/\n */\nexport const MdProgress = createComponent({\n  react: React,\n  tagName: 'md-gb-progress',\n  elementClass: ProgressElement,\n});\n\nexport type MdProgressProps = React.ComponentProps<typeof MdProgress>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/progress/",
+  "meta": {
+    "tags": [
+      "md-gb-progress"
+    ],
+    "docs": "https://material-web.dev/3.0/components/progress/"
+  }
+}

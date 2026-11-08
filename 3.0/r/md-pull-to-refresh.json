@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-pull-to-refresh",
+  "type": "registry:ui",
+  "title": "Pull To Refresh",
+  "description": "MdPullToRefresh: React wrappers for <md-gb-pull-to-refresh> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-pull-to-refresh.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/pulltorefresh/md-gb-pull-to-refresh.js';\nimport {PullToRefreshElement} from '@material/web/labs/gb/components/pulltorefresh/pull-to-refresh-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-pull-to-refresh>.\n * Docs: https://material-web.dev/3.0/components/pull-to-refresh/\n */\nexport const MdPullToRefresh = createComponent({\n  react: React,\n  tagName: 'md-gb-pull-to-refresh',\n  elementClass: PullToRefreshElement,\n  events: {\n    onRefresh: 'refresh' as EventName<Event>,\n  },\n});\n\nexport type MdPullToRefreshProps = React.ComponentProps<typeof MdPullToRefresh>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/pull-to-refresh/",
+  "meta": {
+    "tags": [
+      "md-gb-pull-to-refresh"
+    ],
+    "docs": "https://material-web.dev/3.0/components/pull-to-refresh/"
+  }
+}

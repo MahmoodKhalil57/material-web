@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-switch",
+  "type": "registry:ui",
+  "title": "Switch",
+  "description": "MdSwitch: React wrappers for <md-gb-switch> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-switch.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/switch/md-gb-switch.js';\nimport {SwitchElement} from '@material/web/labs/gb/components/switch/switch-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-switch>.\n * Docs: https://material-web.dev/3.0/components/switch/\n */\nexport const MdSwitch = createComponent({\n  react: React,\n  tagName: 'md-gb-switch',\n  elementClass: SwitchElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n  },\n});\n\nexport type MdSwitchProps = React.ComponentProps<typeof MdSwitch>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/switch/",
+  "meta": {
+    "tags": [
+      "md-gb-switch"
+    ],
+    "docs": "https://material-web.dev/3.0/components/switch/"
+  }
+}

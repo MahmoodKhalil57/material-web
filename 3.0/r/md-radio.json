@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-radio",
+  "type": "registry:ui",
+  "title": "Radio",
+  "description": "MdRadio: React wrappers for <md-gb-radio> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-radio.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/radio/md-gb-radio.js';\nimport {RadioElement} from '@material/web/labs/gb/components/radio/radio-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-radio>.\n * Docs: https://material-web.dev/3.0/components/radio/\n */\nexport const MdRadio = createComponent({\n  react: React,\n  tagName: 'md-gb-radio',\n  elementClass: RadioElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n  },\n});\n\nexport type MdRadioProps = React.ComponentProps<typeof MdRadio>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/radio/",
+  "meta": {
+    "tags": [
+      "md-gb-radio"
+    ],
+    "docs": "https://material-web.dev/3.0/components/radio/"
+  }
+}

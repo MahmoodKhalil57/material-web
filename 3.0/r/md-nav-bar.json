@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-nav-bar",
+  "type": "registry:ui",
+  "title": "Nav Bar",
+  "description": "MdNavBar, MdNavBarItem: React wrappers for <md-gb-nav-bar>, <md-gb-nav-bar-item> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-nav-bar.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/navbar/md-gb-nav-bar.js';\nimport '@material/web/labs/gb/components/navbar/md-gb-nav-bar-item.js';\nimport {NavBarElement} from '@material/web/labs/gb/components/navbar/nav-bar-element.js';\nimport {NavBarItemElement} from '@material/web/labs/gb/components/navbar/nav-bar-item-element.js';\n\n/**\n * A Material Design gBreeze navigation bar custom element. Wraps <md-gb-nav-bar>.\n * Docs: https://material-web.dev/3.0/components/navigation-bar/\n */\nexport const MdNavBar = createComponent({\n  react: React,\n  tagName: 'md-gb-nav-bar',\n  elementClass: NavBarElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n  },\n});\n\nexport type MdNavBarProps = React.ComponentProps<typeof MdNavBar>;\n\n/**\n * A Material Design gBreeze navigation bar item custom element. Wraps <md-gb-nav-bar-item>.\n * Docs: https://material-web.dev/3.0/components/navigation-bar/\n */\nexport const MdNavBarItem = createComponent({\n  react: React,\n  tagName: 'md-gb-nav-bar-item',\n  elementClass: NavBarItemElement,\n});\n\nexport type MdNavBarItemProps = React.ComponentProps<typeof MdNavBarItem>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/navigation-bar/",
+  "meta": {
+    "tags": [
+      "md-gb-nav-bar",
+      "md-gb-nav-bar-item"
+    ],
+    "docs": "https://material-web.dev/3.0/components/navigation-bar/"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-search",
+  "type": "registry:ui",
+  "title": "Search",
+  "description": "MdSearchBar, MdSearchView: React wrappers for <md-gb-search-bar>, <md-gb-search-view> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-search.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/search/md-gb-search-bar.js';\nimport '@material/web/labs/gb/components/search/md-gb-search-view.js';\nimport {SearchBarElement} from '@material/web/labs/gb/components/search/search-bar-element.js';\nimport {SearchViewElement} from '@material/web/labs/gb/components/search/search-view-element.js';\n\n/**\n * A Material Design search bar. Wraps <md-gb-search-bar>.\n * Docs: https://material-web.dev/3.0/components/search/\n */\nexport const MdSearchBar = createComponent({\n  react: React,\n  tagName: 'md-gb-search-bar',\n  elementClass: SearchBarElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onClose: 'close' as EventName<CustomEvent<{reason: string}>>,\n    onClosed: 'closed' as EventName<CustomEvent<{reason: string}>>,\n    onInput: 'input' as EventName<InputEvent>,\n    onOpen: 'open' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n    onSearch: 'search' as EventName<CustomEvent<{value: string}>>,\n  },\n});\n\nexport type MdSearchBarProps = React.ComponentProps<typeof MdSearchBar>;\n\n/**\n * Focused search: suggestions or results opened from a search bar. Wraps <md-gb-search-view>.\n * Docs: https://material-web.dev/3.0/components/search/\n */\nexport const MdSearchView = createComponent({\n  react: React,\n  tagName: 'md-gb-search-view',\n  elementClass: SearchViewElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onClose: 'close' as EventName<CustomEvent<{reason: string}>>,\n    onClosed: 'closed' as EventName<CustomEvent<{reason: string}>>,\n    onInput: 'input' as EventName<InputEvent>,\n    onOpen: 'open' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n    onSearch: 'search' as EventName<CustomEvent<{value: string}>>,\n  },\n});\n\nexport type MdSearchViewProps = React.ComponentProps<typeof MdSearchView>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/search/",
+  "meta": {
+    "tags": [
+      "md-gb-search-bar",
+      "md-gb-search-view"
+    ],
+    "docs": "https://material-web.dev/3.0/components/search/"
+  }
+}

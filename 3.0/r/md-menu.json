@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-menu",
+  "type": "registry:ui",
+  "title": "Menu",
+  "description": "MdMenu, MdMenuGroup, MdMenuItem: React wrappers for <md-gb-menu>, <md-gb-menu-group>, <md-gb-menu-item> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-menu.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/menu/md-gb-menu.js';\nimport '@material/web/labs/gb/components/menu/md-gb-menu-group.js';\nimport '@material/web/labs/gb/components/menu/md-gb-menu-item.js';\nimport {MenuElement} from '@material/web/labs/gb/components/menu/menu-element.js';\nimport {MenuGroupElement} from '@material/web/labs/gb/components/menu/menu-group-element.js';\nimport {MenuItemElement} from '@material/web/labs/gb/components/menu/menu-item-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-menu>.\n * Docs: https://material-web.dev/3.0/components/menu/\n */\nexport const MdMenu = createComponent({\n  react: React,\n  tagName: 'md-gb-menu',\n  elementClass: MenuElement,\n});\n\nexport type MdMenuProps = React.ComponentProps<typeof MdMenu>;\n\n/**\n * A Material Design component. Wraps <md-gb-menu-group>.\n * Docs: https://material-web.dev/3.0/components/menu/\n */\nexport const MdMenuGroup = createComponent({\n  react: React,\n  tagName: 'md-gb-menu-group',\n  elementClass: MenuGroupElement,\n});\n\nexport type MdMenuGroupProps = React.ComponentProps<typeof MdMenuGroup>;\n\n/**\n * A Material Design component. Wraps <md-gb-menu-item>.\n * Docs: https://material-web.dev/3.0/components/menu/\n */\nexport const MdMenuItem = createComponent({\n  react: React,\n  tagName: 'md-gb-menu-item',\n  elementClass: MenuItemElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n  },\n});\n\nexport type MdMenuItemProps = React.ComponentProps<typeof MdMenuItem>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/menu/",
+  "meta": {
+    "tags": [
+      "md-gb-menu",
+      "md-gb-menu-group",
+      "md-gb-menu-item"
+    ],
+    "docs": "https://material-web.dev/3.0/components/menu/"
+  }
+}

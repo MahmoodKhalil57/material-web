@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-slider",
+  "type": "registry:ui",
+  "title": "Slider",
+  "description": "MdSlider: React wrappers for <md-gb-slider> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-slider.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/slider/md-gb-slider.js';\nimport {SliderElement} from '@material/web/labs/gb/components/slider/slider-element.js';\n\n/**\n * A Material Design slider component. Wraps <md-gb-slider>.\n * Docs: https://material-web.dev/3.0/components/slider/\n */\nexport const MdSlider = createComponent({\n  react: React,\n  tagName: 'md-gb-slider',\n  elementClass: SliderElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n  },\n});\n\nexport type MdSliderProps = React.ComponentProps<typeof MdSlider>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/slider/",
+  "meta": {
+    "tags": [
+      "md-gb-slider"
+    ],
+    "docs": "https://material-web.dev/3.0/components/slider/"
+  }
+}

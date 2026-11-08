@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-nav-rail",
+  "type": "registry:ui",
+  "title": "Nav Rail",
+  "description": "MdNavRail, MdNavRailItem: React wrappers for <md-gb-nav-rail>, <md-gb-nav-rail-item> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-nav-rail.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/navrail/md-gb-nav-rail.js';\nimport '@material/web/labs/gb/components/navrail/md-gb-nav-rail-item.js';\nimport {NavRailElement} from '@material/web/labs/gb/components/navrail/nav-rail-element.js';\nimport {NavRailItemElement} from '@material/web/labs/gb/components/navrail/nav-rail-item-element.js';\n\n/**\n * A Material Design navigation rail custom element. Wraps <md-gb-nav-rail>.\n * Docs: https://material-web.dev/3.0/components/navigation-rail/\n */\nexport const MdNavRail = createComponent({\n  react: React,\n  tagName: 'md-gb-nav-rail',\n  elementClass: NavRailElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onToggle: 'toggle' as EventName<CustomEvent<{expanded: boolean, reason?: string}>>,\n  },\n});\n\nexport type MdNavRailProps = React.ComponentProps<typeof MdNavRail>;\n\n/**\n * A Material Design navigation rail item custom element. Wraps <md-gb-nav-rail-item>.\n * Docs: https://material-web.dev/3.0/components/navigation-rail/\n */\nexport const MdNavRailItem = createComponent({\n  react: React,\n  tagName: 'md-gb-nav-rail-item',\n  elementClass: NavRailItemElement,\n});\n\nexport type MdNavRailItemProps = React.ComponentProps<typeof MdNavRailItem>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/navigation-rail/",
+  "meta": {
+    "tags": [
+      "md-gb-nav-rail",
+      "md-gb-nav-rail-item"
+    ],
+    "docs": "https://material-web.dev/3.0/components/navigation-rail/"
+  }
+}

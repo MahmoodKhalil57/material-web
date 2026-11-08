@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en" class="gb-shell-root">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Icon Buttons - Material Web 3.0</title>
+    <meta name="description" content="Icon buttons help people take supplementary actions with a single tap." />
+    <meta name="color-scheme" content="light dark" />
+    <link href="/material-web/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" /><link rel="canonical" href="https://material-web.dev/3.0/components/icon-button/" />
+    <link rel="alternate" type="text/markdown" href="/material-web/3.0/components/icon-button.md" title="Icon Buttons as Markdown" />
+    <link rel="alternate" type="text/plain" href="/material-web/3.0/llms.txt" title="llms.txt" />
+    <link rel="manifest" href="/material-web/3.0/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/material-web/3.0/icons/icon-192.png" />
+    <meta name="theme-color" content="#fef7ff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141218" media="(prefers-color-scheme: dark)" />
+    <meta property="og:site_name" content="Material Web 3.0" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Icon Buttons - Material Web 3.0" />
+    <meta property="og:description" content="Icon buttons help people take supplementary actions with a single tap." />
+    <meta property="og:url" content="https://material-web.dev/3.0/components/icon-button/" />
+    <meta property="og:image" content="https://material-web.dev/3.0/og/components-icon-button.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Icon Buttons - Material Web 3.0" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Icon Buttons - Material Web 3.0" />
+    <meta name="twitter:description" content="Icon buttons help people take supplementary actions with a single tap." />
+    <meta name="twitter:image" content="https://material-web.dev/3.0/og/components-icon-button.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://material-web.dev/3.0/#website","name":"Material Web 3.0","url":"https://material-web.dev/3.0/","inLanguage":"en","description":"Material Web 3.0: Material 3 Expressive components, styles and foundations built as web components.","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://material-web.dev/3.0/?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@type":"TechArticle","@id":"https://material-web.dev/3.0/components/icon-button/#article","headline":"Icon Buttons","description":"Icon buttons help people take supplementary actions with a single tap.","url":"https://material-web.dev/3.0/components/icon-button/","mainEntityOfPage":"https://material-web.dev/3.0/components/icon-button/","image":"https://material-web.dev/3.0/og/components-icon-button.png","inLanguage":"en","articleSection":"Components","dateModified":"2026-11-08T00:04:59Z","isPartOf":{"@id":"https://material-web.dev/3.0/#website"},"publisher":{"@type":"Organization","name":"Material Web","url":"https://material-web.dev"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Material Web 3.0","item":"https://material-web.dev/3.0/"},{"@type":"ListItem","position":2,"name":"Components","item":"https://material-web.dev/3.0/components/"},{"@type":"ListItem","position":3,"name":"Icon Buttons","item":"https://material-web.dev/3.0/components/icon-button/"}]}]}</script>
+    <link rel="preload" href="/material-web/fonts/gb/roboto-flex-6ccf7a9846bd.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/material-web/fonts/gb/material-symbols-outlined-ef785a494cef.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/material-web/fonts/gb/fonts.css" />
+    <link rel="stylesheet" href="/material-web/js/gb/gb.css" />
+    <script>
+      // Before first paint: color-scheme from the saved mode, the dynamic
+      // color CSS generated for the saved theme (cached by gb.js), and
+      // whether the reader collapsed the rail, so nothing moves when the
+      // script runs.
+      (() => {
+        const root = document.documentElement;
+        // Demo cards collapse their code only with JS (gb.css, gb.ts).
+        root.classList.add('js');
+        // Reduce motion (the header's toggle, shell.ts; reduce-motion.css):
+        // while it's on, prefers-reduced-motion queries from scripts answer
+        // "reduce" (asked again on each call, so a toggle takes effect at
+        // once), and the components take their reduced-motion paths.
+        const matchMedia = window.matchMedia.bind(window);
+        window.matchMedia = (query) =>
+          root.dataset.motion === 'reduce' && /prefers-reduced-motion/.test(query)
+            ? matchMedia(/no-preference/.test(query) ? 'not all' : 'all')
+            : matchMedia(query);
+        try {
+          if (localStorage.getItem('gb-reduce-motion') === '1') root.dataset.motion = 'reduce';
+          const mode = localStorage.getItem('color-mode') || 'auto';
+          root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
+          if (localStorage.getItem('gb-rail') === 'collapsed') root.dataset.rail = 'collapsed';
+          if (localStorage.getItem('gb-outline') === 'closed') root.dataset.outline = 'closed';
+          const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
+          const seed = localStorage.getItem('gb-seed-color');
+          const key = [seed, localStorage.getItem('gb-scheme-variant') || 'tonal-spot', localStorage.getItem('gb-contrast') || 'standard'].join('|');
+          // Only a cache for the saved theme, written by this version of gb.js
+          // (THEME_CACHE_VERSION in catalog/src/gb/gb.ts).
+          if (cache && cache.v === 3 && cache.css && seed && cache.key === key) {
+            const style = document.createElement('style');
+            style.id = 'gb-theme-style';
+            style.textContent = cache.css;
+            document.head.append(style);
+          }
+        } catch (e) {}
+      })();
+    </script><script type="speculationrules">
+      {
+        "prefetch": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }],
+        "prerender": [{
+          "where": {"and": [
+            {"href_matches": "/material-web/3.0/*"},
+            {"not": {"href_matches": "/material-web/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }]
+      }
+    </script><script type="module" src="/material-web/js/gb/gb.js" blocking="render"></script>
+  </head>
+  <body>
+    <div class="gb-shell"><header class="gb-top">
+        <a class="gb-skip" href="#main">Skip to main content</a>
+        <md-gb-app-bar class="gb-appbar" id="gb-appbar" variant="search"><a slot="leading" class="gb-brand" href="/material-web/3.0/" aria-label="Material Web 3.0 home">
+            <svg viewBox="0 96 960 960" width="32" height="32" fill="currentColor" aria-hidden="true" focusable="false"><path d="M480 1016q-91 0-171-34.5T169 887q-60-60-94.5-140T40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q91 0 171 34.5T791 265q60 60 94.5 140T920 576q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM200 802V351q-38 47-59 104t-21 121q0 65 21 122t59 104Zm54-506h452q-47-38-104-59t-122-21q-65 0-122 21t-104 59Zm226 381 151-301H330l150 301Zm40 99h160V456L520 776Zm-240 0h160L280 456v320Zm200 160q64 0 121.5-21T706 856H254q47 38 104.5 59T480 936Zm280-134q38-47 59-104t21-122q0-64-21-121t-59-104v451Z"/></svg>
+          </a>
+          <button slot="search" type="button" class="gb-searchbar" data-gb-search>
+            <span class="gb-searchbar-icon" aria-hidden="true"><md-gb-icon>search</md-gb-icon></span>
+            <span class="gb-searchbar-text">Search Material Web</span>
+            <kbd class="gb-search-hint" aria-hidden="true"></kbd>
+          </button>
+          <md-gb-icon-button slot="trailing" id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
+            <md-gb-icon>brightness_auto</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="trailing" id="gb-motion" type="toggle" tooltip aria-label="Reduce motion">
+            <md-gb-icon>motion_photos_off</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="theme" aria-label="Customize theme">
+            <md-gb-icon>palette</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="download" aria-label="Download and copy">
+            <md-gb-icon>download</md-gb-icon>
+          </md-gb-icon-button><md-gb-icon-button slot="overflow" id="gb-overflow" tooltip popovertarget="gb-overflow-menu" aria-label="More actions">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+        </md-gb-app-bar><md-gb-menu id="gb-overflow-menu" aria-label="More actions"></md-gb-menu>
+      </header><nav class="gb-rail-area" aria-label="Site">
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" collapsible role="none">
+          <md-gb-nav-rail-item href="/material-web/3.0/about/" data-section="about">
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="about" data-default-open="false" aria-expanded="true" aria-label="About pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/intro/" data-in-section="about">Introduction</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/compliance/" data-in-section="about">Spec compliance</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/quick-start/" data-in-section="about">Quick Start</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/migration/" data-in-section="about">Migration</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/roadmap/" data-in-section="about">Roadmap</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/support/" data-in-section="about">Support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/size/" data-in-section="about">Bundle Sizes</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/browser-support/" data-in-section="about">Browser support</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/ai-agents/" data-in-section="about">AI agents</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/debugging/" data-in-section="about">Debugging</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/about/shadcn/" data-in-section="about">Use with shadcn/ui</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/foundations/" data-section="foundations">
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="foundations" data-default-open="false" aria-expanded="true" aria-label="Foundations pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/design-tokens/" data-in-section="foundations">Theming</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/interaction-states/" data-in-section="foundations">Interaction States</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/accessibility/" data-in-section="foundations">Accessibility</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/adaptive-layout/" data-in-section="foundations">Adaptive layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/density/" data-in-section="foundations">Density</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/layout/" data-in-section="foundations">Layout</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/foundations/scaffold/" data-in-section="foundations">Scaffold</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/styles/" data-section="styles">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="styles" data-default-open="false" aria-expanded="true" aria-label="Styles pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/color/" data-in-section="styles">Color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/dynamic-color/" data-in-section="styles">Dynamic color</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/typography/" data-in-section="styles">Typography</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/shape/" data-in-section="styles">Shape</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/elevation/" data-in-section="styles">Elevation</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/icons/" data-in-section="styles">Icons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/material-symbols/" data-in-section="styles">Material Symbols</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion/" data-in-section="styles">Motion</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/motion-transitions/" data-in-section="styles">Transitions</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/styles/spacing/" data-in-section="styles">Spacing</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/material-web/3.0/components/" data-section="components" selected data-current>
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-rail-item>
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="components" data-default-open="true" aria-expanded="true" aria-label="Components pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="buttons" data-default-open="true" data-current aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button-group/" data-in-section="components" data-group="buttons">Button Group</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/button/" data-in-section="components" data-group="buttons">Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab-menu/" data-in-section="components" data-group="buttons">FAB menu</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/fab/" data-in-section="components" data-group="buttons">Floating action button (FAB)</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/icon-button/" data-in-section="components" data-group="buttons" data-current>Icon Buttons</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/segmented-button/" data-in-section="components" data-group="buttons">Segmented button</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/split-button/" data-in-section="components" data-group="buttons">Split button</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="pickers" data-default-open="true" aria-expanded="true" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/date-picker/" data-in-section="components" data-group="pickers">Date picker</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/time-picker/" data-in-section="components" data-group="pickers">Time picker</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="progress" data-default-open="true" aria-expanded="true" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/loading-indicator/" data-in-section="components" data-group="progress">Loading indicator</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/progress/" data-in-section="components" data-group="progress">Progress indicators</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/pull-to-refresh/" data-in-section="components" data-group="progress">Pull to refresh</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="navigation" data-default-open="true" aria-expanded="true" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-bar/" data-in-section="components" data-group="navigation">Navigation Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-drawer/" data-in-section="components" data-group="navigation">Navigation Drawer</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/navigation-rail/" data-in-section="components" data-group="navigation">Navigation Rail</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="sheets" data-default-open="true" aria-expanded="true" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/sheets/" data-in-section="components" data-group="sheets">Sheets</md-gb-nav-rail-item>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="other" data-default-open="true" aria-expanded="true" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/app-bar/" data-in-section="components" data-group="other">App Bar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/badge/" data-in-section="components" data-group="other">Badge</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/card/" data-in-section="components" data-group="other">Card</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/carousel/" data-in-section="components" data-group="other">Carousel</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/checkbox/" data-in-section="components" data-group="other">Checkbox</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/chip/" data-in-section="components" data-group="other">Chips</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/dialog/" data-in-section="components" data-group="other">Dialogs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/divider/" data-in-section="components" data-group="other">Divider</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/list/" data-in-section="components" data-group="other">Lists</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/menu/" data-in-section="components" data-group="other">Menus</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/radio/" data-in-section="components" data-group="other">Radio</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/search/" data-in-section="components" data-group="other">Search</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/select/" data-in-section="components" data-group="other">Select</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/slider/" data-in-section="components" data-group="other">Sliders</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/snackbar/" data-in-section="components" data-group="other">Snackbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/switch/" data-in-section="components" data-group="other">Switch</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tabs/" data-in-section="components" data-group="other">Tabs</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/text-field/" data-in-section="components" data-group="other">Text field</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/toolbar/" data-in-section="components" data-group="other">Toolbar</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="/material-web/3.0/components/tooltip/" data-in-section="components" data-group="other">Tooltip</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+        <script>
+          // Which sections and groups are open: the reader's choices
+          // (src/gb/shell.ts saves them), else the defaults in the markup; the
+          // current page's group stays open. A closed section hides its
+          // pages and groups; a closed group its pages. Runs here before
+          // first paint, and again on every toggle (shell.ts). With
+          // deferHiding, the shown pages that close stay shown and are
+          // returned, for shell.ts to fade out before hiding them.
+          window.gbRailApply = (deferHiding) => {
+            const leaving = [];
+            const rail = document.getElementById('gb-rail');
+            const read = (key) => {
+              try {
+                return JSON.parse(localStorage.getItem(key) || '{}');
+              } catch (e) {
+                return {};
+              }
+            };
+            const sections = read('gb-rail-sections');
+            const groups = read('gb-groups');
+            const open = (toggle, saved, id) =>
+              toggle.hasAttribute('data-current') || !(id in saved) ? toggle.dataset.defaultOpen === 'true' : !!saved[id];
+            const openGroups = {};
+            for (const toggle of rail.querySelectorAll('[data-group-toggle]')) {
+              const id = toggle.dataset.groupToggle;
+              openGroups[id] = toggle.hasAttribute('data-current') || open(toggle, groups, id);
+              toggle.setAttribute('aria-expanded', String(openGroups[id]));
+            }
+            for (const toggle of rail.querySelectorAll('[data-section-toggle]')) {
+              const id = toggle.dataset.sectionToggle;
+              const shown = open(toggle, sections, id);
+              toggle.setAttribute('aria-expanded', String(shown));
+              for (const el of rail.querySelectorAll(`[data-in-section="${id}"]`)) {
+                const hide = !shown || (el.dataset.group ? !openGroups[el.dataset.group] : false);
+                if (hide && !el.hidden && deferHiding) leaving.push(el);
+                else el.hidden = hide;
+              }
+            }
+            return leaving;
+          };
+          // Before first paint: expanded from 840px unless the reader
+          // collapsed it, with the current page (if its section is open) as
+          // the active destination. A reload starts over: only the current
+          // section open, with all its groups (the defaults).
+          (() => {
+            if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+              try {
+                localStorage.removeItem('gb-rail-sections');
+                localStorage.removeItem('gb-groups');
+              } catch (e) {
+                // Storage can be blocked; the defaults apply anyway.
+              }
+            }
+            window.gbRailApply();
+            const rail = document.getElementById('gb-rail');
+            const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
+            const page = rail.querySelector('md-gb-nav-rail-item[secondary][data-current]');
+            if (!open) return;
+            rail.setAttribute('expanded', '');
+            if (page && !page.hidden) {
+              rail.querySelector('md-gb-nav-rail-item[data-section][data-current]').removeAttribute('selected');
+              page.setAttribute('selected', '');
+            }
+          })();
+        </script><div class="gb-rail-foot">
+          <div class="gb-rail-links" role="group" aria-label="Project">
+            <md-gb-icon-button tooltip href="https://github.com/material-components/material-web" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)">
+              <md-gb-icon>code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener" aria-label="npm (opens in a new tab)">
+              <md-gb-icon>deployed_code</md-gb-icon>
+            </md-gb-icon-button>
+            <md-gb-icon-button tooltip data-tool="feedback" aria-label="Send feedback">
+              <md-gb-icon>feedback</md-gb-icon>
+            </md-gb-icon-button>
+          </div><label class="gb-version">
+            <span class="gb-version-label" aria-hidden="true">3.0</span>
+            <md-gb-switch id="gb-version" selected aria-label="Material Web 3.0 (off for 2.5)"></md-gb-switch>
+          </label>
+        </div>
+      </nav>
+
+      <div class="gb-content-pane" id="gb-content-pane">
+        <div class="gb-body">
+          <main class="gb-main" id="main" tabindex="-1"><md-gb-fab id="gb-outline-fab" class="gb-outline-fab" color="secondary-container" aria-label="Page outline" aria-haspopup="dialog">
+              <md-gb-icon>toc</md-gb-icon>
+            </md-gb-fab>
+            
+<div class="gb-pager gb-pager-top" role="group" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-prev" href="/material-web/3.0/components/fab/" rel="prev"><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_back</md-gb-icon></span><span class="gb-pager-text"><span class="gb-pager-label">Previous</span> <span class="gb-pager-title">Floating action button (FAB)</span></span></a>
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/components/segmented-button/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">Segmented button</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</div>
+            <h1>Icon Buttons</h1>
+            <p class="gb-lede">Icon buttons help people take supplementary actions with a single tap.</p>
+            <p class="gb-md-link"><a href="/material-web/3.0/components/icon-button.md" type="text/markdown">View as Markdown</a></p>
+            <div class="gb-content"><figure class="gb-demo" aria-label="A row of icon buttons, one for each color" id="gbd-7f4731">
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-7f4731-preview">
+<md-gb-icon-button color="filled" aria-label="Favorite">
+  <md-gb-icon>favorite</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="outlined" aria-label="Settings">
+  <md-gb-icon>settings</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button aria-label="More options">
+  <md-gb-icon>more_vert</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Favorite<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>favorite<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>tonal<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Share<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>share<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>outlined<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Settings<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>settings<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>More options<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>more_vert<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<p><strong>Install with shadcn/ui:</strong> <code>npx shadcn@latest add https://material-web.dev/3.0/r/md-icon-button.json</code> (<a href="/material-web/3.0/about/shadcn/">setup</a>)</p>
+<div class="heading h2">
+<h2 id="usage-guidelines" tabindex="-1">Usage guidelines</h2>
+<a class="anchor" href="#usage-guidelines"><span class="offscreen">Link to “Usage guidelines”</span> <span aria-hidden="true">#</span></a></div>
+<ul>
+<li><strong>Use a clear icon.</strong> Pick a system icon whose meaning people already know, and give the button an accessible name that describes the action.</li>
+<li><strong>Describe the action on hover.</strong> On the web, add a <a href="#tooltip">tooltip</a> so the action is named while hovering or focusing the button.</li>
+<li><strong>Pick the color by emphasis.</strong> <a href="#colors">Filled</a> is the most prominent, <a href="#colors">tonal</a> and <a href="#colors">outlined</a> are medium, and the standard color suits the lowest priority.</li>
+<li><strong>Show state with a toggle.</strong> A <a href="#toggle">toggle</a> button uses the outlined icon when unselected and the filled icon when selected.</li>
+</ul>
+<div class="heading h2">
+<h2 id="anatomy" tabindex="-1">Anatomy</h2>
+<a class="anchor" href="#anatomy"><span class="offscreen">Link to “Anatomy”</span> <span aria-hidden="true">#</span></a></div>
+<p>An icon button is one element that holds an icon (default slot). It renders a native <code>&lt;button&gt;</code> or, with <code>href</code>, a link.</p>
+<figure class="gb-demo" aria-label="A filled icon button with a send icon" id="gbd-8ede0b" data-short>
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-8ede0b-preview">
+<md-gb-icon-button color="filled" aria-label="Send">
+  <md-gb-icon>send</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Send<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>send<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h2">
+<h2 id="examples" tabindex="-1">Examples</h2>
+<a class="anchor" href="#examples"><span class="offscreen">Link to “Examples”</span> <span aria-hidden="true">#</span></a></div>
+<div class="heading h3">
+<h3 id="colors" tabindex="-1">Colors</h3>
+<a class="anchor" href="#colors"><span class="offscreen">Link to “Colors”</span> <span aria-hidden="true">#</span></a></div>
+<p>Choose one of four colors with the <code>color</code> attribute: filled, tonal, outlined, or standard (the default).</p>
+<figure class="gb-demo" aria-label="Filled, tonal, outlined and standard icon buttons" id="gbd-291f17">
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-291f17-preview">
+<md-gb-icon-button color="filled" aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="outlined" aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button aria-label="Video call">
+  <md-gb-icon>videocam</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Video call<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>videocam<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>tonal<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Video call<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>videocam<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>outlined<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Video call<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>videocam<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Video call<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>videocam<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="sizes" tabindex="-1">Sizes</h3>
+<a class="anchor" href="#sizes"><span class="offscreen">Link to “Sizes”</span> <span aria-hidden="true">#</span></a></div>
+<p>Set <code>size</code> to <code>xs</code>, <code>sm</code> (default), <code>md</code>, <code>lg</code>, or <code>xl</code>.</p>
+<figure class="gb-demo" aria-label="Filled icon buttons from extra small to extra large" id="gbd-0452cc">
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-0452cc-preview">
+<md-gb-icon-button color="filled" size="xs" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" size="md" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" size="lg" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" size="xl" aria-label="Add">
+  <md-gb-icon>add</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">size</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>xs<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Add<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>add<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Add<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>add<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">size</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>md<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Add<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>add<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">size</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>lg<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Add<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>add<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">size</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>xl<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Add<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>add<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="widths" tabindex="-1">Widths</h3>
+<a class="anchor" href="#widths"><span class="offscreen">Link to “Widths”</span> <span aria-hidden="true">#</span></a></div>
+<p>Set <code>width</code> to <code>narrow</code> or <code>wide</code>. The default width sits in between.</p>
+<figure class="gb-demo" aria-label="Narrow, default and wide icon buttons" id="gbd-0d720a">
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-0d720a-preview">
+<md-gb-icon-button color="tonal" width="narrow" aria-label="Edit">
+  <md-gb-icon>edit</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" aria-label="Edit">
+  <md-gb-icon>edit</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="tonal" width="wide" aria-label="Edit">
+  <md-gb-icon>edit</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>tonal<span class="token punctuation">"</span></span> <span class="token attr-name">width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>narrow<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Edit<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>edit<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>tonal<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Edit<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>edit<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>tonal<span class="token punctuation">"</span></span> <span class="token attr-name">width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>wide<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Edit<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>edit<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="square-shape" tabindex="-1">Square shape</h3>
+<a class="anchor" href="#square-shape"><span class="offscreen">Link to “Square shape”</span> <span aria-hidden="true">#</span></a></div>
+<p>Add <code>square</code> to change the shape of the button from round to square.</p>
+<figure class="gb-demo" aria-label="A filled icon button with a square shape" id="gbd-4843d5" data-short>
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-4843d5-preview">
+<md-gb-icon-button color="filled" square aria-label="Delete">
+  <md-gb-icon>delete</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">square</span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Delete<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>delete<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="toggle" tabindex="-1">Toggle</h3>
+<a class="anchor" href="#toggle"><span class="offscreen">Link to “Toggle”</span> <span aria-hidden="true">#</span></a></div>
+<p>Set <code>type=&quot;toggle&quot;</code> to make a button that stays selected after it is pressed. Add <code>selected</code> for the initial state. The selected button shows the filled icon; if an icon has no filled version, add <code>unfilled-icon</code> and it gets a heavier weight instead.</p>
+<figure class="gb-demo" aria-label="An unselected and a selected toggle icon button" id="gbd-2b784e">
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-2b784e-preview">
+<md-gb-icon-button type="toggle" color="outlined" aria-label="Favorite">
+  <md-gb-icon>favorite</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button type="toggle" color="outlined" selected aria-label="Bookmark">
+  <md-gb-icon>bookmark</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>toggle<span class="token punctuation">"</span></span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>outlined<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Favorite<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>favorite<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>toggle<span class="token punctuation">"</span></span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>outlined<span class="token punctuation">"</span></span> <span class="token attr-name">selected</span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Bookmark<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>bookmark<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="tooltip" tabindex="-1">Tooltip</h3>
+<a class="anchor" href="#tooltip"><span class="offscreen">Link to “Tooltip”</span> <span aria-hidden="true">#</span></a></div>
+<p>Add <code>tooltip</code> to show the button's <code>aria-label</code> on hover and keyboard focus. Write the label as the action, not the icon's name.</p>
+<figure class="gb-demo" aria-label="An icon button with a tooltip" id="gbd-35e99d" data-short>
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-35e99d-preview">
+<md-gb-icon-button tooltip aria-label="Add to favorites">
+  <md-gb-icon>favorite</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">tooltip</span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Add to favorites<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>favorite<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="links" tabindex="-1">Links</h3>
+<a class="anchor" href="#links"><span class="offscreen">Link to “Links”</span> <span aria-hidden="true">#</span></a></div>
+<p>Set <code>href</code> to render the button as a link. Use <code>target</code> and <code>rel</code> as you would on an anchor.</p>
+<figure class="gb-demo" aria-label="An icon button that links to another page" id="gbd-236bb5" data-short>
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-236bb5-preview">
+<md-gb-icon-button href="https://m3.material.io/components/icon-buttons" target="_blank" aria-label="Open the guidelines">
+  <md-gb-icon>open_in_new</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://m3.material.io/components/icon-buttons<span class="token punctuation">"</span></span> <span class="token attr-name">target</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>_blank<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Open the guidelines<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>open_in_new<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="density" tabindex="-1">Density</h3>
+<a class="anchor" href="#density"><span class="offscreen">Link to “Density”</span> <span aria-hidden="true">#</span></a></div>
+<p>Set <code>density</code> from <code>0</code> (default) down to <code>-3</code> to remove 4px of height per step. The touch target stays at least 48px. Keep it off by default and let people opt in.</p>
+<figure class="gb-demo" aria-label="A filled icon button at density -2" id="gbd-08b5fb" data-short>
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-08b5fb-preview">
+<md-gb-icon-button color="filled" density="-2" aria-label="Search">
+  <md-gb-icon>search</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">density</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>-2<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Search<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>search<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h3">
+<h3 id="disabled-and-soft-disabled" tabindex="-1">Disabled and soft-disabled</h3>
+<a class="anchor" href="#disabled-and-soft-disabled"><span class="offscreen">Link to “Disabled and soft-disabled”</span> <span aria-hidden="true">#</span></a></div>
+<p>A disabled button can't be focused with the keyboard. A <code>soft-disabled</code> button stays focusable, which helps discoverability in toolbars.</p>
+<figure class="gb-demo" aria-label="A disabled icon button and a soft-disabled icon button" id="gbd-cb9f22">
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-cb9f22-preview">
+<md-gb-icon-button color="filled" disabled aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
+</md-gb-icon-button>
+<md-gb-icon-button color="filled" soft-disabled aria-label="Share">
+  <md-gb-icon>share</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">disabled</span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Share<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>share<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">color</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>filled<span class="token punctuation">"</span></span> <span class="token attr-name">soft-disabled</span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Share<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>share<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h2">
+<h2 id="accessibility" tabindex="-1">Accessibility</h2>
+<a class="anchor" href="#accessibility"><span class="offscreen">Link to “Accessibility”</span> <span aria-hidden="true">#</span></a></div>
+<ul>
+<li>An icon button has no visible text, so always give it an <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label"><code>aria-label</code></a> that describes the action.</li>
+<li>Icon buttons activate with Enter and Space and are reachable with Tab.</li>
+<li>Disabled buttons leave the tab order. Use <code>soft-disabled</code> to keep one focusable, as the <a href="https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_disabled_controls">ARIA guidance on disabled controls</a> allows.</li>
+<li>Toggle buttons expose their state with <code>aria-pressed</code>.</li>
+</ul>
+<figure class="gb-demo" aria-label="A toggle icon button that exposes its pressed state" id="gbd-12c2bd" data-short>
+<div class="gb-demo-preview">
+<div class="gb-demo-inline" id="gbd-12c2bd-preview">
+<md-gb-icon-button type="toggle" aria-label="Add to favorites">
+  <md-gb-icon>favorite</md-gb-icon>
+</md-gb-icon-button>
+</div>
+</div>
+<div class="gb-demo-code">
+<div class="gb-code"><pre class="language-html" data-file="HTML"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon-button</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>toggle<span class="token punctuation">"</span></span> <span class="token attr-name">aria-label</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Add to favorites<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>&#10;  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>md-gb-icon</span><span class="token punctuation">></span></span>favorite<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon</span><span class="token punctuation">></span></span>&#10;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>md-gb-icon-button</span><span class="token punctuation">></span></span></code></pre></div>
+</div>
+</figure>
+<div class="heading h2">
+<h2 id="compatibility" tabindex="-1">Compatibility</h2>
+<a class="anchor" href="#compatibility"><span class="offscreen">Link to “Compatibility”</span> <span aria-hidden="true">#</span></a></div>
+<div class="gb-compat"><details class="gb-compat-row" data-state="ok"><summary class="gb-compat-summary"><span class="gb-compat-logo" data-logo="m3"><svg class="gb-shape gb-compat-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false"><path d="M 0.5 0.0142 C 0.5365 0.0142 0.573 0.0273 0.6019 0.0535 C 0.6313 0.0801 0.67 0.0942 0.7096 0.0927 C 0.7876 0.0897 0.8551 0.1463 0.8657 0.2237 C 0.8711 0.263 0.8916 0.2986 0.923 0.3229 C 0.9847 0.3708 1 0.4576 0.9584 0.5236 C 0.9372 0.5572 0.9301 0.5977 0.9385 0.6365 C 0.955 0.7128 0.9109 0.7891 0.8366 0.813 C 0.7988 0.8251 0.7673 0.8515 0.7488 0.8867 C 0.7124 0.9557 0.6296 0.9858 0.5573 0.9563 C 0.5206 0.9413 0.4794 0.9413 0.4427 0.9563 C 0.3704 0.9858 0.2876 0.9557 0.2512 0.8867 C 0.2327 0.8515 0.2012 0.8251 0.1634 0.813 C 0.0891 0.7891 0.045 0.7128 0.0615 0.6365 C 0.0699 0.5977 0.0628 0.5572 0.0416 0.5236 C 0 0.4576 0.0153 0.3708 0.077 0.3229 C 0.1084 0.2986 0.1289 0.263 0.1343 0.2237 C 0.1449 0.1463 0.2124 0.0897 0.2904 0.0927 C 0.33 0.0942 0.3687 0.0801 0.3981 0.0535 C 0.427 0.0273 0.4635 0.0142 0.5 0.0142 Z"/></svg><svg class="gb-compat-logo-svg" aria-hidden="true" focusable="false"
+  viewBox="0 96 960 960"
+  fill="currentColor">
+  <path
+    d="M480 1016q-91 0-171-34.5T169 887q-60-60-94.5-140T40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q91 0 171 34.5T791 265q60 60 94.5 140T920 576q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM200 802V351q-38 47-59 104t-21 121q0 65 21 122t59 104Zm54-506h452q-47-38-104-59t-122-21q-65 0-122 21t-104 59Zm226 381 151-301H330l150 301Zm40 99h160V456L520 776Zm-240 0h160L280 456v320Zm200 160q64 0 121.5-21T706 856H254q47 38 104.5 59T480 936Zm280-134q38-47 59-104t21-122q0-64-21-121t-59-104v451Z" />
+</svg></span><span class="gb-compat-main"><span class="gb-compat-name" id="gb-compat-m3">Material Design 3</span><span class="gb-compat-badge">Spec checked</span><span class="gb-compat-extra"><span class="gb-compat-chip">93% tokens</span></span></span><md-gb-icon class="gb-compat-chevron" aria-hidden="true">expand_more</md-gb-icon></summary><div class="gb-compat-body"><p>168 of 292 buildable spec units are tested, 2 are excluded with a written reason and 0 are uncovered (the target is 0). 114 of 122 token declarations match the spec (93%), and 8 have no spec token.</p><p class="gb-compat-links"><a href="https://m3.material.io/components/icon-buttons/overview" target="_blank" rel="noopener">icon-buttons on m3.material.io<span class="gb-visually-hidden"> (opens in a new tab)</span></a> <a href="/material-web/3.0/about/compliance/">How compliance is measured</a></p></div></details><details class="gb-compat-row" data-state="ok"><summary class="gb-compat-summary"><span class="gb-compat-logo" data-logo="baseline"><svg class="gb-shape gb-compat-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false"><path d="M 0.5 0.0981 C 0.5048 0.0944 0.5097 0.0907 0.5145 0.087 C 0.6276 0 0.7877 0.0104 0.8887 0.1113 C 0.9896 0.2123 1 0.3724 0.913 0.4855 C 0.9093 0.4903 0.9056 0.4952 0.9019 0.5 C 0.9056 0.5048 0.9093 0.5097 0.913 0.5145 C 1 0.6276 0.9896 0.7877 0.8887 0.8887 C 0.7877 0.9896 0.6276 1 0.5145 0.913 C 0.5097 0.9093 0.5048 0.9056 0.5 0.9019 C 0.4952 0.9056 0.4903 0.9093 0.4855 0.913 C 0.3724 1 0.2123 0.9896 0.1113 0.8887 C 0.0104 0.7877 0 0.6276 0.087 0.5145 C 0.0907 0.5097 0.0944 0.5048 0.0981 0.5 C 0.0944 0.4952 0.0907 0.4903 0.087 0.4855 C 0 0.3724 0.0104 0.2123 0.1113 0.1113 C 0.2123 0.0104 0.3724 0 0.4855 0.087 C 0.4903 0.0907 0.4952 0.0944 0.5 0.0981 Z"/></svg><svg class="gb-compat-logo-svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="56.11" height="32" viewBox="0 0 256 146">
+  <path fill="#99dbb1"
+    d="m182.918 35.045l38.037 38.036l-37.61 37.611l-23.505-23.506l-17.523 17.521l23.506 23.506l17.522 17.523L256 73.081L238.477 55.56l-38.036-38.037z" />
+  <path fill="#99dbb3"
+    d="m72.655 0l-55.56 55.559l17.523 17.523l38.037-38.037l23.506 23.506l17.522-17.522l-23.506-23.506z" />
+  <path fill="#008f32"
+    d="M73.082 110.691L17.523 55.132L0 72.654l73.082 73.082l17.095-17.095l.428-.427L200.868 17.95L183.346.427z" />
+</svg></span><span class="gb-compat-main"><span class="gb-compat-name" id="gb-compat-baseline">Baseline</span><span class="gb-compat-badge">Widely available</span><span class="gb-compat-extra"><span class="gb-compat-chip">Chrome 124<md-gb-icon aria-hidden="true">check</md-gb-icon></span><span class="gb-compat-chip">Edge 124<md-gb-icon aria-hidden="true">check</md-gb-icon></span><span class="gb-compat-chip">Firefox 125<md-gb-icon aria-hidden="true">check</md-gb-icon></span><span class="gb-compat-chip">Safari 17.4<md-gb-icon aria-hidden="true">check</md-gb-icon></span></span></span><md-gb-icon class="gb-compat-chevron" aria-hidden="true">expand_more</md-gb-icon></summary><div class="gb-compat-body"><p>The component’s own CSS and JavaScript rely only on web platform features that are Baseline widely available: it works in Chrome 124, Edge 124, Firefox 125, Safari 17.4 and later.</p><p>Newer features it uses where the browser has them (progressive enhancements):</p><ul class="gb-compat-list"><li><a href="https://webstatus.dev/features/cursor" target="_blank" rel="noopener">Cursor styles<span class="gb-visually-hidden"> (opens in a new tab)</span></a> <span class="gb-compat-tag" data-status="limited">Limited availability</span> degrades safely where it is missing</li><li><a href="https://webstatus.dev/features/invoker-commands" target="_blank" rel="noopener">commandForElement (invoker commands)<span class="gb-visually-hidden"> (opens in a new tab)</span></a> <span class="gb-compat-tag" data-status="newly">Newly available</span> JavaScript, feature-detected or optional</li></ul><p class="gb-compat-links"><a href="/material-web/3.0/about/browser-support/">Browser support</a> <a href="https://web.dev/baseline" target="_blank" rel="noopener">Learn more about Baseline<span class="gb-visually-hidden"> (opens in a new tab)</span></a></p></div></details><details class="gb-compat-row" data-state="ok"><summary class="gb-compat-summary"><span class="gb-compat-logo" data-logo="aria"><svg class="gb-shape gb-compat-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false"><path d="M 0.9969 0.5 C 0.9969 0.5179 0.9907 0.5359 0.9783 0.5504 C 0.953 0.5801 0.9277 0.6098 0.9024 0.6395 C 0.8918 0.6519 0.8854 0.6674 0.8841 0.6837 C 0.881 0.7226 0.8779 0.7615 0.8748 0.8004 C 0.8718 0.8384 0.8415 0.8687 0.8035 0.8717 C 0.7646 0.8748 0.7257 0.8779 0.6868 0.881 C 0.6705 0.8823 0.655 0.8887 0.6426 0.8993 C 0.6129 0.9246 0.5832 0.9499 0.5535 0.9752 C 0.5245 1 0.4817 1 0.4527 0.9752 C 0.423 0.9499 0.3933 0.9246 0.3636 0.8993 C 0.3511 0.8887 0.3357 0.8823 0.3194 0.881 C 0.2805 0.8779 0.2416 0.8748 0.2027 0.8717 C 0.1646 0.8687 0.1344 0.8384 0.1314 0.8004 C 0.1283 0.7615 0.1252 0.7226 0.1221 0.6837 C 0.1208 0.6674 0.1144 0.6519 0.1038 0.6395 C 0.0785 0.6098 0.0532 0.5801 0.0279 0.5504 C 0.0031 0.5214 0.0031 0.4786 0.0279 0.4496 C 0.0532 0.4199 0.0785 0.3902 0.1038 0.3605 C 0.1144 0.3481 0.1208 0.3326 0.1221 0.3163 C 0.1252 0.2774 0.1283 0.2385 0.1314 0.1996 C 0.1344 0.1616 0.1646 0.1313 0.2027 0.1283 C 0.2416 0.1252 0.2805 0.1221 0.3194 0.119 C 0.3357 0.1177 0.3511 0.1113 0.3636 0.1007 C 0.3933 0.0754 0.423 0.0501 0.4527 0.0248 C 0.4817 0 0.5245 0 0.5535 0.0248 C 0.5832 0.0501 0.6129 0.0754 0.6426 0.1007 C 0.655 0.1113 0.6705 0.1177 0.6868 0.119 C 0.7257 0.1221 0.7646 0.1252 0.8035 0.1283 C 0.8415 0.1313 0.8718 0.1616 0.8748 0.1996 C 0.8779 0.2385 0.881 0.2774 0.8841 0.3163 C 0.8854 0.3326 0.8918 0.3481 0.9024 0.3605 C 0.9277 0.3902 0.953 0.4199 0.9783 0.4496 C 0.9907 0.4641 0.9969 0.4821 0.9969 0.5 Z"/></svg><svg class="gb-compat-logo-svg" aria-hidden="true" focusable="false"
+  viewBox="0 0 96 96"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="7"
+  stroke-linecap="round"
+  stroke-linejoin="round">
+  <path d="M26 28 10 48l16 20" />
+  <path d="m70 28 16 20-16 20" />
+  <circle cx="48" cy="26" r="7" fill="currentColor" stroke="none" />
+  <path d="M34 42h28" />
+  <path d="M48 42v14l-8 15" />
+  <path d="m48 56 8 15" />
+</svg></span><span class="gb-compat-main"><span class="gb-compat-name" id="gb-compat-aria">WAI-ARIA</span><span class="gb-compat-badge">axe and ARIA 1.3 pass</span><span class="gb-compat-extra"><span class="gb-compat-chip">Button</span><span class="gb-compat-chip">Link</span></span></span><md-gb-icon class="gb-compat-chevron" aria-hidden="true">expand_more</md-gb-icon></summary><div class="gb-compat-body"><p>Roles the component renders: <a href="https://w3c.github.io/aria/#button" target="_blank" rel="noopener">button<span class="gb-visually-hidden"> (opens in a new tab)</span></a>, <a href="https://w3c.github.io/aria/#link" target="_blank" rel="noopener">link<span class="gb-visually-hidden"> (opens in a new tab)</span></a>.</p><p>Follows the WAI-ARIA Authoring Practices: <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/" target="_blank" rel="noopener">Button<span class="gb-visually-hidden"> (opens in a new tab)</span></a>, <a href="https://www.w3.org/WAI/ARIA/apg/patterns/link/" target="_blank" rel="noopener">Link<span class="gb-visually-hidden"> (opens in a new tab)</span></a>.</p><p>5 rendered states run through axe-core and the WAI-ARIA 1.3 role and attribute rules in a real browser, with no known gaps.</p><p class="gb-compat-links"><a href="https://w3c.github.io/aria/" target="_blank" rel="noopener">WAI-ARIA 1.3<span class="gb-visually-hidden"> (opens in a new tab)</span></a> <a href="https://www.w3.org/WAI/ARIA/apg/" target="_blank" rel="noopener">ARIA Authoring Practices<span class="gb-visually-hidden"> (opens in a new tab)</span></a> <a href="/material-web/3.0/foundations/accessibility/">Accessibility</a></p></div></details><details class="gb-compat-row" data-state="ok"><summary class="gb-compat-summary"><span class="gb-compat-logo" data-logo="lighthouse"><svg class="gb-shape gb-compat-shape" viewBox="0 0 1 1" aria-hidden="true" focusable="false"><path d="M 0.1866 0.2724 C 0.1936 0.2628 0.1973 0.2507 0.1963 0.2381 C 0.194 0.2081 0.1917 0.1782 0.1894 0.1483 C 0.1865 0.1099 0.225 0.0818 0.2607 0.0963 C 0.2887 0.1077 0.3166 0.1191 0.3446 0.1304 C 0.3681 0.14 0.395 0.1312 0.4083 0.1096 C 0.424 0.084 0.4398 0.0585 0.4555 0.0329 C 0.4757 0.0001 0.5234 0 0.5437 0.0327 C 0.5596 0.0584 0.5756 0.084 0.5915 0.1097 C 0.6049 0.1312 0.6318 0.1399 0.6553 0.1302 C 0.683 0.1188 0.7108 0.1074 0.7386 0.096 C 0.7742 0.0813 0.8128 0.1092 0.81 0.1476 C 0.8078 0.1778 0.8056 0.2079 0.8035 0.238 C 0.8016 0.2633 0.8183 0.2862 0.843 0.2921 C 0.8721 0.2992 0.9013 0.3063 0.9305 0.3133 C 0.9679 0.3224 0.9827 0.3677 0.9579 0.3972 C 0.9384 0.4202 0.919 0.4433 0.8995 0.4664 C 0.8832 0.4858 0.8832 0.5141 0.8996 0.5334 C 0.9191 0.5563 0.9385 0.5792 0.958 0.602 C 0.9829 0.6314 0.9683 0.6767 0.9309 0.686 C 0.9016 0.6932 0.8723 0.7004 0.843 0.7076 C 0.8184 0.7137 0.8017 0.7367 0.8037 0.7619 C 0.806 0.7919 0.8083 0.8218 0.8106 0.8517 C 0.8135 0.8901 0.775 0.9182 0.7393 0.9037 C 0.7113 0.8923 0.6834 0.8809 0.6554 0.8696 C 0.6319 0.86 0.605 0.8688 0.5917 0.8904 C 0.576 0.916 0.5602 0.9415 0.5445 0.9671 C 0.5243 0.9999 0.4766 1 0.4563 0.9673 C 0.4404 0.9416 0.4244 0.916 0.4085 0.8903 C 0.3951 0.8688 0.3682 0.8601 0.3447 0.8698 C 0.317 0.8812 0.2892 0.8926 0.2614 0.904 C 0.2258 0.9187 0.1872 0.8908 0.19 0.8524 C 0.1922 0.8222 0.1944 0.7921 0.1965 0.762 C 0.1984 0.7367 0.1817 0.7138 0.157 0.7079 C 0.1279 0.7008 0.0987 0.6937 0.0695 0.6867 C 0.0321 0.6776 0.0173 0.6323 0.0421 0.6028 C 0.0616 0.5798 0.081 0.5567 0.1005 0.5336 C 0.1168 0.5142 0.1168 0.4859 0.1004 0.4666 C 0.0809 0.4437 0.0615 0.4208 0.042 0.398 C 0.0171 0.3686 0.0317 0.3233 0.0691 0.314 C 0.0984 0.3068 0.1277 0.2996 0.157 0.2924 C 0.1693 0.2893 0.1796 0.2821 0.1866 0.2724 Z"/></svg><svg class="gb-compat-logo-svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="SVGICRETdzN" x1="49.994%" x2="49.994%" y1=".226%" y2="99.725%">
+      <stop offset="0%" stop-color="#212121" stop-opacity=".04" />
+      <stop offset="66%" stop-color="#212121" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="SVGPN4omccq" x1="36.626%" x2="64.01%" y1="20.358%" y2="100.652%">
+      <stop offset="0%" stop-color="#fff" stop-opacity=".1" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="SVGpecrgAGw" x1="68.935%" x2="31.065%" y1="65.756%" y2="35.799%">
+      <stop offset="0%" stop-color="#262626" stop-opacity=".1" />
+      <stop offset="100%" stop-color="#262626" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="SVGLUBszbWP" x1="62.531%" x2="24.779%" y1="13.086%" y2="100.996%">
+      <stop offset="0%" stop-color="#262626" stop-opacity=".1" />
+      <stop offset="100%" stop-color="#262626" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="SVGTsQK6cSw" x1="0%" x2="100%" y1="50%" y2="50%">
+      <stop offset="0%" stop-color="#262626" stop-opacity=".1" />
+      <stop offset="100%" stop-color="#262626" stop-opacity="0" />
+    </linearGradient>
+    <path id="SVGIUTKp2rM"
+      d="M53.483 15.73h-7.645C42.598 6.56 33.866 0 23.594 0C10.57 0 0 10.57 0 23.594s10.57 23.597 23.594 23.597h29.889c8.686-.004 15.727-7.045 15.73-15.732c-.004-8.686-7.044-15.726-15.73-15.73" />
+    <path id="SVG4Cc6jeMG"
+      d="M29.887 0H0v31.459h29.887c8.685-.004 15.725-7.044 15.729-15.73C45.612 7.045 38.572.005 29.886 0" />
+    <path id="SVGsauddeCj"
+      d="m.72.72l12.756 40.284c4.26-4.28 10.838-10.178 10.838-16.69C24.314 11.29 13.744.72.72.72" />
+    <path id="SVGMn4Yrd1Y"
+      d="M61.71 18.15h-8.822C49.151 7.568 39.078 0 27.225 0C12.197 0 0 12.197 0 27.225S12.197 54.45 27.225 54.45h34.484c10.02 0 18.152-8.13 18.152-18.15c0-10.018-8.133-18.15-18.152-18.15" />
+    <path id="SVGyFcYRckV"
+      d="M34.484 0H0v36.3h34.484c10.02 0 18.152-8.132 18.152-18.15C52.636 8.13 44.503 0 34.484 0" />
+    <path id="SVGsP4sGdiH"
+      d="m.445.445l14.719 46.483C20.084 41.99 27.67 35.184 27.67 27.67C27.67 12.642 15.473.445.445.445" />
+    <radialGradient id="SVGkOYyLd2f" cx="10.105%" cy="14.269%" r="144.565%" fx="10.105%"
+      fy="14.269%" gradientTransform="matrix(.68182 0 0 1 .032 0)">
+      <stop offset="0%" stop-color="#fff" stop-opacity=".1" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="SVGTCLUYd1O" cx="14.489%" cy="14.584%" r="99.973%" fx="14.489%" fy="14.584%">
+      <stop offset="0%" stop-color="#fff" stop-opacity=".1" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="SVGkwwRAdjY" cx="10.105%" cy="14.269%" r="144.568%" fx="10.105%"
+      fy="14.269%" gradientTransform="matrix(.68181 0 0 1 .032 0)">
+      <stop offset="0%" stop-color="#fff" stop-opacity=".1" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+    <filter id="SVGfTbhlbLT" width="159.3%" height="134.8%" x="-29.7%" y="-12.4%"
+      filterUnits="objectBoundingBox">
+      <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1" />
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2" />
+      <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+    </filter>
+    <filter id="SVGFLKEUOMR" width="151.4%" height="130.1%" x="-25.7%" y="-10.8%"
+      filterUnits="objectBoundingBox">
+      <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1" />
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2" />
+      <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+    </filter>
+  </defs>
+  <g fill="none">
+    <circle cx="127.777" cy="127.777" r="127.777" fill="#0535c1" />
+    <path d="M155.363 58.081h75.505v75.504h-75.505z" />
+    <g transform="translate(158.51 73.81)">
+      <mask id="SVGj013bj3L" fill="#fff">
+        <use href="#SVGIUTKp2rM" />
+      </mask>
+      <g mask="url(#SVGj013bj3L)">
+        <path fill="#eaeaea"
+          d="M53.483 15.73h-7.645C42.598 6.56 33.866 0 23.594 0C10.57 0 0 10.57 0 23.594s10.57 23.597 23.594 23.597h29.889c8.686-.004 15.727-7.045 15.73-15.732c-.004-8.686-7.044-15.726-15.73-15.73" />
+        <path fill="#fff" fill-opacity=".2"
+          d="M69.212 31.649v-.19c-.003-8.686-7.043-15.726-15.729-15.73h-7.867v.393h7.867c8.609.001 15.617 6.92 15.73 15.529z" />
+        <path fill="url(#SVGICRETdzN)" d="M77.312 47.191H23.594L45.853 15.73z" />
+        <g transform="translate(23.594 15.73)">
+          <mask id="SVG5ruVOd1e" fill="#fff">
+            <use href="#SVG4Cc6jeMG" />
+          </mask>
+          <g mask="url(#SVG5ruVOd1e)">
+            <g transform="translate(-.72 -16.45)">
+              <use fill="#000" filter="url(#SVGfTbhlbLT)" href="#SVGsauddeCj" />
+              <use fill="#e1e1e1" href="#SVGsauddeCj" />
+            </g>
+          </g>
+        </g>
+        <circle cx="23.594" cy="23.594" r="23.594" fill="#eee" />
+        <path fill="#fff" fill-opacity=".2"
+          d="M23.594.392c12.962 0 23.486 10.461 23.597 23.407v-.187C47.19 10.587 36.619.015 23.594.015C10.57.015 0 10.57 0 23.595v.189C.109 10.853 10.633.392 23.594.392" />
+        <path fill="#212121" fill-opacity=".1"
+          d="M53.483 46.796H23.594C10.635 46.796.111 36.336 0 23.392v.19c0 13.024 10.57 23.593 23.594 23.593h29.889c8.686-.003 15.726-7.043 15.73-15.729v-.187c-.109 8.61-7.118 15.536-15.73 15.54z" />
+      </g>
+    </g>
+    <path fill="url(#SVGkOYyLd2f)"
+      d="M211.993 89.54h-7.644c-3.241-9.17-11.973-15.73-22.244-15.73c-13.025 0-23.595 10.57-23.595 23.594s10.57 23.597 23.595 23.597h29.888c8.687-.004 15.727-7.045 15.73-15.732c-.004-8.685-7.044-15.726-15.73-15.73" />
+    <path fill="#fff176" d="M92.929 53.725h66.792v58.08H92.929z" />
+    <path fill="#fff" d="M85.667 142.295h79.861v79.861H85.667z" />
+    <path fill="#f4481e"
+      d="M174.24 105.997h11.615v23.23H69.696v-23.23h11.615V59.53l46.466-29.039l46.463 29.04zm-23.233 0v-33.59l-23.23-14.516l-23.233 14.517v33.589z" />
+    <path fill="#f4481e"
+      d="m64.536 238.83l19.68-132.835h87.12l19.679 132.836c-18.646 10.641-40.232 16.72-63.238 16.72c-23.007 0-44.593-6.079-63.24-16.72m89.253-92.758l-54.655 17.76l-6.643 44.833l67.33-21.88l-6.032-40.715z" />
+    <path fill="url(#SVGPN4omccq)"
+      d="m174.129 129.227l16.237 109.604c-18.646 10.641-40.232 16.72-63.238 16.72c-23.007 0-44.593-6.079-63.24-16.72l16.238-109.604h-10.43v-23.23h11.615V59.53l46.466-29.039l46.463 29.04v46.465h11.615v23.23H174.13" />
+    <path fill="url(#SVGpecrgAGw)" d="M127.777 105.997H81.311V59.531l46.466-29.039z" />
+    <path fill="url(#SVGLUBszbWP)"
+      d="M127.777 255.551a127.7 127.7 0 0 1-63.24-16.72l14.56-109.604h48.678v126.324z" />
+    <path fill="url(#SVGTsQK6cSw)" d="M69.696 105.997h58.081v23.232H69.696z"
+      transform="matrix(-1 0 0 1 197.473 0)" />
+    <circle cx="127.777" cy="127.777" r="127.777" fill="url(#SVGTCLUYd1O)" />
+    <path d="M27.589 82.764h87.12v87.12h-87.12z" />
+    <g transform="translate(31.217 100.913)">
+      <mask id="SVGLOTy0ciP" fill="#fff">
+        <use href="#SVGMn4Yrd1Y" />
+      </mask>
+      <g mask="url(#SVGLOTy0ciP)">
+        <path fill="#fafafa"
+          d="M61.71 18.15h-8.822C49.151 7.568 39.078 0 27.225 0C12.197 0 0 12.197 0 27.225S12.197 54.45 27.225 54.45h34.484c10.02 0 18.152-8.13 18.152-18.15c0-10.018-8.133-18.15-18.152-18.15" />
+        <path fill="#fff" fill-opacity=".2"
+          d="M79.86 36.519V36.3c0-10.02-8.132-18.152-18.15-18.152h-9.074v.455h9.073c9.933 0 18.02 7.983 18.152 17.915" />
+        <path fill="url(#SVGICRETdzN)" d="M89.206 54.45H27.225l25.683-36.301z" />
+        <g transform="translate(27.225 18.15)">
+          <mask id="SVGt3PrsbmF" fill="#fff">
+            <use href="#SVGyFcYRckV" />
+          </mask>
+          <g mask="url(#SVGt3PrsbmF)">
+            <g transform="translate(-.445 -18.594)">
+              <use fill="#000" filter="url(#SVGFLKEUOMR)" href="#SVGsP4sGdiH" />
+              <use fill="#e1e1e1" href="#SVGsP4sGdiH" />
+            </g>
+          </g>
+        </g>
+        <circle cx="27.225" cy="27.225" r="27.225" fill="#fff" />
+        <path fill="#fff" fill-opacity=".2"
+          d="M27.225.453c14.956 0 27.099 12.07 27.225 27.007v-.218C54.45 12.214 42.253.017 27.225.017S0 12.197 0 27.225v.218C.126 12.523 12.269.453 27.225.453" />
+        <path fill="#212121" fill-opacity=".1"
+          d="M61.71 53.997H27.224C12.269 53.997.126 41.927 0 26.99v.218c0 15.028 12.197 27.225 27.225 27.225h34.484c10.02 0 18.152-8.133 18.152-18.152v-.218c-.129 9.93-8.205 17.934-18.152 17.934" />
+      </g>
+    </g>
+    <path fill="url(#SVGkwwRAdjY)"
+      d="M92.927 119.063h-8.821c-3.738-10.581-13.811-18.15-25.664-18.15c-15.028 0-27.225 12.197-27.225 27.225s12.197 27.225 27.225 27.225h34.485c10.018 0 18.151-8.13 18.151-18.149s-8.133-18.151-18.151-18.151" />
+    <g opacity=".1">
+      <path fill="#fff"
+        d="M127.777 1.335c70.35 0 127.397 56.846 127.761 127.108c0-.218.013-.435.013-.666C255.551 57.21 198.344 0 127.777 0S0 57.21 0 127.777c0 .217.015.435.015.666C.377 58.181 57.427 1.335 127.777 1.335" />
+      <path fill="#263238"
+        d="M255.538 127.108c-.364 70.262-57.412 127.108-127.761 127.108c-70.35 0-127.4-56.846-127.762-127.108c0 .233-.015.45-.015.669C0 198.344 57.21 255.55 127.777 255.55S255.55 198.344 255.55 127.777c0-.218-.013-.436-.013-.669" />
+    </g>
+    <circle cx="127.777" cy="127.777" r="127.777" fill="url(#SVGTCLUYd1O)" />
+  </g>
+</svg></span><span class="gb-compat-main"><span class="gb-compat-name" id="gb-compat-lighthouse">Lighthouse</span><span class="gb-compat-badge">98 · 100 · 100 · 100</span></span><md-gb-icon class="gb-compat-chevron" aria-hidden="true">expand_more</md-gb-icon></summary><div class="gb-compat-body"><ul class="gb-compat-scores"><li class="gb-compat-score" data-level="good"><md-gb-progress circular value="0.98" aria-label="Performance: 98 out of 100"></md-gb-progress><span class="gb-compat-score-value" aria-hidden="true">98</span><span class="gb-compat-score-label">Performance</span></li><li class="gb-compat-score" data-level="good"><md-gb-progress circular value="1" aria-label="Accessibility: 100 out of 100"></md-gb-progress><span class="gb-compat-score-value" aria-hidden="true">100</span><span class="gb-compat-score-label">Accessibility</span></li><li class="gb-compat-score" data-level="good"><md-gb-progress circular value="1" aria-label="Best practices: 100 out of 100"></md-gb-progress><span class="gb-compat-score-value" aria-hidden="true">100</span><span class="gb-compat-score-label">Best practices</span></li><li class="gb-compat-score" data-level="good"><md-gb-progress circular value="1" aria-label="SEO: 100 out of 100"></md-gb-progress><span class="gb-compat-score-value" aria-hidden="true">100</span><span class="gb-compat-score-label">SEO</span></li></ul><p>Audits under 90:</p><ul class="gb-compat-list"><li>Elements with visible text labels do not have matching accessible names.</li><li>Eliminate render-blocking resources</li><li>Minify JavaScript</li><li>Reduce unused JavaScript</li><li>Enable text compression</li><li>Network dependency tree</li><li>Render blocking requests</li></ul><p class="gb-compat-note">Lighthouse 12.8.2 (desktop, 2026-11-08) on the component alone: its first example on a page of its own, without this site's shell. The modules are the development build (not bundled or minified), so the performance score is indicative.</p><p class="gb-compat-links"><a href="/material-web/3.0/lab/icon-button/">Open the test page</a> <a href="https://developer.chrome.com/docs/lighthouse/overview" target="_blank" rel="noopener">About Lighthouse<span class="gb-visually-hidden"> (opens in a new tab)</span></a></p></div></details></div>
+<div class="heading h2">
+<h2 id="api-reference" tabindex="-1">API reference</h2>
+<a class="anchor" href="#api-reference"><span class="offscreen">Link to “API reference”</span> <span aria-hidden="true">#</span></a></div>
+<div class="heading h3">
+<h3 id="lessmd-gb-icon-buttongreater" tabindex="-1">&lt;md-gb-icon-button&gt;</h3>
+<a class="anchor" href="#lessmd-gb-icon-buttongreater"><span class="offscreen">Link to “&lt;md-gb-icon-button&gt;”</span> <span aria-hidden="true">#</span></a></div>
+<p>A Material Design component.</p>
+<div class="heading h4">
+<h4 id="properties" tabindex="-1">Properties</h4>
+<a class="anchor" href="#properties"><span class="offscreen">Link to “Properties”</span> <span aria-hidden="true">#</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color</code><br><span class="gb-desc">The color of the button.</span></td>
+<td><code>color</code></td>
+<td><code>IconButtonColor</code></td>
+<td><code>'standard'</code></td>
+</tr>
+<tr>
+<td><code>density</code><br><span class="gb-desc">The density, from 0 (default) to -3. Each step down removes 4px from the container height (and the width of a default-width button); the icon keeps its size and the touch target stays at least 48px. Values are clamped to that range. Density 0 inherits the density of an enclosing <code>md-gb-button-group</code>. <a href="http://icon-buttons.md">icon-buttons.md</a>: don't apply density by default; let people opt in to a denser layout.</span></td>
+<td><code>density</code></td>
+<td><code>Density</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>download</code><br><span class="gb-desc">The filename to use when downloading the linked resource.</span></td>
+<td><code>download</code></td>
+<td><code>string</code></td>
+<td><code>''</code></td>
+</tr>
+<tr>
+<td><code>href</code><br><span class="gb-desc">The URL that the link button points to.</span></td>
+<td><code>href</code></td>
+<td><code>string</code></td>
+<td><code>''</code></td>
+</tr>
+<tr>
+<td><code>referrerPolicy</code><br><span class="gb-desc">Sets the underlying <code>HTMLAnchorElement</code>'s <code>referrerpolicy</code> attribute when <code>href</code> is set.</span></td>
+<td><code>referrerpolicy</code></td>
+<td><code>string</code></td>
+<td><code>''</code></td>
+</tr>
+<tr>
+<td><code>rel</code><br><span class="gb-desc">Sets the underlying <code>HTMLAnchorElement</code>'s <code>rel</code> attribute when <code>href</code> is set.</span></td>
+<td><code>rel</code></td>
+<td><code>string</code></td>
+<td><code>''</code></td>
+</tr>
+<tr>
+<td><code>selected</code><br><span class="gb-desc">Whether or not the button is selected, when <code>type=&quot;toggle&quot;</code>. TODO: replace reflected <code>[selected]</code> with <code>:state(selected)</code></span></td>
+<td><code>selected</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>size</code><br><span class="gb-desc">The size of the button.</span></td>
+<td><code>size</code></td>
+<td><code>IconButtonSize</code></td>
+<td><code>'sm'</code></td>
+</tr>
+<tr>
+<td><code>softDisabled</code><br><span class="gb-desc">Whether or not the button is &quot;soft-disabled&quot; (disabled but still focusable).</span></td>
+<td><code>soft-disabled</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>square</code><br><span class="gb-desc">Changes the shape of the button to be square.</span></td>
+<td><code>square</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>target</code><br><span class="gb-desc">Where to display the linked <code>href</code> URL for a link button.</span></td>
+<td><code>target</code></td>
+<td><code>&quot;&quot;</td>
+<td>&quot;_blank&quot;</td>
+</tr>
+<tr>
+<td><code>tooltip</code><br><span class="gb-desc">Shows a tooltip with the button's accessibility label (<code>aria-label</code>) on hover and keyboard focus. The label should describe the action, not name the icon.</span></td>
+<td><code>tooltip</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>type</code><br><span class="gb-desc">A string indicating the behavior of the button. - &quot;submit&quot; (default): A button that submits its associated form. - &quot;reset&quot;: A button that resets its associated form. - &quot;button&quot;: A normal button. - &quot;toggle&quot;: A toggle button using the <code>selected</code> property. - &quot;link&quot;: An anchor link (<code>&lt;a&gt;</code>). Type is always &quot;link&quot; when <code>href</code> is set.</span></td>
+<td><code>type</code></td>
+<td><code>string</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>unfilledIcon</code><br><span class="gb-desc">Set when the icon has no filled version: a selected toggle button then shows the icon in semibold weight instead of filled.</span></td>
+<td><code>unfilled-icon</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>width</code><br><span class="gb-desc">Changes the width of the button.</span></td>
+<td><code>width</code></td>
+<td><code>IconButtonWidth</code></td>
+<td><code>''</code></td>
+</tr>
+</tbody>
+</table>
+<div class="heading h4">
+<h4 id="slots" tabindex="-1">Slots</h4>
+<a class="anchor" href="#slots"><span class="offscreen">Link to “Slots”</span> <span aria-hidden="true">#</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Slot</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>default</td>
+<td>Used to display an icon.</td>
+</tr>
+</tbody>
+</table>
+<div class="heading h4">
+<h4 id="events" tabindex="-1">Events</h4>
+<a class="anchor" href="#events"><span class="offscreen">Link to “Events”</span> <span aria-hidden="true">#</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>change</code><br><span class="gb-desc">Event</span></td>
+<td>Fired when a toggle button is selected or unselected.</td>
+</tr>
+<tr>
+<td><code>input</code><br><span class="gb-desc">InputEvent</span></td>
+<td>Fired when a toggle icon button is selected or unselected.</td>
+</tr>
+</tbody>
+</table>
+<div class="heading h4">
+<h4 id="css-parts" tabindex="-1">CSS parts</h4>
+<a class="anchor" href="#css-parts"><span class="offscreen">Link to “CSS parts”</span> <span aria-hidden="true">#</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>::part(icon-btn)</code></td>
+<td>The icon button's root element.</td>
+</tr>
+</tbody>
+</table>
+<div class="heading h4">
+<h4 id="css-custom-properties" tabindex="-1">CSS custom properties</h4>
+<a class="anchor" href="#css-custom-properties"><span class="offscreen">Link to “CSS custom properties”</span> <span aria-hidden="true">#</span></a></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--container-color</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--container-height</code></td>
+<td>Container height at density 0.</td>
+</tr>
+<tr>
+<td><code>--container-shape</code></td>
+<td>The resolved shape; defaults to the round or square shape.</td>
+</tr>
+<tr>
+<td><code>--container-shape-round</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--container-shape-square</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--density-step</code></td>
+<td>Container height removed per density step.</td>
+</tr>
+<tr>
+<td><code>--icon-color</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--icon-size</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--leading-space</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--md-icon-fill</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--outline-color</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--outline-width</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--target-size</code></td>
+<td>The minimum touch target size, kept at any density.</td>
+</tr>
+<tr>
+<td><code>--trailing-space</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+            
+<nav class="gb-pager gb-pager-end" aria-label="Previous and next pages">
+<a class="gb-pager-link gb-pager-prev" href="/material-web/3.0/components/fab/" rel="prev"><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_back</md-gb-icon></span><span class="gb-pager-text"><span class="gb-pager-label">Previous</span> <span class="gb-pager-title">Floating action button (FAB)</span></span></a>
+<a class="gb-pager-link gb-pager-next" href="/material-web/3.0/components/segmented-button/" rel="next"><span class="gb-pager-text"><span class="gb-pager-label">Next</span> <span class="gb-pager-title">Segmented button</span></span><span class="gb-pager-icon" aria-hidden="true"><md-gb-icon>arrow_forward</md-gb-icon></span></a>
+</nav>
+          </main>
+        </div>
+      </div><aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
+        <div class="gb-outline-head">
+          <h2 class="gb-outline-title" id="gb-outline-title">On this page</h2>
+          <md-gb-icon-button id="gb-outline-close" tooltip aria-label="Hide page outline">
+            <md-gb-icon>close</md-gb-icon>
+          </md-gb-icon-button>
+        </div><div class="gb-toc gb-outline-body">
+          <md-gb-nav-rail class="gb-outline-rail" expanded role="none">
+            <md-gb-nav-rail-item href="#main" data-depth="1">(Top)</md-gb-nav-rail-item>
+            <md-gb-nav-rail-item href="#usage-guidelines" data-depth="1">Usage guidelines</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#anatomy" data-depth="1">Anatomy</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#examples" data-depth="1">Examples</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#colors" data-depth="2">Colors</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#sizes" data-depth="2">Sizes</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#widths" data-depth="2">Widths</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#square-shape" data-depth="2">Square shape</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#toggle" data-depth="2">Toggle</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#tooltip" data-depth="2">Tooltip</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#links" data-depth="2">Links</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#density" data-depth="2">Density</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#disabled-and-soft-disabled" data-depth="2">Disabled and soft-disabled</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#accessibility" data-depth="1">Accessibility</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#compatibility" data-depth="1">Compatibility</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#api-reference" data-depth="1">API reference</md-gb-nav-rail-item>
+<md-gb-nav-rail-item href="#lessmd-gb-icon-buttongreater" data-depth="2">&lt;md-gb-icon-button&gt;</md-gb-nav-rail-item>
+          </md-gb-nav-rail>
+        </div>
+      </aside><aside class="gb-outline-strip" aria-label="Page outline">
+        <md-gb-icon-button id="gb-outline-toggle" tooltip aria-label="Show page outline" aria-controls="gb-outline" aria-expanded="true">
+          <md-gb-icon>toc</md-gb-icon>
+        </md-gb-icon-button>
+      </aside><nav class="gb-bar-area" aria-label="Sections">
+        <md-gb-nav-bar class="gb-bar" id="gb-bar" role="none">
+          <md-gb-nav-bar-item href="/material-web/3.0/about/" data-section="about" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">info</md-gb-icon>About
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/foundations/" data-section="foundations" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">foundation</md-gb-icon>Foundations
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/styles/" data-section="styles" aria-haspopup="dialog">
+            <md-gb-icon slot="icon">palette</md-gb-icon>Styles
+          </md-gb-nav-bar-item>
+          <md-gb-nav-bar-item href="/material-web/3.0/components/" data-section="components" aria-haspopup="dialog" active>
+            <md-gb-icon slot="icon">widgets</md-gb-icon>Components
+          </md-gb-nav-bar-item>
+        </md-gb-nav-bar>
+      </nav>
+
+    </div>
+    <template data-pages="about" data-label="About"><md-gb-nav-drawer-item href="/material-web/3.0/about/"><md-gb-icon slot="icon">info</md-gb-icon>About overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/intro/">Introduction</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/compliance/">Spec compliance</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/quick-start/">Quick Start</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/migration/">Migration</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/roadmap/">Roadmap</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/support/">Support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/size/">Bundle Sizes</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/browser-support/">Browser support</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/ai-agents/">AI agents</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/debugging/">Debugging</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/about/shadcn/">Use with shadcn/ui</md-gb-nav-drawer-item></template>
+    <template data-pages="foundations" data-label="Foundations"><md-gb-nav-drawer-item href="/material-web/3.0/foundations/"><md-gb-icon slot="icon">foundation</md-gb-icon>Foundations overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/design-tokens/">Theming</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/interaction-states/">Interaction States</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/accessibility/">Accessibility</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/adaptive-layout/">Adaptive layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/density/">Density</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/layout/">Layout</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/foundations/scaffold/">Scaffold</md-gb-nav-drawer-item></template>
+    <template data-pages="styles" data-label="Styles"><md-gb-nav-drawer-item href="/material-web/3.0/styles/"><md-gb-icon slot="icon">palette</md-gb-icon>Styles overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/color/">Color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/dynamic-color/">Dynamic color</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/typography/">Typography</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/shape/">Shape</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/elevation/">Elevation</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/icons/">Icons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/material-symbols/">Material Symbols</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion/">Motion</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/motion-transitions/">Transitions</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/styles/spacing/">Spacing</md-gb-nav-drawer-item></template>
+    <template data-pages="components" data-label="Components"><md-gb-nav-drawer-item href="/material-web/3.0/components/"><md-gb-icon slot="icon">widgets</md-gb-icon>Components overview</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="buttons" data-current>
+<button class="gb-pane-group-toggle" type="button" aria-expanded="true" aria-label="Buttons"><span class="gb-pane-group-label">Buttons</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button-group/" data-group="buttons">Button Group</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/button/" data-group="buttons">Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab-menu/" data-group="buttons">FAB menu</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/fab/" data-group="buttons">Floating action button (FAB)</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/icon-button/" data-group="buttons" selected>Icon Buttons</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/segmented-button/" data-group="buttons">Segmented button</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/split-button/" data-group="buttons">Split button</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="pickers">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="false" aria-label="Date &amp; time pickers"><span class="gb-pane-group-label">Date &amp; time pickers</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/date-picker/" data-group="pickers" hidden>Date picker</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/time-picker/" data-group="pickers" hidden>Time picker</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="progress">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="false" aria-label="Loading &amp; progress"><span class="gb-pane-group-label">Loading &amp; progress</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/loading-indicator/" data-group="progress" hidden>Loading indicator</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/progress/" data-group="progress" hidden>Progress indicators</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/pull-to-refresh/" data-group="progress" hidden>Pull to refresh</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="navigation">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="false" aria-label="Navigation"><span class="gb-pane-group-label">Navigation</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-bar/" data-group="navigation" hidden>Navigation Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-drawer/" data-group="navigation" hidden>Navigation Drawer</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/navigation-rail/" data-group="navigation" hidden>Navigation Rail</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="sheets">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="false" aria-label="Sheets"><span class="gb-pane-group-label">Sheets</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/sheets/" data-group="sheets" hidden>Sheets</md-gb-nav-drawer-item>
+<div class="gb-pane-group" data-group="other">
+<button class="gb-pane-group-toggle" type="button" aria-expanded="false" aria-label="All other components"><span class="gb-pane-group-label">All other components</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+</div>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/app-bar/" data-group="other" hidden>App Bar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/badge/" data-group="other" hidden>Badge</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/card/" data-group="other" hidden>Card</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/carousel/" data-group="other" hidden>Carousel</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/checkbox/" data-group="other" hidden>Checkbox</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/chip/" data-group="other" hidden>Chips</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/dialog/" data-group="other" hidden>Dialogs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/divider/" data-group="other" hidden>Divider</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/list/" data-group="other" hidden>Lists</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/menu/" data-group="other" hidden>Menus</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/radio/" data-group="other" hidden>Radio</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/search/" data-group="other" hidden>Search</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/select/" data-group="other" hidden>Select</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/slider/" data-group="other" hidden>Sliders</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/snackbar/" data-group="other" hidden>Snackbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/switch/" data-group="other" hidden>Switch</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tabs/" data-group="other" hidden>Tabs</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/text-field/" data-group="other" hidden>Text field</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/toolbar/" data-group="other" hidden>Toolbar</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/material-web/3.0/components/tooltip/" data-group="other" hidden>Tooltip</md-gb-nav-drawer-item></template><md-gb-side-sheet id="gb-side-sheet" class="gb-side-sheet" modal></md-gb-side-sheet>
+    <md-gb-bottom-sheet id="gb-tools-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page tools"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-pages-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Pages"></md-gb-bottom-sheet>
+    <md-gb-bottom-sheet id="gb-outline-sheet" class="gb-bottom-sheet" modal skip-partially-expanded label="Page outline"></md-gb-bottom-sheet>
+
+    <div class="gb-tools" id="gb-tools" hidden><section class="gb-tool" id="gb-download-body" data-tool="download" data-title="Download &amp; copy" data-site-url="https://material-web.dev" aria-labelledby="gb-download-title">
+        <h2 class="gb-tool-title" id="gb-download-title">Download &amp; copy</h2>
+        <h3 class="gb-tool-group">Download</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" id="gb-install" data-action="install">
+            <md-gb-icon aria-hidden="true">install_desktop</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Install app</span><span class="gb-action-support">Add Material Web 3.0 to your device</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/material-web-3.0.mhtml" data-filename="material-web-3.0.mhtml">
+            <md-gb-icon aria-hidden="true">web</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Website (MHTML, single file)</span><span class="gb-action-support" data-base="All pages in one file, for offline reading">All pages in one file, for offline reading</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/llms-full.txt" data-filename="llms-full.txt">
+            <md-gb-icon aria-hidden="true">description</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Docs for LLMs (llms-full.txt)</span><span class="gb-action-support" data-base="All pages as Markdown text">All pages as Markdown text</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-download="/material-web/3.0/custom-elements.json" data-filename="custom-elements.json">
+            <md-gb-icon aria-hidden="true">data_object</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">API (custom-elements.json)</span><span class="gb-action-support" data-base="Every element, as a Custom Elements Manifest">Every element, as a Custom Elements Manifest</span></span>
+          </button></li>
+        </ul><h3 class="gb-tool-group">Copy</h3>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="agent-prompt" data-copied="Copied agent prompt">
+            <md-gb-icon aria-hidden="true">smart_toy</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy agent prompt</span><span class="gb-action-support">Tells an AI agent to install the md-gb skill</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="cdn" data-copied="Copied CDN script tag">
+            <md-gb-icon aria-hidden="true">code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy CDN script tag</span><span class="gb-action-support">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span></span>
+          </button></li>
+        </ul>
+        <md-gb-divider class="gb-actions-divider"></md-gb-divider>
+        <ul class="gb-actions" role="list">
+          <li><button type="button" class="gb-action" data-copy="github" data-copied="Copied GitHub link">
+            <md-gb-icon aria-hidden="true">link</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy GitHub link</span><span class="gb-action-support">github.com/material-components/material-web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="npm" data-copied="Copied npm install command">
+            <md-gb-icon aria-hidden="true">terminal</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy npm install</span><span class="gb-action-support">npm install @material/web</span></span>
+          </button></li>
+          <li><button type="button" class="gb-action" data-copy="shadcn" data-copied="Copied shadcn setup command">
+            <md-gb-icon aria-hidden="true">deployed_code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy shadcn npx setup</span><span class="gb-action-support">npx shadcn@latest add &hellip;/md-theme.json</span></span>
+          </button></li>
+        </ul>
+      </section><section class="gb-tool" id="gb-theme-body" data-tool="theme" data-title="Customize theme" aria-labelledby="gb-theme-title">
+        <h2 class="gb-tool-title" id="gb-theme-title">Customize theme</h2>
+        <p class="gb-tool-note">Changes apply to this site and its demos, and are remembered in this browser.</p>
+        <fieldset class="gb-field">
+          <legend>Seed color</legend>
+          <div class="gb-swatches" id="gb-swatches">
+            <label class="gb-swatch" style="--gb-swatch: #6750a4"><input type="radio" name="gb-seed" value="#6750a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Purple</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #0061a4"><input type="radio" name="gb-seed" value="#0061a4" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Blue</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #006a6a"><input type="radio" name="gb-seed" value="#006a6a" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Teal</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #386a20"><input type="radio" name="gb-seed" value="#386a20" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Green</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #9c4300"><input type="radio" name="gb-seed" value="#9c4300" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Orange</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #b3261e"><input type="radio" name="gb-seed" value="#b3261e" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Red</span></label>
+            <label class="gb-swatch" style="--gb-swatch: #8b4a62"><input type="radio" name="gb-seed" value="#8b4a62" /><span class="gb-swatch-chip" aria-hidden="true"></span><span class="gb-swatch-name">Pink</span></label>
+          </div>
+          <label class="gb-custom-color">
+            <span>Custom color</span>
+            <input type="color" id="gb-seed-input" value="#6750a4" />
+            <output id="gb-seed-hex" for="gb-seed-input">#6750a4</output>
+          </label>
+        </fieldset>
+        <div class="gb-field">
+          <md-gb-select id="gb-variant" label="Scheme variant" value="tonal-spot">
+            <md-gb-select-option value="tonal-spot" selected>Tonal spot</md-gb-select-option>
+            <md-gb-select-option value="neutral">Neutral</md-gb-select-option>
+            <md-gb-select-option value="vibrant">Vibrant</md-gb-select-option>
+            <md-gb-select-option value="expressive">Expressive</md-gb-select-option>
+            <md-gb-select-option value="fidelity">Fidelity</md-gb-select-option>
+            <md-gb-select-option value="content">Content</md-gb-select-option>
+            <md-gb-select-option value="monochrome">Monochrome</md-gb-select-option>
+            <md-gb-select-option value="rainbow">Rainbow</md-gb-select-option>
+            <md-gb-select-option value="fruit-salad">Fruit salad</md-gb-select-option>
+          </md-gb-select>
+        </div>
+        <fieldset class="gb-field">
+          <legend>Color mode</legend>
+          <md-gb-segmented-button-set id="gb-mode" required aria-label="Color mode">
+            <md-gb-segmented-button value="auto" no-checkmark selected>System</md-gb-segmented-button>
+            <md-gb-segmented-button value="light" no-checkmark>Light</md-gb-segmented-button>
+            <md-gb-segmented-button value="dark" no-checkmark>Dark</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <fieldset class="gb-field">
+          <legend>Contrast</legend>
+          <md-gb-segmented-button-set id="gb-contrast" required aria-label="Contrast">
+            <md-gb-segmented-button value="standard" no-checkmark selected>Standard</md-gb-segmented-button>
+            <md-gb-segmented-button value="medium" no-checkmark>Medium</md-gb-segmented-button>
+            <md-gb-segmented-button value="high" no-checkmark>High</md-gb-segmented-button>
+          </md-gb-segmented-button-set>
+        </fieldset>
+        <div class="gb-tool-actions">
+          <md-gb-button id="gb-theme-reset" color="tonal">Reset</md-gb-button>
+        </div>
+      </section><div class="gb-pages-foot" id="gb-pages-foot" role="group" aria-label="Site settings">
+        <md-gb-button color="text" data-theme-toggle><md-gb-icon slot="icon">brightness_auto</md-gb-icon><span class="gb-theme-toggle-label">Theme: system</span></md-gb-button>
+        <md-gb-button color="text" href="/material-web/"><md-gb-icon slot="icon">history</md-gb-icon>v2.5.0 (current)</md-gb-button>
+        <md-gb-button color="text" href="https://github.com/material-components/material-web" target="_blank" rel="noopener"><md-gb-icon slot="icon">code</md-gb-icon>GitHub<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" href="https://www.npmjs.com/package/@material/web" target="_blank" rel="noopener"><md-gb-icon slot="icon">deployed_code</md-gb-icon>npm<span class="offscreen"> (opens in a new tab)</span></md-gb-button>
+        <md-gb-button color="text" data-tool="feedback"><md-gb-icon slot="icon">feedback</md-gb-icon>Send feedback</md-gb-button>
+      </div>
+    </div>
+
+    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000"></md-gb-snackbar>
+
+    <md-gb-dialog id="gb-install-dialog">
+      <span slot="headline">Install Material Web 3.0</span>
+      <p>Your browser did not offer to install the docs as an app. Install them from the browser instead:</p>
+      <ul data-install-steps>
+        <li data-browser="chromium"><strong>Chrome and Edge:</strong> open the browser menu and choose Install Material Web 3.0 (Chrome: Cast, save and share, Install page as app), or use the install icon in the address bar.</li>
+        <li data-browser="safari"><strong>Safari on Mac:</strong> choose File, then Add to Dock.</li>
+        <li data-browser="ios"><strong>Safari on iPhone and iPad:</strong> tap Share, then Add to Home Screen.</li>
+        <li data-browser="firefox"><strong>Firefox:</strong> Firefox on Android has Install in its menu. Firefox on desktop cannot install web apps; bookmark this page instead.</li>
+      </ul>
+      <form id="gb-install-form" method="dialog"></form>
+      <md-gb-button slot="actions" form="gb-install-form" value="close">Close</md-gb-button>
+    </md-gb-dialog><md-gb-dialog id="gb-feedback-dialog">
+      <span slot="headline">Send feedback</span>
+      <form id="gb-feedback-form" class="gb-feedback" novalidate>
+        <md-gb-text-field id="gb-feedback-page" label="Page" value=""></md-gb-text-field>
+        <md-gb-select id="gb-feedback-type" label="Type" value="bug">
+          <md-gb-select-option value="bug" selected>Bug</md-gb-select-option>
+          <md-gb-select-option value="docs">Documentation</md-gb-select-option>
+          <md-gb-select-option value="idea">Idea</md-gb-select-option>
+        </md-gb-select>
+        <md-gb-text-field id="gb-feedback-message" type="textarea" rows="4" label="Message" required error-text="Add a message" value=""></md-gb-text-field>
+        <p class="gb-feedback-note">Opens a new GitHub issue for material-components/material-web in a new tab, with this filled in.</p>
+      </form>
+      <md-gb-button slot="actions" color="text" id="gb-feedback-cancel">Cancel</md-gb-button>
+      <md-gb-button slot="actions" id="gb-feedback-submit">Open issue</md-gb-button>
+    </md-gb-dialog>
+
+    <script type="module">const define = customElements.define.bind(customElements);customElements.define = (name, ctor, options) => { if (!customElements.get(name)) define(name, ctor, options); };import('/material-web/lib/labs/gb/components/iconbutton/md-gb-icon-button.js');import('/material-web/lib/labs/gb/styles/icon/md-gb-icon.js');import('/material-web/lib/labs/gb/components/progress/md-gb-progress.js');</script>
+
+    <div id="gb-status" role="status" aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></div>
+  </body>
+</html>

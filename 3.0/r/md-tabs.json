@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-tabs",
+  "type": "registry:ui",
+  "title": "Tabs",
+  "description": "MdTab, MdTabPanels, MdTabs: React wrappers for <md-gb-tab>, <md-gb-tab-panels>, <md-gb-tabs> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-tabs.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/tabs/md-gb-tab.js';\nimport '@material/web/labs/gb/components/tabs/md-gb-tab-panels.js';\nimport '@material/web/labs/gb/components/tabs/md-gb-tabs.js';\nimport {TabElement} from '@material/web/labs/gb/components/tabs/tab-element.js';\nimport {TabPanelsElement} from '@material/web/labs/gb/components/tabs/tab-panels-element.js';\nimport {TabsElement} from '@material/web/labs/gb/components/tabs/tabs-element.js';\n\n/**\n * A Material Design tab component. Wraps <md-gb-tab>.\n * Docs: https://material-web.dev/3.0/components/tabs/\n */\nexport const MdTab = createComponent({\n  react: React,\n  tagName: 'md-gb-tab',\n  elementClass: TabElement,\n});\n\nexport type MdTabProps = React.ComponentProps<typeof MdTab>;\n\n/**\n * The swipeable content panels of a set of Material Design tabs. Wraps <md-gb-tab-panels>.\n * Docs: https://material-web.dev/3.0/components/tabs/\n */\nexport const MdTabPanels = createComponent({\n  react: React,\n  tagName: 'md-gb-tab-panels',\n  elementClass: TabPanelsElement,\n});\n\nexport type MdTabPanelsProps = React.ComponentProps<typeof MdTabPanels>;\n\n/**\n * A Material Design tabs component. Wraps <md-gb-tabs>.\n * Docs: https://material-web.dev/3.0/components/tabs/\n */\nexport const MdTabs = createComponent({\n  react: React,\n  tagName: 'md-gb-tabs',\n  elementClass: TabsElement,\n});\n\nexport type MdTabsProps = React.ComponentProps<typeof MdTabs>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/tabs/",
+  "meta": {
+    "tags": [
+      "md-gb-tab",
+      "md-gb-tab-panels",
+      "md-gb-tabs"
+    ],
+    "docs": "https://material-web.dev/3.0/components/tabs/"
+  }
+}

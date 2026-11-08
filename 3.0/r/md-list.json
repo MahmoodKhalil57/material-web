@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-list",
+  "type": "registry:ui",
+  "title": "List",
+  "description": "MdList, MdListItem: React wrappers for <md-gb-list>, <md-gb-list-item> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-list.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/list/md-gb-list.js';\nimport '@material/web/labs/gb/components/list/md-gb-list-item.js';\nimport {ListElement} from '@material/web/labs/gb/components/list/list-element.js';\nimport {ListItemElement} from '@material/web/labs/gb/components/list/list-item-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-list>.\n * Docs: https://material-web.dev/3.0/components/list/\n */\nexport const MdList = createComponent({\n  react: React,\n  tagName: 'md-gb-list',\n  elementClass: ListElement,\n  events: {\n    onItemselectionchange: 'itemselectionchange' as EventName<Event>,\n    onReorder: 'reorder' as EventName<Event>,\n  },\n});\n\nexport type MdListProps = React.ComponentProps<typeof MdList>;\n\n/**\n * A Material Design component. Wraps <md-gb-list-item>.\n * Docs: https://material-web.dev/3.0/components/list/\n */\nexport const MdListItem = createComponent({\n  react: React,\n  tagName: 'md-gb-list-item',\n  elementClass: ListItemElement,\n  events: {\n    onRevealChange: 'reveal-change' as EventName<Event>,\n    onToggle: 'toggle' as EventName<Event>,\n  },\n});\n\nexport type MdListItemProps = React.ComponentProps<typeof MdListItem>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/list/",
+  "meta": {
+    "tags": [
+      "md-gb-list",
+      "md-gb-list-item"
+    ],
+    "docs": "https://material-web.dev/3.0/components/list/"
+  }
+}

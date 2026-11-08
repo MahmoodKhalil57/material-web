@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-button",
+  "type": "registry:ui",
+  "title": "Button",
+  "description": "MdButton: React wrappers for <md-gb-button> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-button.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/button/md-gb-button.js';\nimport {ButtonElement} from '@material/web/labs/gb/components/button/button-element.js';\n\n/**\n * A Material Design button. Wraps <md-gb-button>.\n * Docs: https://material-web.dev/3.0/components/button/\n */\nexport const MdButton = createComponent({\n  react: React,\n  tagName: 'md-gb-button',\n  elementClass: ButtonElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n  },\n});\n\nexport type MdButtonProps = React.ComponentProps<typeof MdButton>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/button/",
+  "meta": {
+    "tags": [
+      "md-gb-button"
+    ],
+    "docs": "https://material-web.dev/3.0/components/button/"
+  }
+}

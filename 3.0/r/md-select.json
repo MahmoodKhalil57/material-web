@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-select",
+  "type": "registry:ui",
+  "title": "Select",
+  "description": "MdAutocomplete, MdSelect, MdSelectOption: React wrappers for <md-gb-autocomplete>, <md-gb-select>, <md-gb-select-option> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-select.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/select/md-gb-autocomplete.js';\nimport '@material/web/labs/gb/components/select/md-gb-select.js';\nimport '@material/web/labs/gb/components/select/md-gb-select-option.js';\nimport {AutocompleteElement} from '@material/web/labs/gb/components/select/autocomplete-element.js';\nimport {SelectElement} from '@material/web/labs/gb/components/select/select-element.js';\nimport {SelectOptionElement} from '@material/web/labs/gb/components/select/select-option-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-autocomplete>.\n * Docs: https://material-web.dev/3.0/components/select/\n */\nexport const MdAutocomplete = createComponent({\n  react: React,\n  tagName: 'md-gb-autocomplete',\n  elementClass: AutocompleteElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onClosed: 'closed' as EventName<Event>,\n    onClosing: 'closing' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n    onInvalid: 'invalid' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n    onOpening: 'opening' as EventName<Event>,\n  },\n});\n\nexport type MdAutocompleteProps = React.ComponentProps<typeof MdAutocomplete>;\n\n/**\n * A Material Design component. Wraps <md-gb-select>.\n * Docs: https://material-web.dev/3.0/components/select/\n */\nexport const MdSelect = createComponent({\n  react: React,\n  tagName: 'md-gb-select',\n  elementClass: SelectElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onClosed: 'closed' as EventName<Event>,\n    onClosing: 'closing' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n    onInvalid: 'invalid' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n    onOpening: 'opening' as EventName<Event>,\n  },\n});\n\nexport type MdSelectProps = React.ComponentProps<typeof MdSelect>;\n\n/**\n * A Material Design component. Wraps <md-gb-select-option>.\n * Docs: https://material-web.dev/3.0/components/select/\n */\nexport const MdSelectOption = createComponent({\n  react: React,\n  tagName: 'md-gb-select-option',\n  elementClass: SelectOptionElement,\n});\n\nexport type MdSelectOptionProps = React.ComponentProps<typeof MdSelectOption>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/select/",
+  "meta": {
+    "tags": [
+      "md-gb-autocomplete",
+      "md-gb-select",
+      "md-gb-select-option"
+    ],
+    "docs": "https://material-web.dev/3.0/components/select/"
+  }
+}

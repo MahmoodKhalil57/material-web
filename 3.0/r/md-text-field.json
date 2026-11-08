@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-text-field",
+  "type": "registry:ui",
+  "title": "Text Field",
+  "description": "MdTextField: React wrappers for <md-gb-text-field> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-text-field.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/textfield/md-gb-text-field.js';\nimport {TextFieldElement} from '@material/web/labs/gb/components/textfield/text-field-element.js';\n\n/**\n * A Material Design text field (filled or outlined). Wraps <md-gb-text-field>.\n * Docs: https://material-web.dev/3.0/components/text-field/\n */\nexport const MdTextField = createComponent({\n  react: React,\n  tagName: 'md-gb-text-field',\n  elementClass: TextFieldElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n    onInvalid: 'invalid' as EventName<Event>,\n    onSelect: 'select' as EventName<Event>,\n  },\n});\n\nexport type MdTextFieldProps = React.ComponentProps<typeof MdTextField>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/text-field/",
+  "meta": {
+    "tags": [
+      "md-gb-text-field"
+    ],
+    "docs": "https://material-web.dev/3.0/components/text-field/"
+  }
+}

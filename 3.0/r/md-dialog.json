@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-dialog",
+  "type": "registry:ui",
+  "title": "Dialog",
+  "description": "MdDialog: React wrappers for <md-gb-dialog> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-dialog.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/dialog/md-gb-dialog.js';\nimport {DialogElement} from '@material/web/labs/gb/components/dialog/dialog-element.js';\n\n/**\n * A Material Design dialog component. Wraps <md-gb-dialog>.\n * Docs: https://material-web.dev/3.0/components/dialog/\n */\nexport const MdDialog = createComponent({\n  react: React,\n  tagName: 'md-gb-dialog',\n  elementClass: DialogElement,\n  events: {\n    onCancel: 'cancel' as EventName<Event>,\n    onClose: 'close' as EventName<Event>,\n    onClosed: 'closed' as EventName<Event>,\n    onOpen: 'open' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n  },\n});\n\nexport type MdDialogProps = React.ComponentProps<typeof MdDialog>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/dialog/",
+  "meta": {
+    "tags": [
+      "md-gb-dialog"
+    ],
+    "docs": "https://material-web.dev/3.0/components/dialog/"
+  }
+}

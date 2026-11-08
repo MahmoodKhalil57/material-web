@@ -1,0 +1,87 @@
+# Material Web 3.0
+
+> Material Web 3.0: Material 3 Expressive components, styles and foundations built as web components.
+
+Every page is also available as Markdown at its URL plus `.md`. All pages in one file: [llms-full.txt](https://material-web.dev/3.0/llms-full.txt).
+
+The API of every element (attributes, members, events, slots, CSS parts and properties) as a Custom Elements Manifest: [custom-elements.json](https://material-web.dev/3.0/custom-elements.json). An agent skill about the md-gb elements: [skill/index.json](https://material-web.dev/3.0/skill/index.json) lists its files with their URLs.
+
+## About
+
+- [About](https://material-web.dev/3.0/about.md): Get started with Material Web 3.0 and find the project information: quick start, migration, support, roadmap and browser support.
+- [Introduction](https://material-web.dev/3.0/about/intro.md): Material web, also known as Material Web Components or MWC, is a library of web components that follows Google's Material Design guidelines.
+- [Spec compliance](https://material-web.dev/3.0/about/compliance.md): What the spec checks, ARIA and axe results, Baseline use and size budgets say about md-gb-* components.
+- [Quick Start](https://material-web.dev/3.0/about/quick-start.md): For fast prototyping, use a CDN such as esm.run to load @material/web without installing it.
+- [Migration](https://material-web.dev/3.0/about/migration.md): Version 3.0 renames most elements from md- to md-gb- and moves them to Material 3 Expressive.
+- [Roadmap](https://material-web.dev/3.0/about/roadmap.md): This roadmap describes current, future, and past goals for Material Web Components.
+- [Support](https://material-web.dev/3.0/about/support.md): Version 3.0 targets Baseline widely available: the web platform features it uses have worked in all major browsers for at least 30 months.
+- [Bundle Sizes](https://material-web.dev/3.0/about/size.md): Every md-gb- component is checked against a Brotli-compressed size budget for its JavaScript and CSS (the measured size plus 10% headroom), defined in scripts/size/gb-budgets.json.
+- [Browser support](https://material-web.dev/3.0/about/browser-support.md): Version 3.0 only uses web platform features that are Baseline widely available.
+- [AI agents](https://material-web.dev/3.0/about/ai-agents.md): labs/gb/skill/ is a Claude Code skill named md-gb.
+- [Debugging](https://material-web.dev/3.0/about/debugging.md): The shared plumbing of the components (motion waits, overflow measure passes, and scroll steps) can record performance marks.
+- [Use with shadcn/ui](https://material-web.dev/3.0/about/shadcn.md): Install the md-gb elements as React components with the shadcn CLI, themed by your shadcn variables.
+
+## Foundations
+
+- [Foundations](https://material-web.dev/3.0/foundations.md): The principles Material Web 3.0 applies across its components: theming, interaction states, accessibility, adaptive layout and density.
+- [Theming](https://material-web.dev/3.0/foundations/design-tokens.md): Material Design theming creates unique branded products with familiar patterns and accessible interactions.
+- [Interaction States](https://material-web.dev/3.0/foundations/interaction-states.md): Interactive components show their state with a state layer: a translucent overlay of the component's content color, drawn between the container and the content.
+- [Accessibility](https://material-web.dev/3.0/foundations/accessibility.md): Every labs/gb component works with a keyboard, a screen reader and reduced motion.
+- [Adaptive layout](https://material-web.dev/3.0/foundations/adaptive-layout.md): Pages and components change with the window.
+- [Density](https://material-web.dev/3.0/foundations/density.md): Density lets people see more information in data-heavy views by making components more compact.
+- [Layout](https://material-web.dev/3.0/foundations/layout.md): Layout adapts an app to the window with window size classes, a column grid, margins and panes.
+- [Scaffold](https://material-web.dev/3.0/foundations/scaffold.md): A scaffold arranges the bars, rails and panes around an app's content, and adapts them to the window size.
+
+## Styles
+
+- [Styles](https://material-web.dev/3.0/styles.md): The visual language of Material Web 3.0: color, typography, shape, elevation, icons, motion and spacing, as tokens you can use.
+- [Color](https://material-web.dev/3.0/styles/color.md): Color creates meaning and communicates hierarchy, state, and brand.
+- [Dynamic color](https://material-web.dev/3.0/styles/dynamic-color.md): Dynamic color builds a full color scheme, light and dark, from a seed color.
+- [Typography](https://material-web.dev/3.0/styles/typography.md): Typography helps make writing legible and beautiful.
+- [Shape](https://material-web.dev/3.0/styles/shape.md): Shape can direct attention, communicate state, and express brand.
+- [Elevation](https://material-web.dev/3.0/styles/elevation.md): Elevation is the distance between two surfaces on the z-axis.
+- [Icons](https://material-web.dev/3.0/styles/icons.md): md-gb-icon shows a Material Symbols icon.
+- [Material Symbols](https://material-web.dev/3.0/styles/material-symbols.md): md-gb-icon axes: optical size, weight, fill and grade.
+- [Motion](https://material-web.dev/3.0/styles/motion.md): Motion makes a UI expressive and easy to follow: springs for physics, easing and duration tokens, and transition patterns.
+- [Transitions](https://material-web.dev/3.0/styles/motion-transitions.md): Transition patterns connect elements and views, and skeleton loaders hold space while content loads.
+- [Spacing](https://material-web.dev/3.0/styles/spacing.md): Spacing is the distance around and between elements.
+
+## Components
+
+- [Components](https://material-web.dev/3.0/components.md): Every md-gb element of Material Web 3.0: buttons, pickers, progress indicators, navigation, sheets and more, each with live examples and API.
+- [Button Group](https://material-web.dev/3.0/components/button-group.md): A button group arranges related buttons and can manage their selection, density and overflow.
+- [Buttons](https://material-web.dev/3.0/components/button.md): Buttons help people initiate actions, from sending an email, to sharing a document, to liking a post.
+- [FAB menu](https://material-web.dev/3.0/components/fab-menu.md): A FAB menu opens from a FAB to show several related actions, and the FAB becomes its close button.
+- [Floating action button (FAB)](https://material-web.dev/3.0/components/fab.md): A FAB represents the most important action on a screen, and an extended FAB adds a text label.
+- [Icon Buttons](https://material-web.dev/3.0/components/icon-button.md): Icon buttons help people take supplementary actions with a single tap.
+- [Segmented button](https://material-web.dev/3.0/components/segmented-button.md): A segmented button set lets people pick one or several options from two to five segments, such as a time range or a view.
+- [Split button](https://material-web.dev/3.0/components/split-button.md): A split button pairs a main action with a trailing button that opens a menu of related actions.
+- [Date picker](https://material-web.dev/3.0/components/date-picker.md): A date picker lets people select a date or a range of dates.
+- [Time picker](https://material-web.dev/3.0/components/time-picker.md): Time pickers let people choose an hour and minute on a clock dial, or type them into fields.
+- [Loading indicator](https://material-web.dev/3.0/components/loading-indicator.md): A loading indicator shows that a short process is running, with a shape that morphs through Material shapes while it turns.
+- [Progress indicators](https://material-web.dev/3.0/components/progress.md): Progress indicators inform people about the status of ongoing processes, such as loading an app or submitting a form.
+- [Pull to refresh](https://material-web.dev/3.0/components/pull-to-refresh.md): A pull to refresh container lets people pull its content down to reload it, with a loading indicator that shows progress.
+- [Navigation Bar](https://material-web.dev/3.0/components/navigation-bar.md): A navigation bar lets people switch between a small number of top-level destinations, and can hide as the page scrolls.
+- [Navigation Drawer](https://material-web.dev/3.0/components/navigation-drawer.md): A Material Design navigation drawer.
+- [Navigation Rail](https://material-web.dev/3.0/components/navigation-rail.md): A navigation rail lets people switch between top-level destinations on larger windows, and expands to show full labels.
+- [Sheets](https://material-web.dev/3.0/components/sheets.md): Sheets show supplementary content and actions anchored to the bottom or the side of the window.
+- [App Bar](https://material-web.dev/3.0/components/app-bar.md): An app bar sits at the top of a screen and shows its title, navigation and actions, and can hide or compress as the page scrolls.
+- [Badge](https://material-web.dev/3.0/components/badge.md): A badge shows a small dot or a count to signal new or changed information.
+- [Card](https://material-web.dev/3.0/components/card.md): A card contains content and actions about a single subject.
+- [Carousel](https://material-web.dev/3.0/components/carousel.md): A carousel is a scrollable list of visual items that change size as they move through the layout.
+- [Checkbox](https://material-web.dev/3.0/components/checkbox.md): Checkboxes let people select one or more items from a set, or turn an option on or off.
+- [Chips](https://material-web.dev/3.0/components/chip.md): Chips help people enter information, make selections, filter content, or trigger actions.
+- [Dialogs](https://material-web.dev/3.0/components/dialog.md): Dialogs provide important prompts in a user flow.
+- [Divider](https://material-web.dev/3.0/components/divider.md): A divider is a thin line that groups content in lists and containers.
+- [Lists](https://material-web.dev/3.0/components/list.md): Lists are continuous, vertical indexes of text and images, with optional selection, reordering, expanding and swipe actions.
+- [Menus](https://material-web.dev/3.0/components/menu.md): Menus show a temporary set of actions or choices, opened from a button, a text field or a context.
+- [Radio](https://material-web.dev/3.0/components/radio.md): Radio buttons let people select one option from a set of options.
+- [Search](https://material-web.dev/3.0/components/search.md): A search bar lets people enter a query and find matching results, with a search view that shows suggestions and results.
+- [Select](https://material-web.dev/3.0/components/select.md): Select menus let people choose one option from a list that opens on a temporary surface.
+- [Sliders](https://material-web.dev/3.0/components/slider.md): Sliders let people view and select a value, or a range of values, along a track.
+- [Snackbar](https://material-web.dev/3.0/components/snackbar.md): Snackbars tell people about a process an app has performed or will perform, without interrupting them.
+- [Switch](https://material-web.dev/3.0/components/switch.md): Switches toggle the state of an item on or off.
+- [Tabs](https://material-web.dev/3.0/components/tabs.md): Tabs organize groups of related content that are at the same level of hierarchy.
+- [Text field](https://material-web.dev/3.0/components/text-field.md): Text fields let people enter and edit text.
+- [Toolbar](https://material-web.dev/3.0/components/toolbar.md): A toolbar holds actions that relate to the content on the screen, docked to an edge or floating above it.
+- [Tooltip](https://material-web.dev/3.0/components/tooltip.md): Tooltips add context to a button or other element, as a short plain label or a richer panel with a subhead and actions.

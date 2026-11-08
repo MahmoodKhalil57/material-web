@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-scaffold",
+  "type": "registry:ui",
+  "title": "Scaffold",
+  "description": "MdAppScaffold, MdPaneScaffold: React wrappers for <md-gb-app-scaffold>, <md-gb-pane-scaffold> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-scaffold.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/scaffold/md-gb-app-scaffold.js';\nimport '@material/web/labs/gb/components/scaffold/md-gb-pane-scaffold.js';\nimport {AppScaffoldElement} from '@material/web/labs/gb/components/scaffold/app-scaffold-element.js';\nimport {PaneScaffoldElement} from '@material/web/labs/gb/components/scaffold/pane-scaffold-element.js';\nimport type {NavigationChangeDetail} from '@material/web/labs/gb/components/scaffold/app-scaffold-element.js';\nimport type {PaneLayoutChangeDetail, PaneResizeDetail, WindowClassChangeDetail, WindowHeightClassChangeDetail} from '@material/web/labs/gb/components/scaffold/pane-scaffold-element.js';\n\n/**\n * A Material Design app scaffold (bars, rails, FAB, snackbar). Wraps <md-gb-app-scaffold>.\n * Docs: https://material-web.dev/3.0/components/\n */\nexport const MdAppScaffold = createComponent({\n  react: React,\n  tagName: 'md-gb-app-scaffold',\n  elementClass: AppScaffoldElement,\n  events: {\n    onNavigationChange: 'navigation-change' as EventName<CustomEvent<NavigationChangeDetail>>,\n    onWindowClassChange: 'window-class-change' as EventName<CustomEvent<WindowClassChangeDetail>>,\n    onWindowHeightClassChange: 'window-height-class-change' as EventName<CustomEvent<WindowHeightClassChangeDetail>>,\n  },\n});\n\nexport type MdAppScaffoldProps = React.ComponentProps<typeof MdAppScaffold>;\n\n/**\n * A Material Design pane scaffold (list-detail, supporting pane, feed). Wraps <md-gb-pane-scaffold>.\n * Docs: https://material-web.dev/3.0/components/\n */\nexport const MdPaneScaffold = createComponent({\n  react: React,\n  tagName: 'md-gb-pane-scaffold',\n  elementClass: PaneScaffoldElement,\n  events: {\n    onLevitateClose: 'levitate-close' as EventName<Event>,\n    onPaneLayoutChange: 'pane-layout-change' as EventName<CustomEvent<PaneLayoutChangeDetail>>,\n    onPaneResize: 'pane-resize' as EventName<CustomEvent<PaneResizeDetail>>,\n    onWindowClassChange: 'window-class-change' as EventName<CustomEvent<WindowClassChangeDetail>>,\n    onWindowHeightClassChange: 'window-height-class-change' as EventName<CustomEvent<WindowHeightClassChangeDetail>>,\n  },\n});\n\nexport type MdPaneScaffoldProps = React.ComponentProps<typeof MdPaneScaffold>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/",
+  "meta": {
+    "tags": [
+      "md-gb-app-scaffold",
+      "md-gb-pane-scaffold"
+    ],
+    "docs": "https://material-web.dev/3.0/components/"
+  }
+}

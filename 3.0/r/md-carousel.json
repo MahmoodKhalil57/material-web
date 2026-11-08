@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-carousel",
+  "type": "registry:ui",
+  "title": "Carousel",
+  "description": "MdCarousel, MdCarouselItem: React wrappers for <md-gb-carousel>, <md-gb-carousel-item> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-carousel.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/carousel/md-gb-carousel.js';\nimport '@material/web/labs/gb/components/carousel/md-gb-carousel-item.js';\nimport {CarouselElement} from '@material/web/labs/gb/components/carousel/carousel-element.js';\nimport {CarouselItemElement} from '@material/web/labs/gb/components/carousel/carousel-item-element.js';\n\n/**\n * A Material Design carousel. Wraps <md-gb-carousel>.\n * Docs: https://material-web.dev/3.0/components/carousel/\n */\nexport const MdCarousel = createComponent({\n  react: React,\n  tagName: 'md-gb-carousel',\n  elementClass: CarouselElement,\n});\n\nexport type MdCarouselProps = React.ComponentProps<typeof MdCarousel>;\n\n/**\n * A Material Design carousel item. Wraps <md-gb-carousel-item>.\n * Docs: https://material-web.dev/3.0/components/carousel/\n */\nexport const MdCarouselItem = createComponent({\n  react: React,\n  tagName: 'md-gb-carousel-item',\n  elementClass: CarouselItemElement,\n});\n\nexport type MdCarouselItemProps = React.ComponentProps<typeof MdCarouselItem>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/carousel/",
+  "meta": {
+    "tags": [
+      "md-gb-carousel",
+      "md-gb-carousel-item"
+    ],
+    "docs": "https://material-web.dev/3.0/components/carousel/"
+  }
+}

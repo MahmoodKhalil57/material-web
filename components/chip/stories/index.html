@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>Material Web - Stories Chips</title>
+    <!-- Set the color of the url bar on mobile to match theme -->
+    <meta name="theme-color" content="#251f16" />
+    <link
+      href="/material-web/images/favicon.svg"
+      rel="icon"
+      sizes="any"
+      type="image/svg+xml"
+    />
+    <!-- Inlines the global css in site/css/global.css -->
+    <link rel="stylesheet" href="/material-web/css/global.css">
+    <!-- MUST be loaded before any lit bundle. allows hydration of SSRd components -->
+    <script type="module" src="/material-web/js/ssr-utils/lit-hydrate-support.js"></script>
+    <!-- Inlines the material theming logic since we want to prevent FOUC -->
+    <script type="module" src="/material-web/js/inline/apply-saved-theme.js"></script>
+    <!-- Needed for intializing theme if this is the first page they ever visit -->
+    <script type="module" src="/material-web/js/pages/global.js"></script>
+    <noscript>
+      <link rel="stylesheet" href="/material-web/css/no-js.css" />
+    </noscript>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"
+    />
+    <!-- If JS is disabled just show the contents without the polyfill -->
+    <noscript
+      ><style>
+        body[dsd-pending] {
+          display: block !important;
+        }
+      </style>
+    </noscript>
+    <!-- Syncs theme with playground -->
+    <script type="module" src="/material-web/js/pages/components.js"></script>
+    <script type="module" src="/material-web/js/pages/stories.js"></script>
+    <script
+      type="module"
+      src="/material-web/js/hydration-entrypoints/playground-elements.js"
+    ></script>
+    <link rel="stylesheet" href="/material-web/css/syntax-highlight.css" />
+    <link rel="stylesheet" href="/material-web/css/stories.css" />
+  </head>
+  <!-- dsd-pending hides body until the polyfill has run on browsers that do not support DSD -->
+  <body dsd-pending>
+    <!-- Inlines the declarative shadow dom polyfill for FF since it's performance sensitive -->
+    <script type="module" src="/material-web/js/ssr-utils/dsd-polyfill.js"></script>
+    <playground-project sandbox-base-url="https://cdn.jsdelivr.net/npm/playground-elements@0.17.1/"
+      id="project"
+      project-src="/material-web/assets/stories/chips/project.json"
+    >
+    </playground-project>
+    <drag-playground  id="dragbar"><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      --_drag-bar-height: 24px;
+      --_drag-bar-border-width: 1px;
+      --_half-drag-bar-height: calc(
+        (var(--_drag-bar-height) / 2) + var(--_drag-bar-border-width)
+      );
+    }
+
+    #wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    :host,
+    #wrapper,
+    ::slotted(*) {
+      height: 100%;
+    }
+
+    slot {
+      display: block;
+      overflow: hidden;
+    }
+
+    [name='preview'] {
+      height: max(
+        calc(
+          100% - var(--editor-percentage, 0%) - var(--_half-drag-bar-height)
+        ),
+        0px
+      );
+    }
+
+    [name='editor'] {
+      height: max(
+        calc(var(--editor-percentage, 0px) - var(--_half-drag-bar-height)),
+        0px
+      );
+    }
+
+    #drag-bar {
+      touch-action: none;
+      background-color: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      border: var(--_drag-bar-border-width) solid var(--md-sys-color-outline);
+      border-radius: 12px;
+      height: var(--_drag-bar-height);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    #drag-bar:hover {
+      background-color: var(--md-sys-color-surface-container-high);
+      cursor: grab;
+    }
+
+    #drag-bar.isDragging {
+      background-color: var(--md-sys-color-inverse-surface);
+      color: var(--md-sys-color-inverse-on-surface);
+      cursor: grabbing;
+    }
+  </style><!--lit-part LswJD08QyoQ=--><!--lit-node 0--><div
+      id="wrapper"
+      style="--editor-percentage:0%;"
+    >
+      <slot name="preview"></slot>
+      <!--lit-node 2--><div
+        id="drag-bar"
+        tabindex="0"
+        role="slider"
+        aria-orientation="vertical"
+        aria-valuemax="100"
+        aria-valuemin="0"
+        aria-valuenow="0"
+        aria-valuetext="0 percent"
+        aria-label="Editor height"
+        
+        
+        
+        
+        
+        
+        class="  "
+      >
+        <!--lit-node 3--><md-icon defer-hydration><template shadowroot="open" shadowrootmode="open"><style>:host{font-size:var(--md-icon-size, 24px);width:var(--md-icon-size, 24px);height:var(--md-icon-size, 24px);color:inherit;font-variation-settings:inherit;font-weight:400;font-family:var(--md-icon-font, Material Symbols Outlined);display:inline-flex;font-style:normal;place-items:center;place-content:center;line-height:1;overflow:hidden;letter-spacing:normal;text-transform:none;user-select:none;white-space:nowrap;word-wrap:normal;flex-shrink:0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;-moz-osx-font-smoothing:grayscale}::slotted(svg){fill:currentColor}::slotted(*){height:100%;width:100%}
+</style><!--lit-part Pz0gobCCM4E=--><slot></slot><!--/lit-part--></template>drag_handle</md-icon>
+      </div>
+      <slot name="editor"></slot>
+    </div><!--/lit-part--></template>
+      <playground-preview id="preview" project="project" slot="preview">
+        <md-circular-progress  indeterminate><template shadowroot="open" shadowrootmode="open"><style>:host{--_active-indicator-color: var(--md-circular-progress-active-indicator-color, var(--md-sys-color-primary, #6750a4));--_active-indicator-width: var(--md-circular-progress-active-indicator-width, 10);--_four-color-active-indicator-four-color: var(--md-circular-progress-four-color-active-indicator-four-color, var(--md-sys-color-tertiary-container, #ffd8e4));--_four-color-active-indicator-one-color: var(--md-circular-progress-four-color-active-indicator-one-color, var(--md-sys-color-primary, #6750a4));--_four-color-active-indicator-three-color: var(--md-circular-progress-four-color-active-indicator-three-color, var(--md-sys-color-tertiary, #7d5260));--_four-color-active-indicator-two-color: var(--md-circular-progress-four-color-active-indicator-two-color, var(--md-sys-color-primary-container, #eaddff));--_size: var(--md-circular-progress-size, 48px);display:inline-flex;vertical-align:middle;width:var(--_size);height:var(--_size);position:relative;align-items:center;justify-content:center;contain:strict;content-visibility:auto}.progress{flex:1;align-self:stretch;margin:4px}.progress,.spinner,.left,.right,.circle,svg,.track,.active-track{position:absolute;inset:0}svg{transform:rotate(-90deg)}circle{cx:50%;cy:50%;r:calc(50%*(1 - var(--_active-indicator-width)/100));stroke-width:calc(var(--_active-indicator-width)*1%);stroke-dasharray:100;fill:rgba(0,0,0,0)}.active-track{transition:stroke-dashoffset 500ms cubic-bezier(0, 0, 0.2, 1);stroke:var(--_active-indicator-color)}.track{stroke:rgba(0,0,0,0)}.progress.indeterminate{animation:linear infinite linear-rotate;animation-duration:1568.2352941176ms}.spinner{animation:infinite both rotate-arc;animation-duration:5332ms;animation-timing-function:cubic-bezier(0.4, 0, 0.2, 1)}.left{overflow:hidden;inset:0 50% 0 0}.right{overflow:hidden;inset:0 0 0 50%}.circle{box-sizing:border-box;border-radius:50%;border:solid calc(var(--_active-indicator-width)/100*(var(--_size) - 8px));border-color:var(--_active-indicator-color) var(--_active-indicator-color) rgba(0,0,0,0) rgba(0,0,0,0);animation:expand-arc;animation-iteration-count:infinite;animation-fill-mode:both;animation-duration:1333ms,5332ms;animation-timing-function:cubic-bezier(0.4, 0, 0.2, 1)}.four-color .circle{animation-name:expand-arc,four-color}.left .circle{rotate:135deg;inset:0 -100% 0 0}.right .circle{rotate:100deg;inset:0 0 0 -100%;animation-delay:-666.5ms,0ms}@media(forced-colors: active){.active-track{stroke:CanvasText}.circle{border-color:CanvasText CanvasText Canvas Canvas}}@keyframes expand-arc{0%{transform:rotate(265deg)}50%{transform:rotate(130deg)}100%{transform:rotate(265deg)}}@keyframes rotate-arc{12.5%{transform:rotate(135deg)}25%{transform:rotate(270deg)}37.5%{transform:rotate(405deg)}50%{transform:rotate(540deg)}62.5%{transform:rotate(675deg)}75%{transform:rotate(810deg)}87.5%{transform:rotate(945deg)}100%{transform:rotate(1080deg)}}@keyframes linear-rotate{to{transform:rotate(360deg)}}@keyframes four-color{0%{border-top-color:var(--_four-color-active-indicator-one-color);border-right-color:var(--_four-color-active-indicator-one-color)}15%{border-top-color:var(--_four-color-active-indicator-one-color);border-right-color:var(--_four-color-active-indicator-one-color)}25%{border-top-color:var(--_four-color-active-indicator-two-color);border-right-color:var(--_four-color-active-indicator-two-color)}40%{border-top-color:var(--_four-color-active-indicator-two-color);border-right-color:var(--_four-color-active-indicator-two-color)}50%{border-top-color:var(--_four-color-active-indicator-three-color);border-right-color:var(--_four-color-active-indicator-three-color)}65%{border-top-color:var(--_four-color-active-indicator-three-color);border-right-color:var(--_four-color-active-indicator-three-color)}75%{border-top-color:var(--_four-color-active-indicator-four-color);border-right-color:var(--_four-color-active-indicator-four-color)}90%{border-top-color:var(--_four-color-active-indicator-four-color);border-right-color:var(--_four-color-active-indicator-four-color)}100%{border-top-color:var(--_four-color-active-indicator-one-color);border-right-color:var(--_four-color-active-indicator-one-color)}}
+</style><!--lit-part wX7KtPClswI=-->
+      <!--lit-node 0--><div
+        class="progress  indeterminate "
+        role="progressbar"
+        
+        aria-valuemin="0"
+        aria-valuemax="1"
+        
+        ><!--lit-part X9IkXm/xprw=--> <div class="spinner">
+      <div class="left">
+        <div class="circle"></div>
+      </div>
+      <div class="right">
+        <div class="circle"></div>
+      </div>
+    </div><!--/lit-part--></div
+      >
+    <!--/lit-part--></template></md-circular-progress>
+      </playground-preview>
+      <div slot="editor" id="editor-wrapper">
+        <playground-file-editor
+          id="editor"
+          project="project"
+          filename="stories.ts"
+          line-numbers
+          aria-hidden="true"
+        >
+          <md-circular-progress  indeterminate><template shadowroot="open" shadowrootmode="open"><style>:host{--_active-indicator-color: var(--md-circular-progress-active-indicator-color, var(--md-sys-color-primary, #6750a4));--_active-indicator-width: var(--md-circular-progress-active-indicator-width, 10);--_four-color-active-indicator-four-color: var(--md-circular-progress-four-color-active-indicator-four-color, var(--md-sys-color-tertiary-container, #ffd8e4));--_four-color-active-indicator-one-color: var(--md-circular-progress-four-color-active-indicator-one-color, var(--md-sys-color-primary, #6750a4));--_four-color-active-indicator-three-color: var(--md-circular-progress-four-color-active-indicator-three-color, var(--md-sys-color-tertiary, #7d5260));--_four-color-active-indicator-two-color: var(--md-circular-progress-four-color-active-indicator-two-color, var(--md-sys-color-primary-container, #eaddff));--_size: var(--md-circular-progress-size, 48px);display:inline-flex;vertical-align:middle;width:var(--_size);height:var(--_size);position:relative;align-items:center;justify-content:center;contain:strict;content-visibility:auto}.progress{flex:1;align-self:stretch;margin:4px}.progress,.spinner,.left,.right,.circle,svg,.track,.active-track{position:absolute;inset:0}svg{transform:rotate(-90deg)}circle{cx:50%;cy:50%;r:calc(50%*(1 - var(--_active-indicator-width)/100));stroke-width:calc(var(--_active-indicator-width)*1%);stroke-dasharray:100;fill:rgba(0,0,0,0)}.active-track{transition:stroke-dashoffset 500ms cubic-bezier(0, 0, 0.2, 1);stroke:var(--_active-indicator-color)}.track{stroke:rgba(0,0,0,0)}.progress.indeterminate{animation:linear infinite linear-rotate;animation-duration:1568.2352941176ms}.spinner{animation:infinite both rotate-arc;animation-duration:5332ms;animation-timing-function:cubic-bezier(0.4, 0, 0.2, 1)}.left{overflow:hidden;inset:0 50% 0 0}.right{overflow:hidden;inset:0 0 0 50%}.circle{box-sizing:border-box;border-radius:50%;border:solid calc(var(--_active-indicator-width)/100*(var(--_size) - 8px));border-color:var(--_active-indicator-color) var(--_active-indicator-color) rgba(0,0,0,0) rgba(0,0,0,0);animation:expand-arc;animation-iteration-count:infinite;animation-fill-mode:both;animation-duration:1333ms,5332ms;animation-timing-function:cubic-bezier(0.4, 0, 0.2, 1)}.four-color .circle{animation-name:expand-arc,four-color}.left .circle{rotate:135deg;inset:0 -100% 0 0}.right .circle{rotate:100deg;inset:0 0 0 -100%;animation-delay:-666.5ms,0ms}@media(forced-colors: active){.active-track{stroke:CanvasText}.circle{border-color:CanvasText CanvasText Canvas Canvas}}@keyframes expand-arc{0%{transform:rotate(265deg)}50%{transform:rotate(130deg)}100%{transform:rotate(265deg)}}@keyframes rotate-arc{12.5%{transform:rotate(135deg)}25%{transform:rotate(270deg)}37.5%{transform:rotate(405deg)}50%{transform:rotate(540deg)}62.5%{transform:rotate(675deg)}75%{transform:rotate(810deg)}87.5%{transform:rotate(945deg)}100%{transform:rotate(1080deg)}}@keyframes linear-rotate{to{transform:rotate(360deg)}}@keyframes four-color{0%{border-top-color:var(--_four-color-active-indicator-one-color);border-right-color:var(--_four-color-active-indicator-one-color)}15%{border-top-color:var(--_four-color-active-indicator-one-color);border-right-color:var(--_four-color-active-indicator-one-color)}25%{border-top-color:var(--_four-color-active-indicator-two-color);border-right-color:var(--_four-color-active-indicator-two-color)}40%{border-top-color:var(--_four-color-active-indicator-two-color);border-right-color:var(--_four-color-active-indicator-two-color)}50%{border-top-color:var(--_four-color-active-indicator-three-color);border-right-color:var(--_four-color-active-indicator-three-color)}65%{border-top-color:var(--_four-color-active-indicator-three-color);border-right-color:var(--_four-color-active-indicator-three-color)}75%{border-top-color:var(--_four-color-active-indicator-four-color);border-right-color:var(--_four-color-active-indicator-four-color)}90%{border-top-color:var(--_four-color-active-indicator-four-color);border-right-color:var(--_four-color-active-indicator-four-color)}100%{border-top-color:var(--_four-color-active-indicator-one-color);border-right-color:var(--_four-color-active-indicator-one-color)}}
+</style><!--lit-part wX7KtPClswI=-->
+      <!--lit-node 0--><div
+        class="progress  indeterminate "
+        role="progressbar"
+        
+        aria-valuemin="0"
+        aria-valuemax="1"
+        
+        ><!--lit-part X9IkXm/xprw=--> <div class="spinner">
+      <div class="left">
+        <div class="circle"></div>
+      </div>
+      <div class="right">
+        <div class="circle"></div>
+      </div>
+    </div><!--/lit-part--></div
+      >
+    <!--/lit-part--></template></md-circular-progress>
+        </playground-file-editor>
+      </div>
+    </drag-playground>
+  </body>
+</html>

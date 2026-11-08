@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-segmented-button",
+  "type": "registry:ui",
+  "title": "Segmented Button",
+  "description": "MdSegmentedButton, MdSegmentedButtonSet: React wrappers for <md-gb-segmented-button>, <md-gb-segmented-button-set> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-segmented-button.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/segmentedbutton/md-gb-segmented-button.js';\nimport '@material/web/labs/gb/components/segmentedbutton/md-gb-segmented-button-set.js';\nimport {SegmentedButtonElement} from '@material/web/labs/gb/components/segmentedbutton/segmented-button-element.js';\nimport {SegmentedButtonSetElement} from '@material/web/labs/gb/components/segmentedbutton/segmented-button-set-element.js';\n\n/**\n * One segment of a Material Design segmented button set. Wraps <md-gb-segmented-button>.\n * Docs: https://material-web.dev/3.0/components/segmented-button/\n */\nexport const MdSegmentedButton = createComponent({\n  react: React,\n  tagName: 'md-gb-segmented-button',\n  elementClass: SegmentedButtonElement,\n});\n\nexport type MdSegmentedButtonProps = React.ComponentProps<typeof MdSegmentedButton>;\n\n/**\n * A Material Design segmented button set. Wraps <md-gb-segmented-button-set>.\n * Docs: https://material-web.dev/3.0/components/segmented-button/\n */\nexport const MdSegmentedButtonSet = createComponent({\n  react: React,\n  tagName: 'md-gb-segmented-button-set',\n  elementClass: SegmentedButtonSetElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onInput: 'input' as EventName<InputEvent>,\n  },\n});\n\nexport type MdSegmentedButtonSetProps = React.ComponentProps<typeof MdSegmentedButtonSet>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/segmented-button/",
+  "meta": {
+    "tags": [
+      "md-gb-segmented-button",
+      "md-gb-segmented-button-set"
+    ],
+    "docs": "https://material-web.dev/3.0/components/segmented-button/"
+  }
+}

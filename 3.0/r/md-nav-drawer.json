@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-nav-drawer",
+  "type": "registry:ui",
+  "title": "Nav Drawer",
+  "description": "MdNavDrawer, MdNavDrawerItem: React wrappers for <md-gb-nav-drawer>, <md-gb-nav-drawer-item> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-nav-drawer.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent, type EventName} from '@lit/react';\nimport '@material/web/labs/gb/components/navdrawer/md-gb-nav-drawer.js';\nimport '@material/web/labs/gb/components/navdrawer/md-gb-nav-drawer-item.js';\nimport {NavDrawerElement} from '@material/web/labs/gb/components/navdrawer/nav-drawer-element.js';\nimport {NavDrawerItemElement} from '@material/web/labs/gb/components/navdrawer/nav-drawer-item-element.js';\n\n/**\n * A Material Design navigation drawer custom element. Wraps <md-gb-nav-drawer>.\n * Docs: https://material-web.dev/3.0/components/navigation-drawer/\n */\nexport const MdNavDrawer = createComponent({\n  react: React,\n  tagName: 'md-gb-nav-drawer',\n  elementClass: NavDrawerElement,\n  events: {\n    onChange: 'change' as EventName<Event>,\n    onClose: 'close' as EventName<CustomEvent<{reason: string}>>,\n    onClosed: 'closed' as EventName<CustomEvent<{reason: string}>>,\n    onOpen: 'open' as EventName<Event>,\n    onOpened: 'opened' as EventName<Event>,\n  },\n});\n\nexport type MdNavDrawerProps = React.ComponentProps<typeof MdNavDrawer>;\n\n/**\n * A Material Design navigation drawer item custom element. Wraps <md-gb-nav-drawer-item>.\n * Docs: https://material-web.dev/3.0/components/navigation-drawer/\n */\nexport const MdNavDrawerItem = createComponent({\n  react: React,\n  tagName: 'md-gb-nav-drawer-item',\n  elementClass: NavDrawerItemElement,\n});\n\nexport type MdNavDrawerItemProps = React.ComponentProps<typeof MdNavDrawerItem>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/navigation-drawer/",
+  "meta": {
+    "tags": [
+      "md-gb-nav-drawer",
+      "md-gb-nav-drawer-item"
+    ],
+    "docs": "https://material-web.dev/3.0/components/navigation-drawer/"
+  }
+}

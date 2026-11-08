@@ -1,0 +1,18 @@
+{
+  "extends": "/material-web/assets/stories/base.json",
+  "files": {
+    "demo.ts": {
+      "hidden": true
+    },
+    "stories.ts": {}
+  },
+  "importMap": {
+    "imports": {
+      "@material/web/": "https://cdn.jsdelivr.net/npm/@material/web@2.5.0/",
+      "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+      "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+      "@lit/context": "https://cdn.jsdelivr.net/npm/@lit/context@1/index.js",
+      "postdoc-lib": "https://cdn.jsdelivr.net/npm/postdoc-lib/lib/postdoc.js"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "md-fab",
+  "type": "registry:ui",
+  "title": "Fab",
+  "description": "MdFab: React wrappers for <md-gb-fab> (Material Web 3.0).",
+  "dependencies": [
+    "@material/web",
+    "@lit/react"
+  ],
+  "registryDependencies": [
+    "http://localhost:8000/3.0/r/md-theme.json"
+  ],
+  "files": [
+    {
+      "path": "components/ui/md-fab.tsx",
+      "type": "registry:ui",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {createComponent} from '@lit/react';\nimport '@material/web/labs/gb/components/fab/md-gb-fab.js';\nimport {FabElement} from '@material/web/labs/gb/components/fab/fab-element.js';\n\n/**\n * A Material Design component. Wraps <md-gb-fab>.\n * Docs: https://material-web.dev/3.0/components/fab/\n */\nexport const MdFab = createComponent({\n  react: React,\n  tagName: 'md-gb-fab',\n  elementClass: FabElement,\n});\n\nexport type MdFabProps = React.ComponentProps<typeof MdFab>;\n"
+    }
+  ],
+  "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/fab/",
+  "meta": {
+    "tags": [
+      "md-gb-fab"
+    ],
+    "docs": "https://material-web.dev/3.0/components/fab/"
+  }
+}

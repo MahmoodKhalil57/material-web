@@ -1,0 +1,1196 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "material-web",
+  "homepage": "https://material-web.dev/3.0/",
+  "items": [
+    {
+      "name": "md-app-bar",
+      "type": "registry:ui",
+      "title": "App Bar",
+      "description": "MdAppBar: React wrappers for <md-gb-app-bar> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-app-bar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/app-bar/",
+      "meta": {
+        "tags": [
+          "md-gb-app-bar"
+        ],
+        "docs": "https://material-web.dev/3.0/components/app-bar/"
+      }
+    },
+    {
+      "name": "md-badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "MdBadge: React wrappers for <md-gb-badge> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-badge.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/badge/",
+      "meta": {
+        "tags": [
+          "md-gb-badge"
+        ],
+        "docs": "https://material-web.dev/3.0/components/badge/"
+      }
+    },
+    {
+      "name": "md-button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "MdButton: React wrappers for <md-gb-button> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/button/",
+      "meta": {
+        "tags": [
+          "md-gb-button"
+        ],
+        "docs": "https://material-web.dev/3.0/components/button/"
+      }
+    },
+    {
+      "name": "md-button-group",
+      "type": "registry:ui",
+      "title": "Button Group",
+      "description": "MdButtonGroup: React wrappers for <md-gb-button-group> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-button-group.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/button-group/",
+      "meta": {
+        "tags": [
+          "md-gb-button-group"
+        ],
+        "docs": "https://material-web.dev/3.0/components/button-group/"
+      }
+    },
+    {
+      "name": "md-card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "MdCard: React wrappers for <md-gb-card> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/card/",
+      "meta": {
+        "tags": [
+          "md-gb-card"
+        ],
+        "docs": "https://material-web.dev/3.0/components/card/"
+      }
+    },
+    {
+      "name": "md-carousel",
+      "type": "registry:ui",
+      "title": "Carousel",
+      "description": "MdCarousel, MdCarouselItem: React wrappers for <md-gb-carousel>, <md-gb-carousel-item> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-carousel.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/carousel/",
+      "meta": {
+        "tags": [
+          "md-gb-carousel",
+          "md-gb-carousel-item"
+        ],
+        "docs": "https://material-web.dev/3.0/components/carousel/"
+      }
+    },
+    {
+      "name": "md-checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "MdCheckbox: React wrappers for <md-gb-checkbox> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/checkbox/",
+      "meta": {
+        "tags": [
+          "md-gb-checkbox"
+        ],
+        "docs": "https://material-web.dev/3.0/components/checkbox/"
+      }
+    },
+    {
+      "name": "md-chip",
+      "type": "registry:ui",
+      "title": "Chip",
+      "description": "MdChip, MdChipSet: React wrappers for <md-gb-chip>, <md-gb-chip-set> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-chip.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/chip/",
+      "meta": {
+        "tags": [
+          "md-gb-chip",
+          "md-gb-chip-set"
+        ],
+        "docs": "https://material-web.dev/3.0/components/chip/"
+      }
+    },
+    {
+      "name": "md-date-picker",
+      "type": "registry:ui",
+      "title": "Date Picker",
+      "description": "MdDatePicker: React wrappers for <md-gb-date-picker> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-date-picker.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/date-picker/",
+      "meta": {
+        "tags": [
+          "md-gb-date-picker"
+        ],
+        "docs": "https://material-web.dev/3.0/components/date-picker/"
+      }
+    },
+    {
+      "name": "md-dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "MdDialog: React wrappers for <md-gb-dialog> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/dialog/",
+      "meta": {
+        "tags": [
+          "md-gb-dialog"
+        ],
+        "docs": "https://material-web.dev/3.0/components/dialog/"
+      }
+    },
+    {
+      "name": "md-divider",
+      "type": "registry:ui",
+      "title": "Divider",
+      "description": "MdDivider: React wrappers for <md-gb-divider> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-divider.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/divider/",
+      "meta": {
+        "tags": [
+          "md-gb-divider"
+        ],
+        "docs": "https://material-web.dev/3.0/components/divider/"
+      }
+    },
+    {
+      "name": "md-fab",
+      "type": "registry:ui",
+      "title": "Fab",
+      "description": "MdFab: React wrappers for <md-gb-fab> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-fab.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/fab/",
+      "meta": {
+        "tags": [
+          "md-gb-fab"
+        ],
+        "docs": "https://material-web.dev/3.0/components/fab/"
+      }
+    },
+    {
+      "name": "md-fab-menu",
+      "type": "registry:ui",
+      "title": "Fab Menu",
+      "description": "MdFabMenu, MdFabMenuItem: React wrappers for <md-gb-fab-menu>, <md-gb-fab-menu-item> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-fab-menu.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/fab-menu/",
+      "meta": {
+        "tags": [
+          "md-gb-fab-menu",
+          "md-gb-fab-menu-item"
+        ],
+        "docs": "https://material-web.dev/3.0/components/fab-menu/"
+      }
+    },
+    {
+      "name": "md-icon-button",
+      "type": "registry:ui",
+      "title": "Icon Button",
+      "description": "MdIconButton: React wrappers for <md-gb-icon-button> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-icon-button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/icon-button/",
+      "meta": {
+        "tags": [
+          "md-gb-icon-button"
+        ],
+        "docs": "https://material-web.dev/3.0/components/icon-button/"
+      }
+    },
+    {
+      "name": "md-list",
+      "type": "registry:ui",
+      "title": "List",
+      "description": "MdList, MdListItem: React wrappers for <md-gb-list>, <md-gb-list-item> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-list.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/list/",
+      "meta": {
+        "tags": [
+          "md-gb-list",
+          "md-gb-list-item"
+        ],
+        "docs": "https://material-web.dev/3.0/components/list/"
+      }
+    },
+    {
+      "name": "md-loading-indicator",
+      "type": "registry:ui",
+      "title": "Loading Indicator",
+      "description": "MdLoadingIndicator: React wrappers for <md-gb-loading-indicator> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-loading-indicator.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/loading-indicator/",
+      "meta": {
+        "tags": [
+          "md-gb-loading-indicator"
+        ],
+        "docs": "https://material-web.dev/3.0/components/loading-indicator/"
+      }
+    },
+    {
+      "name": "md-menu",
+      "type": "registry:ui",
+      "title": "Menu",
+      "description": "MdMenu, MdMenuGroup, MdMenuItem: React wrappers for <md-gb-menu>, <md-gb-menu-group>, <md-gb-menu-item> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-menu.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/menu/",
+      "meta": {
+        "tags": [
+          "md-gb-menu",
+          "md-gb-menu-group",
+          "md-gb-menu-item"
+        ],
+        "docs": "https://material-web.dev/3.0/components/menu/"
+      }
+    },
+    {
+      "name": "md-nav-bar",
+      "type": "registry:ui",
+      "title": "Nav Bar",
+      "description": "MdNavBar, MdNavBarItem: React wrappers for <md-gb-nav-bar>, <md-gb-nav-bar-item> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-nav-bar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/navigation-bar/",
+      "meta": {
+        "tags": [
+          "md-gb-nav-bar",
+          "md-gb-nav-bar-item"
+        ],
+        "docs": "https://material-web.dev/3.0/components/navigation-bar/"
+      }
+    },
+    {
+      "name": "md-nav-drawer",
+      "type": "registry:ui",
+      "title": "Nav Drawer",
+      "description": "MdNavDrawer, MdNavDrawerItem: React wrappers for <md-gb-nav-drawer>, <md-gb-nav-drawer-item> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-nav-drawer.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/navigation-drawer/",
+      "meta": {
+        "tags": [
+          "md-gb-nav-drawer",
+          "md-gb-nav-drawer-item"
+        ],
+        "docs": "https://material-web.dev/3.0/components/navigation-drawer/"
+      }
+    },
+    {
+      "name": "md-nav-rail",
+      "type": "registry:ui",
+      "title": "Nav Rail",
+      "description": "MdNavRail, MdNavRailItem: React wrappers for <md-gb-nav-rail>, <md-gb-nav-rail-item> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-nav-rail.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/navigation-rail/",
+      "meta": {
+        "tags": [
+          "md-gb-nav-rail",
+          "md-gb-nav-rail-item"
+        ],
+        "docs": "https://material-web.dev/3.0/components/navigation-rail/"
+      }
+    },
+    {
+      "name": "md-progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "MdProgress: React wrappers for <md-gb-progress> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-progress.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/progress/",
+      "meta": {
+        "tags": [
+          "md-gb-progress"
+        ],
+        "docs": "https://material-web.dev/3.0/components/progress/"
+      }
+    },
+    {
+      "name": "md-pull-to-refresh",
+      "type": "registry:ui",
+      "title": "Pull To Refresh",
+      "description": "MdPullToRefresh: React wrappers for <md-gb-pull-to-refresh> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-pull-to-refresh.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/pull-to-refresh/",
+      "meta": {
+        "tags": [
+          "md-gb-pull-to-refresh"
+        ],
+        "docs": "https://material-web.dev/3.0/components/pull-to-refresh/"
+      }
+    },
+    {
+      "name": "md-radio",
+      "type": "registry:ui",
+      "title": "Radio",
+      "description": "MdRadio: React wrappers for <md-gb-radio> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-radio.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/radio/",
+      "meta": {
+        "tags": [
+          "md-gb-radio"
+        ],
+        "docs": "https://material-web.dev/3.0/components/radio/"
+      }
+    },
+    {
+      "name": "md-scaffold",
+      "type": "registry:ui",
+      "title": "Scaffold",
+      "description": "MdAppScaffold, MdPaneScaffold: React wrappers for <md-gb-app-scaffold>, <md-gb-pane-scaffold> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-scaffold.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/",
+      "meta": {
+        "tags": [
+          "md-gb-app-scaffold",
+          "md-gb-pane-scaffold"
+        ],
+        "docs": "https://material-web.dev/3.0/components/"
+      }
+    },
+    {
+      "name": "md-search",
+      "type": "registry:ui",
+      "title": "Search",
+      "description": "MdSearchBar, MdSearchView: React wrappers for <md-gb-search-bar>, <md-gb-search-view> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-search.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/search/",
+      "meta": {
+        "tags": [
+          "md-gb-search-bar",
+          "md-gb-search-view"
+        ],
+        "docs": "https://material-web.dev/3.0/components/search/"
+      }
+    },
+    {
+      "name": "md-segmented-button",
+      "type": "registry:ui",
+      "title": "Segmented Button",
+      "description": "MdSegmentedButton, MdSegmentedButtonSet: React wrappers for <md-gb-segmented-button>, <md-gb-segmented-button-set> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-segmented-button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/segmented-button/",
+      "meta": {
+        "tags": [
+          "md-gb-segmented-button",
+          "md-gb-segmented-button-set"
+        ],
+        "docs": "https://material-web.dev/3.0/components/segmented-button/"
+      }
+    },
+    {
+      "name": "md-select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "MdAutocomplete, MdSelect, MdSelectOption: React wrappers for <md-gb-autocomplete>, <md-gb-select>, <md-gb-select-option> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-select.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/select/",
+      "meta": {
+        "tags": [
+          "md-gb-autocomplete",
+          "md-gb-select",
+          "md-gb-select-option"
+        ],
+        "docs": "https://material-web.dev/3.0/components/select/"
+      }
+    },
+    {
+      "name": "md-sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "MdBottomSheet, MdSideSheet: React wrappers for <md-gb-bottom-sheet>, <md-gb-side-sheet> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-sheet.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/sheets/",
+      "meta": {
+        "tags": [
+          "md-gb-bottom-sheet",
+          "md-gb-side-sheet"
+        ],
+        "docs": "https://material-web.dev/3.0/components/sheets/"
+      }
+    },
+    {
+      "name": "md-slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "MdSlider: React wrappers for <md-gb-slider> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-slider.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/slider/",
+      "meta": {
+        "tags": [
+          "md-gb-slider"
+        ],
+        "docs": "https://material-web.dev/3.0/components/slider/"
+      }
+    },
+    {
+      "name": "md-snackbar",
+      "type": "registry:ui",
+      "title": "Snackbar",
+      "description": "MdSnackbar, MdSnackbarHost: React wrappers for <md-gb-snackbar>, <md-gb-snackbar-host> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-snackbar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/snackbar/",
+      "meta": {
+        "tags": [
+          "md-gb-snackbar",
+          "md-gb-snackbar-host"
+        ],
+        "docs": "https://material-web.dev/3.0/components/snackbar/"
+      }
+    },
+    {
+      "name": "md-split-button",
+      "type": "registry:ui",
+      "title": "Split Button",
+      "description": "MdSplitButton: React wrappers for <md-gb-split-button> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-split-button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/split-button/",
+      "meta": {
+        "tags": [
+          "md-gb-split-button"
+        ],
+        "docs": "https://material-web.dev/3.0/components/split-button/"
+      }
+    },
+    {
+      "name": "md-switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "MdSwitch: React wrappers for <md-gb-switch> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-switch.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/switch/",
+      "meta": {
+        "tags": [
+          "md-gb-switch"
+        ],
+        "docs": "https://material-web.dev/3.0/components/switch/"
+      }
+    },
+    {
+      "name": "md-tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "MdTab, MdTabPanels, MdTabs: React wrappers for <md-gb-tab>, <md-gb-tab-panels>, <md-gb-tabs> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-tabs.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/tabs/",
+      "meta": {
+        "tags": [
+          "md-gb-tab",
+          "md-gb-tab-panels",
+          "md-gb-tabs"
+        ],
+        "docs": "https://material-web.dev/3.0/components/tabs/"
+      }
+    },
+    {
+      "name": "md-text-field",
+      "type": "registry:ui",
+      "title": "Text Field",
+      "description": "MdTextField: React wrappers for <md-gb-text-field> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-text-field.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/text-field/",
+      "meta": {
+        "tags": [
+          "md-gb-text-field"
+        ],
+        "docs": "https://material-web.dev/3.0/components/text-field/"
+      }
+    },
+    {
+      "name": "md-time-picker",
+      "type": "registry:ui",
+      "title": "Time Picker",
+      "description": "MdTimePicker: React wrappers for <md-gb-time-picker> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-time-picker.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/time-picker/",
+      "meta": {
+        "tags": [
+          "md-gb-time-picker"
+        ],
+        "docs": "https://material-web.dev/3.0/components/time-picker/"
+      }
+    },
+    {
+      "name": "md-toolbar",
+      "type": "registry:ui",
+      "title": "Toolbar",
+      "description": "MdToolbar: React wrappers for <md-gb-toolbar> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-toolbar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/toolbar/",
+      "meta": {
+        "tags": [
+          "md-gb-toolbar"
+        ],
+        "docs": "https://material-web.dev/3.0/components/toolbar/"
+      }
+    },
+    {
+      "name": "md-tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "MdTooltip: React wrappers for <md-gb-tooltip> (Material Web 3.0).",
+      "dependencies": [
+        "@material/web",
+        "@lit/react"
+      ],
+      "registryDependencies": [
+        "http://localhost:8000/3.0/r/md-theme.json"
+      ],
+      "files": [
+        {
+          "path": "components/ui/md-tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "docs": "Client components: in Next.js import them from a 'use client' file. API: https://material-web.dev/3.0/components/tooltip/",
+      "meta": {
+        "tags": [
+          "md-gb-tooltip"
+        ],
+        "docs": "https://material-web.dev/3.0/components/tooltip/"
+      }
+    },
+    {
+      "name": "md-theme",
+      "type": "registry:theme",
+      "title": "Material Web 3.0 theme bridge",
+      "description": "Loads the Material 3 styles of md-gb (labs/gb/styles/m3.css) and maps the shadcn variables to the M3 color and shape roles, so md-gb elements follow your shadcn theme in light and dark.",
+      "dependencies": [
+        "@material/web"
+      ],
+      "cssVars": {
+        "light": {
+          "md-sys-color-primary": "var(--primary)",
+          "md-sys-color-on-primary": "var(--primary-foreground)",
+          "md-sys-color-primary-container": "var(--accent)",
+          "md-sys-color-on-primary-container": "var(--accent-foreground)",
+          "md-sys-color-secondary": "var(--muted-foreground)",
+          "md-sys-color-on-secondary": "var(--background)",
+          "md-sys-color-secondary-container": "var(--secondary)",
+          "md-sys-color-on-secondary-container": "var(--secondary-foreground)",
+          "md-sys-color-tertiary": "var(--primary)",
+          "md-sys-color-on-tertiary": "var(--primary-foreground)",
+          "md-sys-color-tertiary-container": "var(--accent)",
+          "md-sys-color-on-tertiary-container": "var(--accent-foreground)",
+          "md-sys-color-error": "var(--destructive)",
+          "md-sys-color-on-error": "var(--destructive-foreground, oklch(1 0 0))",
+          "md-sys-color-error-container": "color-mix(in oklab, var(--destructive) 14%, var(--background))",
+          "md-sys-color-on-error-container": "var(--destructive)",
+          "md-sys-color-background": "var(--background)",
+          "md-sys-color-on-background": "var(--foreground)",
+          "md-sys-color-surface": "var(--background)",
+          "md-sys-color-on-surface": "var(--foreground)",
+          "md-sys-color-surface-variant": "var(--muted)",
+          "md-sys-color-on-surface-variant": "var(--muted-foreground)",
+          "md-sys-color-surface-tint": "var(--primary)",
+          "md-sys-color-surface-dim": "var(--muted)",
+          "md-sys-color-surface-bright": "var(--background)",
+          "md-sys-color-surface-container-lowest": "var(--background)",
+          "md-sys-color-surface-container-low": "var(--card)",
+          "md-sys-color-surface-container": "var(--popover)",
+          "md-sys-color-surface-container-high": "var(--muted)",
+          "md-sys-color-surface-container-highest": "var(--accent)",
+          "md-sys-color-outline": "var(--muted-foreground)",
+          "md-sys-color-outline-variant": "var(--border)",
+          "md-sys-color-inverse-surface": "var(--foreground)",
+          "md-sys-color-inverse-on-surface": "var(--background)",
+          "md-sys-color-inverse-primary": "var(--primary-foreground)",
+          "md-sys-shape-corner-xs": "calc(var(--radius) * 0.4)",
+          "md-sys-shape-corner-value-xs": "calc(var(--radius) * 0.4)",
+          "md-sys-shape-corner-sm": "calc(var(--radius) * 0.8)",
+          "md-sys-shape-corner-value-sm": "calc(var(--radius) * 0.8)",
+          "md-sys-shape-corner-md": "calc(var(--radius) * 1.2)",
+          "md-sys-shape-corner-value-md": "calc(var(--radius) * 1.2)",
+          "md-sys-shape-corner-lg": "calc(var(--radius) * 1.6)",
+          "md-sys-shape-corner-value-lg": "calc(var(--radius) * 1.6)",
+          "md-sys-shape-corner-lg-increased": "calc(var(--radius) * 2)",
+          "md-sys-shape-corner-value-lg-increased": "calc(var(--radius) * 2)",
+          "md-sys-shape-corner-xl": "calc(var(--radius) * 2.8)",
+          "md-sys-shape-corner-value-xl": "calc(var(--radius) * 2.8)",
+          "md-sys-shape-corner-xl-increased": "calc(var(--radius) * 3.2)",
+          "md-sys-shape-corner-value-xl-increased": "calc(var(--radius) * 3.2)",
+          "md-sys-shape-corner-xxl": "calc(var(--radius) * 4.8)",
+          "md-sys-shape-corner-value-xxl": "calc(var(--radius) * 4.8)"
+        },
+        "dark": {
+          "md-sys-color-primary": "var(--primary)",
+          "md-sys-color-on-primary": "var(--primary-foreground)",
+          "md-sys-color-primary-container": "var(--accent)",
+          "md-sys-color-on-primary-container": "var(--accent-foreground)",
+          "md-sys-color-secondary": "var(--muted-foreground)",
+          "md-sys-color-on-secondary": "var(--background)",
+          "md-sys-color-secondary-container": "var(--secondary)",
+          "md-sys-color-on-secondary-container": "var(--secondary-foreground)",
+          "md-sys-color-tertiary": "var(--primary)",
+          "md-sys-color-on-tertiary": "var(--primary-foreground)",
+          "md-sys-color-tertiary-container": "var(--accent)",
+          "md-sys-color-on-tertiary-container": "var(--accent-foreground)",
+          "md-sys-color-error": "var(--destructive)",
+          "md-sys-color-on-error": "var(--destructive-foreground, oklch(1 0 0))",
+          "md-sys-color-error-container": "color-mix(in oklab, var(--destructive) 14%, var(--background))",
+          "md-sys-color-on-error-container": "var(--destructive)",
+          "md-sys-color-background": "var(--background)",
+          "md-sys-color-on-background": "var(--foreground)",
+          "md-sys-color-surface": "var(--background)",
+          "md-sys-color-on-surface": "var(--foreground)",
+          "md-sys-color-surface-variant": "var(--muted)",
+          "md-sys-color-on-surface-variant": "var(--muted-foreground)",
+          "md-sys-color-surface-tint": "var(--primary)",
+          "md-sys-color-surface-dim": "var(--muted)",
+          "md-sys-color-surface-bright": "var(--background)",
+          "md-sys-color-surface-container-lowest": "var(--background)",
+          "md-sys-color-surface-container-low": "var(--card)",
+          "md-sys-color-surface-container": "var(--popover)",
+          "md-sys-color-surface-container-high": "var(--muted)",
+          "md-sys-color-surface-container-highest": "var(--accent)",
+          "md-sys-color-outline": "var(--muted-foreground)",
+          "md-sys-color-outline-variant": "var(--border)",
+          "md-sys-color-inverse-surface": "var(--foreground)",
+          "md-sys-color-inverse-on-surface": "var(--background)",
+          "md-sys-color-inverse-primary": "var(--primary-foreground)",
+          "md-sys-shape-corner-xs": "calc(var(--radius) * 0.4)",
+          "md-sys-shape-corner-value-xs": "calc(var(--radius) * 0.4)",
+          "md-sys-shape-corner-sm": "calc(var(--radius) * 0.8)",
+          "md-sys-shape-corner-value-sm": "calc(var(--radius) * 0.8)",
+          "md-sys-shape-corner-md": "calc(var(--radius) * 1.2)",
+          "md-sys-shape-corner-value-md": "calc(var(--radius) * 1.2)",
+          "md-sys-shape-corner-lg": "calc(var(--radius) * 1.6)",
+          "md-sys-shape-corner-value-lg": "calc(var(--radius) * 1.6)",
+          "md-sys-shape-corner-lg-increased": "calc(var(--radius) * 2)",
+          "md-sys-shape-corner-value-lg-increased": "calc(var(--radius) * 2)",
+          "md-sys-shape-corner-xl": "calc(var(--radius) * 2.8)",
+          "md-sys-shape-corner-value-xl": "calc(var(--radius) * 2.8)",
+          "md-sys-shape-corner-xl-increased": "calc(var(--radius) * 3.2)",
+          "md-sys-shape-corner-value-xl-increased": "calc(var(--radius) * 3.2)",
+          "md-sys-shape-corner-xxl": "calc(var(--radius) * 4.8)",
+          "md-sys-shape-corner-value-xxl": "calc(var(--radius) * 4.8)"
+        }
+      },
+      "css": {
+        "@import \"@material/web/labs/gb/styles/m3.css\"": {},
+        ":root": {
+          "color-scheme": "light"
+        },
+        ".dark": {
+          "color-scheme": "dark"
+        }
+      },
+      "docs": "Material Web theme bridge installed. Read how the shadcn variables map to --md-sys-color-* at https://material-web.dev/3.0/about/shadcn/",
+      "meta": {
+        "docs": "https://material-web.dev/3.0/about/shadcn/"
+      }
+    },
+    {
+      "name": "md-theme-m3",
+      "type": "registry:theme",
+      "title": "Material 3 baseline theme for shadcn/ui",
+      "description": "Sets the shadcn variables from the Material 3 baseline color roles (light and dark) and a 12px radius, so shadcn/ui components match md-gb elements.",
+      "cssVars": {
+        "light": {
+          "background": "#fef7ff",
+          "foreground": "#1d1b20",
+          "card": "#f7f2fa",
+          "card-foreground": "#1d1b20",
+          "popover": "#f3edf7",
+          "popover-foreground": "#1d1b20",
+          "primary": "#6750a4",
+          "primary-foreground": "#fff",
+          "secondary": "#e8def8",
+          "secondary-foreground": "#4a4458",
+          "muted": "#ece6f0",
+          "muted-foreground": "#49454f",
+          "accent": "#e6e0e9",
+          "accent-foreground": "#1d1b20",
+          "destructive": "#b3261e",
+          "border": "#cac4d0",
+          "input": "#79747e",
+          "ring": "#6750a4",
+          "chart-1": "#6750a4",
+          "chart-2": "#7d5260",
+          "chart-3": "#625b71",
+          "chart-4": "#d0bcff",
+          "chart-5": "#efb8c8",
+          "sidebar": "#f7f2fa",
+          "sidebar-foreground": "#1d1b20",
+          "sidebar-primary": "#6750a4",
+          "sidebar-primary-foreground": "#fff",
+          "sidebar-accent": "#e8def8",
+          "sidebar-accent-foreground": "#4a4458",
+          "sidebar-border": "#cac4d0",
+          "sidebar-ring": "#6750a4",
+          "radius": "0.75rem"
+        },
+        "dark": {
+          "background": "#141218",
+          "foreground": "#e6e0e9",
+          "card": "#1d1b20",
+          "card-foreground": "#e6e0e9",
+          "popover": "#211f26",
+          "popover-foreground": "#e6e0e9",
+          "primary": "#d0bcff",
+          "primary-foreground": "#381e72",
+          "secondary": "#4a4458",
+          "secondary-foreground": "#e8def8",
+          "muted": "#2b2930",
+          "muted-foreground": "#cac4d0",
+          "accent": "#36343b",
+          "accent-foreground": "#e6e0e9",
+          "destructive": "#f2b8b5",
+          "border": "#49454f",
+          "input": "#938f99",
+          "ring": "#d0bcff",
+          "chart-1": "#d0bcff",
+          "chart-2": "#efb8c8",
+          "chart-3": "#ccc2dc",
+          "chart-4": "#d0bcff",
+          "chart-5": "#efb8c8",
+          "sidebar": "#1d1b20",
+          "sidebar-foreground": "#e6e0e9",
+          "sidebar-primary": "#d0bcff",
+          "sidebar-primary-foreground": "#381e72",
+          "sidebar-accent": "#4a4458",
+          "sidebar-accent-foreground": "#e8def8",
+          "sidebar-border": "#49454f",
+          "sidebar-ring": "#d0bcff"
+        }
+      },
+      "docs": "Material 3 baseline theme installed. Mapping: https://material-web.dev/3.0/about/shadcn/",
+      "meta": {
+        "docs": "https://material-web.dev/3.0/about/shadcn/"
+      }
+    }
+  ]
+}

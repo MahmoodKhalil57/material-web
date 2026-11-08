@@ -1,0 +1,306 @@
+# Navigation Bar
+
+A navigation bar lets people switch between a small number of top-level destinations, and can hide as the page scrolls.
+
+**Example: A navigation bar with four destinations and Home active**
+
+```html
+<md-gb-nav-bar aria-label="Primary">
+  <md-gb-nav-bar-item active href="#home">
+    <md-gb-icon slot="icon">home</md-gb-icon>
+    Home
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item href="#explore">
+    <md-gb-icon slot="icon">explore</md-gb-icon>
+    Explore
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item href="#library">
+    <md-gb-icon slot="icon">library_music</md-gb-icon>
+    Library
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item href="#profile">
+    <md-gb-icon slot="icon">person</md-gb-icon>
+    Profile
+  </md-gb-nav-bar-item>
+</md-gb-nav-bar>
+```
+
+## Usage guidelines
+
+*   **Use it in compact and medium windows.** From expanded windows up, switch to a [navigation rail](/material-web/3.0/components/navigation-rail/).
+*   **Keep three to five destinations.** They should be of equal importance.
+*   **Keep destinations consistent.** The same destinations appear on every screen of the app.
+*   **Pick the item layout.** Use [vertical](#item-layout) items in compact windows and horizontal items from medium windows.
+
+This component is new in [M3 Expressive](https://m3.material.io/blog/building-with-m3-expressive).
+
+## Anatomy
+
+A navigation bar holds items. Each item has an icon, a label and an optional badge.
+
+**Example: A navigation bar with one item that has an icon, a badge and a label**
+
+```html
+<md-gb-nav-bar aria-label="Chat">
+  <md-gb-nav-bar-item active>
+    <md-gb-icon slot="icon">chat_bubble</md-gb-icon>
+    <md-gb-badge slot="badge">3</md-gb-badge>
+    Chats
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">call</md-gb-icon>
+    Calls
+  </md-gb-nav-bar-item>
+</md-gb-nav-bar>
+```
+
+## Examples
+
+### Item layout
+
+Set `item-layout` to `vertical` (the default) or `horizontal`. With `auto`, items are vertical in compact windows and horizontal from 600px.
+
+**Example: A navigation bar with horizontal items**
+
+```html
+<md-gb-nav-bar item-layout="horizontal" aria-label="Library">
+  <md-gb-nav-bar-item active>
+    <md-gb-icon slot="icon">auto_awesome</md-gb-icon>
+    For you
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">bookmark</md-gb-icon>
+    Saved
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">settings</md-gb-icon>
+    Settings
+  </md-gb-nav-bar-item>
+</md-gb-nav-bar>
+```
+
+### Badges
+
+Set `badge` on an item to show a count, or `badge="dot"` for a small dot that signals something new.
+
+**Example: Navigation bar items with a count badge and a dot badge**
+
+```html
+<md-gb-nav-bar aria-label="Mail">
+  <md-gb-nav-bar-item active badge="4">
+    <md-gb-icon slot="icon">mail</md-gb-icon>
+    Inbox
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item badge="dot">
+    <md-gb-icon slot="icon">chat_bubble</md-gb-icon>
+    Chat
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">videocam</md-gb-icon>
+    Meet
+  </md-gb-nav-bar-item>
+</md-gb-nav-bar>
+```
+
+### Links
+
+Give an item an `href` (and optionally `target` and `rel`) to make the destination a link, as in the first example. The item then has the `link` role and the selected one is marked `aria-current="page"`. Without `href` an item is a tab that just reports the selection.
+
+### Hide on scroll
+
+Set `scroll-behavior="hide"` to hide the bar when the page scrolls down and show it again on scroll up. By default it follows the window; set `scroll-target` to the id of another scrolling element. Fix the bar to the bottom of the page.
+
+**Example: A navigation bar that hides while its list scrolls down**
+
+*HTML*
+
+```html
+<div id="messages">
+  <p>Message 1</p>
+  <p>Message 2</p>
+  <p>Message 3</p>
+  <p>Message 4</p>
+  <p>Message 5</p>
+  <p>Message 6</p>
+  <p>Message 7</p>
+  <p>Message 8</p>
+  <md-gb-nav-bar scroll-behavior="hide" scroll-target="messages" aria-label="Mail">
+    <md-gb-nav-bar-item active>
+      <md-gb-icon slot="icon">inbox</md-gb-icon>
+      Inbox
+    </md-gb-nav-bar-item>
+    <md-gb-nav-bar-item>
+      <md-gb-icon slot="icon">send</md-gb-icon>
+      Sent
+    </md-gb-nav-bar-item>
+  </md-gb-nav-bar>
+</div>
+```
+
+*CSS*
+
+```css
+#messages {
+  inline-size: 100%;
+  block-size: 240px;
+  overflow: auto;
+}
+
+md-gb-nav-bar {
+  position: sticky;
+  inset-block-end: 0;
+}
+```
+
+### Selection
+
+The `active` item shows the current destination, and `selected-index` selects an item by position. The bar fires `change` when the selection changes.
+
+**Example: A navigation bar that reports the selected index**
+
+*HTML*
+
+```html
+<md-gb-nav-bar aria-label="Sections">
+  <md-gb-nav-bar-item active>
+    <md-gb-icon slot="icon">home</md-gb-icon>
+    Home
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">search</md-gb-icon>
+    Search
+  </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">settings</md-gb-icon>
+    Settings
+  </md-gb-nav-bar-item>
+</md-gb-nav-bar>
+<output id="selection" role="status">Selected item 0</output>
+```
+
+*TypeScript*
+
+```ts
+const bar = document.querySelector('md-gb-nav-bar')!;
+const selection = document.querySelector('#selection')!;
+bar.addEventListener('change', () => {
+  selection.textContent = 'Selected item ' + bar.selectedIndex;
+});
+```
+
+## Accessibility
+
+*   Give the bar an `aria-label` such as "Primary navigation".
+*   Without links the bar is a tab list and its items are tabs, with exactly one selected. Tab moves focus into the bar, the arrow keys move between items, and Enter and Space select one.
+*   When the items have an `href` the bar is a navigation landmark of links and the selected one is `aria-current="page"`. Enter follows a link; Space doesn't.
+*   Every item needs a visible label, which is also its accessible name. If the label is ambiguous, add a more descriptive `aria-label` to the item.
+*   A hidden bar never hides while focus is inside it or when the page scrolls from a key press, and it reappears when focus moves into it. Leave `scroll-behavior` off if screen reader users rely on the bar.
+*   Disabled items leave the tab order.
+
+## API reference
+
+### &lt;md-gb-nav-bar&gt;
+
+A Material Design gBreeze navigation bar custom element.
+
+#### Properties
+
+| Property | Attribute | Type | Default |
+| --- | --- | --- | --- |
+| <code>autoSelect</code><br><span class="gb-desc">Whether or not to automatically select a tab when it is focused.</span> | <code>autoselect</code> | <code>boolean</code> | <code>false</code> |
+| <code>itemLayout</code><br><span class="gb-desc">The layout orientation of items: <code>vertical</code>, <code>horizontal</code>, or <code>auto</code> (vertical in compact windows, horizontal from medium windows, 600px).</span> | <code>item-layout</code> | <code>NavBarLayout</code> | <code>'vertical'</code> |
+| <code>orientation</code><br><span class="gb-desc">Orientation of the tablist ('horizontal' or 'vertical').</span> | <code>orientation</code> | <code>"horizontal" | "vertical"</code> | <code>'horizontal'</code> |
+| <code>scrollBehavior</code><br><span class="gb-desc">How the bar reacts to scrolling: <code>hide</code> hides it on scroll down.</span> | <code>scroll-behavior</code> | <code>"hide"</code> |  |
+| <code>scrollTarget</code><br><span class="gb-desc">The id of the element whose scrolling drives <code>scroll-behavior</code>. Defaults to the window.</span> | <code>scroll-target</code> | <code>string</code> | <code>''</code> |
+| <code>selectedIndex</code><br><span class="gb-desc">The 0-based index of the currently active navigation bar item. Alias for <code>selectedTabIndex</code>.</span> | <code>selected-index</code> | <code>number</code> |  |
+| <code>selectedTabIndex</code><br><span class="gb-desc">The index of the currently selected tab.</span> | <code>selectedtabindex</code> | <code>number</code> |  |
+
+#### Slots
+
+| Slot | Description |
+| --- | --- |
+| default | Used to display navigation bar items (<code>md-gb-nav-bar-item</code>). |
+
+#### Events
+
+| Event | Description |
+| --- | --- |
+| <code>change</code><br><span class="gb-desc">Event</span> | Fired when the selected navigation bar item changes. |
+
+#### CSS parts
+
+| Part | Description |
+| --- | --- |
+| <code>::part(nav-bar)</code> | The navigation bar's root container. |
+
+#### CSS custom properties
+
+| Property | Description |
+| --- | --- |
+| <code>--container-color</code> |  |
+| <code>--container-elevation</code> |  |
+| <code>--container-height</code> |  |
+| <code>--container-shadow-color</code> |  |
+| <code>--container-shape</code> |  |
+| <code>--item-active-icon-color</code> |  |
+| <code>--item-active-indicator-color</code> |  |
+| <code>--item-active-indicator-height</code> |  |
+| <code>--item-active-indicator-icon-label-space</code> |  |
+| <code>--item-active-indicator-leading-space</code> |  |
+| <code>--item-active-indicator-shape</code> |  |
+| <code>--item-active-indicator-trailing-space</code> |  |
+| <code>--item-active-indicator-width</code> |  |
+| <code>--item-active-label-text-color</code> |  |
+| <code>--item-active-state-layer-color</code> |  |
+| <code>--item-between-space</code> |  |
+| <code>--item-container-between-space</code> |  |
+| <code>--item-icon-size</code> |  |
+| <code>--item-inactive-icon-color</code> |  |
+| <code>--item-inactive-label-text-color</code> |  |
+| <code>--item-inactive-state-layer-color</code> |  |
+| <code>--item-label-text</code> |  |
+| <code>--item-label-text-axes</code> |  |
+| <code>--item-label-text-tracking</code> |  |
+| <code>--motion-duration</code> |  |
+| <code>--motion-easing</code> |  |
+
+### &lt;md-gb-nav-bar-item&gt;
+
+A Material Design gBreeze navigation bar item custom element.
+
+#### Properties
+
+| Property | Attribute | Type | Default |
+| --- | --- | --- | --- |
+| <code>active</code><br><span class="gb-desc">Whether the navigation bar item is active. Alias for <code>selected</code>.</span> | <code>active</code> | <code>boolean</code> |  |
+| <code>badge</code><br><span class="gb-desc">Optional badge text (or 'dot' / 'true' for a small dot badge).</span> | <code>badge</code> | <code>string</code> | <code>''</code> |
+| <code>disabled</code><br><span class="gb-desc">Whether the navigation bar item is disabled.</span> | <code>disabled</code> | <code>boolean</code> | <code>false</code> |
+| <code>href</code><br><span class="gb-desc">The URL the destination links to. The item is then a link (role <code>link</code>, <code>aria-current="page"</code> while selected) instead of a tab.</span> | <code>href</code> | <code>string</code> | <code>''</code> |
+| <code>itemLayout</code><br><span class="gb-desc">The layout orientation of the item ('vertical' or 'horizontal').</span> | <code>item-layout</code> | <code>NavBarItemLayout</code> | <code>'vertical'</code> |
+| <code>label</code><br><span class="gb-desc">Optional label text if not provided via default slot.</span> | <code>label</code> | <code>string</code> | <code>''</code> |
+| <code>rel</code><br><span class="gb-desc">The link's <code>rel</code> attribute, when <code>href</code> is set.</span> | <code>rel</code> | <code>string</code> | <code>''</code> |
+| <code>tabpanel</code><br><span class="gb-desc">ID of the associated <code>md-aria-tabpanel</code> element.</span> | <code>tabpanel</code> | <code>string</code> |  |
+| <code>target</code><br><span class="gb-desc">Where to open the linked <code>href</code>, e.g. <code>_blank</code>.</span> | <code>target</code> | <code>"" | "_blank" | "_parent" | "_self" | "_top"</code> | <code>''</code> |
+| <code>unfilledIcon</code><br><span class="gb-desc">Whether the icon has no filled style. The active destination then uses the semibold icon weight instead of the filled icon.</span> | <code>unfilled-icon</code> | <code>boolean</code> | <code>false</code> |
+
+#### Slots
+
+| Slot | Description |
+| --- | --- |
+| default | Used to display the item's label text. |
+| <code>badge</code> | Used to display a custom badge on the item's icon. |
+| <code>icon</code> | Used to display the item's icon (<code>md-gb-icon</code>). |
+
+#### Methods
+
+| Method | Description |
+| --- | --- |
+| <code>click</code><br><span class="gb-desc">() =&gt; void</span> | Activates the destination: follows its link, else clicks the tab. |
+
+#### CSS parts
+
+| Part | Description |
+| --- | --- |
+| <code>::part(indicator)</code> | The active indicator / icon container element. |
+| <code>::part(label)</code> | The label text container element. |
+| <code>::part(nav-bar-item)</code> | The navigation bar item's presentational container. |
