@@ -19,6 +19,9 @@
 :root {
   /* The search app bar's container height (app bars spec). */
   --gb-top-h: 64px;
+  /* The rail (and the header behind its menu button) stands apart from the
+     page, the pages pane and the header. */
+  --gb-rail-color: var(--md-sys-color-surface-container-high);
   --gb-rail-w: 0px;
   --gb-pane-w: 0px;
   --gb-pane-open-w: 280px;
@@ -88,20 +91,41 @@ body:has(.gb-shell) {
   inset-block-start: 0;
   z-index: 30;
   block-size: var(--gb-top-h);
-  background: var(--md-sys-color-surface-container);
+  /* The rail's color continues behind the menu button (the rail's width),
+     the rest is the page's surface container. */
+  background: linear-gradient(
+    to right,
+    var(--gb-rail-color) 0 var(--gb-rail-w),
+    var(--md-sys-color-surface-container) var(--gb-rail-w)
+  );
+}
+.gb-top:dir(rtl) {
+  background: linear-gradient(
+    to left,
+    var(--gb-rail-color) 0 var(--gb-rail-w),
+    var(--md-sys-color-surface-container) var(--gb-rail-w)
+  );
 }
 .gb-appbar {
   display: block;
   block-size: 100%;
-  /* On the page's surface container; the search bar stands out from it. */
   --container-color: transparent;
-  --search-container-color: var(--md-sys-color-surface-container-high);
 }
 /* The search variant sets its own container color on the inner element;
    the part rule (outer styles win) makes the bar blend into the page. */
 .gb-appbar::part(app-bar) {
   --container-color: transparent;
   --on-scroll-container-color: transparent;
+  /* The search bar stands out from the page's surface container (search
+     bar container: a surface role a step above what it sits on). */
+  --search-container-color: var(--md-sys-color-surface-container-highest);
+  --search-on-scroll-container-color: var(--md-sys-color-surface-container-highest);
+}
+/* With the rail (600px and up), the menu button is centered over it. */
+@media (min-width: 600px) {
+  .gb-appbar::part(app-bar) {
+    --leading-space: calc(var(--gb-rail-w) / 2 - 20px);
+  }
 }
 .gb-appbar:not(:defined) {
   visibility: hidden;
@@ -186,6 +210,7 @@ body:has(.gb-shell) {
   block-size: calc(100dvh - var(--gb-top-h));
   min-inline-size: 0;
   color: var(--md-sys-color-on-surface);
+  background: var(--gb-rail-color);
 }
 /* Compact windows have no rail. */
 @media (max-width: 599px) {
@@ -208,11 +233,13 @@ body:has(.gb-shell) {
   visibility: hidden;
 }
 /* The logo at the top of the rail, linking to the docs home. */
+/* 40px, like the logo, so it centers over the rail as the menu button and
+   the destinations do (the rail's header slot starts 20px in). */
 .gb-brand {
   display: grid;
   place-items: center;
-  inline-size: 56px;
-  block-size: 56px;
+  inline-size: 40px;
+  block-size: 40px;
   margin-block-end: var(--md-sys-space-100);
   border-radius: var(--md-sys-shape-corner-full);
 }
