@@ -284,7 +284,7 @@ body:has(.gb-shell) {
   margin-inline: var(--md-sys-space-200);
   block-size: var(--active-indicator-height, 56px);
 }
-.gb-rail[expanded] > .gb-rail-group {
+.gb-rail[expanded] > .gb-rail-group:not([hidden]) {
   display: flex;
 }
 .gb-rail > md-gb-nav-rail-item[hidden] {
@@ -367,8 +367,36 @@ md-gb-nav-drawer .nav-drawer-section-label {
 md-gb-nav-drawer-item[data-group] {
   margin-inline-start: var(--md-sys-space-150);
 }
+/* A section's split button in the expanded rail: the destination (leading
+   side), and this chevron (trailing side) over the end of the same row, a
+   56px pill that shows or hides the section's pages. Its chevron lines up
+   with the groups' chevrons below. Hidden in the collapsed rail. */
+.gb-rail > .gb-rail-section-toggle {
+  display: none;
+}
+.gb-rail[expanded] > .gb-rail-section-toggle {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex: none;
+  align-self: flex-end;
+  inline-size: var(--active-indicator-height, 56px);
+  block-size: var(--active-indicator-height, 56px);
+  margin-block-start: calc(-1 * var(--active-indicator-height, 56px));
+  margin-inline-end: var(--md-sys-space-200);
+  padding: 0;
+  border: 0;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: none;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  outline: none;
+  isolation: isolate;
+}
 /* State layer (interaction-states: hover 8%, focus and pressed 10%). */
-.gb-pane-group-toggle::before {
+.gb-pane-group-toggle::before,
+.gb-rail-section-toggle::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -377,26 +405,33 @@ md-gb-nav-drawer-item[data-group] {
   background: currentColor;
   opacity: 0;
 }
-.gb-pane-group-toggle:hover::before {
+.gb-pane-group-toggle:hover::before,
+.gb-rail-section-toggle:hover::before {
   opacity: 0.08;
 }
 .gb-pane-group-toggle:focus-visible::before,
-.gb-pane-group-toggle:active::before {
+.gb-pane-group-toggle:active::before,
+.gb-rail-section-toggle:focus-visible::before,
+.gb-rail-section-toggle:active::before {
   opacity: 0.1;
 }
-.gb-pane-group-toggle:focus-visible {
+.gb-pane-group-toggle:focus-visible,
+.gb-rail-section-toggle:focus-visible {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;
 }
-.gb-pane-group-toggle md-gb-icon {
+.gb-pane-group-toggle md-gb-icon,
+.gb-rail-section-toggle md-gb-icon {
   transition: rotate var(--md-sys-motion-spring-fast-spatial-duration, 200ms)
     var(--md-sys-motion-spring-fast-spatial, ease);
 }
-.gb-pane-group-toggle[aria-expanded='true'] md-gb-icon {
+.gb-pane-group-toggle[aria-expanded='true'] md-gb-icon,
+.gb-rail-section-toggle[aria-expanded='true'] md-gb-icon {
   rotate: 180deg;
 }
 @media (prefers-reduced-motion: reduce) {
-  .gb-pane-group-toggle md-gb-icon {
+  .gb-pane-group-toggle md-gb-icon,
+  .gb-rail-section-toggle md-gb-icon {
     transition: none;
   }
 }

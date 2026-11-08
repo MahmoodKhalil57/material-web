@@ -70,23 +70,23 @@
 {%- endif %}{% endfor %}
 {%- endif %}
 {%- endmacro -%}
-{#- The pages of the current section as secondary destinations of the
-    expanded rail. The components are in their groups, each under a
-    disclosure button that shows or hides its pages (src/gb/shell.ts); the
-    current page's group starts expanded, the others as the reader left
-    them (applied before first paint, below the rail). -#}
+{#- A section's pages as secondary destinations of the expanded rail, shown
+    while the section is open (its split button's chevron). The components
+    are in their groups, each under a disclosure button. Open by default:
+    the current section, and in it the current page's group (all groups in
+    another section); the reader's choices are applied before first paint
+    (gbRailApply, below the rail) and on every toggle (src/gb/shell.ts). -#}
 {%- macro railPages(sec, groups, pages, url, currentGroup) -%}
 {%- if sec.id == 'components' %}
 {%- for group in groups %}
-{%- set collapsed = currentGroup and group.id != currentGroup %}
-<button class="gb-rail-group gb-pane-group-toggle" type="button" data-group-toggle="{{ group.id }}"{% if group.id == currentGroup %} data-current{% endif %} aria-expanded="{{ 'false' if collapsed else 'true' }}" aria-label="{{ group.label }}"><span class="gb-pane-group-label">{{ group.label }}</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="{{ group.id }}" data-default-open="{{ 'false' if currentGroup and group.id != currentGroup else 'true' }}"{% if group.id == currentGroup %} data-current{% endif %} aria-expanded="true" aria-label="{{ group.label }}"><span class="gb-pane-group-label">{{ group.label }}</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
 {%- for file in pages %}{% if file.data.section == 'components' and file.data.category == group.id %}
-<md-gb-nav-rail-item secondary href="{{ file.url }}" data-group="{{ group.id }}"{% if collapsed %} hidden{% endif %}{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="{{ file.url }}" data-in-section="components" data-group="{{ group.id }}"{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
 {%- endif %}{% endfor %}
 {%- endfor %}
 {%- else %}
 {%- for file in pages %}{% if file.data.section == sec.id %}
-<md-gb-nav-rail-item secondary href="{{ file.url }}"{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
+<md-gb-nav-rail-item secondary href="{{ file.url }}" data-in-section="{{ sec.id }}"{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
 {%- endif %}{% endfor %}
 {%- endif %}
 {%- endmacro -%}
@@ -237,44 +237,65 @@
           Expressive): its menu button at the top, then the four sections.
           Collapsed, the current section is the active destination. Expanded
           (the menu button; beside the content from 840px, modal over it
-          below), the current section's pages follow it as secondary
-          destinations and the current page is the active one
-          (src/gb/shell.ts). -#}
+          below), each section is a split button: the destination (its
+          overview page), and a chevron that shows or hides its pages, the
+          secondary destinations that follow it. The current page is then the
+          active destination (src/gb/shell.ts). -#}
       <nav class="gb-rail-area" aria-label="Site">
         <md-gb-nav-rail class="gb-rail" id="gb-rail" collapsible role="none">
           {%- for sec in gbSections %}
           <md-gb-nav-rail-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} selected data-current{% endif %}>
             <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
           </md-gb-nav-rail-item>
-          {%- if sec.id == gbCurrent %}
-          {{ railPages(sec, gbGroups, gbPages, page.url, category if section == 'components' else '') | safe }}
-          {%- endif %}
+          <button class="gb-rail-section-toggle" type="button" data-section-toggle="{{ sec.id }}" data-default-open="{{ 'true' if sec.id == gbCurrent else 'false' }}" aria-expanded="true" aria-label="{{ sec.label }} pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+          {{ railPages(sec, gbGroups, gbPages, page.url, category if (section == 'components' and sec.id == gbCurrent) else '') | safe }}
           {%- endfor %}
         </md-gb-nav-rail>
         <script>
-          // Before first paint: the groups the reader expanded or collapsed
-          // (src/gb/shell.ts saves them; the current page's stays open), and
-          // expanded from 840px unless the reader collapsed it, with the
-          // current page as the active destination.
-          (() => {
+          // Which sections and groups are open: the reader's choices
+          // (src/gb/shell.ts saves them), else the defaults in the markup; the
+          // current page's group stays open. A closed section hides its
+          // pages and groups; a closed group its pages. Runs here before
+          // first paint, and again on every toggle (shell.ts).
+          window.gbRailApply = () => {
             const rail = document.getElementById('gb-rail');
-            let saved = {};
-            try {
-              saved = JSON.parse(localStorage.getItem('gb-groups') || '{}');
-            } catch (e) {}
-            for (const toggle of rail.querySelectorAll('.gb-rail-group')) {
+            const read = (key) => {
+              try {
+                return JSON.parse(localStorage.getItem(key) || '{}');
+              } catch (e) {
+                return {};
+              }
+            };
+            const sections = read('gb-rail-sections');
+            const groups = read('gb-groups');
+            const open = (toggle, saved, id) =>
+              toggle.hasAttribute('data-current') || !(id in saved) ? toggle.dataset.defaultOpen === 'true' : !!saved[id];
+            const openGroups = {};
+            for (const toggle of rail.querySelectorAll('[data-group-toggle]')) {
               const id = toggle.dataset.groupToggle;
-              if (!(id in saved) || toggle.hasAttribute('data-current')) continue;
-              toggle.setAttribute('aria-expanded', String(!!saved[id]));
-              for (const item of rail.querySelectorAll(`md-gb-nav-rail-item[data-group="${id}"]`)) {
-                item.hidden = !saved[id];
+              openGroups[id] = toggle.hasAttribute('data-current') || open(toggle, groups, id);
+              toggle.setAttribute('aria-expanded', String(openGroups[id]));
+            }
+            for (const toggle of rail.querySelectorAll('[data-section-toggle]')) {
+              const id = toggle.dataset.sectionToggle;
+              const shown = open(toggle, sections, id);
+              toggle.setAttribute('aria-expanded', String(shown));
+              for (const el of rail.querySelectorAll(`[data-in-section="${id}"]`)) {
+                el.hidden = !shown || (el.dataset.group ? !openGroups[el.dataset.group] : false);
               }
             }
+          };
+          // Before first paint: expanded from 840px unless the reader
+          // collapsed it, with the current page (if its section is open) as
+          // the active destination.
+          (() => {
+            window.gbRailApply();
+            const rail = document.getElementById('gb-rail');
             const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
             const page = rail.querySelector('md-gb-nav-rail-item[secondary][data-current]');
             if (!open) return;
             rail.setAttribute('expanded', '');
-            if (page) {
+            if (page && !page.hidden) {
               rail.querySelector('md-gb-nav-rail-item[data-section][data-current]').removeAttribute('selected');
               page.setAttribute('selected', '');
             }

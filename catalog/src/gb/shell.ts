@@ -143,7 +143,8 @@ const currentSection = sectionItem ? sectionOf(sectionItem) : 'about';
  */
 function syncActive() {
   if (!rail || !sectionItem) return;
-  const page = rail.expanded && pageItem;
+  // The page, while it shows: the rail is expanded and its section open.
+  const page = rail.expanded && pageItem && !pageItem.hidden;
   sectionItem.toggleAttribute('selected', !page);
   pageItem?.toggleAttribute('selected', !!page);
 }
@@ -332,11 +333,39 @@ function handleGroupToggle(e: Event) {
   if (!toggle || !list) return;
   const id = groupOf(toggle);
   const open = toggle.getAttribute('aria-expanded') !== 'true';
-  setGroup(list, id, open);
   const saved = savedGroups();
   saved[id] = open;
   store(GROUPS_KEY, JSON.stringify(saved));
+  // The rail applies sections and groups together (default.html).
+  if (list === rail) applyRail();
+  else setGroup(list, id, open);
 }
+
+// --- Rail sections: split buttons ----------------------------------------------------
+
+const SECTIONS_KEY = 'gb-rail-sections';
+
+/** Shows and hides the rail's pages for the open sections and groups. */
+function applyRail() {
+  (window as Window & {gbRailApply?: () => void}).gbRailApply?.();
+  syncActive();
+}
+
+// A section's chevron (the split button's trailing side) shows or hides
+// its pages; the destination beside it goes to the section's overview.
+rail?.addEventListener('click', (e) => {
+  const toggle = (e.target as Element).closest<HTMLElement>('[data-section-toggle]');
+  if (!toggle) return;
+  let saved: Record<string, boolean> = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(SECTIONS_KEY) || '{}');
+  } catch {
+    // A broken entry starts over.
+  }
+  saved[toggle.dataset['sectionToggle'] ?? ''] = toggle.getAttribute('aria-expanded') !== 'true';
+  store(SECTIONS_KEY, JSON.stringify(saved));
+  applyRail();
+});
 
 // --- Compact: the navigation bar and the pages sheet ------------------------------
 
