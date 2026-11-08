@@ -1,0 +1,205 @@
+#!/usr/bin/env node
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
+ * Publishes the catalog (/ is v2.5.0, /3.0/ is labs/gb) as a static site on
+ * a GitHub Pages branch, built here, with no Actions:
+ *
+ *   node scripts/catalog-pages.mjs [--base /material-web/] [--src catalog/_dev]
+ *     [--branch gh-pages] [--remote origin] [--push]
+ *
+ * 1. Copies the built site (`npm run catalog:dev` writes catalog/_dev; its
+ *    build must be ready) to a work directory.
+ * 2. Bundles labs/gb into lib/ (esbuild: every module, at its path, so the
+ *    pages' and demos' imports resolve as they do against the dev library
+ *    server; CSS module scripts become constructed stylesheets, for every
+ *    browser), and copies the labs/gb stylesheets.
+ * 3. Rewrites the site for its base path on Pages (--base): root-relative
+ *    links, the 3.0 shell's script strings and JSON urls get the prefix,
+ *    and the dev library server (http://localhost:8001/) becomes <base>lib/.
+ *    The v2.5 scripts are left alone (their server-rendered templates must
+ *    hydrate), and its code playgrounds load the published @material/web
+ *    from jsDelivr.
+ * 4. Commits the result to --branch (an orphan branch, in a worktree under
+ *    the system temp directory, replaced wholesale) with .nojekyll, and with
+ *    --push pushes it to --remote. GitHub Pages serves that branch's root.
+ */
+
+import {execFileSync} from 'node:child_process';
+import {existsSync} from 'node:fs';
+import {cp, mkdir, readdir, readFile, rm, stat, writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {dirname, extname, join, relative} from 'node:path';
+import {parseArgs} from 'node:util';
+import * as esbuild from 'esbuild';
+
+const {values: args} = parseArgs({
+  options: {
+    base: {type: 'string', default: '/material-web/'},
+    src: {type: 'string', default: 'catalog/_dev'},
+    branch: {type: 'string', default: 'gh-pages'},
+    remote: {type: 'string', default: 'origin'},
+    push: {type: 'boolean', default: false},
+  },
+});
+
+const ROOT = process.cwd();
+const BASE = args.base.endsWith('/') ? args.base : `${args.base}/`;
+const DEV_LIB = 'http://localhost:8001/';
+const OUT = join(tmpdir(), 'catalog-pages-site');
+const TREE = join(tmpdir(), 'catalog-pages-branch');
+const VERSION = JSON.parse(await readFile('package.json', 'utf8')).version;
+
+const log = (...m) => console.log('[catalog-pages]', ...m);
+const git = (argv, cwd = ROOT) => execFileSync('git', argv, {cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit']}).trim();
+
+async function walk(dir, out = []) {
+  for (const entry of await readdir(dir, {withFileTypes: true})) {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) await walk(p, out);
+    else out.push(p);
+  }
+  return out;
+}
+
+// --- 1. The built site --------------------------------------------------------
+
+if (!existsSync(join(args.src, '3.0', 'index.html'))) {
+  console.error(`${args.src} has no built site; run npm run catalog:dev and wait for its build.`);
+  process.exit(1);
+}
+log(`copying ${args.src}`);
+await rm(OUT, {recursive: true, force: true});
+await cp(args.src, OUT, {recursive: true});
+
+// --- 2. labs/gb as static modules -------------------------------------------------
+
+log('bundling labs/gb into lib/');
+const sources = (await walk(join(ROOT, 'labs', 'gb'))).filter(
+  (f) => f.endsWith('.js') && !/(_test|\.stories|[\\/]demo[\\/]|[\\/]skill[\\/])/.test(f) && !f.includes('node_modules'),
+);
+const cssAsStylesheet = {
+  name: 'css-modules-as-stylesheets',
+  setup(build) {
+    build.onResolve({filter: /\.css$/}, (a) =>
+      a.with?.type === 'css' ? {path: join(a.resolveDir, a.path), namespace: 'css-module'} : undefined,
+    );
+    build.onLoad({filter: /.*/, namespace: 'css-module'}, async (a) => ({
+      contents: `const sheet = new CSSStyleSheet();\nsheet.replaceSync(${JSON.stringify(await readFile(a.path, 'utf8'))});\nexport default sheet;\n`,
+      loader: 'js',
+    }));
+  },
+};
+await esbuild.build({
+  entryPoints: sources,
+  outbase: ROOT,
+  outdir: join(OUT, 'lib'),
+  bundle: true,
+  splitting: true,
+  format: 'esm',
+  minify: true,
+  target: 'es2022',
+  chunkNames: 'labs/gb/chunks/[name]-[hash]',
+  plugins: [cssAsStylesheet],
+  logLevel: 'warning',
+});
+for (const f of (await walk(join(ROOT, 'labs', 'gb'))).filter((f) => f.endsWith('.css') && !f.includes('node_modules'))) {
+  const to = join(OUT, 'lib', relative(ROOT, f));
+  await mkdir(dirname(to), {recursive: true});
+  await cp(f, to);
+}
+log(`${sources.length} modules`);
+
+// --- 3. The base path -------------------------------------------------------------------
+
+log(`rewriting for ${BASE}`);
+const top = (await readdir(OUT)).filter((n) => n !== 'lib').map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+// A root-relative URL at the start of an attribute, a string or url(): one
+// of the site's top-level files or folders, or the root itself.
+const rooted = new RegExp(`(["'\`(=]|&quot;|&#39;)/((?:${top.join('|')})(?=[/"'\`?#)&\\s]|$))`, 'g');
+const TEXT = new Set(['.html', '.js', '.mjs', '.css', '.json', '.webmanifest', '.xml', '.txt', '.md', '.svg']);
+const playgroundMap = {
+  imports: {
+    '@material/web/': `https://cdn.jsdelivr.net/npm/@material/web@${VERSION}/`,
+    lit: 'https://cdn.jsdelivr.net/npm/lit@3/index.js',
+    'lit/': 'https://cdn.jsdelivr.net/npm/lit@3/',
+    '@lit/context': 'https://cdn.jsdelivr.net/npm/@lit/context@1/index.js',
+    'postdoc-lib': 'https://cdn.jsdelivr.net/npm/postdoc-lib/lib/postdoc.js',
+  },
+};
+const PLAYGROUND = JSON.parse(await readFile('node_modules/playground-elements/package.json', 'utf8')).version;
+// The v2.5 pages' scripts (js/, but not the 3.0 shell's js/gb/) keep their
+// strings: Lit's server-rendered pages carry a digest of each template's
+// static strings, and a rewritten one no longer hydrates. Their links are
+// in the pages' HTML, rewritten, which hydration leaves as it is.
+const v25Scripts = (file) => file.startsWith(join(OUT, 'js')) && !file.startsWith(join(OUT, 'js', 'gb'));
+let files = 0;
+for (const file of await walk(OUT)) {
+  if (!TEXT.has(extname(file)) || file.startsWith(join(OUT, 'lib')) || v25Scripts(file)) continue;
+  let text = await readFile(file, 'utf8');
+  const before = text;
+  if (file.endsWith('project.json')) {
+    const project = JSON.parse(text);
+    if (project.importMap) project.importMap = playgroundMap;
+    text = JSON.stringify(project, null, 2);
+  }
+  text = text
+    .replaceAll(`${DEV_LIB}node_modules/playground-elements/`, `https://cdn.jsdelivr.net/npm/playground-elements@${PLAYGROUND}/`)
+    .replaceAll(DEV_LIB, `${BASE}lib/`)
+    .replace(rooted, `$1${BASE}$2`)
+    // Links to the root itself: the v2.5 home.
+    .replace(/(href=|href=\\?&quot;|assign\()(["'])\/\2/g, `$1$2${BASE}$2`)
+    .replace(/href="\/"/g, `href="${BASE}"`);
+  if (text !== before) {
+    await writeFile(file, text);
+    files++;
+  }
+}
+await writeFile(join(OUT, '.nojekyll'), '');
+log(`${files} files rewritten`);
+
+// --- 4. The branch --------------------------------------------------------------------
+
+const exists = git(['ls-remote', '--heads', args.remote, args.branch]) !== '';
+await rm(TREE, {recursive: true, force: true});
+git(['worktree', 'prune']);
+let local = true;
+try {
+  git(['rev-parse', '--verify', '--quiet', `refs/heads/${args.branch}`]);
+} catch {
+  local = false;
+}
+if (exists) {
+  git(['fetch', '-q', args.remote, args.branch]);
+  git(['worktree', 'add', '-q', '-B', args.branch, TREE, `${args.remote}/${args.branch}`]);
+} else if (local) {
+  // Built before, never pushed.
+  git(['worktree', 'add', '-q', TREE, args.branch]);
+} else {
+  git(['worktree', 'add', '-q', '--orphan', '-b', args.branch, TREE]);
+}
+for (const entry of await readdir(TREE)) {
+  if (entry !== '.git') await rm(join(TREE, entry), {recursive: true, force: true});
+}
+await cp(OUT, TREE, {recursive: true});
+git(['add', '-A'], TREE);
+const source = git(['rev-parse', '--short', 'HEAD']);
+const changed = git(['status', '--porcelain'], TREE) !== '';
+if (changed) {
+  await writeFile(join(tmpdir(), 'catalog-pages-message.txt'), `site: build of ${source} for ${BASE}\n`);
+  git(['commit', '-q', '-F', join(tmpdir(), 'catalog-pages-message.txt')], TREE);
+  log(`committed to ${args.branch}`);
+} else {
+  log('no changes');
+}
+if (args.push) {
+  git(['push', '-q', args.remote, `${args.branch}:${args.branch}`], TREE);
+  log(`pushed ${args.branch} to ${args.remote}`);
+}
+const size = (await Promise.all((await walk(OUT)).map((f) => stat(f).then((s) => s.size)))).reduce((a, b) => a + b, 0);
+log(`${(size / 1048576).toFixed(1)} MB; preview: ${OUT}`);
+git(['worktree', 'remove', '--force', TREE]);

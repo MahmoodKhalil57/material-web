@@ -39,6 +39,7 @@
     "catalog:dev": "node scripts/catalog-dev.mjs",
     "catalog:walk": "node scripts/catalog-walk.mjs",
     "catalog:lighthouse": "node scripts/catalog-lighthouse.mjs",
+    "catalog:pages": "node scripts/catalog-pages.mjs",
     "gb:check": "node scripts/gb-check.mjs",
     "gb:baseline": "node scripts/gb-baseline.mjs",
     "gb:css-validate": "node scripts/gb-css-validate.mjs",
