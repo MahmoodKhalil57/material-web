@@ -185,16 +185,87 @@ if (rail) {
   requestAnimationFrame(() => requestAnimationFrame(restoreRailScroll));
 }
 
+// --- View transitions: the M3 transition pattern of each navigation ---------
+
+interface PageTransition {
+  types?: Set<string>;
+  finished: Promise<void>;
+  skipTransition(): void;
+}
+interface NavEntry {
+  url: string | null;
+  index: number;
+}
+
 // Skip the transition of a reload: the same page does not cross-fade into
 // itself.
 addEventListener('pageswap', (e) => {
   const event = e as Event & {
-    viewTransition?: {skipTransition(): void} | null;
+    viewTransition?: PageTransition | null;
     activation?: {navigationType?: string} | null;
   };
   if (event.viewTransition && event.activation?.navigationType === 'reload') {
     event.viewTransition.skipTransition();
   }
+});
+
+/** A page's path without its trailing slash, for comparing URLs. */
+const pathOf = (url: string | null | undefined) =>
+  url ? new URL(url, location.href).pathname.replace(/\/$/, '') : '';
+
+/**
+ * The transition pattern from the page left to this one (navigation.css;
+ * motion transitions.md): `forward` or `backward` between pages at
+ * consecutive steps (Previous and Next, a section's index and its pages,
+ * back and forward in history), or `''` for top level (the rail, the
+ * navigation bar, the logo, search, and anything else).
+ */
+function transitionType(): '' | 'forward' | 'backward' {
+  const activation = (
+    window as Window & {
+      navigation?: {
+        activation?: {
+          navigationType?: string;
+          from?: NavEntry | null;
+          entry?: NavEntry | null;
+        } | null;
+      };
+    }
+  ).navigation?.activation;
+  const from = activation?.from;
+  if (!activation || !from) return '';
+  if (activation.navigationType === 'traverse' && activation.entry) {
+    return activation.entry.index < from.index ? 'backward' : 'forward';
+  }
+  const left = pathOf(from.url);
+  const here = pathOf(location.href);
+  const prev = document.querySelector<HTMLAnchorElement>('.gb-pager-top a[rel="prev"]');
+  const next = document.querySelector<HTMLAnchorElement>('.gb-pager-top a[rel="next"]');
+  // Next on the page left leads here: this page's Previous goes back there.
+  if (prev && pathOf(prev.href) === left) return 'forward';
+  if (next && pathOf(next.href) === left) return 'backward';
+  // A section's index and its pages are consecutive levels.
+  const section = (path: string) => path.split('/').slice(0, 3).join('/');
+  if (section(here) === section(left)) {
+    if (left === section(left) && here !== left) return 'forward';
+    if (here === section(here) && here !== left) return 'backward';
+  }
+  return '';
+}
+
+addEventListener('pagereveal', (e) => {
+  const transition = (e as Event & {viewTransition?: PageTransition | null})
+    .viewTransition;
+  if (!transition) return;
+  const type = transitionType();
+  if (type) transition.types?.add(type);
+  // The browser drops a transition whose new page took over 4s from the
+  // click to show, without a word: say so while debugging.
+  transition.finished.catch((error: Error) => {
+    if (error?.name === 'TimeoutError') {
+      console.debug('gb: page transition skipped (the page took over 4s)');
+    }
+  });
 });
 
 // --- Prerender safety: the theme is read when the page starts ----------------

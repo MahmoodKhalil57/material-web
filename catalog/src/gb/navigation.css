@@ -10,52 +10,144 @@
 /* Cross-document view transitions (progressive enhancement: unsupported
    browsers navigate as usual). Both documents of a navigation must opt in,
    and only /3.0/ pages carry this sheet, so leaving to "/" never animates.
-   Not under reduced motion. */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
+
+   The M3 transition patterns (motion transitions.md; transitions still use
+   the easing and duration tokens, easing-and-duration.md), chosen per
+   navigation by navigation.ts as a view transition type:
+
+   - top level (no type): a destination of the rail, the navigation bar,
+     the logo, search. The page quickly fades out, then the new one fades in
+     (fade through); nothing connects the two.
+   - forward / backward: Next and Previous, a page of a section's index, a
+     link in the text, back and forward in history. The page slides along
+     the x axis as it fades: out toward the start going forward, in from the
+     end (mirrored backward and in right-to-left).
+
+   Clean fades: the old page has faded out before the new one fades in.
+   Exits are short with accelerate easing, entrances longer with
+   decelerate. Under reduced motion only the fades remain ("subtle fades
+   instead of intense sliding"). */
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  --gb-vt-exit: var(--md-sys-motion-duration-short3, 150ms);
+  --gb-vt-enter: var(--md-sys-motion-duration-medium2, 300ms);
+  --gb-vt-slide: var(--md-sys-motion-duration-medium4, 400ms);
+  /* The shared x axis: 30dp, like Android's forward and backward. */
+  --gb-vt-shift: 30px;
+}
+:root:dir(rtl) {
+  --gb-vt-shift: -30px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --gb-vt-shift: 0px;
   }
 }
 
-/* The shell stays put while the page cross-fades: the header, the rail and
-   the nav bar are identical on every page. Named elements
-   leave the root snapshot, which then holds the content pane. */
-.gb-rail-area {
-  view-transition-name: gb-rail;
+/* What changes from page to page: the content pane and the outline's
+   headings. Everything else (the root's background) stays. */
+.gb-content-pane {
+  view-transition-name: gb-page;
+  view-transition-class: page;
 }
 .gb-toc {
   view-transition-name: gb-toc;
+  view-transition-class: page;
+}
+/* The shell: the header, the rail and the navigation bar are the same on
+   every page and don't move; the new one replaces the old at once, so they
+   never dim mid-fade. */
+.gb-top {
+  view-transition-name: gb-top;
+  view-transition-class: persistent;
+}
+.gb-rail-area {
+  view-transition-name: gb-rail;
+  view-transition-class: persistent;
 }
 .gb-bar {
   view-transition-name: gb-bar;
+  view-transition-class: persistent;
 }
-.gb-top {
-  view-transition-name: gb-top;
-}
-
-::view-transition-group(root),
-::view-transition-group(gb-toc),
-::view-transition-old(root),
-::view-transition-new(root),
-::view-transition-old(gb-toc),
-::view-transition-new(gb-toc) {
-  animation-duration: var(--md-sys-motion-duration-medium1, 250ms);
-  animation-timing-function: var(--md-sys-motion-easing-standard, ease);
-}
-/* These are identical on every page: the new one replaces the old at once,
-   so they never dim mid-fade. */
-::view-transition-old(gb-rail),
-::view-transition-old(gb-bar),
-::view-transition-old(gb-top) {
+::view-transition-old(*.persistent) {
   display: none;
 }
-::view-transition-new(gb-rail),
-::view-transition-group(gb-rail),
-::view-transition-new(gb-bar),
-::view-transition-group(gb-bar),
-::view-transition-new(gb-top),
-::view-transition-group(gb-top) {
+::view-transition-group(*.persistent),
+::view-transition-new(*.persistent),
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
   animation: none;
+}
+
+/* Top level: fade through. */
+::view-transition-group(*.page) {
+  animation-duration: var(--gb-vt-enter);
+}
+::view-transition-old(*.page) {
+  animation: gb-vt-fade-out var(--gb-vt-exit)
+    var(--md-sys-motion-easing-emphasized-accelerate, ease-in) both;
+}
+::view-transition-new(*.page) {
+  animation: gb-vt-fade-in var(--gb-vt-enter)
+    var(--md-sys-motion-easing-emphasized-decelerate, ease-out) var(--gb-vt-exit) both;
+}
+
+/* Forward and backward: the same fades, sliding along the x axis
+   (emphasized easing: the pages begin and end on screen). */
+html:active-view-transition-type(forward)::view-transition-old(*.page) {
+  animation:
+    gb-vt-fade-out var(--gb-vt-exit) var(--md-sys-motion-easing-emphasized-accelerate, ease-in) both,
+    gb-vt-slide-to-start var(--gb-vt-slide) var(--md-sys-motion-easing-emphasized, ease) both;
+}
+html:active-view-transition-type(forward)::view-transition-new(*.page) {
+  animation:
+    gb-vt-fade-in var(--gb-vt-enter) var(--md-sys-motion-easing-emphasized-decelerate, ease-out) var(--gb-vt-exit) both,
+    gb-vt-slide-from-end var(--gb-vt-slide) var(--md-sys-motion-easing-emphasized, ease) both;
+}
+html:active-view-transition-type(backward)::view-transition-old(*.page) {
+  animation:
+    gb-vt-fade-out var(--gb-vt-exit) var(--md-sys-motion-easing-emphasized-accelerate, ease-in) both,
+    gb-vt-slide-to-end var(--gb-vt-slide) var(--md-sys-motion-easing-emphasized, ease) both;
+}
+html:active-view-transition-type(backward)::view-transition-new(*.page) {
+  animation:
+    gb-vt-fade-in var(--gb-vt-enter) var(--md-sys-motion-easing-emphasized-decelerate, ease-out) var(--gb-vt-exit) both,
+    gb-vt-slide-from-start var(--gb-vt-slide) var(--md-sys-motion-easing-emphasized, ease) both;
+}
+
+@keyframes gb-vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes gb-vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes gb-vt-slide-to-start {
+  to {
+    translate: calc(-1 * var(--gb-vt-shift)) 0;
+  }
+}
+@keyframes gb-vt-slide-from-end {
+  from {
+    translate: var(--gb-vt-shift) 0;
+  }
+}
+@keyframes gb-vt-slide-to-end {
+  to {
+    translate: var(--gb-vt-shift) 0;
+  }
+}
+@keyframes gb-vt-slide-from-start {
+  from {
+    translate: calc(-1 * var(--gb-vt-shift)) 0;
+  }
 }
 
 /* Route progress indicator. One element, so its transition name is unique:
