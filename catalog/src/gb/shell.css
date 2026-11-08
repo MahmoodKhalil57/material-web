@@ -167,56 +167,6 @@ md-gb-nav-drawer .gb-group-label {
   text-transform: uppercase;
 }
 
-/* --- Flyout: another section's pages over the content ---------------------------- */
-
-.gb-flyout {
-  position: fixed;
-  inset: 0 auto 0 var(--gb-rail-w);
-  inline-size: var(--gb-pane-open-w);
-  block-size: 100dvh;
-  max-block-size: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  overflow: hidden;
-  background: var(--md-sys-color-surface-container-low);
-  color: var(--md-sys-color-on-surface);
-  border-start-end-radius: var(--md-sys-shape-corner-xl);
-  border-end-end-radius: var(--md-sys-shape-corner-xl);
-  box-shadow: var(--md-sys-elevation-shadow-3);
-  opacity: 0;
-  translate: -24px 0;
-}
-.gb-flyout:popover-open {
-  opacity: 1;
-  translate: 0 0;
-}
-.gb-flyout md-gb-nav-drawer {
-  block-size: 100%;
-  --container-width: 100%;
-  --container-color: transparent;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .gb-flyout {
-    transition:
-      opacity var(--md-sys-motion-spring-fast-effects-duration, 140ms) var(--md-sys-motion-spring-fast-effects, ease),
-      translate var(--md-sys-motion-spring-default-spatial-duration, 420ms) var(--md-sys-motion-spring-default-spatial, ease),
-      display var(--md-sys-motion-spring-default-spatial-duration, 420ms) allow-discrete,
-      overlay var(--md-sys-motion-spring-default-spatial-duration, 420ms) allow-discrete;
-  }
-  @starting-style {
-    .gb-flyout:popover-open {
-      opacity: 0;
-      translate: -24px 0;
-    }
-  }
-}
-@media (max-width: 599px) {
-  .gb-flyout {
-    display: none !important;
-  }
-}
-
 /* --- Content pane ---------------------------------------------------------------- */
 
 .gb-content-pane {

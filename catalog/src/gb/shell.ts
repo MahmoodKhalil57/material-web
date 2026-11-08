@@ -15,8 +15,10 @@
  *   theme, version and more controls. The pages pane (the current section's
  *   pages in an `md-gb-nav-drawer`) is standard beside the rail when expanded
  *   (the menu button toggles it, remembered in localStorage) and modal in
- *   medium windows. Another section's destination shows its pages in a
- *   flyout over the content (hover, focus, or Right arrow).
+ *   medium windows. While the pane is open, hovering or focusing another
+ *   section's destination shows that section's pages in the pane (Right
+ *   arrow moves into them); leaving the rail and pane shows the current
+ *   section again. With the pane closed, hovering does nothing.
  * - Compact windows (below 600px): a navigation bar with the sections.
  *   Selecting the current one again opens its pages in a bottom sheet, and
  *   the small search button follows the scroll (hides when scrolling down).
@@ -117,7 +119,7 @@ if (drawer) {
   place();
   expanded.addEventListener('change', place);
   menuButton?.addEventListener('click', () => {
-    hideFlyout();
+    restorePane();
     if (expanded.matches) {
       // The pane slides away; the content takes the width (CSS).
       const open = !paneOpen();
@@ -134,22 +136,23 @@ if (drawer) {
   }
 }
 
-// --- Flyout: another section's pages over the content --------------------------------
+// --- Pane preview: another section's pages in the open pages pane ---------------
 
 const rail = $('gb-rail');
-const flyout = $('gb-flyout');
-const flyoutDrawer = $<DrawerElement>('gb-flyout-drawer');
 const railItems = () =>
   [...(rail?.querySelectorAll<HTMLElement>('md-gb-nav-rail-item') ?? [])];
 
-let flyoutSection = '';
-let flyoutTimer: number | undefined;
-let flyoutFrom: HTMLElement | null = null;
+/** The pane's own items (the current section), kept while another shows. */
+let homeNodes: Node[] | null = null;
+let homeLabel = '';
+let previewing = '';
+let previewFrom: HTMLElement | null = null;
+let previewTimer: number | undefined;
+let skipFocusPreview = false;
 
-if (flyoutDrawer) {
-  flyoutDrawer.quick = true;
-  flyoutDrawer.open = true;
-}
+/** Whether the pages pane is on screen (standard, or the open modal one). */
+const paneShowing = () =>
+  !!drawer && !compact.matches && (standardPaneShowing() || (drawer.modal && drawer.open));
 
 /** Clones the pages of a section: from its template, or the live pane. */
 function pagesOf(section: string): {nodes: Node[]; label: string} | null {
@@ -163,121 +166,128 @@ function pagesOf(section: string): {nodes: Node[]; label: string} | null {
     };
   }
   if (section === currentSection && drawer) {
+    const nodes = homeNodes ?? [...drawer.childNodes];
     return {
-      nodes: [...drawer.children].map((c) => c.cloneNode(true)),
-      label: drawer.getAttribute('label')?.replace(/ pages$/, '') ?? section,
+      nodes: nodes.map((c) => c.cloneNode(true)),
+      label: (homeNodes ? homeLabel : drawer.getAttribute('label') ?? '').replace(/ pages$/, '') || section,
     };
   }
   return null;
 }
 
-function showFlyout(section: string, from: HTMLElement) {
-  clearTimeout(flyoutTimer);
-  if (!flyout || !flyoutDrawer || compact.matches) return;
-  // The standard pane already shows the current section; a modal pane is
-  // above everything.
-  if (section === currentSection && standardPaneShowing()) {
-    hideFlyout();
+/**
+ * Shows a section's pages in the pages pane while its rail destination is
+ * hovered or focused. Does nothing when the pane is closed.
+ */
+function previewSection(section: string, from: HTMLElement) {
+  clearTimeout(previewTimer);
+  if (!drawer || !paneShowing()) return;
+  previewFrom = from;
+  if (section === currentSection) {
+    restorePane();
     return;
   }
-  if (drawer?.modal && drawer.open) return;
-  flyoutFrom = from;
-  if (flyoutSection !== section) {
-    const pages = pagesOf(section);
-    if (!pages) return;
-    flyoutDrawer.replaceChildren(...pages.nodes);
-    flyoutDrawer.setAttribute('label', `${pages.label} pages`);
-    flyoutSection = section;
+  if (section === previewing) return;
+  const pages = pagesOf(section);
+  if (!pages) return;
+  if (!homeNodes) {
+    homeNodes = [...drawer.childNodes];
+    homeLabel = drawer.getAttribute('label') ?? '';
   }
-  flyout.dataset['section'] = section;
-  if (!flyout.matches(':popover-open')) flyout.showPopover();
+  drawer.replaceChildren(...pages.nodes);
+  drawer.setAttribute('label', `${pages.label} pages`);
+  drawer.dataset['preview'] = section;
+  previewing = section;
 }
 
-function hideFlyout(returnFocus = false) {
-  clearTimeout(flyoutTimer);
-  if (flyout?.matches(':popover-open')) flyout.hidePopover();
-  if (returnFocus) flyoutFrom?.focus();
+/** Puts the current section's pages back in the pane. */
+function restorePane(returnFocus = false) {
+  clearTimeout(previewTimer);
+  if (drawer && homeNodes) {
+    drawer.replaceChildren(...homeNodes);
+    drawer.setAttribute('label', homeLabel);
+    delete drawer.dataset['preview'];
+  }
+  homeNodes = null;
+  previewing = '';
+  if (returnFocus && previewFrom) {
+    // Focus goes back without previewing that destination again.
+    skipFocusPreview = true;
+    previewFrom.focus();
+    skipFocusPreview = false;
+  }
 }
 
-function hideFlyoutSoon() {
-  clearTimeout(flyoutTimer);
-  flyoutTimer = window.setTimeout(() => hideFlyout(), 280);
+function restorePaneSoon() {
+  clearTimeout(previewTimer);
+  previewTimer = window.setTimeout(() => restorePane(), 280);
 }
 
-function showFlyoutSoon(section: string, from: HTMLElement) {
-  clearTimeout(flyoutTimer);
-  flyoutTimer = window.setTimeout(
-    () => showFlyout(section, from),
-    flyout?.matches(':popover-open') ? 0 : 120,
-  );
+function focusPane() {
+  const first = drawer?.querySelector<HTMLElement>('a, md-gb-nav-drawer-item[href]');
+  requestAnimationFrame(() => first?.focus());
 }
 
-if (rail && flyout) {
+if (rail && drawer) {
   for (const item of railItems()) {
     const section = sectionOf(item);
     item.addEventListener('pointerenter', (e) => {
       if (e.pointerType === 'touch') return;
-      showFlyoutSoon(section, item);
+      clearTimeout(previewTimer);
+      // A short delay, so moving across the rail doesn't flash each section.
+      previewTimer = window.setTimeout(() => previewSection(section, item), 80);
     });
-    item.addEventListener('pointerleave', hideFlyoutSoon);
-    // Keyboard focus shows the pages too; a click focus does not.
+    item.addEventListener('pointerleave', restorePaneSoon);
+    // Keyboard focus previews too; a click focus does not.
     item.addEventListener('focus', () => {
-      if (item.matches(':focus-visible')) showFlyout(section, item);
+      if (!skipFocusPreview && item.matches(':focus-visible')) previewSection(section, item);
     });
   }
-  flyout.addEventListener('pointerenter', () => clearTimeout(flyoutTimer));
-  flyout.addEventListener('pointerleave', hideFlyoutSoon);
-  flyout.addEventListener('click', (e) => {
-    if ((e.target as Element).closest('a, md-gb-nav-drawer-item')) hideFlyout();
-  });
-  // Right arrow (Left in right-to-left) moves into the flyout; Left comes back.
+  cell?.addEventListener('pointerenter', () => clearTimeout(previewTimer));
+  cell?.addEventListener('pointerleave', restorePaneSoon);
+  // Right arrow (Left in right-to-left) moves into the pane; Left comes back.
   rail.addEventListener(
     'keydown',
     (e) => {
       const forward = getComputedStyle(rail).direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
       const item = (e.target as Element).closest<HTMLElement>('md-gb-nav-rail-item');
-      if (e.key !== forward || !item || compact.matches) return;
+      if (e.key !== forward || !item || !paneShowing()) return;
       e.preventDefault();
       e.stopPropagation();
-      showFlyout(sectionOf(item), item);
-      focusFlyout();
+      previewSection(sectionOf(item), item);
+      focusPane();
     },
     true,
   );
-  flyout.addEventListener('keydown', (e) => {
-    const back = getComputedStyle(flyout).direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
-    if (e.key === 'Escape') {
+  drawer.addEventListener('keydown', (e) => {
+    const back = getComputedStyle(drawer).direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
+    if (e.key === 'Escape' && previewing) {
       e.stopPropagation();
-      hideFlyout(true);
-    } else if (e.key === back) {
+      restorePane(true);
+    } else if (e.key === back && previewFrom) {
       e.preventDefault();
-      hideFlyout(true);
+      previewFrom.focus();
     }
   });
-  // Focus left the rail and the flyout.
+  // Focus left the rail and the pane: show the current section again.
   document.addEventListener('focusin', (e) => {
-    if (!flyout.matches(':popover-open')) return;
+    if (!previewing) return;
     const target = e.target as Node;
-    if (!rail.contains(target) && !flyout.contains(target)) hideFlyout();
+    if (!rail.contains(target) && !cell?.contains(target)) restorePane();
   });
   document.addEventListener(
     'keydown',
     (e) => {
-      if (e.key === 'Escape' && flyout.matches(':popover-open')) {
-        const active = document.activeElement;
-        hideFlyout(rail.contains(active) || flyout.contains(active));
+      if (e.key === 'Escape' && previewing && rail.contains(document.activeElement)) {
+        restorePane();
       }
     },
     true,
   );
-  compact.addEventListener('change', () => hideFlyout());
+  compact.addEventListener('change', () => restorePane());
+  expanded.addEventListener('change', () => restorePane());
 }
 
-function focusFlyout() {
-  const first = flyoutDrawer?.querySelector<HTMLElement>('a, md-gb-nav-drawer-item[href]');
-  // The drawer lays out when it first shows.
-  requestAnimationFrame(() => first?.focus());
-}
 
 // --- Compact: the navigation bar and the pages sheet ------------------------------
 

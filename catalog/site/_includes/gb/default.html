@@ -240,14 +240,11 @@
       </aside>
     </div>
 
-    {#- The other sections' pages, for the flyout of the rail (src/gb/shell.ts
-        puts them in #gb-flyout). -#}
+    {#- The other sections' pages: hovering or focusing their rail destination
+        shows them in the open pages pane (src/gb/shell.ts). -#}
     {%- for sec in gbSections %}{% if sec.id != gbCurrent %}
     <template data-pages="{{ sec.id }}" data-label="{{ sec.label }}">{{ pageItems(sec, gbGroups, gbPages, page.url) | safe }}</template>
     {%- endif %}{% endfor %}
-    <div class="gb-flyout" id="gb-flyout" popover="manual">
-      <md-gb-nav-drawer class="gb-flyout-drawer" id="gb-flyout-drawer" label="Pages"></md-gb-nav-drawer>
-    </div>
 
     {#- The sheets. One side sheet (600px and up) and one bottom sheet (below
         600px) show the tool bodies below, which move into whichever opens. -#}
