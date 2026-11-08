@@ -117,6 +117,108 @@ async function swapWithFade(targets: () => Element[], change: () => void) {
   }
 }
 
+let held: {animation: Animation; release: () => void} | null = null;
+
+// The panel's and the rail column's widths as of the last frame (resize
+// observers report them after each layout): reading them from layout at
+// the click would lay the whole panel out once more first (15-20ms).
+const widths = {pane: 0, rail: 0};
+{
+  const pane = document.getElementById('gb-content-pane');
+  const railArea = document.querySelector('.gb-rail-area');
+  const observer = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const size = entry.target === pane ? entry.contentBoxSize[0] : entry.borderBoxSize[0];
+      widths[entry.target === pane ? 'pane' : 'rail'] = size?.inlineSize ?? 0;
+    }
+  });
+  if (pane) observer.observe(pane);
+  if (railArea) observer.observe(railArea);
+}
+
+/**
+ * Runs `change`, which resizes the rail's or the outline's column (its width
+ * then moves on the column's spatial spring, shell.css), holding the content
+ * still while it moves. Laid out at every frame's width, the text would wrap
+ * anew on each (20ms of layout a frame, every other frame dropped); instead
+ * it keeps one width, the narrower of before and after, centered in the
+ * moving panel (a translate on the same spring): the panel's edge moves,
+ * the content reflows once (motion transitions.md: stable layouts). As the
+ * rail's destinations do (md-gb-nav-rail morph).
+ */
+function holdContent(change: () => void) {
+  const shell = document.querySelector<HTMLElement>('.gb-shell');
+  const pane = $('gb-content-pane');
+  const body = pane?.querySelector<HTMLElement>('.gb-body');
+  if (!shell || !pane || !body) {
+    change();
+    return;
+  }
+  // The widths as they are now: the panel's and the rail's as of the last
+  // frame (mid-motion, when interrupted), the outline's column as set (it
+  // moves rarely and only on its own button).
+  const before = widths.pane;
+  const railBefore = widths.rail;
+  const outlineBefore = parseFloat(getComputedStyle(shell).getPropertyValue('--gb-outline-w'));
+  held?.release();
+  change();
+  const style = getComputedStyle(shell);
+  const duration = parseFloat(style.transitionDuration) * 1000;
+  if (!duration || !before) return;
+  const after =
+    before +
+    railBefore -
+    parseFloat(style.getPropertyValue('--gb-rail-w')) +
+    outlineBefore -
+    parseFloat(style.getPropertyValue('--gb-outline-w'));
+  if (!(after > 0) || Math.abs(after - before) < 1) return;
+  // Held at the narrower width, so it's never cut off by the panel: a
+  // panel that narrows has the content's new lines at once; one that widens
+  // keeps the old ones until it has nearly settled, then takes its new ones
+  // (WIDEN_AT: within 500ms of the click, so the reflow is part of the
+  // interaction, not a layout shift; the spring is ~97% there, so the
+  // content overhangs the panel by a few pixels, inside its padding). The
+  // body starts at the panel's inline start; centered, its offset from there
+  // is half the difference of the widths, which moves with the panel's
+  // width, on the same spring.
+  const sign = getComputedStyle(pane).direction === 'rtl' ? -1 : 1;
+  const offset = (panel: number, width: number) => `${((panel - width) / 2) * sign}px 0`;
+  const width = Math.min(before, after);
+  body.style.inlineSize = `${width}px`;
+  pane.style.overflowX = 'hidden';
+  let animation = body.animate(
+    {translate: [offset(before, width), offset(after, width)]},
+    {duration, easing: style.transitionTimingFunction},
+  );
+  let timer = 0;
+  const release = () => {
+    clearTimeout(timer);
+    animation.cancel();
+    body.style.inlineSize = '';
+    pane.style.overflowX = '';
+    if (held?.release === release) held = null;
+  };
+  held = {animation, release};
+  void animation.finished.then(release, () => {});
+  if (after > before && duration > WIDEN_AT) {
+    timer = window.setTimeout(() => {
+      if (held?.release !== release) return;
+      const panel = pane.clientWidth;
+      animation.cancel();
+      body.style.inlineSize = `${after}px`;
+      animation = body.animate(
+        {translate: [offset(panel, after), offset(after, after)]},
+        {duration: duration - WIDEN_AT, easing: 'ease-out'},
+      );
+      held.animation = animation;
+      void animation.finished.then(release, () => {});
+    }, WIDEN_AT);
+  }
+}
+
+/** When a widening panel's content takes its new width (holdContent). */
+const WIDEN_AT = 450;
+
 // --- Navigation rail: collapsed and expanded -----------------------------------------
 
 interface RailElement extends HTMLElement {
@@ -165,8 +267,10 @@ if (rail) {
   // reveals or clips it (shell.css).
   rail.addEventListener('toggle', () => {
     if (expanded.matches) {
-      if (rail.expanded) delete root.dataset['rail'];
-      else root.dataset['rail'] = 'collapsed';
+      holdContent(() => {
+        if (rail.expanded) delete root.dataset['rail'];
+        else root.dataset['rail'] = 'collapsed';
+      });
       store(RAIL_KEY, rail.expanded ? null : 'collapsed');
     }
     syncActive();
@@ -198,8 +302,10 @@ const outlineSheet = $<SheetElement>('gb-outline-sheet');
 const outlineOpen = () => root.dataset['outline'] !== 'closed';
 
 function setOutline(open: boolean) {
-  if (open) delete root.dataset['outline'];
-  else root.dataset['outline'] = 'closed';
+  holdContent(() => {
+    if (open) delete root.dataset['outline'];
+    else root.dataset['outline'] = 'closed';
+  });
   store(OUTLINE_KEY, open ? null : 'closed');
   outlineOpenButton?.setAttribute('aria-expanded', String(open));
 }
@@ -347,9 +453,11 @@ const SECTIONS_KEY = 'gb-rail-sections';
 
 /** Shows and hides the rail's pages for the open sections and groups. */
 function applyRail() {
-  const apply = () => {
-    (window as Window & {gbRailApply?: () => void}).gbRailApply?.();
+  const apply = (deferHiding = false) => {
+    const leaving =
+      (window as Window & {gbRailApply?: (deferHiding?: boolean) => HTMLElement[]}).gbRailApply?.(deferHiding) ?? [];
     syncActive();
+    return leaving;
   };
   if (!rail?.expanded) {
     apply();
@@ -365,17 +473,22 @@ function applyRail() {
  * (fast effects) before the rows below move up into their space; rows make
  * room (spatial spring) before pages that enter fade in (default effects).
  * Only what's in view animates; reduced motion keeps the fades.
+ *
+ * `apply(true)` shows the pages that enter and returns those that leave,
+ * still shown (`apply(false)` hides them): each page's display changes once (hiding a page and showing it
+ * again for its fade would restyle some 40 pages twice, 35ms each).
  */
-async function disclose(list: HTMLElement, apply: () => void) {
+async function disclose(list: HTMLElement, apply: (deferHiding: boolean) => HTMLElement[]) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const kids = [...list.children].filter(
     (el): el is HTMLElement => el instanceof HTMLElement && el.localName !== 'script',
   );
   const wasHidden = new Map(kids.map((el) => [el, el.hidden]));
-  apply();
-  const leaving = kids.filter((el) => !wasHidden.get(el) && el.hidden);
-  const entering = kids.filter((el) => wasHidden.get(el) && !el.hidden);
+  // Where the rows are before the change, measured while layout is clean.
   const view = (list.shadowRoot?.querySelector('.nav-rail-items') ?? list).getBoundingClientRect();
+  const shown = new Map(kids.filter((el) => !el.hidden).map((el) => [el, el.getBoundingClientRect()]));
+  const leaving = apply(true);
+  const entering = kids.filter((el) => wasHidden.get(el) && !el.hidden);
   const inView = (r: DOMRect) => r.bottom > view.top && r.top < view.bottom;
   const ms = (name: string, fallback: number) => parseFloat(token(name)) || fallback;
   const fast = {
@@ -393,9 +506,8 @@ async function disclose(list: HTMLElement, apply: () => void) {
     };
   };
 
-  // Leaving: shown again for their fade-out, then hidden.
+  // Leaving: fade out, then hidden.
   if (leaving.length) {
-    for (const el of leaving) el.hidden = false;
     const fades = leaving
       .filter((el) => inView(el.getBoundingClientRect()))
       .map((el) => el.animate({opacity: [1, 0]}, {...fast, fill: 'forwards'}));
@@ -403,7 +515,9 @@ async function disclose(list: HTMLElement, apply: () => void) {
     // Where the rows below are before the pages go.
     const staying = kids.filter((el) => !el.hidden && !leaving.includes(el));
     const before = new Map(staying.map((el) => [el, el.getBoundingClientRect()]));
-    for (const el of leaving) el.hidden = true;
+    // Hidden now, as the saved state says then (a click during the fade may
+    // have opened them again); the active destination follows.
+    apply(false);
     for (const a of fades) a.cancel();
     if (!reduced) slide(staying, before, inView, spatial);
     return;
@@ -413,10 +527,7 @@ async function disclose(list: HTMLElement, apply: () => void) {
   if (entering.length) {
     const staying = kids.filter((el) => !el.hidden && !entering.includes(el));
     // Where the rows below were: laid out without the entering pages.
-    for (const el of entering) el.hidden = true;
-    const before = new Map(staying.map((el) => [el, el.getBoundingClientRect()]));
-    for (const el of entering) el.hidden = false;
-    if (!reduced) slide(staying, before, inView, spatial);
+    if (!reduced) slide(staying, shown, inView, spatial);
     const fadeIn = {
       duration: ms('--md-sys-motion-spring-default-effects-duration', 220),
       easing: token('--md-sys-motion-spring-default-effects') || 'ease',

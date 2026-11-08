@@ -91,7 +91,7 @@
 {%- endif %}
 {%- endmacro -%}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="gb-shell-root">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -232,8 +232,11 @@
           // (src/gb/shell.ts saves them), else the defaults in the markup; the
           // current page's group stays open. A closed section hides its
           // pages and groups; a closed group its pages. Runs here before
-          // first paint, and again on every toggle (shell.ts).
-          window.gbRailApply = () => {
+          // first paint, and again on every toggle (shell.ts). With
+          // deferHiding, the shown pages that close stay shown and are
+          // returned, for shell.ts to fade out before hiding them.
+          window.gbRailApply = (deferHiding) => {
+            const leaving = [];
             const rail = document.getElementById('gb-rail');
             const read = (key) => {
               try {
@@ -257,9 +260,12 @@
               const shown = open(toggle, sections, id);
               toggle.setAttribute('aria-expanded', String(shown));
               for (const el of rail.querySelectorAll(`[data-in-section="${id}"]`)) {
-                el.hidden = !shown || (el.dataset.group ? !openGroups[el.dataset.group] : false);
+                const hide = !shown || (el.dataset.group ? !openGroups[el.dataset.group] : false);
+                if (hide && !el.hidden && deferHiding) leaving.push(el);
+                else el.hidden = hide;
               }
             }
+            return leaving;
           };
           // Before first paint: expanded from 840px unless the reader
           // collapsed it, with the current page (if its section is open) as

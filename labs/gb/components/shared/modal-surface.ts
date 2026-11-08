@@ -164,13 +164,20 @@ function isDisplayContents(element: Element) {
  * Returns the keyboard-focusable elements inside `root` in flat tree
  * (rendered) order: slots are expanded to their assigned elements and open
  * shadow roots are walked, except for custom elements that delegate focus,
- * which count as one stop.
+ * which count as one stop. With `first`, returns only the first one.
  */
 export function getFocusableElements(
   root: Element | ShadowRoot,
+  {first = false} = {},
 ): HTMLElement[] {
   const result: HTMLElement[] = [];
   const visit = (node: Element) => {
+    // With `first`, the walk stops at the first one: each element it checks
+    // is a style lookup (checkVisibility), and a surface such as a rail with
+    // its destinations has hundreds.
+    if (first && result.length) {
+      return;
+    }
     if (node instanceof HTMLSlotElement) {
       const assigned = node.assignedElements({flatten: true});
       const children = assigned.length ? assigned : [...node.children];
@@ -602,7 +609,9 @@ export class ModalSurfaceController implements ReactiveController {
       this.options.initialFocus?.() ??
       this.host.querySelector<HTMLElement>('[autofocus]') ??
       surface?.querySelector<HTMLElement>('[autofocus]') ??
-      (surface ? getFocusableElements(surface.shadowRoot ?? surface)[0] : null) ??
+      (surface
+        ? getFocusableElements(surface.shadowRoot ?? surface, {first: true})[0]
+        : null) ??
       surface;
     target?.focus();
   }

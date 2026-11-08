@@ -21,17 +21,29 @@
    width is reserved here, before the elements are defined, so nothing moves
    when the script runs. */
 
+/* The rail's and the outline's columns. They change when the reader expands
+   or collapses one, so they aren't inherited: set on :root, a change would
+   restyle the whole document (some 3,000 elements with the components'
+   shadow trees, 60ms) instead of the three elements that read them. */
+@property --gb-rail-w {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+@property --gb-outline-w {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
 :root {
   /* The search app bar's container height (app bars spec). */
   --gb-top-h: 64px;
-  --gb-rail-w: 0px;
   /* md.comp.nav-rail.collapsed.container.width (96dp): the labels
      ("Foundations", "Components") keep space on both sides; the narrow
      80dp rail leaves them touching its edges. */
   --gb-rail-collapsed-w: 96px;
   /* Within the expanded rail's 220-360dp: the longest page titles fit. */
   --gb-rail-open-w: 280px;
-  --gb-outline-w: 0px;
   /* Wide enough for most headings, which wrap beyond it. */
   --gb-outline-open-w: clamp(12.5rem, 18vw, 15rem);
   --gb-bar-h: 80px;
@@ -43,37 +55,41 @@
     var(--md-sys-motion-spring-slow-spatial, ease);
 }
 @media (min-width: 600px) {
-  :root {
+  :is(.gb-shell, .gb-rail, .gb-rail-foot) {
     --gb-rail-w: var(--gb-rail-collapsed-w);
   }
 }
 @media (min-width: 840px) {
   /* Expanded beside the content, unless the reader collapsed it. */
-  :root:not([data-rail='collapsed']) {
+  :root:not([data-rail='collapsed']) :is(.gb-shell, .gb-rail, .gb-rail-foot) {
     --gb-rail-w: var(--gb-rail-open-w);
   }
   /* The page outline is a column, open unless the reader closed it; closed,
      the column is a strip with the button that opens it. */
-  :root {
+  .gb-shell {
     --gb-outline-w: var(--gb-outline-open-w);
   }
-  :root[data-outline='closed'] {
+  :root[data-outline='closed'] .gb-shell {
     --gb-outline-w: 56px;
   }
 }
 
 /* One screen high, like Gmail: the document never scrolls; the rail, the
-   content and the outline scroll in their own panels. */
-html:has(.gb-shell),
-html:has(.gb-shell) body {
+   content and the outline scroll in their own panels. The layout marks its
+   root (.gb-shell-root) rather than html:has(.gb-shell): Chrome checks a
+   :has() on the root again on attribute changes anywhere below it, and with
+   `body` after it restyles the whole document each time (2,200 elements,
+   60ms, on every rail toggle). */
+.gb-shell-root,
+.gb-shell-root body {
   block-size: 100dvh;
   overflow: hidden;
 }
-html:has(.gb-shell) {
+.gb-shell-root {
   scrollbar-gutter: auto;
 }
 
-body:has(.gb-shell) {
+.gb-shell-root body {
   background: var(--md-sys-color-surface-container);
 }
 
@@ -214,8 +230,14 @@ body:has(.gb-shell) {
    Applying transitions): the standard rail takes its new width at once and
    the column reveals or clips it, so its labels don't reflow frame by
    frame. The modal rail opens over the content, unclipped. */
-.gb-rail-area:not(:has(> .gb-rail[modal])) {
-  overflow: clip;
+/* The rail is modal below 840px (shell.ts place()). Media queries, not
+   .gb-rail-area:has(> .gb-rail[modal]): a :has() over the rail's state
+   restyles the whole area, the rail's destinations too, on every toggle
+   (30ms). */
+@media (min-width: 840px) {
+  .gb-rail-area {
+    overflow: clip;
+  }
 }
 .gb-rail:not([modal])::part(nav-rail) {
   transition: none;
@@ -262,9 +284,12 @@ body:has(.gb-shell) {
   visibility: hidden;
 }
 /* The modal expanded rail (medium windows) and its scrim cover the header
-   too. */
-.gb-rail-area:has(> .gb-rail[modal][expanded]) {
-  z-index: 40;
+   too. Collapsed, the rail is below the header and covers none of it;
+   the header's search and menus open in the top layer. */
+@media (max-width: 839px) {
+  .gb-rail-area {
+    z-index: 40;
+  }
 }
 /* The expanded rail's levels step in 16px at a time: a section's pill at
    the rail's inset (its icon, then its label at 68px), a group's toggle
@@ -324,12 +349,14 @@ body:has(.gb-shell) {
   align-items: center;
   gap: var(--md-sys-space-50);
 }
-.gb-rail-area:has(> .gb-rail[expanded]:not([modal])) .gb-rail-foot {
+/* Sibling selectors, not .gb-rail-area:has(...): a :has() change restyles
+   all of the area, the rail's destinations too (30ms). */
+.gb-rail[expanded]:not([modal]) ~ .gb-rail-foot {
   flex-direction: row;
   justify-content: space-between;
   padding-inline: var(--md-sys-space-250, 20px);
 }
-.gb-rail-area:has(> .gb-rail[expanded]:not([modal])) .gb-rail-links {
+.gb-rail[expanded]:not([modal]) ~ .gb-rail-foot .gb-rail-links {
   flex-direction: row;
 }
 .gb-rail-foot :not(:defined) {
@@ -488,7 +515,11 @@ md-gb-nav-drawer-item[data-group] {
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-padding-block-start: var(--md-sys-space-200);
-  /* The top previous / next links measure from the panel (100cqi). */
+}
+/* The top previous / next links measure from the panel (100cqi): its body,
+   which is as wide, and keeps its width while a column moves (shell.ts
+   holdContent). */
+.gb-body {
   container-type: inline-size;
 }
 .gb-main {
@@ -999,8 +1030,8 @@ md-gb-bottom-sheet .gb-tool {
 
 /* Print: the pages in normal flow, without the panels. */
 @media print {
-  html:has(.gb-shell),
-  html:has(.gb-shell) body,
+  .gb-shell-root,
+  .gb-shell-root body,
   .gb-shell {
     display: block;
     block-size: auto;

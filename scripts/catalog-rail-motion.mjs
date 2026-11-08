@@ -19,7 +19,12 @@
 //
 // Scenarios: the standard rail (expanded beside the content, 1300px), the
 // modal rail (over the content, 700px), and both under reduced motion. Each
-// toggle is a real click on the menu button. Per frame: the rail column's
+// toggle is a real click on the menu button. In the standard rail it also
+// closes and opens the current section's pages (its chevron) and a group's
+// (its toggle), checked against motion transitions.md, Enter and exit
+// (expand and collapse along the y axis, clean fades): the toggle stays put,
+// leaving pages fade out before the rows below move up, rows make room
+// before entering pages fade in, no jump cut. Per frame: the rail column's
 // width, the rail's own width, the content pane, the menu button, every
 // section's icon, the active pill, the labels, the scrim, and the gaps
 // between frames.
@@ -93,6 +98,10 @@ function sampleFrames() {
   };
   const frames = [];
   const t0 = performance.now();
+  // The active destination before the click (sampling starts just before
+  // it): on a page in an open section, expanding moves it from the section
+  // to the page.
+  const from = rail.querySelector('md-gb-nav-rail-item[selected]')?.getAttribute('href') ?? '';
   let still = 0;
   let last = '';
   return new Promise((resolve) => {
@@ -105,6 +114,8 @@ function sampleFrames() {
       const frame = {
         t: Math.round(now - t0),
         expanded: rail.expanded,
+        from,
+        selected: selected?.getAttribute('href') ?? '',
         column: Math.round(area.getBoundingClientRect().width * 10) / 10,
         rail: Math.round(inner.getBoundingClientRect().width * 10) / 10,
         paneX: Math.round(pane.getBoundingClientRect().left * 10) / 10,
@@ -114,6 +125,45 @@ function sampleFrames() {
         labels: sections.map((s) => Number(getComputedStyle(s.shadowRoot.querySelector('.nav-rail-item-label')).opacity)),
         scrim: scrim ? Number(getComputedStyle(scrim).opacity) : null,
         animations: rail.getAnimations({subtree: true}).length + sections.reduce((n, s) => n + s.shadowRoot.getAnimations().length, 0),
+      };
+      frames.push(frame);
+      const key = JSON.stringify({...frame, t: 0});
+      still = key === last ? still + 1 : 0;
+      last = key;
+      if ((still >= 20 && frame.t > 100) || frame.t > 2000) resolve(frames);
+      else requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+// Samples a disclosure in the expanded rail (a section's chevron or a group's
+// toggle, window.__disclosure: the toggle, the pages it shows or hides, and
+// the first row after them) every frame until it has been still for 20
+// frames (or 2s).
+function sampleDisclosure() {
+  const {toggle, pages, below} = window.__disclosure;
+  const list = document.getElementById('gb-rail').shadowRoot.querySelector('.nav-rail-items');
+  const view = list.getBoundingClientRect();
+  const inView = (r) => r.height > 0 && r.bottom > view.top && r.top < view.bottom;
+  const frames = [];
+  const t0 = performance.now();
+  let still = 0;
+  let last = '';
+  return new Promise((resolve) => {
+    const tick = (now) => {
+      const shown = pages.filter((el) => inView(el.getBoundingClientRect()));
+      const frame = {
+        t: Math.round(now - t0),
+        toggle: Math.round(toggle.getBoundingClientRect().top * 10) / 10,
+        // The first row after the pages, while it's in view (out of view,
+        // nothing animates it).
+        below: below && inView(below.getBoundingClientRect()) ? Math.round(below.getBoundingClientRect().top * 10) / 10 : null,
+        // The pages in view, and how opaque they are on average (a hidden
+        // page counts as transparent).
+        shown: shown.length,
+        opacity: shown.length ? shown.reduce((n, el) => n + Number(getComputedStyle(el).opacity), 0) / shown.length : 0,
+        expanded: toggle.getAttribute('aria-expanded'),
       };
       frames.push(frame);
       const key = JSON.stringify({...frame, t: 0});
@@ -182,10 +232,16 @@ function check(frames, {modal, reduced, perf, clickAt, endAt}) {
   add('labels fade (no pop)', fading >= 2, `${fading} frames mid-fade`);
 
   // The active pill stretches between its two shapes (spatial), unless
-  // motion is reduced.
+  // motion is reduced. When the active destination changes (the section
+  // collapsed, its page expanded), the new one wasn't shown before: it
+  // fades in where it is, like the other pages.
   if (!reduced) {
     const stretching = frames.filter((f) => f.pillInset && f.pillInset !== '0px').length;
-    add('active pill stretches', stretching >= 2, `${stretching} frames mid-stretch`);
+    if (end.selected !== first.from) {
+      add('active pill stretches', true, `active destination changes (${first.from} -> ${end.selected})`);
+    } else {
+      add('active pill stretches', stretching >= 2, `${stretching} frames mid-stretch`);
+    }
   }
 
   // The modal rail's scrim fades (effects), not pops.
@@ -194,6 +250,56 @@ function check(frames, {modal, reduced, perf, clickAt, endAt}) {
     add('scrim fades in', reduced || scrimFading >= 2, `${scrimFading} frames mid-fade`);
   }
 
+  return {results, settle};
+}
+
+/**
+ * The expectations for one disclosure (shell.ts disclose; motion
+ * transitions.md, Enter and exit: expand and collapse along the y axis,
+ * clean fades): the toggle stays where it was clicked; pages that leave fade
+ * out before the rows below move up into their space; rows make room before
+ * pages that enter fade in; the rows move on a spring, not a jump cut, and
+ * settle. Under reduced motion only the fades remain.
+ */
+function checkDisclosure(frames, {reduced, closing}) {
+  const results = [];
+  const add = (label, ok, detail) => results.push({label, ok, detail});
+  const first = frames[0];
+  const end = frames.at(-1);
+  const visible = (f) => JSON.stringify({...f, t: 0});
+  const moving = frames.filter((f) => visible(f) !== visible(end));
+  const settle = moving.length ? moving.at(-1).t : 0;
+
+  const drift = max(frames.map((f) => Math.abs(f.toggle - first.toggle)));
+  add('toggle stays put', drift <= 1, `drift ${drift.toFixed(1)}px`);
+  add('toggle state flips', end.expanded === (closing ? 'false' : 'true'), `aria-expanded ${end.expanded} after ${closing ? 'closing' : 'opening'}`);
+
+  // The pages fade (effects), not pop, when any are in view.
+  const fading = frames.filter((f) => f.shown && f.opacity > 0.02 && f.opacity < 0.98).length;
+  const anyShown = (closing ? first : end).shown > 0;
+  add(`pages fade ${closing ? 'out' : 'in'} (no pop)`, !anyShown || fading >= 2, `${fading} frames mid-fade`);
+
+  // The first row below the pages: where it moves, when it starts, and how.
+  const rowMoved = (f) => first.below !== null && f.below !== null && Math.abs(f.below - first.below) > 1;
+  const startMove = frames.find(rowMoved);
+  const total = first.below === null || end.below === null ? 0 : Math.abs(end.below - first.below);
+  if (closing) {
+    // Clean fade: the pages are gone before the rows close the gap.
+    const atMove = startMove ? startMove.opacity : 0;
+    add('fade-out before rows move', !startMove || !startMove.shown || atMove <= 0.05, startMove ? `pages at opacity ${atMove.toFixed(2)} when the rows start at +${startMove.t}ms` : 'rows below out of view');
+  } else if (!reduced) {
+    // Room first: the pages appear only once the rows have started moving.
+    const firstFade = frames.find((f) => f.shown && f.opacity > 0.02);
+    add('rows make room before fade-in', !firstFade || !startMove || firstFade.t >= startMove.t, firstFade && startMove ? `rows start at +${startMove.t}ms, pages at +${firstFade.t}ms` : 'nothing in view to order');
+  }
+  if (reduced) {
+    add('rows without movement', true, `moved ${total}px`);
+  } else if (total > 0) {
+    const steps = frames.slice(1).map((f, i) => (f.below === null || frames[i].below === null ? 0 : Math.abs(f.below - frames[i].below)));
+    const biggest = max(steps) / total;
+    add('rows move, no jump cut', biggest <= 0.4, `largest frame step ${(biggest * 100).toFixed(0)}% of ${total}px`);
+  }
+  add('settles in <= 1000ms', settle <= 1000, `settled at ${settle}ms`);
   return {results, settle};
 }
 
@@ -252,6 +358,14 @@ function printFrames(label, frames) {
   }
 }
 
+function printDisclosure(label, frames) {
+  console.log(`\n  frames: ${label}`);
+  console.log('     t  toggle   below  shown  opacity  expanded');
+  for (const f of frames) {
+    console.log(`  ${String(f.t).padStart(4)}  ${String(f.toggle).padStart(6)}  ${String(f.below ?? '-').padStart(6)}  ${String(f.shown).padStart(5)}  ${f.opacity.toFixed(2).padStart(7)}  ${f.expanded}`);
+  }
+}
+
 // --- Run ---------------------------------------------------------------------------
 
 const browser = await chromium.launch();
@@ -306,6 +420,57 @@ async function toggleOnce(context, page, collect, {shots = false} = {}) {
   return {...result, label};
 }
 
+/**
+ * Clicks a disclosure toggle in the expanded rail once (`which`: the current
+ * section's chevron or the first group's toggle), with `collect` running in
+ * the page from just before the click.
+ */
+async function discloseOnce(page, which, collect) {
+  const box = await page.evaluate((which) => {
+    const rail = document.getElementById('gb-rail');
+    const toggle =
+      which === 'section'
+        ? rail.querySelector('[data-section-toggle][data-default-open="true"]')
+        : // Not the current page's group, which stays open.
+          rail.querySelector('.gb-rail-group[data-group-toggle]:not([hidden], [data-current])');
+    if (!toggle) return null;
+    const pages =
+      which === 'section'
+        ? [...rail.querySelectorAll(`[data-in-section="${toggle.dataset.sectionToggle}"]`)]
+        : [...rail.querySelectorAll(`[data-group="${toggle.dataset.groupToggle}"]`)];
+    // The first row after the pages that stays (a group toggle or a section).
+    const kids = [...rail.children];
+    const after = kids.slice(kids.indexOf(pages.at(-1) ?? toggle) + 1);
+    const below = after.find((el) => !pages.includes(el) && !el.hidden && el.localName !== 'script') ?? null;
+    window.__disclosure = {toggle, pages, below};
+    // In view, its pages and the rows below too where they fit. (Not at the
+    // top of the list: closing the last section there shortens the list,
+    // and the browser clamps its scroll.)
+    const list = rail.shadowRoot.querySelector('.nav-rail-items').getBoundingClientRect();
+    const at = toggle.getBoundingClientRect();
+    if (at.top < list.top || at.bottom > list.bottom - 160) toggle.scrollIntoView({block: 'center'});
+    const r = toggle.getBoundingClientRect();
+    return {x: r.left + r.width / 2, y: r.top + r.height / 2, open: toggle.getAttribute('aria-expanded') === 'true'};
+  }, which);
+  if (!box) return null;
+  await page.waitForTimeout(100);
+  await page.evaluate((collect) => {
+    window.__clickAt = performance.now();
+    window.__collected = null;
+    window[collect]().then((data) => (window.__collected = data));
+  }, collect);
+  await page.mouse.click(box.x, box.y);
+  await page.waitForFunction(() => window.__collected, null, {timeout: 5000});
+  const result = await page.evaluate(() => ({
+    data: window.__collected,
+    clickAt: window.__clickAt,
+    endAt: performance.now(),
+    perf: window.__perf,
+  }));
+  await page.waitForTimeout(250);
+  return {...result, label: `${which} ${box.open ? 'close' : 'open'}`};
+}
+
 /** One line per expectation: how many transitions met it, and the worst. */
 function report(rows) {
   const labels = [...new Set(rows.flatMap((r) => r.results.map((x) => x.label)))];
@@ -326,7 +491,9 @@ for (const scenario of SCENARIOS.filter((s) => !only || s.name.includes(only))) 
     colorScheme: 'dark',
   });
   await context.addInitScript(observe);
-  await context.addInitScript(`window.sampleFrames = ${sampleFrames.toString()}; window.paceFrames = ${paceFrames.toString()};`);
+  await context.addInitScript(
+    `window.sampleFrames = ${sampleFrames.toString()}; window.sampleDisclosure = ${sampleDisclosure.toString()}; window.paceFrames = ${paceFrames.toString()};`,
+  );
   // Start each scenario from the defaults (expanded from 840px).
   await context.addInitScript(() => {
     try {
@@ -360,6 +527,29 @@ for (const scenario of SCENARIOS.filter((s) => !only || s.name.includes(only))) 
     rows.push({label: run.label, ...checkPerf(run.data, run)});
   }
   report(rows);
+
+  // Disclosures in the expanded standard rail: the current section's pages
+  // and a group's, closed and opened again.
+  if (!modal) {
+    const expandedNow = await page.evaluate(() => document.getElementById('gb-rail').expanded);
+    if (!expandedNow) await toggleOnce(context, page, 'paceFrames');
+    console.log(`  disclosures:`);
+    const disclosures = [];
+    for (const which of ['section', 'group']) {
+      for (let i = 0; i < cycles * 2; i++) {
+        const run = await discloseOnce(page, which, 'sampleDisclosure');
+        if (!run) break;
+        if (args.frames && i < 2) printDisclosure(run.label, run.data);
+        disclosures.push({label: run.label, ...checkDisclosure(run.data, {reduced, closing: run.label.endsWith('close')})});
+      }
+      for (let i = 0; i < cycles * 2; i++) {
+        const run = await discloseOnce(page, which, 'paceFrames');
+        if (!run) break;
+        disclosures.push({label: run.label, ...checkPerf(run.data, run)});
+      }
+    }
+    report(disclosures);
+  }
   if (errors.length) {
     failed++;
     console.log(`  FAIL  page errors: ${errors.join(' | ')}`);
