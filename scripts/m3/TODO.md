@@ -607,3 +607,14 @@ Left after M-4:
 - [ ] Service worker: treat /3.0/r/* as network-only.
 - [ ] The registry names "@material/web", which is 2.5.0 on npm without
       the newest labs/gb files; the commands fully work after a 3.0 release.
+
+# Accessibility follow-ups (2026-11-08)
+
+- [ ] md-gb-icon: its ligature text ("download", "keyboard_arrow_down")
+      ends up in the accessible name of the button or link around it
+      (Chrome: `button "download Download"` on the split button page), and
+      `aria-hidden="true"` on the icon does not remove it. Decorative icons
+      should be hidden from the accessibility tree by default (e.g.
+      ElementInternals ariaHidden, or role none + hidden text), with an
+      opt-in label for meaningful icons. Check every component that slots
+      an icon, and add a central test.

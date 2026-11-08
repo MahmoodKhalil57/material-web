@@ -158,61 +158,42 @@ md-gb-nav-drawer .nav-drawer-section-label {
   align-items: flex-end;
   padding-block-end: var(--md-sys-space-100);
 }
-/* The groups of the components (Buttons, Date & time pickers, ...): a split
-   row like the M3 Expressive split button: the label links to the group on
-   the section page, the chevron shows or hides its pages. Outer corners are
-   full, inner corners small, with a 2px gap; a quiet container so six rows
-   don't compete with the destinations. */
-/* Same size and spacing as a destination: the drawer's 12dp inset, the
-   item height and the item's label inset. */
+/* The groups of the components (Buttons, Date & time pickers, ...): one
+   disclosure button per row, with a destination's size, inset and label
+   inset, and a full-row state layer. The whole row shows or hides the
+   group's pages; the chevron turns with it. */
 .gb-pane-group {
   display: flex;
-  gap: 2px;
   block-size: var(--active-indicator-height, 56px);
+}
+.gb-pane-group-toggle {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-space-150);
+  min-inline-size: 0;
+  padding-inline: var(--md-sys-space-200);
+  border: 0;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: none;
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+  text-align: start;
+  cursor: pointer;
+  outline: none;
+  isolation: isolate;
+}
+.gb-pane-group-label {
+  flex: 1;
+  min-inline-size: 0;
 }
 /* A group's pages: the active indicator starts one step further in. */
 md-gb-nav-drawer-item[data-group] {
   margin-inline-start: var(--md-sys-space-150);
 }
-.gb-pane-group-link,
-.gb-pane-group-toggle {
-  position: relative;
-  display: flex;
-  align-items: center;
-  border: 0;
-  background: none;
-  color: var(--md-sys-color-on-surface-variant);
-  font: var(--md-sys-typescale-label-lg);
-  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
-  text-decoration: none;
-  cursor: pointer;
-  outline: none;
-  isolation: isolate;
-}
-.gb-pane-group-link {
-  flex: 1;
-  min-inline-size: 0;
-  padding-inline: var(--md-sys-space-200);
-  border-radius: var(--md-sys-shape-corner-full) var(--md-sys-shape-corner-xs)
-    var(--md-sys-shape-corner-xs) var(--md-sys-shape-corner-full);
-}
-.gb-pane-group-toggle {
-  justify-content: center;
-  inline-size: 48px;
-  padding: 0;
-  border-radius: var(--md-sys-shape-corner-xs) var(--md-sys-shape-corner-full)
-    var(--md-sys-shape-corner-full) var(--md-sys-shape-corner-xs);
-}
-:dir(rtl) .gb-pane-group-link {
-  border-radius: var(--md-sys-shape-corner-xs) var(--md-sys-shape-corner-full)
-    var(--md-sys-shape-corner-full) var(--md-sys-shape-corner-xs);
-}
-:dir(rtl) .gb-pane-group-toggle {
-  border-radius: var(--md-sys-shape-corner-full) var(--md-sys-shape-corner-xs)
-    var(--md-sys-shape-corner-xs) var(--md-sys-shape-corner-full);
-}
-/* State layers (interaction-states: hover 8%, focus and pressed 10%). */
-.gb-pane-group-link::before,
+/* State layer (interaction-states: hover 8%, focus and pressed 10%). */
 .gb-pane-group-toggle::before {
   content: '';
   position: absolute;
@@ -222,17 +203,13 @@ md-gb-nav-drawer-item[data-group] {
   background: currentColor;
   opacity: 0;
 }
-.gb-pane-group-link:hover::before,
 .gb-pane-group-toggle:hover::before {
   opacity: 0.08;
 }
-.gb-pane-group-link:focus-visible::before,
 .gb-pane-group-toggle:focus-visible::before,
-.gb-pane-group-link:active::before,
 .gb-pane-group-toggle:active::before {
   opacity: 0.1;
 }
-.gb-pane-group-link:focus-visible,
 .gb-pane-group-toggle:focus-visible {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;

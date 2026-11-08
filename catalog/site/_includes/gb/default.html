@@ -29,13 +29,11 @@
 <md-gb-nav-drawer-item href="/3.0/{{ sec.id }}/"{% if url == '/3.0/' + sec.id + '/' %} selected{% endif %}>{{ sec.label }} overview</md-gb-nav-drawer-item>
 {%- if sec.id == 'components' %}
 {%- for group in groups %}
-{#- A split row: the label links to the group on the section page, the
-    chevron shows or hides the group's pages (src/gb/shell.ts). The group
-    with the current page starts expanded. -#}
+{#- A disclosure row: the whole row shows or hides the group's pages
+    (src/gb/shell.ts). The group with the current page starts expanded. -#}
 {%- set collapsed = currentGroup and group.id != currentGroup %}
 <div class="gb-pane-group" data-group="{{ group.id }}"{% if group.id == currentGroup %} data-current{% endif %}>
-<a class="gb-pane-group-link" href="/3.0/components/#gb-pane-group-{{ group.id }}">{{ group.label }}</a>
-<button class="gb-pane-group-toggle" type="button" aria-expanded="{{ 'false' if collapsed else 'true' }}" aria-label="{{ group.label }} pages"><md-gb-icon aria-hidden="true">keyboard_arrow_down</md-gb-icon></button>
+<button class="gb-pane-group-toggle" type="button" aria-expanded="{{ 'false' if collapsed else 'true' }}" aria-label="{{ group.label }}"><span class="gb-pane-group-label">{{ group.label }}</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
 </div>
 {%- for file in pages %}{% if file.data.section == 'components' and file.data.category == group.id %}
 <md-gb-nav-drawer-item href="{{ file.url }}" data-group="{{ group.id }}"{% if collapsed %} hidden{% endif %}{% if file.url == url %} selected{% endif %}>{{ file.data.title }}</md-gb-nav-drawer-item>
