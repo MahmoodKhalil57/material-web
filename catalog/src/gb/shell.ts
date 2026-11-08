@@ -347,8 +347,109 @@ const SECTIONS_KEY = 'gb-rail-sections';
 
 /** Shows and hides the rail's pages for the open sections and groups. */
 function applyRail() {
-  (window as Window & {gbRailApply?: () => void}).gbRailApply?.();
-  syncActive();
+  const apply = () => {
+    (window as Window & {gbRailApply?: () => void}).gbRailApply?.();
+    syncActive();
+  };
+  if (!rail?.expanded) {
+    apply();
+    return;
+  }
+  void disclose(rail, apply);
+}
+
+/**
+ * Opens or closes a section's or group's pages in the rail along the y axis
+ * (motion transitions.md, Enter and exit: components "expand and collapse
+ * along the x or y axis"), with clean fades: pages that leave fade out
+ * (fast effects) before the rows below move up into their space; rows make
+ * room (spatial spring) before pages that enter fade in (default effects).
+ * Only what's in view animates; reduced motion keeps the fades.
+ */
+async function disclose(list: HTMLElement, apply: () => void) {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const kids = [...list.children].filter(
+    (el): el is HTMLElement => el instanceof HTMLElement && el.localName !== 'script',
+  );
+  const wasHidden = new Map(kids.map((el) => [el, el.hidden]));
+  apply();
+  const leaving = kids.filter((el) => !wasHidden.get(el) && el.hidden);
+  const entering = kids.filter((el) => wasHidden.get(el) && !el.hidden);
+  const view = (list.shadowRoot?.querySelector('.nav-rail-items') ?? list).getBoundingClientRect();
+  const inView = (r: DOMRect) => r.bottom > view.top && r.top < view.bottom;
+  const ms = (name: string, fallback: number) => parseFloat(token(name)) || fallback;
+  const fast = {
+    duration: ms('--md-sys-motion-spring-fast-effects-duration', 140),
+    easing: token('--md-sys-motion-spring-fast-effects') || 'ease',
+  };
+  // Durations scale with the distance (easing-and-duration.md, Transition
+  // size; overview.md: larger elements may use slow): a section's pages
+  // move the rows below by hundreds of pixels, a group's by a few rows.
+  const spatial = (distance: number) => {
+    const speed = distance > 200 ? 'slow' : 'default';
+    return {
+      duration: ms(`--md-sys-motion-spring-${speed}-spatial-duration`, speed === 'slow' ? 570 : 420),
+      easing: token(`--md-sys-motion-spring-${speed}-spatial`) || 'ease',
+    };
+  };
+
+  // Leaving: shown again for their fade-out, then hidden.
+  if (leaving.length) {
+    for (const el of leaving) el.hidden = false;
+    const fades = leaving
+      .filter((el) => inView(el.getBoundingClientRect()))
+      .map((el) => el.animate({opacity: [1, 0]}, {...fast, fill: 'forwards'}));
+    await Promise.all(fades.map((a) => a.finished.catch(() => {})));
+    // Where the rows below are before the pages go.
+    const staying = kids.filter((el) => !el.hidden && !leaving.includes(el));
+    const before = new Map(staying.map((el) => [el, el.getBoundingClientRect()]));
+    for (const el of leaving) el.hidden = true;
+    for (const a of fades) a.cancel();
+    if (!reduced) slide(staying, before, inView, spatial);
+    return;
+  }
+
+  // Entering: the rows below move down to make room, then the pages fade in.
+  if (entering.length) {
+    const staying = kids.filter((el) => !el.hidden && !entering.includes(el));
+    // Where the rows below were: laid out without the entering pages.
+    for (const el of entering) el.hidden = true;
+    const before = new Map(staying.map((el) => [el, el.getBoundingClientRect()]));
+    for (const el of entering) el.hidden = false;
+    if (!reduced) slide(staying, before, inView, spatial);
+    const fadeIn = {
+      duration: ms('--md-sys-motion-spring-default-effects-duration', 220),
+      easing: token('--md-sys-motion-spring-default-effects') || 'ease',
+      delay: reduced ? 0 : fast.duration,
+      fill: 'backwards' as FillMode,
+    };
+    for (const el of entering) {
+      if (inView(el.getBoundingClientRect())) el.animate({opacity: [0, 1]}, fadeIn);
+    }
+  }
+}
+
+/**
+ * Moves each element from where it was (`before`) to where it is, all on
+ * the timing for the longest move.
+ */
+function slide(
+  els: HTMLElement[],
+  before: Map<HTMLElement, DOMRect>,
+  inView: (r: DOMRect) => boolean,
+  timing: (distance: number) => KeyframeAnimationOptions,
+) {
+  const moves = els
+    .map((el) => {
+      const now = el.getBoundingClientRect();
+      const was = before.get(el);
+      return {el, dy: was ? was.top - now.top : 0, show: !!was && (inView(now) || inView(was))};
+    })
+    .filter((m) => m.dy && m.show);
+  const options = timing(Math.max(0, ...moves.map((m) => Math.abs(m.dy))));
+  for (const {el, dy} of moves) {
+    el.animate({translate: [`0px ${dy}px`, '0px 0px']}, options);
+  }
 }
 
 // A section's chevron (the split button's trailing side) shows or hides
