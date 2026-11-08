@@ -77,10 +77,6 @@ body:has(.gb-shell) {
   block-size: 100dvh;
   transition: grid-template-columns var(--gb-pane-motion);
 }
-/* A section's index page has no outline. */
-.gb-shell-index {
-  --gb-outline-w: 0px;
-}
 
 /* --- Header: the search app bar ------------------------------------------------- */
 
@@ -388,6 +384,8 @@ md-gb-nav-drawer-item[data-group] {
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-padding-block-start: var(--md-sys-space-200);
+  /* The top previous / next links measure from the panel (100cqi). */
+  container-type: inline-size;
 }
 .gb-main {
   padding-block-end: var(--md-sys-space-800);
@@ -565,10 +563,15 @@ md-gb-nav-drawer-item[data-group] {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;
 }
-/* Top: text buttons with the page title; "Previous" / "Next" are read out. */
+/* Top: text buttons with the page title; "Previous" / "Next" are read out.
+   They sit at the same place on every page, so paging through the docs
+   needs no mouse movement: 16px in from the content panel's edges, not the
+   text column's (60rem on most pages, 80rem on the section index pages).
+   100% is the text column, centered in the panel (100cqi). */
 .gb-pager-top {
   justify-content: space-between;
   margin-block: var(--md-sys-space-200) var(--md-sys-space-100);
+  margin-inline: calc((100% - 100cqi) / 2 + var(--md-sys-space-200));
 }
 .gb-pager-top .gb-pager-link {
   block-size: 40px;

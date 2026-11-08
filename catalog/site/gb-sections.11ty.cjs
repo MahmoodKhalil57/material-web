@@ -16,8 +16,8 @@
  *   read well small, show a shape with the component's icon instead.
  * - The other sections show a shape with the page's `icon` (front matter).
  *
- * The pages carry the tag `gbsection` and `gbIndex: true`: the layout drops
- * the outline for them, and eleventy-helpers/gb-site.cjs adds them to the
+ * The pages carry the tag `gbsection` and `gbIndex: true`: the layout swaps
+ * its title block for the hero, and eleventy-helpers/gb-site.cjs adds them to the
  * `gbAll` collection (sitemap, Markdown, llms.txt, search).
  */
 
@@ -114,12 +114,14 @@ function illustration(index, icon) {
   );
 }
 
-/** A card: media (decorative: the title is the link), title, description. */
+/** A card: media (decorative: the title is the link), title, description.
+    The title's id puts the card in the page outline. */
 function card({url, title, text, media, deprecated, level = 3}) {
   const chip = deprecated ? `<span class="gb-card-chip">${escapeHtml(deprecated)}</span>` : '';
+  const id = `gb-card-${url.split('/').filter(Boolean).pop()}`;
   return (
     `<li class="gb-card">${media}` +
-    `<h${level} class="gb-card-title"><a class="gb-card-link" href="${url}">${escapeHtml(title)}</a>${chip}</h${level}>` +
+    `<h${level} id="${id}" class="gb-card-title"><a class="gb-card-link" href="${url}">${escapeHtml(title)}</a>${chip}</h${level}>` +
     `<p class="gb-card-desc">${escapeHtml(text)}</p></li>`
   );
 }

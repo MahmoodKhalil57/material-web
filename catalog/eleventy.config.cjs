@@ -111,6 +111,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginTOC, {
     tags: ['h2', 'h3'],
     wrapper: 'div',
+    // A section index card's "Not recommended" chip isn't part of its name.
+    ignoredElements: ['.gb-card-chip'],
   });
 
   eleventyConfig.addPlugin(compress, {

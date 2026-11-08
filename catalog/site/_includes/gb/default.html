@@ -149,7 +149,7 @@
     <script type="module" src="/js/gb/gb.js" blocking="render"></script>
   </head>
   <body>
-    <div class="gb-shell{% if gbIndex %} gb-shell-index{% endif %}">
+    <div class="gb-shell">
       {#- The header: an M3 search app bar (app-bars.md "Search app bar"): the
           menu button that toggles the pages pane, a search bar that opens
           the search view (src/gb/search.ts; also Ctrl/Cmd+K and "/"), and up
@@ -258,13 +258,11 @@
       <div class="gb-content-pane" id="gb-content-pane">
         <div class="gb-body{% if gbIndex %} gb-layout-index{% endif %}">
           <main class="gb-main" id="main" tabindex="-1">
-            {%- if not gbIndex %}
             {#- Below 840px a FAB opens the page outline in a bottom sheet
                 (src/gb/shell.ts). -#}
             <md-gb-fab id="gb-outline-fab" class="gb-outline-fab" color="secondary-container" aria-label="Page outline" aria-haspopup="dialog">
               <md-gb-icon>toc</md-gb-icon>
             </md-gb-fab>
-            {%- endif %}
             {{ pager(gbNav, 'top') | safe }}
             {%- if not gbIndex %}
             <h1>{{ title }}</h1>
@@ -281,9 +279,9 @@
           default. Its close button widens the content, and the choice is
           remembered; closed, the column narrows to a strip with the button
           that opens it again. Below 840px its links open in a bottom sheet
-          from the FAB.
-          A section's index page has no outline. -#}
-      {%- if not gbIndex %}
+          from the FAB. Every page has it, the section index pages too (their
+          cards), so the content panel and the previous / next links keep
+          their place from page to page. -#}
       <aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
         <div class="gb-outline-head">
           <h2 class="gb-outline-title" id="gb-outline-title">On this page</h2>
@@ -302,7 +300,6 @@
           <md-gb-icon>toc</md-gb-icon>
         </md-gb-icon-button>
       </aside>
-      {%- endif %}
 
       {#- Below 600px: the sections as a navigation bar. Selecting the current
           one opens its pages in a bottom sheet. -#}

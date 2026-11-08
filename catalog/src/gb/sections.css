@@ -8,7 +8,7 @@
    a large hero with M3 Expressive shapes, and a grid of cards. Colors, type,
    shape and motion come from --md-sys-* tokens only. */
 
-/* No outline column on these pages (shell.css): the cards get the width. */
+/* A wider text column than the other pages: the cards get the width. */
 .gb-layout-index .gb-main {
   max-inline-size: 80rem;
 }

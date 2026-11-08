@@ -6,7 +6,7 @@
 
 /**
  * Filter `gbPager`: the previous and next /3.0/ page of `url`, in sidebar
- * order: each section's overview page, then its pages by `order` (the same
+ * order: the home page, then each section's overview page, then its pages by `order` (the same
  * order as the pages pane), section after section. Used by the layout's
  * previous / next links (site/_includes/gb/default.html).
  *
@@ -17,7 +17,8 @@
  */
 function gbPager(eleventyConfig) {
   eleventyConfig.addFilter('gbPager', (pages, url, sections) => {
-    const sequence = [];
+    // The home page (/3.0/, not in the collection) comes first.
+    const sequence = [{url: '/3.0/', title: 'Home', section: 'Home'}];
     for (const section of sections ?? []) {
       sequence.push({
         url: `/3.0/${section.id}/`,
