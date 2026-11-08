@@ -13,6 +13,8 @@ description: Switches toggle the state of an item on or off.
 </label>
 {% enddemo %}
 
+{% gbshadcn "switch" %}
+
 ## Usage guidelines
 
 *   **Use for settings.** Switches are the best way to let people adjust a setting. Use a switch, not a radio button, when each item in a list is controlled on its own.

@@ -24,6 +24,8 @@ document.querySelector('#open-delete').addEventListener('click', () => {
 ```
 {% enddemo %}
 
+{% gbshadcn "dialog" %}
+
 ## Usage guidelines
 
 *   **Use them sparingly.** A dialog interrupts people to ask for a decision or to show critical information, so it blocks the rest of the app until it is dismissed.

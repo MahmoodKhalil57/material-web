@@ -10,6 +10,8 @@ description: A loading indicator shows that a short process is running, with a s
 <md-gb-loading-indicator aria-label="Loading"></md-gb-loading-indicator>
 {% enddemo %}
 
+{% gbshadcn "loadingindicator" %}
+
 ## Usage guidelines
 
 *   **Use it for short waits.** A loading indicator suits processes that finish in under five seconds, and replaces most uses of an indeterminate circular [progress indicator](/3.0/components/progress/).

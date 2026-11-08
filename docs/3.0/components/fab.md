@@ -12,6 +12,8 @@ description: A FAB represents the most important action on a screen, and an exte
 </md-gb-fab>
 {% enddemo %}
 
+{% gbshadcn "fab" %}
+
 ## Usage guidelines
 
 *   **One main action.** Use a FAB for the most important action on a screen. It floats in front of other content.

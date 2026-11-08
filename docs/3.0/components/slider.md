@@ -10,6 +10,8 @@ description: Sliders let people view and select a value, or a range of values, a
 <md-gb-slider aria-label="Volume" value="50" labeled></md-gb-slider>
 {% enddemo %}
 
+{% gbshadcn "slider" %}
+
 ## Usage guidelines
 
 *   **Show the full range.** A slider should present every value that can be chosen, with `min` and `max` set to match.

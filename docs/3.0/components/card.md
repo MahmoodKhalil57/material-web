@@ -15,6 +15,8 @@ description: A card contains content and actions about a single subject.
 </md-gb-card>
 {% enddemo %}
 
+{% gbshadcn "card" %}
+
 ## Usage guidelines
 
 *   **One subject per card.** A card shows related content and actions about a single topic, arranged so the hierarchy is clear.

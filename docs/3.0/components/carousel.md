@@ -23,6 +23,8 @@ description: A carousel is a scrollable list of visual items that change size as
 </md-gb-carousel>
 {% enddemo %}
 
+{% gbshadcn "carousel" %}
+
 ## Usage guidelines
 
 *   **Lead with visuals.** Items emphasize an image and can carry a brief label that adapts to the item size.

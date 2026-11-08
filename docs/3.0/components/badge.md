@@ -12,6 +12,8 @@ description: A badge shows a small dot or a count to signal new or changed infor
 <md-gb-badge>99+</md-gb-badge>
 {% enddemo %}
 
+{% gbshadcn "badge" %}
+
 ## Usage guidelines
 
 *   **Use a dot for something new.** A badge without content signals new or changed information.

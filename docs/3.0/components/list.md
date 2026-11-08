@@ -29,6 +29,8 @@ description: Lists are continuous, vertical indexes of text and images, with opt
 </md-gb-list>
 {% enddemo %}
 
+{% gbshadcn "list" %}
+
 ## Usage guidelines
 
 *   **Make items easy to scan.** Keep labels short, order items in a logical way such as alphabetical or numerical, and show icons, text and actions in a consistent format.

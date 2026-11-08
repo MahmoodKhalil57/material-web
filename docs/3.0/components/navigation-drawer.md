@@ -21,6 +21,8 @@ hero: navdrawer/standard-drawer
 </md-gb-nav-drawer>
 {% enddemo %}
 
+{% gbshadcn "navdrawer" %}
+
 ## Usage guidelines
 
 *   **Use it for top-level destinations.** A drawer lists the main sections of an app, with the current one selected.

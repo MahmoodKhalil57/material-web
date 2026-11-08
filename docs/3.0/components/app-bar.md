@@ -19,6 +19,8 @@ description: An app bar sits at the top of a screen and shows its title, navigat
 </md-gb-app-bar>
 {% enddemo %}
 
+{% gbshadcn "appbar" %}
+
 ## Usage guidelines
 
 *   **Keep it about the page.** An app bar shows the title, navigation and a few actions that belong to the current page.

@@ -14,6 +14,8 @@ description: Tabs organize groups of related content that are at the same level 
 </md-gb-tabs>
 {% enddemo %}
 
+{% gbshadcn "tabs" %}
+
 ## Usage guidelines
 
 *   **Same level of hierarchy.** Tabs switch between views of related content that are peers. Don't use them for steps in a flow.

@@ -10,6 +10,8 @@ description: A date picker lets people select a date or a range of dates.
 <md-gb-date-picker label="Event date"></md-gb-date-picker>
 {% enddemo %}
 
+{% gbshadcn "datepicker" %}
+
 ## Usage guidelines
 
 *   **Match the context.** Use the docked picker, a calendar under a text field, on medium and expanded windows. Use a [modal](#modal) picker on compact ones.

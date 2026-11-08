@@ -13,6 +13,8 @@ description: Tooltips add context to a button or other element, as a short plain
 <md-gb-tooltip for="edit">Edit</md-gb-tooltip>
 {% enddemo %}
 
+{% gbshadcn "tooltip" %}
+
 ## Usage guidelines
 
 *   **Plain to label.** Use a [plain](#placement) tooltip to name an element with no text, such as an icon-only button. Don't add one when the element already has a visible label.

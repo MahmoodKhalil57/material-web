@@ -10,6 +10,8 @@ description: Text fields let people enter and edit text.
 <md-gb-text-field label="Name"></md-gb-text-field>
 {% enddemo %}
 
+{% gbshadcn "textfield" %}
+
 ## Usage guidelines
 
 *   **Filled or outlined.** Filled fields have more visual weight and suit most forms. [Outlined](#variants) fields are lighter and work where many fields sit together. Don't mix them in one form.

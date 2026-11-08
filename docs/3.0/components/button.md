@@ -11,6 +11,8 @@ description: Buttons help people initiate actions, from sending an email, to sha
 <md-gb-button color="outlined">Cancel</md-gb-button>
 {% enddemo %}
 
+{% gbshadcn "button" %}
+
 ## Usage guidelines
 
 *   **Label the action.** A button's text describes what happens when it is pressed, such as "Save" or "Join now".

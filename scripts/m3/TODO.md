@@ -587,5 +587,23 @@ Left after M-4:
 - [ ] Tabs: aria-label on icon-only md-gb-tab reported as
       aria-prohibited-attr (role via ElementInternals; likely axe false
       positive, verify against the ARIA model test).
-- [ ] Shortcode exposing the labs/gb module URL so {% demo %} scripts can
-      import helpers (applyTheme, transitions) live.
+- [x] Shortcode exposing the labs/gb module URL so {% demo %} scripts can
+      import helpers (applyTheme, transitions) live. (Import map in demo
+      frames: @material/web/labs/gb/, lit, lit/.)
+
+# shadcn registry follow-ups (2026-11-08)
+
+- [ ] Elements import their styles as CSS module scripts
+      (`import x from './x.css' with {type: 'css'}`, the upstream
+      "github-only" convention from 2026-07-14). Vite cannot bundle them
+      (the shadcn docs page ships a plugin that rewrites them to the
+      `.cssresult.js` siblings), and browsers without CSS module scripts
+      cannot load the elements unbundled. Decide with upstream: publish
+      the `.cssresult.js` variant for npm consumers, or a build step that
+      rewrites the imports in the package. Test the elements in Firefox
+      and Safari (all tests run in Chromium today).
+- [ ] Next.js: wrappers are client-only (next/dynamic ssr: false) since the
+      elements can't be imported in Node; untested. Lit SSR path?
+- [ ] Service worker: treat /3.0/r/* as network-only.
+- [ ] The registry names "@material/web", which is 2.5.0 on npm without
+      the newest labs/gb files; the commands fully work after a 3.0 release.

@@ -15,6 +15,8 @@ description: Menus show a temporary set of actions or choices, opened from a but
 </md-gb-menu>
 {% enddemo %}
 
+{% gbshadcn "menu" %}
+
 ## Usage guidelines
 
 *   **Use it for temporary actions.** A menu shows a short set of actions on demand. To show actions on screen at all times, use a [toolbar](/3.0/components/toolbar/).

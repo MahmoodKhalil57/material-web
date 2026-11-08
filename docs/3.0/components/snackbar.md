@@ -18,6 +18,8 @@ document.querySelector('#archive')!.addEventListener('click', () => {
 ```
 {% enddemo %}
 
+{% gbshadcn "snackbar" %}
+
 ## Usage guidelines
 
 *   **Low priority only.** Use a snackbar for a message that needs no response. For an important one that blocks the task, use a dialog.

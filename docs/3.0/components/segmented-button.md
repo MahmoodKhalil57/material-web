@@ -14,6 +14,8 @@ description: A segmented button set lets people pick one or several options from
 </md-gb-segmented-button-set>
 {% enddemo %}
 
+{% gbshadcn "segmentedbutton" %}
+
 ## Usage guidelines
 
 *   **Prefer a connected button group.** Material 3 Expressive no longer recommends segmented buttons; the connected [button group](/3.0/components/button-group/) has mostly the same function with an updated look.

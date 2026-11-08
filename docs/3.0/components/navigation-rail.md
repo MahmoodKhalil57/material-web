@@ -27,6 +27,8 @@ description: A navigation rail lets people switch between top-level destinations
 </md-gb-nav-rail>
 {% enddemo %}
 
+{% gbshadcn "navrail" %}
+
 ## Usage guidelines
 
 *   **Use it in medium windows and larger.** On compact windows use a [navigation bar](/3.0/components/navigation-bar/) instead.

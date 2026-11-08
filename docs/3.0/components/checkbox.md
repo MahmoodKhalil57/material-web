@@ -13,6 +13,8 @@ description: Checkboxes let people select one or more items from a set, or turn 
 </label>
 {% enddemo %}
 
+{% gbshadcn "checkbox" %}
+
 ## Usage guidelines
 
 *   **Select from a set.** Use checkboxes when people can pick any number of options from a list, or to turn one option on or off.

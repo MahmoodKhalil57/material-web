@@ -14,6 +14,8 @@ description: Select menus let people choose one option from a list that opens on
 </md-gb-select>
 {% enddemo %}
 
+{% gbshadcn "select" %}
+
 ## Usage guidelines
 
 *   **Fixed list of choices.** Use a select to choose one value from a short, fixed list, like the native `<select>`. For a longer list that people can search, use the [autocomplete](#autocomplete).

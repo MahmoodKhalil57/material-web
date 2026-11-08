@@ -23,6 +23,8 @@ description: A FAB menu opens from a FAB to show several related actions, and th
 </md-gb-fab-menu>
 {% enddemo %}
 
+{% gbshadcn "fabmenu" %}
+
 ## Usage guidelines
 
 *   **Open it from a FAB.** The menu appears where the FAB was, and not from an extended FAB or any other component.

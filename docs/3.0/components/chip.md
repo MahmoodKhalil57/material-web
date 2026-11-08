@@ -14,6 +14,8 @@ description: Chips help people enter information, make selections, filter conten
 </md-gb-chip-set>
 {% enddemo %}
 
+{% gbshadcn "chip" %}
+
 ## Usage guidelines
 
 *   **Pick the type by purpose.** [Assist](#assist-chips) chips are smart actions, [filter](#filter-chips) chips filter content, [input](#input-chips) chips are information a person entered, and [suggestion](#suggestion-chips) chips offer dynamic replies or queries.

@@ -27,6 +27,8 @@ description: A navigation bar lets people switch between a small number of top-l
 </md-gb-nav-bar>
 {% enddemo %}
 
+{% gbshadcn "navbar" %}
+
 ## Usage guidelines
 
 *   **Use it in compact and medium windows.** From expanded windows up, switch to a [navigation rail](/3.0/components/navigation-rail/).

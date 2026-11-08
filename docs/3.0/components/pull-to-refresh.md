@@ -29,6 +29,8 @@ news.addEventListener('refresh', async () => {
 ```
 {% enddemo %}
 
+{% gbshadcn "pulltorefresh" %}
+
 Pull to refresh is the pull-to-refresh behavior of the [loading indicator](/3.0/components/loading-indicator/), which it shows while the content reloads.
 
 ## Usage guidelines

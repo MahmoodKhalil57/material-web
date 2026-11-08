@@ -14,6 +14,8 @@ description: A button group arranges related buttons and can manage their select
 </md-gb-button-group>
 {% enddemo %}
 
+{% gbshadcn "buttongroup" %}
+
 ## Usage guidelines
 
 *   **Choose standard or connected.** In a standard group, buttons respond to the one that is pressed; a [connected group](#connected) joins them into one control.

@@ -17,6 +17,8 @@ description: A split button pairs a main action with a trailing button that open
 </md-gb-split-button>
 {% enddemo %}
 
+{% gbshadcn "splitbutton" %}
+
 ## Usage guidelines
 
 *   **One main action plus related ones.** The leading button runs the most common action, and the menu holds the alternatives.

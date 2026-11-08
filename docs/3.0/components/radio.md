@@ -19,6 +19,8 @@ description: Radio buttons let people select one option from a set of options.
 </div>
 {% enddemo %}
 
+{% gbshadcn "radio" %}
+
 ## Usage guidelines
 
 *   **Use radios for a single choice.** Pick radio buttons, not switches, when only one option can be selected from a list; use checkboxes when several can.

@@ -24,6 +24,8 @@ document.querySelector('#open-actions').addEventListener('click', () => {
 ```
 {% enddemo %}
 
+{% gbshadcn "sheet" %}
+
 ## Usage guidelines
 
 *   **Secondary content.** Sheets hold extra content and actions, not the main content of the app.

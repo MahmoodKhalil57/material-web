@@ -23,6 +23,8 @@ description: A search bar lets people enter a query and find matching results, w
 </md-gb-search-bar>
 {% enddemo %}
 
+{% gbshadcn "search" %}
+
 ## Usage guidelines
 
 *   **Use it to navigate with queries.** Search is the entry point for finding content in a product by typing.

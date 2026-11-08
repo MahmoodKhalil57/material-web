@@ -11,6 +11,8 @@ description: Progress indicators inform people about the status of ongoing proce
 <md-gb-progress circular aria-label="Loading"></md-gb-progress>
 {% enddemo %}
 
+{% gbshadcn "progress" %}
+
 ## Usage guidelines
 
 *   **Pick the variant.** Use [linear](#linear) for progress across a page or container and [circular](#circular) for a compact spot such as a button or a card.

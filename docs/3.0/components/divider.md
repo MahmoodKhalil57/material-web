@@ -12,6 +12,8 @@ description: A divider is a thin line that groups content in lists and container
 <p>Delivery is expected on Friday.</p>
 {% enddemo %}
 
+{% gbshadcn "divider" %}
+
 ## Usage guidelines
 
 *   **Group and create hierarchy.** Dividers visually group components and can imply a parent and child relationship.

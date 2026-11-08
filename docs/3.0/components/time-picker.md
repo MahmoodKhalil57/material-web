@@ -10,6 +10,8 @@ description: Time pickers let people choose an hour and minute on a clock dial, 
 <md-gb-time-picker value="07:00"></md-gb-time-picker>
 {% enddemo %}
 
+{% gbshadcn "timepicker" %}
+
 ## Usage guidelines
 
 *   **Dial or input.** The dial is quick for picking an approximate time, and typing is faster for an exact one. People can [switch](#input-mode) between them unless you hide the toggle.

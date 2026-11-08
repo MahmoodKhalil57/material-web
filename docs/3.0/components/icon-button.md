@@ -21,6 +21,8 @@ description: Icon buttons help people take supplementary actions with a single t
 </md-gb-icon-button>
 {% enddemo %}
 
+{% gbshadcn "iconbutton" %}
+
 ## Usage guidelines
 
 *   **Use a clear icon.** Pick a system icon whose meaning people already know, and give the button an accessible name that describes the action.

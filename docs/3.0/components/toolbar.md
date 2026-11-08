@@ -14,6 +14,8 @@ description: A toolbar holds actions that relate to the content on the screen, d
 </md-gb-toolbar>
 {% enddemo %}
 
+{% gbshadcn "toolbar" %}
+
 ## Usage guidelines
 
 *   **Actions for the page.** A toolbar offers actions related to the current page and can show more of them in larger windows.
