@@ -14493,8 +14493,9 @@ var docKey = (url) => url.origin + url.pathname + url.search;
 var rail = document.getElementById("gb-rail");
 var scroller = () => rail?.shadowRoot?.querySelector(".nav-rail-items") ?? null;
 var scrollRestored = false;
+var lastRailTop;
 function saveRailScroll() {
-  const top = scroller()?.scrollTop;
+  const top = lastRailTop;
   if (top === void 0) return;
   try {
     store()?.setItem(
@@ -14549,9 +14550,13 @@ if (rail) {
   let saveTimer;
   customElements.whenDefined("md-gb-nav-rail").then(async () => {
     await rail.updateComplete;
-    scroller()?.addEventListener(
+    const el2 = scroller();
+    if (!el2) return;
+    requestAnimationFrame(() => lastRailTop ??= el2.scrollTop);
+    el2.addEventListener(
       "scroll",
       () => {
+        lastRailTop = el2.scrollTop;
         clearTimeout(saveTimer);
         saveTimer = window.setTimeout(saveRailScroll, 100);
       },
@@ -14603,17 +14608,25 @@ addEventListener("pageswap", (e11) => {
 addEventListener("pageshow", (e11) => {
   if (e11.persisted) document.documentElement.classList.remove("gb-vt");
 });
-addEventListener("pageswap", () => {
+{
   const pager = document.querySelector(".gb-pager-top");
   const pane = document.getElementById("gb-content-pane");
-  if (!pager) return;
-  const r5 = pager.getBoundingClientRect();
-  const view = pane?.getBoundingClientRect() ?? { top: 0, bottom: innerHeight };
-  if (r5.top >= view.top && r5.bottom <= view.bottom) return;
-  for (const el2 of pager.querySelectorAll(".gb-pager-link, .gb-pager-title")) {
-    el2.style.viewTransitionName = "none";
+  let pagerInView = true;
+  if (pager && "IntersectionObserver" in window) {
+    new IntersectionObserver(
+      ([entry]) => {
+        pagerInView = entry.isIntersecting && entry.intersectionRatio > 0.99;
+      },
+      { root: pane, threshold: [0, 1] }
+    ).observe(pager);
   }
-});
+  addEventListener("pageswap", () => {
+    if (!pager || pagerInView) return;
+    for (const el2 of pager.querySelectorAll(".gb-pager-link, .gb-pager-title")) {
+      el2.style.viewTransitionName = "none";
+    }
+  });
+}
 addEventListener("pageshow", (e11) => {
   if (!e11.persisted) return;
   for (const el2 of document.querySelectorAll(".gb-pager-top .gb-pager-link, .gb-pager-top .gb-pager-title")) {
