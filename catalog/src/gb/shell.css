@@ -41,12 +41,13 @@
   :root[data-pane='closed'] {
     --gb-pane-w: 0px;
   }
-  /* The page outline is a column, open unless the reader closed it. */
+  /* The page outline is a column, open unless the reader closed it; closed,
+     the column is a strip with the button that opens it. */
   :root {
     --gb-outline-w: var(--gb-outline-open-w);
   }
   :root[data-outline='closed'] {
-    --gb-outline-w: 0px;
+    --gb-outline-w: 56px;
   }
 }
 
@@ -388,10 +389,9 @@ md-gb-nav-drawer-item[data-group] {
     background: var(--md-sys-color-surface);
     overflow: hidden;
   }
-  /* Closed, the column has no width (and its content is out of reach). */
+  /* Closed, the strip takes the column. */
   :root[data-outline='closed'] .gb-outline {
-    visibility: hidden;
-    transition: visibility 0s var(--md-sys-motion-spring-default-spatial-duration, 420ms);
+    display: none;
   }
 }
 .gb-outline-head {
@@ -425,29 +425,22 @@ md-gb-nav-drawer-item[data-group] {
   display: none;
 }
 
-/* Opening it again (840px and up): a button at the top end of the content,
-   level with the previous / next row (which leaves room for it), that stays
-   there while the content scrolls. */
-.gb-outline-open {
+/* The strip (840px and up, outline closed): the button that opens it, at the
+   top of the column, beside the content panel. */
+.gb-outline-strip {
   display: none;
 }
 @media (min-width: 840px) {
-  :root[data-outline='closed'] .gb-outline-open {
+  :root[data-outline='closed'] .gb-outline-strip {
+    grid-column: 4;
+    grid-row: 2;
     display: flex;
-    justify-content: flex-end;
-    /* The row has no height; the button keeps its own. */
-    align-items: flex-start;
-    position: sticky;
-    inset-block-start: var(--md-sys-space-200);
-    z-index: 5;
-    block-size: 0;
-    margin-inline-end: calc(-1 * var(--md-sys-space-200));
-  }
-  :root[data-outline='closed'] .gb-pager-top {
-    padding-inline-end: var(--md-sys-space-500);
+    flex-direction: column;
+    align-items: center;
+    padding-block-start: var(--md-sys-space-100);
   }
 }
-.gb-outline-open > :not(:defined) {
+.gb-outline-strip > :not(:defined) {
   visibility: hidden;
 }
 
@@ -861,7 +854,7 @@ md-gb-bottom-sheet .gb-tool {
     margin: 0;
   }
   .gb-outline,
-  .gb-outline-open,
+  .gb-outline-strip,
   .gb-outline-fab {
     display: none;
   }

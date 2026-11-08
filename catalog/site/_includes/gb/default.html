@@ -259,14 +259,8 @@
         <div class="gb-body{% if gbIndex %} gb-layout-index{% endif %}">
           <main class="gb-main" id="main" tabindex="-1">
             {%- if not gbIndex %}
-            {#- Opening the page outline: from 840px, a button at the top end of
-                the content while the outline panel is closed; below 840px, a
-                FAB that opens it in a bottom sheet (src/gb/shell.ts). -#}
-            <div class="gb-outline-open">
-              <md-gb-icon-button id="gb-outline-toggle" color="tonal" tooltip aria-label="Show page outline" aria-controls="gb-outline" aria-expanded="true">
-                <md-gb-icon>toc</md-gb-icon>
-              </md-gb-icon-button>
-            </div>
+            {#- Below 840px a FAB opens the page outline in a bottom sheet
+                (src/gb/shell.ts). -#}
             <md-gb-fab id="gb-outline-fab" class="gb-outline-fab" color="secondary-container" aria-label="Page outline" aria-haspopup="dialog">
               <md-gb-icon>toc</md-gb-icon>
             </md-gb-fab>
@@ -285,8 +279,9 @@
 
       {#- The page outline (840px and up): a column on the right, open by
           default. Its close button widens the content, and the choice is
-          remembered; the button at the top end of the content opens it
-          again. Below 840px its links open in a bottom sheet from the FAB.
+          remembered; closed, the column narrows to a strip with the button
+          that opens it again. Below 840px its links open in a bottom sheet
+          from the FAB.
           A section's index page has no outline. -#}
       {%- if not gbIndex %}
       <aside class="gb-outline" id="gb-outline" aria-labelledby="gb-outline-title">
@@ -300,6 +295,12 @@
           <a class="gb-toc-top" href="#main">(Top)</a>
           {{ content | toc | filterToc | safe }}
         </div>
+      </aside>
+      {#- Shown in the outline's column while the outline is closed. -#}
+      <aside class="gb-outline-strip" aria-label="Page outline">
+        <md-gb-icon-button id="gb-outline-toggle" tooltip aria-label="Show page outline" aria-controls="gb-outline" aria-expanded="true">
+          <md-gb-icon>toc</md-gb-icon>
+        </md-gb-icon-button>
       </aside>
       {%- endif %}
 
