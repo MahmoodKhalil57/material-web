@@ -1,0 +1,3032 @@
+{
+  "targets": {
+    "chrome": "124",
+    "edge": "124",
+    "firefox": "125",
+    "safari": "17.4",
+    "ios_saf": "17.4"
+  },
+  "components": {
+    "app-bar": {
+      "m3": {
+        "pages": [
+          {
+            "name": "app-bars",
+            "url": "https://m3.material.io/components/app-bars/overview"
+          }
+        ],
+        "units": 404,
+        "buildable": 319,
+        "tested": 104,
+        "excluded": 22,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 51,
+          "match": 47,
+          "derived": 0,
+          "drift": 0,
+          "none": 4
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "container-scroll-state-queries",
+            "name": "Container scroll-state queries",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "line-clamp",
+            "name": "line-clamp",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [],
+        "patterns": [],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/app-bar/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "badge": {
+      "m3": {
+        "pages": [
+          {
+            "name": "badges",
+            "url": "https://m3.material.io/components/badges/overview"
+          }
+        ],
+        "units": 162,
+        "buildable": 135,
+        "tested": 63,
+        "excluded": 2,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 11,
+          "match": 10,
+          "derived": 0,
+          "drift": 0,
+          "none": 1
+        }
+      },
+      "baseline": {
+        "enhancements": [],
+        "js": []
+      },
+      "aria": {
+        "roles": [],
+        "patterns": [],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/badge/",
+        "performance": 100,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "button": {
+      "m3": {
+        "pages": [
+          {
+            "name": "buttons",
+            "url": "https://m3.material.io/components/buttons/overview"
+          }
+        ],
+        "units": 435,
+        "buildable": 348,
+        "tested": 173,
+        "excluded": 8,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 168,
+          "match": 157,
+          "derived": 1,
+          "drift": 0,
+          "none": 10
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": [
+          {
+            "name": "commandForElement (invoker commands)",
+            "id": "invoker-commands",
+            "status": "newly"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "link"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Link",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/link/"
+          }
+        ],
+        "rows": 5,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/button/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "button-group": {
+      "m3": {
+        "pages": [
+          {
+            "name": "button-groups",
+            "url": "https://m3.material.io/components/button-groups/overview"
+          }
+        ],
+        "units": 249,
+        "buildable": 210,
+        "tested": 133,
+        "excluded": 2,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 36,
+          "match": 10,
+          "derived": 0,
+          "drift": 0,
+          "none": 26
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "calc-size",
+            "name": "calc-size()",
+            "status": "limited",
+            "how": "guarded"
+          },
+          {
+            "id": "interpolate-size",
+            "name": "interpolate-size",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "toolbar"
+        ],
+        "patterns": [
+          {
+            "name": "Toolbar",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/"
+          }
+        ],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/button-group/",
+        "performance": 90,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "First Contentful Paint",
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "card": {
+      "m3": {
+        "pages": [
+          {
+            "name": "cards",
+            "url": "https://m3.material.io/components/cards/overview"
+          }
+        ],
+        "units": 315,
+        "buildable": 243,
+        "tested": 79,
+        "excluded": 37,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 35,
+          "match": 33,
+          "derived": 0,
+          "drift": 0,
+          "none": 2
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "link"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Link",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/link/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/card/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "carousel": {
+      "m3": {
+        "pages": [
+          {
+            "name": "carousel",
+            "url": "https://m3.material.io/components/carousel/overview"
+          }
+        ],
+        "units": 347,
+        "buildable": 299,
+        "tested": 97,
+        "excluded": 16,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 29,
+          "match": 14,
+          "derived": 0,
+          "drift": 0,
+          "none": 15
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": [
+          {
+            "name": "CSS.registerProperty()",
+            "id": "registered-custom-properties",
+            "status": "newly"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "link",
+          "list",
+          "listitem",
+          "region"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Link",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/link/"
+          }
+        ],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/carousel/",
+        "performance": 99,
+        "accessibility": 93,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Elements with an ARIA `[role]` that require children to contain a specific `[role]` are missing some or all of those required children.",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "checkbox": {
+      "m3": {
+        "pages": [
+          {
+            "name": "checkbox",
+            "url": "https://m3.material.io/components/checkbox/overview"
+          }
+        ],
+        "units": 115,
+        "buildable": 82,
+        "tested": 45,
+        "excluded": 4,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 54,
+          "match": 43,
+          "derived": 0,
+          "drift": 0,
+          "none": 11
+        }
+      },
+      "baseline": {
+        "enhancements": [],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "checkbox",
+          "textbox"
+        ],
+        "patterns": [
+          {
+            "name": "Checkbox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/"
+          }
+        ],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/checkbox/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "chip": {
+      "m3": {
+        "pages": [
+          {
+            "name": "chips",
+            "url": "https://m3.material.io/components/chips/overview"
+          }
+        ],
+        "units": 516,
+        "buildable": 397,
+        "tested": 114,
+        "excluded": 21,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 133,
+          "match": 121,
+          "derived": 0,
+          "drift": 0,
+          "none": 12
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "grid",
+          "link",
+          "row",
+          "textbox"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Grid",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/grid/"
+          },
+          {
+            "name": "Link",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/link/"
+          }
+        ],
+        "rows": 6,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/chip/",
+        "performance": 98,
+        "accessibility": 94,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "`[role]`s are not contained by their required parent element",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "date-picker": {
+      "m3": {
+        "pages": [
+          {
+            "name": "date-pickers",
+            "url": "https://m3.material.io/components/date-pickers/overview"
+          }
+        ],
+        "units": 424,
+        "buildable": 379,
+        "tested": 79,
+        "excluded": 11,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 146,
+          "match": 112,
+          "derived": 0,
+          "drift": 1,
+          "none": 33
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "starting-style",
+            "name": "@starting-style",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": [
+          {
+            "name": "popover",
+            "id": "popover",
+            "status": "newly"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "dialog",
+          "grid",
+          "gridcell",
+          "group",
+          "heading",
+          "listbox",
+          "option",
+          "row",
+          "rowgroup",
+          "separator",
+          "textbox"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Dialog (Modal)",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+          },
+          {
+            "name": "Grid",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/grid/"
+          },
+          {
+            "name": "Listbox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/"
+          }
+        ],
+        "rows": 4,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/date-picker/",
+        "performance": 91,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "First Contentful Paint",
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Eliminate render-blocking resources",
+          "Minify CSS",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "dialog": {
+      "m3": {
+        "pages": [
+          {
+            "name": "dialogs",
+            "url": "https://m3.material.io/components/dialogs/overview"
+          }
+        ],
+        "units": 328,
+        "buildable": 244,
+        "tested": 124,
+        "excluded": 19,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 45,
+          "match": 41,
+          "derived": 0,
+          "drift": 0,
+          "none": 4
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "starting-style",
+            "name": "@starting-style",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "alertdialog",
+          "button",
+          "dialog",
+          "separator"
+        ],
+        "patterns": [
+          {
+            "name": "Alert and Message Dialogs",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/"
+          },
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Dialog (Modal)",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/dialog/",
+        "performance": 91,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "First Contentful Paint",
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "divider": {
+      "m3": {
+        "pages": [
+          {
+            "name": "divider",
+            "url": "https://m3.material.io/components/divider/overview"
+          }
+        ],
+        "units": 84,
+        "buildable": 48,
+        "tested": 20,
+        "excluded": 4,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 4,
+          "match": 2,
+          "derived": 0,
+          "drift": 0,
+          "none": 2
+        }
+      },
+      "baseline": {
+        "enhancements": [],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "separator"
+        ],
+        "patterns": [],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/divider/",
+        "performance": 100,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "fab": {
+      "m3": {
+        "pages": [
+          {
+            "name": "floating-action-button",
+            "url": "https://m3.material.io/components/floating-action-button/overview"
+          },
+          {
+            "name": "extended-fab",
+            "url": "https://m3.material.io/components/extended-fab/overview"
+          }
+        ],
+        "units": 509,
+        "buildable": 377,
+        "tested": 134,
+        "excluded": 40,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 65,
+          "match": 65,
+          "derived": 0,
+          "drift": 0,
+          "none": 0
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "interpolate-size",
+            "name": "interpolate-size",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          }
+        ],
+        "rows": 5,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/fab/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Elements with visible text labels do not have matching accessible names.",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "fab-menu": {
+      "m3": {
+        "pages": [
+          {
+            "name": "fab-menu",
+            "url": "https://m3.material.io/components/fab-menu/overview"
+          }
+        ],
+        "units": 227,
+        "buildable": 196,
+        "tested": 81,
+        "excluded": 24,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 38,
+          "match": 36,
+          "derived": 0,
+          "drift": 0,
+          "none": 2
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "calc-size",
+            "name": "calc-size()",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "menu",
+          "menuitem"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Menu and Menubar",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/"
+          }
+        ],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/fab-menu/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Elements with visible text labels do not have matching accessible names.",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "icon-button": {
+      "m3": {
+        "pages": [
+          {
+            "name": "icon-buttons",
+            "url": "https://m3.material.io/components/icon-buttons/overview"
+          }
+        ],
+        "units": 352,
+        "buildable": 292,
+        "tested": 168,
+        "excluded": 2,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 122,
+          "match": 113,
+          "derived": 1,
+          "drift": 0,
+          "none": 8
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": [
+          {
+            "name": "commandForElement (invoker commands)",
+            "id": "invoker-commands",
+            "status": "newly"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "link"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Link",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/link/"
+          }
+        ],
+        "rows": 5,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/icon-button/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Elements with visible text labels do not have matching accessible names.",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "list": {
+      "m3": {
+        "pages": [
+          {
+            "name": "lists",
+            "url": "https://m3.material.io/components/lists/overview"
+          }
+        ],
+        "units": 577,
+        "buildable": 486,
+        "tested": 161,
+        "excluded": 35,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 117,
+          "match": 101,
+          "derived": 4,
+          "drift": 1,
+          "none": 11
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "container-style-queries",
+            "name": "Container style queries",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "customizable-select",
+            "name": "Customizable <select>",
+            "status": "limited",
+            "how": "guarded"
+          },
+          {
+            "id": "stretch",
+            "name": "stretch",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "group",
+          "list",
+          "listbox",
+          "listitem",
+          "option"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Listbox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/"
+          }
+        ],
+        "rows": 5,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/list/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Document request latency",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "loading-indicator": {
+      "m3": {
+        "pages": [
+          {
+            "name": "loading-indicator",
+            "url": "https://m3.material.io/components/loading-indicator/overview"
+          }
+        ],
+        "units": 151,
+        "buildable": 102,
+        "tested": 41,
+        "excluded": 6,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 9,
+          "match": 7,
+          "derived": 0,
+          "drift": 0,
+          "none": 2
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "svg",
+            "name": "SVG",
+            "status": "widely",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "progressbar"
+        ],
+        "patterns": [],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/loading-indicator/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "menu": {
+      "m3": {
+        "pages": [
+          {
+            "name": "menus",
+            "url": "https://m3.material.io/components/menus/overview"
+          }
+        ],
+        "units": 391,
+        "buildable": 325,
+        "tested": 124,
+        "excluded": 35,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 113,
+          "match": 97,
+          "derived": 0,
+          "drift": 0,
+          "none": 16
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "anchor-positioning",
+            "name": "Anchor positioning",
+            "status": "limited",
+            "how": "guarded"
+          },
+          {
+            "id": "container-style-queries",
+            "name": "Container style queries",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": [
+          {
+            "name": "commandForElement (invoker commands)",
+            "id": "invoker-commands",
+            "status": "newly"
+          },
+          {
+            "name": "popover",
+            "id": "popover",
+            "status": "newly"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "group",
+          "menu",
+          "menuitem",
+          "menuitemcheckbox",
+          "menuitemradio"
+        ],
+        "patterns": [
+          {
+            "name": "Menu and Menubar",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/menu/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "navigation-bar": {
+      "m3": {
+        "pages": [
+          {
+            "name": "navigation-bar",
+            "url": "https://m3.material.io/components/navigation-bar/overview"
+          }
+        ],
+        "units": 313,
+        "buildable": 259,
+        "tested": 80,
+        "excluded": 24,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 40,
+          "match": 35,
+          "derived": 0,
+          "drift": 0,
+          "none": 5
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "navigation",
+          "tablist"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Tabs",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/"
+          }
+        ],
+        "rows": 4,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/navigation-bar/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Document request latency",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "navigation-drawer": {
+      "m3": {
+        "pages": [
+          {
+            "name": "navigation-drawer",
+            "url": "https://m3.material.io/components/navigation-drawer/overview"
+          }
+        ],
+        "units": 295,
+        "buildable": 256,
+        "tested": 142,
+        "excluded": 5,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 57,
+          "match": 38,
+          "derived": 0,
+          "drift": 1,
+          "none": 18
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "dialog",
+          "link",
+          "separator"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Dialog (Modal)",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+          },
+          {
+            "name": "Link",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/link/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/navigation-drawer/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "navigation-rail": {
+      "m3": {
+        "pages": [
+          {
+            "name": "navigation-rail",
+            "url": "https://m3.material.io/components/navigation-rail/overview"
+          }
+        ],
+        "units": 359,
+        "buildable": 311,
+        "tested": 134,
+        "excluded": 11,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 92,
+          "match": 38,
+          "derived": 8,
+          "drift": 0,
+          "none": 46
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": [
+          {
+            "name": "CloseWatcher",
+            "id": "close-watcher",
+            "status": "limited"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "navigation",
+          "tablist"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Tabs",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/"
+          }
+        ],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/navigation-rail/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Elements with visible text labels do not have matching accessible names.",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Document request latency",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "progress": {
+      "m3": {
+        "pages": [
+          {
+            "name": "progress-indicators",
+            "url": "https://m3.material.io/components/progress-indicators/overview"
+          }
+        ],
+        "units": 220,
+        "buildable": 164,
+        "tested": 61,
+        "excluded": 3,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 18,
+          "match": 17,
+          "derived": 0,
+          "drift": 0,
+          "none": 1
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "container-style-queries",
+            "name": "Container style queries",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "forced-colors",
+            "name": "Forced colors",
+            "status": "widely",
+            "how": "allowed"
+          },
+          {
+            "id": "registered-custom-properties",
+            "name": "Registered custom properties",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "svg",
+            "name": "SVG",
+            "status": "widely",
+            "how": "allowed"
+          }
+        ],
+        "js": [
+          {
+            "name": "CSS.registerProperty()",
+            "id": "registered-custom-properties",
+            "status": "newly"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "progressbar"
+        ],
+        "patterns": [],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/progress/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "pull-to-refresh": {
+      "m3": {
+        "pages": [],
+        "units": 0,
+        "buildable": 0,
+        "tested": 0,
+        "excluded": 0,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": null
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "touch-action",
+            "name": "touch-action",
+            "status": "widely",
+            "how": "guarded"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "progressbar"
+        ],
+        "patterns": [],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/pull-to-refresh/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "radio": {
+      "m3": {
+        "pages": [
+          {
+            "name": "radio-button",
+            "url": "https://m3.material.io/components/radio-button/overview"
+          }
+        ],
+        "units": 127,
+        "buildable": 84,
+        "tested": 44,
+        "excluded": 8,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 24,
+          "match": 18,
+          "derived": 0,
+          "drift": 0,
+          "none": 6
+        }
+      },
+      "baseline": {
+        "enhancements": [],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "radio"
+        ],
+        "patterns": [
+          {
+            "name": "Radio Group",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/"
+          }
+        ],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/radio/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "search": {
+      "m3": {
+        "pages": [
+          {
+            "name": "search",
+            "url": "https://m3.material.io/components/search/overview"
+          }
+        ],
+        "units": 367,
+        "buildable": 297,
+        "tested": 154,
+        "excluded": 13,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 79,
+          "match": 60,
+          "derived": 0,
+          "drift": 0,
+          "none": 19
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "combobox",
+          "dialog",
+          "listbox",
+          "option",
+          "status",
+          "textbox"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Combobox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/"
+          },
+          {
+            "name": "Dialog (Modal)",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+          },
+          {
+            "name": "Listbox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/search/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "segmented-button": {
+      "m3": {
+        "pages": [
+          {
+            "name": "segmented-buttons",
+            "url": "https://m3.material.io/components/segmented-buttons/overview"
+          }
+        ],
+        "units": 193,
+        "buildable": 149,
+        "tested": 56,
+        "excluded": 0,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 23,
+          "match": 16,
+          "derived": 0,
+          "drift": 0,
+          "none": 7
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "checkbox",
+          "group",
+          "radiogroup"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Checkbox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/"
+          },
+          {
+            "name": "Radio Group",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/segmented-button/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "select": {
+      "m3": {
+        "pages": [
+          {
+            "name": "menus",
+            "url": "https://m3.material.io/components/menus/overview"
+          }
+        ],
+        "units": 391,
+        "buildable": 325,
+        "tested": 124,
+        "excluded": 35,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 256,
+          "match": 248,
+          "derived": 0,
+          "drift": 2,
+          "none": 6
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "starting-style",
+            "name": "@starting-style",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "anchor-positioning",
+            "name": "Anchor positioning",
+            "status": "limited",
+            "how": "guarded"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "combobox",
+          "listbox",
+          "option",
+          "textbox"
+        ],
+        "patterns": [
+          {
+            "name": "Combobox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/"
+          },
+          {
+            "name": "Listbox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/"
+          }
+        ],
+        "rows": 5,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/select/",
+        "performance": 98,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "sheets": {
+      "m3": {
+        "pages": [
+          {
+            "name": "bottom-sheets",
+            "url": "https://m3.material.io/components/bottom-sheets/overview"
+          },
+          {
+            "name": "side-sheets",
+            "url": "https://m3.material.io/components/side-sheets/overview"
+          }
+        ],
+        "units": 353,
+        "buildable": 299,
+        "tested": 163,
+        "excluded": 6,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 40,
+          "match": 20,
+          "derived": 0,
+          "drift": 2,
+          "none": 18
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "starting-style",
+            "name": "@starting-style",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "dialog"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Dialog (Modal)",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+          }
+        ],
+        "rows": 4,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/sheets/",
+        "performance": 95,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "slider": {
+      "m3": {
+        "pages": [
+          {
+            "name": "sliders",
+            "url": "https://m3.material.io/components/sliders/overview"
+          }
+        ],
+        "units": 292,
+        "buildable": 261,
+        "tested": 124,
+        "excluded": 0,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 52,
+          "match": 19,
+          "derived": 0,
+          "drift": 3,
+          "none": 30
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "forced-colors",
+            "name": "Forced colors",
+            "status": "widely",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "slider"
+        ],
+        "patterns": [
+          {
+            "name": "Slider",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/slider/"
+          }
+        ],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/slider/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "snackbar": {
+      "m3": {
+        "pages": [
+          {
+            "name": "snackbar",
+            "url": "https://m3.material.io/components/snackbar/overview"
+          }
+        ],
+        "units": 199,
+        "buildable": 169,
+        "tested": 71,
+        "excluded": 1,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 42,
+          "match": 15,
+          "derived": 1,
+          "drift": 0,
+          "none": 26
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "starting-style",
+            "name": "@starting-style",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          }
+        ],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/snackbar/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "split-button": {
+      "m3": {
+        "pages": [
+          {
+            "name": "split-button",
+            "url": "https://m3.material.io/components/split-button/overview"
+          }
+        ],
+        "units": 186,
+        "buildable": 155,
+        "tested": 98,
+        "excluded": 3,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 53,
+          "match": 36,
+          "derived": 0,
+          "drift": 0,
+          "none": 17
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "anchor-positioning",
+            "name": "Anchor positioning",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          }
+        ],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/split-button/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "switch": {
+      "m3": {
+        "pages": [
+          {
+            "name": "switch",
+            "url": "https://m3.material.io/components/switch/overview"
+          }
+        ],
+        "units": 200,
+        "buildable": 150,
+        "tested": 86,
+        "excluded": 5,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 58,
+          "match": 53,
+          "derived": 0,
+          "drift": 0,
+          "none": 5
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "if",
+            "name": "if()",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "checkbox",
+          "switch"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Checkbox",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/"
+          },
+          {
+            "name": "Switch",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/switch/"
+          }
+        ],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/switch/",
+        "performance": 97,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "tabs": {
+      "m3": {
+        "pages": [
+          {
+            "name": "tabs",
+            "url": "https://m3.material.io/components/tabs/overview"
+          }
+        ],
+        "units": 245,
+        "buildable": 206,
+        "tested": 87,
+        "excluded": 12,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 56,
+          "match": 40,
+          "derived": 1,
+          "drift": 0,
+          "none": 15
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "state",
+            "name": ":state()",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "anchor-positioning",
+            "name": "Anchor positioning",
+            "status": "limited",
+            "how": "guarded"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "flexbox",
+            "name": "Flexbox",
+            "status": "widely",
+            "how": "guarded"
+          },
+          {
+            "id": "overscroll-behavior",
+            "name": "overscroll-behavior",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "tab",
+          "tablist",
+          "tabpanel"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Tabs",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/"
+          }
+        ],
+        "rows": 5,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/tabs/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "text-field": {
+      "m3": {
+        "pages": [
+          {
+            "name": "text-fields",
+            "url": "https://m3.material.io/components/text-fields/overview"
+          }
+        ],
+        "units": 405,
+        "buildable": 358,
+        "tested": 69,
+        "excluded": 14,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 150,
+          "match": 130,
+          "derived": 0,
+          "drift": 0,
+          "none": 20
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "field-sizing",
+            "name": "field-sizing",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "resize",
+            "name": "resize (CSS property)",
+            "status": "limited",
+            "how": "allowed"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "alert",
+          "textbox"
+        ],
+        "patterns": [
+          {
+            "name": "Alert",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/text-field/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "time-picker": {
+      "m3": {
+        "pages": [
+          {
+            "name": "time-pickers",
+            "url": "https://m3.material.io/components/time-pickers/overview"
+          }
+        ],
+        "units": 365,
+        "buildable": 342,
+        "tested": 208,
+        "excluded": 2,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 95,
+          "match": 88,
+          "derived": 0,
+          "drift": 0,
+          "none": 7
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "starting-style",
+            "name": "@starting-style",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "cursor",
+            "name": "Cursor styles",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-color",
+            "name": "scrollbar-color",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-gutter",
+            "name": "scrollbar-gutter",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "scrollbar-width",
+            "name": "scrollbar-width",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "dialog",
+          "group",
+          "radio",
+          "radiogroup",
+          "slider",
+          "textbox"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Dialog (Modal)",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+          },
+          {
+            "name": "Radio Group",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/"
+          },
+          {
+            "name": "Slider",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/slider/"
+          }
+        ],
+        "rows": 2,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/time-picker/",
+        "performance": 99,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Elements with visible text labels do not have matching accessible names.",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused CSS",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "toolbar": {
+      "m3": {
+        "pages": [
+          {
+            "name": "toolbars",
+            "url": "https://m3.material.io/components/toolbars/overview"
+          }
+        ],
+        "units": 339,
+        "buildable": 253,
+        "tested": 71,
+        "excluded": 23,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 63,
+          "match": 45,
+          "derived": 7,
+          "drift": 0,
+          "none": 11
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "interpolate-size",
+            "name": "interpolate-size",
+            "status": "limited",
+            "how": "allowed"
+          },
+          {
+            "id": "user-select",
+            "name": "user-select",
+            "status": "limited",
+            "how": "guarded"
+          }
+        ],
+        "js": []
+      },
+      "aria": {
+        "roles": [
+          "button",
+          "toolbar"
+        ],
+        "patterns": [
+          {
+            "name": "Button",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+          },
+          {
+            "name": "Toolbar",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/"
+          }
+        ],
+        "rows": 1,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/toolbar/",
+        "performance": 96,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Elements with visible text labels do not have matching accessible names.",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Reduce unused JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    },
+    "tooltip": {
+      "m3": {
+        "pages": [
+          {
+            "name": "tooltips",
+            "url": "https://m3.material.io/components/tooltips/overview"
+          }
+        ],
+        "units": 162,
+        "buildable": 130,
+        "tested": 58,
+        "excluded": 0,
+        "tracked": 0,
+        "uncovered": 0,
+        "tokens": {
+          "decls": 41,
+          "match": 24,
+          "derived": 0,
+          "drift": 0,
+          "none": 17
+        }
+      },
+      "baseline": {
+        "enhancements": [
+          {
+            "id": "starting-style",
+            "name": "@starting-style",
+            "status": "newly",
+            "how": "allowed"
+          },
+          {
+            "id": "transition-behavior",
+            "name": "transition-behavior",
+            "status": "newly",
+            "how": "allowed"
+          }
+        ],
+        "js": [
+          {
+            "name": "popover",
+            "id": "popover",
+            "status": "newly"
+          }
+        ]
+      },
+      "aria": {
+        "roles": [
+          "dialog",
+          "tooltip"
+        ],
+        "patterns": [
+          {
+            "name": "Dialog (Modal)",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"
+          },
+          {
+            "name": "Tooltip",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/"
+          }
+        ],
+        "rows": 3,
+        "gaps": 0
+      },
+      "lighthouse": {
+        "page": "/3.0/lab/tooltip/",
+        "performance": 92,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "failed": [
+          "First Contentful Paint",
+          "Largest Contentful Paint",
+          "Largest Contentful Paint element",
+          "Eliminate render-blocking resources",
+          "Minify JavaScript",
+          "Enable text compression",
+          "Network dependency tree",
+          "Render blocking requests"
+        ],
+        "preset": "desktop",
+        "version": "12.8.2",
+        "date": "2026-11-08"
+      }
+    }
+  }
+}

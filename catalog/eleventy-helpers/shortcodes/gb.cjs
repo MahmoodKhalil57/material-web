@@ -48,11 +48,36 @@ const {
  *   once (preview and code).
  * - Filter `gbcomponents`: loads the md-gb-* elements a page uses.
  * - `{% gbapi "<dir>" %}`: the API tables (scripts/m3/gen-api-docs.mjs).
+ * - `{% gbcompat %}`: the Compatibility section of a component page
+ *   (eleventy-helpers/gb-compat.cjs), added to every one by a preprocessor.
+ * - `{% gbshape "<name>", "<class>", "<to>", "loop", <delay> %}`: a
+ *   decorative M3 Expressive shape (eleventy-helpers/gb-shapes.cjs) as
+ *   inline SVG in currentColor; with `to`, it morphs into that shape, in a
+ *   loop with "loop" (delay 0-3 staggers it), else on hover and focus.
  *
  * @param eleventyConfig The 11ty config in which to attach the shortcodes.
  */
 function gb(eleventyConfig) {
   eleventyConfig.on('eleventy.before', resetDemoIds);
+  // Every component page gets a Compatibility section (M3 spec, Baseline,
+  // WAI-ARIA, Lighthouse) before its API reference, or at its end.
+  eleventyConfig.addPreprocessor('gb-compat', 'md', (data, content) => {
+    if (!/[\\/]3\.0[\\/]components[\\/][\w-]+\.md$/.test(String(data.page?.inputPath ?? ''))) return content;
+    const section = '## Compatibility\n\n{% gbcompat %}\n\n';
+    return /^## API reference/m.test(content)
+      ? content.replace(/^## API reference/m, `${section}## API reference`)
+      : `${content.trimEnd()}\n\n${section}`;
+  });
+  eleventyConfig.addShortcode('gbcompat', function () {
+    return require('../gb-compat.cjs').compatSection(this.page.fileSlug);
+  });
+  eleventyConfig.addShortcode('gbshape', (name, cls = '', to = '', mode = '', delay = 0) =>
+    require('../gb-shapes.cjs').shapeSvg(String(name), String(cls), {
+      to: String(to),
+      loop: mode === 'loop',
+      delay: Number(delay) || 0,
+    }),
+  );
   // Nunjucks wants commas between arguments; the docs write
   // {% demo "label" height=240 %}.
   eleventyConfig.addPreprocessor('gb-demo-args', 'md', (data, content) =>
