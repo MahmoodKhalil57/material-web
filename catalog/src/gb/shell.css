@@ -377,6 +377,24 @@
 .gb-rail-foot :not(:defined) {
   visibility: hidden;
 }
+/* The version switch (52dp: room at the collapsed rail's edges) with its
+   label over it; beside it in the expanded rail's row. */
+.gb-version {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--md-sys-space-50);
+  cursor: pointer;
+}
+.gb-rail[expanded]:not([modal]) ~ .gb-rail-foot .gb-version {
+  flex-direction: row;
+  gap: var(--md-sys-space-150);
+}
+.gb-version-label {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+}
 
 /* The logo at the start of the header, linking to the docs home. The rail's
    own menu button expands it (a logo must not look like that button). */

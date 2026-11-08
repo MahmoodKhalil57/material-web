@@ -308,10 +308,13 @@
               <md-gb-icon>feedback</md-gb-icon>
             </md-gb-icon-button>
           </div>
-          <md-gb-segmented-button-set class="gb-version" id="gb-version" required aria-label="Version">
-            <md-gb-segmented-button value="3.0" selected no-checkmark>3.0</md-gb-segmented-button>
-            <md-gb-segmented-button value="2.5" no-checkmark>2.5</md-gb-segmented-button>
-          </md-gb-segmented-button-set>
+          {#- The version: a switch, on for 3.0 (this site); turning it off
+              goes to the v2.5.0 site at the root. Its label stays visible:
+              beside it in the expanded rail, over it in the collapsed one. -#}
+          <label class="gb-version">
+            <span class="gb-version-label" aria-hidden="true">3.0</span>
+            <md-gb-switch id="gb-version" selected aria-label="Material Web 3.0 (off for 2.5)"></md-gb-switch>
+          </label>
         </div>
       </nav>
 

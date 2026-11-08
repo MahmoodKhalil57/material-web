@@ -44,6 +44,7 @@ import '@material/web/labs/gb/components/select/md-gb-select.js';
 import '@material/web/labs/gb/components/select/md-gb-select-option.js';
 import '@material/web/labs/gb/components/sheet/md-gb-bottom-sheet.js';
 import '@material/web/labs/gb/components/sheet/md-gb-side-sheet.js';
+import '@material/web/labs/gb/components/switch/md-gb-switch.js';
 import '@material/web/labs/gb/components/textfield/md-gb-text-field.js';
 import '@material/web/labs/gb/components/tooltip/md-gb-tooltip.js';
 
@@ -746,12 +747,9 @@ railFoot?.addEventListener('click', (e) => {
   if (button) openFeedback(button);
 });
 // 2.5 is the v2.5.0 site at the root; 3.0 stays under /3.0/.
+// The switch is on for 3.0; off goes there.
 $('gb-version')?.addEventListener('change', (e) => {
-  const set = e.currentTarget as HTMLElement & {value?: string};
-  const picked = set.querySelector<HTMLElement & {selected: boolean; value: string}>(
-    'md-gb-segmented-button[selected]',
-  );
-  if ((picked?.value ?? set.value) === '2.5') location.assign('/');
+  if (!(e.currentTarget as HTMLElement & {selected: boolean}).selected) location.assign('/');
 });
 
 // --- Sheets: download & copy and customize theme ---------------------------------------
