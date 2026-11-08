@@ -25,8 +25,10 @@
   /* The search app bar's container height (app bars spec). */
   --gb-top-h: 64px;
   --gb-rail-w: 0px;
-  /* md.comp.nav-rail.collapsed.narrow.container.width */
-  --gb-rail-collapsed-w: 80px;
+  /* md.comp.nav-rail.collapsed.container.width (96dp): the labels
+     ("Foundations", "Components") keep space on both sides; the narrow
+     80dp rail leaves them touching its edges. */
+  --gb-rail-collapsed-w: 96px;
   /* Within the expanded rail's 220-360dp: the longest page titles fit. */
   --gb-rail-open-w: 280px;
   --gb-outline-w: 0px;

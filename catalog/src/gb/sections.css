@@ -278,6 +278,11 @@ md-gb-nav-drawer .nav-drawer-section-label a:focus-visible {
 }
 
 /* The live preview: a fixed design size, scaled to the width of the box. */
+/* A carousel takes the stage's row: its width comes from its container,
+   never its items (carousel.scss). */
+.gb-card-stage > md-gb-carousel {
+  inline-size: 100%;
+}
 .gb-card-stage {
   position: absolute;
   inset-block-start: 50%;

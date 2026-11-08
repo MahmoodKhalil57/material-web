@@ -241,7 +241,7 @@
           destinations and the current page is the active one
           (src/gb/shell.ts). -#}
       <nav class="gb-rail-area" aria-label="Site">
-        <md-gb-nav-rail class="gb-rail" id="gb-rail" narrow collapsible role="none">
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" collapsible role="none">
           {%- for sec in gbSections %}
           <md-gb-nav-rail-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} selected data-current{% endif %}>
             <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
