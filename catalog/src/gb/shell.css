@@ -738,47 +738,10 @@ md-gb-nav-drawer-item[data-group] {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;
 }
-/* Top: text buttons with the page title; "Previous" / "Next" are read out.
-   They sit at the same place on every page, so paging through the docs
-   needs no mouse movement: 16px in from the content panel's edges, not the
-   text column's (60rem on most pages, 80rem on the section index pages).
-   100% is the text column, centered in the panel (100cqi). */
-.gb-pager-top {
-  justify-content: space-between;
-  margin-block: var(--md-sys-space-200) var(--md-sys-space-100);
-  margin-inline: calc((100% - 100cqi) / 2 + var(--md-sys-space-200));
-}
-.gb-pager-top .gb-pager-link {
-  block-size: 40px;
-  max-inline-size: 50%;
-  padding-inline: var(--md-sys-space-150) var(--md-sys-space-200);
-  border-radius: var(--md-sys-shape-corner-full);
-  color: var(--md-sys-color-primary);
-  font: var(--md-sys-typescale-label-lg);
-  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
-}
-.gb-pager-top .gb-pager-next {
-  padding-inline: var(--md-sys-space-200) var(--md-sys-space-150);
-}
-.gb-pager-top .gb-pager-label {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.gb-pager-top .gb-pager-icon md-gb-icon {
-  --md-icon-size: 18px;
-  font-size: 18px;
-}
-/* End: two outlined cards. */
-.gb-pager-end {
-  margin-block-start: var(--md-sys-space-600);
-  padding-block-start: var(--md-sys-space-300);
-  border-block-start: 1px solid var(--md-sys-color-outline-variant);
-}
-.gb-pager-end .gb-pager-link {
+/* At the top and the end of a page: two outlined cards, "Previous" or
+   "Next" over the page's title, each half the row (the next one stays in
+   the end half when there's no previous). */
+.gb-pager .gb-pager-link {
   flex: 1 1 0;
   max-inline-size: calc(50% - var(--md-sys-space-100));
   gap: var(--md-sys-space-200);
@@ -787,20 +750,34 @@ md-gb-nav-drawer-item[data-group] {
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--md-sys-shape-corner-lg);
 }
-.gb-pager-end .gb-pager-label {
+.gb-pager .gb-pager-label {
   color: var(--md-sys-color-on-surface-variant);
   font: var(--md-sys-typescale-label-md);
   font-variation-settings: var(--md-sys-typescale-label-md-axes);
 }
-.gb-pager-end .gb-pager-title {
+.gb-pager .gb-pager-title {
   font: var(--md-sys-typescale-title-md);
   font-variation-settings: var(--md-sys-typescale-title-md-axes);
 }
-.gb-pager-end .gb-pager-next {
+.gb-pager .gb-pager-next {
   justify-content: flex-end;
 }
-.gb-pager-end .gb-pager-icon {
+.gb-pager .gb-pager-icon {
   color: var(--md-sys-color-primary);
+}
+/* Top: at the same place on every page, so paging through the docs needs
+   no mouse movement: 16px in from the content panel's edges, not the text
+   column's (60rem on most pages, 80rem on the section index pages). 100% is
+   the text column, centered in the panel (100cqi). */
+.gb-pager-top {
+  margin-block: var(--md-sys-space-200) var(--md-sys-space-300);
+  margin-inline: calc((100% - 100cqi) / 2 + var(--md-sys-space-200));
+}
+/* End: below the page, set off by a divider. */
+.gb-pager-end {
+  margin-block-start: var(--md-sys-space-600);
+  padding-block-start: var(--md-sys-space-300);
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
 }
 
 /* --- Compact: navigation bar ------------------------------------------------------- */
