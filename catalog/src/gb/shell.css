@@ -242,6 +242,14 @@ body:has(.gb-shell) {
   --expanded-container-width-maximum: var(--gb-rail-open-w);
   block-size: 100%;
 }
+/* The menu button and the first destination's icon stay put as the rail
+   expands. The collapsed item (64dp) has its icon 6dp from its top, the
+   expanded one (56dp) centers it, 12dp down: the expanded items start 6px
+   closer to the menu button (40dp header space, md.comp.nav-rail.item.
+   header-space-minimum, less 6px). */
+.gb-rail[expanded]::part(header) {
+  margin-block-end: calc(var(--md-sys-space-500) - 6px);
+}
 .gb-rail::part(items) {
   min-block-size: 0;
   overflow-y: auto;
