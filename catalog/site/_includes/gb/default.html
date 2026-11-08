@@ -70,6 +70,22 @@
 {%- endif %}{% endfor %}
 {%- endif %}
 {%- endmacro -%}
+{#- The pages of the current section as secondary destinations of the
+    expanded rail (the components under their groups' labels). -#}
+{%- macro railPages(sec, groups, pages, url) -%}
+{%- if sec.id == 'components' %}
+{%- for group in groups %}
+<p class="gb-rail-group">{{ group.label }}</p>
+{%- for file in pages %}{% if file.data.section == 'components' and file.data.category == group.id %}
+<md-gb-nav-rail-item secondary href="{{ file.url }}"{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
+{%- endif %}{% endfor %}
+{%- endfor %}
+{%- else %}
+{%- for file in pages %}{% if file.data.section == sec.id %}
+<md-gb-nav-rail-item secondary href="{{ file.url }}"{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
+{%- endif %}{% endfor %}
+{%- endif %}
+{%- endmacro -%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -96,7 +112,8 @@
     <script>
       // Before first paint: color-scheme from the saved mode, the dynamic
       // color CSS generated for the saved theme (cached by gb.js), and
-      // whether the pages pane is open, so nothing moves when the script runs.
+      // whether the reader collapsed the rail, so nothing moves when the
+      // script runs.
       (() => {
         const root = document.documentElement;
         // Demo cards collapse their code only with JS (gb.css, gb.ts).
@@ -104,7 +121,7 @@
         try {
           const mode = localStorage.getItem('color-mode') || 'auto';
           root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
-          if (localStorage.getItem('gb-pane') === 'closed') root.dataset.pane = 'closed';
+          if (localStorage.getItem('gb-rail') === 'collapsed') root.dataset.rail = 'collapsed';
           if (localStorage.getItem('gb-outline') === 'closed') root.dataset.outline = 'closed';
           const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
           const seed = localStorage.getItem('gb-seed-color');
@@ -151,16 +168,16 @@
   <body>
     <div class="gb-shell">
       {#- The header: an M3 search app bar (app-bars.md "Search app bar"): the
-          menu button that toggles the pages pane, a search bar that opens
-          the search view (src/gb/search.ts; also Ctrl/Cmd+K and "/"), and up
-          to four trailing actions. Actions that don't fit the window size
-          class move into the overflow menu (src/gb/shell.ts). -#}
+          logo, a search bar that opens the search view (src/gb/search.ts;
+          also Ctrl/Cmd+K and "/"), and up to four trailing actions. Actions
+          that don't fit the window size class move into the overflow menu
+          (src/gb/shell.ts). The menu button is the rail's. -#}
       <header class="gb-top">
         <a class="gb-skip" href="#main">Skip to main content</a>
         <md-gb-app-bar class="gb-appbar" id="gb-appbar" variant="search">
-          <md-gb-icon-button slot="leading" id="gb-menu" class="gb-menu" tooltip aria-label="Pages" aria-controls="gb-drawer" aria-expanded="false">
-            <md-gb-icon>menu</md-gb-icon>
-          </md-gb-icon-button>
+          <a slot="leading" class="gb-brand" href="/3.0/" aria-label="Material Web 3.0 home">
+            <img src="/images/favicon.svg" alt="" width="40" height="40" />
+          </a>
           <button slot="search" type="button" class="gb-searchbar" data-gb-search>
             <span class="gb-searchbar-icon" aria-hidden="true"><md-gb-icon>search</md-gb-icon></span>
             <span class="gb-searchbar-text">Search Material Web</span>
@@ -212,48 +229,40 @@
         </md-gb-menu>
       </header>
 
-      {#- The navigation rail (600px and up): the logo and the four sections. -#}
-      <nav class="gb-rail-area" aria-label="Sections">
-        <md-gb-nav-rail class="gb-rail" id="gb-rail" narrow role="none">
-          <a slot="header" class="gb-brand" href="/3.0/" aria-label="Material Web 3.0 home">
-            <img src="/images/favicon.svg" alt="" width="40" height="40" />
-          </a>
+      {#- The navigation rail (600px and up; navigation-rail.md, M3
+          Expressive): its menu button at the top, then the four sections.
+          Collapsed, the current section is the active destination. Expanded
+          (the menu button; beside the content from 840px, modal over it
+          below), the current section's pages follow it as secondary
+          destinations and the current page is the active one
+          (src/gb/shell.ts). -#}
+      <nav class="gb-rail-area" aria-label="Site">
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" narrow collapsible role="none">
           {%- for sec in gbSections %}
-          <md-gb-nav-rail-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} selected{% endif %}>
+          <md-gb-nav-rail-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} selected data-current{% endif %}>
             <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
           </md-gb-nav-rail-item>
+          {%- if sec.id == gbCurrent %}
+          {{ railPages(sec, gbGroups, gbPages, page.url) | safe }}
+          {%- endif %}
           {%- endfor %}
         </md-gb-nav-rail>
-      </nav>
-
-      {#- The pages pane: the current section's pages. Standard beside the
-          rail from 840px, modal below it (src/gb/shell.ts). -#}
-      <div class="gb-pane-cell">
-        <md-gb-nav-drawer class="gb-drawer" id="gb-drawer" label="{% for sec in gbSections %}{% if sec.id == gbCurrent %}{{ sec.label }}{% endif %}{% endfor %} pages" data-section="{{ gbCurrent }}">
-          {%- for sec in gbSections %}{% if sec.id == gbCurrent %}
-          {{ pageItems(sec, gbGroups, gbPages, page.url, category if section == 'components' else '') | safe }}
-          {%- endif %}{% endfor %}
-        </md-gb-nav-drawer>
         <script>
-          // Before first paint: the groups the reader expanded or collapsed
-          // (src/gb/shell.ts saves them). The current page's group stays open.
+          // Before first paint: expanded from 840px unless the reader
+          // collapsed it, with the current page as the active destination.
           (() => {
-            let saved = {};
-            try {
-              saved = JSON.parse(localStorage.getItem('gb-groups') || '{}');
-            } catch (e) {}
-            for (const row of document.querySelectorAll('#gb-drawer .gb-pane-group')) {
-              const id = row.dataset.group;
-              if (!(id in saved) || row.hasAttribute('data-current')) continue;
-              const open = !!saved[id];
-              row.querySelector('.gb-pane-group-toggle').setAttribute('aria-expanded', String(open));
-              for (const item of document.querySelectorAll(`#gb-drawer md-gb-nav-drawer-item[data-group="${id}"]`)) {
-                item.hidden = !open;
-              }
+            const rail = document.getElementById('gb-rail');
+            const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
+            const page = rail.querySelector('md-gb-nav-rail-item[secondary][data-current]');
+            if (!open) return;
+            rail.setAttribute('expanded', '');
+            if (page) {
+              rail.querySelector('md-gb-nav-rail-item[data-section][data-current]').removeAttribute('selected');
+              page.setAttribute('selected', '');
             }
           })();
         </script>
-      </div>
+      </nav>
 
       <div class="gb-content-pane" id="gb-content-pane">
         <div class="gb-body{% if gbIndex %} gb-layout-index{% endif %}">
@@ -315,10 +324,10 @@
 
     </div>
 
-    {#- The other sections' pages: hovering or focusing their rail destination
-        shows them in the open pages pane (src/gb/shell.ts). -#}
-    {%- for sec in gbSections %}{% if sec.id != gbCurrent %}
-    <template data-pages="{{ sec.id }}" data-label="{{ sec.label }}">{{ pageItems(sec, gbGroups, gbPages, page.url) | safe }}</template>
+    {#- The current section's pages for the pages sheet of compact windows,
+        opened from the navigation bar (src/gb/shell.ts). -#}
+    {%- for sec in gbSections %}{% if sec.id == gbCurrent %}
+    <template data-pages="{{ sec.id }}" data-label="{{ sec.label }}">{{ pageItems(sec, gbGroups, gbPages, page.url, category if section == 'components' else '') | safe }}</template>
     {%- endif %}{% endfor %}
 
     {#- The sheets. One side sheet (600px and up) and one bottom sheet (below

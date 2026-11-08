@@ -7,10 +7,10 @@
 /**
  * Smooth page-to-page navigation inside /3.0/ (imported by gb.ts):
  *
- * - keeps the pages pane's (navigation drawer) scroll position across pages (view
+ * - keeps the expanded navigation rail's scroll position across pages (view
  *   transitions themselves are CSS: navigation.css);
  * - speculation rules for links the document rules in the layout cannot see
- *   (the drawer's links are in shadow roots) and for links in the viewport,
+ *   (the rail's links are in shadow roots) and for links in the viewport,
  *   with `<link rel=prefetch>` where speculation rules are unsupported;
  * - a route progress indicator following the M3 progress indicator guidance
  *   (.m3-specs/pages/components/progress-indicators.md, "Expected wait
@@ -34,10 +34,10 @@ const MIN_VISIBLE = 600;
 /** A navigation still pending after this is assumed lost. */
 const GIVE_UP = 60000;
 const FADE = 200;
-/** How long a saved drawer position belongs to the navigation that saved it. */
+/** How long a saved rail position belongs to the navigation that saved it. */
 const SAVED_FOR = 30000;
 const ROUTE_KEY = 'gb-route-progress';
-const SCROLL_KEY = 'gb-drawer-scroll';
+const SCROLL_KEY = 'gb-rail-scroll';
 
 type Stage = 'loading' | 'linear';
 interface Carry {
@@ -98,17 +98,19 @@ function pageUrl(href: string | null | undefined): URL | null {
 /** URL without its fragment, the identity of a document. */
 const docKey = (url: URL) => url.origin + url.pathname + url.search;
 
-// --- Drawer scroll position ------------------------------------------------
+// --- Rail scroll position --------------------------------------------------
+// The expanded rail's items scroll (a section's pages); the position carries
+// over to the next page, so the list doesn't jump back to the top.
 
-interface Drawer extends HTMLElement {
+interface Rail extends HTMLElement {
   updateComplete?: Promise<unknown>;
 }
-const drawer = document.getElementById('gb-drawer') as Drawer | null;
+const rail = document.getElementById('gb-rail') as Rail | null;
 const scroller = () =>
-  drawer?.shadowRoot?.querySelector<HTMLElement>('.nav-drawer') ?? null;
+  rail?.shadowRoot?.querySelector<HTMLElement>('.nav-rail-items') ?? null;
 let scrollRestored = false;
 
-function saveDrawerScroll() {
+function saveRailScroll() {
   const top = scroller()?.scrollTop;
   if (top === undefined) return;
   try {
@@ -117,12 +119,12 @@ function saveDrawerScroll() {
       JSON.stringify({top: Math.round(top), at: Date.now()}),
     );
   } catch {
-    // Storage can be blocked; the drawer just starts at the top.
+    // Storage can be blocked; the rail just starts at the top.
   }
 }
 
-/** Restores the saved scroll, and keeps the selected item in view. */
-function restoreDrawerScroll() {
+/** Restores the saved scroll, and keeps the active page in view. */
+function restoreRailScroll() {
   const el = scroller();
   if (scrollRestored || !el || el.scrollHeight <= el.clientHeight) return;
   scrollRestored = true;
@@ -136,7 +138,7 @@ function restoreDrawerScroll() {
   if (saved?.top && Date.now() - (saved.at ?? 0) < SAVED_FOR) {
     el.scrollTop = saved.top;
   }
-  const selected = drawer?.querySelector('[selected]');
+  const selected = rail?.querySelector('md-gb-nav-rail-item[selected]');
   if (selected) {
     const item = selected.getBoundingClientRect();
     const box = el.getBoundingClientRect();
@@ -146,38 +148,41 @@ function restoreDrawerScroll() {
   }
 }
 
-if (drawer) {
-  addEventListener('pagehide', saveDrawerScroll);
+if (rail) {
+  addEventListener('pagehide', saveRailScroll);
   // Chrome's last chance before a cross-document transition captures the old
   // page.
-  addEventListener('pageswap', saveDrawerScroll);
-  customElements.whenDefined('md-gb-nav-drawer').then(async () => {
-    await drawer.updateComplete;
-    restoreDrawerScroll();
+  addEventListener('pageswap', saveRailScroll);
+  customElements.whenDefined('md-gb-nav-rail').then(async () => {
+    await rail.updateComplete;
+    restoreRailScroll();
   });
-  // Before the first frame of a view transition, and once the drawer opens
-  // (or lays out) for the first time.
-  addEventListener('pagereveal', restoreDrawerScroll);
-  drawer.addEventListener('opened', restoreDrawerScroll);
+  // Before the first frame of a view transition, and once the rail expands
+  // (it only scrolls expanded).
+  addEventListener('pagereveal', restoreRailScroll);
+  rail.addEventListener('toggle', () => {
+    scrollRestored = false;
+    requestAnimationFrame(restoreRailScroll);
+  });
   // A prerendered page restored (or had nothing to restore) while hidden.
   whenActive(() => {
     scrollRestored = false;
-    restoreDrawerScroll();
+    restoreRailScroll();
   });
   // Always current, so the next page, prerendered or not, finds it.
   let saveTimer: number | undefined;
-  customElements.whenDefined('md-gb-nav-drawer').then(async () => {
-    await drawer.updateComplete;
+  customElements.whenDefined('md-gb-nav-rail').then(async () => {
+    await rail.updateComplete;
     scroller()?.addEventListener(
       'scroll',
       () => {
         clearTimeout(saveTimer);
-        saveTimer = window.setTimeout(saveDrawerScroll, 100);
+        saveTimer = window.setTimeout(saveRailScroll, 100);
       },
       {passive: true},
     );
   });
-  requestAnimationFrame(() => requestAnimationFrame(restoreDrawerScroll));
+  requestAnimationFrame(() => requestAnimationFrame(restoreRailScroll));
 }
 
 // Skip the transition of a reload: the same page does not cross-fade into
@@ -300,8 +305,8 @@ function setUpSpeculation() {
   });
 
   // Links in the viewport: prefetch them (the document rules in the layout
-  // cannot reach the drawer's links in shadow roots). Batched and bounded;
-  // items of a closed or scrolled drawer are reported when they come into
+  // cannot reach the rail's links in shadow roots). Batched and bounded;
+  // pages of a collapsed or scrolled rail are reported when they come into
   // view.
   if (!('IntersectionObserver' in window)) return;
   const queue = new Map<string, URL>();

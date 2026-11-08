@@ -5,44 +5,46 @@
  */
 
 /* The layout of the /3.0/ pages (shell.ts, site/_includes/gb/default.html):
-   an M3 search app bar across the top, then a navigation rail, a pages pane
-   and a rounded content pane (M3 Expressive navigation rail, canonical
-   list-detail: the pages pane is the list, the content pane the detail). Colors, type, shape
-   and motion come from --md-sys-* tokens only.
+   an M3 search app bar across the top, then a navigation rail and a rounded
+   content pane. Colors, type, shape and motion come from --md-sys-* tokens
+   only.
+
+   The rail (M3 Expressive navigation rail) is the only navigation: collapsed
+   it shows the four sections; its menu button expands it to show the current
+   section's pages too (secondary destinations), in place of a navigation
+   drawer (navigation-rail.md: the expanded rail replaces the drawer).
 
    Window size classes: compact below 600px (navigation bar, no rail), medium
-   from 600px (rail, modal pages pane), expanded from 840px (rail, standard
-   pages pane), and the page outline beside the text from 1200px. The widths
-   of the rail and the pane are reserved here, before the elements are
-   defined, so nothing moves when the script runs. */
+   from 600px (collapsed rail; expanded, it's modal over the content),
+   expanded from 840px (expanded beside the content unless the reader
+   collapsed it), and the page outline beside the text from 840px. The rail's
+   width is reserved here, before the elements are defined, so nothing moves
+   when the script runs. */
 
 :root {
   /* The search app bar's container height (app bars spec). */
   --gb-top-h: 64px;
-  /* The rail (and the header behind its menu button) stands apart from the
-     page, the pages pane and the header. */
-  --gb-rail-color: var(--md-sys-color-surface-container-high);
   --gb-rail-w: 0px;
-  --gb-pane-w: 0px;
-  --gb-pane-open-w: 280px;
+  /* md.comp.nav-rail.collapsed.narrow.container.width */
+  --gb-rail-collapsed-w: 80px;
+  /* Within the expanded rail's 220-360dp: the longest page titles fit. */
+  --gb-rail-open-w: 280px;
   --gb-outline-w: 0px;
   /* Wide enough for most headings, which wrap beyond it. */
   --gb-outline-open-w: clamp(12.5rem, 18vw, 15rem);
   --gb-bar-h: 80px;
-  --gb-pane-motion: var(--md-sys-motion-spring-default-spatial-duration, 420ms)
+  --gb-rail-motion: var(--md-sys-motion-spring-default-spatial-duration, 420ms)
     var(--md-sys-motion-spring-default-spatial, ease);
 }
 @media (min-width: 600px) {
   :root {
-    --gb-rail-w: 80px;
+    --gb-rail-w: var(--gb-rail-collapsed-w);
   }
 }
 @media (min-width: 840px) {
-  :root {
-    --gb-pane-w: var(--gb-pane-open-w);
-  }
-  :root[data-pane='closed'] {
-    --gb-pane-w: 0px;
+  /* Expanded beside the content, unless the reader collapsed it. */
+  :root:not([data-rail='collapsed']) {
+    --gb-rail-w: var(--gb-rail-open-w);
   }
   /* The page outline is a column, open unless the reader closed it; closed,
      the column is a strip with the button that opens it. */
@@ -54,8 +56,8 @@
   }
 }
 
-/* One screen high, like Gmail: the document never scrolls; the pages pane,
-   the content and the outline scroll in their own panels. */
+/* One screen high, like Gmail: the document never scrolls; the rail, the
+   content and the outline scroll in their own panels. */
 html:has(.gb-shell),
 html:has(.gb-shell) body {
   block-size: 100dvh;
@@ -71,11 +73,10 @@ body:has(.gb-shell) {
 
 .gb-shell {
   display: grid;
-  grid-template-columns:
-    var(--gb-rail-w) var(--gb-pane-w) minmax(0, 1fr) var(--gb-outline-w);
+  grid-template-columns: var(--gb-rail-w) minmax(0, 1fr) var(--gb-outline-w);
   grid-template-rows: var(--gb-top-h) minmax(0, 1fr);
   block-size: 100dvh;
-  transition: grid-template-columns var(--gb-pane-motion);
+  transition: grid-template-columns var(--gb-rail-motion);
 }
 
 /* --- Header: the search app bar ------------------------------------------------- */
@@ -87,20 +88,8 @@ body:has(.gb-shell) {
   inset-block-start: 0;
   z-index: 30;
   block-size: var(--gb-top-h);
-  /* The rail's color continues behind the menu button (the rail's width),
-     the rest is the page's surface container. */
-  background: linear-gradient(
-    to right,
-    var(--gb-rail-color) 0 var(--gb-rail-w),
-    var(--md-sys-color-surface-container) var(--gb-rail-w)
-  );
-}
-.gb-top:dir(rtl) {
-  background: linear-gradient(
-    to left,
-    var(--gb-rail-color) 0 var(--gb-rail-w),
-    var(--md-sys-color-surface-container) var(--gb-rail-w)
-  );
+  /* The page's surface container, like the rail below. */
+  background: var(--md-sys-color-surface-container);
 }
 .gb-appbar {
   display: block;
@@ -117,10 +106,12 @@ body:has(.gb-shell) {
   --search-container-color: var(--md-sys-color-surface-container-highest);
   --search-on-scroll-container-color: var(--md-sys-color-surface-container-highest);
 }
-/* With the rail (600px and up), the menu button is centered over it. */
+/* With the rail (600px and up), the logo is centered over the collapsed
+   rail's column, where the menu button and the destinations' icons are,
+   whether the rail is expanded or not. */
 @media (min-width: 600px) {
   .gb-appbar::part(app-bar) {
-    --leading-space: calc(var(--gb-rail-w) / 2 - 20px);
+    --leading-space: calc(var(--gb-rail-collapsed-w) / 2 - 20px);
   }
 }
 .gb-appbar:not(:defined) {
@@ -206,7 +197,6 @@ body:has(.gb-shell) {
   block-size: calc(100dvh - var(--gb-top-h));
   min-inline-size: 0;
   color: var(--md-sys-color-on-surface);
-  background: var(--gb-rail-color);
 }
 /* Compact windows have no rail. */
 @media (max-width: 599px) {
@@ -219,24 +209,66 @@ body:has(.gb-shell) {
   min-block-size: 0;
   inline-size: var(--gb-rail-w);
 }
-/* The rail sits on the page's surface container, like the pane. */
-.gb-rail::part(nav-rail) {
+/* The rail sits directly on the page's surface, with no container fill
+   (navigation-rail.md, Container: its items keep 3:1 contrast on it); the
+   modal expanded rail keeps its own container over the content. The
+   expanded rail is as wide as the column; its items scroll when the
+   current section's pages don't fit. */
+.gb-rail:not([modal][expanded])::part(nav-rail) {
   --container-color: transparent;
+  --expanded-container-color: transparent;
+}
+.gb-rail::part(nav-rail) {
   --collapsed-top-space: 8px;
+  --expanded-top-space: 8px;
+  --expanded-container-width-minimum: var(--gb-rail-open-w);
+  --expanded-container-width-maximum: var(--gb-rail-open-w);
+  block-size: 100%;
+}
+.gb-rail::part(items) {
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block-end: var(--md-sys-space-200);
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-sys-color-outline) transparent;
 }
 .gb-rail:not(:defined) {
   display: block;
   visibility: hidden;
 }
-/* The logo at the top of the rail, linking to the docs home. */
-/* 40px, like the logo, so it centers over the rail as the menu button and
-   the destinations do (the rail's header slot starts 20px in). */
+/* The modal expanded rail (medium windows) and its scrim cover the header
+   too. */
+.gb-rail-area:has(> .gb-rail[modal][expanded]) {
+  z-index: 40;
+}
+/* The components' groups (Buttons, Date & time pickers, ...): labels above
+   their pages in the expanded rail, title-small on-surface-variant like a
+   navigation section's label. Not destinations: the rail skips them. */
+.gb-rail-group {
+  display: none;
+  margin: var(--md-sys-space-200) 0 var(--md-sys-space-50);
+  padding-inline: var(--md-sys-space-200);
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-title-sm);
+  font-variation-settings: var(--md-sys-typescale-title-sm-axes);
+}
+.gb-rail[expanded] > .gb-rail-group {
+  display: block;
+}
+/* A section's pages (secondary destinations, no icon): their labels start
+   under the section's label. */
+.gb-rail > md-gb-nav-rail-item[secondary] {
+  --item-icon-size: 0px;
+}
+
+/* The logo at the start of the header, linking to the docs home. The rail's
+   own menu button expands it (a logo must not look like that button). */
 .gb-brand {
   display: grid;
   place-items: center;
   inline-size: 40px;
   block-size: 40px;
-  margin-block-end: var(--md-sys-space-100);
   border-radius: var(--md-sys-shape-corner-full);
 }
 .gb-brand:focus-visible {
@@ -247,53 +279,11 @@ body:has(.gb-shell) {
   display: block;
 }
 
-/* --- Pages pane ------------------------------------------------------------- */
+/* --- Pages sheet (compact) -------------------------------------------------- */
 
-.gb-pane-cell {
-  grid-column: 2;
-  grid-row: 2;
-  position: sticky;
-  inset-block-start: var(--gb-top-h);
-  z-index: 10;
-  block-size: calc(100dvh - var(--gb-top-h));
-  min-inline-size: 0;
-  overflow: hidden;
-}
-/* Hidden (and inert, shell.ts) once the column has closed. */
-:root[data-pane='closed'] .gb-pane-cell {
-  visibility: hidden;
-  transition: visibility 0s var(--md-sys-motion-spring-default-spatial-duration, 420ms);
-}
-/* Below expanded the pane is modal (a dialog in the top layer): no column. */
-@media (max-width: 839px) {
-  .gb-pane-cell {
-    inline-size: 0;
-  }
-}
-@media (max-width: 599px) {
-  .gb-pane-cell {
-    display: none;
-  }
-}
-.gb-drawer {
-  block-size: 100%;
-  --container-width: var(--gb-pane-open-w);
-}
-.gb-drawer:not([modal]) {
-  --container-color: transparent;
-}
-.gb-drawer:not(:defined) {
-  display: none;
-}
-@media (min-width: 840px) {
-  .gb-drawer:not(:defined) {
-    display: block;
-    inline-size: var(--gb-pane-open-w);
-    visibility: hidden;
-  }
-}
-/* Section labels of the pane: title-small on-surface-variant (the drawer
-   styles them), shorter than a destination and set off from the items. */
+/* Section labels of the sheet's list: title-small on-surface-variant (the
+   drawer styles them), shorter than a destination and set off from the
+   items. */
 md-gb-nav-drawer {
   --section-label-height: 48px;
 }
@@ -373,13 +363,13 @@ md-gb-nav-drawer-item[data-group] {
 /* --- Content pane ---------------------------------------------------------------- */
 
 .gb-content-pane {
-  grid-column: 3;
+  grid-column: 2;
   grid-row: 2;
   position: relative;
   min-inline-size: 0;
   min-block-size: 0;
   /* Set off from the rail by the gap it keeps from the window's edge and the
-     outline; the pages pane, when it's a column, sets it off instead. */
+     outline. */
   margin: 0 var(--md-sys-space-150) var(--md-sys-space-150);
   border-radius: var(--md-sys-shape-corner-xl);
   background: var(--md-sys-color-surface);
@@ -388,11 +378,6 @@ md-gb-nav-drawer-item[data-group] {
   scroll-padding-block-start: var(--md-sys-space-200);
   /* The top previous / next links measure from the panel (100cqi). */
   container-type: inline-size;
-}
-@media (min-width: 840px) {
-  :root:not([data-pane='closed']) .gb-content-pane {
-    margin-inline-start: 0;
-  }
 }
 .gb-main {
   padding-block-end: var(--md-sys-space-800);
@@ -410,7 +395,7 @@ md-gb-nav-drawer-item[data-group] {
 }
 @media (min-width: 840px) {
   .gb-outline {
-    grid-column: 4;
+    grid-column: 3;
     grid-row: 2;
     display: flex;
     flex-direction: column;
@@ -464,7 +449,7 @@ md-gb-nav-drawer-item[data-group] {
 }
 @media (min-width: 840px) {
   :root[data-outline='closed'] .gb-outline-strip {
-    grid-column: 4;
+    grid-column: 3;
     grid-row: 2;
     display: flex;
     flex-direction: column;
@@ -899,7 +884,6 @@ md-gb-bottom-sheet .gb-tool {
 
 @media (prefers-reduced-motion: reduce) {
   .gb-shell,
-  .gb-pane-cell,
   .gb-action {
     transition: none;
   }

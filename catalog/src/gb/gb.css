@@ -94,13 +94,6 @@
 .gb-content-pane::-webkit-scrollbar-track {
   margin-block: var(--md-sys-space-300);
 }
-/* The pages pane: its scrollbar comes and goes as groups collapse. Its
-   scroller is in the drawer's shadow root (the shared scroller mixin); the
-   custom properties reach it. */
-.gb-drawer {
-  --scrollbar-gutter: stable;
-  --scrollbar-track-inset: var(--md-sys-space-200);
-}
 
 html {
   scroll-padding-block-start: 16px;
@@ -460,7 +453,6 @@ body {
     break-inside: avoid;
   }
   .gb-rail-area,
-  .gb-pane-cell,
   .gb-bar,
   .gb-top,
   .gb-toc,

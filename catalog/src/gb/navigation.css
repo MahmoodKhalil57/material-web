@@ -23,9 +23,6 @@
 .gb-rail-area {
   view-transition-name: gb-rail;
 }
-.gb-pane-cell {
-  view-transition-name: gb-pane;
-}
 .gb-toc {
   view-transition-name: gb-toc;
 }
@@ -38,13 +35,10 @@
 
 ::view-transition-group(root),
 ::view-transition-group(gb-toc),
-::view-transition-group(gb-pane),
 ::view-transition-old(root),
 ::view-transition-new(root),
 ::view-transition-old(gb-toc),
-::view-transition-new(gb-toc),
-::view-transition-old(gb-pane),
-::view-transition-new(gb-pane) {
+::view-transition-new(gb-toc) {
   animation-duration: var(--md-sys-motion-duration-medium1, 250ms);
   animation-timing-function: var(--md-sys-motion-easing-standard, ease);
 }

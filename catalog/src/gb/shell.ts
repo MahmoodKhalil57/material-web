@@ -6,25 +6,20 @@
 
 /**
  * The layout of the /3.0/ site (imported by gb.ts; markup in
- * site/_includes/gb/default.html, styles in shell.css), modelled on
- * m3.material.io with the navigation rail, navigation bar, FAB menu and
- * sheets of labs/gb:
+ * site/_includes/gb/default.html, styles in shell.css): a search app bar,
+ * and the navigation rail, navigation bar and sheets of labs/gb:
  *
- * - Expanded (840px and up) and medium (600px and up) windows: a navigation
- *   rail with the menu button, the search FAB, the four sections, and the
- *   theme, version and more controls. The pages pane (the current section's
- *   pages in an `md-gb-nav-drawer`) is standard beside the rail when expanded
- *   (the menu button toggles it, remembered in localStorage) and modal in
- *   medium windows. While the pane is open, hovering or focusing another
- *   section's destination shows that section's pages in the pane (Right
- *   arrow moves into them); leaving the rail and pane shows the current
- *   section again. With the pane closed, hovering does nothing.
+ * - Medium (600px and up) and expanded (840px and up) windows: an M3
+ *   Expressive navigation rail, the only navigation. Its menu button
+ *   expands it to show the current section's pages as secondary
+ *   destinations (in place of a navigation drawer). From 840px the expanded
+ *   rail is beside the content, expanded unless the reader collapsed it
+ *   (remembered); below, it expands modal over the content.
  * - Compact windows (below 600px): a navigation bar with the sections.
- *   Selecting the current one again opens its pages in a bottom sheet, and
- *   the small search button follows the scroll (hides when scrolling down).
- * - All sizes: the FAB menu with Download & copy (download.ts) and Customize
- *   theme in a side sheet (a bottom sheet when compact), and Send feedback in
- *   a dialog that opens a prefilled GitHub issue.
+ *   Selecting the current one again opens its pages in a bottom sheet.
+ * - All sizes: the header's actions, Download & copy (download.ts) and
+ *   Customize theme in a side sheet (a bottom sheet when compact), and Send
+ *   feedback in a dialog that opens a prefilled GitHub issue.
  *
  * Prerender safe: nothing here reads the network or the clipboard.
  */
@@ -76,219 +71,69 @@ function sectionOf(el: Element): string {
   return (el as HTMLElement).dataset['section'] ?? '';
 }
 
-// --- Pages pane ----------------------------------------------------------------
+// --- Navigation rail: collapsed and expanded -----------------------------------------
+
+interface RailElement extends HTMLElement {
+  expanded: boolean;
+  modal: boolean;
+}
 
 interface DrawerElement extends HTMLElement {
   open: boolean;
-  modal: boolean;
   quick: boolean;
 }
 
-const drawer = $<DrawerElement>('gb-drawer');
-const menuButton = $('gb-menu');
-const cell = drawer?.parentElement ?? null;
+const RAIL_KEY = 'gb-rail';
 const root = document.documentElement;
-const currentSection = drawer?.dataset['section'] ?? 'about';
+const rail = $<RailElement>('gb-rail');
+const sectionItem = rail?.querySelector<HTMLElement>('md-gb-nav-rail-item[data-section][data-current]') ?? null;
+const pageItem = rail?.querySelector<HTMLElement>('md-gb-nav-rail-item[secondary][data-current]') ?? null;
+const currentSection = sectionItem ? sectionOf(sectionItem) : 'about';
 
-const paneOpen = () => root.dataset['pane'] !== 'closed';
-
-/** Whether the standard pane (not the modal one) is showing. */
-const standardPaneShowing = () => expanded.matches && paneOpen();
-
-function syncMenuButton() {
-  if (!menuButton || !drawer) return;
-  const open = expanded.matches ? paneOpen() : drawer.open;
-  menuButton.setAttribute('aria-expanded', String(open));
-  if (cell) cell.inert = expanded.matches && !paneOpen();
+/**
+ * One active destination (navigation-rail.md: the active indicator only for
+ * the current page): the section while the rail is collapsed, the page
+ * among the section's pages while it's expanded.
+ */
+function syncActive() {
+  if (!rail || !sectionItem) return;
+  const page = rail.expanded && pageItem;
+  sectionItem.toggleAttribute('selected', !page);
+  pageItem?.toggleAttribute('selected', !!page);
 }
 
-if (drawer) {
-  // Standard and open at expanded and up; modal and closed below.
+if (rail) {
+  // From 840px the expanded rail is standard (beside the content, expanded
+  // unless the reader collapsed it, remembered); below it, the rail is
+  // collapsed and expands modal over the content.
   const place = () => {
-    drawer.quick = true;
-    drawer.modal = !expanded.matches;
-    drawer.open = expanded.matches;
-    syncMenuButton();
-    requestAnimationFrame(() => (drawer.quick = false));
+    rail.modal = !expanded.matches;
+    rail.expanded = expanded.matches && root.dataset['rail'] !== 'collapsed';
+    syncActive();
   };
   place();
   expanded.addEventListener('change', place);
-  menuButton?.addEventListener('click', () => {
-    restorePane();
-    // Compact windows have no pane: the section's pages open in a sheet.
-    if (compact.matches) {
-      openPagesSheet(menuButton);
-      return;
-    }
+  rail.addEventListener('toggle', () => {
     if (expanded.matches) {
-      // The pane slides away; the content takes the width (CSS).
-      const open = !paneOpen();
-      if (open) delete root.dataset['pane'];
-      else root.dataset['pane'] = 'closed';
-      store(PANE_KEY, open ? null : 'closed');
-    } else {
-      drawer.open = !drawer.open;
+      if (rail.expanded) delete root.dataset['rail'];
+      else root.dataset['rail'] = 'collapsed';
+      store(RAIL_KEY, rail.expanded ? null : 'collapsed');
     }
-    syncMenuButton();
+    syncActive();
   });
-  for (const type of ['opened', 'closed', 'open']) {
-    drawer.addEventListener(type, syncMenuButton);
-  }
 }
 
-// --- Pane preview: another section's pages in the open pages pane ---------------
-
-const rail = $('gb-rail');
-const railItems = () =>
-  [...(rail?.querySelectorAll<HTMLElement>('md-gb-nav-rail-item') ?? [])];
-
-/** The pane's own items (the current section), kept while another shows. */
-let homeNodes: Node[] | null = null;
-let homeLabel = '';
-let previewing = '';
-let previewFrom: HTMLElement | null = null;
-let previewTimer: number | undefined;
-let skipFocusPreview = false;
-
-/** Whether the pages pane is on screen (standard, or the open modal one). */
-const paneShowing = () =>
-  !!drawer && !compact.matches && (standardPaneShowing() || (drawer.modal && drawer.open));
-
-/** Clones the pages of a section: from its template, or the live pane. */
+/** The current section's pages, for the pages sheet (compact windows). */
 function pagesOf(section: string): {nodes: Node[]; label: string} | null {
   const template = document.querySelector<HTMLTemplateElement>(
     `template[data-pages="${section}"]`,
   );
-  if (template) {
-    return {
-      nodes: [...(template.content.cloneNode(true) as DocumentFragment).childNodes],
-      label: template.dataset['label'] ?? section,
-    };
-  }
-  if (section === currentSection && drawer) {
-    const nodes = homeNodes ?? [...drawer.childNodes];
-    return {
-      nodes: nodes.map((c) => c.cloneNode(true)),
-      label: (homeNodes ? homeLabel : drawer.getAttribute('label') ?? '').replace(/ pages$/, '') || section,
-    };
-  }
-  return null;
+  if (!template) return null;
+  return {
+    nodes: [...(template.content.cloneNode(true) as DocumentFragment).childNodes],
+    label: template.dataset['label'] ?? section,
+  };
 }
-
-/**
- * Shows a section's pages in the pages pane while its rail destination is
- * hovered or focused. Does nothing when the pane is closed.
- */
-function previewSection(section: string, from: HTMLElement) {
-  clearTimeout(previewTimer);
-  if (!drawer || !paneShowing()) return;
-  previewFrom = from;
-  if (section === currentSection) {
-    restorePane();
-    return;
-  }
-  if (section === previewing) return;
-  const pages = pagesOf(section);
-  if (!pages) return;
-  if (!homeNodes) {
-    homeNodes = [...drawer.childNodes];
-    homeLabel = drawer.getAttribute('label') ?? '';
-  }
-  drawer.replaceChildren(...pages.nodes);
-  drawer.setAttribute('label', `${pages.label} pages`);
-  drawer.dataset['preview'] = section;
-  applySavedGroups(drawer);
-  previewing = section;
-}
-
-/** Puts the current section's pages back in the pane. */
-function restorePane(returnFocus = false) {
-  clearTimeout(previewTimer);
-  if (drawer && homeNodes) {
-    drawer.replaceChildren(...homeNodes);
-    drawer.setAttribute('label', homeLabel);
-    delete drawer.dataset['preview'];
-  }
-  homeNodes = null;
-  previewing = '';
-  if (returnFocus && previewFrom) {
-    // Focus goes back without previewing that destination again.
-    skipFocusPreview = true;
-    previewFrom.focus();
-    skipFocusPreview = false;
-  }
-}
-
-function restorePaneSoon() {
-  clearTimeout(previewTimer);
-  previewTimer = window.setTimeout(() => restorePane(), 280);
-}
-
-function focusPane() {
-  const first = drawer?.querySelector<HTMLElement>('a, md-gb-nav-drawer-item[href]');
-  requestAnimationFrame(() => first?.focus());
-}
-
-if (rail && drawer) {
-  for (const item of railItems()) {
-    const section = sectionOf(item);
-    item.addEventListener('pointerenter', (e) => {
-      if (e.pointerType === 'touch') return;
-      clearTimeout(previewTimer);
-      // A short delay, so moving across the rail doesn't flash each section.
-      previewTimer = window.setTimeout(() => previewSection(section, item), 80);
-    });
-    item.addEventListener('pointerleave', restorePaneSoon);
-    // Keyboard focus previews too; a click focus does not.
-    item.addEventListener('focus', () => {
-      if (!skipFocusPreview && item.matches(':focus-visible')) previewSection(section, item);
-    });
-  }
-  cell?.addEventListener('pointerenter', () => clearTimeout(previewTimer));
-  cell?.addEventListener('pointerleave', restorePaneSoon);
-  // Right arrow (Left in right-to-left) moves into the pane; Left comes back.
-  rail.addEventListener(
-    'keydown',
-    (e) => {
-      const forward = getComputedStyle(rail).direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
-      const item = (e.target as Element).closest<HTMLElement>('md-gb-nav-rail-item');
-      if (e.key !== forward || !item || !paneShowing()) return;
-      e.preventDefault();
-      e.stopPropagation();
-      previewSection(sectionOf(item), item);
-      focusPane();
-    },
-    true,
-  );
-  drawer.addEventListener('keydown', (e) => {
-    const back = getComputedStyle(drawer).direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
-    if (e.key === 'Escape' && previewing) {
-      e.stopPropagation();
-      restorePane(true);
-    } else if (e.key === back && previewFrom) {
-      e.preventDefault();
-      previewFrom.focus();
-    }
-  });
-  // Focus left the rail and the pane: show the current section again.
-  document.addEventListener('focusin', (e) => {
-    if (!previewing) return;
-    const target = e.target as Node;
-    if (!rail.contains(target) && !cell?.contains(target)) restorePane();
-  });
-  document.addEventListener(
-    'keydown',
-    (e) => {
-      if (e.key === 'Escape' && previewing && rail.contains(document.activeElement)) {
-        restorePane();
-      }
-    },
-    true,
-  );
-  compact.addEventListener('change', () => restorePane());
-  expanded.addEventListener('change', () => restorePane());
-}
-
 
 // --- Page outline ----------------------------------------------------------------------
 
@@ -382,6 +227,8 @@ addEventListener('keydown', (e) => {
 
 // --- Component groups: split rows that collapse their pages ------------------------
 
+// In the pages sheet of compact windows (the expanded rail lists every
+// component under its group's label).
 const GROUPS_KEY = 'gb-groups';
 
 function savedGroups(): Record<string, boolean> {
@@ -412,7 +259,7 @@ function applySavedGroups(list: ParentNode) {
   }
 }
 
-/** Toggles a group from its chevron (in the pane, a preview, or the sheet). */
+/** Toggles a group from its row in the pages sheet. */
 function handleGroupToggle(e: Event) {
   const toggle = (e.target as Element).closest<HTMLElement>('.gb-pane-group-toggle');
   const row = toggle?.closest<HTMLElement>('.gb-pane-group');
@@ -425,8 +272,6 @@ function handleGroupToggle(e: Event) {
   saved[id] = open;
   store(GROUPS_KEY, JSON.stringify(saved));
 }
-
-drawer?.addEventListener('click', handleGroupToggle);
 
 // --- Compact: the navigation bar and the pages sheet ------------------------------
 
@@ -442,6 +287,7 @@ function openPagesSheet(trigger: HTMLElement) {
   list.className = 'gb-sheet-drawer';
   list.setAttribute('label', `${pages.label} pages`);
   list.append(...pages.nodes);
+  applySavedGroups(list);
   list.quick = true;
   list.open = true;
   pagesSheet.replaceChildren(list);
