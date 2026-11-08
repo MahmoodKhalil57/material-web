@@ -76,7 +76,15 @@ search.
 <output id="result">Searching…</output>
 ```
 ```ts
-const tools = (parent as any).gbDocsTools;
+// The page registers the tools once its script has loaded.
+const tools = await new Promise<any>((resolve) => {
+  const check = () => {
+    const found = (parent as any).gbDocsTools;
+    if (found) resolve(found);
+    else setTimeout(check, 50);
+  };
+  check();
+});
 const out = document.querySelector('#result')!;
 const found = await tools.search_docs({query: 'split button menu', limit: 3});
 out.textContent = found.results.map((r: any) => `${r.heading}: ${r.url}`).join('\n');
