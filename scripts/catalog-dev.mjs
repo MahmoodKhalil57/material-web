@@ -707,6 +707,11 @@ async function startCatalogServer() {
           if (ctx.status !== 200) return;
           if (/\.md$/.test(ctx.path)) ctx.type = 'text/markdown; charset=utf-8';
           else if (/\.webmanifest$/.test(ctx.path)) ctx.type = 'application/manifest+json';
+          // Content-hashed fonts (scripts/gb-fonts.mjs), as in firebase.json:
+          // the browser keeps them without asking again, in dev too.
+          if (/^\/fonts\/gb\/[^/]+\.woff2$/.test(ctx.path)) {
+            ctx.set('Cache-Control', 'public, max-age=31536000, immutable');
+          }
         },
       ],
     },

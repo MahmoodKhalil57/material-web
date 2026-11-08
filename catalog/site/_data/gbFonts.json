@@ -1,0 +1,7 @@
+{
+  "stylesheet": "/fonts/gb/fonts.css",
+  "preload": [
+    "/fonts/gb/roboto-flex-6ccf7a9846bd.woff2",
+    "/fonts/gb/material-symbols-outlined-c126361daaf8.woff2"
+  ]
+}

@@ -82,15 +82,16 @@
     {#- Canonical, Markdown alternate, manifest, theme-color, Open Graph,
         Twitter Card and JSON-LD (eleventy-helpers/gb-site.cjs). -#}
     {% gbhead title, description, section, page.url %}
-    {#- Roboto Flex is `optional`: text starts in a fallback of the same
-        metrics (gb.css) and only uses the font when it arrives in time (it
-        is cached for the next page), so a late font never moves the text.
-        Material Symbols is `block`: icons stay invisible, in their fixed
-        boxes, instead of showing their names. -#}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=optional" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;display=block" />
+    {#- Self-hosted fonts (scripts/gb-fonts.mjs): same origin, content-hash
+        file names, cached for a year (firebase.json) and cache-first in the
+        service worker, and preloaded, so after the first visit they are
+        ready before first paint. Roboto Flex is `swap` (the size-matched
+        fallback in gb.css keeps the swap from moving text); Material Symbols
+        is `block` (icons stay invisible instead of showing their names). -#}
+    {%- for href in gbFonts.preload %}
+    <link rel="preload" href="{{ href }}" as="font" type="font/woff2" crossorigin />
+    {%- endfor %}
+    <link rel="stylesheet" href="{{ gbFonts.stylesheet }}" />
     <link rel="stylesheet" href="/js/gb/gb.css" />
     <script>
       // Before first paint: color-scheme from the saved mode, the dynamic

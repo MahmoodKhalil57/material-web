@@ -293,7 +293,9 @@ function frameDoc({id, html, css, js, lib}) {
   return (
     '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Material+Symbols+Outlined&display=swap">' +
+    // The site's self-hosted fonts (scripts/gb-fonts.mjs); a srcdoc frame
+    // resolves the path against the page, so it shares the page's cache.
+    '<link rel="stylesheet" href="/fonts/gb/fonts.css">' +
     (lib ? `<link rel="stylesheet" href="${lib}labs/gb/styles/m3.css">` : '') +
     importMap +
     '<style>' + FRAME_CSS + '</style>' +

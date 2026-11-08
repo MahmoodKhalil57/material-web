@@ -10,12 +10,16 @@
  *
  * - Page navigations: network first with a short timeout, then the cached
  *   copy; offline, the cached page (or the 3.0 start page).
- * - Static assets (/js/, /css/, /fonts/, /images/, Google Fonts):
+ * - Fonts (/fonts/gb/*.woff2, self-hosted by scripts/gb-fonts.mjs): cache
+ *   first, in a cache that outlives builds. Their file names carry a content
+ *   hash, so a URL never changes content: once fetched they are never
+ *   fetched again, in dev too.
+ * - Other static assets (/js/, /css/, /fonts/, /images/):
  *   stale-while-revalidate; on localhost network first, so a rebuild is
  *   never served stale for more than the one load that fails to reach it.
- * - Cache names carry the build id, which changes the worker script on every
- *   build: a new build installs, takes over at once, and deletes the caches
- *   of the old one.
+ * - Page and asset cache names carry the build id, which changes the worker
+ *   script on every build: a new build installs, takes over at once, and
+ *   deletes the caches of the old one (not the font cache).
  */
 
 declare const __GB_BUILD_ID__: string;
@@ -37,11 +41,13 @@ const sw = self as unknown as Scope;
 const BUILD = typeof __GB_BUILD_ID__ === 'string' ? __GB_BUILD_ID__ : 'dev';
 const PAGES = `gb-pages-${BUILD}`;
 const ASSETS = `gb-assets-${BUILD}`;
+/** Content-hashed font files: kept across builds. */
+const FONTS = 'gb-fonts-v1';
+const FONT_FILE = /^\/fonts\/gb\/[^/]+\.woff2$/;
 const START = '/3.0/';
 /** How long a page may take before the cached copy is used. */
 const NETWORK_TIMEOUT = 3000;
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 const ASSET_PATH = /^\/(js|css|fonts|images)\//;
 const DOWNLOADS =
   /^\/3\.0\/(skill\/|material-web-3\.0\.mhtml$|custom-elements\.json$|llms-full\.txt$)/;
@@ -54,7 +60,7 @@ sw.addEventListener('activate', (e: ExtendableEvent) => {
   e.waitUntil(
     (async () => {
       for (const name of await caches.keys()) {
-        if (name.startsWith('gb-') && name !== PAGES && name !== ASSETS) {
+        if (name.startsWith('gb-') && ![PAGES, ASSETS, FONTS].includes(name)) {
           await caches.delete(name);
         }
       }
@@ -63,9 +69,18 @@ sw.addEventListener('activate', (e: ExtendableEvent) => {
   );
 });
 
-/** Only complete, successful (or opaque font) responses are worth keeping. */
-const cacheable = (response: Response) =>
-  response.ok || response.type === 'opaque';
+/** Only complete, successful responses are worth keeping. */
+const cacheable = (response: Response) => response.ok;
+
+/** The cached copy, else the network (kept for next time). */
+async function cacheFirst(request: Request, cacheName: string): Promise<Response> {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (cacheable(response)) await cache.put(request, response.clone());
+  return response;
+}
 
 async function networkFirst(
   request: Request,
@@ -158,12 +173,11 @@ sw.addEventListener('fetch', (e: FetchEvent) => {
   }
 
   const sameOrigin = url.origin === location.origin;
-  if (
-    !(sameOrigin && ASSET_PATH.test(url.pathname)) &&
-    !FONT_HOSTS.includes(url.hostname)
-  ) {
+  if (sameOrigin && FONT_FILE.test(url.pathname)) {
+    e.respondWith(cacheFirst(request, FONTS));
     return;
   }
+  if (!(sameOrigin && ASSET_PATH.test(url.pathname))) return;
   // Dev: files change without a new URL, so the network wins.
   if (LOCAL && sameOrigin) {
     e.respondWith(networkFirst(request, ASSETS, null, undefined, e));
