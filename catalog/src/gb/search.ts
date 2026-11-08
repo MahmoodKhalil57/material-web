@@ -66,6 +66,83 @@ const SECTION_LABELS: Record<string, string> = {
 };
 const SUGGESTIONS = ['Button', 'Color', 'Accessibility', 'md-gb-dialog', 'Motion'];
 
+// --- Actions -----------------------------------------------------------------
+// What the site's controls do, found by name: the color theme, the theme
+// sheet, the downloads and copies of Download & copy, the project's links,
+// Send feedback and the 2.5 site. Each runs the control on the page (the
+// same behavior, focus return and confirmation), after the search closes.
+
+interface Action {
+  id: string;
+  label: string;
+  /** What it does (shown under the label, searched too). */
+  detail: string;
+  /** More words it's found by. */
+  keywords: string;
+  /** Material Symbols name. */
+  icon: string;
+  run: () => void;
+}
+
+/** Runs a control of the page (it may be hidden, like the sheet's items). */
+const press = (selector: string) => () => document.querySelector<HTMLElement>(selector)?.click();
+const openTab = (url: string) => () => void window.open(url, '_blank', 'noopener');
+
+// In order of preference when several match (MAX_ACTIONS are listed): the
+// links before the copies of their text ("github", "npm").
+const ACTIONS: Action[] = [
+  {id: 'theme', label: 'Toggle color theme', detail: 'System, light or dark', keywords: 'mode appearance dark light system night day', icon: 'brightness_auto', run: press('#gb-theme')},
+  {id: 'motion', label: 'Reduce motion', detail: 'Turn animations off, or back on, on this site', keywords: 'animation animations motion reduce reduced slow device performance accessibility vestibular transitions toggle', icon: 'motion_photos_off', run: press('#gb-motion')},
+  {id: 'customize', label: 'Customize color theme', detail: 'Source color, scheme and contrast', keywords: 'palette seed scheme variant contrast colors', icon: 'palette', run: press('[data-tool="theme"]')},
+  {id: 'github', label: 'Open GitHub', detail: 'The repository, in a new tab', keywords: 'repository repo source code issues', icon: 'open_in_new', run: openTab('https://github.com/material-components/material-web')},
+  {id: 'npm', label: 'Open npm', detail: 'The package, in a new tab', keywords: 'package registry', icon: 'open_in_new', run: openTab('https://www.npmjs.com/package/@material/web')},
+  {id: 'feedback', label: 'Send feedback', detail: 'Report a problem or suggest a change', keywords: 'issue bug report problem suggestion', icon: 'feedback', run: press('.gb-rail-foot [data-tool="feedback"]')},
+  {id: 'version', label: 'Switch to version 2.5', detail: 'The Material Web 2.5 site', keywords: 'toggle version old previous v2 legacy', icon: 'swap_horiz', run: () => location.assign('/')},
+  {id: 'install', label: 'Install app', detail: 'Add Material Web 3.0 to your device', keywords: 'download pwa offline app', icon: 'install_desktop', run: press('#gb-install')},
+  {id: 'mhtml', label: 'Download website (MHTML)', detail: 'All pages in one file, for offline reading', keywords: 'offline single file save site', icon: 'web', run: press('#gb-download-body [data-download$=".mhtml"]')},
+  {id: 'llms', label: 'Download docs for LLMs (llms-full.txt)', detail: 'All pages as Markdown text', keywords: 'ai markdown text llm agent', icon: 'description', run: press('#gb-download-body [data-download$="llms-full.txt"]')},
+  {id: 'manifest', label: 'Download API (custom-elements.json)', detail: 'Every element, as a Custom Elements Manifest', keywords: 'manifest json elements cem', icon: 'data_object', run: press('#gb-download-body [data-download$="custom-elements.json"]')},
+  {id: 'agent', label: 'Copy agent prompt', detail: 'Tells an AI agent to install the md-gb skill', keywords: 'ai claude skill llm', icon: 'smart_toy', run: press('[data-copy="agent-prompt"]')},
+  {id: 'cdn', label: 'Copy CDN script tag', detail: 'A script tag and import map', keywords: 'script importmap esm cdn html', icon: 'code', run: press('[data-copy="cdn"]')},
+  {id: 'github-link', label: 'Copy GitHub link', detail: 'github.com/material-components/material-web', keywords: 'repository repo url source', icon: 'link', run: press('[data-copy="github"]')},
+  {id: 'npm-install', label: 'Copy npm install', detail: 'npm install @material/web', keywords: 'package install command terminal', icon: 'terminal', run: press('[data-copy="npm"]')},
+  {id: 'shadcn', label: 'Copy shadcn npx setup', detail: 'npx shadcn@latest add …/md-theme.json', keywords: 'react registry ui install command', icon: 'deployed_code', run: press('[data-copy="shadcn"]')},
+];
+/** All five copies show for "copy". */
+const MAX_ACTIONS = 5;
+
+/**
+ * The actions whose label, detail or keywords have a word starting with
+ * each word of the query, in the list's order.
+ */
+function matchActions(query: string): Action[] {
+  const tokens = words(query);
+  if (!tokens.length) return [];
+  return ACTIONS.filter((action) => {
+    const own = words(`${action.label} ${action.detail} ${action.keywords}`);
+    return tokens.every((t) => own.some((w) => w.startsWith(t)));
+  }).slice(0, MAX_ACTIONS);
+}
+
+/**
+ * Which option is chosen first, the actions listed before the pages: the
+ * first action whose name has the query's words ("download", "2.5"),
+ * unless a page's title has them too ("color"), where the action wins only
+ * if the query starts its name ("copy npm", "toggle theme"). Else the
+ * first page.
+ */
+function firstChoice(query: string, actions: Action[], results: Result[]): number {
+  const tokens = words(query);
+  const named = actions.findIndex((a) => {
+    const label = words(a.label);
+    return tokens.every((t) => label.some((w) => w.startsWith(t)));
+  });
+  if (named < 0) return results.length ? actions.length : 0;
+  const starts = words(actions[named].label)[0].startsWith(tokens[0]);
+  if (results[0]?.titleMatch && !starts) return actions.length;
+  return named;
+}
+
 /** Field weights: title > heading > identifiers > text. */
 const W_TITLE = 10;
 const W_HEADING = 6;
@@ -593,14 +670,25 @@ class SearchDialog {
       this.renderIdle();
       return;
     }
-    if (!index) {
+    const actions = matchActions(query);
+    if (!index && !actions.length) {
       this.setExpanded(false);
       this.status.textContent = '';
       empty.hidden = false;
       empty.textContent = 'Loading the index…';
       return;
     }
-    const results = index.search(query);
+    const results = index?.search(query) ?? [];
+    if (actions.length) {
+      this.dialog.toggleAttribute('data-has-results', true);
+      this.renderActions(actions);
+      if (results.length) this.renderResults(results);
+      this.setExpanded(true);
+      this.setActive(firstChoice(query, actions, results), true);
+      const count = this.options.length;
+      this.announce(`${count} result${count === 1 ? '' : 's'}`);
+      return;
+    }
     if (!results.length) {
       this.setExpanded(false);
       empty.hidden = false;
@@ -655,6 +743,37 @@ class SearchDialog {
     this.setExpanded(true);
     // Nothing is chosen until an arrow key: Enter on an empty query does nothing.
     this.status.textContent = '';
+  }
+
+  private renderActions(actions: Action[]) {
+    const tokens = words(this.input.value);
+    const group = el('div', 'gb-search-group');
+    group.setAttribute('role', 'group');
+    const title = el('div', 'gb-search-group-title', 'Actions');
+    title.setAttribute('role', 'presentation');
+    title.id = 'gb-search-g-actions';
+    group.setAttribute('aria-labelledby', title.id);
+    group.append(title);
+    for (const action of actions) {
+      const option = el('a', 'gb-search-option gb-search-action');
+      option.setAttribute('role', 'option');
+      option.tabIndex = -1;
+      option.id = `gb-search-o-${this.counter++}`;
+      option.dataset['action'] = action.id;
+      const icon = el('md-gb-icon');
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = action.icon;
+      const text = el('span', 'gb-search-action-text');
+      const name = el('span', 'gb-search-name');
+      highlight(name, action.label, tokens);
+      const detail = el('span', 'gb-search-snippet');
+      highlight(detail, action.detail, tokens);
+      text.append(name, detail);
+      option.append(icon, text);
+      group.append(option);
+      this.options.push(option as HTMLAnchorElement);
+    }
+    this.list.append(group);
   }
 
   private renderResults(results: Result[]) {
@@ -753,6 +872,17 @@ class SearchDialog {
   /** Opens a result: in a new tab with Ctrl/Cmd (click or Enter). */
   private go(option: HTMLAnchorElement, e: MouseEvent | KeyboardEvent) {
     if (option.dataset['term'] !== undefined) return;
+    const action = ACTIONS.find((a) => a.id === option.dataset['action']);
+    if (action) {
+      // The search closes first, so what the action opens (a sheet, a
+      // dialog, the snackbar) isn't under it: it runs once the dialog has
+      // closed and focus has returned to where the search was opened from
+      // (onClosed), so a sheet or dialog it opens keeps the focus.
+      e.preventDefault();
+      this.dialog.addEventListener('close', () => action.run(), {once: true});
+      this.close();
+      return;
+    }
     const href = option.href;
     const modified = e.ctrlKey || e.metaKey;
     remember(this.input.value);

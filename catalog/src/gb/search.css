@@ -158,6 +158,26 @@
 .gb-search-term md-gb-icon {
   color: var(--md-sys-color-on-surface-variant);
 }
+/* An action: its icon, then its name over what it does. */
+.gb-search-action {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--md-sys-space-200);
+  min-block-size: 56px;
+}
+.gb-search-action md-gb-icon {
+  flex: none;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.gb-search-option[aria-selected='true'] md-gb-icon {
+  color: inherit;
+}
+.gb-search-action-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
 .gb-search-term-text {
   font: var(--md-sys-typescale-body-lg);
   font-variation-settings: var(--md-sys-typescale-body-lg-axes);

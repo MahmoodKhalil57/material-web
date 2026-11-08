@@ -53,6 +53,8 @@ function copyText(id: string, site: string): string {
   switch (id) {
     case 'agent-prompt':
       return agentPrompt(site);
+    case 'github':
+      return GITHUB_URL;
     case 'npm':
       return NPM_COMMAND;
     case 'cdn':
@@ -63,6 +65,8 @@ function copyText(id: string, site: string): string {
       return '';
   }
 }
+
+const GITHUB_URL = 'https://github.com/material-components/material-web';
 
 const NPM_COMMAND = 'npm install @material/web';
 
