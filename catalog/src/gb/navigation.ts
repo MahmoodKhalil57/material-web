@@ -24,6 +24,8 @@
 import '@material/web/labs/gb/components/loadingindicator/md-gb-loading-indicator.js';
 import '@material/web/labs/gb/components/progress/md-gb-progress.js';
 
+import {movePill} from './pill.js';
+
 const SCOPE = '/3.0/';
 /** Under this a navigation is instant: no indicator (M3: under 200ms). */
 const SHOW_AFTER = 200;
@@ -183,6 +185,49 @@ if (rail) {
     );
   });
   requestAnimationFrame(() => requestAnimationFrame(restoreRailScroll));
+}
+
+// --- Rail active pill: from the page left to this one ------------------------
+// The rail persists across a page transition (navigation.css: the new page's
+// rail shows from the first frame), so its active pill moves from the
+// destination of the page left to this page's, as in the outline (pill.ts),
+// rather than fading out there and in here. The page left records its
+// destination; this page moves the pill from it, when it's in view here.
+
+const PILL_KEY = 'gb-rail-pill';
+
+if (rail) {
+  addEventListener('pageswap', () => {
+    const href = rail.querySelector('md-gb-nav-rail-item[selected]')?.getAttribute('href');
+    try {
+      if (href) store()?.setItem(PILL_KEY, JSON.stringify({href, at: Date.now()}));
+    } catch {
+      // Storage can be blocked; the pill just shows where it is.
+    }
+  });
+  const movePillIn = async () => {
+    let saved: {href?: string; at?: number} | null = null;
+    try {
+      saved = JSON.parse(store()?.getItem(PILL_KEY) ?? 'null');
+      store()?.removeItem(PILL_KEY);
+    } catch {
+      // Ignore a broken entry.
+    }
+    if (!saved?.href || Date.now() - (saved.at ?? 0) > SAVED_FOR) return;
+    await rail.updateComplete;
+    const to = rail.querySelector('md-gb-nav-rail-item[selected]');
+    const from = [...rail.querySelectorAll('md-gb-nav-rail-item')].find(
+      (item) => item.getAttribute('href') === saved.href,
+    );
+    const list = scroller()?.getBoundingClientRect();
+    if (!to || !from || from === to || !list || (from as HTMLElement).hidden) return;
+    const r = from.getBoundingClientRect();
+    if (!r.height || r.bottom <= list.top || r.top >= list.bottom) return;
+    movePill(from, to);
+  };
+  // As the new page shows (after its rail scroll is restored), or once a
+  // prerendered page does.
+  addEventListener('pagereveal', () => whenActive(() => void movePillIn()));
 }
 
 // --- View transitions: the M3 transition pattern of each navigation ---------
