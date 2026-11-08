@@ -29,10 +29,9 @@
  * Prerender safe: nothing here reads the network or the clipboard.
  */
 
+import '@material/web/labs/gb/components/appbar/md-gb-app-bar.js';
 import '@material/web/labs/gb/components/dialog/md-gb-dialog.js';
-import '@material/web/labs/gb/components/fab/md-gb-fab.js';
-import '@material/web/labs/gb/components/fabmenu/md-gb-fab-menu.js';
-import '@material/web/labs/gb/components/fabmenu/md-gb-fab-menu-item.js';
+import '@material/web/labs/gb/components/divider/md-gb-divider.js';
 // The menu first: items find it through a context, which only reaches those
 // upgraded after it is defined.
 import '@material/web/labs/gb/components/menu/md-gb-menu.js';
@@ -51,11 +50,6 @@ import '@material/web/labs/gb/components/sheet/md-gb-bottom-sheet.js';
 import '@material/web/labs/gb/components/sheet/md-gb-side-sheet.js';
 import '@material/web/labs/gb/components/textfield/md-gb-text-field.js';
 import '@material/web/labs/gb/components/tooltip/md-gb-tooltip.js';
-
-import {
-  stepScroll,
-  type ScrollStep,
-} from '@material/web/labs/gb/components/shared/scroll-behavior.js';
 
 import type {SchemeVariant} from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
@@ -120,6 +114,11 @@ if (drawer) {
   expanded.addEventListener('change', place);
   menuButton?.addEventListener('click', () => {
     restorePane();
+    // Compact windows have no pane: the section's pages open in a sheet.
+    if (compact.matches) {
+      openPagesSheet(menuButton);
+      return;
+    }
     if (expanded.matches) {
       // The pane slides away; the content takes the width (CSS).
       const open = !paneOpen();
@@ -379,46 +378,60 @@ addEventListener(
   true,
 );
 
-// The search button floats at the top end and hides while scrolling down.
-const searchCompact = $('gb-search-compact');
-if (searchCompact) {
-  let step: ScrollStep = {y: scrollY, hidden: false, travel: 0};
-  let focusInside = false;
-  searchCompact.addEventListener('focusin', () => {
-    focusInside = true;
-    searchCompact.removeAttribute('data-hidden');
-    step = {...step, hidden: false, travel: 0};
-  });
-  searchCompact.addEventListener('focusout', () => (focusInside = false));
-  addEventListener(
-    'scroll',
-    () => {
-      const next = stepScroll(step, scrollY, !focusInside);
-      if (next.hidden !== step.hidden) {
-        searchCompact.toggleAttribute('data-hidden', next.hidden);
-      }
-      step = next;
-    },
-    {passive: true},
-  );
+// --- Header: the more menu, and the actions that don't fit ---------------------------
+
+const appBar = $('gb-appbar');
+const moreMenu = $('gb-more-menu');
+const moreButton = $('gb-more');
+const overflowButton = $('gb-overflow');
+
+/** The visible button that opened the more menu (focus returns there). */
+const moreInvoker = () =>
+  moreButton && !moreButton.hidden ? moreButton : overflowButton;
+
+/**
+ * The trailing actions the app bar hides at the current window size class
+ * (2 up to medium, 4 from expanded) appear at the top of the more menu.
+ */
+function mirrorOverflow(actions: Element[]) {
+  if (!moreMenu) return;
+  for (const old of moreMenu.querySelectorAll('[data-mirror]')) old.remove();
+  const mirrored = actions.filter((a) => a !== moreButton) as HTMLElement[];
+  if (!mirrored.length) return;
+  const first = moreMenu.firstElementChild;
+  for (const action of mirrored) {
+    const item = document.createElement('md-gb-menu-item');
+    item.dataset['mirror'] = '';
+    const icon = document.createElement('md-gb-icon');
+    icon.slot = 'leading';
+    icon.textContent = action.querySelector('md-gb-icon')?.textContent ?? '';
+    item.append(icon, action.getAttribute('aria-label') ?? '');
+    item.addEventListener('click', () => {
+      // The menu closes first, then the hidden action runs as if pressed.
+      setTimeout(() => action.click(), 0);
+    });
+    moreMenu.insertBefore(item, first);
+  }
+  const divider = document.createElement('md-gb-divider');
+  divider.dataset['mirror'] = '';
+  moreMenu.insertBefore(divider, first);
 }
 
-// --- Rail menus --------------------------------------------------------------------
-
-$('gb-version-menu')?.addEventListener('click', (e) => {
-  const item = (e.target as Element).closest<HTMLElement>('md-gb-menu-item');
-  // v2.5.0 is the site root; 3.0 stays under /3.0/.
-  if (item?.dataset['version'] === '2.5') location.assign('/');
+appBar?.addEventListener('overflowchange', (e) => {
+  mirrorOverflow((e as CustomEvent<{overflowed: Element[]}>).detail.overflowed);
 });
 
-$('gb-more-menu')?.addEventListener('click', (e) => {
+moreMenu?.addEventListener('click', (e) => {
   const item = (e.target as Element).closest<HTMLElement>('md-gb-menu-item');
   if (!item) return;
-  if (item.dataset['open']) {
+  if (item.dataset['version'] === '2.5') {
+    // v2.5.0 is the site root; 3.0 stays under /3.0/.
+    location.assign('/');
+  } else if (item.dataset['open']) {
     window.open(item.dataset['open'], '_blank', 'noopener');
   } else if (item.dataset['tool'] === 'feedback') {
     // The menu is closing and returns focus to its button.
-    setTimeout(() => openFeedback($('gb-more')), 0);
+    setTimeout(() => openFeedback(moreInvoker()), 0);
   }
 });
 
@@ -434,16 +447,12 @@ interface SheetElement extends HTMLElement {
 const sideSheet = $<SheetElement>('gb-side-sheet');
 const toolsSheet = $<SheetElement>('gb-tools-sheet');
 const holder = $('gb-tools');
-const fabMenu = $('gb-fab-menu');
 /** Where focus returns when a sheet or the dialog closes. */
 const returnFocus = new Map<HTMLElement, HTMLElement | null>();
 
-const fabButton = () =>
-  fabMenu?.shadowRoot?.getElementById('button') as HTMLElement | null | undefined;
-
 let openTool: HTMLElement | null = null;
 
-function openToolSheet(name: string) {
+function openToolSheet(name: string, trigger: HTMLElement | null) {
   const body = $(`gb-${name}-body`);
   if (!body) return;
   const sheet = compact.matches ? toolsSheet : sideSheet;
@@ -451,7 +460,7 @@ function openToolSheet(name: string) {
   openTool = body;
   if (sheet === sideSheet) sheet.headline = body.dataset['title'] ?? '';
   sheet.replaceChildren(body);
-  returnFocus.set(sheet, fabButton() ?? null);
+  returnFocus.set(sheet, trigger);
   void sheet.show();
   dispatchEvent(new CustomEvent('gb-tool-open', {detail: name}));
 }
@@ -470,15 +479,14 @@ addEventListener('gb-tools-close', () => {
   void toolsSheet?.close();
 });
 
-fabMenu?.addEventListener('activate', (e) => {
-  const item = (e as CustomEvent<{item: HTMLElement}>).detail?.item;
-  const tool = item?.dataset['tool'];
-  if (!tool) return;
-  // The menu closes first, then the tool opens.
-  setTimeout(() => {
-    if (tool === 'feedback') openFeedback(fabButton() ?? null);
-    else openToolSheet(tool);
-  }, 0);
+// The header's tool buttons (and their copies in the more menu).
+appBar?.addEventListener('click', (e) => {
+  const button = (e.target as Element).closest<HTMLElement>('[data-tool]');
+  const tool = button?.dataset['tool'];
+  if (!button || !tool || button.closest('md-gb-menu')) return;
+  if (tool === 'feedback') openFeedback(button);
+  // A hidden button (moved to the more menu) returns focus to that menu's button.
+  else openToolSheet(tool, button.hidden ? moreInvoker() : button);
 });
 
 // Send feedback from the pages sheet footer.

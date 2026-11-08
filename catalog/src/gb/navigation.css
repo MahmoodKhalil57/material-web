@@ -17,8 +17,8 @@
   }
 }
 
-/* The shell stays put while the page cross-fades: the rail, the nav bar, the
-   FAB menu and the search button are identical on every page. Named elements
+/* The shell stays put while the page cross-fades: the header, the rail and
+   the nav bar are identical on every page. Named elements
    leave the root snapshot, which then holds the content pane. */
 .gb-rail-area {
   view-transition-name: gb-rail;
@@ -32,11 +32,8 @@
 .gb-bar {
   view-transition-name: gb-bar;
 }
-.gb-fab-menu {
-  view-transition-name: gb-fab;
-}
-.gb-search-compact {
-  view-transition-name: gb-search;
+.gb-top {
+  view-transition-name: gb-top;
 }
 
 ::view-transition-group(root),
@@ -55,18 +52,15 @@
    so they never dim mid-fade. */
 ::view-transition-old(gb-rail),
 ::view-transition-old(gb-bar),
-::view-transition-old(gb-fab),
-::view-transition-old(gb-search) {
+::view-transition-old(gb-top) {
   display: none;
 }
 ::view-transition-new(gb-rail),
 ::view-transition-group(gb-rail),
 ::view-transition-new(gb-bar),
 ::view-transition-group(gb-bar),
-::view-transition-new(gb-fab),
-::view-transition-group(gb-fab),
-::view-transition-new(gb-search),
-::view-transition-group(gb-search) {
+::view-transition-new(gb-top),
+::view-transition-group(gb-top) {
   animation: none;
 }
 

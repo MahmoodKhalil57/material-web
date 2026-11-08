@@ -123,63 +123,81 @@
   </head>
   <body>
     <div class="gb-shell{% if gbIndex %} gb-shell-index{% endif %}">
-      {#- The navigation rail (600px and up): the menu button that toggles the
-          pages pane, the search FAB, the four sections, and below them the
-          theme, version and more menus. -#}
-      <header class="gb-rail-area">
+      {#- The header: an M3 search app bar (app-bars.md "Search app bar"): the
+          menu button that toggles the pages pane, a search bar that opens
+          the search view (src/gb/search.ts; also Ctrl/Cmd+K and "/"), and up
+          to four trailing actions. Actions that don't fit the window size
+          class move into the overflow menu (src/gb/shell.ts). -#}
+      <header class="gb-top">
         <a class="gb-skip" href="#main">Skip to main content</a>
-        <md-gb-nav-rail class="gb-rail" id="gb-rail" narrow aria-label="Sections">
-          <md-gb-icon-button slot="header" id="gb-menu" class="gb-menu" tooltip data-nav-rail-no-toggle aria-label="Pages" aria-controls="gb-drawer" aria-expanded="false">
+        <md-gb-app-bar class="gb-appbar" id="gb-appbar" variant="search">
+          <md-gb-icon-button slot="leading" id="gb-menu" class="gb-menu" tooltip aria-label="Pages" aria-controls="gb-drawer" aria-expanded="false">
             <md-gb-icon>menu</md-gb-icon>
           </md-gb-icon-button>
-          {#- Docs search (src/gb/search.ts) opens from here and from Ctrl/Cmd+K and "/". -#}
-          <md-gb-fab slot="header" id="gb-search-fab" class="gb-search-fab" color="tertiary-container" data-gb-search data-gb-search-tip aria-label="Search docs">
-            <md-gb-icon>search</md-gb-icon>
-          </md-gb-fab>
+          <button slot="search" type="button" class="gb-searchbar" data-gb-search>
+            <span class="gb-searchbar-icon" aria-hidden="true"><md-gb-icon>search</md-gb-icon></span>
+            <span class="gb-searchbar-text">Search Material Web</span>
+            <kbd class="gb-search-hint" aria-hidden="true"></kbd>
+          </button>
+          <md-gb-icon-button slot="trailing" id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
+            <md-gb-icon>brightness_auto</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="theme" aria-label="Customize theme">
+            <md-gb-icon>palette</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" tooltip data-tool="download" aria-label="Download and copy">
+            <md-gb-icon>download</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="trailing" id="gb-more" tooltip popovertarget="gb-more-menu" aria-label="More">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+          <md-gb-icon-button slot="overflow" id="gb-overflow" tooltip popovertarget="gb-more-menu" aria-label="More">
+            <md-gb-icon>more_vert</md-gb-icon>
+          </md-gb-icon-button>
+        </md-gb-app-bar>
+        {#- The menu is a popover (top layer); it stays in the banner landmark.
+            Hidden actions are added above the version (src/gb/shell.ts). -#}
+        <md-gb-menu id="gb-more-menu" aria-label="More">
+          <md-gb-menu-item data-version="3.0">
+            <md-gb-icon slot="leading">check</md-gb-icon>
+            v3.0-Alpha
+          </md-gb-menu-item>
+          <md-gb-menu-item data-version="2.5">
+            <md-gb-icon slot="leading"></md-gb-icon>
+            v2.5.0 Current - Latest
+          </md-gb-menu-item>
+          <md-gb-divider></md-gb-divider>
+          <md-gb-menu-item data-open="https://github.com/material-components/material-web">
+            <md-gb-icon slot="leading">code</md-gb-icon>
+            GitHub
+            <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
+          </md-gb-menu-item>
+          <md-gb-menu-item data-open="https://www.npmjs.com/package/@material/web">
+            <md-gb-icon slot="leading">deployed_code</md-gb-icon>
+            npm
+            <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
+          </md-gb-menu-item>
+          <md-gb-divider></md-gb-divider>
+          <md-gb-menu-item data-tool="feedback">
+            <md-gb-icon slot="leading">feedback</md-gb-icon>
+            Send feedback
+          </md-gb-menu-item>
+        </md-gb-menu>
+      </header>
+
+      {#- The navigation rail (600px and up): the logo and the four sections. -#}
+      <nav class="gb-rail-area" aria-label="Sections">
+        <md-gb-nav-rail class="gb-rail" id="gb-rail" narrow role="none">
+          <a slot="header" class="gb-brand" href="/3.0/" aria-label="Material Web 3.0 home">
+            <img src="/images/favicon.svg" alt="" width="40" height="40" />
+          </a>
           {%- for sec in gbSections %}
           <md-gb-nav-rail-item href="/3.0/{{ sec.id }}/" data-section="{{ sec.id }}"{% if sec.id == gbCurrent %} selected{% endif %}>
             <md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }}
           </md-gb-nav-rail-item>
           {%- endfor %}
         </md-gb-nav-rail>
-        <div class="gb-rail-foot" role="group" aria-label="Site settings">
-          <md-gb-icon-button id="gb-theme" class="gb-theme-toggle" tooltip aria-label="Color theme: system. Change to light" data-mode="auto">
-            <md-gb-icon>brightness_auto</md-gb-icon>
-          </md-gb-icon-button>
-          <md-gb-button id="gb-version" class="gb-version" color="text" size="xs" popovertarget="gb-version-menu" aria-label="Material Web version 3.0">3.0</md-gb-button>
-          <md-gb-icon-button id="gb-more" tooltip popovertarget="gb-more-menu" aria-label="More">
-            <md-gb-icon>more_vert</md-gb-icon>
-          </md-gb-icon-button>
-          {#- The menus are popovers (top layer); they stay in the banner landmark. -#}
-          <md-gb-menu id="gb-version-menu" aria-label="Material Web version">
-            <md-gb-menu-item data-version="3.0">
-              <md-gb-icon slot="leading">check</md-gb-icon>
-              v3.0-Alpha
-            </md-gb-menu-item>
-            <md-gb-menu-item data-version="2.5">
-              <md-gb-icon slot="leading"></md-gb-icon>
-              v2.5.0 Current - Latest
-            </md-gb-menu-item>
-          </md-gb-menu>
-          <md-gb-menu id="gb-more-menu" aria-label="More">
-            <md-gb-menu-item data-open="https://github.com/material-components/material-web">
-              <md-gb-icon slot="leading">code</md-gb-icon>
-              GitHub
-              <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
-            </md-gb-menu-item>
-            <md-gb-menu-item data-open="https://www.npmjs.com/package/@material/web">
-              <md-gb-icon slot="leading">deployed_code</md-gb-icon>
-              npm
-              <md-gb-icon slot="trailing">open_in_new</md-gb-icon>
-            </md-gb-menu-item>
-            <md-gb-divider></md-gb-divider>
-            <md-gb-menu-item data-tool="feedback">
-              <md-gb-icon slot="leading">feedback</md-gb-icon>
-              Send feedback
-            </md-gb-menu-item>
-          </md-gb-menu>
-        </div>
-      </header>
+      </nav>
 
       {#- The pages pane: the current section's pages. Standard beside the
           rail from 840px, modal below it (src/gb/shell.ts). -#}
@@ -246,22 +264,6 @@
         </md-gb-nav-bar>
       </nav>
 
-      {#- Below 600px: search floats at the top end and hides while scrolling down. -#}
-      <div class="gb-tools-area" role="search" aria-label="Docs">
-        <md-gb-icon-button id="gb-search-compact" class="gb-search-compact" color="tonal" tooltip data-gb-search data-gb-search-tip aria-label="Search docs">
-          <md-gb-icon>search</md-gb-icon>
-        </md-gb-icon-button>
-      </div>
-
-      {#- Page tools: download and copy, theme and feedback. -#}
-      <aside class="gb-tools-area" aria-label="Page tools">
-        <md-gb-fab-menu class="gb-fab-menu" id="gb-fab-menu" aria-label="Page tools">
-          <md-gb-fab-menu-item data-tool="download"><md-gb-icon slot="icon">download</md-gb-icon>Download &amp; copy</md-gb-fab-menu-item>
-          <md-gb-fab-menu-item data-tool="theme"><md-gb-icon slot="icon">palette</md-gb-icon>Customize theme</md-gb-fab-menu-item>
-          <md-gb-fab-menu-item data-tool="feedback"><md-gb-icon slot="icon">feedback</md-gb-icon>Send feedback</md-gb-fab-menu-item>
-          <md-gb-icon slot="icon">build</md-gb-icon>
-        </md-gb-fab-menu>
-      </aside>
     </div>
 
     {#- The other sections' pages: hovering or focusing their rail destination
@@ -381,7 +383,7 @@
       </div>
     </div>
 
-    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000" anchor="gb-fab-menu"></md-gb-snackbar>
+    <md-gb-snackbar id="gb-snackbar" fixed timeout-ms="4000"></md-gb-snackbar>
 
     <md-gb-dialog id="gb-install-dialog">
       <span slot="headline">Install Material Web 3.0</span>

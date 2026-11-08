@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* The layout of the /3.0/ pages (shell.ts, site/_includes/gb/default.html),
-   modelled on m3.material.io: a navigation rail, a pages pane and a rounded
-   content pane (M3 Expressive navigation rail, canonical list-detail: the
-   pages pane is the list, the content pane the detail). Colors, type, shape
+/* The layout of the /3.0/ pages (shell.ts, site/_includes/gb/default.html):
+   an M3 search app bar across the top, then a navigation rail, a pages pane
+   and a rounded content pane (M3 Expressive navigation rail, canonical
+   list-detail: the pages pane is the list, the content pane the detail). Colors, type, shape
    and motion come from --md-sys-* tokens only.
 
    Window size classes: compact below 600px (navigation bar, no rail), medium
@@ -17,6 +17,8 @@
    defined, so nothing moves when the script runs. */
 
 :root {
+  /* The search app bar's container height (app bars spec). */
+  --gb-top-h: 64px;
   --gb-rail-w: 0px;
   --gb-pane-w: 0px;
   --gb-pane-open-w: 280px;
@@ -45,32 +47,116 @@ body:has(.gb-shell) {
 .gb-shell {
   display: grid;
   grid-template-columns: var(--gb-rail-w) var(--gb-pane-w) minmax(0, 1fr);
+  grid-template-rows: var(--gb-top-h) auto;
   min-block-size: 100dvh;
   transition: grid-template-columns var(--gb-pane-motion);
+}
+
+/* --- Header: the search app bar ------------------------------------------------- */
+
+.gb-top {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 30;
+  block-size: var(--gb-top-h);
+  background: var(--md-sys-color-surface-container);
+}
+.gb-appbar {
+  display: block;
+  block-size: 100%;
+  /* On the page's surface container; the search bar stands out from it. */
+  --container-color: transparent;
+  --search-container-color: var(--md-sys-color-surface-container-high);
+}
+.gb-appbar:not(:defined) {
+  visibility: hidden;
+}
+/* The app bar hides the trailing actions past its limit (2 up to medium, 4
+   from expanded) and shows its overflow button. The same here from the first
+   frame, so the header doesn't change once the script has run. */
+@media (max-width: 839px) {
+  .gb-appbar > [data-tool='download'],
+  .gb-appbar > #gb-more {
+    display: none;
+  }
+}
+@media (min-width: 840px) {
+  .gb-appbar > #gb-overflow {
+    display: none;
+  }
+}
+/* The search bar: hinted text that opens the search view (search.ts), with
+   the keyboard shortcut at its end. */
+.gb-searchbar {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-space-200);
+  inline-size: 100%;
+  block-size: 100%;
+  padding-inline: var(--md-sys-space-100) var(--md-sys-space-200);
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-lg);
+  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
+  letter-spacing: var(--md-sys-typescale-body-lg-tracking);
+  text-align: start;
+  cursor: text;
+}
+.gb-searchbar:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+.gb-searchbar-icon {
+  display: inline-flex;
+  padding-inline-start: var(--md-sys-space-100);
+  color: var(--md-sys-color-on-surface);
+}
+.gb-searchbar-text {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gb-search-hint {
+  padding: 0 var(--md-sys-space-100);
+  border-radius: var(--md-sys-shape-corner-xs);
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-label-md);
+  font-variation-settings: var(--md-sys-typescale-label-md-axes);
+}
+.gb-search-hint:empty {
+  display: none;
+}
+@media (max-width: 599px) {
+  .gb-search-hint {
+    display: none;
+  }
 }
 
 /* --- Rail ------------------------------------------------------------------ */
 
 .gb-rail-area {
   grid-column: 1;
-  grid-row: 1;
+  grid-row: 2;
   position: sticky;
-  inset-block-start: 0;
+  inset-block-start: var(--gb-top-h);
   z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;
-  block-size: 100dvh;
+  block-size: calc(100dvh - var(--gb-top-h));
   min-inline-size: 0;
   color: var(--md-sys-color-on-surface);
 }
-/* Compact windows have no rail: only the skip link stays. */
+/* Compact windows have no rail. */
 @media (max-width: 599px) {
   .gb-rail-area {
-    position: static;
-    block-size: 0;
-  }
-  .gb-rail-area > :not(.gb-skip) {
     display: none;
   }
 }
@@ -82,37 +168,38 @@ body:has(.gb-shell) {
 /* The rail sits on the page's surface container, like the pane. */
 .gb-rail::part(nav-rail) {
   --container-color: transparent;
-  --collapsed-top-space: 16px;
+  --collapsed-top-space: 8px;
 }
 .gb-rail:not(:defined) {
   display: block;
   visibility: hidden;
 }
-.gb-rail-foot {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--md-sys-space-100);
-  block-size: 168px;
-  padding-block: var(--md-sys-space-100) var(--md-sys-space-200);
+/* The logo at the top of the rail, linking to the docs home. */
+.gb-brand {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  margin-block-end: var(--md-sys-space-100);
+  border-radius: var(--md-sys-shape-corner-full);
 }
-.gb-rail-foot > :not(:defined) {
-  visibility: hidden;
+.gb-brand:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
 }
-.gb-version {
-  min-inline-size: 48px;
+.gb-brand img {
+  display: block;
 }
 
 /* --- Pages pane ------------------------------------------------------------- */
 
 .gb-pane-cell {
   grid-column: 2;
-  grid-row: 1;
+  grid-row: 2;
   position: sticky;
-  inset-block-start: 0;
+  inset-block-start: var(--gb-top-h);
   z-index: 10;
-  block-size: 100dvh;
+  block-size: calc(100dvh - var(--gb-top-h));
   min-inline-size: 0;
   overflow: hidden;
 }
@@ -231,14 +318,14 @@ md-gb-nav-drawer-item[data-group] {
 
 .gb-content-pane {
   grid-column: 3;
-  grid-row: 1;
+  grid-row: 2;
   position: relative;
   min-inline-size: 0;
-  margin: var(--md-sys-space-150) var(--md-sys-space-150) var(--md-sys-space-150) 0;
+  margin: 0 var(--md-sys-space-150) var(--md-sys-space-150) 0;
   border-radius: var(--md-sys-shape-corner-xl);
   background: var(--md-sys-color-surface);
   overflow: clip;
-  min-block-size: calc(100dvh - 2 * var(--md-sys-space-150));
+  min-block-size: calc(100dvh - var(--gb-top-h) - var(--md-sys-space-150));
 }
 .gb-body {
   display: grid;
@@ -268,8 +355,8 @@ md-gb-nav-drawer-item[data-group] {
     grid-column: 2;
     grid-row: 1;
     position: sticky;
-    inset-block-start: var(--md-sys-space-300);
-    max-block-size: calc(100dvh - 2 * var(--md-sys-space-150) - 2 * var(--md-sys-space-300));
+    inset-block-start: calc(var(--gb-top-h) + var(--md-sys-space-300));
+    max-block-size: calc(100dvh - var(--gb-top-h) - var(--md-sys-space-150) - 2 * var(--md-sys-space-300));
     overflow-y: auto;
     margin-block-start: var(--md-sys-space-300);
     padding-inline: 0 var(--md-sys-space-300);
@@ -284,13 +371,10 @@ md-gb-nav-drawer-item[data-group] {
   }
 }
 
-/* --- Compact: navigation bar, floating search --------------------------------------- */
+/* --- Compact: navigation bar ------------------------------------------------------- */
 
 .gb-bar-area,
 .gb-bar {
-  display: none;
-}
-.gb-search-compact {
   display: none;
 }
 @media (max-width: 599px) {
@@ -301,7 +385,7 @@ md-gb-nav-drawer-item[data-group] {
     grid-column: 1;
     margin: 0;
     border-radius: 0;
-    min-block-size: 100dvh;
+    min-block-size: calc(100dvh - var(--gb-top-h));
     padding-block-end: var(--gb-bar-h);
   }
   .gb-bar-area {
@@ -318,48 +402,6 @@ md-gb-nav-drawer-item[data-group] {
     display: block;
     block-size: var(--gb-bar-h);
     visibility: hidden;
-  }
-  .gb-search-compact {
-    display: inline-flex;
-    position: fixed;
-    inset-block-start: var(--md-sys-space-150);
-    inset-inline-end: var(--md-sys-space-150);
-    z-index: 15;
-  }
-  .gb-search-compact:not(:defined) {
-    visibility: hidden;
-  }
-  /* Follows the scroll: hides when scrolling down, shows when scrolling up
-     (the spatial spring; none under reduced motion). */
-  .gb-search-compact {
-    transition: translate var(--md-sys-motion-spring-default-spatial-duration, 420ms)
-      var(--md-sys-motion-spring-default-spatial, ease);
-  }
-  .gb-search-compact[data-hidden] {
-    translate: 0 calc(-100% - var(--md-sys-space-300));
-  }
-}
-
-/* --- FAB menu ------------------------------------------------------------------------ */
-
-/* Landmarks (page tools, search) around fixed controls: no box of their own. */
-.gb-tools-area {
-  display: contents;
-}
-
-.gb-fab-menu {
-  position: fixed;
-  inset-inline-end: var(--md-sys-space-300);
-  inset-block-end: var(--md-sys-space-300);
-  z-index: 15;
-}
-.gb-fab-menu:not(:defined) {
-  visibility: hidden;
-}
-@media (max-width: 599px) {
-  .gb-fab-menu {
-    inset-inline-end: var(--md-sys-space-200);
-    inset-block-end: calc(var(--gb-bar-h) + var(--md-sys-space-200));
   }
 }
 
@@ -575,8 +617,7 @@ md-gb-bottom-sheet .gb-tool {
 @media (prefers-reduced-motion: reduce) {
   .gb-shell,
   .gb-pane-cell,
-  .gb-action,
-  .gb-search-compact {
+  .gb-action {
     transition: none;
   }
 }
