@@ -418,19 +418,30 @@
             <span class="gb-action-text"><span class="gb-action-label">API (custom-elements.json)</span><span class="gb-action-support" data-base="Every element, as a Custom Elements Manifest">Every element, as a Custom Elements Manifest</span></span>
           </button></li>
         </ul>
+        {#- Ways to start: without installing anything (an agent sets it
+            up, or a script tag), then into a project (npm, or the shadcn
+            registry's theme, which installs the package and the M3 styles
+            and maps the shadcn theme to the M3 roles). -#}
         <h3 class="gb-tool-group">Copy</h3>
         <ul class="gb-actions" role="list">
           <li><button type="button" class="gb-action" data-copy="agent-prompt" data-copied="Copied agent prompt">
             <md-gb-icon aria-hidden="true">smart_toy</md-gb-icon>
             <span class="gb-action-text"><span class="gb-action-label">Copy agent prompt</span><span class="gb-action-support">Tells an AI agent to install the md-gb skill</span></span>
           </button></li>
+          <li><button type="button" class="gb-action" data-copy="cdn" data-copied="Copied CDN script tag">
+            <md-gb-icon aria-hidden="true">code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy CDN script tag</span><span class="gb-action-support">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span></span>
+          </button></li>
+        </ul>
+        <md-gb-divider class="gb-actions-divider"></md-gb-divider>
+        <ul class="gb-actions" role="list">
           <li><button type="button" class="gb-action" data-copy="npm" data-copied="Copied npm install command">
             <md-gb-icon aria-hidden="true">terminal</md-gb-icon>
             <span class="gb-action-text"><span class="gb-action-label">Copy npm install</span><span class="gb-action-support">npm install @material/web</span></span>
           </button></li>
-          <li><button type="button" class="gb-action" data-copy="cdn" data-copied="Copied CDN script tag">
-            <md-gb-icon aria-hidden="true">code</md-gb-icon>
-            <span class="gb-action-text"><span class="gb-action-label">Copy CDN script tag</span><span class="gb-action-support">&lt;script type="module" src="https://esm.run/&hellip;/all.js"&gt;</span></span>
+          <li><button type="button" class="gb-action" data-copy="shadcn" data-copied="Copied shadcn setup command">
+            <md-gb-icon aria-hidden="true">deployed_code</md-gb-icon>
+            <span class="gb-action-text"><span class="gb-action-label">Copy shadcn npx setup</span><span class="gb-action-support">npx shadcn@latest add &hellip;/md-theme.json</span></span>
           </button></li>
         </ul>
       </section>

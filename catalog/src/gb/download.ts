@@ -57,6 +57,8 @@ function copyText(id: string, site: string): string {
       return NPM_COMMAND;
     case 'cdn':
       return CDN_SNIPPET;
+    case 'shadcn':
+      return shadcnSetup(site);
     default:
       return '';
   }
@@ -68,6 +70,14 @@ const CDN_SNIPPET = `<script type="importmap">
   {"imports": {"@material/web/": "https://esm.run/@material/web/"}}
 </script>
 <script type="module" src="https://esm.run/@material/web/labs/gb/all.js"></script>`;
+
+/**
+ * Sets up a shadcn/ui project (about/shadcn.md): the registry's theme, which
+ * installs @material/web, loads the M3 styles and maps the shadcn variables
+ * to the M3 roles. Every component of the registry installs it too.
+ */
+const shadcnSetup = (site: string) =>
+  `npx shadcn@latest add ${site}/3.0/r/md-theme.json`;
 
 /** Plain text for an AI coding agent: install the md-gb skill. */
 function agentPrompt(site: string): string {

@@ -858,6 +858,10 @@ md-gb-bottom-sheet .gb-tool {
 .gb-actions li[hidden] {
   display: none;
 }
+/* Between the ways to start without installing and those into a project. */
+.gb-actions-divider {
+  margin-block: var(--md-sys-space-100);
+}
 .gb-action {
   display: flex;
   align-items: center;
