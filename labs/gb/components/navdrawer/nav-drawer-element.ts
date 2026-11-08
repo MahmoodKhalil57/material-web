@@ -261,13 +261,23 @@ export class NavDrawerElement extends baseClass {
     this.addEventListener('click', this.handleItemClick);
   }
 
+  /** Keeps the tab stop on a visible item when items are hidden or shown. */
+  private readonly hiddenObserver = new MutationObserver(() =>
+    this.syncTabStops(),
+  );
+
   override connectedCallback() {
     super.connectedCallback();
     adoptStyles(this, [focusRingStyles, rippleStyles, navDrawerStyles]);
+    this.hiddenObserver.observe(this, {
+      subtree: true,
+      attributeFilter: ['hidden'],
+    });
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.hiddenObserver.disconnect();
     this.dragOffset = null;
   }
 
@@ -433,7 +443,9 @@ export class NavDrawerElement extends baseClass {
   protected readonly rovingFocus = new RovingFocusController(this, {
     items: () => this.items,
     orientation: 'vertical',
-    canFocus: (item) => !(item as NavDrawerItemElement).disabled,
+    // Hidden destinations (e.g. a collapsed group's) are not focus targets.
+    canFocus: (item) =>
+      !item.hidden && !(item as NavDrawerItemElement).disabled,
     setTabStop: (item, stop) => {
       (item as NavDrawerItemElement).tabStop = stop;
     },

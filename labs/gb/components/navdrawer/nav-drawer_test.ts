@@ -390,6 +390,24 @@ describe('<md-gb-nav-drawer>', () => {
       await env.waitForStability();
       expectFocused(innerControl(items[3]));
     });
+
+    it('skips hidden items and moves the tab stop off an item when it is hidden', async () => {
+      const {drawer, items} = await setupTest();
+      await drawer.show();
+      // A collapsed group hides its items.
+      items[1].hidden = true;
+      await env.waitForStability();
+      items[0].focus();
+      press(innerControl(items[0]), 'ArrowDown');
+      await env.waitForStability();
+      expectFocused(innerControl(items[3]), 'skips the hidden and disabled items');
+
+      // The tab stop (now the last item) is hidden: it moves to a visible one.
+      items[3].hidden = true;
+      await env.waitForStability();
+      const stops = items.filter((item) => innerControl(item).tabIndex === 0);
+      expect(stops).toEqual([items[0]]);
+    });
   });
 
   describe('standard drawer', () => {

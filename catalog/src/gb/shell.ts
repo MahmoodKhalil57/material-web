@@ -197,6 +197,7 @@ function previewSection(section: string, from: HTMLElement) {
   drawer.replaceChildren(...pages.nodes);
   drawer.setAttribute('label', `${pages.label} pages`);
   drawer.dataset['preview'] = section;
+  applySavedGroups(drawer);
   previewing = section;
 }
 
@@ -289,10 +290,59 @@ if (rail && drawer) {
 }
 
 
+// --- Component groups: split rows that collapse their pages ------------------------
+
+const GROUPS_KEY = 'gb-groups';
+
+function savedGroups(): Record<string, boolean> {
+  try {
+    return JSON.parse(localStorage.getItem(GROUPS_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+/** Shows or hides a group's pages in `list` and updates its toggle. */
+function setGroup(list: ParentNode, id: string, open: boolean) {
+  const row = list.querySelector<HTMLElement>(`.gb-pane-group[data-group="${id}"]`);
+  row?.querySelector('.gb-pane-group-toggle')?.setAttribute('aria-expanded', String(open));
+  for (const item of list.querySelectorAll<HTMLElement>(
+    `md-gb-nav-drawer-item[data-group="${id}"]`,
+  )) {
+    item.hidden = !open;
+  }
+}
+
+/** Applies the reader's saved choices; the current page's group stays open. */
+function applySavedGroups(list: ParentNode) {
+  const saved = savedGroups();
+  for (const row of list.querySelectorAll<HTMLElement>('.gb-pane-group')) {
+    const id = row.dataset['group'] ?? '';
+    if (id in saved && !row.hasAttribute('data-current')) setGroup(list, id, saved[id]);
+  }
+}
+
+/** Toggles a group from its chevron (in the pane, a preview, or the sheet). */
+function handleGroupToggle(e: Event) {
+  const toggle = (e.target as Element).closest<HTMLElement>('.gb-pane-group-toggle');
+  const row = toggle?.closest<HTMLElement>('.gb-pane-group');
+  const list = row?.parentElement;
+  if (!toggle || !row || !list) return;
+  const id = row.dataset['group'] ?? '';
+  const open = toggle.getAttribute('aria-expanded') !== 'true';
+  setGroup(list, id, open);
+  const saved = savedGroups();
+  saved[id] = open;
+  store(GROUPS_KEY, JSON.stringify(saved));
+}
+
+drawer?.addEventListener('click', handleGroupToggle);
+
 // --- Compact: the navigation bar and the pages sheet ------------------------------
 
 const pagesSheet = $<SheetElement>('gb-pages-sheet');
 const pagesFoot = $('gb-pages-foot');
+pagesSheet?.addEventListener('click', handleGroupToggle);
 
 function openPagesSheet(trigger: HTMLElement) {
   if (!pagesSheet) return;
