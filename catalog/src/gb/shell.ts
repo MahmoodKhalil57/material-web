@@ -49,6 +49,9 @@ import '@material/web/labs/gb/components/tooltip/md-gb-tooltip.js';
 
 import type {SchemeVariant} from '@material/web/labs/gb/styles/color/dynamic-color.js';
 
+import {centerInRail} from './navigation.js';
+import {movePill} from './pill.js';
+
 const REPO = 'https://github.com/material-components/material-web';
 const PANE_KEY = 'gb-pane';
 
@@ -578,6 +581,84 @@ rail?.addEventListener('click', (e) => {
   store(SECTIONS_KEY, JSON.stringify(saved));
   applyRail();
 });
+
+// --- The current page in the rail -----------------------------------------------------
+// Arriving on a page, the rail scrolls to its destination and the active
+// pill moves there at once (navigation.ts); the sections and groups stay as
+// the reader left them, so the list doesn't change while they page through.
+// Once they stay a moment (REVEAL_AFTER), a closed section or group holding
+// the page opens (with its motion), and the pill moves from the section down
+// to the page, in the middle of the rail. A reload instead starts with only
+// the current section open (default.html). Anything the reader does in the
+// rail first cancels it.
+
+const REVEAL_AFTER = 1000;
+
+function revealCurrentPage() {
+  if (!rail || compact.matches) return;
+  let sections: Record<string, boolean> = {};
+  try {
+    sections = JSON.parse(localStorage.getItem(SECTIONS_KEY) || '{}');
+  } catch {
+    // A broken entry starts over.
+  }
+  const sectionToggle = rail.querySelector(`[data-section-toggle="${currentSection}"]`);
+  const groupToggle = rail.querySelector<HTMLElement>('.gb-rail-group[data-current]');
+  const group = groupToggle ? groupOf(groupToggle) : '';
+  const groups = savedGroups();
+  const closed =
+    sectionToggle?.getAttribute('aria-expanded') === 'false' ||
+    groupToggle?.getAttribute('aria-expanded') === 'false';
+  sections[currentSection] = true;
+  store(SECTIONS_KEY, JSON.stringify(sections));
+  if (group) {
+    groups[group] = true;
+    store(GROUPS_KEY, JSON.stringify(groups));
+  }
+  if (!closed) return;
+  applyRail();
+  if (!rail.expanded || !pageItem || pageItem.hidden) return;
+  if (sectionItem) movePill(sectionItem, pageItem);
+  centerInRail(pageItem, {always: true, smooth: true});
+}
+
+const navigationType = (
+  performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+)?.type;
+if (rail && navigationType !== 'reload') {
+  let timer = 0;
+  const cancel = () => {
+    clearTimeout(timer);
+    for (const type of ['pointerdown', 'wheel', 'keydown', 'touchstart']) {
+      rail.removeEventListener(type, cancel);
+    }
+  };
+  const start = () => {
+    timer = window.setTimeout(() => {
+      cancel();
+      revealCurrentPage();
+    }, REVEAL_AFTER);
+    for (const type of ['pointerdown', 'wheel', 'keydown', 'touchstart']) {
+      rail.addEventListener(type, cancel, {passive: true});
+    }
+  };
+  // A prerendered page waits until it's shown, and takes the sections and
+  // groups as they are then (the reader may have changed them since it was
+  // prerendered).
+  if ((document as Document & {prerendering?: boolean}).prerendering) {
+    document.addEventListener(
+      'prerenderingchange',
+      () => {
+        (window as Window & {gbRailApply?: () => void}).gbRailApply?.();
+        syncActive();
+        start();
+      },
+      {once: true},
+    );
+  } else {
+    start();
+  }
+}
 
 // --- Compact: the navigation bar and the pages sheet ------------------------------
 

@@ -125,8 +125,12 @@ function saveRailScroll() {
   }
 }
 
-/** Restores the saved scroll, and keeps the active page in view. */
-function restoreRailScroll() {
+/**
+ * Restores the saved scroll, and focuses the active destination: arriving
+ * on a page, it moves to the middle (from where the page left had the
+ * list; at once after a reload); expanding the rail, it's kept in view.
+ */
+function restoreRailScroll({arriving = true} = {}) {
   const el = scroller();
   if (scrollRestored || !el || el.scrollHeight <= el.clientHeight) return;
   scrollRestored = true;
@@ -136,18 +140,32 @@ function restoreRailScroll() {
   } catch {
     // Ignore a broken entry.
   }
-  // Only a position saved by the page just left.
-  if (saved?.top && Date.now() - (saved.at ?? 0) < SAVED_FOR) {
+  // Only a position saved by the page just left; a reload starts over,
+  // centered on the active destination.
+  const reload =
+    (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)
+      ?.type === 'reload';
+  if (!reload && saved?.top && Date.now() - (saved.at ?? 0) < SAVED_FOR) {
     el.scrollTop = saved.top;
   }
   const selected = rail?.querySelector('md-gb-nav-rail-item[selected]');
-  if (selected) {
-    const item = selected.getBoundingClientRect();
-    const box = el.getBoundingClientRect();
-    if (item.top < box.top || item.bottom > box.bottom) {
-      el.scrollTop += item.top - box.top - (box.height - item.height) / 2;
-    }
-  }
+  if (selected) centerInRail(selected, {always: arriving, smooth: arriving && !reload});
+}
+
+/**
+ * Scrolls the rail so `item` is in the middle of it: when it's out of view,
+ * or `always`. `smooth` animates the scroll (spatial), unless motion is
+ * reduced.
+ */
+export function centerInRail(item: Element, {always = false, smooth = false} = {}) {
+  const el = scroller();
+  if (!el) return;
+  const box = el.getBoundingClientRect();
+  const r = item.getBoundingClientRect();
+  if (!always && r.top >= box.top && r.bottom <= box.bottom) return;
+  const top = el.scrollTop + r.top - box.top - (box.height - r.height) / 2;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollTo({top, behavior: smooth && !reduced ? 'smooth' : 'instant'});
 }
 
 if (rail) {
@@ -161,10 +179,10 @@ if (rail) {
   });
   // Before the first frame of a view transition, and once the rail expands
   // (it only scrolls expanded).
-  addEventListener('pagereveal', restoreRailScroll);
+  addEventListener('pagereveal', () => restoreRailScroll());
   rail.addEventListener('toggle', () => {
     scrollRestored = false;
-    requestAnimationFrame(restoreRailScroll);
+    requestAnimationFrame(() => restoreRailScroll({arriving: false}));
   });
   // A prerendered page restored (or had nothing to restore) while hidden.
   whenActive(() => {
@@ -184,7 +202,7 @@ if (rail) {
       {passive: true},
     );
   });
-  requestAnimationFrame(() => requestAnimationFrame(restoreRailScroll));
+  requestAnimationFrame(() => requestAnimationFrame(() => restoreRailScroll()));
 }
 
 // --- Rail active pill: from the page left to this one ------------------------

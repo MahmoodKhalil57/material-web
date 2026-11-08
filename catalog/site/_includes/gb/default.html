@@ -73,13 +73,13 @@
 {#- A section's pages as secondary destinations of the expanded rail, shown
     while the section is open (its split button's chevron). The components
     are in their groups, each under a disclosure button. Open by default:
-    the current section, and in it the current page's group (all groups in
-    another section); the reader's choices are applied before first paint
-    (gbRailApply, below the rail) and on every toggle (src/gb/shell.ts). -#}
+    the current section, and all its groups; the reader's choices (until the
+    page is reloaded) are applied before first paint (gbRailApply, below the
+    rail) and on every toggle (src/gb/shell.ts). -#}
 {%- macro railPages(sec, groups, pages, url, currentGroup) -%}
 {%- if sec.id == 'components' %}
 {%- for group in groups %}
-<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="{{ group.id }}" data-default-open="{{ 'false' if currentGroup and group.id != currentGroup else 'true' }}"{% if group.id == currentGroup %} data-current{% endif %} aria-expanded="true" aria-label="{{ group.label }}"><span class="gb-pane-group-label">{{ group.label }}</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
+<button class="gb-rail-group gb-pane-group-toggle" type="button" data-in-section="components" data-group-toggle="{{ group.id }}" data-default-open="true"{% if group.id == currentGroup %} data-current{% endif %} aria-expanded="true" aria-label="{{ group.label }}"><span class="gb-pane-group-label">{{ group.label }}</span><span aria-hidden="true"><md-gb-icon>keyboard_arrow_down</md-gb-icon></span></button>
 {%- for file in pages %}{% if file.data.section == 'components' and file.data.category == group.id %}
 <md-gb-nav-rail-item secondary href="{{ file.url }}" data-in-section="components" data-group="{{ group.id }}"{% if file.url == url %} data-current{% endif %}>{{ file.data.title }}</md-gb-nav-rail-item>
 {%- endif %}{% endfor %}
@@ -269,8 +269,17 @@
           };
           // Before first paint: expanded from 840px unless the reader
           // collapsed it, with the current page (if its section is open) as
-          // the active destination.
+          // the active destination. A reload starts over: only the current
+          // section open, with all its groups (the defaults).
           (() => {
+            if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+              try {
+                localStorage.removeItem('gb-rail-sections');
+                localStorage.removeItem('gb-groups');
+              } catch (e) {
+                // Storage can be blocked; the defaults apply anyway.
+              }
+            }
             window.gbRailApply();
             const rail = document.getElementById('gb-rail');
             const open = matchMedia('(min-width: 840px)').matches && document.documentElement.dataset.rail !== 'collapsed';
