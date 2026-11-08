@@ -26,7 +26,7 @@
     linking to the section's index page, then the pages (components in their
     groups). -#}
 {%- macro pageItems(sec, groups, pages, url, currentGroup) -%}
-<md-gb-nav-drawer-item href="/3.0/{{ sec.id }}/"{% if url == '/3.0/' + sec.id + '/' %} selected{% endif %}>{{ sec.label }} overview</md-gb-nav-drawer-item>
+<md-gb-nav-drawer-item href="/3.0/{{ sec.id }}/"{% if url == '/3.0/' + sec.id + '/' %} selected{% endif %}><md-gb-icon slot="icon">{{ sec.icon }}</md-gb-icon>{{ sec.label }} overview</md-gb-nav-drawer-item>
 {%- if sec.id == 'components' %}
 {%- for group in groups %}
 {#- A disclosure row: the whole row shows or hides the group's pages
