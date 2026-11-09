@@ -1,6 +1,6 @@
 {
   "name": "@mahmoodkhalil/material-web-3-demo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Demo build of the Material 3 Expressive (labs/gb) web components, from the 3.0 docs site on material-web.",
   "type": "module",
   "main": "labs/gb/all.js",
