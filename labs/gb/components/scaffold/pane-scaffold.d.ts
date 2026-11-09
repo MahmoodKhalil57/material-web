@@ -1,0 +1,195 @@
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+import { type ClassInfo } from 'lit/directives/class-map.js';
+import { type FoldOrientation } from '../../styles/layout/viewport-segments.js';
+import { type WindowSizeClass } from '../../styles/layout/window-size-class.js';
+/**
+ * Canonical layouts (spec: foundations/layout/canonical-examples).
+ *
+ * - `list-detail`: a list pane (`secondary`) and a detail pane (primary).
+ *   Single-pane windows show one of them at a time (show and hide).
+ * - `supporting-pane`: a focus pane (primary) and a supporting pane
+ *   (`secondary`). Single-pane windows stack the supporting pane below the
+ *   focus pane (reflow).
+ * - `feed`: the primary pane lays its children on a grid whose column count
+ *   grows with the window. A `secondary` pane behaves like a supporting pane.
+ */
+export type PaneScaffoldLayout = 'list-detail' | 'supporting-pane' | 'feed';
+/**
+ * Two-pane arrangements (spec: foundations/layout/scaffold, panes).
+ *
+ * - `fixed-flexible`: the secondary pane has a fixed width (360dp at
+ *   expanded, 412dp at large and extra-large); the primary pane flexes.
+ * - `split`: two flexible panes with the spacer visually centered in the
+ *   window, even beside a navigation rail.
+ *
+ * Two-pane medium windows always split 50/50.
+ */
+export type PaneArrangement = 'fixed-flexible' | 'split';
+/** Where the secondary pane sits in a two-pane layout. */
+export type PanePosition = 'start' | 'end';
+/** How resizing with the drag handle is kept (spec: pane resizing). */
+export type PaneResizeBehavior = 'persistent' | 'temporary';
+/**
+ * What a tap (or Enter / Space) on the drag handle does. The spec: "The drag
+ * handle should also toggle between layout sizes when selected. This can be
+ * a tap, double tap, or long press" (foundations/layout/scaffold, Pane
+ * expansion & resizing); it is also the single-pointer alternative to
+ * dragging (WCAG 2.5.7).
+ *
+ * - `toggle`: switches between one pane (secondary collapsed) and two.
+ * - `cycle`: steps through the snap widths (360px, 412px, split) and then
+ *   collapses the secondary pane, so every snap width is reachable without
+ *   dragging.
+ */
+export type PaneHandleTap = 'toggle' | 'cycle';
+/**
+ * The levitate adaptive strategy for the secondary pane of supporting pane
+ * and feed layouts (spec: foundations/layout/scaffold, "Levitate"). In
+ * windows too small for two co-planar panes, instead of reflowing below the
+ * primary pane, the secondary pane is elevated above it:
+ *
+ * - `none`: no levitation; the panes reflow (stack).
+ * - `floating`: a floating pane above the primary pane, inset from the
+ *   window edges, like a non-modal dialog.
+ * - `docked`: a pane pinned to the bottom edge, like a bottom sheet, at
+ *   compact; it adapts into a floating pane at medium and expanded.
+ *
+ * Where two panes fit, the pane is co-planar again.
+ */
+export type PaneLevitate = 'none' | 'floating' | 'docked';
+/** How a levitated pane is presented. */
+export type LevitatedPresentation = 'floating' | 'docked';
+/** A pane of the scaffold. */
+export type PaneName = 'primary' | 'secondary' | 'tertiary';
+/**
+ * How the panes are arranged for the current window size class.
+ *
+ * - `single`: one pane fills the scaffold.
+ * - `two-pane`: co-planar panes side by side.
+ * - `stacked`: panes reflow vertically (supporting pane below).
+ * - `levitated`: the primary pane fills the scaffold and the secondary
+ *   pane floats or docks above it (see `PaneLevitate`).
+ */
+export type PaneMode = 'single' | 'two-pane' | 'stacked' | 'levitated';
+/** Input to `planPanes()`. */
+export interface PanePlanState {
+    layout: PaneScaffoldLayout;
+    windowClass: WindowSizeClass;
+    /** Show two panes in medium windows (spec: low-density content only). */
+    mediumTwoPane?: boolean;
+    hasSecondary?: boolean;
+    hasTertiary?: boolean;
+    /** List-detail: whether the detail (primary) pane has content to show. */
+    detailOpen?: boolean;
+    /** A pane collapsed with the drag handle. */
+    collapsedPane?: 'primary' | 'secondary' | null;
+    /** The levitate strategy for the secondary pane. */
+    levitate?: PaneLevitate;
+    /** Whether a levitated secondary pane is shown. */
+    levitateOpen?: boolean;
+    /**
+     * Whether the levitated pane is modal, a temporary task that stays
+     * floating at every window size class (spec: scaffold, Floating).
+     */
+    levitateModal?: boolean;
+    /**
+     * Opts a levitated pane out of the large-screen default and keeps it
+     * co-planar where two panes fit (spec: scaffold, "On large screens,
+     * consider changing docked panes into co-planar panes").
+     */
+    levitateCoplanar?: boolean;
+    /** The orientation of a fold (hinge) that crosses the scaffold, if any. */
+    fold?: FoldOrientation | null;
+}
+/** Output of `planPanes()`. */
+export interface PanePlan {
+    mode: PaneMode;
+    /** Visible panes, excluding the tertiary pane. */
+    visible: Array<'primary' | 'secondary'>;
+    /** Whether the tertiary pane is shown. */
+    tertiary: boolean;
+    /** Co-planar panes visible side by side (a stack counts as one). */
+    paneCount: number;
+    /** The fold the panes split at, or null. */
+    fold: FoldOrientation | null;
+    /** How the secondary pane is levitated in `levitated` mode, or null. */
+    levitated: LevitatedPresentation | null;
+}
+/**
+ * Decides which panes are visible and how, following the pane totals per
+ * window size class (spec: compact 1, medium 1 (or 2), expanded and large 2,
+ * extra-large 2 (or 3)).
+ *
+ * On foldables, panes keep off the fold (spec: the spacer is "the space
+ * between two panes on a foldable device"): a vertical fold (book posture,
+ * dual screens) always shows two panes split at the fold, one per segment;
+ * a horizontal fold (tabletop posture) stacks the supporting pane of
+ * supporting pane and feed layouts below the fold. A layout with a single
+ * pane can't split and ignores the fold.
+ */
+export declare function planPanes({ layout, windowClass, mediumTwoPane, hasSecondary, hasTertiary, detailOpen, collapsedPane, levitate, levitateOpen, levitateModal, levitateCoplanar, fold, }: PanePlanState): PanePlan;
+/**
+ * Returns the widths the secondary pane snaps to when the drag handle is
+ * released, smallest first: 0 (collapsed), the spec's custom widths (360dp,
+ * 412dp) and the centered split at expanded and larger, or 50% at medium,
+ * and `available` (the other pane collapsed).
+ *
+ * @param windowClass The current window size class.
+ * @param available The width shared by the two panes (without the spacer).
+ * @param splitWidth The secondary width that visually centers the spacer.
+ */
+export declare function paneSnapTargets(windowClass: WindowSizeClass, available: number, splitWidth?: number): number[];
+/**
+ * Returns the secondary width a `cycle` tap on the drag handle moves to: the
+ * next snap width wider than `current`, then 0 (secondary collapsed), then the
+ * narrowest snap width again.
+ *
+ * @param current The current secondary width (0 when collapsed, `available`
+ *     when the primary pane is collapsed).
+ * @param targets The snap targets (`paneSnapTargets`).
+ * @param available The width of both panes.
+ * @return The next secondary width.
+ */
+export declare function nextPaneSnapTarget(current: number, targets: number[], available: number): number;
+/** Returns the target closest to `width`. */
+export declare function nearestSnapTarget(width: number, targets: number[]): number;
+/** Pane scaffold CSS classes. */
+export declare const PANE_SCAFFOLD_CLASSES: {
+    readonly paneScaffold: "pane-scaffold";
+    readonly single: "pane-scaffold-single";
+    readonly twoPane: "pane-scaffold-two-pane";
+    readonly stacked: "pane-scaffold-stacked";
+    readonly split: "pane-scaffold-split";
+    readonly secondaryEnd: "pane-scaffold-secondary-end";
+    readonly tertiary: "pane-scaffold-tertiary";
+    readonly feed: "pane-scaffold-feed";
+    readonly dragging: "pane-scaffold-dragging";
+    readonly levitated: "pane-scaffold-levitated";
+    readonly floating: "pane-scaffold-floating";
+    readonly docked: "pane-scaffold-docked";
+    readonly foldVertical: "pane-scaffold-fold-vertical";
+    readonly foldHorizontal: "pane-scaffold-fold-horizontal";
+};
+/** State provided to `paneScaffoldClasses()`. */
+export interface PaneScaffoldClassesState {
+    mode?: PaneMode;
+    layout?: PaneScaffoldLayout;
+    split?: boolean;
+    secondaryPosition?: PanePosition;
+    tertiary?: boolean;
+    dragging?: boolean;
+    /** How the secondary pane is levitated, in `levitated` mode. */
+    levitated?: LevitatedPresentation | null;
+    /** The fold the panes split at. */
+    fold?: FoldOrientation | null;
+}
+/** Returns the class map object for the pane scaffold. */
+export declare function paneScaffoldClasses({ mode, layout, split, secondaryPosition, tertiary, dragging, levitated, fold, }?: PaneScaffoldClassesState): ClassInfo;
+/**
+ * A Lit directive that adds pane scaffold classes to an element.
+ */
+export declare const paneScaffold: (state?: PaneScaffoldClassesState & import("../shared/directives.js").AdditionalClasses) => import("lit-html/directive.js").DirectiveResult;
