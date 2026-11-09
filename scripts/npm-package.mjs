@@ -34,7 +34,7 @@ import {parseArgs} from 'node:util';
 const {values: args} = parseArgs({
   options: {
     name: {type: 'string', default: '@mahmoodkhalil/material-web-3-demo'},
-    version: {type: 'string', default: '0.1.0'},
+    version: {type: 'string', default: '0.1.1'},
     branch: {type: 'string', default: 'npm-package'},
     remote: {type: 'string', default: 'origin'},
     push: {type: 'boolean', default: false},
@@ -226,6 +226,14 @@ if (args.push) {
   log(`pushed ${args.branch} to ${args.remote}`);
 }
 if (args.publish) {
+  // npm never replaces a version, so fail before the one-time code prompt.
+  let taken = '';
+  try {
+    taken = execFileSync('npm', ['view', `${args.name}@${args.version}`, 'version'], {encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], shell: true}).trim();
+  } catch {
+    // Not published yet: npm view exits non-zero for an unknown version.
+  }
+  if (taken) throw new Error(`${args.name}@${args.version} is already published; pass --version.`);
   execFileSync('npm', ['publish', '--access', 'public'], {cwd: TREE, stdio: 'inherit', shell: true});
   log(`published ${args.name}@${args.version}`);
 }
