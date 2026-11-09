@@ -9,11 +9,11 @@ import { property } from 'lit/decorators.js';
 import '../tooltip/md-gb-tooltip.js';
 import { mixinDelegatesAria } from '../../../../internal/aria/delegate.js';
 import { DisclosureController, expandedUnlessFalseConverter, } from '../shared/disclosure.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import fabStyles from './fab.css' with { type: 'css' }; // github-only
+import fabStyles from './fab.css.js'; // github-only
 // import {styles as fabStyles} from './fab.cssresult.js'; // google3-only
 import { fab, FAB_CLASSES, setupCollapseOnScroll, } from './fab.js';
 // Separate variable needed for closure.

@@ -13,7 +13,7 @@ import { getFormValue } from '../../../behaviors/form-associated.js';
 import { TextFieldValidator } from '../../../behaviors/validators/text-field-validator.js';
 import { SelectBase } from './select-base.js';
 import { matchesFilter, SELECT_CLASSES, } from './select.js';
-import autocompleteStyles from './autocomplete.css' with { type: 'css' }; // github-only
+import autocompleteStyles from './autocomplete.css.js'; // github-only
 // import autocompleteStyles from './autocomplete.cssresult.js'; // google3-only
 /**
  * A Material Design autocomplete text field: an editable text field with a

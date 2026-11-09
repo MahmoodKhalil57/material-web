@@ -7,11 +7,11 @@ import { html } from 'lit';
 import { AriaTabElement } from '../../../aria/tabs/tab.js';
 import { adoptStyles } from '../../styles/adopt-styles.js';
 import { updateClassList } from '../shared/update-class-list.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import tabsStyles from './tabs.css' with { type: 'css' }; // github-only
+import tabsStyles from './tabs.css.js'; // github-only
 // import tabsStyles from './tabs.cssresult.js'; // google3-only
 import { TAB_CLASSES } from './tabs.js';
 /**

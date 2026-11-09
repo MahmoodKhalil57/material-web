@@ -10,7 +10,7 @@ import { AriaTablistElement } from '../../../aria/tabs/tablist.js';
 import { DragSettleController } from '../shared/drag-settle.js';
 import { isReducedMotion, parseDuration } from '../shared/motion.js';
 import { updateClassList } from '../shared/update-class-list.js';
-import tabPanelsStyles from './tab-panels.css' with { type: 'css' }; // github-only
+import tabPanelsStyles from './tab-panels.css.js'; // github-only
 // import tabPanelsStyles from './tab-panels.cssresult.js'; // google3-only
 import { TAB_PANEL_OFFSET_PROPERTY, TAB_PANELS_CLASSES, TAB_PANELS_POSITIONAL_THRESHOLD, TAB_PANELS_VELOCITY_THRESHOLD_PX_PER_S, } from './tab-panels.js';
 /** Extra time after the transition before the slide is finished anyway. */

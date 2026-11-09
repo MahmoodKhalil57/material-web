@@ -9,7 +9,7 @@ import { css, html, LitElement, nothing, svg, } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import pullToRefreshStyles from './pull-to-refresh.css' with { type: 'css' }; // github-only
+import pullToRefreshStyles from './pull-to-refresh.css.js'; // github-only
 // import {styles as pullToRefreshStyles} from './pull-to-refresh.cssresult.js'; // google3-only
 import { AnnouncerController } from '../shared/announcer.js';
 import { PULL_TO_REFRESH_THRESHOLD_PX, pullToRefreshArrow, pullToRefreshClasses, PullToRefreshGesture, } from './pull-to-refresh.js';

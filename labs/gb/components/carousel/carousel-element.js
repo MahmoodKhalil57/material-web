@@ -7,7 +7,7 @@ import { __decorate } from "tslib";
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { carousel, getCarouselController, } from './carousel.js';
-import carouselStyles from './carousel.css' with { type: 'css' }; // github-only
+import carouselStyles from './carousel.css.js'; // github-only
 // import carouselStyles from './carousel.cssresult.js'; // google3-only
 /**
  * A Material Design carousel: a scrollable list of visual items that change

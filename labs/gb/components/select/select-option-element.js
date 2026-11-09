@@ -9,11 +9,11 @@ import { property, state } from 'lit/decorators.js';
 import { internals, mixinElementInternals, } from '../../../behaviors/element-internals.js';
 import { hasSlotted } from '../shared/has-slotted.js';
 import { selectOption } from './select.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import menuStyles from '../menu/menu.css' with { type: 'css' }; // github-only
+import menuStyles from '../menu/menu.css.js'; // github-only
 // import {styles as menuStyles} from '../menu/menu.cssresult.js'; // google3-only
 /**
  * Fired (bubbling, not composed) when an option's `selected` property

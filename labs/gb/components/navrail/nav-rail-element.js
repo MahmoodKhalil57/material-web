@@ -15,11 +15,11 @@ import { DragSettleController } from '../shared/drag-settle.js';
 import { ModalSurfaceController } from '../shared/modal-surface.js';
 import { RovingFocusController } from '../shared/roving-focus.js';
 import { BACK_REASON, playPredictiveBack } from '../shared/predictive-back.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
-import navRailStyles from './nav-rail.css' with { type: 'css' }; // github-only
+import navRailStyles from './nav-rail.css.js'; // github-only
 // import {styles as navRailStyles} from './nav-rail.cssresult.js'; // google3-only
 import { navRail, } from './nav-rail.js';
 import { NavRailItemElement } from './nav-rail-item-element.js';

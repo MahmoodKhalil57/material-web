@@ -20,15 +20,15 @@ import { ModalSurfaceController } from '../shared/modal-surface.js';
 import { TimePickerValidator } from './time-picker-validator.js';
 import { waitForMotion } from '../shared/motion.js';
 import { angleToValue, displayHour12, formatTime, localePeriodLabels, localeUses24Hour, nearestAngle, parseTime, pointToAngle, timePickerClasses, valueToAngle, } from './time-picker.js';
-import buttonStyles from '../button/button.css' with { type: 'css' }; // github-only
+import buttonStyles from '../button/button.css.js'; // github-only
 // import buttonStyles from '../button/button.cssresult.js'; // google3-only
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import iconButtonStyles from '../iconbutton/icon-button.css' with { type: 'css' }; // github-only
+import iconButtonStyles from '../iconbutton/icon-button.css.js'; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import timePickerStyles from './time-picker.css' with { type: 'css' }; // github-only
+import timePickerStyles from './time-picker.css.js'; // github-only
 // import timePickerStyles from './time-picker.cssresult.js'; // google3-only
 /** The 12-hour clock dial labels, clockwise from the top. */
 const HOURS_12 = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];

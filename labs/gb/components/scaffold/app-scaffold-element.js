@@ -9,7 +9,7 @@ import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { isWindowSizeClassAtLeast, WindowSizeClassController, } from '../../styles/layout/window-size-class.js';
 import { appScaffoldClasses, resolveNavigation, shouldExpandRail, } from './app-scaffold.js';
-import appScaffoldStyles from './app-scaffold.css' with { type: 'css' }; // github-only
+import appScaffoldStyles from './app-scaffold.css.js'; // github-only
 // spec-labels: layout-breakpoints/expanded/navigation, layout-breakpoints/medium/panes/two-pane-layout,
 // spec-labels: layout-breakpoints/large-extra-large/navigation, layout-breakpoints/medium/navigation
 /**

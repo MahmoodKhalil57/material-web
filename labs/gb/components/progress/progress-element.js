@@ -9,7 +9,7 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { mixinDelegatesAria } from '../../../../internal/aria/delegate.js';
-import progressStyles from './progress.css' with { type: 'css' }; // github-only
+import progressStyles from './progress.css.js'; // github-only
 // import {styles as progressStyles} from './progress.cssresult.js'; // google3-only
 import { CIRCULAR_VIEW_BOX, CIRCULAR_FLAT_PATH, LINEAR_PATH_LENGTH, LINEAR_FLAT_PATH, LINEAR_INDETERMINATE_WAVY_PATH, LINEAR_WAVY_PATH, CIRCULAR_WAVY_PATH, } from './progress-paths.js';
 import { progressClasses, registerProgressProperties } from './progress.js';

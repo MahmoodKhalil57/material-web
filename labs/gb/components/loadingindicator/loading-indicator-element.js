@@ -9,7 +9,7 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { mixinDelegatesAria } from '../../../../internal/aria/delegate.js';
-import loadingIndicatorStyles from './loading-indicator.css' with { type: 'css' }; // github-only
+import loadingIndicatorStyles from './loading-indicator.css.js'; // github-only
 // import {styles as loadingIndicatorStyles} from './loading-indicator.cssresult.js'; // google3-only
 import { DETERMINATE_INITIAL_PATH, INDETERMINATE_INITIAL_PATH, } from './loading-indicator-paths.js';
 import { loadingIndicatorClasses } from './loading-indicator.js';

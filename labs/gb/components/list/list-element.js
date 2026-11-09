@@ -7,7 +7,7 @@ import { __decorate } from "tslib";
 import { css, html, LitElement, nothing, } from "lit";
 import { property, query } from "lit/decorators.js";
 import { internals, mixinElementInternals, } from "../../../behaviors/element-internals.js";
-import listStyles from "./list.css" with { type: "css" }; // github-only
+import listStyles from "./list.css.js"; // github-only
 // import {styles as listStyles} from './list.cssresult.js'; // google3-only
 import { DragGesture } from "../shared/drag-gesture.js";
 import { isRtl, nextFocusIndex } from "../shared/roving-focus.js";

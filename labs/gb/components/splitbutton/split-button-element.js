@@ -7,13 +7,13 @@ import { __decorate } from "tslib";
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { button } from '../button/button.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import buttonStyles from '../button/button.css' with { type: 'css' }; // github-only
+import buttonStyles from '../button/button.css.js'; // github-only
 // import buttonStyles from '../button/button.cssresult.js'; // google3-only
-import splitButtonStyles from './split-button.css' with { type: 'css' }; // github-only
+import splitButtonStyles from './split-button.css.js'; // github-only
 // import {styles as splitButtonStyles} from './split-button.cssresult.js'; // google3-only
 import { splitButton, } from './split-button.js';
 /**

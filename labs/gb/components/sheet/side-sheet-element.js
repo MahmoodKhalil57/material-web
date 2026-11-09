@@ -15,13 +15,13 @@ import { playPredictiveBack, } from '../shared/predictive-back.js';
 import { CLOSE_REASONS } from './sheet.js';
 import { SheetBase } from './sheet-base.js';
 import { SIDE_SHEET_CLASSES, SIDE_SHEET_POSITIONAL_THRESHOLD, SIDE_SHEET_VELOCITY_THRESHOLD_PX_PER_S, sideSheetClasses, } from './side-sheet.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import iconButtonStyles from '../iconbutton/icon-button.css' with { type: 'css' }; // github-only
+import iconButtonStyles from '../iconbutton/icon-button.css.js'; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import sideSheetStyles from './side-sheet.css' with { type: 'css' }; // github-only
+import sideSheetStyles from './side-sheet.css.js'; // github-only
 // import sideSheetStyles from './side-sheet.cssresult.js'; // google3-only
 // spec-labels: side-sheets/guidelines/anatomy/divider-optional,
 // spec-labels: side-sheets/guidelines/anatomy/back-icon-button-optional,

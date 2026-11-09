@@ -6,7 +6,7 @@
 import { __decorate } from "tslib";
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import skeletonStyles from './skeleton.css' with { type: 'css' }; // github-only
+import skeletonStyles from './skeleton.css.js'; // github-only
 /**
  * A skeleton loader: a placeholder that hints at where content will appear
  * and holds its space while it loads (m3.material.io/styles/motion/transitions,

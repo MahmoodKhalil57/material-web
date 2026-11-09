@@ -11,11 +11,11 @@ import { afterDispatch, setupDispatchHooks, } from '../../../../internal/events/
 import { internals, mixinElementInternals, } from '../../../behaviors/element-internals.js';
 import { isFocusable, mixinFocusable } from '../../../behaviors/focusable.js';
 import { hasSlotted } from '../shared/has-slotted.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import menuStyles from './menu.css' with { type: 'css' }; // github-only
+import menuStyles from './menu.css.js'; // github-only
 // import {styles as menuStyles} from './menu.cssresult.js'; // google3-only
 import { MENU_CLASSES, menuContext, menuItem, menuItemCheckable, } from './menu.js';
 // Separate variable needed for closure.

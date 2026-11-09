@@ -30,17 +30,17 @@ import { isReducedMotion, waitForMotion } from '../shared/motion.js';
 import { addMonths, clampDate, compareDates, daysInMonth, defaultLocale, formatDate, formatInputDate, formatNumber, getDateInputFormat, getFirstDayOfWeek, getMonthGrid, getMonthNames, getWeekdayNames, isSameDate, parseInputDate, parseIsoDate, splitRangeText, toIsoDate, today, } from './calendar.js';
 import { DATE_PICKER_CLOSE_REASONS, datePickerClasses, datePickerDayClasses, getKeyboardTargetDate, } from './date-picker.js';
 import { DatePickerValidator } from './date-picker-validator.js';
-import buttonStyles from '../button/button.css' with { type: 'css' }; // github-only
+import buttonStyles from '../button/button.css.js'; // github-only
 // import buttonStyles from '../button/button.cssresult.js'; // google3-only
-import dividerStyles from '../divider/divider.css' with { type: 'css' }; // github-only
+import dividerStyles from '../divider/divider.css.js'; // github-only
 // import dividerStyles from '../divider/divider.cssresult.js'; // google3-only
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import iconButtonStyles from '../iconbutton/icon-button.css' with { type: 'css' }; // github-only
+import iconButtonStyles from '../iconbutton/icon-button.css.js'; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import datePickerStyles from './date-picker.css' with { type: 'css' }; // github-only
+import datePickerStyles from './date-picker.css.js'; // github-only
 /** Default (English) strings, from Compose Material 3. */
 export const DEFAULT_DATE_PICKER_STRINGS = {
     title: 'Select date',

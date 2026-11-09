@@ -9,7 +9,7 @@ import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { AnchoredOverlayController, composedContains, deepActiveElement, } from '../shared/anchored-overlay.js';
 import { TOOLTIP_HIDE_DELAY_MS, TOOLTIP_LONG_PRESS_MS, TOOLTIP_SHOW_DELAY_MS, TOOLTIP_VARIANTS, tooltipClasses, } from './tooltip.js';
-import tooltipStyles from './tooltip.css' with { type: 'css' }; // github-only
+import tooltipStyles from './tooltip.css.js'; // github-only
 /** Pointer travel (px) that cancels a pending long press. */
 const LONG_PRESS_SLOP_PX = 10;
 /** The open transient tooltip; showing another closes it ("one at a time"). */

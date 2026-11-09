@@ -8,7 +8,7 @@
  *
  * @example
  * ```ts
- * import globalStylesheet from './stylesheet.css' with {type: 'css'};
+ * import globalStylesheet from './stylesheet.css.js';
  *
  * adoptStyles(document, globalStylesheet);
  * ```
@@ -19,7 +19,7 @@
  *
  * @example
  * ```ts
- * import hostClasses from './stylesheet.css' with {type: 'css'};
+ * import hostClasses from './stylesheet.css.js';
  *
  * class LightDomElement extends HTMLElement {
  *   connectedCallback() {

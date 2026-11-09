@@ -24,4 +24,4 @@ For production, import individual components from
 `@mahmoodkhalil/material-web-3-demo/labs/gb/components/<name>/<file>.js` and adopt the styles
 yourself.
 
-Built from material-web 2.5.0 at commit 94dde96bd.
+Built from material-web 2.5.0 at commit 2814f960e.

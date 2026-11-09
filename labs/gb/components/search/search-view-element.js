@@ -13,13 +13,13 @@ import { iconButton } from '../iconbutton/icon-button.js';
 import { ModalSurfaceController } from '../shared/modal-surface.js';
 import { BACK_REASON, playPredictiveBack, } from '../shared/predictive-back.js';
 import { getResultOptions, moveResultFocus, SEARCH_CLOSE_REASONS, SEARCH_VIEW_CLASSES, searchViewClasses, } from './search.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import iconButtonStyles from '../iconbutton/icon-button.css' with { type: 'css' }; // github-only
+import iconButtonStyles from '../iconbutton/icon-button.css.js'; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import searchViewStyles from './search-view.css' with { type: 'css' }; // github-only
+import searchViewStyles from './search-view.css.js'; // github-only
 // import searchViewStyles from './search-view.cssresult.js'; // google3-only
 /** Fallbacks when the `md.sys.motion` tokens are not loaded. */
 const FALLBACK_EASING = 'cubic-bezier(0.2, 0, 0, 1)';

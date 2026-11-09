@@ -6,7 +6,7 @@
 import { __decorate } from "tslib";
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import dividerStyles from './divider.css' with { type: 'css' }; // github-only
+import dividerStyles from './divider.css.js'; // github-only
 // import {styles as dividerStyles} from './divider.cssresult.js'; // google3-only
 import { divider } from './divider.js';
 /**

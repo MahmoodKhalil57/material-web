@@ -31,11 +31,11 @@ import { property } from 'lit/decorators.js';
 import { ripple } from '../ripple/ripple.js';
 import { hasSlotted } from '../shared/has-slotted.js';
 import { CAROUSEL_ITEM_FRAME_CLASSES, carouselItem } from './carousel.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import carouselItemStyles from './carousel-item.css' with { type: 'css' }; // github-only
+import carouselItemStyles from './carousel-item.css.js'; // github-only
 // import carouselItemStyles from './carousel-item.cssresult.js'; // google3-only
 /**
  * A Material Design carousel item, used in `md-gb-carousel`.

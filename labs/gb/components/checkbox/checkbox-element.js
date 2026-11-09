@@ -12,11 +12,11 @@ import { createValidator, getValidityAnchor, mixinConstraintValidation, } from '
 import { mixinElementInternals } from '../../../behaviors/element-internals.js';
 import { getFormState, getFormValue, mixinFormAssociated, } from '../../../behaviors/form-associated.js';
 import { CheckboxValidator } from '../../../behaviors/validators/checkbox-validator.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import checkboxStyles from './checkbox.css' with { type: 'css' }; // github-only
+import checkboxStyles from './checkbox.css.js'; // github-only
 // import checkboxStyles from './checkbox.cssresult.js'; // google3-only
 import { clampDensity } from '../shared/density.js';
 import { FormDisabledController, ToggleFieldController, } from '../shared/form-field.js';

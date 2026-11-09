@@ -18,11 +18,11 @@ import { AnchoredOverlayController, composedContains, } from '../shared/anchored
 import { FormDisabledController, ValueFieldController, } from '../shared/form-field.js';
 import { SELECT_CLASSES, selectClasses } from './select.js';
 import { SelectOptionElement } from './select-option-element.js';
-import textFieldStyles from '../textfield/text-field.css' with { type: 'css' }; // github-only
+import textFieldStyles from '../textfield/text-field.css.js'; // github-only
 // import textFieldStyles from '../textfield/text-field.cssresult.js'; // google3-only
-import menuStyles from '../menu/menu.css' with { type: 'css' }; // github-only
+import menuStyles from '../menu/menu.css.js'; // github-only
 // import {styles as menuStyles} from '../menu/menu.cssresult.js'; // google3-only
-import selectStyles from './select.css' with { type: 'css' }; // github-only
+import selectStyles from './select.css.js'; // github-only
 // import selectStyles from './select.cssresult.js'; // google3-only
 /** How many options PageUp / PageDown move the active option. */
 const PAGE_SIZE = 10;

@@ -13,7 +13,7 @@ import { RovingFocusController } from '../shared/roving-focus.js';
 import { ScrollBehaviorController } from '../shared/scroll-behavior.js';
 import { SelectionController } from '../shared/selection.js';
 import { updateClassList } from '../shared/update-class-list.js';
-import tabsStyles from './tabs.css' with { type: 'css' }; // github-only
+import tabsStyles from './tabs.css.js'; // github-only
 // import tabsStyles from './tabs.cssresult.js'; // google3-only
 import { setupTabs, tabsClasses } from './tabs.js';
 /**

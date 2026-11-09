@@ -11,11 +11,11 @@ import { internals } from '../../../behaviors/element-internals.js';
 import { isFocusable } from '../../../behaviors/focusable.js';
 import { adoptStyles } from '../../styles/adopt-styles.js';
 import { NavLinkController, navLinkStyles } from '../shared/nav-link.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
-import navRailStyles from './nav-rail.css' with { type: 'css' }; // github-only
+import navRailStyles from './nav-rail.css.js'; // github-only
 // import {styles as navRailStyles} from './nav-rail.cssresult.js'; // google3-only
 import { navRailItem } from './nav-rail.js';
 /**

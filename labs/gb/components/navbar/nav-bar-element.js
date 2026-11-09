@@ -12,7 +12,7 @@ import { adoptStyles } from '../../styles/adopt-styles.js';
 import { hasLinkItems, NAV_LINK_CHANGE } from '../shared/nav-link.js';
 import { ScrollBehaviorController } from '../shared/scroll-behavior.js';
 import { SelectionController } from '../shared/selection.js';
-import navBarStyles from './nav-bar.css' with { type: 'css' }; // github-only
+import navBarStyles from './nav-bar.css.js'; // github-only
 // import {styles as navBarStyles} from './nav-bar.cssresult.js'; // google3-only
 import { MEDIUM_WINDOW_QUERY, navBar, } from './nav-bar.js';
 import { NavBarItemElement } from './nav-bar-item-element.js';

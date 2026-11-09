@@ -15,13 +15,13 @@ import { playPredictiveBack, } from '../shared/predictive-back.js';
 import { DragSettleController } from '../shared/drag-settle.js';
 import { CLOSE_REASONS } from './sheet.js';
 import { SheetBase } from './sheet-base.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import iconButtonStyles from '../iconbutton/icon-button.css' with { type: 'css' }; // github-only
+import iconButtonStyles from '../iconbutton/icon-button.css.js'; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import bottomSheetStyles from './bottom-sheet.css' with { type: 'css' }; // github-only
+import bottomSheetStyles from './bottom-sheet.css.js'; // github-only
 // import bottomSheetStyles from './bottom-sheet.cssresult.js'; // google3-only
 /**
  * Compose `BottomSheetDefaults.PositionalThreshold` (56dp): how far a drag must

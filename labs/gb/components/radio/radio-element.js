@@ -12,11 +12,11 @@ import { internals, mixinElementInternals, } from '../../../behaviors/element-in
 import { mixinFocusable } from '../../../behaviors/focusable.js';
 import { getFormState, getFormValue, mixinFormAssociated, } from '../../../behaviors/form-associated.js';
 import { RadioValidator } from '../../../behaviors/validators/radio-validator.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import radioStyles from './radio.css' with { type: 'css' }; // github-only
+import radioStyles from './radio.css.js'; // github-only
 // import {styles as radioStyles} from './radio.cssresult.js'; // google3-only
 import { clampDensity } from '../shared/density.js';
 import { FormDisabledController, FormScopedSelectionController, ToggleFieldController, } from '../shared/form-field.js';

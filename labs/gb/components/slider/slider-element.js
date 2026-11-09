@@ -16,9 +16,9 @@ import { mixinElementInternals } from '../../../behaviors/element-internals.js';
 import { getFormValue, mixinFormAssociated, } from '../../../behaviors/form-associated.js';
 import { FormDisabledController, numberAttribute, parseNumberState, rangeFormData, } from '../shared/form-field.js';
 import { computeSliderProperties, formatValueIndicatorLabel, handleClasses, handleNubClasses, sliderClasses, } from './slider.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import sliderStyles from './slider.css' with { type: 'css' }; // github-only
+import sliderStyles from './slider.css.js'; // github-only
 // Separate variable needed for closure.
 // spec-labels: sliders/specs/anatomy, sliders/guidelines/anatomy, sliders/specs/variants, sliders/specs/configurations, sliders/specs/measurements
 const baseClass = mixinDelegatesAria(mixinFormAssociated(mixinElementInternals(LitElement)));

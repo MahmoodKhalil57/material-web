@@ -10,11 +10,11 @@ import { mixinDelegatesAria } from '../../../../internal/aria/delegate.js';
 import { ripple } from '../ripple/ripple.js';
 import { fxSlot } from '../shared/fx.js';
 import { hasSlotted } from '../shared/has-slotted.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import cardStyles from './card.css' with { type: 'css' }; // github-only
+import cardStyles from './card.css.js'; // github-only
 // import cardStyles from './card.cssresult.js'; // google3-only
 import { card } from './card.js';
 // Separate variable needed for closure.

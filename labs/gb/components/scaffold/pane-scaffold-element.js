@@ -14,9 +14,9 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { foldWithin, observeFold, } from '../../styles/layout/viewport-segments.js';
 import { WindowSizeClassController, } from '../../styles/layout/window-size-class.js';
 import { nextPaneSnapTarget, paneScaffoldClasses, paneSnapTargets, planPanes, } from './pane-scaffold.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import paneScaffoldStyles from './pane-scaffold.css' with { type: 'css' }; // github-only
+import paneScaffoldStyles from './pane-scaffold.css.js'; // github-only
 /**
  * The handle's release velocity (px/s) above which a fling goes to the next
  * snap width in its direction.

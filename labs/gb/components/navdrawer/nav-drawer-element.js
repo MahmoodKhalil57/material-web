@@ -10,11 +10,11 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { mixinDelegatesAria } from '../../../../internal/aria/delegate.js';
 import { adoptStyles } from '../../styles/adopt-styles.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
-import navDrawerStyles from './nav-drawer.css' with { type: 'css' }; // github-only
+import navDrawerStyles from './nav-drawer.css.js'; // github-only
 // import {styles as navDrawerStyles} from './nav-drawer.cssresult.js'; // google3-only
 import { DragSettleController } from '../shared/drag-settle.js';
 import { ModalSurfaceController } from '../shared/modal-surface.js';

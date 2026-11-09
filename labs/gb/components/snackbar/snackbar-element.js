@@ -13,15 +13,15 @@ import { AnnouncerController } from '../shared/announcer.js';
 import { hasSlotted } from '../shared/has-slotted.js';
 import { waitForMotion } from '../shared/motion.js';
 import { CLOSE_REASONS, snackbarClasses } from './snackbar.js';
-import buttonStyles from '../button/button.css' with { type: 'css' }; // github-only
+import buttonStyles from '../button/button.css.js'; // github-only
 // import buttonStyles from '../button/button.cssresult.js'; // google3-only
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import iconButtonStyles from '../iconbutton/icon-button.css' with { type: 'css' }; // github-only
+import iconButtonStyles from '../iconbutton/icon-button.css.js'; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import snackbarStyles from './snackbar.css' with { type: 'css' }; // github-only
+import snackbarStyles from './snackbar.css.js'; // github-only
 // import snackbarStyles from './snackbar.cssresult.js'; // google3-only
 /**
  * Animation duration for snackbar appearance in milliseconds.

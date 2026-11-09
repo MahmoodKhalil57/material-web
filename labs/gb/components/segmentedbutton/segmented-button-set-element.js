@@ -13,7 +13,7 @@ import { FormDisabledController, SelectionGroupValidator, } from '../shared/form
 import { RovingFocusController } from '../shared/roving-focus.js';
 import { SelectionController } from '../shared/selection.js';
 import { clampDensity, } from './segmented-button.js';
-import segmentedButtonSetStyles from './segmented-button-set.css' with { type: 'css' }; // github-only
+import segmentedButtonSetStyles from './segmented-button-set.css.js'; // github-only
 // import segmentedButtonSetStyles from './segmented-button-set.cssresult.js'; // google3-only
 const SEGMENT_TAG = 'md-gb-segmented-button';
 // Separate variable needed for closure.

@@ -13,7 +13,7 @@ import { AnchoredOverlayController } from '../shared/anchored-overlay.js';
 import { clampDensity } from '../shared/density.js';
 import { isReducedMotion, springDuration } from '../shared/motion.js';
 import { nextFocusIndex } from '../shared/roving-focus.js';
-import menuStyles from './menu.css' with { type: 'css' }; // github-only
+import menuStyles from './menu.css.js'; // github-only
 // import {styles as menuStyles} from './menu.cssresult.js'; // google3-only
 import { menu, MENU_COLORS, menuContext, } from './menu.js';
 // Separate variable needed for closure.

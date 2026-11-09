@@ -11,15 +11,15 @@ import { redispatchEvent } from '../../../../internal/events/redispatch-event.js
 import { mixinElementInternals } from '../../../behaviors/element-internals.js';
 import { mixinFormAssociated } from '../../../behaviors/form-associated.js';
 import { mixinFormSubmitter } from '../../../behaviors/form-submitter.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
 import { safeHref } from '../../../../internal/directives/safe-href.js';
 import { fxSlot } from '../shared/fx.js';
 import { hasSlotted } from '../shared/has-slotted.js';
 import { InvokerController } from '../shared/invoker.js';
-import buttonStyles from './button.css' with { type: 'css' }; // github-only
+import buttonStyles from './button.css.js'; // github-only
 // import buttonStyles from './button.cssresult.js'; // google3-only
 import { button } from './button.js';
 // Separate variable needed for closure.

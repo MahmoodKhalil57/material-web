@@ -11,11 +11,11 @@ import { internals, mixinElementInternals, } from "../../../behaviors/element-in
 import { DisclosureController } from "../shared/disclosure.js";
 import { DragSettleController } from "../shared/drag-settle.js";
 import { hasSlotted } from "../shared/has-slotted.js";
-import focusRingStyles from "../focus/focus-ring.css" with { type: "css" }; // github-only
+import focusRingStyles from "../focus/focus-ring.css.js"; // github-only
 // import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from "../ripple/ripple.css" with { type: "css" }; // github-only
+import rippleStyles from "../ripple/ripple.css.js"; // github-only
 // import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
-import listStyles from "./list.css" with { type: "css" }; // github-only
+import listStyles from "./list.css.js"; // github-only
 // import {styles as listStyles} from './list.cssresult.js'; // google3-only
 import { listItem, listItemDragHandle, listItemMoveButton, listItemRevealButton, } from "./list.js";
 // Compose SwipeToDismissBoxDefaults.positionalThreshold (56.dp): how far an

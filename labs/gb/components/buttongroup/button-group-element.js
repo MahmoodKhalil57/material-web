@@ -17,7 +17,7 @@ import { RovingFocusController } from "../shared/roving-focus.js";
 import { SelectionController } from "../shared/selection.js";
 import { updateClassList } from "../shared/update-class-list.js";
 import { buttonGroupClasses, isItemSelectable, } from "./button-group.js";
-import buttonGroupStyles from "./button-group.css" with { type: "css" }; // github-only
+import buttonGroupStyles from "./button-group.css.js"; // github-only
 // import buttonGroupStyles from './button-group.cssresult.js'; // google3-only
 // Separate variable needed for closure.
 const baseClass = mixinElementInternals(LitElement);

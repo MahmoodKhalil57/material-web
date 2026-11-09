@@ -5,7 +5,7 @@
  */
 import { Icon as IconBase } from '../../../../icon/internal/icon.js';
 import { adoptStyles } from '../adopt-styles.js';
-import iconStyles from './md-icon.css' with { type: 'css' }; // github-only
+import iconStyles from './md-icon.css.js'; // github-only
 // import iconStyles from './md-icon.cssresult.js'; // google3-only
 /**
  * A Material Design icon component.

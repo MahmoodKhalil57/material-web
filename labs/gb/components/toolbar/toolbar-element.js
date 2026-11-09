@@ -14,7 +14,7 @@ import '../menu/md-gb-menu-item.js';
 import { OverflowController, overflowIcon, overflowStyles, renderOverflowMenu, } from '../shared/overflow.js';
 import { ScrollBehaviorController } from '../shared/scroll-behavior.js';
 import { RovingFocusController, } from '../shared/roving-focus.js';
-import toolbarStyles from './toolbar.css' with { type: 'css' }; // github-only
+import toolbarStyles from './toolbar.css.js'; // github-only
 // import {styles as toolbarStyles} from './toolbar.cssresult.js'; // google3-only
 import { toolbar } from './toolbar.js';
 const CONTROL_SELECTOR = 'md-gb-button, md-gb-icon-button, md-gb-split-button, button, a[href], input, select, [tabindex]';

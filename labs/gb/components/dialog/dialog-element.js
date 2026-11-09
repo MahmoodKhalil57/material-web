@@ -13,15 +13,15 @@ import { iconButton } from '../iconbutton/icon-button.js';
 import { AdaptiveController } from '../shared/adaptive.js';
 import { ModalSurfaceController } from '../shared/modal-surface.js';
 import { dialogClasses } from './dialog.js';
-import dividerStyles from '../divider/divider.css' with { type: 'css' }; // github-only
+import dividerStyles from '../divider/divider.css.js'; // github-only
 // import dividerStyles from '../divider/divider.cssresult.js'; // google3-only
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import iconButtonStyles from '../iconbutton/icon-button.css' with { type: 'css' }; // github-only
+import iconButtonStyles from '../iconbutton/icon-button.css.js'; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import dialogStyles from './dialog.css' with { type: 'css' }; // github-only
+import dialogStyles from './dialog.css.js'; // github-only
 const baseClass = mixinDelegatesAria(LitElement);
 // spec-labels: dialogs/specs/full-screen-dialogs, dialogs/guidelines/anatomy/full-screen-dialog,
 // spec-labels: dialogs/specs/basic-dialogs/basic-dialog-measurements, dialogs/specs/basic-dialogs,

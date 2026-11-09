@@ -12,11 +12,11 @@ import { focusRingClasses } from '../focus/focus-ring.js';
 import { ripple, rippleClasses } from '../ripple/ripple.js';
 import { hasSlotted } from '../shared/has-slotted.js';
 import { SEARCH_BAR_CLASSES, searchBarClasses } from './search.js';
-import focusRingStyles from '../focus/focus-ring.css' with { type: 'css' }; // github-only
+import focusRingStyles from '../focus/focus-ring.css.js'; // github-only
 // import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with { type: 'css' }; // github-only
+import rippleStyles from '../ripple/ripple.css.js'; // github-only
 // import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
-import searchBarStyles from './search-bar.css' with { type: 'css' }; // github-only
+import searchBarStyles from './search-bar.css.js'; // github-only
 // import searchBarStyles from './search-bar.cssresult.js'; // google3-only
 const SEARCH_ICON = html `<svg
   class="search-bar-icon"

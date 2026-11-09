@@ -24,7 +24,7 @@ import { FormDisabledController, ValueFieldController, } from '../shared/form-fi
 // interaction-inputs-e456f0), also when no other component loaded it.
 import '../shared/focus-reset.js';
 import { TEXT_FIELD_CLASSES, textFieldClasses, } from './text-field.js';
-import textFieldStyles from './text-field.css' with { type: 'css' }; // github-only
+import textFieldStyles from './text-field.css.js'; // github-only
 // Types whose native control always shows content, so the label stays
 // floated.
 const ALWAYS_POPULATED_TYPES = new Set([
