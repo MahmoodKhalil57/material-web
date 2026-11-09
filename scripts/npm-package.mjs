@@ -1,0 +1,199 @@
+#!/usr/bin/env node
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
+ * Builds the labs/gb components as an npm package on a branch, the way
+ * catalog-pages.mjs builds the site on gh-pages, and publishes from it:
+ *
+ *   node scripts/npm-package.mjs [--name @mahmoodkhalil/material-web-3-demo]
+ *     [--version 0.1.0] [--branch npm-package] [--remote origin] [--push]
+ *     [--publish]
+ *
+ * 1. Follows the relative imports of labs/gb/all.js (the built .js, its
+ *    .d.ts and source maps) and copies every module it reaches, at its path,
+ *    so the package is the unbundled ES modules and their types. Run
+ *    `npx tsc -p tsconfig.json` and `npx tsc -p labs/gb/tsconfig.json` first.
+ * 2. Writes a package.json (lit and the other bare imports become
+ *    dependencies), README.md and LICENSE.
+ * 3. Commits the result to --branch (an orphan branch, in a worktree under
+ *    the system temp directory, replaced wholesale); --push pushes it.
+ * 4. --publish runs `npm publish --access public` from that branch's tree.
+ */
+
+import {execFileSync} from 'node:child_process';
+import {existsSync} from 'node:fs';
+import {cp, mkdir, readdir, readFile, rm, writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {dirname, join, relative, resolve} from 'node:path';
+import {parseArgs} from 'node:util';
+
+const {values: args} = parseArgs({
+  options: {
+    name: {type: 'string', default: '@mahmoodkhalil/material-web-3-demo'},
+    version: {type: 'string', default: '0.1.0'},
+    branch: {type: 'string', default: 'npm-package'},
+    remote: {type: 'string', default: 'origin'},
+    push: {type: 'boolean', default: false},
+    publish: {type: 'boolean', default: false},
+  },
+});
+
+const ROOT = process.cwd();
+const ENTRY = 'labs/gb/all.js';
+const TREE = join(tmpdir(), 'npm-package-branch');
+const main = JSON.parse(await readFile('package.json', 'utf8'));
+
+const log = (...m) => console.log('[npm-package]', ...m);
+const git = (argv, cwd = ROOT) => execFileSync('git', argv, {cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit']}).trim();
+
+// --- 1. The module closure -------------------------------------------------
+
+const SPEC = /(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
+const files = new Set();
+const bare = new Set();
+
+async function visit(path) {
+  if (files.has(path)) return;
+  if (!existsSync(join(ROOT, path))) throw new Error(`Missing ${path}; build first.`);
+  files.add(path);
+  for (const extra of [`${path}.map`, path.replace(/\.js$/, '.d.ts')]) {
+    if (existsSync(join(ROOT, extra))) files.add(extra);
+  }
+  const sources = [path];
+  const types = path.replace(/\.js$/, '.d.ts');
+  if (types !== path && existsSync(join(ROOT, types))) sources.push(types);
+  for (const source of sources) {
+    const text = await readFile(join(ROOT, source), 'utf8');
+    for (const [, spec] of text.matchAll(SPEC)) {
+      if (spec.startsWith('.')) {
+        const target = relative(ROOT, resolve(ROOT, dirname(source), spec)).replaceAll('\\', '/');
+        if (target.endsWith('.js')) await visit(target);
+        else files.add(target);
+      } else if (source.endsWith('.js')) {
+        const parts = spec.split('/');
+        bare.add(spec.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0]);
+      }
+    }
+  }
+}
+await visit(ENTRY);
+log(`${files.size} files, bare imports: ${[...bare].sort().join(', ')}`);
+
+// --- 2. The package ---------------------------------------------------------
+
+const OUT = join(tmpdir(), 'npm-package-out');
+await rm(OUT, {recursive: true, force: true});
+for (const file of files) {
+  if (!existsSync(join(ROOT, file))) continue;
+  await mkdir(dirname(join(OUT, file)), {recursive: true});
+  await cp(join(ROOT, file), join(OUT, file));
+}
+
+const all = {...main.dependencies, ...main.peerDependencies};
+const dependencies = {};
+for (const name of [...bare].sort()) {
+  if (!all[name]) throw new Error(`No version for ${name} in package.json`);
+  dependencies[name] = all[name];
+}
+
+await writeFile(
+  join(OUT, 'package.json'),
+  JSON.stringify(
+    {
+      name: args.name,
+      version: args.version,
+      description: 'Demo build of the Material 3 Expressive (labs/gb) web components, from the 3.0 docs site on material-web.',
+      type: 'module',
+      main: ENTRY,
+      module: ENTRY,
+      types: ENTRY.replace(/\.js$/, '.d.ts'),
+      exports: {'.': {types: './labs/gb/all.d.ts', default: './labs/gb/all.js'}, './*': './*'},
+      sideEffects: true,
+      dependencies,
+      license: 'Apache-2.0',
+      repository: {type: 'git', url: 'git+https://github.com/MahmoodKhalil57/material-web.git'},
+      homepage: 'https://mahmoodkhalil57.github.io/material-web/3.0/',
+      keywords: ['material-design', 'm3', 'material-3-expressive', 'web-components', 'lit'],
+    },
+    null,
+    2,
+  ) + '\n',
+);
+await cp('LICENSE', join(OUT, 'LICENSE'));
+await writeFile(
+  join(OUT, 'README.md'),
+  `# ${args.name}
+
+A demo build of the Material 3 Expressive web components (labs/gb) from
+[material-web](https://github.com/material-components/material-web), as
+published on the 3.0 docs site: https://mahmoodkhalil57.github.io/material-web/3.0/
+
+This is an unofficial demo, not a Google release. The components are
+unbundled ES modules built on Lit.
+
+\`\`\`sh
+npm install ${args.name}
+\`\`\`
+
+\`\`\`js
+// Defines every md-gb-* element and adopts the M3 styles into the document.
+import '${args.name}';
+\`\`\`
+
+\`\`\`html
+<md-gb-button>Hello</md-gb-button>
+\`\`\`
+
+For production, import individual components from
+\`${args.name}/labs/gb/components/<name>/<file>.js\` and adopt the styles
+yourself.
+
+Built from material-web ${main.version} at commit ${git(['rev-parse', '--short', 'HEAD'])}.
+`,
+);
+
+// --- 3. The branch ---------------------------------------------------------
+
+const exists = git(['ls-remote', '--heads', args.remote, args.branch]) !== '';
+await rm(TREE, {recursive: true, force: true});
+git(['worktree', 'prune']);
+let local = true;
+try {
+  git(['rev-parse', '--verify', '--quiet', `refs/heads/${args.branch}`]);
+} catch {
+  local = false;
+}
+if (exists) {
+  git(['fetch', '-q', args.remote, args.branch]);
+  git(['worktree', 'add', '-q', '-B', args.branch, TREE, `${args.remote}/${args.branch}`]);
+} else if (local) {
+  git(['worktree', 'add', '-q', TREE, args.branch]);
+} else {
+  git(['worktree', 'add', '-q', '--orphan', '-b', args.branch, TREE]);
+}
+for (const entry of await readdir(TREE)) {
+  if (entry !== '.git') await rm(join(TREE, entry), {recursive: true, force: true});
+}
+await cp(OUT, TREE, {recursive: true});
+git(['add', '-A'], TREE);
+if (git(['status', '--porcelain'], TREE) !== '') {
+  await writeFile(join(tmpdir(), 'npm-package-message.txt'), `package: build of ${git(['rev-parse', '--short', 'HEAD'])} as ${args.version}\n`);
+  git(['commit', '-q', '-F', join(tmpdir(), 'npm-package-message.txt')], TREE);
+  log(`committed to ${args.branch}`);
+} else {
+  log('no changes');
+}
+if (args.push) {
+  git(['push', '-q', args.remote, `${args.branch}:${args.branch}`], TREE);
+  log(`pushed ${args.branch} to ${args.remote}`);
+}
+if (args.publish) {
+  execFileSync('npm', ['publish', '--access', 'public'], {cwd: TREE, stdio: 'inherit', shell: true});
+  log(`published ${args.name}@${args.version}`);
+}
+git(['worktree', 'remove', '--force', TREE]);
+log(`package directory: ${OUT}`);
