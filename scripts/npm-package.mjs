@@ -54,6 +54,7 @@ const git = (argv, cwd = ROOT) => execFileSync('git', argv, {cwd, encoding: 'utf
 
 const SPEC = /(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
 const files = new Set();
+const cssTargets = new Set();
 const bare = new Set();
 
 async function visit(path) {
@@ -67,11 +68,15 @@ async function visit(path) {
   const types = path.replace(/\.js$/, '.d.ts');
   if (types !== path && existsSync(join(ROOT, types))) sources.push(types);
   for (const source of sources) {
-    const text = await readFile(join(ROOT, source), 'utf8');
+    // Drop comments first: JSDoc examples mention imports that are not there.
+    const text = (await readFile(join(ROOT, source), 'utf8'))
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '');
     for (const [, spec] of text.matchAll(SPEC)) {
       if (spec.startsWith('.')) {
         const target = relative(ROOT, resolve(ROOT, dirname(source), spec)).replaceAll('\\', '/');
         if (target.endsWith('.js')) await visit(target);
+        else if (target.endsWith('.css')) cssTargets.add(target);
         else files.add(target);
       } else if (source.endsWith('.js')) {
         const parts = spec.split('/');
@@ -92,6 +97,35 @@ for (const file of files) {
   await mkdir(dirname(join(OUT, file)), {recursive: true});
   await cp(join(ROOT, file), join(OUT, file));
 }
+
+// The .css modules (`import ... with {type: 'css'}`) are compiled from their
+// .scss siblings. build:sass does this in the repo, but its `$(ls ...)` shell
+// substitution fails on Windows, so compile the ones needed here, into the
+// package only.
+const sass = await import('sass');
+for (const css of cssTargets) {
+  const scss = css.replace(/\.css$/, '.scss');
+  if (!existsSync(join(ROOT, scss))) throw new Error(`No ${scss} to compile ${css} from.`);
+  const {css: text} = sass.compile(join(ROOT, scss), {style: 'compressed', loadPaths: [join(ROOT, 'node_modules')]});
+  await mkdir(dirname(join(OUT, css)), {recursive: true});
+  await writeFile(join(OUT, css), text);
+  // `import sheet from './x.css' with {type: 'css'}` needs a browser or
+  // bundler with CSS module scripts. The package ships a plain module instead
+  // (the same constructed stylesheet catalog-pages.mjs makes for Pages).
+  await writeFile(
+    join(OUT, `${css}.js`),
+    `const sheet = new CSSStyleSheet();\nsheet.replaceSync(${JSON.stringify(text)});\nexport default sheet;\n`,
+  );
+}
+const CSS_IMPORT = /(from\s+)(['"])([^'"]+\.css)\2\s+with\s*\{\s*type:\s*['"]css['"]\s*\}/g;
+for (const file of files) {
+  if (!file.endsWith('.js')) continue;
+  const path = join(OUT, file);
+  const text = await readFile(path, 'utf8');
+  const next = text.replace(CSS_IMPORT, (_, from, quote, spec) => `${from}${quote}${spec}.js${quote}`);
+  if (next !== text) await writeFile(path, next);
+}
+log(`${cssTargets.size} stylesheets compiled from .scss, CSS imports rewritten as modules`);
 
 const all = {...main.dependencies, ...main.peerDependencies};
 const dependencies = {};
