@@ -4,10 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const litPlugin = require('@lit-labs/eleventy-plugin-lit');
 const inlineCss = require('./eleventy-helpers/shortcodes/inline-css.cjs');
 const inlineJS = require('./eleventy-helpers/shortcodes/inline-js.cjs');
-const playgroundExample = require('./eleventy-helpers/shortcodes/playground-example.cjs');
 const gbShortcodes = require('./eleventy-helpers/shortcodes/gb.cjs');
 const {gbSite} = require('./eleventy-helpers/gb-site.cjs');
 const minifyHTML = require('./eleventy-helpers/transforms/minify-html.cjs');
@@ -54,19 +52,12 @@ module.exports = function (eleventyConfig) {
     .addPassthroughCopy({ '_dev-gb/custom-elements.json': '3.0/custom-elements.json' })
     .addPassthroughCopy({ '_dev-gb/skill': '3.0/skill' });
 
-  // add the lit-ssr plugin
-  eleventyConfig.addPlugin(litPlugin, {
-    mode: 'worker',
-    componentModules: [`./${jsDir}/ssr.js`],
-  });
-
   // Add this for 11ty's --watch flag
   eleventyConfig.addWatchTarget(`./${jsDir}/**/*.js`);
 
   // install shortcodes
   inlineCss(eleventyConfig, DEV);
   inlineJS(eleventyConfig, DEV, { jsDir });
-  playgroundExample(eleventyConfig);
   gbShortcodes(eleventyConfig);
   require('./eleventy-helpers/shortcodes/gb-shadcn.cjs')(eleventyConfig);
   require('./eleventy-helpers/filters/gb-pager.cjs')(eleventyConfig);

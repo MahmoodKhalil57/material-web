@@ -51,13 +51,9 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
   nodeScript(['scripts/generate-sass-token-meta.js', ...tokenFiles]);
 
   log('Compiling Sass');
-  const skip = new Set(['node_modules', 'catalog', 'scripts', 'docs', 'types', 'migrations']);
-  const dirs = [];
-  for (const entry of await readdir(ROOT, {withFileTypes: true})) {
-    if (entry.isDirectory() && !entry.name.startsWith('.') && !skip.has(entry.name)) {
-      dirs.push(`${entry.name}:${entry.name}`);
-    }
-  }
+  // v3 only: labs/ (labs/gb and labs/aria). The shared Sass in sass/ext is
+  // loaded from there; the v2.5 component folders are gone on this branch.
+  const dirs = ['labs:labs'];
   npx([
     'sass',
     '--style=compressed',
@@ -96,4 +92,9 @@ async function walk(dir, keep, out = []) {
     else if (keep(p)) out.push(p);
   }
   return out;
+}
+
+// `npm run build`
+if (process.argv[1]?.replace(/\\/g, '/').endsWith('/build-local.mjs')) {
+  await buildLibrary();
 }

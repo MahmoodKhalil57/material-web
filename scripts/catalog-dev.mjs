@@ -188,7 +188,7 @@ async function main() {
   const watching = !argv.includes('--no-watch');
   if (watching) watchSources();
   log(
-    `Catalog: http://localhost:${PORT}/  (v2.5.0), http://localhost:${PORT}/3.0/  (${pages} pages, demos for ${demos} components)
+    `Catalog: http://localhost:${PORT}/3.0/  (${pages} pages, demos for ${demos} components)
 ` +
       `[catalog:dev] Library: ${LIB} (serves this repo for the playground)\n` +
       (watching
@@ -204,23 +204,15 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 // ---------------------------------------------------------------------------
 
 /**
- * Builds the site pages: "/" (v2.5.0: docs and stories), "/3.0/" (docs/3.0
+ * Builds the site pages: "/3.0/" (docs/3.0
  * as Markdown with the labs/gb demos), the catalog scripts and Eleventy. Run
  * once at start and again by the watcher; the servers keep running.
  */
 async function buildSite({first = false} = {}) {
-  log('Copying docs and stories');
   // Generated pages (gitignored) of earlier runs, including the old 3.0 overlay.
-  for (const dir of ['foundations', 'styles', '3.0']) {
+  for (const dir of ['3.0']) {
     await rm(join(CATALOG, 'site', dir), {recursive: true, force: true});
   }
-  for (const dir of ['components', 'about', 'theming']) {
-    for (const f of await readdir(join(CATALOG, 'site', dir))) {
-      if (f.endsWith('.md')) await rm(join(CATALOG, 'site', dir, f));
-    }
-  }
-  nodeScript(['scripts/copy-docs.mjs'], {cwd: CATALOG});
-  nodeScript(['scripts/copy-stories.mjs'], {cwd: CATALOG});
 
   log('Preparing the labs/gb demos');
   const gbDirs = await gbDemoDirs();
