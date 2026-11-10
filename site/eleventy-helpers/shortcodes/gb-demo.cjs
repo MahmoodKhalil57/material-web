@@ -72,10 +72,10 @@ function loadTagModules() {
         }
       }
     };
-    scan(join(ROOT, 'components'), 'components');
-    scan(join(ROOT, 'styles'), 'styles');
+    scan(join(ROOT, 'material-design-expressive', 'components'), 'components');
+    scan(join(ROOT, 'material-design-expressive', 'styles'), 'styles');
     // The ARIA elements the gb ones pair with (md-aria-tabpanel for tabs).
-    scan(join(ROOT, 'aria'), 'aria');
+    scan(join(ROOT, 'material-design-expressive', 'aria'), 'aria');
   }
   return tagModules;
 }

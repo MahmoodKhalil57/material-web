@@ -13,7 +13,7 @@
 import {readFile, rm, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
-export const GB = 'components';
+export const GB = 'material-design-expressive/components';
 
 let unitsCache;
 /** Every spec unit, in document order. */

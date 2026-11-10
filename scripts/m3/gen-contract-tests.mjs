@@ -23,7 +23,7 @@ import {readdir, readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
-const GB = 'components';
+const GB = 'material-design-expressive/components';
 
 /**
  * Per component: the controllers it uses and their contract.

@@ -15,7 +15,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUnusedLocals": true,
     "paths": {
-      "@material/web/*": ["./*"]
+      "@material/web/*": ["./material-design-expressive/*"]
     },
     "sourceMap": true,
     "inlineSources": true,

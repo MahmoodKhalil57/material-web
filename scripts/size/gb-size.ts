@@ -24,7 +24,7 @@ import {join} from 'path';
 
 import {getSplitBrotliSize} from './bundle-size.js';
 
-const COMPONENTS = join('components');
+const COMPONENTS = join('material-design-expressive', 'components');
 const BUDGETS = join('scripts', 'size', 'gb-budgets.json');
 /** Headroom added to today's size when writing budgets. */
 const HEADROOM = 0.1;

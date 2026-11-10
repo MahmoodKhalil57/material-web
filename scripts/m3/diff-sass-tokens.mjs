@@ -16,7 +16,7 @@
 import {readdir, readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
-const [genDir = '.m3-specs/out/sass', refDir = 'tokens/versions/latest/sass'] = process.argv
+const [genDir = '.m3-specs/out/sass', refDir = 'material-design-expressive/material-design-expressive/tokens/versions/latest/sass'] = process.argv
   .slice(2)
   .filter((a) => !a.startsWith('--'));
 const verbose = process.argv.includes('--verbose');

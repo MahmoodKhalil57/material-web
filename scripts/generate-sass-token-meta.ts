@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/** @fileoverview Generates tokens/versions/latest/_md-{name}-meta.scss files. */
+/** @fileoverview Generates material-design-expressive/tokens/versions/latest/_md-{name}-meta.scss files. */
 
 import * as fs from 'fs';
 import * as util from 'util';

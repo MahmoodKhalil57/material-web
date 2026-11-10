@@ -35,7 +35,7 @@ import {buildLibrary, nodeScript, npx, ROOT} from './build-local.mjs';
 import {buildSiteAssets, buildSnapshot, restoreSnapshot} from './gb-site-assets.mjs';
 
 const CATALOG = join(ROOT, 'site');
-const GB = join(ROOT, 'components');
+const GB = join(ROOT, 'material-design-expressive', 'components');
 const OUT = join(CATALOG, '_dev');
 const EXAMPLES = join(CATALOG, '_dev-gb');
 
@@ -156,6 +156,8 @@ let snapshotRunning = false;
 let snapshotAgain = false;
 const LIB_PORT = Number(arg('lib-port', 8001));
 const LIB = `http://localhost:${LIB_PORT}/`;
+// The library folders, served from material-design-expressive/ at the library server's root.
+const LIB_FOLDERS = /^\/(components|styles|aria|behaviors|internal|skill|testing|types|tokens|sass|all(_test)?\.(js|ts|d\.ts))(\/|$)/;
 // Each step prints the time since the previous one, to see where a run spends it.
 const started = Date.now();
 let lastStep = started;
@@ -465,7 +467,7 @@ function styleDemos() {
 /** Source folder of a component (or style) key. */
 function srcDir(dir) {
   const styles = styleDemos();
-  return dir in styles ? join(ROOT, 'styles', styles[dir]) : join(GB, dir);
+  return dir in styles ? join(ROOT, 'material-design-expressive', 'styles', styles[dir]) : join(GB, dir);
 }
 
 /** labs/gb components (and styles) that have a demo. */
@@ -677,6 +679,9 @@ async function startLibraryServer() {
       middleware: [
         (ctx, next) => {
           ctx.set('Access-Control-Allow-Origin', '*');
+          // The library's folders live under material-design-expressive/:
+          // /components/x.js is served from material-design-expressive/components/x.js.
+          if (LIB_FOLDERS.test(ctx.path)) ctx.path = '/material-design-expressive' + ctx.path;
           return next();
         },
       ],

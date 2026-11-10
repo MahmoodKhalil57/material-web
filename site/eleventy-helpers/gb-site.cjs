@@ -126,7 +126,7 @@ let colors;
 /** {light, dark}: {surface, primary, ...} of the baseline md-sys-color tokens. */
 function baselineColors() {
   if (colors) return colors;
-  const css = readFileSync(join(ROOT, 'styles', 'm3.css'), 'utf8');
+  const css = readFileSync(join(ROOT, 'material-design-expressive', 'styles', 'm3.css'), 'utf8');
   const darkAt = css.indexOf('prefers-color-scheme: dark');
   const pick = (text, name, fallback) =>
     new RegExp(`--md-sys-color-${name}:\\s*(#[0-9a-fA-F]{3,8})`).exec(text)?.[1] ?? fallback;

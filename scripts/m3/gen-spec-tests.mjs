@@ -434,8 +434,8 @@ function testFile(dir, files, cases) {
 // and checks that the property resolves to the M3 spec value.
 
 // import 'jasmine'; (google3-only)
-import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../material-design-expressive/styles/m3.cssresult.js';
+import {adoptStyles} from '../../material-design-expressive/styles/adopt-styles.js';
 ${imports}
 
 interface SpecCase {

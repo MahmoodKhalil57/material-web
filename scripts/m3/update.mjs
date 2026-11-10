@@ -17,7 +17,7 @@
  * Steps:
  *   1. Download docs + token DB (m3.material.io) and Compose Material 3 sources.
  *   2. Extract Compose token usage.
- *   3. Regenerate tokens/versions/latest/sass (+ -meta files), spring easings,
+ *   3. Regenerate material-design-expressive/tokens/versions/latest/sass (+ -meta files), spring easings,
  *      and Material shapes.
  *   4. Diff generated tokens against the previous run; audit labs/gb.
  *   5. Regenerate browser spec tests (<component>_spec_test.ts in each component).
@@ -41,7 +41,7 @@ const sync = argv.includes('--sync');
 const accept = argv.includes('--accept');
 
 const SPECS = '.m3-specs';
-const TOKENS = 'tokens/versions/latest/sass';
+const TOKENS = 'material-design-expressive/material-design-expressive/tokens/versions/latest/sass';
 const PREV = join(SPECS, 'prev-sass');
 const COMPOSE = join(SPECS, 'compose');
 const REVIEW = 'scripts/m3/upstream-review.json';

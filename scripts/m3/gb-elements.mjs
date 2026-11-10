@@ -22,7 +22,7 @@ const require = createRequire(import.meta.url);
 const ts = require('typescript');
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
-const GB = resolve(ROOT);
+const GB = resolve(ROOT, 'material-design-expressive');
 const COMPONENTS = join(GB, 'components');
 const posix = (p) => p.split(sep).join('/');
 
@@ -40,9 +40,9 @@ export function readGbElements() {
     )
     .sort();
 
-  const cfgPath = join(GB, 'tsconfig.json');
+  const cfgPath = join(ROOT, 'tsconfig.json');
   const cfg = ts.readConfigFile(cfgPath, ts.sys.readFile);
-  const parsed = ts.parseJsonConfigFileContent(cfg.config, ts.sys, GB);
+  const parsed = ts.parseJsonConfigFileContent(cfg.config, ts.sys, ROOT);
   const program = ts.createProgram({
     rootNames: [...entryFiles, join(ROOT, 'types/css-imports.d.ts')],
     options: {...parsed.options, noEmit: true, skipLibCheck: true},

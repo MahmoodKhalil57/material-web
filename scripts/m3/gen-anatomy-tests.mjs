@@ -687,8 +687,8 @@ function fileText(dir, config, cases, gap) {
   const host = config.pages[0].host;
   return pruneHelpers(`${header('gen-anatomy-tests.mjs', dir, 'anatomy', what)}
 // import 'jasmine'; (google3-only)
-import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../material-design-expressive/styles/m3.cssresult.js';
+import {adoptStyles} from '../../material-design-expressive/styles/adopt-styles.js';
 ${config.imports.map((m) => `import '${m}';`).join('\n')}
 import type {ReactiveElement} from 'lit';
 

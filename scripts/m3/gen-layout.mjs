@@ -270,9 +270,9 @@ must(/including special behavior for foldables/.test(canonicalMd) || undefined, 
 // sheet tokens, docked panes the docked bottom sheet tokens, and the modal
 // scrim the scrim tokens. The token DB export has no md.comp.sheet.floating
 // or md.comp.scrim set, so those are read from the generated token Sass
-// (tokens/versions/latest/sass).
+// (material-design-expressive/tokens/versions/latest/sass).
 const db = await SpecDb.load();
-const TOKEN_SASS = 'tokens/versions/latest/sass';
+const TOKEN_SASS = 'material-design-expressive/material-design-expressive/tokens/versions/latest/sass';
 const sassSets = new Map();
 async function sassToken(name) {
   const m = must(name.match(/^md\.comp\.(.+?)\.((?:container|drag-handle)\..+)$/), `token ${name}`);

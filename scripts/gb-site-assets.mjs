@@ -216,8 +216,8 @@ async function buildIcons(browser, c, log) {
 // ---------------------------------------------------------------------------
 // API manifest and agent skill.
 
-const COMPONENTS = join(ROOT, 'components');
-const SKILL = join(ROOT, 'skill');
+const COMPONENTS = join(ROOT, 'material-design-expressive', 'components');
+const SKILL = join(ROOT, 'material-design-expressive', 'skill');
 /** Bump to regenerate custom-elements.json after changing how it is written. */
 const API_VERSION = 2;
 

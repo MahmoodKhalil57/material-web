@@ -20,14 +20,14 @@ const ROOT = join(__dirname, '..', '..', '..');
 /** Newest mtime of the sources the registry depends on. */
 function stamp() {
   let newest = 0;
-  const components = join(ROOT, 'components');
+  const components = join(ROOT, 'material-design-expressive', 'components');
   for (const d of readdirSync(components, {withFileTypes: true})) {
     if (!d.isDirectory()) continue;
     for (const f of readdirSync(join(components, d.name))) {
       if (f.endsWith('.ts') && !f.endsWith('.d.ts')) newest = Math.max(newest, statSync(join(components, d.name, f)).mtimeMs);
     }
   }
-  for (const f of ['scripts/m3/gb-shadcn.mjs', 'site/eleventy-helpers/gb-shadcn.cjs', 'styles/m3.css']) {
+  for (const f of ['scripts/m3/gb-shadcn.mjs', 'site/eleventy-helpers/gb-shadcn.cjs', 'material-design-expressive/styles/m3.css']) {
     newest = Math.max(newest, statSync(join(ROOT, f)).mtimeMs);
   }
   return `${newest}|${process.env.MWC_REGISTRY_URL ?? ''}|${process.env.MWC_SITE_URL ?? ''}`;

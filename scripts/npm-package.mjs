@@ -43,6 +43,7 @@ const {values: args} = parseArgs({
 });
 
 const ROOT = process.cwd();
+const LIB = join(ROOT, 'material-design-expressive');
 const ENTRY = 'all.js';
 const TREE = join(tmpdir(), 'npm-package-branch');
 const main = JSON.parse(await readFile('package.json', 'utf8'));
@@ -59,22 +60,22 @@ const bare = new Set();
 
 async function visit(path) {
   if (files.has(path)) return;
-  if (!existsSync(join(ROOT, path))) throw new Error(`Missing ${path}; build first.`);
+  if (!existsSync(join(LIB, path))) throw new Error(`Missing ${path}; build first.`);
   files.add(path);
   for (const extra of [`${path}.map`, path.replace(/\.js$/, '.d.ts')]) {
-    if (existsSync(join(ROOT, extra))) files.add(extra);
+    if (existsSync(join(LIB, extra))) files.add(extra);
   }
   const sources = [path];
   const types = path.replace(/\.js$/, '.d.ts');
-  if (types !== path && existsSync(join(ROOT, types))) sources.push(types);
+  if (types !== path && existsSync(join(LIB, types))) sources.push(types);
   for (const source of sources) {
     // Drop comments first: JSDoc examples mention imports that are not there.
-    const text = (await readFile(join(ROOT, source), 'utf8'))
+    const text = (await readFile(join(LIB, source), 'utf8'))
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^\s*\/\/.*$/gm, '');
     for (const [, spec] of text.matchAll(SPEC)) {
       if (spec.startsWith('.')) {
-        const target = relative(ROOT, resolve(ROOT, dirname(source), spec)).replaceAll('\\', '/');
+        const target = relative(LIB, resolve(LIB, dirname(source), spec)).replaceAll('\\', '/');
         if (target.endsWith('.js')) await visit(target);
         else if (target.endsWith('.css')) cssTargets.add(target);
         else files.add(target);
@@ -93,9 +94,9 @@ log(`${files.size} files, bare imports: ${[...bare].sort().join(', ')}`);
 const OUT = join(tmpdir(), 'npm-package-out');
 await rm(OUT, {recursive: true, force: true});
 for (const file of files) {
-  if (!existsSync(join(ROOT, file))) continue;
+  if (!existsSync(join(LIB, file))) continue;
   await mkdir(dirname(join(OUT, file)), {recursive: true});
-  await cp(join(ROOT, file), join(OUT, file));
+  await cp(join(LIB, file), join(OUT, file));
 }
 
 // The .css modules (`import ... with {type: 'css'}`) are compiled from their
@@ -105,8 +106,8 @@ for (const file of files) {
 const sass = await import('sass');
 for (const css of cssTargets) {
   const scss = css.replace(/\.css$/, '.scss');
-  if (!existsSync(join(ROOT, scss))) throw new Error(`No ${scss} to compile ${css} from.`);
-  const {css: text} = sass.compile(join(ROOT, scss), {style: 'compressed', loadPaths: [join(ROOT, 'node_modules')]});
+  if (!existsSync(join(LIB, scss))) throw new Error(`No ${scss} to compile ${css} from.`);
+  const {css: text} = sass.compile(join(LIB, scss), {style: 'compressed', loadPaths: [join(ROOT, 'node_modules')]});
   await mkdir(dirname(join(OUT, css)), {recursive: true});
   await writeFile(join(OUT, css), text);
   // `import sheet from './x.css' with {type: 'css'}` needs a browser or

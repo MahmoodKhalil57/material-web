@@ -16,7 +16,7 @@ const {readdirSync, readFileSync, statSync} = require('node:fs');
 const {join} = require('node:path');
 const {SITE, absolute} = require('../eleventy-helpers/gb-site.cjs');
 
-const SKILL = join(__dirname, '..', '..', 'skill');
+const SKILL = join(__dirname, '..', '..', 'material-design-expressive', 'skill');
 
 function walk(dir, prefix = '') {
   const out = [];

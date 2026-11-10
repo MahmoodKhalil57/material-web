@@ -11,7 +11,7 @@ Material Web 2.5 components are on `main`.
   is the agent skill for the library.
 - `docs/`: the docs pages (Markdown).
 - `site/`: the docs site (Eleventy). `site/content/` holds the pages.
-- `tokens/`: the M3 token source (`tokens/versions/latest/sass`).
+- `tokens/`: the M3 token source (`material-design-expressive/tokens/versions/latest/sass`).
 - `scripts/`: build, site and publishing scripts.
 
 ## Develop

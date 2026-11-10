@@ -56,8 +56,8 @@
     "!site/",
     "!scripts/",
     "!**/testing/**",
-    "testing/harness.{js,js.map,d.ts}",
-    "testing/transform-pseudo-classes.{js,js.map,d.ts}"
+    "material-design-expressive/testing/harness.{js,js.map,d.ts}",
+    "material-design-expressive/testing/transform-pseudo-classes.{js,js.map,d.ts}"
   ],
   "workspaces": [
     "site"

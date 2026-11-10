@@ -457,8 +457,8 @@ ${setup}${adds}${lines.join('\n')}
 
 function testsHelpers(imports, viewport) {
   return `// import 'jasmine'; (google3-only)${viewport ? "\nimport {setViewport} from '@web/test-runner-commands';" : ''}
-import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {adoptStyles} from '../../styles/adopt-styles.js';
+import {styles as m3Styles} from '../../material-design-expressive/styles/m3.cssresult.js';
+import {adoptStyles} from '../../material-design-expressive/styles/adopt-styles.js';
 ${imports.map((m) => `import '${m}';`).join('\n')}
 import type {ReactiveElement} from 'lit';
 

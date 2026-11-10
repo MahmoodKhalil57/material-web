@@ -33,7 +33,7 @@ import {assignIds, normalize, pageUnits} from './spec-units.mjs';
 
 const SPECS = '.m3-specs';
 const PAGES = join(SPECS, 'pages/components');
-const GB = 'components';
+const GB = 'material-design-expressive/components';
 
 const argv = process.argv.slice(2);
 const check = argv.includes('--check');

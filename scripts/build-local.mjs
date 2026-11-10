@@ -38,7 +38,7 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
   npx(['tsc', '-b', 'scripts/tsconfig.json']);
 
   log('Generating token metadata');
-  const tokenDir = join(ROOT, 'tokens', 'versions');
+  const tokenDir = join(ROOT, 'material-design-expressive', 'tokens', 'versions');
   const tokenFiles = [];
   for (const version of await readdir(tokenDir)) {
     const dir = join(tokenDir, version, 'sass');
@@ -54,7 +54,7 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
   // The library's Sass: components and styles (labs/gb before the layout
   // refactor), plus the aria and behaviors folders. sass/ext is loaded by
   // path from these.
-  const dirs = ['components:components', 'styles:styles', 'aria:aria', 'behaviors:behaviors'];
+  const dirs = ['components', 'styles', 'aria', 'behaviors'].map((d) => `material-design-expressive/${d}:material-design-expressive/${d}`);
   npx([
     'sass',
     '--style=compressed',
@@ -66,7 +66,7 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
   ]);
 
   log('Converting CSS to CSSResult modules');
-  for (const css of await walk(ROOT, (p) => p.endsWith('.css'))) {
+  for (const css of await walk(join(ROOT, 'material-design-expressive'), (p) => p.endsWith('.css'))) {
     const content = (await readFile(css, 'utf8'))
       .replace(/\/\*# sourceMappingURL=[^*]+ \*\//, '')
       .replace(/\\/g, '\\\\')

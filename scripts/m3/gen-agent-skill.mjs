@@ -38,7 +38,7 @@ import {readGbElements} from './gb-elements.mjs';
 
 
 const ROOT = process.cwd();
-const GB = resolve(ROOT);
+const GB = resolve(ROOT, 'material-design-expressive');
 const COMPONENTS = join(GB, 'components');
 const OUT = join(GB, 'skill');
 const CHECKLIST = 'scripts/m3/CHECKLIST.md';

@@ -25,7 +25,7 @@ const require = createRequire(import.meta.url);
 const names = require('../../site/eleventy-helpers/gb-shadcn.cjs');
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
-const COMPONENTS = join(ROOT, 'components');
+const COMPONENTS = join(ROOT, 'material-design-expressive', 'components');
 const PKG = '@material/web/components';
 const SCHEMA_ITEM = 'https://ui.shadcn.com/schema/registry-item.json';
 const SCHEMA_REGISTRY = 'https://ui.shadcn.com/schema/registry.json';

@@ -55,7 +55,7 @@ const size = argv.includes('--size');
 const emit = argv.includes('--emit') || all || size;
 const dirs = argv.filter((a) => !a.startsWith('--'));
 
-const GB = join();
+const GB = join('material-design-expressive');
 const COMPONENTS = join(GB, 'components');
 if (!all && !dirs.length) {
   console.error('Name at least one components directory, or pass --all.');
@@ -137,13 +137,13 @@ export default styles.styleSheet!;
 // (TypeScript's native compiler) when installed, else tsc.
 if (typecheck) {
   step('typecheck', () => {
-    node(existsSync(BIN.tsgo) ? BIN.tsgo : BIN.tsc, ['-p', join(GB, 'tsconfig.json'), '--noEmit']);
+    node(existsSync(BIN.tsgo) ? BIN.tsgo : BIN.tsc, ['-p', 'tsconfig.json', '--noEmit']);
   });
 }
 
 if (emit) {
   step('emit', () => {
-    node(BIN.tsc, ['-p', join(GB, 'tsconfig.json'), '--incremental', '--tsBuildInfoFile', join('.m3-specs', 'gb.tsbuildinfo')]);
+    node(BIN.tsc, ['-p', 'tsconfig.json', '--incremental', '--tsBuildInfoFile', join('.m3-specs', 'gb.tsbuildinfo')]);
   });
 }
 

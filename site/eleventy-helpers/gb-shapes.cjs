@@ -25,7 +25,7 @@ let shapePaths;
 /** The path of a Material shape, in a 0..1 box. */
 function shapePath(name) {
   if (!shapePaths) {
-    const src = readFileSync(join(ROOT, 'styles', 'shape', 'material-shapes.ts'), 'utf8');
+    const src = readFileSync(join(ROOT, 'material-design-expressive', 'styles', 'shape', 'material-shapes.ts'), 'utf8');
     shapePaths = Object.fromEntries([...src.matchAll(/^\s+(\w+): '([^']+)',?$/gm)].map((m) => [m[1], m[2]]));
   }
   if (!shapePaths[name]) throw new Error(`gb-shapes: no shape "${name}"`);

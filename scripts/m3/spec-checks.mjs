@@ -76,7 +76,7 @@ import {ACCEPT_NOT_APPLICABLE, FINAL, MODEL as REVIEW_MODEL, REVIEW_FILE, REVIEW
 const OUT = '.m3-specs/spec-checks';
 const CLASSIFIED = join(OUT, 'classified.jsonl');
 const EXTRACTED = join(OUT, 'extracted.jsonl');
-const SCAN = ['components', 'styles', 'scripts/m3'];
+const SCAN = ['material-design-expressive/components', 'material-design-expressive/styles', 'scripts/m3'];
 
 /** Units at or above this `buildable` score must be cited. */
 const THRESHOLD = 0.3;

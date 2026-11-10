@@ -18,7 +18,7 @@ const {join} = require('node:path');
 const {url: SITE_URL} = require('../content/_data/gbSite.cjs');
 
 const ROOT = join(__dirname, '..', '..');
-const COMPONENTS = join(ROOT, 'components');
+const COMPONENTS = join(ROOT, 'material-design-expressive', 'components');
 const DOCS = join(ROOT, 'docs', 'components');
 
 /** Directories whose item name is not the directory name. */
@@ -185,7 +185,7 @@ function themeCssVars() {
 
 /** The M3 baseline colors of styles/m3.css: {light, dark} role -> hex. */
 function baselineRoles() {
-  const css = readFileSync(join(ROOT, 'styles', 'm3.css'), 'utf8');
+  const css = readFileSync(join(ROOT, 'material-design-expressive', 'styles', 'm3.css'), 'utf8');
   const start = css.indexOf('@layer md.sys.color{');
   const darkAt = css.indexOf('@media(prefers-color-scheme: dark){', start);
   const read = (text) => {

@@ -23,7 +23,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import {compileBinding, declValue, norm, parseMixins, sameValue, STATES} from './gb-compile.mjs';
 import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 
-export const GB = 'components';
+export const GB = 'material-design-expressive/components';
 
 /**
  * Spec token-set prefixes per gb component. This (one line per component) is
@@ -98,7 +98,8 @@ export async function loadBindings(specsDir = '.m3-specs') {
   for (const f of await readdir(BINDINGS)) {
     if (!f.endsWith('.mjs')) continue;
     const binding = (await import(pathToFileURL(join(BINDINGS, f)).href)).default;
-    if (binding.generate) generated.set(posix(binding.file), binding);
+    // binding.file is relative to the library folder; GB paths are repo-relative.
+    if (binding.generate) generated.set(posix(`material-design-expressive/${binding.file}`), binding);
   }
   const includes = await allIncludes();
   return {db, usage, analyze: (dir) => analyze(db, usage, generated, includes, dir)};

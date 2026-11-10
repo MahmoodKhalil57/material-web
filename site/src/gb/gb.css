@@ -6,7 +6,7 @@
 
 /* Site shell of the /3.0/ pages: M3 tokens from labs/gb, layout from here.
    Colors, type and shape come from --md-sys-* tokens only. */
-@import '../../../styles/m3.css';
+@import '../../../material-design-expressive/styles/m3.css';
 @import './navigation.css';
 @import './search.css';
 @import './shell.css';

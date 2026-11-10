@@ -44,7 +44,7 @@ const {values: args} = parseArgs({options: {lighthouse: {type: 'string'}}});
 
 const OUT = 'site/content/_data/gbCompat.json';
 const DOCS = 'docs/components';
-const LABS = 'components';
+const LABS = 'material-design-expressive/components';
 const CENTRAL = join(LABS, 'shared', 'central');
 const BUILDABLE = 0.3;
 

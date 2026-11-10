@@ -77,7 +77,7 @@ await esbuild
       outbase: 'src',
       // The library is the repo root (the parent of this site folder):
       // '@material/web/components/...' imports resolve to its sources.
-      alias: {'@material/web': fileURLToPath(new URL('..', import.meta.url))},
+      alias: {'@material/web': fileURLToPath(new URL('../material-design-expressive/', import.meta.url))},
       // Names the service worker's caches: every build is a new
       // worker, which replaces the old one and its caches.
       define: {__GB_BUILD_ID__: JSON.stringify(Date.now().toString(36))},

@@ -70,8 +70,8 @@ async function markupFiles() {
     ...(await walk('docs', (n) => n.endsWith('.md'))),
     ...(await walk('site/content/_includes/gb', (n) => n.endsWith('.html'))),
     ...(await walk('site/src/gb', (n) => n.endsWith('.ts'))),
-    ...(await walk('components', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
-    ...(await walk('styles', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
+    ...(await walk('material-design-expressive/components', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
+    ...(await walk('material-design-expressive/styles', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
   ];
 }
 
@@ -80,7 +80,7 @@ async function codeFiles() {
   return [
     ...(await walk('site/src/gb', (n) => n.endsWith('.ts'))),
     ...(await walk('site/eleventy-helpers', (n) => n.endsWith('.cjs'))),
-    ...(await walk('components', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
+    ...(await walk('material-design-expressive/components', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
   ];
 }
 
@@ -101,7 +101,7 @@ async function collect() {
   for (const m of layout.matchAll(/\bicon:\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);
   // Ligatures in component styles: content: 'arrow_drop_down', or a custom
   // property the content reads (--icon: 'radio_button_checked').
-  for (const file of [...(await walk('components', (n) => n.endsWith('.scss'))), ...(await walk('styles', (n) => n.endsWith('.scss')))]) {
+  for (const file of [...(await walk('material-design-expressive/components', (n) => n.endsWith('.scss'))), ...(await walk('material-design-expressive/styles', (n) => n.endsWith('.scss')))]) {
     const text = await readFile(file, 'utf8');
     for (const m of text.matchAll(/(?:\bcontent|--[\w-]*icon[\w-]*):\s*['"]([a-z][a-z0-9_]*)['"]/g)) certain.add(m[1]);
   }

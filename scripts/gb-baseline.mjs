@@ -78,7 +78,7 @@ async function main() {
   const argv = process.argv.slice(2);
   const verbose = argv.includes('--verbose');
   const cssOnly = argv.includes('--css-only');
-  const ROOT = join();
+  const ROOT = join('material-design-expressive');
 
   // ---- BCD key -> {feature, baseline} ------------------------------------
   /** @type {Map<string, {feature: string, baseline: 'high'|'low'|false}>} */
