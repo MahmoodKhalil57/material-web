@@ -6,7 +6,7 @@
 
 import {LitElement, ReactiveElement, isServer} from 'lit';
 
-import {MixinBase, MixinReturn} from '../../labs/behaviors/mixin.js';
+import {MixinBase, MixinReturn} from '../../behaviors/mixin.js';
 import {
   ARIA_PROPERTIES,
   ariaPropertyToAttribute,

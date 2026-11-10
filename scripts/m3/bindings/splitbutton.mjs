@@ -5,7 +5,7 @@
  */
 
 /**
- * Split buttons (`labs/gb/components/splitbutton`).
+ * Split buttons (`components/splitbutton`).
  *
  * `root` (on `.split-btn`) is the space between the two buttons. The other
  * mixins apply to the buttons (`.btn-<size>` inside `.split-btn`): `<size>`
@@ -29,7 +29,7 @@ const sizes = [
 
 export default {
   generate: true,
-  file: 'labs/gb/components/splitbutton/_split-button-tokens.scss',
+  file: 'components/splitbutton/_split-button-tokens.scss',
   exclude: ['corner-size'],
   root: {set: `${S}.small`, pick: {'between-space': 'between-space'}, only: true},
   mixins: [

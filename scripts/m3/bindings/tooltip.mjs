@@ -5,7 +5,7 @@
  */
 
 /**
- * Plain and rich tooltips (`labs/gb/components/tooltip`).
+ * Plain and rich tooltips (`components/tooltip`).
  *
  * `root` holds only layout values without a spec token; each variant's
  * tokens live in a mixin named after it (`plain`, `rich`), so every
@@ -13,7 +13,7 @@
  */
 export default {
   generate: true,
-  file: 'labs/gb/components/tooltip/_tooltip-tokens.scss',
+  file: 'components/tooltip/_tooltip-tokens.scss',
   // State layers use the shared ripple; shadows use the elevation tokens.
   exclude: ['state-layer', 'shadow-color'],
   root: [],

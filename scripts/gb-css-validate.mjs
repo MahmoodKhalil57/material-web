@@ -38,7 +38,7 @@ const {targets: TARGETS, versions: TARGET_VERSIONS} = baselineTargets();
 export {TARGETS};
 console.log(`[gb:css-validate] Baseline widely available targets: ${Object.entries(TARGET_VERSIONS).map(([b, v]) => `${b} ${v}`).join(', ')}`);
 
-const ROOT = join('labs', 'gb');
+const ROOT = join();
 
 /**
  * Tailwind v4 directives in styles/tailwind.css are input for Tailwind, not

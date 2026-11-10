@@ -13,10 +13,10 @@
  *     [--version 0.1.0] [--branch npm-package] [--remote origin] [--push]
  *     [--publish]
  *
- * 1. Follows the relative imports of labs/gb/all.js (the built .js, its
+ * 1. Follows the relative imports of all.js (the built .js, its
  *    .d.ts and source maps) and copies every module it reaches, at its path,
  *    so the package is the unbundled ES modules and their types. Run
- *    `npx tsc -p tsconfig.json` and `npx tsc -p labs/gb/tsconfig.json` first.
+ *    `npx tsc -p tsconfig.json` and `npx tsc -p tsconfig.json` first.
  * 2. Writes a package.json (lit and the other bare imports become
  *    dependencies), README.md and LICENSE.
  * 3. Commits the result to --branch (an orphan branch, in a worktree under
@@ -34,7 +34,7 @@ import {parseArgs} from 'node:util';
 const {values: args} = parseArgs({
   options: {
     name: {type: 'string', default: '@mahmoodkhalil/material-web-3-demo'},
-    version: {type: 'string', default: '0.1.1'},
+    version: {type: 'string', default: '0.2.0'},
     branch: {type: 'string', default: 'npm-package'},
     remote: {type: 'string', default: 'origin'},
     push: {type: 'boolean', default: false},
@@ -43,7 +43,7 @@ const {values: args} = parseArgs({
 });
 
 const ROOT = process.cwd();
-const ENTRY = 'labs/gb/all.js';
+const ENTRY = 'all.js';
 const TREE = join(tmpdir(), 'npm-package-branch');
 const main = JSON.parse(await readFile('package.json', 'utf8'));
 
@@ -145,7 +145,7 @@ await writeFile(
       main: ENTRY,
       module: ENTRY,
       types: ENTRY.replace(/\.js$/, '.d.ts'),
-      exports: {'.': {types: './labs/gb/all.d.ts', default: './labs/gb/all.js'}, './*': './*'},
+      exports: {'.': {types: './all.d.ts', default: './all.js'}, './*': './*'},
       sideEffects: true,
       dependencies,
       license: 'Apache-2.0',
@@ -183,7 +183,7 @@ import '${args.name}';
 \`\`\`
 
 For production, import individual components from
-\`${args.name}/labs/gb/components/<name>/<file>.js\` and adopt the styles
+\`${args.name}/components/<name>/<file>.js\` and adopt the styles
 yourself.
 
 Built from material-web ${main.version} at commit ${git(['rev-parse', '--short', 'HEAD'])}.

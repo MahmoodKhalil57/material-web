@@ -5,7 +5,7 @@
  */
 
 /**
- * Vertical menus (`labs/gb/components/menu`).
+ * Vertical menus (`components/menu`).
  *
  * `md.comp.menus` holds the shared layout tokens (container, groups, item
  * sizes and shapes); `md.comp.menus.standard` / `.vibrant` hold the colors.
@@ -19,7 +19,7 @@
  *   of the vertical menus the web supports.
  * - state layers: the shared ripple paints them in the label color, which is
  *   the state layer color of every menu-item state in both color styles.
- * - `focus.indicator.*`: the shared focus ring (`labs/gb/components/focus`).
+ * - `focus.indicator.*`: the shared focus ring (`components/focus`).
  * - `container.shadow-color`: shadows use the elevation tokens.
  * Disabled `*.opacity` tokens are folded into their colors
  * (`hsl(from <color> h s l / 38%)`), as Compose does (`copy(alpha = ...)`).
@@ -31,7 +31,7 @@ const ITEM_STATES = ['hovered', 'focused', 'pressed', 'disabled', 'selected', 's
 
 export default {
   generate: true,
-  file: 'labs/gb/components/menu/_menu-tokens.scss',
+  file: 'components/menu/_menu-tokens.scss',
   exclude: [
     'state-layer',
     '^focus-indicator-',

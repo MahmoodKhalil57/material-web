@@ -5,7 +5,7 @@
  */
 
 /**
- * Outlined segmented buttons (`labs/gb/components/segmentedbutton`).
+ * Outlined segmented buttons (`components/segmentedbutton`).
  *
  * The set prefixes its states with `selected`, `unselected` and `disabled`
  * (and `hover`/`focus`/`pressed` below those), so each is its own mixin and
@@ -24,7 +24,7 @@ const pick = {
 
 export default {
   generate: true,
-  file: 'labs/gb/components/segmentedbutton/_segmented-button-tokens.scss',
+  file: 'components/segmentedbutton/_segmented-button-tokens.scss',
   // State layers use the shared ripple, focus indicators the shared focus
   // ring. Hover / focus / pressed icon and label colors equal the resting
   // colors of their selection state.

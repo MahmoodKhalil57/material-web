@@ -6,7 +6,7 @@
  */
 
 /**
- * Checks every /3.0/ page built by `npm run catalog:dev` (catalog/_dev/3.0)
+ * Checks every /3.0/ page built by `npm run catalog:dev` (site/_dev/3.0)
  * against the running server: status 200, no console errors, no code block
  * outside a demo card (shell excepted), no raw ``` fences, no demo script
  * errors, and axe-core with the live previews excluded. Run from the repo
@@ -25,13 +25,13 @@ const walk = (d) => {
     else if (n === 'index.html' && !/3\.0[\\/]all$/.test(d)) pages.push(p);
   }
 };
-walk('catalog/_dev/3.0');
+walk('site/_dev/3.0');
 const axe = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
 const b = await chromium.launch();
 const ctx = await b.newContext({viewport: {width: 1280, height: 900}, serviceWorkers: 'block'});
 const bad = [];
 for (const file of pages) {
-  const url = 'http://localhost:8000/' + file.replace(/\\/g, '/').replace('catalog/_dev/', '').replace('index.html', '');
+  const url = 'http://localhost:8000/' + file.replace(/\\/g, '/').replace('site/_dev/', '').replace('index.html', '');
   const p = await ctx.newPage();
   const errs = [];
   p.on('pageerror', (e) => errs.push(String(e).slice(0, 120)));

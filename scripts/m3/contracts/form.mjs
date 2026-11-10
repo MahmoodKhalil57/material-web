@@ -6,7 +6,7 @@
 
 /**
  * Contract tests for the shared form layer
- * (`labs/gb/components/shared/form-field.ts` on `labs/behaviors`): each
+ * (`components/shared/form-field.ts` on `labs/behaviors`): each
  * component's form value, reset, state restore, required / validity,
  * reportValidity and fieldset-disabled behavior, proven through the real
  * element, a real `<form>` and real key presses.

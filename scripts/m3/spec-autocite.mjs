@@ -833,7 +833,7 @@ function dirIndex(dir) {
 export function findCandidates(units, extracted) {
   const indexes = new Map();
   const shared = dirIndex(`${GB}/shared`);
-  const styles = dirIndex('labs/gb/styles');
+  const styles = dirIndex('styles');
   const out = new Map();
   for (const u of units) {
     const dirs = PAGE_DIRS[u.slug] ?? [];

@@ -28,7 +28,7 @@ indicator is the app's job.
 
 ## Motion patterns the app applies (enter and exit, container transform, tabs)
 
-The shared transition patterns live in `labs/gb/styles/motion/transitions`;
+The shared transition patterns live in `styles/motion/transitions`;
 the app wraps the FAB, card, chip or menu item in them. The components have no
 transition of their own to appear, morph into a screen, or change with tabs.
 

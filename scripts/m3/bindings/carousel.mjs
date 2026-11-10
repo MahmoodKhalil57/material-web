@@ -7,7 +7,7 @@
 const ITEM = 'md.comp.carousel-item';
 
 /**
- * Carousels (`labs/gb/components/carousel`).
+ * Carousels (`components/carousel`).
  *
  * The spec only tokenizes the carousel item; the container and keyline layout
  * values come from the spec page and Compose `CarouselDefaults` (EDIT lines).
@@ -18,7 +18,7 @@ const ITEM = 'md.comp.carousel-item';
  */
 export default {
   generate: true,
-  file: 'labs/gb/components/carousel/_carousel-tokens.scss',
+  file: 'components/carousel/_carousel-tokens.scss',
   // State layers use the shared ripple, focus indicators the shared focus
   // ring, and shadows the elevation tokens. Surface tint is deprecated.
   exclude: [

@@ -6,13 +6,13 @@
  */
 
 /**
- * Writes catalog/site/_data/gbCompat.json, the Compatibility section of each
+ * Writes site/content/_data/gbCompat.json, the Compatibility section of each
  * /3.0/ component page (the `gbcompat` shortcode): numbers and ids only, no
  * spec text, from the repository's own checks.
  *
  *   node scripts/m3/gen-component-compat.mjs [--lighthouse <dir>]
  *
- * Per component (docs/3.0/components/<slug>.md, its labs/gb directory from
+ * Per component (docs/components/<slug>.md, its labs/gb directory from
  * the page's `{% gbapi %}`):
  *
  * - m3: its M3 spec pages (m3.material.io), the spec units of those pages
@@ -24,10 +24,10 @@
  *   the web-features package), plus its newer JavaScript APIs.
  * - aria: the WAI-ARIA roles it renders (from its sources), the APG pattern
  *   of each, its rows in the central axe and WAI-ARIA 1.3 suites
- *   (labs/gb/components/shared/central) and their known gaps.
+ *   (components/shared/central) and their known gaps.
  * - lighthouse: the category scores and the failed audits of the
  *   component's test page (/3.0/lab/<slug>/: its first example alone,
- *   catalog/site/gb-lab.11ty.cjs), not of its docs page
+ *   site/content/gb-lab.11ty.cjs), not of its docs page
  *   (scripts/catalog-lighthouse.mjs --desktop --out <dir> on those pages,
  *   read from <dir>/desktop); kept from the last run when no reports are
  *   given.
@@ -42,9 +42,9 @@ import {parseArgs} from 'node:util';
 const require = createRequire(import.meta.url);
 const {values: args} = parseArgs({options: {lighthouse: {type: 'string'}}});
 
-const OUT = 'catalog/site/_data/gbCompat.json';
-const DOCS = 'docs/3.0/components';
-const LABS = 'labs/gb/components';
+const OUT = 'site/content/_data/gbCompat.json';
+const DOCS = 'docs/components';
+const LABS = 'components';
 const CENTRAL = join(LABS, 'shared', 'central');
 const BUILDABLE = 0.3;
 
@@ -226,7 +226,7 @@ function rolesOf(dir) {
 
 const previous = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
 function lighthouseOf(slug) {
-  // The component's test page (catalog/site/gb-lab.11ty.cjs), not its docs page.
+  // The component's test page (site/content/gb-lab.11ty.cjs), not its docs page.
   const file = args.lighthouse ? join(args.lighthouse, 'desktop', `3.0-lab-${slug}.report.json`) : '';
   if (!file || !existsSync(file)) {
     // The last run's, when it was of the test page.

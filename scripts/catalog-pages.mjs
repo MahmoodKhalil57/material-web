@@ -9,10 +9,10 @@
  * Publishes the catalog (/ is v2.5.0, /3.0/ is labs/gb) as a static site on
  * a GitHub Pages branch, built here, with no Actions:
  *
- *   node scripts/catalog-pages.mjs [--base /material-web/] [--src catalog/_dev]
+ *   node scripts/catalog-pages.mjs [--base /material-web/] [--src site/_dev]
  *     [--branch gh-pages] [--remote origin] [--push]
  *
- * 1. Copies the built site (`npm run catalog:dev` writes catalog/_dev; its
+ * 1. Copies the built site (`npm run catalog:dev` writes site/_dev; its
  *    build must be ready) to a work directory.
  * 2. Bundles labs/gb into lib/ (esbuild: every module, at its path, so the
  *    pages' and demos' imports resolve as they do against the dev library
@@ -41,7 +41,7 @@ import * as esbuild from 'esbuild';
 const {values: args} = parseArgs({
   options: {
     base: {type: 'string', default: '/material-web/'},
-    src: {type: 'string', default: 'catalog/_dev'},
+    src: {type: 'string', default: 'site/_dev'},
     branch: {type: 'string', default: 'gh-pages'},
     remote: {type: 'string', default: 'origin'},
     push: {type: 'boolean', default: false},
@@ -81,11 +81,11 @@ await cp(args.src, OUT, {recursive: true});
 
 log('bundling labs/gb into lib/');
 const sources = [
-  ...(await walk(join(ROOT, 'labs', 'gb'))).filter(
+  ...(await walk(join(ROOT, 'components'))).concat(await walk(join(ROOT, 'styles'))).filter(
     (f) => f.endsWith('.js') && !/(_test|\.stories|[\\/]demo[\\/]|[\\/]skill[\\/])/.test(f) && !f.includes('node_modules'),
   ),
   // The ARIA elements the pages use beside labs/gb (md-aria-tabpanel).
-  ...(await walk(join(ROOT, 'labs', 'aria'))).filter((f) => /[\\/]md-aria-[a-z0-9-]+\.js$/.test(f) && !f.includes('_test')),
+  ...(await walk(join(ROOT, 'aria'))).filter((f) => /[\\/]md-aria-[a-z0-9-]+\.js$/.test(f) && !f.includes('_test')),
 ];
 const cssAsStylesheet = {
   name: 'css-modules-as-stylesheets',
@@ -109,11 +109,11 @@ const {metafile} = await esbuild.build({
   format: 'esm',
   minify: true,
   target: 'es2022',
-  chunkNames: 'labs/gb/chunks/[name]-[hash]',
+  chunkNames: 'chunks/[name]-[hash]',
   plugins: [cssAsStylesheet],
   logLevel: 'warning',
 });
-for (const f of (await walk(join(ROOT, 'labs', 'gb'))).filter((f) => f.endsWith('.css') && !f.includes('node_modules'))) {
+for (const f of (await walk(join(ROOT, 'components'))).concat(await walk(join(ROOT, 'styles'))).filter((f) => f.endsWith('.css') && !f.includes('node_modules'))) {
   const to = join(OUT, 'lib', relative(ROOT, f));
   await mkdir(dirname(to), {recursive: true});
   await cp(f, to);

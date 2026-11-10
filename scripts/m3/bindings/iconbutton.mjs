@@ -5,7 +5,7 @@
  */
 
 /**
- * Icon buttons and toggle icon buttons (`labs/gb/components/iconbutton`).
+ * Icon buttons and toggle icon buttons (`components/iconbutton`).
  *
  * `root` is the base set (the filled default colors) plus the small size,
  * the default size. Each color style has a mixin, `-unselected` /
@@ -38,7 +38,7 @@ const sizes = [
 
 export default {
   generate: true,
-  file: 'labs/gb/components/iconbutton/_icon-button-tokens.scss',
+  file: 'components/iconbutton/_icon-button-tokens.scss',
   exclude: [
     // State layers use the shared ripple, focus indicators the shared focus
     // ring. Hover / focus / pressed icon and outline colors equal the

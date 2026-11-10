@@ -23,7 +23,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import {compileBinding, declValue, norm, parseMixins, sameValue, STATES} from './gb-compile.mjs';
 import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 
-export const GB = 'labs/gb/components';
+export const GB = 'components';
 
 /**
  * Spec token-set prefixes per gb component. This (one line per component) is

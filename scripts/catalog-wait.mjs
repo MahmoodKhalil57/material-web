@@ -32,7 +32,7 @@ const opt = (name, fallback) => {
   const i = argv.indexOf(`--${name}`);
   return i >= 0 ? argv[i + 1] : fallback;
 };
-const STATE = join(fileURLToPath(new URL('..', import.meta.url)), 'catalog', '.catalog-dev.json');
+const STATE = join(fileURLToPath(new URL('..', import.meta.url)), 'site', '.catalog-dev.json');
 const ready = argv.includes('--ready');
 const started = Date.now();
 const GRACE = 1500;
@@ -57,7 +57,7 @@ while (Date.now() < deadline) {
   }
   // No recorded run at all: give up quickly instead of waiting out the timeout.
   if (!state && Date.now() - started > 5000) {
-    console.error('no catalog:dev run recorded (catalog/.catalog-dev.json); start it with npm run catalog:dev');
+    console.error('no catalog:dev run recorded (site/.catalog-dev.json); start it with npm run catalog:dev');
     process.exit(2);
   }
   // A dead pid may be a run that was just replaced: the new one rewrites the

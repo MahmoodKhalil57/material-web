@@ -5,7 +5,7 @@
  */
 
 /**
- * Bottom and side sheets (`labs/gb/components/sheet`).
+ * Bottom and side sheets (`components/sheet`).
  *
  * `root` is the standard (docked) bottom sheet. `modal` layers the modal
  * bottom sheet over it. `side` re-points the shared container tokens at the
@@ -21,7 +21,7 @@ const SIDE = 'md.comp.sheet.side';
 
 export default {
   generate: true,
-  file: 'labs/gb/components/sheet/_sheet-tokens.scss',
+  file: 'components/sheet/_sheet-tokens.scss',
   // State layers and action label colors belong to the slotted buttons;
   // focus indicators use the shared focus ring.
   exclude: ['state-layer', '^action-', 'focus-indicator'],

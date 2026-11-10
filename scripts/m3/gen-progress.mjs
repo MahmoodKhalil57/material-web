@@ -29,8 +29,8 @@
  *   node scripts/m3/gen-progress.mjs
  *
  * Writes:
- *   labs/gb/components/progress/_progress-motion.scss
- *   labs/gb/components/progress/progress-paths.ts
+ *   components/progress/_progress-motion.scss
+ *   components/progress/progress-paths.ts
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
@@ -38,7 +38,7 @@ import {join} from 'node:path';
 import {circle, CornerRounding, Morph, star} from './shapes/graphics-shapes.mjs';
 import {SpecDb} from './spec-db.mjs';
 
-const OUT = 'labs/gb/components/progress';
+const OUT = 'components/progress';
 const M3 = '.m3-specs/compose/material3/commonMain/androidx/compose/material3';
 const SOURCES = {
   progress: `${M3}/ProgressIndicator.kt`,

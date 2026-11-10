@@ -5,7 +5,7 @@
  */
 
 /**
- * Elevated, filled and outlined cards (`labs/gb/components/card`).
+ * Elevated, filled and outlined cards (`components/card`).
  *
  * Every card has a color class, so the resting tokens of each style live in
  * a mixin named after it (`elevated`, `filled`, `outlined`) and its states in
@@ -19,14 +19,14 @@ const STATES = ['hover', 'focus', 'pressed', 'dragged', 'disabled'];
 
 export default {
   generate: true,
-  file: 'labs/gb/components/card/_card-tokens.scss',
+  file: 'components/card/_card-tokens.scss',
   exclude: [
     // State layers use the shared ripple; shadows use the elevation tokens.
     'state-layer',
     'shadow-color',
     // M3 has no surface tint on the web (tonal surfaces are color roles).
     'surface-tint',
-    // The focus indicator is the shared focus ring (`labs/gb/components/focus`).
+    // The focus indicator is the shared focus ring (`components/focus`).
     'focus-indicator',
     '^indicator-',
     // `hover.` / `focus.` tokens in the resting mixins (see above).

@@ -5,7 +5,7 @@
  */
 
 /**
- * Switch (`labs/gb/components/switch`).
+ * Switch (`components/switch`).
  *
  * The spec names the selected and unselected parts of every state
  * (`unselected.hover.handle.color`), so each has its own mixin; switch.scss
@@ -23,7 +23,7 @@ const S = 'md.comp.switch';
 
 export default {
   generate: true,
-  file: 'labs/gb/components/switch/_switch-tokens.scss',
+  file: 'components/switch/_switch-tokens.scss',
   exclude: [
     // The shared ripple applies the state layer opacities, so the state layer
     // colors (on-surface unselected, primary selected, without the folded

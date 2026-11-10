@@ -51,9 +51,10 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
   nodeScript(['scripts/generate-sass-token-meta.js', ...tokenFiles]);
 
   log('Compiling Sass');
-  // v3 only: labs/ (labs/gb and labs/aria). The shared Sass in sass/ext is
-  // loaded from there; the v2.5 component folders are gone on this branch.
-  const dirs = ['labs:labs'];
+  // The library's Sass: components and styles (labs/gb before the layout
+  // refactor), plus the aria and behaviors folders. sass/ext is loaded by
+  // path from these.
+  const dirs = ['components:components', 'styles:styles', 'aria:aria', 'behaviors:behaviors'];
   npx([
     'sass',
     '--style=compressed',
@@ -81,12 +82,11 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
 
   log('Compiling TypeScript');
   npx(['tsc', '--pretty']);
-  npx(['tsc', '--pretty', '-p', 'labs/gb/tsconfig.json']);
 }
 
 async function walk(dir, keep, out = []) {
   for (const entry of await readdir(dir, {withFileTypes: true})) {
-    if (entry.name === 'node_modules' || entry.name.startsWith('.') || entry.name === 'catalog') continue;
+    if (entry.name === 'node_modules' || entry.name.startsWith('.') || entry.name === 'site') continue;
     const p = join(dir, entry.name);
     if (entry.isDirectory()) await walk(p, keep, out);
     else if (keep(p)) out.push(p);

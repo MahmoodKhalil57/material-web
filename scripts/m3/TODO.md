@@ -63,7 +63,7 @@ otherwise exclude as baseline (same reason as `exclusions/navigation.md`).
 - [x] tabs-bf79b7 tabs-09e737 tabs-7ce157: scrollable tabs start 52dp from the leading edge (red test exists)
 - [x] (see "Resolved from the specs (second pass)") tabs-28dacf: fixed tabs are all as wide as the widest tab
 
-### H5. Typography, icons and targets (owns `labs/gb/styles/typography/`, `icon/`)
+### H5. Typography, icons and targets (owns `styles/typography/`, `icon/`)
 - [x] typography-11f209 typography-acc02d typography-48e5e6: links are underlined and primary (or tertiary)
 - [x] typography-6a429e typography-29cfca: tabular numbers where values change (time picker, date picker, slider value label, progress)
 - [x] icons-f11257: symbols next to text shift down ~11.5% of the text size
@@ -337,7 +337,7 @@ scratchpad `site-brief.md`.
 How to add a page that only exists in /3.0/: write
 `scripts/catalog-3.0/<section>/<slug>.md` with front matter `name`, `title`,
 `order` and `expressiveOnly: true`. `npm run catalog:dev` copies it to
-`catalog/site/<section>/` (a new section folder gets the docs layout and a
+`site/content/<section>/` (a new section folder gets the docs layout and a
 collection). The drawer lists About, Theming and Foundations (the
 `foundations` collection); "/" hides 3.0-only pages and redirects them. To
 replace a section of an existing About or Theming page in /3.0/ only, use a
@@ -345,11 +345,11 @@ file with the same name and the same heading (`addExpressivePageSections` in
 scripts/catalog-dev.mjs).
 
 ## S-A (Sonnet): theme picker and heading ids
-Owns: catalog/src/components/theme-changer.ts,
-catalog/src/inline/apply-saved-theme.ts, catalog/site/_includes/default.html.
+Owns: site/src/components/theme-changer.ts,
+site/src/inline/apply-saved-theme.ts, site/content/_includes/default.html.
 - [x] In /3.0/ the palette menu (source color, light or dark, contrast) also
       themes the labs/gb tokens: `themeFromSource()` / `applyTheme()` from
-      labs/gb/styles/color/dynamic-color.ts, loaded only under /3.0/, on the
+      styles/color/dynamic-color.ts, loaded only under /3.0/, on the
       document and in the playground iframes if they don't inherit it (today
       the button playground is purple while the site is brown). "/" unchanged.
 - [x] The saved theme applies before first paint in /3.0/ too (no flash).
@@ -380,7 +380,7 @@ scripts/catalog-3.0/about/compliance.md (expressiveOnly; order after the intro).
       excluded (counts by reason) and tracked (.m3-specs/spec-checks/units.json);
       the token audit (match, drift with reason, gaps) from
       `node scripts/m3/audit-gb.mjs --gaps`; axe and ARIA 1.3 rows and known
-      gaps (labs/gb/components/shared/central/axe-helpers.ts, aria-rows.ts);
+      gaps (components/shared/central/axe-helpers.ts, aria-rows.ts);
       the Baseline summary (`npm run gb:baseline`); the size budgets
       (scripts/size/gb-budgets.json).
 - [x] Numbers and unit ids only, no spec text. Say how each number is made
@@ -391,7 +391,7 @@ scripts/catalog-3.0/about/compliance.md (expressiveOnly; order after the intro).
 Owns: scripts/catalog-3.0/about/migration.md.
 - [x] A table: v2.5.0 element to 3.0 element and attributes, from
       `transformToExpressive` in scripts/catalog-dev.mjs (read only that
-      function) and the labs/gb/components/*/md-gb-*.ts files.
+      function) and the components/*/md-gb-*.ts files.
 - [x] Call out: styles load with `adoptStyles(document, [m3Styles])`; slider
       `aria-label-start/end` and `aria-valuetext-start/end` became `label-start`,
       `label-end`, `valuetext-start`, `valuetext-end`; `full-screen` dialogs
@@ -405,12 +405,12 @@ Owns: scripts/catalog-3.0/about/migration.md.
 ## H-2 (Haiku): Foundations: motion, interaction states, density
 Owns: scripts/catalog-3.0/foundations/{motion,interaction-states,density}.md.
 - [x] Motion: expressive and standard springs
-      (labs/gb/styles/motion/md-motion-tokens-spring.scss),
-      `.md-motion-standard`, reduced motion, the labs/gb/components/shared/
+      (styles/motion/md-motion-tokens-spring.scss),
+      `.md-motion-standard`, reduced motion, the components/shared/
       motion.ts helpers, which components morph their shape on press.
 - [x] Interaction states: hover 8%, focus 10%, pressed 10%, dragged 16%;
       hover only on hover-capable pointers; the ripple timing (75ms fade in,
-      225ms expansion, 150ms fade out; labs/gb/components/ripple/).
+      225ms expansion, 150ms fade out; components/ripple/).
 - [x] Density: the `density` attribute (0 to -3), the components that
       support it, and touch targets staying 48dp.
 
@@ -421,20 +421,20 @@ Owns: scripts/catalog-3.0/foundations/{accessibility,adaptive-layout}.md.
       (axe_test.ts), the rule that M3 wins where it and ARIA disagree,
       reduced motion.
 - [x] Adaptive layout: window size classes (shared/adaptive.ts), the app and
-      pane scaffolds (labs/gb/components/scaffold/), rails, safe areas,
+      pane scaffolds (components/scaffold/), rails, safe areas,
       full-screen dialogs only on compact windows.
 
 ## H-4 (Haiku): browser support, AI agents, debugging, what's new
 Owns: scripts/catalog-3.0/about/{browser-support,ai-agents,debugging}.md and a
-data-variant="expressive" block on the home page (catalog/site/index.html).
+data-variant="expressive" block on the home page (site/content/index.html).
 - [x] Browser support: the Baseline widely available targets (printed by
       `node scripts/gb-css-validate.mjs`), and which features sit behind
       `@supports` with which fallback (the reasons in
       scripts/gb-baseline-allow.json).
-- [x] AI agents: install `labs/gb/skill/` as a Claude Code skill; regenerate
+- [x] AI agents: install `skill/` as a Claude Code skill; regenerate
       it with `node scripts/m3/gen-agent-skill.mjs`.
 - [x] Debugging: the `?md-gb-perf` / `MD_GB_DEBUG_PERF` / localStorage
-      `md-gb-perf` DevTools track (labs/gb/components/shared/perf.ts).
+      `md-gb-perf` DevTools track (components/shared/perf.ts).
 - [x] What's new, on the /3.0/ home page only: the M3 Expressive components
       new in 3.0 (the gb-only pages), with links to migration and compliance.
 
@@ -446,7 +446,7 @@ scratchpad `wave4-brief.md`; page rules: `site-brief.md`. Each agent also
 updates its page: the "not built in labs/gb yet" line becomes how to use it.
 
 ## G-1 (Sonnet): color
-Owns: labs/gb/styles/color/ (dynamic-color.ts and tests),
+Owns: styles/color/ (dynamic-color.ts and tests),
 scripts/catalog-3.0/theming/color.md.
 - [x] Custom color roles defined by palette and tone (advanced.md "custom
       color roles"): an option that takes {name, palette or source, tone per
@@ -467,8 +467,8 @@ scripts/catalog-3.0/theming/color.md.
       report it (MCU 0.4 doesn't implement them; don't hand-roll).
 
 ## G-2 (Sonnet): spring physics for gestures
-Owns: a new labs/gb/components/shared/spring.ts (+ test), the settle
-animation in labs/gb/components/shared/drag-settle.ts, and the Overview
+Owns: a new components/shared/spring.ts (+ test), the settle
+animation in components/shared/drag-settle.ts, and the Overview
 "gestures" paragraph of scripts/catalog-3.0/styles/motion.md (only that
 section; another agent edits Transitions).
 - [x] A small spring solver driven by requestAnimationFrame: damping ratio
@@ -484,11 +484,11 @@ section; another agent edits Transitions).
 - [x] Tests: velocity continuity at release, retarget mid-flight, reduced motion.
 
 ## G-3 (Sonnet): transition helpers
-Owns: labs/gb/styles/motion/transitions/ (transitions.ts and tests), the
+Owns: styles/motion/transitions/ (transitions.ts and tests), the
 Transitions section of scripts/catalog-3.0/styles/motion.md.
 - [x] Scroll-driven enter and exit (transitions.md "beyond screen bounds"):
       a helper that hides/reveals an element by scroll direction with the
-      enter/exit motion (reuse labs/gb/components/shared/scroll-behavior.ts
+      enter/exit motion (reuse components/shared/scroll-behavior.ts
       if it fits instead of duplicating it).
 - [x] Coplanar side sheet: a helper (or md-gb-side-sheet option, if the
       sheet already has the hook) where the sheet slides in beside the content
@@ -509,13 +509,13 @@ toolbar padding where the spec says), and scripts/catalog-3.0/styles/spacing.md.
 
 # 3.0 site as plain Markdown (2026-11-07)
 
-Goal: every /3.0/ page is a Markdown document under `docs/3.0/`, rendered by
+Goal: every /3.0/ page is a Markdown document under `docs/`, rendered by
 a site shell built from labs/gb (md-gb-*) components, following the M3 pages,
 WAI-ARIA 1.3/MDN and Baseline. "/" stays the v2.5.0 site and loses every 3.0
 overlay (no data-variant blocks, no /3.0 rewrite, no md-gb on "/").
 
 Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
-- Path: `docs/3.0/<section>/<slug>.md`, sections `about`, `foundations`,
+- Path: `docs/<section>/<slug>.md`, sections `about`, `foundations`,
   `styles`, `components` (matching m3.material.io). URL `/3.0/<section>/<slug>/`.
 - Front matter: `title`, `section`, `order` (number, sidebar order),
   `description` (one sentence), optional `hero` (example id).
@@ -523,7 +523,7 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
   `{% gbexample "<dir>/<story>" %}` (live demo with its code),
   `{% gbapi "<dir>" %}` (generated API tables), `{% playgroundexample ... %}`.
   Generated pages (compliance) are written into docs/3.0 by their generator.
-- Layout: `gb` (catalog/site/_includes/gb/default.html), data it gets:
+- Layout: `gb` (site/content/_includes/gb/default.html), data it gets:
   `title`, `description`, `page.url`, `content`, `collections.gb3` (all 3.0
   pages with `data.section/order/title`), `toc` (from the content headings).
 
@@ -533,7 +533,7 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
       pages) to docs/3.0 per the contract; theming pages go to styles (color,
       typography, shape) and foundations (design tokens).
 - [x] Demos and API tables become shortcodes; md-* tags become md-gb-*.
-- [x] gen-compliance-page writes docs/3.0/about/compliance.md.
+- [x] gen-compliance-page writes docs/about/compliance.md.
 - [x] scripts/catalog-3.0 is deleted after the export (git keeps it).
 
 ## M-2 (Sonnet, after M-1): build
@@ -559,7 +559,7 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
 
 Left after M-4:
 - [ ] Production build: only scripts/catalog-dev.mjs copies docs/3.0 and
-      captures the gbexample demos (catalog/_dev-gb/examples.json); the
+      captures the gbexample demos (site/_dev-gb/examples.json); the
       catalog's prod build needs the same steps. The `gbcomponents`
       filter and live demos also need MWC_GB_LIB (a production library URL).
 - [ ] axe: `aria-label` on the md-gb-fab and md-gb-text-field hosts is
@@ -589,7 +589,7 @@ Left after M-4:
       positive, verify against the ARIA model test).
 - [x] Shortcode exposing the labs/gb module URL so {% demo %} scripts can
       import helpers (applyTheme, transitions) live. (Import map in demo
-      frames: @material/web/labs/gb/, lit, lit/.)
+      frames: @material/web/, lit, lit/.)
 
 # shadcn registry follow-ups (2026-11-08)
 

@@ -6,7 +6,7 @@
 
 /**
  * Contract tests of the disclosure behavior
- * (`labs/gb/components/shared/disclosure.ts`): each component that expands
+ * (`components/shared/disclosure.ts`): each component that expands
  * and collapses a region does it as its spec page says: the trigger carries
  * `aria-expanded` / `aria-controls`, the collapsed region is inert, Enter and
  * Space toggle it, a cancelable `toggle` event comes first, and the motion

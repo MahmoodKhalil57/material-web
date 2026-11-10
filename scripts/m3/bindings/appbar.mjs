@@ -5,7 +5,7 @@
  */
 
 /**
- * App bars (`labs/gb/components/appbar`): small (default), medium flexible,
+ * App bars (`components/appbar`): small (default), medium flexible,
  * large flexible and the search app bar.
  *
  * The baseline medium and large app bars (`md.comp.app-bar.medium`,
@@ -31,7 +31,7 @@ const withSubtitle = {
 
 export default {
   generate: true,
-  file: 'labs/gb/components/appbar/_app-bar-tokens.scss',
+  file: 'components/appbar/_app-bar-tokens.scss',
   // The with-subtitle heights apply through their own mixins.
   exclude: ['^with-subtitle-'],
   root: [{set: AB}, {set: `${AB}.small`}],

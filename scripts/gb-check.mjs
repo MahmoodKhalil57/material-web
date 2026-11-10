@@ -11,7 +11,7 @@
  *
  *   npm run gb:check -- slider            # one component
  *   npm run gb:check -- slider chip       # several
- *   npm run gb:check -- --styles slider   # also recompile labs/gb/styles
+ *   npm run gb:check -- --styles slider   # also recompile styles
  *   npm run gb:check -- --all             # everything (end of a change set)
  *   npm run gb:check -- --no-test slider  # build only
  *   npm run gb:check -- --fast slider     # skip the type check while iterating
@@ -26,7 +26,7 @@
  *   npm run gb:check -- --baseline slider # only the Baseline check (fails on unguarded, non-allowed CSS uses)
  *
  * Steps, each limited to what was asked for:
- *   1. Sass for the named directories (labs/gb/styles too with --styles/--all).
+ *   1. Sass for the named directories (styles too with --styles/--all).
  *   2. .css -> .cssresult.ts for those directories.
  *   3. Type check (tsgo if installed, else tsc), no output.
  *   4. tsc output, only with --emit or --all (the catalog and `npm test` use
@@ -55,10 +55,10 @@ const size = argv.includes('--size');
 const emit = argv.includes('--emit') || all || size;
 const dirs = argv.filter((a) => !a.startsWith('--'));
 
-const GB = join('labs', 'gb');
+const GB = join();
 const COMPONENTS = join(GB, 'components');
 if (!all && !dirs.length) {
-  console.error('Name at least one labs/gb/components directory, or pass --all.');
+  console.error('Name at least one components directory, or pass --all.');
   process.exit(2);
 }
 const targets = all
@@ -71,7 +71,7 @@ const targets = all
       }
       return dir;
     });
-// A target may be one test file (`labs/gb/components/x/x_test.ts`): only that
+// A target may be one test file (`components/x/x_test.ts`): only that
 // file runs, and Sass compiles its folder.
 const isFile = (p) => statSync(p).isFile();
 const folderOf = (p) => (isFile(p) ? dirname(p) : p);

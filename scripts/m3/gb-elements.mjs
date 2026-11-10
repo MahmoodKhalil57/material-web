@@ -22,7 +22,7 @@ const require = createRequire(import.meta.url);
 const ts = require('typescript');
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
-const GB = resolve(ROOT, 'labs/gb');
+const GB = resolve(ROOT);
 const COMPONENTS = join(GB, 'components');
 const posix = (p) => p.split(sep).join('/');
 
@@ -219,7 +219,7 @@ export function readGbElements() {
 
   /** Methods of Lit and the mixins' plumbing are not part of the usage API. */
   function isFrameworkFile(decl) {
-    return /[\\/]internal[\\/]/.test(decl.getSourceFile().fileName) && !/labs[\\/]gb/.test(decl.getSourceFile().fileName)
+    return /[\\/]internal[\\/]/.test(decl.getSourceFile().fileName) && !/(^|[\\/])(components|styles)[\\/]/.test(decl.getSourceFile().fileName)
       ? true
       : /[\\/]lit[\\/]|reactive-element/.test(decl.getSourceFile().fileName);
   }

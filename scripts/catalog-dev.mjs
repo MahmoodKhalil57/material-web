@@ -15,8 +15,8 @@
  *   npm run catalog:dev -- --no-watch      # don't rebuild pages on edits
  *   node scripts/catalog-wait.mjs          # wait for the next (re)build
  *
- * A run stops the previous one (pid in catalog/.catalog-dev.json), then keeps
- * watching docs (including docs/3.0), catalog/src, catalog/site/_includes and
+ * A run stops the previous one (pid in site/.catalog-dev.json), then keeps
+ * watching docs (including docs/3.0), site/src, site/content/_includes and
  * labs/gb demos, rebuilding the pages in place (~15s) without restarting.
  *   npm run catalog:dev -- --port 8000 --lib-port 8001 --no-open
  *
@@ -34,8 +34,8 @@ import {pathToFileURL} from 'node:url';
 import {buildLibrary, nodeScript, npx, ROOT} from './build-local.mjs';
 import {buildSiteAssets, buildSnapshot, restoreSnapshot} from './gb-site-assets.mjs';
 
-const CATALOG = join(ROOT, 'catalog');
-const GB = join(ROOT, 'labs', 'gb', 'components');
+const CATALOG = join(ROOT, 'site');
+const GB = join(ROOT, 'components');
 const OUT = join(CATALOG, '_dev');
 const EXAMPLES = join(CATALOG, '_dev-gb');
 
@@ -211,7 +211,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 async function buildSite({first = false} = {}) {
   // Generated pages (gitignored) of earlier runs, including the old 3.0 overlay.
   for (const dir of ['3.0']) {
-    await rm(join(CATALOG, 'site', dir), {recursive: true, force: true});
+    await rm(join(CATALOG, 'content', dir), {recursive: true, force: true});
   }
 
   log('Preparing the labs/gb demos');
@@ -280,14 +280,14 @@ function slugify(name) {
 }
 
 /**
- * Copies docs/3.0 (plain Markdown) into catalog/site/3.0, with the directory
+ * Copies docs/3.0 (plain Markdown) into site/content/3.0, with the directory
  * data that gives every page the gb layout, the gb3 tag and its permalink
  * /3.0/<section>/<slug>/, and /3.0/ itself (the intro page).
  */
 async function copyGbDocs() {
-  const dest = join(CATALOG, 'site', '3.0');
-  await cp(join(ROOT, 'docs', '3.0'), dest, {recursive: true});
-  // docs/3.0/README.md is the page template for authors, not a page.
+  const dest = join(CATALOG, 'content', '3.0');
+  await cp(join(ROOT, 'docs'), dest, {recursive: true});
+  // docs/README.md is the page template for authors, not a page.
   await rm(join(dest, 'README.md'), {force: true});
   await writeFile(
     join(dest, '3.0.json'),
@@ -301,15 +301,15 @@ async function copyGbDocs() {
       2,
     ) + '\n',
   );
-  // /3.0/ is docs/3.0/index.md (the home page), else the intro page.
-  if (!existsSync(join(ROOT, 'docs', '3.0', 'index.md'))) {
+  // /3.0/ is docs/index.md (the home page), else the intro page.
+  if (!existsSync(join(ROOT, 'docs', 'index.md'))) {
     const intro = await readFile(join(dest, 'about', 'intro.md'), 'utf8');
     await writeFile(
       join(dest, 'index.md'),
       intro.replace(/^---\n/, '---\npermalink: /3.0/\neleventyExcludeFromCollections: true\n'),
     );
   }
-  return (await walk(join(ROOT, 'docs', '3.0'))).filter((f) => f.endsWith('.md') && !f.endsWith('README.md')).length;
+  return (await walk(join(ROOT, 'docs'))).filter((f) => f.endsWith('.md') && !f.endsWith('README.md')).length;
 }
 
 /** catalog-dev's state for other tools: pid, status, builds, time. */
@@ -366,20 +366,20 @@ function watchSources() {
   const roots = [
     join(ROOT, 'docs'),
     join(CATALOG, 'src'),
-    join(CATALOG, 'site', '_includes'),
-    join(CATALOG, 'site', 'index.html'),
+    join(CATALOG, 'content', '_includes'),
+    join(CATALOG, 'content', 'index.html'),
     // Shortcodes, filters and the Eleventy config (each build runs a fresh
     // Eleventy process, so a rebuild picks up their changes).
     join(CATALOG, 'eleventy-helpers'),
     join(CATALOG, 'eleventy.config.cjs'),
     // Site data and the generated-file templates (search index, llms.txt,
-    // sitemap, Markdown pages...). Not all of catalog/site: builds write into it.
-    join(CATALOG, 'site', '_data'),
+    // sitemap, Markdown pages...). Not all of site/site: builds write into it.
+    join(CATALOG, 'content', '_data'),
     ...fsSync
-      .readdirSync(join(CATALOG, 'site'))
+      .readdirSync(join(CATALOG, 'content'))
       .filter((n) => n.endsWith('.11ty.cjs'))
-      .map((n) => join(CATALOG, 'site', n)),
-    join(ROOT, 'labs', 'gb'),
+      .map((n) => join(CATALOG, 'content', n)),
+    join(ROOT),
   ];
   let timer;
   let building = false;
@@ -392,10 +392,10 @@ function watchSources() {
   const relevant = (root, name) => {
     if (!name || !/\.(md|html|njk|ts|js|mjs|cjs|json|scss|css)$/.test(name)) return false;
     // Under labs/gb: demos, and compiled .js (gb-check --emit), which the
-    // /3.0/ shell bundle (catalog/src/gb) includes; else the shell keeps the
+    // /3.0/ shell bundle (site/src/gb) includes; else the shell keeps the
     // old components and, defined first, wins over the library server's.
     if (
-      root === join(ROOT, 'labs', 'gb') &&
+      root === join(ROOT) &&
       !/[\\/]demo[\\/]/.test(name) &&
       !(/\.js$/.test(name) && !/_test\.js$/.test(name))
     ) {
@@ -451,7 +451,7 @@ function watchSources() {
 
 /**
  * labs/gb styles with a demo, shown as their own pages: page key -> folder
- * under labs/gb/styles.
+ * under styles.
  */
 function styleDemos() {
   return {
@@ -465,7 +465,7 @@ function styleDemos() {
 /** Source folder of a component (or style) key. */
 function srcDir(dir) {
   const styles = styleDemos();
-  return dir in styles ? join(ROOT, 'labs', 'gb', 'styles', styles[dir]) : join(GB, dir);
+  return dir in styles ? join(ROOT, 'styles', styles[dir]) : join(GB, dir);
 }
 
 /** labs/gb components (and styles) that have a demo. */
@@ -479,7 +479,7 @@ async function gbDemoDirs() {
 
 /**
  * Transpiles each component's demo (demo.ts + stories.ts) into
- * catalog/_dev-gb/<dir>/ with a stand-in for the catalog story framework that
+ * site/_dev-gb/<dir>/ with a stand-in for the catalog story framework that
  * renders each story into the docs page (or, in capture mode, records its
  * HTML). Served by the library server so bare imports resolve.
  */
@@ -542,7 +542,7 @@ async function captureExamples(dirs) {
     // resources (net::ERR_INSUFFICIENT_RESOURCES).
     const page = await browser.newPage();
     try {
-      await page.goto(`${LIB}catalog/_dev-gb/capture.html?dir=${dir}`);
+      await page.goto(`${LIB}site/_dev-gb/capture.html?dir=${dir}`);
       await page.waitForFunction(() => window.__gbCapture || window.__gbError, null, {timeout: 20000});
       const {stories, error} = await page.evaluate(() => ({stories: window.__gbCapture, error: window.__gbError}));
       if (error) throw new Error(error);

@@ -5,7 +5,7 @@
  */
 
 /**
- * Flexible navigation bar (`labs/gb/components/navbar`) with vertical items
+ * Flexible navigation bar (`components/navbar`) with vertical items
  * (compact windows, the default) and horizontal items (medium windows).
  *
  * - `root`: the common `md.comp.nav-bar` tokens plus the vertical item
@@ -36,7 +36,7 @@ const item = (layout, extra = {}) => ({
 
 export default {
   generate: true,
-  file: 'labs/gb/components/navbar/_nav-bar-tokens.scss',
+  file: 'components/navbar/_nav-bar-tokens.scss',
   exclude: ['-(hovered|focused|pressed)-state-layer-'],
   root: [
     {set: NB},

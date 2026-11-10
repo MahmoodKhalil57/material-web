@@ -23,18 +23,18 @@
  * names (icons chosen in code, e.g. the theme toggle's). Candidates are
  * matched against Google's list of Material Symbols names.
  *
- * Output: catalog/site/fonts/gb/ (content-hash file names, served at
+ * Output: site/content/fonts/gb/ (content-hash file names, served at
  * /fonts/gb/ with an immutable one-year Cache-Control, cache first in the
  * service worker), fonts.css with the @font-face rules, and
- * catalog/site/_data/gbFonts.json (stylesheet, preload list, icon list).
+ * site/content/_data/gbFonts.json (stylesheet, preload list, icon list).
  */
 
 import {createHash} from 'node:crypto';
 import {mkdir, readFile, readdir, rm, stat, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
-const OUT = join('catalog', 'site', 'fonts', 'gb');
-const DATA = join('catalog', 'site', '_data', 'gbFonts.json');
+const OUT = join('site', 'content', 'fonts', 'gb');
+const DATA = join('site', 'content', '_data', 'gbFonts.json');
 // A current Chrome user agent, so Google Fonts answers with woff2.
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
@@ -67,20 +67,20 @@ async function walk(dir, test, out = []) {
 /** Sources whose <md-gb-icon> text and front matter name icons. */
 async function markupFiles() {
   return [
-    ...(await walk('docs/3.0', (n) => n.endsWith('.md'))),
-    ...(await walk('catalog/site/_includes/gb', (n) => n.endsWith('.html'))),
-    ...(await walk('catalog/src/gb', (n) => n.endsWith('.ts'))),
-    ...(await walk('labs/gb/components', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
-    ...(await walk('labs/gb/styles', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
+    ...(await walk('docs', (n) => n.endsWith('.md'))),
+    ...(await walk('site/content/_includes/gb', (n) => n.endsWith('.html'))),
+    ...(await walk('site/src/gb', (n) => n.endsWith('.ts'))),
+    ...(await walk('components', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
+    ...(await walk('styles', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
   ];
 }
 
 /** Sources whose quoted strings may be icon names chosen in code. */
 async function codeFiles() {
   return [
-    ...(await walk('catalog/src/gb', (n) => n.endsWith('.ts'))),
-    ...(await walk('catalog/eleventy-helpers', (n) => n.endsWith('.cjs'))),
-    ...(await walk('labs/gb/components', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
+    ...(await walk('site/src/gb', (n) => n.endsWith('.ts'))),
+    ...(await walk('site/eleventy-helpers', (n) => n.endsWith('.cjs'))),
+    ...(await walk('components', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
   ];
 }
 
@@ -97,11 +97,11 @@ async function collect() {
     for (const m of text.matchAll(/^icon:\s*([a-z][a-z0-9_]*)\s*$/gm)) certain.add(m[1]);
   }
   // The layout's section icons are a Nunjucks list: icon: 'info'.
-  const layout = await readFile('catalog/site/_includes/gb/default.html', 'utf8');
+  const layout = await readFile('site/content/_includes/gb/default.html', 'utf8');
   for (const m of layout.matchAll(/\bicon:\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);
   // Ligatures in component styles: content: 'arrow_drop_down', or a custom
   // property the content reads (--icon: 'radio_button_checked').
-  for (const file of await walk('labs/gb', (n) => n.endsWith('.scss'))) {
+  for (const file of [...(await walk('components', (n) => n.endsWith('.scss'))), ...(await walk('styles', (n) => n.endsWith('.scss')))]) {
     const text = await readFile(file, 'utf8');
     for (const m of text.matchAll(/(?:\bcontent|--[\w-]*icon[\w-]*):\s*['"]([a-z][a-z0-9_]*)['"]/g)) certain.add(m[1]);
   }
@@ -165,7 +165,7 @@ if (process.argv.includes('--check')) {
   if (missing.length) {
     console.error(
       `gb-fonts: ${missing.length} icon(s) used but not in the subset font: ${missing.join(', ')}.\n` +
-        'Run `node scripts/gb-fonts.mjs` and commit catalog/site/fonts/gb and catalog/site/_data/gbFonts.json.',
+        'Run `node scripts/gb-fonts.mjs` and commit site/content/fonts/gb and site/content/_data/gbFonts.json.',
     );
     process.exit(1);
   }
@@ -199,7 +199,7 @@ const css = [
   '',
   ...roboto.css,
   ...symbols.css,
-  // md-gb-icon's font (labs/gb/styles/icon: 'Material Symbols' by default)
+  // md-gb-icon's font (styles/icon: 'Material Symbols' by default)
   // is this family wherever the fonts are loaded: the site, and the
   // documents without its stylesheet (demo frames, component test pages).
   ":root {\n  --md-icon-font: 'Material Symbols Outlined';\n}",

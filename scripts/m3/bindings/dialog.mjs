@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/** Basic and full-screen dialogs (`labs/gb/components/dialog`). */
+/** Basic and full-screen dialogs (`components/dialog`). */
 export default {
   generate: true,
-  file: 'labs/gb/components/dialog/_dialog-tokens.scss',
+  file: 'components/dialog/_dialog-tokens.scss',
   // State layers use the shared ripple; shadows use the elevation tokens.
   exclude: ['state-layer', 'shadow-color'],
   root: {set: 'md.comp.dialog'},

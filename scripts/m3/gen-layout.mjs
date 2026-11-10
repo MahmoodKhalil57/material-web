@@ -36,10 +36,10 @@
  *   node scripts/m3/gen-layout.mjs --check   # exit 1 if a file is out of date
  *
  * Writes:
- *   labs/gb/styles/layout/_md-layout-values.scss
- *   labs/gb/styles/layout/layout-values.ts
- *   labs/gb/components/scaffold/_drag-handle-tokens.scss
- *   labs/gb/components/scaffold/_levitated-pane-tokens.scss
+ *   styles/layout/_md-layout-values.scss
+ *   styles/layout/layout-values.ts
+ *   components/scaffold/_drag-handle-tokens.scss
+ *   components/scaffold/_levitated-pane-tokens.scss
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
@@ -50,10 +50,10 @@ import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 const PAGES = '.m3-specs/pages/foundations/layout';
 const DRAG_HANDLE_KT =
   '.m3-specs/compose/material3/commonMain/androidx/compose/material3/tokens/DragHandleTokens.kt';
-const OUT_SCSS = 'labs/gb/styles/layout/_md-layout-values.scss';
-const OUT_TS = 'labs/gb/styles/layout/layout-values.ts';
-const OUT_DRAG = 'labs/gb/components/scaffold/_drag-handle-tokens.scss';
-const OUT_LEVITATED = 'labs/gb/components/scaffold/_levitated-pane-tokens.scss';
+const OUT_SCSS = 'styles/layout/_md-layout-values.scss';
+const OUT_TS = 'styles/layout/layout-values.ts';
+const OUT_DRAG = 'components/scaffold/_drag-handle-tokens.scss';
+const OUT_LEVITATED = 'components/scaffold/_levitated-pane-tokens.scss';
 const check = process.argv.includes('--check');
 
 // The pages use non-breaking spaces in places; match them as spaces.

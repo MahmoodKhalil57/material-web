@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/** Search bar and search view (`labs/gb/components/search`). */
+/** Search bar and search view (`components/search`). */
 
 const V = 'md.comp.search-view';
 
@@ -23,7 +23,7 @@ const viewPick = {
 
 export default {
   generate: true,
-  file: 'labs/gb/components/search/_search-tokens.scss',
+  file: 'components/search/_search-tokens.scss',
   // State layers use the shared ripple, focus indicators the shared focus
   // ring. The tint layer and elevation are Android tonal elevation; Compose
   // and the spec page draw search with no shadow by default. Hover and pressed

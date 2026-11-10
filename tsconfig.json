@@ -1,9 +1,15 @@
 {
   "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "include": [
+    "types/css-imports.d.ts",
+    "**/*"
+  ],
   "exclude": [
-    "catalog",
+    "site",
     "**/demo",
-    "scripts/",
-    "labs/gb/"
+    "scripts/"
   ]
 }

@@ -78,7 +78,7 @@ async function main() {
   const argv = process.argv.slice(2);
   const verbose = argv.includes('--verbose');
   const cssOnly = argv.includes('--css-only');
-  const ROOT = join('labs', 'gb');
+  const ROOT = join();
 
   // ---- BCD key -> {feature, baseline} ------------------------------------
   /** @type {Map<string, {feature: string, baseline: 'high'|'low'|false}>} */
@@ -323,7 +323,7 @@ async function main() {
     for (const [key, list] of byKey) {
       const fileCounts = new Map();
       for (const u of list) {
-        const f = u.file.replace('labs/gb/', '');
+        const f = u.file.replace('', '');
         fileCounts.set(f, (fileCounts.get(f) ?? 0) + 1);
       }
       console.error(`  ${key} (${KEYS.get(key).feature}): ${list.length} in ${[...fileCounts].map(([f, n]) => `${f}${n > 1 ? ` x${n}` : ''}`).join(', ')}`);

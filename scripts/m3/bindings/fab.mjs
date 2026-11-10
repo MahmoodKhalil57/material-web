@@ -5,7 +5,7 @@
  */
 
 /**
- * FAB and extended FAB (`labs/gb/components/fab`).
+ * FAB and extended FAB (`components/fab`).
  *
  * One `.fab` element is both: an icon-only FAB uses the `md.comp.fab` sizes
  * (square container), and a FAB with a label is an extended FAB that also
@@ -35,7 +35,7 @@ const colors = [
 
 export default {
   generate: true,
-  file: 'labs/gb/components/fab/_fab-tokens.scss',
+  file: 'components/fab/_fab-tokens.scss',
   // State layers use the shared ripple; shadows use the elevation tokens.
   exclude: ['state-layer', 'shadow-color'],
   root: [

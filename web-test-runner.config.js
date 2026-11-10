@@ -11,8 +11,8 @@ import {join} from 'node:path';
 import {jasmineTestRunnerConfig} from 'web-test-runner-jasmine';
 
 /**
- * Serves labs/gb modules straight from their TypeScript source: a request for
- * `labs/gb/**\/x.js` with a sibling `x.ts` gets the `.ts` transpiled by
+ * Serves the library's modules (components, styles, aria, behaviors) straight from their TypeScript source: a request for
+ * `**\/x.js` with a sibling `x.ts` gets the `.ts` transpiled by
  * esbuild (milliseconds), so tests always run the current source and don't
  * need a tsc build first. Type checking stays a separate step
  * (`npm run gb:check`). Set MWC_TEST_COMPILED=1 to test tsc's output instead.
@@ -25,7 +25,7 @@ const serveGbTypeScript = {
   async serve(context) {
     if (process.env.MWC_TEST_COMPILED === '1') return undefined;
     const path = context.path;
-    if (!path.startsWith('/labs/gb/') || !/\.[jt]s$/.test(path) || path.endsWith('.d.ts')) {
+    if (!path.startsWith('/') || !/\.[jt]s$/.test(path) || path.endsWith('.d.ts')) {
       return undefined;
     }
     // Test files may be requested as `.ts` (`npm run gb:check` runs the

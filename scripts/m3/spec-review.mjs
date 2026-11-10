@@ -119,7 +119,7 @@ export const STAGES = Number(cliArg('--stages') ?? 3);
 
 export const REVIEW_FILE = '.m3-specs/spec-checks/review.jsonl';
 export const GAPS_DIR = '.m3-specs/spec-checks/review-gaps';
-const GB = 'labs/gb/components';
+const GB = 'components';
 const CONCURRENCY = 24;
 /** Concurrent requests per component after its cache-writing first unit. */
 const ANTHROPIC_CONCURRENCY = 32;
@@ -368,14 +368,14 @@ const numbered = (lines, from, to) => {
 /** Code around the top-3 candidates, and the component's file list. */
 function snippets(candidates, dirs) {
   const ranges = snippetRanges(candidates);
-  const files = dirs.length ? dirs.flatMap((d) => componentFiles(`${GB}/${d}`)) : componentFiles('labs/gb/styles');
+  const files = dirs.length ? dirs.flatMap((d) => componentFiles(`${GB}/${d}`)) : componentFiles('styles');
   const code = ranges.map((r) => `=== ${r.file} (lines ${r.from}-${r.to}) ===\n${numbered(fileLines(r.file), r.from, r.to)}`);
   return {ranges, files, code};
 }
 
 function snippetText(dirs, files, code) {
   return [
-    `gb component directory: ${dirs.length ? dirs.map((d) => `${GB}/${d}`).join(', ') : '(none; foundation page — shared styles in labs/gb/styles)'}`,
+    `gb component directory: ${dirs.length ? dirs.map((d) => `${GB}/${d}`).join(', ') : '(none; foundation page — shared styles in styles)'}`,
     `Files:\n${files.map((f) => `- ${f}`).join('\n') || '(none)'}`,
     '',
     code.length ? `Code snippets:\n\n${code.join('\n\n')}` : 'Code snippets: (no keyword candidates found)',

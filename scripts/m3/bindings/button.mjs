@@ -5,7 +5,7 @@
  */
 
 /**
- * Buttons and toggle buttons (`labs/gb/components/button`).
+ * Buttons and toggle buttons (`components/button`).
  *
  * `root` is the base set (the filled default colors) plus the small size,
  * the default size. Each color style has a mixin, plus `-unselected` /
@@ -36,7 +36,7 @@ const sizes = [
 
 export default {
   generate: true,
-  file: 'labs/gb/components/button/_button-tokens.scss',
+  file: 'components/button/_button-tokens.scss',
   exclude: [
     // State layers use the shared ripple, focus indicators the shared focus
     // ring and shadows the elevation tokens.

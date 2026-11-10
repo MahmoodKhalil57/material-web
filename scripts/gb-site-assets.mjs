@@ -8,18 +8,18 @@
  * Generated images of the /3.0/ docs, built by scripts/catalog-dev.mjs
  * (buildSite) before Eleventy copies them to /3.0/og/ and /3.0/icons/:
  *
- * - catalog/_dev-gb/og/<section>-<slug>.png: the 1200x630 Open Graph image of
+ * - site/_dev-gb/og/<section>-<slug>.png: the 1200x630 Open Graph image of
  *   every page (title, section, description, wordmark, M3 Expressive shapes,
  *   baseline md-sys-color tokens), rendered from an HTML template by
  *   Playwright. Cached by a hash of the page's text and the template in
- *   catalog/_dev-gb/og-cache, so a rebuild renders only changed pages.
- * - catalog/_dev-gb/icons/: icon-192.png, icon-512.png and
+ *   site/_dev-gb/og-cache, so a rebuild renders only changed pages.
+ * - site/_dev-gb/icons/: icon-192.png, icon-512.png and
  *   icon-maskable-512.png of the web app manifest, rendered from
- *   catalog/site/images/favicon.svg (re-rendered when it changes).
- * - catalog/_dev-gb/custom-elements.json: the API of every md-gb element as a
+ *   site/content/images/favicon.svg (re-rendered when it changes).
+ * - site/_dev-gb/custom-elements.json: the API of every md-gb element as a
  *   Custom Elements Manifest (/3.0/custom-elements.json), read from the labs/gb
  *   sources; cached by a stamp of them.
- * - catalog/_dev-gb/skill/: the agent skill (labs/gb/skill) as /3.0/skill/.
+ * - site/_dev-gb/skill/: the agent skill (skill) as /3.0/skill/.
  * - buildSnapshot() (after the pages are served, off the critical path): the
  *   single-file download of the docs, /3.0/material-web-3.0.mhtml, made by
  *   Chromium from /3.0/all/ and cached by a hash of that page. Run alone with
@@ -35,10 +35,10 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const require = createRequire(import.meta.url);
 const ROOT = join(import.meta.dirname, '..');
-const CATALOG = join(ROOT, 'catalog');
+const CATALOG = join(ROOT, 'site');
 const OUT = join(CATALOG, '_dev-gb');
-const FAVICON = join(CATALOG, 'site', 'images', 'favicon.svg');
-const FONT = join(CATALOG, 'site', 'fonts', 'google-sans', 'regular.woff2');
+const FAVICON = join(CATALOG, 'content', 'images', 'favicon.svg');
+const FONT = join(CATALOG, 'content', 'fonts', 'google-sans', 'regular.woff2');
 const SECTIONS = ['about', 'foundations', 'styles', 'components'];
 const CONCURRENCY = 6;
 /** Bump to re-render every image after a change to the template. */
@@ -63,7 +63,7 @@ async function pages() {
       section: info.label,
       description: info.description,
     });
-    const dir = join(ROOT, 'docs', '3.0', section);
+    const dir = join(ROOT, 'docs', section);
     for (const f of (await readdir(dir)).sort()) {
       if (!f.endsWith('.md') || f === 'README.md') continue;
       const {data} = matter(await readFile(join(dir, f), 'utf8'));
@@ -216,8 +216,8 @@ async function buildIcons(browser, c, log) {
 // ---------------------------------------------------------------------------
 // API manifest and agent skill.
 
-const COMPONENTS = join(ROOT, 'labs', 'gb', 'components');
-const SKILL = join(ROOT, 'labs', 'gb', 'skill');
+const COMPONENTS = join(ROOT, 'components');
+const SKILL = join(ROOT, 'skill');
 /** Bump to regenerate custom-elements.json after changing how it is written. */
 const API_VERSION = 2;
 
@@ -377,7 +377,7 @@ async function buildApiManifest(log) {
   log?.(`custom-elements.json: ${elements.length} elements (${((Date.now() - t) / 1000).toFixed(1)}s)`);
 }
 
-/** The agent skill (labs/gb/skill) as /3.0/skill/ (its index.json is an Eleventy template). */
+/** The agent skill (skill) as /3.0/skill/ (its index.json is an Eleventy template). */
 async function copySkill() {
   const dest = join(OUT, 'skill');
   await rm(dest, {recursive: true, force: true});

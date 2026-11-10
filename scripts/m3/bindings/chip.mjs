@@ -5,7 +5,7 @@
  */
 
 /**
- * Assist, filter, input and suggestion chips (`labs/gb/components/chip`).
+ * Assist, filter, input and suggestion chips (`components/chip`).
  *
  * Each chip type has its own spec token set, organized as a tree of styles
  * (`elevated`, `flat`), selection (`selected`, `unselected`), content
@@ -112,7 +112,7 @@ function mixinName(type, path) {
 
 export default {
   generate: true,
-  file: 'labs/gb/components/chip/_chip-tokens.scss',
+  file: 'components/chip/_chip-tokens.scss',
   exclude: [
     // State layers use the shared ripple (the label color); shadows and the
     // surface tint use the elevation tokens.

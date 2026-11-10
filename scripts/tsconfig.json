@@ -8,7 +8,7 @@
     "moduleResolution": "node"
   },
   "exclude": [
-    "catalog",
+    "site",
     "**/demo"
   ],
   "include": ["**/*"]

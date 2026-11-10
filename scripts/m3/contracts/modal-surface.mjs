@@ -6,7 +6,7 @@
 
 /**
  * Contract tests for the shared ModalSurfaceController
- * (`labs/gb/components/shared/modal-surface.ts`): each modal surface closes
+ * (`components/shared/modal-surface.ts`): each modal surface closes
  * on Escape, back and the scrim, moves focus in and restores it, keeps Tab
  * inside, fires its events with reasons, and locks page scrolling only while
  * modal. See `MODULES` in `scripts/m3/gen-contract-tests.mjs`.

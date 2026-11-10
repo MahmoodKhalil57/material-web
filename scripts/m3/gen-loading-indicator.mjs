@@ -20,8 +20,8 @@
  *   node scripts/m3/gen-loading-indicator.mjs
  *
  * Writes:
- *   labs/gb/components/loadingindicator/_loading-indicator-motion.scss
- *   labs/gb/components/loadingindicator/loading-indicator-paths.ts
+ *   components/loadingindicator/_loading-indicator-motion.scss
+ *   components/loadingindicator/loading-indicator-paths.ts
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
@@ -31,7 +31,7 @@ import {MaterialShapes} from './shapes/material-shapes.mjs';
 import {SpecDb} from './spec-db.mjs';
 import {settleTime, springEasing} from './spring.mjs';
 
-const OUT = 'labs/gb/components/loadingindicator';
+const OUT = 'components/loadingindicator';
 const SOURCE = '.m3-specs/compose/material3/commonMain/androidx/compose/material3/LoadingIndicator.kt';
 
 const kt = await readFile(SOURCE, 'utf8');

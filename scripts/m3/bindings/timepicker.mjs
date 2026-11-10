@@ -5,7 +5,7 @@
  */
 
 /**
- * Dial and input time pickers (`labs/gb/components/timepicker`).
+ * Dial and input time pickers (`components/timepicker`).
  *
  * The time picker sets name selected and unselected parts inside the token
  * path (`time-selector.selected.container.color`), so both are kept as
@@ -16,7 +16,7 @@
  */
 export default {
   generate: true,
-  file: 'labs/gb/components/timepicker/_time-picker-tokens.scss',
+  file: 'components/timepicker/_time-picker-tokens.scss',
   exclude: [
     'state-layer',
     '(hover|focus|pressed)-label-text-color$',

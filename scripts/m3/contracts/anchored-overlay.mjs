@@ -6,7 +6,7 @@
 
 /**
  * Contract tests of the AnchoredOverlayController
- * (`labs/gb/components/shared/anchored-overlay.ts`): each component that
+ * (`components/shared/anchored-overlay.ts`): each component that
  * puts a surface next to an anchor opens it beside its invoker, flips it
  * when there is no room, closes it with Escape and a press outside, and
  * returns focus to the invoker. Plugged into gen-contract-tests.mjs.

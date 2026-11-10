@@ -7,8 +7,8 @@
 
 /**
  * Writes a Claude Code skill that teaches an agent to use the `md-gb-*`
- * elements of labs/gb: `labs/gb/skill/SKILL.md` plus one reference file per
- * component directory under `labs/gb/skill/reference/`.
+ * elements of labs/gb: `skill/SKILL.md` plus one reference file per
+ * component directory under `skill/reference/`.
  *
  *   node scripts/m3/gen-agent-skill.mjs           # write
  *   node scripts/m3/gen-agent-skill.mjs --check   # fail if the output is stale
@@ -38,7 +38,7 @@ import {readGbElements} from './gb-elements.mjs';
 
 
 const ROOT = process.cwd();
-const GB = resolve(ROOT, 'labs/gb');
+const GB = resolve(ROOT);
 const COMPONENTS = join(GB, 'components');
 const OUT = join(GB, 'skill');
 const CHECKLIST = 'scripts/m3/CHECKLIST.md';
@@ -116,7 +116,7 @@ function elementDoc(e) {
   const out = [];
   out.push(`### ${code('<' + e.tag + '>')}`, '');
   if (e.summary) out.push(e.summary, '');
-  out.push(`Source: ${code(e.file)}  `, `Import: ${code("import '@material/web/labs/gb/components/" + e.dir + "/" + e.tag + ".js';")}`, '');
+  out.push(`Source: ${code(e.file)}  `, `Import: ${code("import '@material/web/components/" + e.dir + "/" + e.tag + ".js';")}`, '');
   if (e.props.length) {
     out.push('Attributes and properties', '', '| Property | Attribute | Type | Default | Notes |', '| --- | --- | --- | --- | --- |');
     for (const p of e.props) {
@@ -215,7 +215,7 @@ function skillFile() {
     '## How to use',
     '',
     `1. Find the component below and open its reference file (${code('reference/<component>.md')}) before writing markup. It lists every tag with attributes, properties, slots, events, CSS parts, custom properties and the usage rules the library follows.`,
-    `2. Import only the elements you use, for example ${code("import '@material/web/labs/gb/components/button/md-gb-button.js';")}; ${code('components/all.js')} registers everything.`,
+    `2. Import only the elements you use, for example ${code("import '@material/web/components/button/md-gb-button.js';")}; ${code('components/all.js')} registers everything.`,
     '3. Use attributes for static configuration and properties for state set from code. Boolean attributes are present or absent: never write `selected="false"`.',
     '4. Style with the documented CSS custom properties and parts. Colors, shapes, type and motion come from the M3 tokens (`--md-sys-*`); override tokens instead of hard-coding values.',
     `5. Read ${code('reference/app-owned.md')} for what stays in the app: labels, layout placement, content, and decisions such as which variant to show at which window size.`,
@@ -253,7 +253,7 @@ let stale = 0;
 for (const [p, text] of expected) {
   if (existing.get(p) === text) continue;
   stale++;
-  if (check) console.log(`out of date: labs/gb/skill/${p}`);
+  if (check) console.log(`out of date: skill/${p}`);
   else {
     const target = join(OUT, p);
     mkdirSync(join(target, '..'), {recursive: true});
@@ -263,7 +263,7 @@ for (const [p, text] of expected) {
 for (const p of existing.keys()) {
   if (expected.has(p)) continue;
   stale++;
-  if (check) console.log(`unexpected: labs/gb/skill/${p}`);
+  if (check) console.log(`unexpected: skill/${p}`);
   else rmSync(join(OUT, p));
 }
 if (check) {

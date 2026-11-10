@@ -8,9 +8,9 @@
 /**
  * Generates contract tests: each labs/gb component declares in CONTRACTS
  * which shared controllers it uses and with what options, and this writes
- * `labs/gb/components/<dir>/<dir>_contract_test.ts` with the shared checks
+ * `components/<dir>/<dir>_contract_test.ts` with the shared checks
  * for each one, pressing real keys in a browser. The controllers themselves
- * are tested once in `labs/gb/components/shared/*_test.ts`; contract tests
+ * are tested once in `components/shared/*_test.ts`; contract tests
  * prove each component wires them up as its spec page says, and cite those
  * spec units (`// spec:`).
  *
@@ -23,7 +23,7 @@ import {readdir, readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
-const GB = 'labs/gb/components';
+const GB = 'components';
 
 /**
  * Per component: the controllers it uses and their contract.
@@ -357,7 +357,7 @@ function file(dir, parts) {
 // node scripts/m3/gen-contract-tests.mjs ${dir}
 //
 // Contract tests: this component wires up the shared controllers (tested in
-// labs/gb/components/shared/) as its spec page says.
+// components/shared/) as its spec page says.
 
 ${head}
 

@@ -12,7 +12,7 @@
  * (scripts/m3/shapes/) and emitted normalized to a 0..1 unit box, as in
  * Compose. Also writes a preview page with every shape and a few morphs.
  *
- *   node scripts/m3/gen-shapes.mjs [--out labs/gb/styles/shape/material-shapes.ts]
+ *   node scripts/m3/gen-shapes.mjs [--out styles/shape/material-shapes.ts]
  *                                  [--preview .m3-specs/shapes-preview.html]
  */
 
@@ -30,7 +30,7 @@ import {
 const arg = (flag, fallback) =>
   process.argv.includes(flag) ? process.argv[process.argv.indexOf(flag) + 1] : fallback;
 
-const OUT = arg('--out', 'labs/gb/styles/shape/material-shapes.ts');
+const OUT = arg('--out', 'styles/shape/material-shapes.ts');
 const PREVIEW = arg('--preview', '.m3-specs/shapes-preview.html');
 const DIGITS = 4;
 

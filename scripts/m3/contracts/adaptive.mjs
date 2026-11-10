@@ -6,7 +6,7 @@
 
 /**
  * Contract tests for adaptive components
- * (`labs/gb/components/shared/adaptive.ts`, `AdaptiveController`): the
+ * (`components/shared/adaptive.ts`, `AdaptiveController`): the
  * component tracks the window size class of its width, exposes it as the
  * `window-size-class` attribute, and applies its per-class options.
  *

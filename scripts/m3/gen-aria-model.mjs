@@ -8,7 +8,7 @@
 /**
  * Reads the saved WAI-ARIA 1.3 recommendation draft and writes the role and
  * state/property model that the central ARIA suite
- * (`labs/gb/components/shared/central/aria_test.ts`) checks components
+ * (`components/shared/central/aria_test.ts`) checks components
  * against. The HTML is the source of truth; the output stays in the ignored
  * `.m3-specs/aria/` folder (W3C text is not committed).
  *

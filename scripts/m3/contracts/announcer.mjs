@@ -6,7 +6,7 @@
 
 /**
  * Contract tests of the AnnouncerController
- * (`labs/gb/components/shared/announcer.ts`): each component announces what
+ * (`components/shared/announcer.ts`): each component announces what
  * the accessibility section of its spec page says, in a live region of the
  * right politeness, without moving focus, and cleans the region up when it
  * disconnects. Plugged into gen-contract-tests.mjs.

@@ -21,7 +21,7 @@
  * springs (opacity, color) keep animating, so every transition built on the
  * spring tokens degrades to a fade.
  *
- *   node scripts/m3/gen-motion.mjs [--out labs/gb/styles/motion/md-motion-tokens-spring.scss]
+ *   node scripts/m3/gen-motion.mjs [--out styles/motion/md-motion-tokens-spring.scss]
  */
 
 import {writeFile} from 'node:fs/promises';
@@ -30,7 +30,7 @@ import {settleTime, springEasing} from './spring.mjs';
 
 const OUT = process.argv.includes('--out')
   ? process.argv[process.argv.indexOf('--out') + 1]
-  : 'labs/gb/styles/motion/md-motion-tokens-spring.scss';
+  : 'styles/motion/md-motion-tokens-spring.scss';
 
 /** Max |x - 1| after the duration ends. */
 const SETTLE = 0.002;

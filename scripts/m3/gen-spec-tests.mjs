@@ -18,7 +18,7 @@
  *
  *   node scripts/m3/gen-spec-tests.mjs [component ...]
  *
- * Writes `labs/gb/components/<dir>/<dir>_spec_test.ts`.
+ * Writes `components/<dir>/<dir>_spec_test.ts`.
  */
 
 import {readdir, readFile, writeFile} from 'node:fs/promises';

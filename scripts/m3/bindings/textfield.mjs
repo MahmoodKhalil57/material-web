@@ -5,7 +5,7 @@
  */
 
 /**
- * Filled and outlined text fields (`labs/gb/components/textfield`).
+ * Filled and outlined text fields (`components/textfield`).
  *
  * Like the card, each style's resting tokens live in a mixin named after it
  * (`filled`, `outlined`) and its states in `<style>-<state>` mixins, so every
@@ -36,7 +36,7 @@ const STATES = [
 
 export default {
   generate: true,
-  file: 'labs/gb/components/textfield/_text-field-tokens.scss',
+  file: 'components/textfield/_text-field-tokens.scss',
   exclude: [
     '^(hover|focus|error|disabled)-',
     // `label-text.populated.size` / `.line-height` reference

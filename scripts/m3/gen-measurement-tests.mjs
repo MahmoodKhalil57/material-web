@@ -14,7 +14,7 @@
  * row's unit IDs (`// spec:`).
  *
  * Rows that measure wrong in gb go to
- * `labs/gb/components/<dir>/<dir>_measurement_gap.ts` (not run in the main
+ * `components/<dir>/<dir>_measurement_gap.ts` (not run in the main
  * suite, run with `npm run gb:check -- --gaps <dir>`); the rest go to
  * `<dir>_measurement_test.ts`.
  *

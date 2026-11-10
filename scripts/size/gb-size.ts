@@ -11,7 +11,7 @@
  *   npm run gb:size:check     # exit 1 when a component exceeds its budget
  *   npm run gb:size:update    # rewrite gb-budgets.json: current size + 10%
  *
- * A component is a labs/gb/components directory with `md-gb-*.js` entries.
+ * A component is a components directory with `md-gb-*.js` entries.
  * Its JS size is the minified module graph of those entries (Lit and other
  * node_modules external, Lit `css` templates stripped); its CSS size is its
  * compiled `.css` files concatenated. Both Brotli at maximum quality.
@@ -24,7 +24,7 @@ import {join} from 'path';
 
 import {getSplitBrotliSize} from './bundle-size.js';
 
-const COMPONENTS = join('labs', 'gb', 'components');
+const COMPONENTS = join('components');
 const BUDGETS = join('scripts', 'size', 'gb-budgets.json');
 /** Headroom added to today's size when writing budgets. */
 const HEADROOM = 0.1;

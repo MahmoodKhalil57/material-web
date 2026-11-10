@@ -1,0 +1,674 @@
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Site shell of the /3.0/ pages: M3 tokens from labs/gb, layout from here.
+   Colors, type and shape come from --md-sys-* tokens only. */
+@import '../../../styles/m3.css';
+@import './navigation.css';
+@import './search.css';
+@import './shell.css';
+@import './sections.css';
+@import './home.css';
+@import './morph.css';
+@import './reduce-motion.css';
+@import './compat.css';
+
+/* While Roboto Flex loads (font-display: swap), text is set in Arial scaled
+   to Roboto's vertical metrics, so the swap moves little (CLS). */
+@font-face {
+  font-family: 'Roboto Flex Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 99%;
+  ascent-override: 92.8%;
+  descent-override: 24.4%;
+  line-gap-override: 0%;
+}
+
+:root {
+  --md-ref-typeface-plain: 'Roboto Flex', 'Roboto Flex Fallback', Roboto, 'Noto Sans', system-ui, sans-serif;
+  --gb-toc-width: 240px;
+  --md-icon-font: 'Material Symbols Outlined';
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Scrollbars, global and local (reasoning in
+   labs/gb/components/shared/_scrollbar.scss: M3 has no scrollbar visuals, so
+   the thumb in `outline` for 3:1 contrast, `on-surface-variant` on hover,
+   a transparent track). Chromium and WebKit use ::-webkit-scrollbar (no
+   arrow buttons, an inset pill thumb, track ends clear of rounded corners);
+   the standard properties, which would turn those styles off, are for the
+   other browsers. scrollbar-gutter is not inherited, so each vertical
+   scroller in the page reserves its own, and a scrollbar that appears never
+   moves the content. (Not a universal rule: overflow: hidden elements would
+   reserve an empty gutter, and the gutter does nothing for horizontal
+   scrollers like code blocks.) */
+@supports not selector(::-webkit-scrollbar) {
+  :root {
+    scrollbar-width: thin;
+    scrollbar-color: var(--md-sys-color-outline) transparent;
+  }
+}
+/* The pseudo-element reads physical sizes only. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-track {
+  margin: var(--scrollbar-track-inset, 4px);
+}
+::-webkit-scrollbar-thumb {
+  min-height: 40px;
+  border: 2px solid transparent;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-outline) padding-box;
+}
+:hover::-webkit-scrollbar-thumb {
+  background-color: var(--md-sys-color-on-surface-variant);
+}
+.gb-content-pane,
+.gb-outline-body,
+.gb-search-body {
+  scrollbar-gutter: stable;
+}
+/* The rounded panels (corner-xl): the thumb sits 4px in from the edge, and
+   the track ends clear of the corners. */
+.gb-content-pane::-webkit-scrollbar,
+.gb-outline-body::-webkit-scrollbar {
+  width: 14px;
+}
+.gb-content-pane::-webkit-scrollbar-thumb,
+.gb-outline-body::-webkit-scrollbar-thumb {
+  border-width: 4px;
+}
+.gb-content-pane::-webkit-scrollbar-track {
+  margin-block: var(--md-sys-space-300);
+}
+
+html {
+  scroll-padding-block-start: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font: var(--md-sys-typescale-body-lg);
+  font-variation-settings: var(--md-sys-typescale-body-lg-axes);
+  min-block-size: 100dvh;
+}
+
+/* Skip link: visible only while focused. */
+.gb-skip {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-start: 8px;
+  z-index: 100;
+  padding: var(--md-sys-space-150) var(--md-sys-space-300);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font: var(--md-sys-typescale-label-lg);
+  text-decoration: none;
+  translate: 0 -200%;
+}
+.gb-skip:focus-visible {
+  translate: 0 0;
+  outline: 3px solid var(--md-sys-color-tertiary);
+  outline-offset: 2px;
+}
+
+.gb-main {
+  min-inline-size: 0;
+  padding: var(--md-sys-space-300) var(--md-sys-space-200) var(--md-sys-space-800);
+  max-inline-size: 60rem;
+  margin-inline: auto;
+  inline-size: 100%;
+}
+.gb-main:focus {
+  outline: none;
+}
+.gb-main > h1 {
+  font: var(--md-sys-typescale-display-sm);
+  font-variation-settings: var(--md-sys-typescale-display-sm-axes);
+  margin: 0 0 var(--md-sys-space-100);
+}
+.gb-lede {
+  margin: 0 0 var(--md-sys-space-300);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* "View as Markdown": a text link in the look of a text button (md-gb-button). */
+.gb-md-link {
+  margin: calc(-1 * var(--md-sys-space-150)) 0 var(--md-sys-space-300);
+}
+.gb-md-link a {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-block-size: 32px;
+  padding-inline: var(--md-sys-space-150);
+  margin-inline-start: calc(-1 * var(--md-sys-space-150));
+  border-radius: var(--md-sys-shape-corner-full, 999px);
+  color: var(--md-sys-color-primary);
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+  text-decoration: none;
+  transition: background-color 150ms;
+}
+.gb-md-link a:hover {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+}
+.gb-md-link a:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 1px;
+}
+
+/* Markdown content. */
+.gb-content h2,
+.gb-content h3,
+.gb-content h4 {
+  margin-block: var(--md-sys-space-400) var(--md-sys-space-150);
+}
+.gb-content h2 {
+  font: var(--md-sys-typescale-headline-md);
+  font-variation-settings: var(--md-sys-typescale-headline-md-axes);
+}
+.gb-content h3 {
+  font: var(--md-sys-typescale-title-lg);
+  font-variation-settings: var(--md-sys-typescale-title-lg-axes);
+}
+.gb-content h4 {
+  font: var(--md-sys-typescale-title-md);
+  font-variation-settings: var(--md-sys-typescale-title-md-axes);
+}
+/* Heading permalinks (markdown-it-anchor, 'visually-hidden' style): the link
+   text is for assistive technology; sighted users get a # on hover or focus. */
+.gb-content .heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--md-sys-space-100);
+}
+.gb-content .heading > :is(h2, h3, h4) {
+  margin: 0;
+}
+.gb-content .heading {
+  margin-block: var(--md-sys-space-400) var(--md-sys-space-150);
+}
+.gb-content .heading > .anchor {
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: none;
+  opacity: 0;
+}
+.gb-content .heading:hover > .anchor,
+.gb-content .heading > .anchor:focus-visible {
+  opacity: 1;
+}
+.gb-content .heading > .anchor:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  border-radius: var(--md-sys-shape-corner-xs);
+}
+.offscreen {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.gb-content p,
+.gb-content ul,
+.gb-content ol {
+  margin-block: 0 var(--md-sys-space-200);
+}
+.gb-content a {
+  color: var(--md-sys-color-primary);
+}
+.gb-content :not(pre) > code {
+  font-family: ui-monospace, 'Roboto Mono', Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.4em;
+  border-radius: var(--md-sys-shape-corner-xs);
+  background: var(--md-sys-color-surface-container-highest);
+}
+.gb-table {
+  overflow-x: auto;
+  margin-block-end: var(--md-sys-space-200);
+}
+.gb-table:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+}
+.gb-content table {
+  border-collapse: collapse;
+  inline-size: 100%;
+  font: var(--md-sys-typescale-body-md);
+}
+.gb-content th,
+.gb-content td {
+  text-align: start;
+  vertical-align: top;
+  padding: var(--md-sys-space-150) var(--md-sys-space-150);
+  border-block-end: 1px solid var(--md-sys-color-outline-variant);
+}
+.gb-content th {
+  font: var(--md-sys-typescale-label-lg);
+  font-variation-settings: var(--md-sys-typescale-label-lg-axes);
+  color: var(--md-sys-color-on-surface-variant);
+  white-space: nowrap;
+}
+.gb-content td {
+  font: var(--md-sys-typescale-body-md);
+  font-variation-settings: var(--md-sys-typescale-body-md-axes);
+}
+.gb-content tbody tr:last-child td {
+  border-block-end: 0;
+}
+.gb-content td code {
+  font-size: var(--md-sys-typescale-body-sm-size, 0.8125rem);
+  background: none;
+  padding: 0;
+  /* Break a token only when it can't fit on its own line (long URLs, unions);
+     `anywhere` would split short types like "string" across lines. */
+  overflow-wrap: break-word;
+}
+.gb-content td:first-child code {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 500;
+}
+.gb-desc {
+  display: block;
+  margin-block-start: var(--md-sys-space-50);
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-sm);
+  font-variation-settings: var(--md-sys-typescale-body-sm-axes);
+  min-inline-size: 16em;
+}
+.gb-desc code {
+  font-size: inherit;
+}
+.gb-content img,
+.gb-content video {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+/* Code blocks and the copy button. */
+.gb-code {
+  position: relative;
+  margin-block: 0 var(--md-sys-space-200);
+}
+.gb-content pre {
+  margin: 0;
+  padding: var(--md-sys-space-200);
+  padding-inline-end: 56px;
+  overflow-x: auto;
+  border-radius: var(--md-sys-shape-corner-md);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  font: var(--md-sys-typescale-body-md);
+  font-family: ui-monospace, 'Roboto Mono', Menlo, Consolas, monospace;
+  tab-size: 2;
+}
+.gb-content pre:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+}
+.gb-copy {
+  position: absolute;
+  inset-block-start: var(--md-sys-space-50);
+  inset-inline-end: var(--md-sys-space-50);
+  /* Long lines scroll under the button: keep the code from showing through. */
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-container);
+}
+.token.comment,
+.token.prolog,
+.token.doctype {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.token.tag,
+.token.keyword,
+.token.number,
+.token.boolean,
+.token.selector {
+  color: var(--md-sys-color-primary);
+}
+.token.string,
+.token.attr-value,
+.token.function {
+  color: var(--md-sys-color-secondary);
+}
+.token.attr-name,
+.token.property,
+.token.class-name {
+  color: var(--md-sys-color-tertiary);
+}
+
+/* /3.0/all/ (site/gb-all.11ty.cjs): every page on one page, no shell. */
+.gb-all-title {
+  margin: 0 0 var(--md-sys-space-100);
+  font: var(--md-sys-typescale-display-md);
+  font-variation-settings: var(--md-sys-typescale-display-md-axes);
+}
+.gb-all-contents ul {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+.gb-all-contents > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--md-sys-space-200);
+  padding: 0;
+  list-style: none;
+}
+.gb-all-contents > ul > li > span {
+  font: var(--md-sys-typescale-title-md);
+  font-variation-settings: var(--md-sys-typescale-title-md-axes);
+}
+.gb-all-contents a {
+  color: var(--md-sys-color-primary);
+}
+.gb-all-page {
+  margin-block-start: var(--md-sys-space-800);
+  padding-block-start: var(--md-sys-space-300);
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+}
+.gb-all-page > h1 {
+  font: var(--md-sys-typescale-display-sm);
+  font-variation-settings: var(--md-sys-typescale-display-sm-axes);
+  margin: 0 0 var(--md-sys-space-100);
+}
+.gb-all-source {
+  margin: 0 0 var(--md-sys-space-300);
+  font: var(--md-sys-typescale-body-sm);
+  color: var(--md-sys-color-on-surface-variant);
+  overflow-wrap: anywhere;
+}
+.gb-all-source a {
+  color: inherit;
+}
+
+@media print {
+  .gb-all-page {
+    break-before: page;
+    border: 0;
+    margin-block-start: 0;
+  }
+  .gb-all-page > h1 {
+    break-after: avoid;
+  }
+  .gb-content pre,
+  .gb-demo {
+    break-inside: avoid;
+  }
+  .gb-rail-area,
+  .gb-bar,
+  .gb-top,
+  .gb-toc,
+  .gb-copy,
+  .gb-skip,
+  .gb-demo-toggle {
+    display: none;
+  }
+  :root.js .gb-demo .gb-code {
+    block-size: auto !important;
+    mask-image: none !important;
+  }
+}
+
+/* Demo cards (shortcodes {% demo %} and {% gbexample %}): a figure with a
+   preview on top and the code below, collapsed to its first lines (behind a
+   "View code" button, gb.ts) when the script runs. */
+:root {
+  interpolate-size: allow-keywords;
+}
+.gb-demo {
+  margin: 0 0 var(--md-sys-space-200);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-lg);
+  overflow: clip;
+}
+/* The preview is also the class of figures that have no code. */
+.gb-demo-preview,
+.gb-content figure.gb-demo-figure {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--md-sys-space-200);
+  min-block-size: 12rem;
+  margin: 0;
+  padding: var(--md-sys-space-400);
+  background: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+}
+.gb-content figure.gb-demo-figure {
+  margin-block-end: var(--md-sys-space-200);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-lg);
+}
+.gb-demo-preview > .gb-example {
+  inline-size: 100%;
+}
+/* The inline preview of html and css (the css is scoped to it by @scope). */
+.gb-demo-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--md-sys-space-200);
+  inline-size: 100%;
+}
+.gb-demo-preview:has(> .gb-demo-inline) {
+  min-block-size: var(--gb-demo-height, 12rem);
+}
+/* A carousel takes the row (its width comes from its container, never its
+   items: carousel.scss), at its height (--height, 221px by default) from
+   the first frame, before it's defined. */
+.gb-demo-inline > md-gb-carousel {
+  inline-size: 100%;
+}
+md-gb-carousel:not(:defined) {
+  display: block;
+  block-size: var(--height, 221px);
+  visibility: hidden;
+}
+/* An inline time picker has a fixed size per layout (the dial below or
+   beside the selectors, or the input fields), reserved before it's defined.
+   Each density step takes 8px off the dial below the selectors and 4px off
+   the fields; the dial beside them keeps its size. A modal one takes no
+   space. */
+md-gb-time-picker:not(:defined):not([modal]) {
+  display: block;
+  inline-size: 304px;
+  block-size: 520px;
+  visibility: hidden;
+}
+md-gb-time-picker:not(:defined)[density='-1']:not([modal]) {
+  inline-size: 300px;
+  block-size: 512px;
+}
+md-gb-time-picker:not(:defined)[density='-2']:not([modal]) {
+  inline-size: 300px;
+  block-size: 504px;
+}
+md-gb-time-picker:not(:defined)[density='-3']:not([modal]) {
+  inline-size: 300px;
+  block-size: 496px;
+}
+md-gb-time-picker:not(:defined)[orientation='horizontal']:not([modal]) {
+  inline-size: 556px;
+  block-size: 404px;
+}
+md-gb-time-picker:not(:defined)[mode='input']:not([modal]) {
+  inline-size: 264px;
+  block-size: 243px;
+}
+md-gb-time-picker:not(:defined)[mode='input'][density='-1']:not([modal]) {
+  block-size: 239px;
+}
+md-gb-time-picker:not(:defined)[mode='input'][density='-2']:not([modal]) {
+  block-size: 235px;
+}
+md-gb-time-picker:not(:defined)[mode='input'][density='-3']:not([modal]) {
+  block-size: 231px;
+}
+/* A demo with a script is an iframe that fills the preview; it reserves the
+   author's height (or 12rem) and only grows when its content is taller
+   (gb.ts). */
+.gb-demo-preview[data-frame] {
+  display: block;
+  padding: 0;
+  min-block-size: var(--gb-demo-height, 12rem);
+}
+.gb-demo-frame {
+  display: block;
+  inline-size: 100%;
+  block-size: var(--gb-demo-height, 12rem);
+  border: 0;
+}
+/* File tabs of a demo with several files. The space is reserved before the
+   tabs are defined. */
+.gb-demo-tabs {
+  min-block-size: 48px;
+}
+.gb-demo-tabs:not(:defined) {
+  display: block;
+  block-size: 48px;
+  visibility: hidden;
+}
+.gb-demo-code {
+  position: relative;
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+}
+.gb-demo .gb-code {
+  margin: 0;
+  font: var(--md-sys-typescale-body-md);
+  font-family: ui-monospace, 'Roboto Mono', Menlo, Consolas, monospace;
+}
+.gb-demo pre {
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+}
+/* Collapsed: three lines and padding, faded out; the height is reserved from
+   the first paint (:root.js is set by the script in the layout head). */
+:root.js .gb-demo:not([data-short]):not([data-open]) .gb-code {
+  block-size: calc(3lh + 2 * var(--md-sys-space-200));
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 35%, transparent);
+}
+:root.js .gb-demo:not([data-short])[data-open] .gb-code {
+  block-size: auto;
+}
+:root.js .gb-demo:not([data-short]) .gb-code {
+  transition: block-size var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-emphasized);
+}
+.gb-demo-toggle {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: var(--md-sys-space-150);
+  margin-inline: auto;
+  inline-size: fit-content;
+}
+.gb-demo[data-open] .gb-demo-toggle {
+  position: static;
+  display: block;
+  margin-block: 0 var(--md-sys-space-150);
+}
+/* Without script there is no button and the code shows in full. */
+.gb-demo-toggle:not(:defined) {
+  visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.js .gb-demo:not([data-short]) .gb-code {
+    transition: none;
+  }
+}
+
+/* Live demos (gbexample) reserve the height measured when they were captured
+   (set on the preview), so the code after them doesn't move when they load:
+   the phone column height below the medium window class, the desktop one from
+   it. */
+.gb-example {
+  min-block-size: var(--gb-example-narrow-height, 0);
+}
+@media (min-width: 600px) {
+  .gb-example {
+    min-block-size: var(--gb-example-height, 0);
+  }
+}
+
+/* Component figures in the content: invisible (space kept) until their
+   elements are defined, so icon names and labels don't flash as raw text. */
+.gb-content figure :not(:defined) {
+  visibility: hidden;
+}
+
+/* Skeleton loaders (M3 motion, transition patterns: "Skeleton loaders"):
+   while a preview's components are still loading (an element in it isn't
+   defined, or its demo frame hasn't reported its content, gb.ts), its
+   reserved space shows a subtle pulse that moves from the top left to the
+   bottom right; once they're ready the skeleton fades out and the content
+   shows in place. Nothing moves: the space was kept from the first paint. */
+@keyframes gb-skeleton-pulse {
+  from {
+    background-position: 100% 100%;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+.gb-demo-preview,
+.gb-content figure.gb-demo-figure {
+  position: relative;
+}
+.gb-demo-preview::after,
+.gb-content figure.gb-demo-figure::after,
+.gb-card-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: var(--md-sys-color-surface-container);
+  background-image: linear-gradient(
+    135deg,
+    transparent 40%,
+    hsl(from var(--md-sys-color-on-surface) h s l / 6%) 50%,
+    transparent 60%
+  );
+  background-size: 300% 300%;
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short3, 150ms) linear;
+}
+:is(.gb-demo-preview, .gb-content figure.gb-demo-figure, .gb-card-stage):is(
+    :has(:not(:defined)),
+    :has(> .gb-demo-frame:not([data-ready]))
+  )::after {
+  opacity: 1;
+  animation: gb-skeleton-pulse 1.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.gb-demo-preview, .gb-content figure.gb-demo-figure, .gb-card-stage)::after {
+    animation: none !important;
+  }
+}

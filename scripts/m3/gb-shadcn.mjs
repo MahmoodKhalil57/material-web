@@ -6,11 +6,11 @@
 
 /**
  * Generates the shadcn registry of the md-gb elements (/3.0/r/, see
- * docs/3.0/about/shadcn.md): one `registry:ui` item per labs/gb/components
+ * docs/about/shadcn.md): one `registry:ui` item per components
  * directory (a React wrapper file per item, made with @lit/react from the
  * element classes and the events read by gb-elements.mjs), the `md-theme`
  * and `md-theme-m3` themes, and the registry.json index. Used by the Eleventy
- * data file catalog/site/_data/gbShadcn.cjs; run it alone to write the files:
+ * data file site/content/_data/gbShadcn.cjs; run it alone to write the files:
  *
  *   node scripts/m3/gb-shadcn.mjs <out dir> [registry base URL]
  */
@@ -22,11 +22,11 @@ import {fileURLToPath} from 'node:url';
 import {readGbElements} from './gb-elements.mjs';
 
 const require = createRequire(import.meta.url);
-const names = require('../../catalog/eleventy-helpers/gb-shadcn.cjs');
+const names = require('../../site/eleventy-helpers/gb-shadcn.cjs');
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
-const COMPONENTS = join(ROOT, 'labs/gb/components');
-const PKG = '@material/web/labs/gb/components';
+const COMPONENTS = join(ROOT, 'components');
+const PKG = '@material/web/components';
 const SCHEMA_ITEM = 'https://ui.shadcn.com/schema/registry-item.json';
 const SCHEMA_REGISTRY = 'https://ui.shadcn.com/schema/registry.json';
 
@@ -123,11 +123,11 @@ function themeItem(base) {
     type: 'registry:theme',
     title: 'Material Web 3.0 theme bridge',
     description:
-      'Loads the Material 3 styles of md-gb (labs/gb/styles/m3.css) and maps the shadcn variables to the M3 color and shape roles, so md-gb elements follow your shadcn theme in light and dark.',
+      'Loads the Material 3 styles of md-gb (styles/m3.css) and maps the shadcn variables to the M3 color and shape roles, so md-gb elements follow your shadcn theme in light and dark.',
     dependencies: ['@material/web'],
     cssVars: {light: vars, dark: vars},
     css: {
-      '@import "@material/web/labs/gb/styles/m3.css"': {},
+      '@import "@material/web/styles/m3.css"': {},
       // Not in a layer: m3.css sets color-scheme in a layer that would win.
       ':root': {'color-scheme': 'light'},
       '.dark': {'color-scheme': 'dark'},

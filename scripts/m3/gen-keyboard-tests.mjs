@@ -24,7 +24,7 @@
  *   node scripts/m3/gen-keyboard-tests.mjs [component ...]   # write
  *   node scripts/m3/gen-keyboard-tests.mjs --check           # exit 1 if stale
  *
- * Writes `labs/gb/components/<dir>/<dir>_keyboard_spec_test.ts`.
+ * Writes `components/<dir>/<dir>_keyboard_spec_test.ts`.
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
@@ -33,7 +33,7 @@ import {assignIds, normalize, pageUnits} from './spec-units.mjs';
 
 const SPECS = '.m3-specs';
 const PAGES = join(SPECS, 'pages/components');
-const GB = 'labs/gb/components';
+const GB = 'components';
 
 const argv = process.argv.slice(2);
 const check = argv.includes('--check');

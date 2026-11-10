@@ -53,14 +53,14 @@
     "!**/test/**",
     "!**/*_test.*",
     "!.wireit/**",
-    "!catalog/",
+    "!site/",
     "!scripts/",
     "!**/testing/**",
     "testing/harness.{js,js.map,d.ts}",
     "testing/transform-pseudo-classes.{js,js.map,d.ts}"
   ],
   "workspaces": [
-    "catalog"
+    "site"
   ],
   "dependencies": {
     "@lit/context": "^1.1.6",

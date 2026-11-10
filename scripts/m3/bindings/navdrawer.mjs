@@ -6,10 +6,10 @@
 
 const D = 'md.comp.navigation-drawer';
 
-/** Standard and modal navigation drawers (`labs/gb/components/navdrawer`). */
+/** Standard and modal navigation drawers (`components/navdrawer`). */
 export default {
   generate: true,
-  file: 'labs/gb/components/navdrawer/_nav-drawer-tokens.scss',
+  file: 'components/navdrawer/_nav-drawer-tokens.scss',
   // State layers use the shared ripple and focus indicators the shared focus
   // ring. The bottom drawer is not part of M3.
   exclude: ['state-layer', 'focus-indicator', '^bottom-'],

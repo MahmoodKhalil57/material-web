@@ -6,7 +6,7 @@
 
 /**
  * Contract tests for the shared selection controller
- * (`labs/gb/components/shared/selection.ts`): each component's selection mode,
+ * (`components/shared/selection.ts`): each component's selection mode,
  * Space / Enter selection, `required`, ARIA state, events and form value,
  * proven through the real element and real key presses. The controller's own
  * rules are tested once in `shared/selection_test.ts`.

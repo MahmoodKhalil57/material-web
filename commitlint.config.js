@@ -14,7 +14,7 @@ export default {
         // Use "/" for multiple scopes: `fix(button/checkbox): subject"`
         // Omit scope for broad "all" changes.
         'button',
-        'catalog',
+        'site',
         'checkbox',
         'chips',
         'color',

@@ -28,7 +28,7 @@
  *   node scripts/m3/gen-fab-menu.mjs
  *
  * Writes:
- *   labs/gb/components/fabmenu/_fab-menu-motion.scss
+ *   components/fabmenu/_fab-menu-motion.scss
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
@@ -36,7 +36,7 @@ import {join} from 'node:path';
 import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 import {settleTime, springAt} from './spring.mjs';
 
-const OUT = 'labs/gb/components/fabmenu';
+const OUT = 'components/fabmenu';
 const SOURCE = '.m3-specs/compose/material3/commonMain/androidx/compose/material3/FloatingActionButtonMenu.kt';
 const DOCS = '.m3-specs/pages/components/fab-menu.md';
 /** Must match gen-motion.mjs, which defines the CSS spring durations. */

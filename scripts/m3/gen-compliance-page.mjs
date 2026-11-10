@@ -15,7 +15,7 @@
  * Sources: .m3-specs/spec-checks/units.json (spec-checks.mjs output),
  * scripts/m3/exclusions/*.md, `audit-gb.mjs --gaps`, `gb-baseline.mjs`,
  * scripts/size/gb-budgets.json, and the axe and ARIA row files in
- * labs/gb/components/shared/central/.
+ * components/shared/central/.
  */
 
 import {execFileSync} from 'node:child_process';
@@ -23,10 +23,10 @@ import {existsSync} from 'node:fs';
 import {mkdir, readdir, readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
-const OUT = 'docs/3.0/about/compliance.md';
+const OUT = 'docs/about/compliance.md';
 const UNITS = '.m3-specs/spec-checks/units.json';
 const EXCLUSIONS = 'scripts/m3/exclusions';
-const CENTRAL = 'labs/gb/components/shared/central';
+const CENTRAL = 'components/shared/central';
 const BUILDABLE = 0.3;
 const check = process.argv.includes('--check');
 
@@ -276,7 +276,7 @@ if (check) {
   }
   console.log(`${OUT} is up to date.`);
 } else {
-  await mkdir('docs/3.0/about', {recursive: true});
+  await mkdir('docs/about', {recursive: true});
   await writeFile(OUT, md);
   console.log(`wrote ${OUT}: ${n(units.length)} units, ${total.uncovered} uncovered, ${auditRows.length} components audited.`);
 }

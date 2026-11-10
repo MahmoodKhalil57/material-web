@@ -5,7 +5,7 @@
  */
 
 /**
- * M3 Expressive list interactions (`labs/gb/components/list`): expand,
+ * M3 Expressive list interactions (`components/list`): expand,
  * reorder (drag) and reveal (swipe to reveal actions).
  *
  * The base list tokens live in the hand-maintained `_list-tokens.scss`; these
@@ -30,7 +30,7 @@ const REVEAL = 'md.comp.list.reveal';
 
 export default {
   generate: true,
-  file: 'labs/gb/components/list/_list-behaviors-tokens.scss',
+  file: 'components/list/_list-behaviors-tokens.scss',
   // State layers use the shared ripple; shadows use the elevation tokens.
   exclude: ['shadow-color'],
   root: [

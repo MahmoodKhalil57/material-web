@@ -16,7 +16,7 @@
  *    keyed by unit ID, so only new or changed units are classified.
  * 3. With `--extract`, pulls subject / condition / keys / dp values out of
  *    each buildable unit with Clairic (cached in `extracted.jsonl`).
- * 4. Scans `labs/gb/` and `scripts/m3/` for citations.
+ * 4. Scans `` and `scripts/m3/` for citations.
  * 5. Reduces the rest mechanically (spec-autocite.mjs, no LLM): units that
  *    state no requirement (`not-a-requirement`, by named rules), units whose
  *    values and subject match the component's resolved tokens (`auto-token`),
@@ -76,7 +76,7 @@ import {ACCEPT_NOT_APPLICABLE, FINAL, MODEL as REVIEW_MODEL, REVIEW_FILE, REVIEW
 const OUT = '.m3-specs/spec-checks';
 const CLASSIFIED = join(OUT, 'classified.jsonl');
 const EXTRACTED = join(OUT, 'extracted.jsonl');
-const SCAN = ['labs/gb', 'scripts/m3'];
+const SCAN = ['components', 'styles', 'scripts/m3'];
 
 /** Units at or above this `buildable` score must be cited. */
 const THRESHOLD = 0.3;
