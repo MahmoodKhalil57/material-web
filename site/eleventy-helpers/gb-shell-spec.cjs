@@ -103,7 +103,20 @@ function shellSpec(page, pages, content) {
     // The headline; the site's home is the rail's first destination.
     children: [text('site-name', 'Material Web 3.0')],
     slots: {
+      // Up to four trailing actions (app-bars.md, Search app bar).
       trailing: [
+        add('theme-open', {
+          type: 'IconButton',
+          props: {tooltip: true, ariaLabel: 'Customize theme'},
+          children: [icon('theme-open-icon', 'palette')],
+          on: {click: {action: 'openTool', params: {tool: 'theme'}}},
+        }),
+        add('download-open', {
+          type: 'IconButton',
+          props: {tooltip: true, ariaLabel: 'Download and copy'},
+          children: [icon('download-open-icon', 'download')],
+          on: {click: {action: 'openTool', params: {tool: 'download'}}},
+        }),
         add('color-mode', {
           type: 'IconButton',
           props: {
@@ -134,11 +147,6 @@ function shellSpec(page, pages, content) {
           type: 'IconButton',
           props: {type: 'toggle', tooltip: true, ariaLabel: 'Reduce motion', selected: {$bindState: '/reduceMotion'}},
           children: [icon('motion-icon', 'motion_photos_off')],
-        }),
-        add('repo', {
-          type: 'IconButton',
-          props: {href: REPO, target: '_blank', tooltip: true, ariaLabel: 'Source on GitHub'},
-          children: [icon('repo-icon', 'code')],
         }),
       ],
     },
@@ -247,18 +255,293 @@ function shellSpec(page, pages, content) {
     slots['companion-rail'] = ['outline'];
   }
 
+  const overlays = tools({add, text, icon});
+  slots.snackbar = ['snack'];
+
   add('root', {
     type: 'AppScaffold',
     props: {fullscreen: true, navigation: 'auto', autoExpandRail: true},
-    children: ['main'],
+    children: ['main', ...overlays],
     slots,
   });
 
   return {
     root: 'root',
     elements,
-    state: {colorMode: 'auto', reduceMotion: false, railExpanded: true},
+    state: {
+      colorMode: 'auto',
+      reduceMotion: false,
+      railExpanded: true,
+      siteUrl: page.siteUrl ?? '',
+      tool: '',
+      theme: {seed: '#6750a4', seedInput: '#6750a4', variant: 'tonal-spot', contrast: 'standard'},
+      feedback: {open: false, page: '', type: 'bug', message: '', error: false},
+      install: {open: false},
+      snack: {open: false, text: ''},
+    },
   };
+}
+
+const SEEDS = [
+  ['#6750a4', 'Purple'],
+  ['#0061a4', 'Blue'],
+  ['#006a6a', 'Teal'],
+  ['#386a20', 'Green'],
+  ['#9c4300', 'Orange'],
+  ['#b3261e', 'Red'],
+  ['#8b4a62', 'Pink'],
+];
+const VARIANTS = [
+  ['tonal-spot', 'Tonal spot'],
+  ['neutral', 'Neutral'],
+  ['vibrant', 'Vibrant'],
+  ['expressive', 'Expressive'],
+  ['fidelity', 'Fidelity'],
+  ['content', 'Content'],
+  ['monochrome', 'Monochrome'],
+  ['rainbow', 'Rainbow'],
+  ['fruit-salad', 'Fruit salad'],
+];
+
+/** `{$cond: {$state: path, eq: value}, $then: true, $else: false}` */
+const is = (path, value) => ({$cond: {$state: path, eq: value}, $then: true, $else: false});
+
+/**
+ * The tools: the Download & copy and Customize theme side sheets, the Send
+ * feedback and Install dialogs and the snackbar (src/spec/tools.ts acts on
+ * them). Returns the overlay keys for the scaffold's content.
+ */
+function tools({add, text, icon}) {
+  const heading = (key, value) => add(key, {type: 'Html', props: {tag: 'h3', text: value}});
+  /** A list action: icon, label, supporting text, and an action on click. */
+  const action = (key, iconName, label, support, binding) =>
+    add(key, {
+      type: 'ListItem',
+      props: {},
+      children: [text(`${key}-label`, label)],
+      slots: {leading: [icon(`${key}-icon`, iconName)], 'supporting-text': [text(`${key}-support`, support)]},
+      on: {click: binding},
+    });
+  const list = (key, label, items) => add(key, {type: 'List', props: {ariaLabel: label}, children: items});
+  const sheet = (key, tool, headline, children) =>
+    add(key, {
+      type: 'SideSheet',
+      props: {modal: true, headline, open: is('/tool', tool)},
+      children,
+      on: {closed: {action: 'closeTool'}},
+    });
+
+  // Download & copy.
+  const download = (key, iconName, label, support, href) =>
+    action(key, iconName, label, support, {action: 'download', params: {href, name: href.split('/').pop()}});
+  const copy = (key, iconName, label, support, id, done) => action(key, iconName, label, support, {action: 'copy', params: {id, done}});
+  sheet('download-sheet', 'download', 'Download & copy', [
+    add('download-body', {
+      type: 'Prose',
+      props: {},
+      children: [
+        heading('download-h', 'Download'),
+        list('download-list', 'Download', [
+          action('dl-install', 'install_desktop', 'Install app', 'Add Material Web 3.0 to your device', {action: 'install'}),
+          download('dl-mhtml', 'web', 'Website (MHTML, single file)', 'All pages in one file, for offline reading', '/3.0/material-web-3.0.mhtml'),
+          download('dl-llms', 'description', 'Docs for LLMs (llms-full.txt)', 'All pages as Markdown text', '/3.0/llms-full.txt'),
+          download('dl-cem', 'data_object', 'API (custom-elements.json)', 'Every element, as a Custom Elements Manifest', '/3.0/custom-elements.json'),
+        ]),
+        heading('copy-h', 'Copy'),
+        list('copy-list', 'Copy', [
+          copy('cp-agent', 'smart_toy', 'Copy agent prompt', 'Tells an AI agent to install the md-gb skill', 'agent-prompt', 'Copied agent prompt'),
+          copy('cp-cdn', 'code', 'Copy CDN script tag', '<script type="module" src="https://esm.run/…/all.js">', 'cdn', 'Copied CDN script tag'),
+          copy('cp-github', 'link', 'Copy GitHub link', 'github.com/material-components/material-web', 'github', 'Copied GitHub link'),
+          copy('cp-npm', 'terminal', 'Copy npm install', 'npm install @material/web', 'npm', 'Copied npm install command'),
+          copy('cp-shadcn', 'deployed_code', 'Copy shadcn npx setup', 'npx shadcn@latest add …/md-theme.json', 'shadcn', 'Copied shadcn setup command'),
+        ]),
+        heading('more-h', 'More'),
+        add('more-links', {
+          type: 'Html',
+          props: {tag: 'p'},
+          children: [
+            add('more-github', {type: 'Button', props: {color: 'text', href: REPO, target: '_blank'}, children: [icon('more-github-icon', 'code'), text('more-github-label', 'GitHub')]}),
+            add('more-npm', {
+              type: 'Button',
+              props: {color: 'text', href: 'https://www.npmjs.com/package/@material/web', target: '_blank'},
+              children: [icon('more-npm-icon', 'deployed_code'), text('more-npm-label', 'npm')],
+            }),
+            add('more-v25', {type: 'Button', props: {color: 'text', href: '/'}, children: [icon('more-v25-icon', 'history'), text('more-v25-label', 'v2.5.0')]}),
+            add('more-feedback', {
+              type: 'Button',
+              props: {color: 'text'},
+              children: [icon('more-feedback-icon', 'feedback'), text('more-feedback-label', 'Send feedback')],
+              on: {click: {action: 'openFeedback'}},
+            }),
+          ],
+        }),
+      ],
+    }),
+  ]);
+
+  // Customize theme.
+  const segment = (key, path, value, label) =>
+    add(key, {
+      type: 'SegmentedButton',
+      props: {label, value, noCheckmark: true, selected: is(path, value)},
+      on: {click: {action: 'setState', params: {statePath: path, value}}},
+    });
+  sheet('theme-sheet', 'theme', 'Customize theme', [
+    add('theme-body', {
+      type: 'Prose',
+      props: {},
+      children: [
+        add('theme-note', {type: 'Html', props: {tag: 'p', text: 'Changes apply to this site and its demos, and are remembered in this browser.'}}),
+        heading('seed-h', 'Seed color'),
+        add('seed-chips', {
+          type: 'ChipSet',
+          props: {selection: 'single', ariaLabel: 'Seed color'},
+          children: SEEDS.map(([hex, name]) =>
+            add(`seed-${name.toLowerCase()}`, {
+              type: 'Chip',
+              props: {type: 'filter', value: hex, selected: is('/theme/seed', hex)},
+              children: [text(`seed-${name.toLowerCase()}-label`, name)],
+              on: {click: {action: 'setSeed', params: {seed: hex}}},
+            }),
+          ),
+        }),
+        add('seed-field', {
+          type: 'TextField',
+          props: {label: 'Custom color (hex)', value: {$bindState: '/theme/seedInput'}, supportingText: 'Six hex digits, such as #6750a4'},
+          on: {change: {action: 'applySeedInput'}},
+        }),
+        heading('variant-h', 'Scheme variant'),
+        add('variant', {
+          type: 'Select',
+          props: {label: 'Scheme variant', value: {$bindState: '/theme/variant'}},
+          children: VARIANTS.map(([value, label]) =>
+            add(`variant-${value}`, {type: 'SelectOption', props: {value}, children: [text(`variant-${value}-label`, label)]}),
+          ),
+        }),
+        heading('mode-h', 'Color mode'),
+        add('mode', {
+          type: 'SegmentedButtonSet',
+          props: {required: true, ariaLabel: 'Color mode'},
+          children: [
+            segment('mode-auto', '/colorMode', 'auto', 'System'),
+            segment('mode-light', '/colorMode', 'light', 'Light'),
+            segment('mode-dark', '/colorMode', 'dark', 'Dark'),
+          ],
+        }),
+        heading('contrast-h', 'Contrast'),
+        add('contrast', {
+          type: 'SegmentedButtonSet',
+          props: {required: true, ariaLabel: 'Contrast'},
+          children: [
+            segment('contrast-standard', '/theme/contrast', 'standard', 'Standard'),
+            segment('contrast-medium', '/theme/contrast', 'medium', 'Medium'),
+            segment('contrast-high', '/theme/contrast', 'high', 'High'),
+          ],
+        }),
+        add('theme-actions', {
+          type: 'Html',
+          props: {tag: 'p'},
+          children: [add('theme-reset', {type: 'Button', props: {color: 'tonal'}, children: [text('theme-reset-label', 'Reset')], on: {click: {action: 'resetTheme'}}})],
+        }),
+      ],
+    }),
+  ]);
+
+  // Send feedback: a prefilled GitHub issue (no backend).
+  add('feedback', {
+    type: 'Dialog',
+    props: {open: {$bindState: '/feedback/open'}},
+    children: [
+      add('feedback-page', {type: 'TextField', props: {label: 'Page', value: {$bindState: '/feedback/page'}}}),
+      add('feedback-type', {
+        type: 'Select',
+        props: {label: 'Type', value: {$bindState: '/feedback/type'}},
+        children: [
+          ['bug', 'Bug'],
+          ['docs', 'Documentation'],
+          ['idea', 'Idea'],
+        ].map(([value, label]) => add(`feedback-type-${value}`, {type: 'SelectOption', props: {value}, children: [text(`feedback-type-${value}-label`, label)]})),
+      }),
+      add('feedback-message', {
+        type: 'TextField',
+        props: {
+          label: 'Message',
+          type: 'textarea',
+          rows: 4,
+          required: true,
+          errorText: 'Add a message',
+          error: {$state: '/feedback/error'},
+          value: {$bindState: '/feedback/message'},
+        },
+      }),
+      add('feedback-note', {
+        type: 'Prose',
+        props: {},
+        children: [add('feedback-note-p', {type: 'Html', props: {tag: 'small', text: 'Opens a new GitHub issue for material-components/material-web in a new tab, with this filled in.'}})],
+      }),
+    ],
+    slots: {
+      headline: [text('feedback-headline', 'Send feedback')],
+      actions: [
+        add('feedback-cancel', {
+          type: 'Button',
+          props: {color: 'text'},
+          children: [text('feedback-cancel-label', 'Cancel')],
+          on: {click: {action: 'setState', params: {statePath: '/feedback/open', value: false}}},
+        }),
+        add('feedback-submit', {type: 'Button', props: {}, children: [text('feedback-submit-label', 'Open issue')], on: {click: {action: 'submitFeedback'}}}),
+      ],
+    },
+  });
+
+  // Install: the browser's own steps when it offered no prompt.
+  const step = (key, browser, how) =>
+    add(key, {
+      type: 'Html',
+      props: {tag: 'li'},
+      children: [add(`${key}-b`, {type: 'Html', props: {tag: 'strong', text: `${browser}: `}}), text(`${key}-t`, how)],
+    });
+  add('install', {
+    type: 'Dialog',
+    props: {open: {$bindState: '/install/open'}},
+    children: [
+      add('install-body', {
+        type: 'Prose',
+        props: {},
+        children: [
+          add('install-p', {type: 'Html', props: {tag: 'p', text: 'Your browser did not offer to install the docs as an app. Install them from the browser instead:'}}),
+          add('install-steps', {
+            type: 'Html',
+            props: {tag: 'ul'},
+            children: [
+              step('install-chromium', 'Chrome and Edge', 'open the browser menu and choose Install Material Web 3.0 (Chrome: Cast, save and share, Install page as app), or use the install icon in the address bar.'),
+              step('install-safari', 'Safari on Mac', 'choose File, then Add to Dock.'),
+              step('install-ios', 'Safari on iPhone and iPad', 'tap Share, then Add to Home Screen.'),
+              step('install-firefox', 'Firefox', 'Firefox on Android has Install in its menu. Firefox on desktop cannot install web apps; bookmark this page instead.'),
+            ],
+          }),
+        ],
+      }),
+    ],
+    slots: {
+      headline: [text('install-headline', 'Install Material Web 3.0')],
+      actions: [
+        add('install-close', {
+          type: 'Button',
+          props: {},
+          children: [text('install-close-label', 'Close')],
+          on: {click: {action: 'setState', params: {statePath: '/install/open', value: false}}},
+        }),
+      ],
+    },
+  });
+
+  add('snack', {
+    type: 'Snackbar',
+    props: {labelText: {$state: '/snack/text'}, open: {$bindState: '/snack/open'}, timeoutMs: 4000},
+  });
+
+  return ['download-sheet', 'theme-sheet', 'feedback', 'install'];
 }
 
 module.exports = {shellSpec, SECTIONS, GROUPS, outlineOf, pager};

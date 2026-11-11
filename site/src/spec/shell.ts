@@ -10,8 +10,10 @@
  * renderer, with the reader's saved preferences as its state, and keeps the
  * page's content (not a spec yet) in the live shell.
  *
- * App actions: `cycleColorMode` (system -> light -> dark). State changes
- * apply the color mode and reduced motion to the document and save them.
+ * App actions: `cycleColorMode` (system -> light -> dark), and the tools'
+ * (./tools.ts: download, copy, install, theme, feedback). State changes
+ * apply the color mode, reduced motion and theme to the document and save
+ * them.
  */
 
 import '@material/web/components/appbar/md-gb-app-bar.js';
@@ -25,7 +27,21 @@ import '@material/web/extras/prose/md-gb-prose.js';
 import '@material/web/extras/scaffold/md-gb-app-scaffold.js';
 import '@material/web/styles/icons/md-gb-icon.js';
 
+import '@material/web/components/chip/md-gb-chip-set.js';
+import '@material/web/components/chip/md-gb-chip.js';
+import '@material/web/components/dialog/md-gb-dialog.js';
+import '@material/web/components/list/md-gb-list-item.js';
+import '@material/web/components/list/md-gb-list.js';
+import '@material/web/components/segmentedbutton/md-gb-segmented-button-set.js';
+import '@material/web/components/segmentedbutton/md-gb-segmented-button.js';
+import '@material/web/components/sheet/md-gb-side-sheet.js';
+import '@material/web/components/snackbar/md-gb-snackbar.js';
+import '@material/web/components/textfield/md-gb-text-field.js';
+import '@material/web/extras/select/md-gb-select-option.js';
+import '@material/web/extras/select/md-gb-select.js';
+
 import {createStateStore, type Spec} from '@json-render/core';
+import {applyTheme, savedTheme, toolHandlers} from './tools.js';
 import {hydrateSpec} from '@material/web/json-render/renderer.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
 import {styles as m3Styles} from '@material/web/styles/m3.cssresult.js';
@@ -74,7 +90,9 @@ function boot() {
     colorMode: MODES.includes(saved as ColorMode) ? saved : 'auto',
     reduceMotion: read('gb-reduce-motion') === '1',
     railExpanded: read('gb-rail') !== 'collapsed',
+    theme: savedTheme(),
   });
+  const siteUrl = String(spec.state?.['siteUrl'] ?? location.origin);
 
   // The content isn't part of the spec yet: keep its nodes across hydration.
   const kept = document.createDocumentFragment();
@@ -82,6 +100,7 @@ function boot() {
   hydrateSpec(spec, shell, {
     store,
     handlers: {
+      ...toolHandlers(store, siteUrl),
       cycleColorMode: () => {
         const mode = store.get('/colorMode') as ColorMode;
         store.set('/colorMode', MODES[(MODES.indexOf(mode) + 1) % MODES.length]);
@@ -90,7 +109,27 @@ function boot() {
   });
   document.getElementById('gb-content')?.append(kept);
   apply(store.getSnapshot());
-  store.subscribe(() => apply(store.getSnapshot()));
+  // The theme's CSS is regenerated only when its seed, variant or contrast change.
+  const themeKey = () => {
+    const t = store.get('/theme') as {seed: string; variant: string; contrast: string};
+    return `${t.seed}|${t.variant}|${t.contrast}`;
+  };
+  let lastTheme = '';
+  const applyThemeIfChanged = () => {
+    const key = themeKey();
+    if (key === lastTheme) return;
+    lastTheme = key;
+    try {
+      applyTheme(store.get('/theme') as Parameters<typeof applyTheme>[0]);
+    } catch (e) {
+      console.warn('Could not generate the theme', e);
+    }
+  };
+  applyThemeIfChanged();
+  store.subscribe(() => {
+    apply(store.getSnapshot());
+    applyThemeIfChanged();
+  });
   if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
 }
 

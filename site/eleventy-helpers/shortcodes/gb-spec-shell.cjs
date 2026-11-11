@@ -23,6 +23,8 @@
 const {join} = require('node:path');
 const {pathToFileURL} = require('node:url');
 const {shellSpec} = require('../gb-shell-spec.cjs');
+// The site's public URL (MWC_SITE_URL), which the copy actions put in their text.
+const gbSite = require('../../content/_data/gbSite.cjs');
 
 const JSON_RENDER = join(__dirname, '..', '..', '..', 'material-design-expressive', 'json-render');
 let modules;
@@ -47,7 +49,7 @@ function gbSpecShell(eleventyConfig) {
       category: p.data.category,
       order: p.data.order,
     }));
-    const spec = shellSpec({url: this.page?.url ?? '', title, description, section}, pages, content ?? '');
+    const spec = shellSpec({url: this.page?.url ?? '', title, description, section, siteUrl: gbSite.url}, pages, content ?? '');
     const {checkSpec, renderSpecToString} = await library();
     const {valid, issues} = checkSpec(spec);
     if (!valid) {
