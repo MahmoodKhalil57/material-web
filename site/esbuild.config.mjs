@@ -39,10 +39,10 @@ if (!DEV) {
   };
 }
 
-// The /3.0/ site shell (site/_includes/gb): src/gb/gb.ts and gb.css, built on
-// their own because the labs/gb sources import their styles as
+// The /3.0/ site (layout site/content/_includes/gb/spec.html): src/spec/,
+// built on its own because the library's sources import their styles as
 // `with {type: 'css'}` modules, which esbuild turns into constructed
-// stylesheets here. Outputs <js>/gb/gb.js and <js>/gb/gb.css.
+// stylesheets here. Outputs <js>/spec/shell.js and <js>/spec/sw.js.
 const cssModulePlugin = {
   name: 'css-modules-as-stylesheets',
   setup(build) {
@@ -71,10 +71,9 @@ await esbuild
       ...config,
       splitting: false,
       plugins: [...(config.plugins ?? []), cssModulePlugin],
-      // shape-morphs.css: the morph paths (scripts/gb-shape-morphs.mjs),
-      // linked by the pages with morphing shapes only.
-      // src/spec/shell.ts: the spec shell (layout gb/spec.html).
-      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css', 'src/gb/shape-morphs.css', 'src/gb/sw.ts', 'src/spec/shell.ts'],
+      // src/spec/shell.ts: the /3.0/ site (layout gb/spec.html, and the
+      // all-pages document); src/spec/sw.ts: its service worker.
+      entryPoints: ['src/spec/shell.ts', 'src/spec/sw.ts'],
       outbase: 'src',
       // The library is the repo root (the parent of this site folder):
       // '@material/web/components/...' imports resolve to its sources.

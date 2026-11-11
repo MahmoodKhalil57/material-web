@@ -165,11 +165,11 @@ const playgroundMap = {
   },
 };
 const PLAYGROUND = JSON.parse(await readFile('node_modules/playground-elements/package.json', 'utf8')).version;
-// The v2.5 pages' scripts (js/, but not the 3.0 shell's js/gb/) keep their
+// The v2.5 pages' scripts (js/, but not the 3.0 site's js/spec/) keep their
 // strings: Lit's server-rendered pages carry a digest of each template's
 // static strings, and a rewritten one no longer hydrates. Their links are
 // in the pages' HTML, rewritten, which hydration leaves as it is.
-const v25Scripts = (file) => file.startsWith(join(OUT, 'js')) && !file.startsWith(join(OUT, 'js', 'gb'));
+const v25Scripts = (file) => file.startsWith(join(OUT, 'js')) && !file.startsWith(join(OUT, 'js', 'spec'));
 let files = 0;
 let preloaded = 0;
 for (const file of await walk(OUT)) {

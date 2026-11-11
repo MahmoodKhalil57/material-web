@@ -8,7 +8,7 @@
  * The index pages of the /3.0/ sections: /3.0/about/, /3.0/foundations/,
  * /3.0/styles/ and /3.0/components/. A large hero (the section's name and
  * intro, with M3 Expressive shapes) and a grid of cards, one per page of the
- * section (styles: site/src/gb/sections.css).
+ * section (drawn with the library's components: md-gb-shape for the shapes).
  *
  * - Components are grouped like https://m3.material.io/components (the
  *   `category` front matter of docs/components) and show their hero demo
@@ -121,7 +121,7 @@ const preview = (html, zoom = 1) =>
 
 function hero(section, count) {
   // Shapes behind the headline: M3 Expressive shapes in the container roles,
-  // each morphing into another and back, in turn (morph.css).
+  // each morphing into another and back, in turn (md-gb-shape loop).
   const decor = [
     ['cookie9Sided', 'flower', 'primary', 'a'],
     ['clover4Leaf', 'clover8Leaf', 'tertiary', 'b'],
@@ -145,9 +145,8 @@ function hero(section, count) {
 class GbSections {
   data() {
     return {
-      // As the docs pages (catalog-dev's 3.0.json): the spec shell with
-      // MWC_SPEC_SHELL=1.
-      layout: process.env.MWC_SPEC_SHELL === '1' ? 'gb/spec.html' : 'gb/default.html',
+      // As the docs pages (catalog-dev's 3.0.json): the spec shell.
+      layout: 'gb/spec.html',
       tags: ['gbsection'],
       gbIndex: true,
       order: 0,

@@ -38,7 +38,7 @@ const {
 } = require('./gb-demo.cjs');
 
 /**
- * Shortcodes of the /3.0/ pages (docs/3.0, layout gb/default.html).
+ * Shortcodes of the /3.0/ pages (docs/3.0, layout gb/spec.html).
  *
  * - `{% gbexample "<dir>/<story>" %}`: the labs/gb demo story `<story>` (the
  *   slugified story name in .../<dir>/demo/stories.ts), live in a
@@ -103,9 +103,9 @@ function gb(eleventyConfig) {
 ` +
         `<script type="module">import('${lib}site/_dev-gb/${dir}/demo.js');</script>`
       : '';
-    // The heights measured at capture (phone and desktop column widths) are
-    // reserved (site/src/gb/gb.css), so the code doesn't move when the
-    // demo arrives.
+    // The heights measured at capture (phone and desktop column widths), for
+    // a page style that reserves them so the code doesn't move when the demo
+    // arrives (the spec shell has none).
     const style = story.height
       ? `--gb-example-height: ${story.height}px; --gb-example-narrow-height: ${story.narrowHeight ?? story.height}px`
       : '';
@@ -160,7 +160,7 @@ ${html}
    * Filter `gbcomponents`: the script that defines the md-gb-* elements used
    * in a page's content (from the library server of `npm run catalog:dev`,
    * MWC_GB_LIB); empty without it. The first definition of a tag wins, since
-   * the page shell (/js/gb/gb.js) bundles some of the components.
+   * the page shell (/js/spec/shell.js) bundles some of the components.
    */
   eleventyConfig.addFilter('gbcomponents', (html) => {
     const lib = process.env.MWC_GB_LIB;

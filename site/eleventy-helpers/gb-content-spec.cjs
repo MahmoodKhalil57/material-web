@@ -24,6 +24,7 @@
 
 const {parseFragment, serialize, serializeOuter} = require('parse5');
 const {frameDoc} = require('./shortcodes/gb-demo.cjs');
+const {shapeProps} = require('./gb-shapes.cjs');
 
 const DROP = new Set(['script', 'style', 'template', 'noscript']);
 /** The old shell's copy button around code blocks (plugins/copy-code-button.cjs):
@@ -48,14 +49,6 @@ const HTML_ATTRS = {
 
 const attrsOf = (node) => Object.fromEntries((node.attrs ?? []).map((a) => [a.name, a.value]));
 
-/** A compatibility row's status (gb-compat.cjs) -> its shape's color role. */
-const STATE_COLORS = {
-  ok: 'secondary-container',
-  warn: 'error-container',
-  none: 'surface-container-highest',
-  info: 'surface-container-highest',
-};
-
 /** The value of `name` on the node or its closest ancestor that has it. */
 function closestAttr(node, name) {
   for (let n = node; n; n = n.parentNode) {
@@ -72,18 +65,6 @@ function classesUp(node) {
   return out;
 }
 
-/**
- * A Material shape's size in the spec shell, which has no page styles: by
- * what it decorates (the old shell sized them in home.css, sections.css and
- * compat.css).
- */
-function shapeSize(node) {
-  const classes = classesUp(node);
-  if (/\bgb-home-blob\b|\bgb-hero-shape\b/.test(classes)) return 96;
-  if (/\bgb-home-tile\b|\bgb-card\b|\bgb-home-card\b/.test(classes)) return 72;
-  if (/\bgb-compat-logo\b/.test(classes)) return 40;
-  return 48;
-}
 const textOf = (node) =>
   node.nodeName === '#text' ? node.value : (node.childNodes ?? []).map(textOf).join('');
 
@@ -173,21 +154,11 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
     // of the tile or card around it (or a compatibility row's status) and
     // sized by what it decorates. A tile's icon, next to it, goes on it.
     if (tag === 'svg' && attrs['data-shape']) {
-      const [, to = ''] = (attrs['data-morph'] ?? '').split(':');
-      const tone = closestAttr(node, 'data-tone');
-      const props = {
-        shape: attrs['data-shape'],
-        size: shapeSize(node),
-        color: tone ? `${tone}-container` : (STATE_COLORS[closestAttr(node, 'data-state')] ?? 'current'),
-      };
-      if (to) {
-        props.to = to;
-        // Heroes loop; a card's or tile's shape morphs while it's hovered
-        // or focused, as in the old shell (morph.css).
-        if (attrs['data-morph-mode'] === 'loop') props.loop = true;
-        else props.morphOnHover = true;
-        if (attrs['data-delay']) props.delay = Number(attrs['data-delay']);
-      }
+      const props = shapeProps(attrs, {
+        tone: closestAttr(node, 'data-tone'),
+        state: closestAttr(node, 'data-state'),
+        classes: classesUp(node),
+      });
       const icon = (node.parentNode?.childNodes ?? []).find((c) => c.tagName === 'md-gb-icon');
       const children = icon ? convert(icon, issues) : [];
       if (icon) consumed.add(icon);

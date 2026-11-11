@@ -36,7 +36,8 @@ const START =
   'https://mahmoodkhalil57.github.io/material-web/3.0/';
 const RUNS = Number(option('--runs', 1));
 const JSON_OUT = option('--json');
-const NEXT = '.gb-pager-top .gb-pager-next';
+// The spec shell's pager (site/eleventy-helpers/gb-shell-spec.cjs).
+const NEXT = 'nav[aria-label="Previous and next pages"] md-gb-button[rel="next"]';
 const MAX_STEPS = 500;
 
 // Records when the incoming page's view transition finishes. Runs before the

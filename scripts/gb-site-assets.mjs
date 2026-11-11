@@ -294,7 +294,7 @@ async function snapshotHash(siteDir) {
   if (!existsSync(page)) return null;
   const hash = createHash('sha1').update(`${SNAPSHOT_VERSION}\n`);
   hash.update(await readFile(page));
-  for (const extra of [join(siteDir, 'js', 'gb', 'gb.js'), join(siteDir, 'js', 'gb', 'gb.css')]) {
+  for (const extra of [join(siteDir, 'js', 'spec', 'shell.js')]) {
     if (existsSync(extra)) hash.update(await readFile(extra));
   }
   return hash.digest('hex').slice(0, 16);

@@ -250,7 +250,7 @@ const FRAME_BOOT = `(() => {
 
 /**
  * The document of a demo with a script (iframe srcdoc): the m3 styles, the
- * page's theme (posted by gb.ts), the html and css, an import map for
+ * page's theme (posted by src/spec/shell.ts), the html and css, an import map for
  * `@material/web/`, the md-gb elements the html uses, the script as a
  * module, a height report and a visible error text.
  */

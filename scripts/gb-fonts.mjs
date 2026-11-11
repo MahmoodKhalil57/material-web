@@ -69,8 +69,9 @@ async function markupFiles() {
   return [
     ...(await walk('docs', (n) => n.endsWith('.md'))),
     ...(await walk('site/content/_includes/gb', (n) => n.endsWith('.html'))),
-    ...(await walk('site/src/gb', (n) => n.endsWith('.ts'))),
+    ...(await walk('site/src/spec', (n) => n.endsWith('.ts'))),
     ...(await walk('material-design-expressive/components', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
+    ...(await walk('material-design-expressive/extras', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
     ...(await walk('material-design-expressive/styles', (n) => /\.ts$/.test(n) && !/(_test|\.d)\.ts$/.test(n))),
   ];
 }
@@ -78,9 +79,10 @@ async function markupFiles() {
 /** Sources whose quoted strings may be icon names chosen in code. */
 async function codeFiles() {
   return [
-    ...(await walk('site/src/gb', (n) => n.endsWith('.ts'))),
+    ...(await walk('site/src/spec', (n) => n.endsWith('.ts'))),
     ...(await walk('site/eleventy-helpers', (n) => n.endsWith('.cjs'))),
     ...(await walk('material-design-expressive/components', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
+    ...(await walk('material-design-expressive/extras', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
   ];
 }
 
@@ -96,9 +98,12 @@ async function collect() {
     for (const m of text.matchAll(/<md-gb-icon\b[^>]*>\s*([a-z][a-z0-9_]*)\s*<\/md-gb-icon>/g)) certain.add(m[1]);
     for (const m of text.matchAll(/^icon:\s*([a-z][a-z0-9_]*)\s*$/gm)) certain.add(m[1]);
   }
-  // The layout's section icons are a Nunjucks list: icon: 'info'.
-  const layout = await readFile('site/content/_includes/gb/default.html', 'utf8');
-  for (const m of layout.matchAll(/\bicon:\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);
+  // The shell spec's icons: the sections ({icon: 'info'}) and icon(key,
+  // 'palette') calls.
+  const shell = await readFile('site/eleventy-helpers/gb-shell-spec.cjs', 'utf8');
+  for (const m of shell.matchAll(/\bicon:\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);
+  for (const m of shell.matchAll(/\bicon\([^,()]+,\s*'([a-z][a-z0-9_]*)'\)/g)) certain.add(m[1]);
+  for (const m of shell.matchAll(/\$(?:then|else):\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);
   // Ligatures in component styles: content: 'arrow_drop_down', or a custom
   // property the content reads (--icon: 'radio_button_checked').
   for (const file of [...(await walk('material-design-expressive/components', (n) => n.endsWith('.scss'))), ...(await walk('material-design-expressive/styles', (n) => n.endsWith('.scss')))]) {

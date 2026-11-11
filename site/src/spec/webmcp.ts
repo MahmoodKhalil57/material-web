@@ -5,7 +5,7 @@
  */
 
 /**
- * WebMCP tools of the /3.0/ docs (imported by gb.ts).
+ * WebMCP tools of the /3.0/ docs (imported by shell.ts).
  *
  * Follows the WebMCP draft (https://webmachinelearning.github.io/webmcp/,
  * Draft Community Group Report): `document.modelContext.registerTool(tool,
@@ -17,12 +17,13 @@
  *
  * Nothing is registered where the API is missing, on prerendered pages before
  * they are shown, or outside /3.0/ (the v2.5 site). The tools reuse the search
- * index and ranking of search.ts and the Markdown of every page (URL + ".md").
+ * index and ranking of search-index.ts (as the search bar) and the Markdown
+ * of every page (URL + ".md").
  * `window.gbDocsTools` maps each tool name to its execute function, for the
  * demo on the AI agents page and for debugging.
  */
 
-import {loadIndex, snippet, type Index, type Page, type Section} from './search.js';
+import {loadIndex, snippet, type Index, type Page, type Section} from './search-index.js';
 
 interface ToolDefinition {
   name: string;

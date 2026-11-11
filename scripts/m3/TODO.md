@@ -523,9 +523,9 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
   `{% gbexample "<dir>/<story>" %}` (live demo with its code),
   `{% gbapi "<dir>" %}` (generated API tables), `{% playgroundexample ... %}`.
   Generated pages (compliance) are written into docs/3.0 by their generator.
-- Layout: `gb` (site/content/_includes/gb/default.html), data it gets:
-  `title`, `description`, `page.url`, `content`, `collections.gb3` (all 3.0
-  pages with `data.section/order/title`), `toc` (from the content headings).
+- Layout: `gb/spec.html` (the spec shell; it replaced gb/default.html), data
+  it gets: `title`, `description`, `section`, `page.url`, `content`,
+  `collections.gb3` (all 3.0 pages with `data.section/order/title`).
 
 ## M-1 (Sonnet): export the pages
 - [x] A one-shot script writes every current 3.0 page (component pages with

@@ -17,13 +17,16 @@
  *   demos refer to them (popovertarget, anchor).
  * - Demo iframes load when near the viewport (84 at once exhaust a browser);
  *   the snapshot step loads them a few at a time.
- * - gb.js blocks rendering, so the page's tools (window.gbDocsTools) exist
- *   before a demo iframe runs.
+ * - The library's styles only (m3.css, md-gb-prose), as the spec shell.
+ * - The spec shell's script (/js/spec/shell.js: the theme, the demo frames'
+ *   theme, the WebMCP tools) blocks rendering, so the page's tools
+ *   (window.gbDocsTools) exist before a demo iframe runs.
  * - noindex, and left out of the sitemap and the collections.
  */
 
 const cheerio = require('cheerio');
 const {SECTIONS, SITE, absolute, sorted} = require('../eleventy-helpers/gb-site.cjs');
+const {shapeAttributes, shapeProps} = require('../eleventy-helpers/gb-shapes.cjs');
 
 const esc = (s) =>
   String(s ?? '')
@@ -95,6 +98,23 @@ class GbAll {
         const d = docs.get(dest.url);
         $(el).attr('href', target.hash && d.ids.has(target.hash) ? `#${d.slug}--${target.hash}` : `#${d.slug}`);
       });
+      // Material shapes (gb-shapes.cjs) are md-gb-shape, as on the pages,
+      // with a tile's icon on its shape.
+      $('svg[data-shape]').each((_, el) => {
+        const shape = $(el);
+        const classes = [shape, ...shape.parents().toArray().map((p) => $(p))].map((n) => n.attr('class') ?? '').join(' ');
+        const props = shapeProps(el.attribs, {
+          tone: shape.closest('[data-tone]').attr('data-tone') ?? '',
+          state: shape.closest('[data-state]').attr('data-state') ?? '',
+          classes,
+        });
+        const icon = shape.siblings('md-gb-icon').first();
+        shape.replaceWith(`<md-gb-shape ${shapeAttributes(props)}>${icon.length ? $.html(icon) : ''}</md-gb-shape>`);
+        icon.remove();
+      });
+      // The compatibility rows' logos have no size of their own (the old
+      // shell's styles gave them one).
+      $('svg.gb-compat-logo-svg').attr('width', '24').attr('height', '24');
       // Demo iframes (srcdoc) load as they come near the viewport (the inline
       // script below): 84 of them at once exhaust the browser's resources.
       $('iframe[srcdoc]').each((_, el) => {
@@ -126,6 +146,9 @@ class GbAll {
       .join('\n');
 
     const components = this.gbcomponents ? this.gbcomponents(body) : '';
+    // The library's styles only (m3.css, md-gb-prose), as the spec shell.
+    const styles = this.gbstyles ? this.gbstyles() : '';
+    const fonts = data.gbFonts?.stylesheet ? `<link rel="stylesheet" href="${esc(data.gbFonts.stylesheet)}" />` : '';
     return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -136,11 +159,11 @@ class GbAll {
     <meta name="robots" content="noindex" />
     <meta name="color-scheme" content="light dark" />
     <link href="/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;family=Material+Symbols+Outlined&amp;display=swap" />
-    <link rel="stylesheet" href="/js/gb/gb.css" />
+    ${fonts}
+    ${styles}
     <script>
-      // Demo iframes run before gb.js registers window.gbDocsTools (modules are
-      // deferred): calls wait for the real tools.
+      // Demo iframes run before shell.js registers window.gbDocsTools (modules
+      // are deferred): calls wait for the real tools.
       (() => {
         const stub = new Proxy({}, {
           get: (_, name) => async (...args) => {
@@ -160,16 +183,18 @@ class GbAll {
         } catch (e) {}
       })();
     </script>
-    <script type="module" src="/js/gb/gb.js" blocking="render"></script>
+    <script type="module" src="/js/spec/shell.js" blocking="render"></script>
   </head>
-  <body class="gb-all-body">
-    <main class="gb-main gb-all" id="main" tabindex="-1">
-      <header class="gb-all-header" id="top">
-        <p class="gb-all-title">${esc(SITE.name)}</p>
-        <p class="gb-lede">${esc(SITE.description)} All pages of <a href="${esc(absolute('/3.0/'))}">${esc(absolute('/3.0/'))}</a> on one page.</p>
-        <nav class="gb-all-contents" aria-label="Contents"><ul>${contents}</ul></nav>
+  <body>
+    <main id="main" tabindex="-1">
+      <md-gb-prose>
+      <header id="top">
+        <p><strong>${esc(SITE.name)}</strong></p>
+        <p>${esc(SITE.description)} All pages of <a href="${esc(absolute('/3.0/'))}">${esc(absolute('/3.0/'))}</a> on one page.</p>
+        <nav aria-label="Contents"><ul>${contents}</ul></nav>
       </header>
 ${body}
+      </md-gb-prose>
     </main>
     ${components}
     <script>

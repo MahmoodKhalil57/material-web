@@ -30,8 +30,8 @@ module.exports = function (eleventyConfig) {
   // copy folders to the 11ty output folder
   eleventyConfig
     .addPassthroughCopy({ [`${jsDir}/`]: 'js/' })
-    // The /3.0/ service worker is served from its scope (src/gb/sw.ts).
-    .addPassthroughCopy({ [`${jsDir}/gb/sw.js`]: '3.0/sw.js' })
+    // The /3.0/ service worker is served from its scope (src/spec/sw.ts).
+    .addPassthroughCopy({ [`${jsDir}/spec/sw.js`]: '3.0/sw.js' })
     .addPassthroughCopy('content/css')
     .addPassthroughCopy('content/fonts')
     .addPassthroughCopy('content/images')
@@ -55,11 +55,9 @@ module.exports = function (eleventyConfig) {
   inlineCss(eleventyConfig, DEV);
   inlineJS(eleventyConfig, DEV, { jsDir });
   gbShortcodes(eleventyConfig);
-  // The spec shell (layout gb/spec.html; MWC_SPEC_SHELL=1 in catalog-dev).
+  // The spec shell (layout gb/spec.html).
   require('./eleventy-helpers/shortcodes/gb-spec-shell.cjs')(eleventyConfig);
   require('./eleventy-helpers/shortcodes/gb-shadcn.cjs')(eleventyConfig);
-  require('./eleventy-helpers/filters/gb-pager.cjs')(eleventyConfig);
-  require('./eleventy-helpers/filters/gb-outline.cjs')(eleventyConfig);
   // /3.0/ site metadata: gbAll collection, gbhead shortcode.
   gbSite(eleventyConfig);
 

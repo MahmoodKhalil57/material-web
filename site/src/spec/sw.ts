@@ -174,7 +174,7 @@ sw.addEventListener('fetch', (e: FetchEvent) => {
     return;
   }
 
-  // The search index (search.ts) changes with every build: network first,
+  // The search index (search-index.ts) changes with every build: network first,
   // the cached copy offline.
   if (url.origin === location.origin && url.pathname === `${START}search-index.json`) {
     e.respondWith(networkFirst(request, PAGES, NETWORK_TIMEOUT, undefined, e));

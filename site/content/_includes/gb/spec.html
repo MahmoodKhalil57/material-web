@@ -23,9 +23,11 @@
     <link rel="stylesheet" href="{{ gbFonts.stylesheet }}" />
     {% gbstyles %}
     <script>
-      // Before first paint: the saved color mode, and reduced motion (while
-      // it's on, prefers-reduced-motion queries from scripts answer "reduce",
-      // so the components take their reduced-motion paths).
+      // Before first paint: the saved color mode, the dynamic color CSS of the
+      // saved theme (cached by src/spec/tools.ts), and reduced motion: the
+      // library's .md-motion-reduced (its motion tokens resolve to 0ms), and
+      // prefers-reduced-motion queries from scripts answer "reduce", so the
+      // components take their reduced-motion paths.
       (() => {
         const root = document.documentElement;
         const matchMedia = window.matchMedia.bind(window);
@@ -34,9 +36,23 @@
             ? matchMedia(/no-preference/.test(query) ? 'not all' : 'all')
             : matchMedia(query);
         try {
-          if (localStorage.getItem('gb-reduce-motion') === '1') root.dataset.motion = 'reduce';
+          if (localStorage.getItem('gb-reduce-motion') === '1') {
+            root.dataset.motion = 'reduce';
+            root.classList.add('md-motion-reduced');
+          }
           const mode = localStorage.getItem('color-mode') || 'auto';
           root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
+          const cache = JSON.parse(localStorage.getItem('gb-theme-css') || 'null');
+          const seed = localStorage.getItem('gb-seed-color');
+          const key = [seed, localStorage.getItem('gb-scheme-variant') || 'tonal-spot', localStorage.getItem('gb-contrast') || 'standard'].join('|');
+          // Only a cache for the saved theme, of this version of tools.ts
+          // (THEME_CACHE_VERSION).
+          if (cache && cache.v === 3 && cache.css && seed && cache.key === key) {
+            const style = document.createElement('style');
+            style.id = 'gb-theme-style';
+            style.textContent = cache.css;
+            document.head.append(style);
+          }
         } catch (e) {}
       })();
     </script>

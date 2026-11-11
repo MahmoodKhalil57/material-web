@@ -17,7 +17,7 @@
  * - Lighthouse: the category scores and failed audits of the component's
  *   test page (/3.0/lab/<slug>/: its first example alone), not this page.
  *
- * Styles: site/src/gb/compat.css.
+ * The row's shape is md-gb-shape in its status color (gb-shapes.cjs shapeProps).
  */
 
 const {existsSync, readFileSync, statSync} = require('node:fs');

@@ -51,9 +51,10 @@ const {values: args} = parseArgs({
 });
 
 const GOOD = {lcp: 2500, cls: 0.1, inp: 200};
-const NEXT = '.gb-pager-top .gb-pager-next';
+// The spec shell's pager (eleventy-helpers/gb-shell-spec.cjs).
+const NEXT = 'nav[aria-label="Previous and next pages"] md-gb-button[rel="next"]';
 const LAYOUT_CSS = `
-  .gb-content { visibility: hidden !important; }
+  #gb-content { visibility: hidden !important; }
   *, *::before, *::after { color: transparent !important; text-shadow: none !important; }
   /* Inherited into the components' shadow roots, which set their own color. */
   :root { -webkit-text-fill-color: transparent !important; }

@@ -24,7 +24,9 @@
  * - Companion rail (large windows): the page outline.
  *
  * State: `/colorMode` ('auto' | 'light' | 'dark'), `/reduceMotion`,
- * `/railExpanded`. Actions (src/spec/shell.ts): `cycleColorMode`.
+ * `/railExpanded`, `/route` ('' | 'loading' | 'linear'), and the tools' and
+ * search's. Actions (src/spec/shell.ts): `cycleColorMode`, `toggleMotion`,
+ * the tools' (tools.ts) and the search's (search.ts).
  */
 
 const SECTIONS = [
@@ -45,7 +47,7 @@ const GROUPS = [
 
 const REPO = 'https://github.com/MahmoodKhalil57/material-web';
 
-/** Previous and next pages in the rail's order (as gb-pager.cjs). */
+/** Previous and next pages in the rail's order. */
 function pager(pages, url) {
   const sequence = [{url: '/3.0/', title: 'Home'}];
   for (const section of SECTIONS) {
@@ -98,18 +100,24 @@ function shellSpec(page, pages, content) {
 
   // Top app bar.
   // Search (app-bars.md, Search app bar): the results are a repeat over
-  // `/search/results`, which src/spec/search.ts fills as the query changes.
+  // `/search/results`, which src/spec/search.ts fills as the query changes:
+  // the site's actions, then pages.
   add('search', {
     type: 'SearchBar',
     props: {placeholder: 'Search Material Web', ariaLabel: 'Search Material Web', value: {$bindState: '/search/query'}},
-    repeat: {statePath: '/search/results', key: 'url'},
+    repeat: {statePath: '/search/results', key: 'key'},
     children: [
       add('search-result', {
         type: 'ListItem',
         props: {},
         children: [add('search-result-title', {type: 'Text', props: {text: {$item: 'title'}}})],
-        slots: {'supporting-text': [add('search-result-snippet', {type: 'Text', props: {text: {$item: 'snippet'}}})]},
-        on: {click: {action: 'openResult', params: {path: {$item: 'url'}}}},
+        slots: {
+          leading: [
+            add('search-result-icon', {type: 'Icon', props: {}, children: [add('search-result-icon-name', {type: 'Text', props: {text: {$item: 'icon'}}})]}),
+          ],
+          'supporting-text': [add('search-result-snippet', {type: 'Text', props: {text: {$item: 'snippet'}}})],
+        },
+        on: {click: {action: 'openResult', params: {path: {$item: 'key'}}}},
       }),
     ],
     on: {input: {action: 'search'}, search: {action: 'openTopResult'}},
@@ -193,7 +201,7 @@ function shellSpec(page, pages, content) {
   }
   add('rail', {
     type: 'NavRail',
-    props: {collapsible: true, expanded: {$bindState: '/railExpanded'}, ariaLabel: 'Site'},
+    props: {id: 'gb-rail', collapsible: true, expanded: {$bindState: '/railExpanded'}, ariaLabel: 'Site'},
     children: railItems,
   });
 
@@ -227,6 +235,19 @@ function shellSpec(page, pages, content) {
     children: [...(prev ? [pagerLink('pager-prev', prev, 'prev')] : []), ...(next ? [pagerLink('pager-next', next, 'next')] : [])],
   });
   const article = [];
+  // Route progress (src/spec/navigation.ts sets `/route`), following the M3
+  // progress indicator guidance ("Expected wait time"): the loading
+  // indicator for a wait over 200ms, the linear indicator after 5s.
+  article.push(
+    add('route', {
+      type: 'Html',
+      props: {tag: 'div'},
+      children: [
+        add('route-loading', {type: 'LoadingIndicator', props: {contained: true, ariaLabel: 'Loading page'}, visible: {$state: '/route', eq: 'loading'}}),
+        add('route-linear', {type: 'Progress', props: {ariaLabel: 'Loading page'}, visible: {$state: '/route', eq: 'linear'}}),
+      ],
+    }),
+  );
   if (page.title) article.push(add('title', {type: 'Html', props: {tag: 'h1', text: page.title}}));
   if (page.description) article.push(add('lede', {type: 'Html', props: {tag: 'p', text: page.description}}));
   article.push(add('content', {type: 'Html', props: {tag: 'div', id: 'gb-content'}}));
@@ -297,6 +318,7 @@ function shellSpec(page, pages, content) {
       install: {open: false},
       snack: {open: false, text: ''},
       search: {query: '', results: []},
+      route: '',
     },
   };
 }

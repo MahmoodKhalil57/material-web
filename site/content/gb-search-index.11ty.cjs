@@ -5,7 +5,7 @@
  */
 
 /**
- * The search index of the /3.0/ docs (client: src/gb/search.ts), written to
+ * The search index of the /3.0/ docs (client: src/spec/search-index.ts), written to
  * /3.0/search-index.json from collections.gb3.
  *
  * Format (short keys, to stay small):
