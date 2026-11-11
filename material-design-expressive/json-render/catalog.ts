@@ -814,6 +814,26 @@ export const COMPONENTS = {
     deprecated: false,
     spec: ["https://m3.material.io/components/fab-menu"] as string[],
   },
+  Grid: {
+    tag: "md-gb-grid",
+    props: z
+      .object({
+        /** The accessible name (aria-label). */
+        ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
+        /** The number of columns each child spans (1 to 12), at most the window size class's columns. 1, 2, 4 or 12 make full rows at every breakpoint. */
+        span: dynamic(z.number()).optional(),
+      })
+      .strict(),
+    slots: ["default"] as string[],
+    events: [] as string[],
+    attributes: {ariaLabel: "aria-label", id: "id", span: "span"} as Record<string, string>,
+    booleans: [] as string[],
+    description: "The M3 layout grid: columns that adapt across breakpoints. Slots: default. M3: grids-spacing.",
+    deprecated: false,
+    spec: ["https://m3.material.io/foundations/layout/grids-spacing"] as string[],
+  },
   Icon: {
     tag: "md-gb-icon",
     props: z
@@ -1915,6 +1935,34 @@ export const COMPONENTS = {
     description: "A Material Design component. Slots: default, leading, trailing. M3: split-button.",
     deprecated: false,
     spec: ["https://m3.material.io/components/split-button"] as string[],
+  },
+  Stack: {
+    tag: "md-gb-stack",
+    props: z
+      .object({
+        /** How the children line up across the stack. */
+        align: dynamic(z.enum(["start", "center", "end", "stretch", "baseline"])).optional(),
+        /** The accessible name (aria-label). */
+        ariaLabel: dynamic(z.string()).optional(),
+        /** Children one below the other (`column`) or side by side (`row`). */
+        direction: dynamic(z.enum(["column", "row"])).optional(),
+        /** The space between children: a step of the spacing scale (200 is 16px). */
+        gap: dynamic(z.enum(["0", "25", "50", "75", "100", "125", "150", "175", "200", "250", "300", "400", "450", "500", "600", "700", "800", "900"])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
+        /** How the children share the space along the stack. */
+        justify: dynamic(z.enum(["start", "center", "end", "space-between"])).optional(),
+        /** Whether a row wraps onto more lines when its children don't fit. */
+        wrap: dynamic(z.boolean()).optional(),
+      })
+      .strict(),
+    slots: ["default"] as string[],
+    events: [] as string[],
+    attributes: {align: "align", ariaLabel: "aria-label", direction: "direction", gap: "gap", id: "id", justify: "justify", wrap: "wrap"} as Record<string, string>,
+    booleans: ["wrap"] as string[],
+    description: "A column or row of children spaced with the M3 spacing scale. Slots: default. M3: grids-spacing.",
+    deprecated: false,
+    spec: ["https://m3.material.io/foundations/layout/grids-spacing"] as string[],
   },
   Switch: {
     tag: "md-gb-switch",

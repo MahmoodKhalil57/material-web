@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 238 |
-| Custom elements | 62 |
-| Classes | 102 |
+| Public modules | 242 |
+| Custom elements | 64 |
+| Classes | 104 |
 | Functions | 335 |
 | Constants and variables | 308 |
-| Types and interfaces | 320 |
+| Types and interfaces | 323 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2190 of 2190 (100%) |
+| JSDoc coverage | 2205 of 2205 (100%) |
 
 ## Contents
 
@@ -3750,6 +3750,65 @@ One highlighted file of a demo's code.
 | `Token` | interface | `{kind; text}` | A run of code of one kind. |
 | `tokenize` | function | `(code: string, language: string): Token[]` | Splits code into tokens; consecutive plain characters are one token. |
 | `TokenKind` | type | `'' \| 'comment' \| 'tag' \| 'attr' \| 'string' \| 'keyword' \| 'number' \| 'property' \| 'punctuation'` | A token kind; `''` is plain text. |
+
+### `extras/layout/`
+
+#### `<md-gb-grid>`
+
+The M3 layout grid: columns that adapt across breakpoints.
+
+- Class: `GridElement` in `extras/layout/grid-element.js`
+- Import: `import '@material/web/extras/layout/md-gb-grid.js';`
+- Spec: [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) (No page of its own: the layout grid and spacing of the grids & spacing page.)
+- Spec sections cited: `layout-grids-spacing/grids`
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `span` | `span` (reflects) | `number` | `4` | The number of columns each child spans (1 to 12), at most the window size class's columns. 1, 2, 4 or 12 make full rows at every breakpoint. |
+
+| Slot | Description |
+| --- | --- |
+| (default) | The grid's items. |
+
+#### `<md-gb-stack>`
+
+A column or row of children spaced with the M3 spacing scale.
+
+- Class: `StackElement` in `extras/layout/stack-element.js`
+- Import: `import '@material/web/extras/layout/md-gb-stack.js';`
+- Spec: [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) (No page of its own: the layout grid and spacing of the grids & spacing page.)
+- Spec sections cited: `layout-grids-spacing/spacing`
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `align` | `align` (reflects) | `"start" \| "center" \| "end" \| "stretch" \| "baseline"` | `'stretch'` | How the children line up across the stack. |
+| `direction` | `direction` (reflects) | `"column" \| "row"` | `'column'` | Children one below the other (`column`) or side by side (`row`). |
+| `gap` | `gap` (reflects) | `"0" \| "25" \| "50" \| "75" \| "100" \| "125" \| "150" \| "175" \| "200" \| "250" \| "300…` | `'200'` | The space between children: a step of the spacing scale (200 is 16px). |
+| `justify` | `justify` (reflects) | `"start" \| "center" \| "end" \| "space-between"` | `'start'` | How the children share the space along the stack. |
+| `wrap` | `wrap` (reflects) | `boolean` | `false` | Whether a row wraps onto more lines when its children don't fit. |
+
+| Slot | Description |
+| --- | --- |
+| (default) | The stack's items. |
+
+#### `extras/layout/grid-element.js`
+
+- Spec: [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) (No page of its own: the layout grid and spacing of the grids & spacing page.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `GridElement` | class | `class GridElement extends LitElement` | The M3 layout grid (m3.material.io/foundations/layout/grids-spacing): its children are placed on columns that adapt across breakpoints (4 compact, 8 medium and expanded, 12 large and extra-large), with the breakpoint's spacer between them. |
+
+#### `extras/layout/stack-element.js`
+
+- Spec: [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) (No page of its own: the layout grid and spacing of the grids & spacing page.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `SpaceStep` | type | `\| '0' \| '25' \| '50' \| '75' \| '100' \| '125' \| '150' \| '175' \| '200' \| '250' \| '300' \| '400' \| '450' \| '500' \| '600' \| '700' \| '800' \| '900'` | A step of the M3 spacing scale (styles/spacing: `--md-sys-space-<step>`). |
+| `StackAlign` | type | `'stretch' \| 'start' \| 'center' \| 'end' \| 'baseline'` | How the children line up across the stack. |
+| `StackElement` | class | `class StackElement extends LitElement` | A column or row of children with a step of the M3 spacing scale between them (m3.material.io/foundations/layout/grids-spacing, Spacing): close spacing groups related elements, generous spacing separates groups and gives the most important content room. |
+| `StackJustify` | type | `'start' \| 'center' \| 'end' \| 'space-between'` | How the children share the space along the stack. |
 
 ### `extras/prose/`
 

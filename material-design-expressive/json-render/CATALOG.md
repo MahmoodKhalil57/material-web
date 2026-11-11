@@ -32,6 +32,7 @@ rules below.
 | `Fab` | `md-gb-fab` | 8 | default |   | [floating-action-button](https://m3.material.io/components/floating-action-button), [extended-fab](https://m3.material.io/components/extended-fab) |
 | `FabMenu` | `md-gb-fab-menu` | 6 | default, close-icon, icon | activate, toggle | [fab-menu](https://m3.material.io/components/fab-menu) |
 | `FabMenuItem` | `md-gb-fab-menu-item` | 2 | default, icon |   | [fab-menu](https://m3.material.io/components/fab-menu) |
+| `Grid` | `md-gb-grid` | 3 | default |   | [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) |
 | `Icon` | `md-gb-icon` | 2 | default |   | [icons](https://m3.material.io/styles/icons) |
 | `IconButton` | `md-gb-icon-button` | 20 | default | change, input | [icon-buttons](https://m3.material.io/components/icon-buttons) |
 | `List` | `md-gb-list` | 7 (+1 not JSON) | default | itemselectionchange, reorder | [lists](https://m3.material.io/components/lists) |
@@ -64,6 +65,7 @@ rules below.
 | `Snackbar` | `md-gb-snackbar` | 12 (+1 not JSON) | default, action, dismiss | close, closed, open, opened | [snackbar](https://m3.material.io/components/snackbar) |
 | `SnackbarHost` | `md-gb-snackbar-host` | 6 (+1 not JSON) | default | close, closed | [snackbar](https://m3.material.io/components/snackbar) |
 | `SplitButton` | `md-gb-split-button` | 5 | default, leading, trailing |   | [split-button](https://m3.material.io/components/split-button) |
+| `Stack` | `md-gb-stack` | 7 | default |   | [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) |
 | `Switch` | `md-gb-switch` | 8 | off-icon, on-icon | change, input | [switch](https://m3.material.io/components/switch) |
 | `Tab` | `md-gb-tab` | 4 | default, badge, label |   | [tabs](https://m3.material.io/components/tabs) |
 | `TabPanels` | `md-gb-tab-panels` | 4 | default |   | [tabs](https://m3.material.io/components/tabs) |

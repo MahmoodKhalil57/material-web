@@ -26557,6 +26557,228 @@
   },
   {
    "kind": "javascript-module",
+   "path": "extras/layout/grid-element.js",
+   "declarations": [
+    {
+     "kind": "class",
+     "name": "GridElement",
+     "tagName": "md-gb-grid",
+     "customElement": true,
+     "description": "The M3 layout grid: columns that adapt across breakpoints.",
+     "summary": "The M3 layout grid: columns that adapt across breakpoints.",
+     "attributes": [
+      {
+       "name": "span",
+       "type": {
+        "text": "number"
+       },
+       "fieldName": "span",
+       "default": "4",
+       "description": "The number of columns each child spans (1 to 12), at most the window size class's columns. 1, 2, 4 or 12 make full rows at every breakpoint."
+      }
+     ],
+     "members": [
+      {
+       "kind": "field",
+       "name": "span",
+       "type": {
+        "text": "number"
+       },
+       "privacy": "public",
+       "default": "4",
+       "description": "The number of columns each child spans (1 to 12), at most the window size class's columns. 1, 2, 4 or 12 make full rows at every breakpoint.",
+       "attribute": "span",
+       "reflects": true
+      }
+     ],
+     "slots": [
+      {
+       "name": "",
+       "description": "The grid's items."
+      }
+     ]
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "GridElement",
+     "declaration": {
+      "name": "GridElement",
+      "module": "/extras/layout/grid-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/layout/md-gb-grid.js",
+   "exports": [
+    {
+     "kind": "custom-element-definition",
+     "name": "md-gb-grid",
+     "declaration": {
+      "name": "GridElement",
+      "module": "/extras/layout/grid-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/layout/md-gb-stack.js",
+   "exports": [
+    {
+     "kind": "custom-element-definition",
+     "name": "md-gb-stack",
+     "declaration": {
+      "name": "StackElement",
+      "module": "/extras/layout/stack-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/layout/stack-element.js",
+   "declarations": [
+    {
+     "kind": "class",
+     "name": "StackElement",
+     "tagName": "md-gb-stack",
+     "customElement": true,
+     "description": "A column or row of children spaced with the M3 spacing scale.",
+     "summary": "A column or row of children spaced with the M3 spacing scale.",
+     "attributes": [
+      {
+       "name": "align",
+       "type": {
+        "text": "\"start\" | \"center\" | \"end\" | \"stretch\" | \"baseline\""
+       },
+       "fieldName": "align",
+       "default": "'stretch'",
+       "description": "How the children line up across the stack."
+      },
+      {
+       "name": "direction",
+       "type": {
+        "text": "\"column\" | \"row\""
+       },
+       "fieldName": "direction",
+       "default": "'column'",
+       "description": "Children one below the other (`column`) or side by side (`row`)."
+      },
+      {
+       "name": "gap",
+       "type": {
+        "text": "\"0\" | \"25\" | \"50\" | \"75\" | \"100\" | \"125\" | \"150\" | \"175\" | \"200\" | \"250\" | \"300\" | \"400\" | \"450\" | \"500\" | \"600\" | \"700\" | \"800\" | \"900\""
+       },
+       "fieldName": "gap",
+       "default": "'200'",
+       "description": "The space between children: a step of the spacing scale (200 is 16px)."
+      },
+      {
+       "name": "justify",
+       "type": {
+        "text": "\"start\" | \"center\" | \"end\" | \"space-between\""
+       },
+       "fieldName": "justify",
+       "default": "'start'",
+       "description": "How the children share the space along the stack."
+      },
+      {
+       "name": "wrap",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "wrap",
+       "default": "false",
+       "description": "Whether a row wraps onto more lines when its children don't fit."
+      }
+     ],
+     "members": [
+      {
+       "kind": "field",
+       "name": "align",
+       "type": {
+        "text": "\"start\" | \"center\" | \"end\" | \"stretch\" | \"baseline\""
+       },
+       "privacy": "public",
+       "default": "'stretch'",
+       "description": "How the children line up across the stack.",
+       "attribute": "align",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "direction",
+       "type": {
+        "text": "\"column\" | \"row\""
+       },
+       "privacy": "public",
+       "default": "'column'",
+       "description": "Children one below the other (`column`) or side by side (`row`).",
+       "attribute": "direction",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "gap",
+       "type": {
+        "text": "\"0\" | \"25\" | \"50\" | \"75\" | \"100\" | \"125\" | \"150\" | \"175\" | \"200\" | \"250\" | \"300\" | \"400\" | \"450\" | \"500\" | \"600\" | \"700\" | \"800\" | \"900\""
+       },
+       "privacy": "public",
+       "default": "'200'",
+       "description": "The space between children: a step of the spacing scale (200 is 16px).",
+       "attribute": "gap",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "justify",
+       "type": {
+        "text": "\"start\" | \"center\" | \"end\" | \"space-between\""
+       },
+       "privacy": "public",
+       "default": "'start'",
+       "description": "How the children share the space along the stack.",
+       "attribute": "justify",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "wrap",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Whether a row wraps onto more lines when its children don't fit.",
+       "attribute": "wrap",
+       "reflects": true
+      }
+     ],
+     "slots": [
+      {
+       "name": "",
+       "description": "The stack's items."
+      }
+     ]
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "StackElement",
+     "declaration": {
+      "name": "StackElement",
+      "module": "/extras/layout/stack-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "extras/prose/md-gb-prose.js",
    "exports": [
     {
