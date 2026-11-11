@@ -7,8 +7,8 @@
 import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../tooltip/md-gb-tooltip.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {
   DisclosureController,
   expandedUnlessFalseConverter,

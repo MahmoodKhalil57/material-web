@@ -7,7 +7,7 @@ node_modules
 tokens/versions/**/*-meta.scss
 *.map
 *.d.ts
-!types/*.d.ts
+!material-design-expressive/internal/types/*.d.ts
 .wireit/
 *.tsbuildinfo
 custom-elements.json

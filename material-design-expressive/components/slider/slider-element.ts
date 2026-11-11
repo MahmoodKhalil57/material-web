@@ -16,8 +16,8 @@ import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {when} from 'lit/directives/when.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {
   dispatchActivationClick,
   isActivationClick,

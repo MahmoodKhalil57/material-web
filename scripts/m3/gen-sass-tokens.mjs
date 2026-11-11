@@ -6,7 +6,7 @@
  */
 
 /**
- * Generates `material-design-expressive/tokens/versions/latest/sass/` (every md.ref, md.sys and md.comp
+ * Generates `material-design-expressive/foundations/design-tokens/versions/latest/sass/` (every md.ref, md.sys and md.comp
  * token set) from the M3 docs export downloaded by
  * `scripts/download-m3-specs.mjs`, in the same format as the upstream token
  * compiler.
@@ -14,7 +14,7 @@
  *   node scripts/m3/gen-sass-tokens.mjs [--out <dir>] [--specs .m3-specs]
  *
  * Default output is `.m3-specs/out/sass`; pass
- * `--out material-design-expressive/tokens/versions/latest/sass` to update the repo.
+ * `--out material-design-expressive/foundations/design-tokens/versions/latest/sass` to update the repo.
  */
 
 import {mkdir, readdir, writeFile} from 'node:fs/promises';

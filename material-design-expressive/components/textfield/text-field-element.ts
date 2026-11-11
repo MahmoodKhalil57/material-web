@@ -16,8 +16,8 @@ import {property, query} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {live} from 'lit/directives/live.js';
 import {styleMap} from 'lit/directives/style-map.js';
-import {type ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {type ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {stringConverter} from '../../internal/controller/string-converter.js';
 import {redispatchEvent} from '../../internal/events/redispatch-event.js';
 import {

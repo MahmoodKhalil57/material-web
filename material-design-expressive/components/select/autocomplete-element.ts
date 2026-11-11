@@ -7,7 +7,7 @@
 import {html, nothing, type PropertyValues} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import {live} from 'lit/directives/live.js';
-import {type ARIAMixinStrict} from '../../internal/aria/aria.js';
+import {type ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
 import {stringConverter} from '../../internal/controller/string-converter.js';
 import {
   createValidator,

@@ -7,8 +7,8 @@
 import {css, type CSSResultOrNative, html, isServer, LitElement, nothing} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {divider} from '../divider/divider.js';
 import {iconButton} from '../iconbutton/icon-button.js';
 import {AdaptiveController} from '../../foundations/layout/adaptive.js';

@@ -35,7 +35,7 @@
  *   back to 2021 inside MCU (`DynamicScheme.maybeFallbackSpecVersion`). A
  *   theme's `specVersion` reports the version actually used.
  * - `2021`: the original M3 rules, which the static baseline tokens
- *   (`md-color-tokens.css`, from `material-design-expressive/tokens/versions/latest`) follow.
+ *   (`md-color-tokens.css`, from `material-design-expressive/foundations/design-tokens/versions/latest`) follow.
  *
  * Platform: `phone` (default, also right for the web) or `watch` (changes
  * the 2025 rules only; tuned for always-dark wearables).

@@ -9,11 +9,11 @@
 @use 'sass:meta';
 @use 'sass:string';
 @use '../../../internal/sass/ext/map_ext';
-@use '../../../tokens/versions/latest/sass/md-ref-typeface';
-@use '../../../tokens/versions/latest/sass/md-sys-typescale';
-@use '../../../tokens/versions/latest/sass/md-sys-typescale-emphasized';
-@use '../../../tokens/versions/latest/sass/md-sys-typescale-emphasized-meta';
-@use '../../../tokens/versions/latest/sass/md-sys-typescale-meta';
+@use '../../../foundations/design-tokens/versions/latest/sass/md-ref-typeface';
+@use '../../../foundations/design-tokens/versions/latest/sass/md-sys-typescale';
+@use '../../../foundations/design-tokens/versions/latest/sass/md-sys-typescale-emphasized';
+@use '../../../foundations/design-tokens/versions/latest/sass/md-sys-typescale-emphasized-meta';
+@use '../../../foundations/design-tokens/versions/latest/sass/md-sys-typescale-meta';
 // go/keep-sorted end
 
 @mixin emit-custom-properties(

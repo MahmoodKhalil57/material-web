@@ -13,8 +13,8 @@ import {
   PropertyValues,
 } from "lit";
 import { property, query, state } from "lit/decorators.js";
-import { ARIAMixinStrict } from "../../internal/aria/aria.js";
-import { mixinDelegatesAria } from "../../internal/aria/delegate.js";
+import { ARIAMixinStrict } from "../../foundations/accessibility/aria/aria.js";
+import { mixinDelegatesAria } from "../../foundations/accessibility/aria/delegate.js";
 import {
   internals,
   mixinElementInternals,

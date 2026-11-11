@@ -9,7 +9,7 @@
 // levels of contrast" (.m3-specs/pages/styles/color/system.md). Medium gives a
 // minimum 3:1 ratio, high 7:1. Values come from the spec token sets
 // md.sys.color (medium-contrast / high-contrast contexts), generated into
-// material-design-expressive/tokens/versions/latest/sass by scripts/m3/gen-sass-tokens.mjs.
+// material-design-expressive/foundations/design-tokens/versions/latest/sass by scripts/m3/gen-sass-tokens.mjs.
 //
 // Use with md-color-tokens.css:
 // - `prefers-contrast: more` selects high contrast on :root.
@@ -19,12 +19,12 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'sass:meta';
-@use '../../tokens/versions/latest/sass/md-sys-color';
-@use '../../tokens/versions/latest/sass/md-sys-color__dark';
-@use '../../tokens/versions/latest/sass/md-sys-color__dark__high-contrast';
-@use '../../tokens/versions/latest/sass/md-sys-color__dark__medium-contrast';
-@use '../../tokens/versions/latest/sass/md-sys-color__high-contrast';
-@use '../../tokens/versions/latest/sass/md-sys-color__medium-contrast';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-color';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-color__dark';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-color__dark__high-contrast';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-color__dark__medium-contrast';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-color__high-contrast';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-color__medium-contrast';
 @use 'internal/color-tokens';
 // go/keep-sorted end
 

@@ -7,8 +7,8 @@
 import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {type FabSize} from '../fab/fab.js';
 import {applyDisclosure} from '../shared/disclosure.js';
 

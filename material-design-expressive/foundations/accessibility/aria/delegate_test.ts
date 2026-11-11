@@ -9,7 +9,7 @@
 import {html, LitElement, nothing, TemplateResult} from 'lit';
 import {customElement, property, queryAsync} from 'lit/decorators.js';
 
-import {Environment} from '../../testing/environment.js';
+import {Environment} from '../../../testing/environment.js';
 
 import {ARIAMixinStrict} from './aria.js';
 import {mixinDelegatesAria} from './delegate.js';

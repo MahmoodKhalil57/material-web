@@ -8,8 +8,8 @@ import {css, CSSResultOrNative, html, LitElement, nothing, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 
 import loadingIndicatorStyles from './loading-indicator.css' with {type: 'css'}; // github-only
 // import {styles as loadingIndicatorStyles} from './loading-indicator.cssresult.js'; // google3-only

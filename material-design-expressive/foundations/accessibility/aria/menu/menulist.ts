@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/// <reference types="../../../../types/popover.d.ts" />
+/// <reference types="../../../../internal/types/popover.d.ts" />
 
 import {CSSResultOrNative, LitElement, PropertyValues, css, html} from 'lit';
 import {property} from 'lit/decorators.js';

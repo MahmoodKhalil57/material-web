@@ -6,8 +6,8 @@
 
 import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {ripple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {fxSlot} from '../shared/fx.js';
 import {hasSlotted} from '../shared/has-slotted.js';

@@ -38,7 +38,7 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
   npx(['tsc', '-b', 'scripts/tsconfig.json']);
 
   log('Generating token metadata');
-  const tokenDir = join(ROOT, 'material-design-expressive', 'tokens', 'versions');
+  const tokenDir = join(ROOT, 'material-design-expressive', 'foundations', 'design-tokens', 'versions');
   const tokenFiles = [];
   for (const version of await readdir(tokenDir)) {
     const dir = join(tokenDir, version, 'sass');

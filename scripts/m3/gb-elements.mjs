@@ -44,7 +44,7 @@ export function readGbElements() {
   const cfg = ts.readConfigFile(cfgPath, ts.sys.readFile);
   const parsed = ts.parseJsonConfigFileContent(cfg.config, ts.sys, ROOT);
   const program = ts.createProgram({
-    rootNames: [...entryFiles, join(ROOT, 'types/css-imports.d.ts')],
+    rootNames: [...entryFiles, join(ROOT, 'material-design-expressive/internal/types/css-imports.d.ts')],
     options: {...parsed.options, noEmit: true, skipLibCheck: true},
   });
   const checker = program.getTypeChecker();

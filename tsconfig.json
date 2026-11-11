@@ -4,7 +4,7 @@
     "skipLibCheck": true
   },
   "include": [
-    "material-design-expressive/types/css-imports.d.ts",
+    "material-design-expressive/internal/types/css-imports.d.ts",
     "**/*"
   ],
   "exclude": [

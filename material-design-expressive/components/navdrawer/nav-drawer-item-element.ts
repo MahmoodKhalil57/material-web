@@ -7,8 +7,8 @@
 import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {guard} from 'lit/directives/guard.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {safeHref} from '../../internal/directives/safe-href.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 

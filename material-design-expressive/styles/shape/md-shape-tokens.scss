@@ -4,7 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
-@use '../../tokens/versions/latest/sass' as tokens;
+@use '../../foundations/design-tokens/versions/latest/sass' as tokens;
 // go/keep-sorted end
 
 @layer md.sys.shape {

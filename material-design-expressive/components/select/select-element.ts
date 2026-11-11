@@ -6,7 +6,7 @@
 
 import {html, nothing, type PropertyValues} from 'lit';
 import {property, query} from 'lit/decorators.js';
-import {type ARIAMixinStrict} from '../../internal/aria/aria.js';
+import {type ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
 import {
   createValidator,
   getValidityAnchor,

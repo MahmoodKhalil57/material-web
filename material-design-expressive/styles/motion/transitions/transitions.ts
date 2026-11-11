@@ -179,7 +179,7 @@ export const CONTAINER_TRANSFORM_FADE = {
 
 /**
  * Token values used when `md-motion-transitions.css` is not adopted
- * (`material-design-expressive/tokens/versions/latest/sass/_md-sys-motion.scss`).
+ * (`material-design-expressive/foundations/design-tokens/versions/latest/sass/_md-sys-motion.scss`).
  */
 const FALLBACK = {
   'container-transform': {

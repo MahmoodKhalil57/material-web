@@ -5,7 +5,7 @@
  */
 
 import {type CSSResultOrNative} from 'lit';
-import {Icon as IconBase} from '../../internal/icon/icon.js';
+import {Icon as IconBase} from './icon.js';
 import {adoptStyles} from '../adopt-styles.js';
 
 import iconStyles from './md-icon.css' with {type: 'css'}; // github-only

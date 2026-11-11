@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/// <reference types="../../../types/command-event.d.ts" />
-/// <reference types="../../../types/popover.d.ts" />
+/// <reference types="../../../internal/types/command-event.d.ts" />
+/// <reference types="../../../internal/types/popover.d.ts" />
 
 import {queryAssociatedById} from './query-associated.js';
 

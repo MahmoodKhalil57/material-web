@@ -5,8 +5,8 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'sass:math';
-@use '../../tokens/versions/latest/sass/md-sys-state';
-@use '../../tokens/versions/latest/sass/md-sys-state-focus-indicator';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-state';
+@use '../../foundations/design-tokens/versions/latest/sass/md-sys-state-focus-indicator';
 @use 'snackbar-tokens';
 // go/keep-sorted end
 

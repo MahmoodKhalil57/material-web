@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/// <reference types="../../../../types/popover.d.ts" />
+/// <reference types="../../../../internal/types/popover.d.ts" />
 
 // import 'jasmine'; (google3-only)
 

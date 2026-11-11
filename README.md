@@ -7,20 +7,21 @@ Material Web 2.5 components are on `main`.
 - Docs: https://mahmoodkhalil57.github.io/material-web/3.0/
 - `material-design-expressive/`: the library. Its folders follow the M3 docs
   pillars, one folder per docs page that has code:
-  - `foundations/`: `accessibility/` (the headless ARIA primitives in
-    `aria/`, the axe and ARIA suites, touch targets), `interaction/`
-    (`states/` with the focus ring and ripple, `gestures/`, `inputs/`,
-    `selection/`) and `layout/` (window size classes, density, RTL).
+  - `foundations/`: `design-tokens/` (the M3 token source, in
+    `versions/latest/sass`), `accessibility/` (the headless ARIA primitives
+    and ARIA mixins in `aria/`, the axe and ARIA suites, touch targets),
+    `interaction/` (`states/` with the focus ring and ripple, `gestures/`,
+    `inputs/`, `selection/`) and `layout/` (window size classes, density, RTL).
   - `styles/`: `color/`, `elevation/`, `icons/`, `motion/`, `shape/`,
     `spacing/` and `typography/`, each with its tokens, helpers and tests.
   - `components/`: the `md-gb-*` elements of the M3 components index, and
     `components/shared/` for behavior several of them share.
   - `internal/`: plumbing with no docs page (form `behaviors/`, Sass `sass/ext`,
-    controllers, events). `testing/` holds the test helpers, and `skill/`
-    is the agent skill for the library.
+    TypeScript declarations in `types/`, controllers, events, directives).
+    `testing/` holds the test helpers, and `skill/` is the agent skill for
+    the library.
 - `docs/`: the docs pages (Markdown).
 - `site/`: the docs site (Eleventy). `site/content/` holds the pages.
-- `tokens/`: the M3 token source (`material-design-expressive/tokens/versions/latest/sass`).
 - `scripts/`: build, site and publishing scripts.
 
 ## Develop

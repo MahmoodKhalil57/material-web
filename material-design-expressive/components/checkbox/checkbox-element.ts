@@ -6,8 +6,8 @@
 
 import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property, query} from 'lit/decorators.js';
-import {ARIAMixinStrict} from '../../internal/aria/aria.js';
-import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
+import {ARIAMixinStrict} from '../../foundations/accessibility/aria/aria.js';
+import {mixinDelegatesAria} from '../../foundations/accessibility/aria/delegate.js';
 import {redispatchEvent} from '../../internal/events/redispatch-event.js';
 import {
   createValidator,

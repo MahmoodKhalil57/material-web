@@ -23,7 +23,7 @@ import {
 // Suite 2 of the central CSS/token suites: the keyboard focus indicator
 // (foundations/interaction/states.md, Focused > Keyboard focus indicator). The
 // ring's thickness, offsets and color are the md.sys.state.focus-indicator
-// tokens (material-design-expressive/tokens/versions/latest/sass/_md-sys-state-focus-indicator.scss):
+// tokens (material-design-expressive/foundations/design-tokens/versions/latest/sass/_md-sys-state-focus-indicator.scss):
 // thickness 3px, outer offset 2px, inner offset -3px; the color is the
 // secondary role.
 const THICKNESS = '3px';

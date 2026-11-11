@@ -8,7 +8,7 @@
 
 import {styles as m3Styles} from './styles/m3.cssresult.js';
 
-import '../all.js';
+import './all.js';
 
 describe('all', () => {
   it('defines the components', () => {
