@@ -62,4 +62,18 @@ describe('spring motion tokens', () => {
       getComputedStyle(child).getPropertyValue('--md-sys-motion-spring-fast-spatial-duration').trim(),
     ).toBe('0ms');
   });
+
+  it('applies the classes on the root element, for the whole page', () => {
+    const root = document.documentElement;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try {
+      root.classList.add('md-motion-standard');
+      // The standard scheme's default spatial spring is shorter.
+      if (!reduced) expect(prop('--md-sys-motion-spring-default-spatial-duration')).toBe('220ms');
+      root.classList.add('md-motion-reduced');
+      expect(prop('--md-sys-motion-spring-default-spatial-duration')).toBe('0ms');
+    } finally {
+      root.classList.remove('md-motion-standard', 'md-motion-reduced');
+    }
+  });
 });

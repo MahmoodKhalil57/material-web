@@ -21,7 +21,8 @@
  * springs (opacity, color) keep animating, so every transition built on the
  * spring tokens degrades to a fade.
  *
- *   node scripts/m3/gen-motion.mjs [--out styles/motion/md-motion-tokens-spring.scss]
+ *   node scripts/m3/gen-motion.mjs
+ *     [--out material-design-expressive/styles/motion/md-motion-tokens-spring.scss]
  */
 
 import {writeFile} from 'node:fs/promises';
@@ -30,7 +31,7 @@ import {settleTime, springEasing} from './spring.mjs';
 
 const OUT = process.argv.includes('--out')
   ? process.argv[process.argv.indexOf('--out') + 1]
-  : 'styles/motion/md-motion-tokens-spring.scss';
+  : 'material-design-expressive/styles/motion/md-motion-tokens-spring.scss';
 
 /** Max |x - 1| after the duration ends. */
 const SETTLE = 0.002;
@@ -134,7 +135,9 @@ const scss = `//
   :root {
 ${declarations('expressive', '    ')}  }
 
-  // Standard motion scheme.
+  // Standard motion scheme. On the root element the class needs more than
+  // :where() to win over :root above.
+  :root.md-motion-standard,
   :where(.md-motion-standard) {
 ${declarations('standard', '    ')}  }
 
@@ -143,11 +146,14 @@ ${declarations('standard', '    ')}  }
   // instantly; effects springs (fades, color) are unchanged.
   @media (prefers-reduced-motion: reduce) {
     :root,
+    :root.md-motion-standard,
     :where(.md-motion-standard) {
 ${reducedDeclarations('      ')}    }
   }
 
-  // Opts a subtree into reduced motion regardless of the platform setting.
+  // Opts a subtree into reduced motion regardless of the platform setting,
+  // the whole page when it's on the root element.
+  :root.md-motion-reduced,
   :where(.md-motion-reduced) {
 ${reducedDeclarations('    ')}  }
 }

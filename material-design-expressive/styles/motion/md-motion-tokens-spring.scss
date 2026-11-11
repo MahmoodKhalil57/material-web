@@ -50,7 +50,9 @@
     --md-sys-motion-curve-slow-effects-duration: 300ms;
   }
 
-  // Standard motion scheme.
+  // Standard motion scheme. On the root element the class needs more than
+  // :where() to win over :root above.
+  :root.md-motion-standard,
   :where(.md-motion-standard) {
     // md.sys.motion.spring.fast.spatial: damping 0.9, stiffness 1400
     --md-sys-motion-spring-fast-spatial: linear(0, 0.004 1.5%, 0.017 3.25%, 0.041 5.25%, 0.073 7.25%, 0.115 9.5%, 0.174 12.25%, 0.383 21.25%, 0.462 24.75%, 0.53 28%, 0.589 31%, 0.659 35%, 0.721 39%, 0.777 43.25%, 0.824 47.5%, 0.867 52.25%, 0.902 57.25%, 0.932 62.75%, 0.955 68.5%, 0.972 74.75%, 0.985 81.75%, 0.993 89.25%, 1);
@@ -89,6 +91,7 @@
   // instantly; effects springs (fades, color) are unchanged.
   @media (prefers-reduced-motion: reduce) {
     :root,
+    :root.md-motion-standard,
     :where(.md-motion-standard) {
       --md-sys-motion-spring-fast-spatial: linear;
       --md-sys-motion-spring-fast-spatial-duration: 0ms;
@@ -105,7 +108,9 @@
     }
   }
 
-  // Opts a subtree into reduced motion regardless of the platform setting.
+  // Opts a subtree into reduced motion regardless of the platform setting,
+  // the whole page when it's on the root element.
+  :root.md-motion-reduced,
   :where(.md-motion-reduced) {
     --md-sys-motion-spring-fast-spatial: linear;
     --md-sys-motion-spring-fast-spatial-duration: 0ms;
