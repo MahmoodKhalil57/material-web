@@ -27,18 +27,25 @@ const GB = resolve(ROOT, 'material-design-expressive');
 const posix = (p) => p.split(sep).join('/');
 
 /**
- * Every element with `{dir, tag, file, className, summary, props, methods,
- * slots, events, parts, cssProps}`, sorted by tag.
+ * Every element with `{dir, tag, file, classFile, className, summary,
+ * deprecated, props, methods, slots, events, parts, cssProps}`, sorted by
+ * tag.
+ *
+ * By default the md-gb-* elements of the element roots (components/ and
+ * extras/). `files` (absolute paths of the modules that register elements)
+ * and `tags` (a tag-name pattern) read others, such as the md-aria-*
+ * elements and the elements under styles/ (scripts/api/gen-api.mjs).
  */
-export function readGbElements() {
+export function readGbElements({files, tags = /^md-gb-/} = {}) {
   // Every element root: components/ (the M3 index) and extras/.
-  const entryFiles = elementDirs(ROOT)
-    .flatMap((d) =>
+  const entryFiles = (
+    files ??
+    elementDirs(ROOT).flatMap((d) =>
       readdirSync(d.dir)
         .filter((f) => /^md-gb-.*\.ts$/.test(f) && !f.endsWith('.d.ts'))
         .map((f) => join(d.dir, f)),
     )
-    .sort();
+  ).sort();
 
   const cfgPath = join(ROOT, 'tsconfig.json');
   const cfg = ts.readConfigFile(cfgPath, ts.sys.readFile);
@@ -57,7 +64,7 @@ export function readGbElements() {
     ts.forEachChild(source, function visit(node) {
       if (ts.isPropertySignature(node) && node.type && node.name) {
         const tag = node.name.text ?? node.name.getText().replace(/['"]/g, '');
-        if (/^md-gb-/.test(tag)) elements.push(describe(dir, tag, node, file));
+        if (tags.test(tag)) elements.push(describe(dir, tag, node, file));
       }
       ts.forEachChild(node, visit);
     });
@@ -70,10 +77,14 @@ export function readGbElements() {
     const classes = classChain(type);
     const own = ts.getJSDocCommentsAndTags(node).find(ts.isJSDoc);
     const summary = firstParagraph(flatten(own?.comment) || classes.map(docText).find(Boolean) || '');
+    // `@deprecated` on the element's class (the reason is its text).
+    const deprecatedTag = classes[0] && ts.getJSDocTags(classes[0]).find((t) => t.tagName.text === 'deprecated');
     return {
       dir,
       tag,
       file: posix(relative(ROOT, file)),
+      classFile: classes[0] ? posix(relative(ROOT, classes[0].getSourceFile().fileName)) : '',
+      deprecated: deprecatedTag ? clean(flatten(deprecatedTag.comment)) || true : false,
       className: symbol?.getName() ?? '',
       // The next class of the chain, when the element extends a labs/gb class.
       superclass: classes[1]?.name?.text ?? '',
@@ -177,7 +188,10 @@ export function readGbElements() {
       if (flags.some((f) => f & (ts.ModifierFlags.Private | ts.ModifierFlags.Protected))) continue;
       if (flags.some((f) => f & ts.ModifierFlags.Static)) continue;
       const reactive = decls.map(propertyDecorator).find(Boolean);
-      const doc = clean(ts.displayPartsToString(sym.getDocumentationComment(checker)));
+      // A member documented only by `@deprecated <reason>` is described by it.
+      const deprecatedTag = sym.getJsDocTags(checker).find((t) => t.name === 'deprecated');
+      const deprecation = deprecatedTag ? `Deprecated. ${clean(ts.displayPartsToString(deprecatedTag.text))}`.trim() : '';
+      const doc = clean(ts.displayPartsToString(sym.getDocumentationComment(checker))) || deprecation;
       if (reactive) {
         const primary = decls.find((d) => ts.isPropertyDeclaration(d) && d.initializer);
         const propType = checker.typeToString(

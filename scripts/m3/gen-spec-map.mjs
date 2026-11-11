@@ -28,63 +28,8 @@ const LIB = 'material-design-expressive';
 const SPECS = join('.m3-specs', 'pages');
 const OUT = join(LIB, 'SPEC-MAP.md');
 
-/**
- * Library folder -> the spec pages it implements (paths under
- * .m3-specs/pages, without `.md`), its docs page (under docs/) and a note.
- */
-export const SPEC_MAP = [
-  // Components (m3.material.io/components).
-  {dir: 'components/appbar', pages: ['components/app-bars'], docs: 'components/app-bar'},
-  {dir: 'components/badge', pages: ['components/badges'], docs: 'components/badge'},
-  {dir: 'components/button', pages: ['components/buttons', 'components/all-buttons'], docs: 'components/button',
-    note: '`all-buttons` is the overview of every button type.'},
-  {dir: 'components/buttongroup', pages: ['components/button-groups'], docs: 'components/button-group'},
-  {dir: 'components/card', pages: ['components/cards'], docs: 'components/card'},
-  {dir: 'components/carousel', pages: ['components/carousel'], docs: 'components/carousel'},
-  {dir: 'components/checkbox', pages: ['components/checkbox'], docs: 'components/checkbox'},
-  {dir: 'components/chip', pages: ['components/chips'], docs: 'components/chip'},
-  {dir: 'components/datepicker', pages: ['components/date-pickers'], docs: 'components/date-picker'},
-  {dir: 'components/dialog', pages: ['components/dialogs'], docs: 'components/dialog'},
-  {dir: 'components/divider', pages: ['components/divider'], docs: 'components/divider'},
-  {dir: 'components/fab', pages: ['components/floating-action-button', 'components/extended-fab'], docs: 'components/fab',
-    note: 'One element for both pages: a `label` makes it an extended FAB.'},
-  {dir: 'components/fabmenu', pages: ['components/fab-menu'], docs: 'components/fab-menu'},
-  {dir: 'components/iconbutton', pages: ['components/icon-buttons'], docs: 'components/icon-button'},
-  {dir: 'components/list', pages: ['components/lists'], docs: 'components/list'},
-  {dir: 'components/loadingindicator', pages: ['components/loading-indicator'], docs: 'components/loading-indicator'},
-  {dir: 'components/menu', pages: ['components/menus'], docs: 'components/menu'},
-  {dir: 'components/navbar', pages: ['components/navigation-bar'], docs: 'components/navigation-bar'},
-  {dir: 'components/navdrawer', pages: ['components/navigation-drawer'], docs: 'components/navigation-drawer',
-    note: 'Deprecated: no longer recommended in M3 Expressive. Use the expanded navigation rail.'},
-  {dir: 'components/navrail', pages: ['components/navigation-rail'], docs: 'components/navigation-rail'},
-  {dir: 'components/progress', pages: ['components/progress-indicators'], docs: 'components/progress'},
-  {dir: 'components/radio', pages: ['components/radio-button'], docs: 'components/radio'},
-  {dir: 'components/search', pages: ['components/search'], docs: 'components/search'},
-  {dir: 'components/segmentedbutton', pages: ['components/segmented-buttons'], docs: 'components/segmented-button'},
-  {dir: 'components/sheet', pages: ['components/bottom-sheets', 'components/side-sheets'], docs: 'components/sheets'},
-  {dir: 'components/slider', pages: ['components/sliders'], docs: 'components/slider'},
-  {dir: 'components/snackbar', pages: ['components/snackbar'], docs: 'components/snackbar'},
-  {dir: 'components/splitbutton', pages: ['components/split-button'], docs: 'components/split-button'},
-  {dir: 'components/switch', pages: ['components/switch'], docs: 'components/switch'},
-  {dir: 'components/tabs', pages: ['components/tabs'], docs: 'components/tabs'},
-  {dir: 'components/textfield', pages: ['components/text-fields'], docs: 'components/text-field'},
-  {dir: 'components/timepicker', pages: ['components/time-pickers'], docs: 'components/time-picker'},
-  {dir: 'components/toolbar', pages: ['components/toolbars'], docs: 'components/toolbar'},
-  {dir: 'components/tooltip', pages: ['components/tooltips'], docs: 'components/tooltip'},
-  // Extras (extras/): the library's own components, with no page of their
-  // own in the M3 components index. Each follows the pages listed.
-  {dir: 'extras/scaffold', pages: ['foundations/layout/scaffold'], docs: 'foundations/scaffold',
-    note: 'A Foundations > Layout page, not a component.'},
-  {dir: 'extras/select', pages: ['components/menus', 'components/text-fields'], docs: 'components/select',
-    note: 'No page of its own: a menu opened from a text field.'},
-  {dir: 'extras/pulltorefresh', pages: ['components/loading-indicator'], docs: 'components/pull-to-refresh',
-    note: 'No page of its own: the loading indicator page covers pull to refresh.'},
-  // Elements outside the component folders.
-  {dir: 'styles/icons', pages: ['styles/icons'], docs: 'styles/icons'},
-  {dir: 'styles/motion/transitions', pages: ['styles/motion/transitions'], docs: 'styles/motion-transitions'},
-  {dir: 'foundations/accessibility/aria', pages: [], docs: null,
-    note: 'Headless WAI-ARIA patterns that the components build on; M3 has no page for them.'},
-];
+export {SPEC_MAP} from './spec-map-data.mjs';
+import {SPEC_MAP} from './spec-map-data.mjs';
 
 const fail = (msg) => {
   console.error(`gen-spec-map: ${msg}`);

@@ -137,7 +137,9 @@ export class MenuItemElement extends baseClass {
     `,
   ];
 
+  /** Whether the item is checked, in a checkable group (`<md-gb-menu-group checkable>`). */
   @property({type: Boolean, reflect: true}) checked = false;
+  /** Whether the item is disabled: it can't be focused or activated. */
   @property({type: Boolean, reflect: true}) disabled = false;
 
   get menu(): HTMLElement | null {

@@ -56,6 +56,11 @@ export class MenuGroupElement extends baseClass {
     `,
   ];
 
+  /**
+   * Whether the group's items can be checked: `single` (one at a time, like
+   * radio buttons) or `multiple` (like checkboxes). Unset, items aren't
+   * checkable.
+   */
   @provide({context: menuItemCheckable})
   @property({reflect: true})
   checkable: MenuItemCheckable | null = null;

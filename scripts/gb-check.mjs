@@ -128,7 +128,9 @@ step('cssresult', () => {
  */
 // Generated stylesheet for ${cssPath}.
 import {css} from 'lit';
+/** The stylesheet, as a Lit \`CSSResult\` (for \`static styles\` or \`adoptStyles\`). */
 export const styles = css\`${css}\`;
+/** The stylesheet, as a constructed \`CSSStyleSheet\`. */
 export default styles.styleSheet!;
 `;
     if (!existsSync(tsPath) || readFileSync(tsPath, 'utf8') !== ts) writeFileSync(tsPath, ts);
@@ -147,6 +149,15 @@ if (typecheck) {
 if (emit) {
   step('emit', () => {
     node(BIN.tsc, ['-p', 'tsconfig.json', '--incremental', '--tsBuildInfoFile', join('.m3-specs', 'gb.tsbuildinfo')]);
+  });
+}
+
+// --all: the generated public API (API.md, custom-elements.json) and the spec
+// map (SPEC-MAP.md) must match the sources.
+if (all) {
+  step('api', () => {
+    node(join('scripts', 'api', 'gen-api.mjs'), ['--check']);
+    node(join('scripts', 'm3', 'gen-spec-map.mjs'), ['--check']);
   });
 }
 

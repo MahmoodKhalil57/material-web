@@ -1,0 +1,24 @@
+{
+  "//": "The library sources the public API is read from (scripts/api/gen-api.mjs): no tests, gaps, demos or test helpers.",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "../../material-design-expressive/internal/types/*.d.ts",
+    "../../material-design-expressive/all.ts",
+    "../../material-design-expressive/components/**/*.ts",
+    "../../material-design-expressive/extras/**/*.ts",
+    "../../material-design-expressive/foundations/**/*.ts",
+    "../../material-design-expressive/styles/**/*.ts",
+    "../../material-design-expressive/internal/**/*.ts"
+  ],
+  "exclude": [
+    "../../**/*_test.ts",
+    "../../**/*_gap.ts",
+    "../../**/demo/**",
+    "../../**/*.d.ts.map",
+    "../../material-design-expressive/foundations/design-tokens/**"
+  ]
+}

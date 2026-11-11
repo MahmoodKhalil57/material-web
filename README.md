@@ -23,6 +23,11 @@ Material Web 2.5 components are on `main`.
   - `SPEC-MAP.md` maps each spec page to its folder, elements and docs page;
     `scripts/m3/gen-spec-map.mjs` writes it and fails when a folder is in
     the wrong one of `components/` and `extras/`.
+  - `API.md` and `custom-elements.json` are the public API: every module,
+    element, function, constant, type, global stylesheet and design token a
+    user can import, with the spec pages each implements and its JSDoc.
+    `scripts/api/gen-api.mjs` writes both; `npm run gb:check -- --all` fails
+    when they are stale, and the npm package ships them.
   - `internal/`: plumbing with no docs page (form `behaviors/`, Sass `sass/ext`,
     TypeScript declarations in `types/`, controllers, events, directives).
     `testing/` holds the test helpers, and `skill/` is the agent skill for

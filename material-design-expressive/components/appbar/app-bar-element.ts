@@ -17,6 +17,20 @@ import {ScrollBehaviorController} from '../../foundations/interaction/gestures/s
 import {appBar, type AppBarSize, type AppBarVariant} from './app-bar.js';
 import {styles as appBarStyles} from './app-bar.cssresult.js';
 
+/** The most trailing actions the app bar shows at a window size class. */
+export interface AppBarAdaptiveOptions {
+  trailingActions: number;
+}
+
+/**
+ * Trailing actions per window size class: two on small windows, up to four on
+ * larger ones. Larger classes inherit from the next smaller one.
+ */
+export const TRAILING_ACTIONS: AdaptiveOptions<AppBarAdaptiveOptions> = {
+  compact: {trailingActions: 2},
+  expanded: {trailingActions: 4},
+};
+
 /**
  * A Material Design Expressive App Bar component (`md-gb-app-bar`).
  *
@@ -97,20 +111,6 @@ import {styles as appBarStyles} from './app-bar.cssresult.js';
  * @cssprop --trailing-space
  */
 // spec-labels: app-bars/specs/anatomy, app-bars/guidelines/anatomy, app-bars/guidelines/anatomy/headline, app-bars/guidelines/anatomy/leading-button, app-bars/specs/anatomy/subtitle, app-bars/specs/anatomy/search, app-bars/guidelines/usage, app-bars/specs/variants, app-bars/specs/baseline-app-bars
-/** The most trailing actions the app bar shows at a window size class. */
-export interface AppBarAdaptiveOptions {
-  trailingActions: number;
-}
-
-/**
- * Trailing actions per window size class: two on small windows, up to four on
- * larger ones. Larger classes inherit from the next smaller one.
- */
-export const TRAILING_ACTIONS: AdaptiveOptions<AppBarAdaptiveOptions> = {
-  compact: {trailingActions: 2},
-  expanded: {trailingActions: 4},
-};
-
 export class AppBarElement extends LitElement {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [

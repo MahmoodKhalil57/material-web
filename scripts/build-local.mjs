@@ -75,7 +75,11 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
       css.replace(/\.css$/, '.cssresult.ts'),
       `/**\n * @license\n * Copyright 2026 Google LLC\n * SPDX-License-Identifier: Apache-2.0\n */\n` +
         `// Generated stylesheet for ${relative(ROOT, css).replace(/\\/g, '/')}.\n` +
-        `import {css} from 'lit';\nexport const styles = css\`${content}\`;\nexport default styles.styleSheet!;\n`,
+        `import {css} from 'lit';\n` +
+        `/** The stylesheet, as a Lit \`CSSResult\` (for \`static styles\` or \`adoptStyles\`). */\n` +
+        `export const styles = css\`${content}\`;\n` +
+        `/** The stylesheet, as a constructed \`CSSStyleSheet\`. */\n` +
+        `export default styles.styleSheet!;\n`,
     );
   }
 

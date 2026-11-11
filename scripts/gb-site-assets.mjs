@@ -217,16 +217,21 @@ async function buildIcons(browser, c, log) {
 // ---------------------------------------------------------------------------
 // API manifest and agent skill.
 
-// Every element root (components/ and extras/).
-const COMPONENT_ROOTS = ELEMENT_ROOTS.map((r) => join(ROOT, 'material-design-expressive', r));
+// Every public folder (scripts/api/gen-api.mjs reads the public API from them).
+const COMPONENT_ROOTS = [...ELEMENT_ROOTS, 'foundations', 'styles'].map((r) => join(ROOT, 'material-design-expressive', r));
 const SKILL = join(ROOT, 'material-design-expressive', 'skill');
 /** Bump to regenerate custom-elements.json after changing how it is written. */
-const API_VERSION = 2;
+const API_VERSION = 3;
 
 /** The sources whose change changes the API: stat of every component .ts. */
 async function apiStamp() {
   const hash = createHash('sha1').update(`${API_VERSION}\n`);
-  const files = [join(ROOT, 'scripts', 'm3', 'gb-elements.mjs'), fileURLToPath(import.meta.url)];
+  const files = [
+    join(ROOT, 'scripts', 'm3', 'gb-elements.mjs'),
+    join(ROOT, 'scripts', 'api', 'gen-api.mjs'),
+    join(ROOT, 'scripts', 'm3', 'spec-map-data.mjs'),
+    fileURLToPath(import.meta.url),
+  ];
   const walkDir = async (dir) => {
     for (const e of await readdir(dir, {withFileTypes: true})) {
       const path = join(dir, e.name);
@@ -246,105 +251,6 @@ async function apiStamp() {
   return hash.digest('hex').slice(0, 16);
 }
 
-/** `(a: T, b?: U) => R` -> {parameters, returns} (top-level parts only). */
-function parseSignature(signature) {
-  if (!signature.startsWith('(')) return {parameters: [], returns: ''};
-  const split = (text) => {
-    const parts = [];
-    let depth = 0;
-    let start = 0;
-    for (let i = 0; i < text.length; i++) {
-      const ch = text[i];
-      if (ch === '=' && text[i + 1] === '>') i++;
-      else if ('([{<'.includes(ch)) depth++;
-      else if (')]}>'.includes(ch)) depth--;
-      else if (ch === ',' && depth === 0) {
-        parts.push(text.slice(start, i));
-        start = i + 1;
-      }
-    }
-    parts.push(text.slice(start));
-    return parts.map((p) => p.trim()).filter(Boolean);
-  };
-  let depth = 0;
-  let close = -1;
-  for (let i = 0; i < signature.length; i++) {
-    if (signature[i] === '=' && signature[i + 1] === '>' && depth === 0) break;
-    if ('([{'.includes(signature[i])) depth++;
-    else if (')]}'.includes(signature[i]) && --depth === 0) {
-      close = i;
-      break;
-    }
-  }
-  if (close < 0) return {parameters: [], returns: ''};
-  const parameters = split(signature.slice(1, close)).map((p) => {
-    const m = /^(\.\.\.)?([\w$]+)(\?)?\s*(?::\s*([\s\S]*))?$/.exec(p);
-    if (!m) return {name: p};
-    const out = {name: m[2]};
-    if (m[4]) out.type = {text: m[4].trim()};
-    if (m[3]) out.optional = true;
-    if (m[1]) out.rest = true;
-    return out;
-  });
-  const returns = /^\s*=>\s*([\s\S]*)$/.exec(signature.slice(close + 1))?.[1]?.trim() ?? '';
-  return {parameters, returns};
-}
-
-/** One element as a Custom Elements Manifest class declaration. */
-function cemDeclaration(e) {
-  const attributes = [];
-  const members = [];
-  for (const p of e.props) {
-    const field = {
-      kind: 'field',
-      name: p.name,
-      type: {text: p.type},
-      privacy: 'public',
-    };
-    if (p.default) field.default = p.default;
-    if (p.description) field.description = p.description;
-    if (p.attribute) {
-      field.attribute = p.attribute;
-      if (p.reflect) field.reflects = true;
-      const attribute = {name: p.attribute, type: {text: p.type}, fieldName: p.name};
-      if (p.default) attribute.default = p.default;
-      if (p.description) attribute.description = p.description;
-      attributes.push(attribute);
-    }
-    members.push(field);
-  }
-  for (const m of e.methods) {
-    // Custom element lifecycle callbacks are not API.
-    if (/^(connected|disconnected|adopted|attributeChanged)Callback$/.test(m.name)) continue;
-    const {parameters, returns} = parseSignature(m.signature);
-    const method = {kind: 'method', name: m.name, privacy: 'public'};
-    if (m.description) method.description = m.description;
-    if (parameters.length) method.parameters = parameters;
-    if (returns) method.return = {type: {text: returns}};
-    members.push(method);
-  }
-  const declaration = {kind: 'class', name: e.className, tagName: e.tag, customElement: true};
-  if (e.summary) {
-    declaration.description = e.summary;
-    declaration.summary = e.summary;
-  }
-  if (e.superclass) declaration.superclass = {name: e.superclass, module: `/${e.superclassFile.replace(/\.ts$/, '.js')}`};
-  if (attributes.length) declaration.attributes = attributes;
-  if (members.length) declaration.members = members;
-  const named = (list, extra) => list.map(([name, description]) => ({name, ...(description ? {description} : {}), ...extra?.(name)}));
-  if (e.events.length) {
-    declaration.events = e.events.map(([name, {type, description}]) => ({
-      name,
-      type: {text: type},
-      ...(description ? {description} : {}),
-    }));
-  }
-  if (e.slots.length) declaration.slots = named(e.slots);
-  if (e.parts.length) declaration.cssParts = named(e.parts);
-  if (e.cssProps.length) declaration.cssProperties = named(e.cssProps);
-  return declaration;
-}
-
 /**
  * custom-elements.json (https://github.com/webcomponents/custom-elements-manifest,
  * schema 2.1.0): every md-gb element with its attributes, members, events,
@@ -358,25 +264,12 @@ async function buildApiManifest(log) {
   const stampFile = join(OUT, 'custom-elements.stamp');
   const stamp = await apiStamp();
   if (existsSync(file) && existsSync(stampFile) && (await readFile(stampFile, 'utf8')) === stamp) return;
-  const {readGbElements} = await import(pathToFileURL(join(ROOT, 'scripts', 'm3', 'gb-elements.mjs')).href);
+  const {buildApi} = await import(pathToFileURL(join(ROOT, 'scripts', 'api', 'gen-api.mjs')).href);
   const t = Date.now();
-  const elements = readGbElements();
-  const modules = elements.map((e) => {
-    const path = e.file.replace(/\.ts$/, '.js');
-    return {
-      kind: 'javascript-module',
-      path,
-      declarations: [cemDeclaration(e)],
-      exports: [
-        {kind: 'js', name: e.className, declaration: {name: e.className, module: path}},
-        {kind: 'custom-element-definition', name: e.tag, declaration: {name: e.className, module: path}},
-      ],
-    };
-  });
-  const manifest = {schemaVersion: '2.1.0', readme: 'Material Web 3.0 (labs/gb): the md-gb-* custom elements.', modules};
+  const {manifest, elements} = buildApi();
   await writeFile(file, JSON.stringify(manifest, null, 1) + '\n');
   await writeFile(stampFile, stamp);
-  log?.(`custom-elements.json: ${elements.length} elements (${((Date.now() - t) / 1000).toFixed(1)}s)`);
+  log?.(`custom-elements.json: ${elements.length} elements, ${manifest.modules.length} modules (${((Date.now() - t) / 1000).toFixed(1)}s)`);
 }
 
 /** The agent skill (skill) as /3.0/skill/ (its index.json is an Eleventy template). */

@@ -11,6 +11,9 @@ tokens/versions/**/*-meta.scss
 .wireit/
 *.tsbuildinfo
 custom-elements.json
+# The library's public API manifest is generated (scripts/api/gen-api.mjs)
+# and committed, so API changes show in review.
+!material-design-expressive/custom-elements.json
 
 !site/**/*.css
 site/_dev

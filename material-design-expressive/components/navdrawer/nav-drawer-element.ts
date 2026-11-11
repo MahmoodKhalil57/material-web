@@ -55,11 +55,6 @@ const baseClass = mixinDelegatesAria(LitElement);
 /**
  * A Material Design navigation drawer.
  *
- * @deprecated "The navigation drawer is no longer recommended in the Material
- *     3 Expressive update" (navigation-drawer.md). Use an expanded
- *     navigation rail (`<md-gb-nav-rail expanded>`), which has mostly the
- *     same functionality. The drawer stays for apps that haven't moved yet.
- *
  * A standard drawer sits next to the app content and slides in and out with
  * `open`. A `modal` drawer opens over a scrim in a modal `<dialog>`: focus is
  * trapped inside it and restored when it closes, and it closes on Escape, a
@@ -69,6 +64,10 @@ const baseClass = mixinDelegatesAria(LitElement);
  * faster than 400px/s settles it closed with the spatial spring, otherwise it
  * settles back open). Set `gestures-disabled` to turn swiping off.
  *
+ * @deprecated "The navigation drawer is no longer recommended in the Material
+ *     3 Expressive update" (navigation-drawer.md). Use an expanded
+ *     navigation rail (`<md-gb-nav-rail expanded>`), which has mostly the
+ *     same functionality. The drawer stays for apps that haven't moved yet.
  * @slot - Navigation items (`md-gb-nav-drawer-item`), section labels (headings
  *     or `.nav-drawer-section-label`) and dividers (`md-gb-divider` or `<hr>`).
  * @slot headline - Optional headline shown above the items.

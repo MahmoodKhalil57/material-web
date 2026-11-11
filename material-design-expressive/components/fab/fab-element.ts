@@ -96,6 +96,11 @@ export class FabElement extends baseClass {
     `,
   ];
 
+  /**
+   * The color set: `primary-container` (default), `secondary-container`,
+   * `tertiary-container`, or the stronger `primary`, `secondary` and
+   * `tertiary`.
+   */
   @property() color: FabColor = 'primary-container';
 
   /**

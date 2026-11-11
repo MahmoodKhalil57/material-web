@@ -113,11 +113,20 @@ export class SliderElement extends baseClass {
   /** @nocollapse */
   static override styles: CSSResultOrNative[] = [focusRingStyles, sliderStyles];
 
+  /** The smallest value. */
   @property({type: Number}) min = 0;
+  /** The largest value. */
   @property({type: Number}) max = 100;
+  /** The value of a standard or centered slider (not `range`). */
   @property({type: Number}) value?: number;
+  /** The lower value of a `range` slider. */
   @property({type: Number, attribute: 'value-start'}) valueStart?: number;
+  /** The upper value of a `range` slider. */
   @property({type: Number, attribute: 'value-end'}) valueEnd?: number;
+  /**
+   * The step between values, or `'any'` for a continuous slider. Arrow keys
+   * move by one step; with `ticks`, a stop shows at each step.
+   */
   @property({
     converter: {
       fromAttribute(value: string | null): number | 'any' {
@@ -132,6 +141,7 @@ export class SliderElement extends baseClass {
     },
   })
   step: number | 'any' = 1;
+  /** The size: `xs` (default), `sm`, `md`, `lg` or `xl`. */
   @property({type: String, reflect: true}) size: SliderSize = 'xs';
   /**
    * The orientation of the slider.
@@ -141,18 +151,33 @@ export class SliderElement extends baseClass {
    */
   @property({type: String, reflect: true})
   orientation: SliderOrientation = 'horizontal';
+  /** Whether the slider selects a range with two handles (`value-start`, `value-end`). */
   @property({type: Boolean, reflect: true}) range = false;
+  /** Whether the active track starts at the middle of the range, for values with a neutral point. */
   @property({type: Boolean, reflect: true}) centered = false;
+  /** Whether to show a stop indicator at each `step`. */
   @property({type: Boolean}) ticks = false;
+  /** Whether to show the value indicator above the handle while it is hovered, pressed or keyboard-focused. */
   @property({type: Boolean}) labeled = false;
+  /**
+   * The text of the value indicator and the handle's accessible value, when
+   * the number alone is unclear (`5 minutes`). The slider does not format
+   * numbers itself.
+   */
   @property({attribute: 'value-label'}) valueLabel = '';
+  /** `value-label` for the lower handle of a `range` slider. */
   @property({attribute: 'value-label-start'}) valueLabelStart = '';
+  /** `value-label` for the upper handle of a `range` slider. */
   @property({attribute: 'value-label-end'}) valueLabelEnd = '';
   // The attributes are not `aria-*`: ARIA 1.3 defines no `aria-label-start`,
   // `aria-valuetext-start` and so on, and the prefix is reserved for it.
+  /** The accessible name of the lower handle of a `range` slider (default: `aria-label` + " start"). */
   @property({attribute: 'label-start'}) ariaLabelStart = '';
+  /** The accessible name of the upper handle of a `range` slider (default: `aria-label` + " end"). */
   @property({attribute: 'label-end'}) ariaLabelEnd = '';
+  /** The accessible value text of the lower handle (default: `value-label-start`, then the number). */
   @property({attribute: 'valuetext-start'}) ariaValueTextStart = '';
+  /** The accessible value text of the upper handle (default: `value-label-end`, then the number). */
   @property({attribute: 'valuetext-end'}) ariaValueTextEnd = '';
 
   private readonly formDisabled = new FormDisabledController(this);

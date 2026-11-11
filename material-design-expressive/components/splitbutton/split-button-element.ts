@@ -90,8 +90,14 @@ export class SplitButtonElement extends LitElement {
     `,
   ];
 
+  /** The color style: `filled` (default), `elevated`, `tonal` or `outlined`. */
   @property() color: SplitButtonColor = 'filled';
+  /** The size: `xs`, `sm` (default), `md`, `lg` or `xl`. */
   @property() size: SplitButtonSize = 'sm';
+  /**
+   * Whether the trailing button shows its selected (open) state. Set while
+   * the menu the trailing button opens (its `popovertarget`) is open.
+   */
   @property({type: Boolean}) selected = false;
 
   protected override render() {
