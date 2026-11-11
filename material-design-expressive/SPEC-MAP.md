@@ -60,6 +60,7 @@ pages listed.
 | --- | --- | --- | --- | --- |
 | [scaffold](https://m3.material.io/foundations/layout/scaffold) | `extras/scaffold/` | `md-gb-app-scaffold`, `md-gb-pane-scaffold` | [scaffold](../docs/foundations/scaffold.md) | A Foundations > Layout page, not a component. |
 | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) | `extras/select/` | `md-gb-autocomplete`, `md-gb-select`, `md-gb-select-option` | [select](../docs/components/select.md) | No page of its own: a menu opened from a text field. |
+| - | `extras/demo/` | `md-gb-demo`, `md-gb-demo-code` | - | No M3 page: an example and its code, as documentation shows them. |
 | [typography](https://m3.material.io/styles/typography) | `extras/prose/` | `md-gb-prose` | - | No page of its own: long-form text styled with the type scale (Applying type). |
 | [loading-indicator](https://m3.material.io/components/loading-indicator) | `extras/pulltorefresh/` | `md-gb-pull-to-refresh` | [pull-to-refresh](../docs/components/pull-to-refresh.md) | No page of its own: the loading indicator page covers pull to refresh. |
 

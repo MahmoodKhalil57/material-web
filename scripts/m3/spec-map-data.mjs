@@ -59,6 +59,8 @@ export const SPEC_MAP = [
     note: 'A Foundations > Layout page, not a component.'},
   {dir: 'extras/select', pages: ['components/menus', 'components/text-fields'], docs: 'components/select',
     note: 'No page of its own: a menu opened from a text field.'},
+  {dir: 'extras/demo', pages: [], docs: null,
+    note: 'No M3 page: an example and its code, as documentation shows them.'},
   {dir: 'extras/prose', pages: ['styles/typography'], docs: null,
     note: 'No page of its own: long-form text styled with the type scale (Applying type).'},
   {dir: 'extras/pulltorefresh', pages: ['components/loading-indicator'], docs: 'components/pull-to-refresh',

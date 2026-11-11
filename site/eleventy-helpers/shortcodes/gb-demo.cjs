@@ -100,49 +100,34 @@ function demoId(seed) {
 }
 
 /**
- * The demo card (styles in site/src/gb/gb.css, behavior in gb.ts): a
- * figure with the preview and the code, one tab per file when there are
- * several. The code's line breaks are entities, so the output has no blank
- * lines.
+ * The demo card: the library's md-gb-demo (material-design-expressive/
+ * extras/demo) with the preview in its default slot and one md-gb-demo-code
+ * per file (it highlights the code itself, and shows a tab per file, copy,
+ * and Show code for long code). The code is an attribute with its line
+ * breaks as entities, so the output has no blank lines.
  *
  * @param label Accessible label.
  * @param preview Markup of the preview (inline, or the iframe).
  * @param files The code: [{lang, code}], in tab order.
- * @param options `id` of the card, `style` of the preview, `frame` for an
- *     iframe preview, `head` markup before the preview (the scoped style).
+ * @param options `id` of the card, `style` with the height the preview
+ *     reserves (`--gb-demo-height` / `--gb-example-height`, px), `head`
+ *     markup before the preview (the scoped style).
  */
-function demoCard(label, preview, files, {id = '', style = '', frame = false, head = ''} = {}) {
-  const sources = files.map((f) => ({...f, code: dedent(f.code)}));
-  const short = sources.every((f) => f.code.split('\n').length <= SHORT_CODE_LINES);
-  const multi = sources.length > 1;
-  const panelId = (f) => `${id || 'gbd-x'}-${f.lang}`;
-  const tabs = multi
-    ? `<md-gb-tabs class="gb-demo-tabs" aria-label="${escapeHtml(label)} files">` +
-      sources
-        .map(
-          (f, i) =>
-            `<md-gb-tab tabpanel="${panelId(f)}"${i ? '' : ' selected'}><span slot="label">${FILE_LABELS[f.lang]}</span></md-gb-tab>`,
-        )
-        .join('') +
-      '</md-gb-tabs>\n'
-    : '';
-  const panels = sources
-    .map((f, i) => {
-      const code = highlight(f.code, f.lang).replace(/\n/g, '&#10;');
-      return (
-        `<div class="gb-code"${multi ? ` role="tabpanel" id="${panelId(f)}"${i ? ' hidden' : ''}` : ''}>` +
-        `<pre class="language-${f.lang}" data-file="${FILE_LABELS[f.lang]}"><code class="language-${f.lang}">${code}</code></pre></div>`
-      );
+function demoCard(label, preview, files, {id = '', style = '', head = ''} = {}) {
+  const height = /--gb-(?:demo|example)-height:\s*(\d+)px/.exec(style)?.[1];
+  const codes = files
+    .map((f) => {
+      const code = escapeHtml(dedent(f.code)).replace(/\n/g, '&#10;');
+      return `<md-gb-demo-code slot="code" language="${f.lang}" label="${FILE_LABELS[f.lang]}" code="${code}"></md-gb-demo-code>`;
     })
-    .join('\n');
+    .join('');
   return (
-    '\n\n<figure class="gb-demo" aria-label="' + escapeHtml(label) + '"' +
+    '\n\n<md-gb-demo label="' + escapeHtml(label) + '"' +
     (id ? ' id="' + id + '"' : '') +
-    (short ? ' data-short' : '') + '>\n' +
+    (height ? ' preview-height="' + height + '"' : '') + '>\n' +
     (head ? head + '\n' : '') +
-    '<div class="gb-demo-preview"' + (frame ? ' data-frame' : '') + (style ? ' style="' + style + '"' : '') + '>\n' +
     preview +
-    '\n</div>\n<div class="gb-demo-code">\n' + tabs + panels + '\n</div>\n</figure>\n\n'
+    '\n' + codes + '</md-gb-demo>\n\n'
   );
 }
 
@@ -242,7 +227,8 @@ const FRAME_BOOT = `(() => {
     const root = document.getElementById('root');
     const err = document.getElementById('gb-error');
     const h = Math.ceil(root.getBoundingClientRect().height + (err ? err.getBoundingClientRect().height + 12 : 0)) + 48;
-    parent.postMessage({type: 'gb-demo-height', id, height: h}, '*');
+    // md-gb-demo sizes its iframe to this (material-design-expressive/extras/demo).
+    parent.postMessage({type: 'md-gb-demo-height', id, height: h}, '*');
   }
   ro.observe(document.getElementById('root'));
   let sheet;

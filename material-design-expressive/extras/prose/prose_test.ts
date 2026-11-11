@@ -57,6 +57,14 @@ describe('md-gb-prose', () => {
     probe.remove();
   });
 
+  it('leaves the examples of md-gb-demo as they are on their own', () => {
+    const demo = document.createElement('md-gb-demo');
+    demo.innerHTML = '<h2>In a demo</h2>';
+    prose.append(demo);
+    const h2 = demo.querySelector('h2')!;
+    expect(getComputedStyle(h2).font).not.toBe(token('--md-sys-typescale-headline-sm'));
+  });
+
   it('lets the app override its styles (zero specificity)', () => {
     const style = document.createElement('style');
     style.textContent = 'h2 { margin-block-start: 3px; }';

@@ -23,6 +23,8 @@ rules below.
 | `Chip` | `md-gb-chip` | 18 | default, icon, remove-icon, trailing-icon | change, edit, input, remove, update-focus | [chips](https://m3.material.io/components/chips) |
 | `ChipSet` | `md-gb-chip-set` | 7 | default |   | [chips](https://m3.material.io/components/chips) |
 | `DatePicker` | `md-gb-date-picker` | 23 (+2 not JSON) |   | cancel, change, close, input, open | [date-pickers](https://m3.material.io/components/date-pickers) |
+| `Demo` | `md-gb-demo` | 4 | default, code | copy | none |
+| `DemoCode` | `md-gb-demo-code` | 5 |   |   | none |
 | `Dialog` | `md-gb-dialog` | 9 | default, actions, headline, icon | cancel, close, closed, open, opened | [dialogs](https://m3.material.io/components/dialogs) |
 | `Divider` | `md-gb-divider` | 5 |   |   | [divider](https://m3.material.io/components/divider) |
 | `Fab` | `md-gb-fab` | 7 | default |   | [floating-action-button](https://m3.material.io/components/floating-action-button), [extended-fab](https://m3.material.io/components/extended-fab) |

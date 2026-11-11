@@ -26198,6 +26198,319 @@
   },
   {
    "kind": "javascript-module",
+   "path": "extras/demo/demo-code-element.js",
+   "declarations": [
+    {
+     "kind": "class",
+     "name": "DemoCodeElement",
+     "tagName": "md-gb-demo-code",
+     "customElement": true,
+     "description": "One highlighted file of a demo's code.",
+     "summary": "One highlighted file of a demo's code.",
+     "attributes": [
+      {
+       "name": "code",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "code",
+       "default": "''",
+       "description": "The code, as plain text."
+      },
+      {
+       "name": "collapsed",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "collapsed",
+       "default": "false",
+       "description": "Whether only the first lines show (the demo's Show code expands it)."
+      },
+      {
+       "name": "label",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "label",
+       "default": "''",
+       "description": "The file's name in the demo's tabs (default: the language)."
+      },
+      {
+       "name": "language",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "language",
+       "default": "'html'",
+       "description": "Its language: `html`, `css`, `js` or `ts` (others aren't highlighted)."
+      }
+     ],
+     "members": [
+      {
+       "kind": "field",
+       "name": "code",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "default": "''",
+       "description": "The code, as plain text.",
+       "attribute": "code"
+      },
+      {
+       "kind": "field",
+       "name": "collapsed",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Whether only the first lines show (the demo's Show code expands it).",
+       "attribute": "collapsed",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "label",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "default": "''",
+       "description": "The file's name in the demo's tabs (default: the language).",
+       "attribute": "label"
+      },
+      {
+       "kind": "field",
+       "name": "language",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "default": "'html'",
+       "description": "Its language: `html`, `css`, `js` or `ts` (others aren't highlighted).",
+       "attribute": "language",
+       "reflects": true
+      }
+     ],
+     "cssProperties": [
+      {
+       "name": "--max-lines",
+       "description": "Lines shown while the demo collapses its code."
+      }
+     ]
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "DemoCodeElement",
+     "declaration": {
+      "name": "DemoCodeElement",
+      "module": "/extras/demo/demo-code-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/demo/demo-element.js",
+   "declarations": [
+    {
+     "kind": "variable",
+     "name": "DEMO_HEIGHT_MESSAGE",
+     "type": {
+      "text": "\"md-gb-demo-height\""
+     },
+     "description": "The message an iframe preview posts to size its frame."
+    },
+    {
+     "kind": "class",
+     "name": "DemoElement",
+     "tagName": "md-gb-demo",
+     "customElement": true,
+     "description": "An example and its code.",
+     "summary": "An example and its code.",
+     "attributes": [
+      {
+       "name": "expanded",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "expanded",
+       "default": "false",
+       "description": "Whether long code shows in full."
+      },
+      {
+       "name": "label",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "label",
+       "default": "''",
+       "description": "The accessible name of the demo (what it shows)."
+      },
+      {
+       "name": "preview-height",
+       "type": {
+        "text": "number"
+       },
+       "fieldName": "previewHeight",
+       "default": "0",
+       "description": "The block size the preview reserves (px), so the page doesn't move as it loads."
+      }
+     ],
+     "members": [
+      {
+       "kind": "field",
+       "name": "expanded",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Whether long code shows in full.",
+       "attribute": "expanded",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "label",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "default": "''",
+       "description": "The accessible name of the demo (what it shows).",
+       "attribute": "label"
+      },
+      {
+       "kind": "field",
+       "name": "previewHeight",
+       "type": {
+        "text": "number"
+       },
+       "privacy": "public",
+       "default": "0",
+       "description": "The block size the preview reserves (px), so the page doesn't move as it loads.",
+       "attribute": "preview-height"
+      }
+     ],
+     "events": [
+      {
+       "name": "copy",
+       "type": {
+        "text": "CustomEvent<{code: string}>"
+       },
+       "description": "Fired when the code is copied. --bubbles --composed"
+      }
+     ],
+     "slots": [
+      {
+       "name": "",
+       "description": "The example: elements, or an iframe."
+      },
+      {
+       "name": "code",
+       "description": "The code: one `md-gb-demo-code` per file."
+      }
+     ],
+     "cssParts": [
+      {
+       "name": "code",
+       "description": "The code's container."
+      },
+      {
+       "name": "preview",
+       "description": "The example's container."
+      }
+     ]
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "DEMO_HEIGHT_MESSAGE",
+     "declaration": {
+      "name": "DEMO_HEIGHT_MESSAGE",
+      "module": "/extras/demo/demo-element.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "DemoElement",
+     "declaration": {
+      "name": "DemoElement",
+      "module": "/extras/demo/demo-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/demo/highlight.js",
+   "declarations": [
+    {
+     "kind": "function",
+     "name": "tokenize",
+     "parameters": [
+      {
+       "name": "code",
+       "type": {
+        "text": "string"
+       }
+      },
+      {
+       "name": "language",
+       "type": {
+        "text": "string"
+       }
+      }
+     ],
+     "description": "Splits code into tokens; consecutive plain characters are one token."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "tokenize",
+     "declaration": {
+      "name": "tokenize",
+      "module": "/extras/demo/highlight.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/demo/md-gb-demo-code.js",
+   "exports": [
+    {
+     "kind": "custom-element-definition",
+     "name": "md-gb-demo-code",
+     "declaration": {
+      "name": "DemoCodeElement",
+      "module": "/extras/demo/demo-code-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/demo/md-gb-demo.js",
+   "exports": [
+    {
+     "kind": "custom-element-definition",
+     "name": "md-gb-demo",
+     "declaration": {
+      "name": "DemoElement",
+      "module": "/extras/demo/demo-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "extras/prose/md-gb-prose.js",
    "exports": [
     {

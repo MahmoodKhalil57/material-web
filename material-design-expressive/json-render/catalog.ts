@@ -577,6 +577,52 @@ export const COMPONENTS = {
     deprecated: false,
     spec: ["https://m3.material.io/components/date-pickers"] as string[],
   },
+  Demo: {
+    tag: "md-gb-demo",
+    props: z
+      .object({
+        /** The accessible name (aria-label). */
+        ariaLabel: dynamic(z.string()).optional(),
+        /** Whether long code shows in full. */
+        expanded: dynamic(z.boolean()).optional(),
+        /** The accessible name of the demo (what it shows). */
+        label: dynamic(z.string()).optional(),
+        /** The block size the preview reserves (px), so the page doesn't move as it loads. */
+        previewHeight: dynamic(z.number()).optional(),
+      })
+      .strict(),
+    slots: ["default", "code"] as string[],
+    events: ["copy"] as string[],
+    attributes: {ariaLabel: "aria-label", expanded: "expanded", label: "label", previewHeight: "preview-height"} as Record<string, string>,
+    booleans: ["expanded"] as string[],
+    description: "An example and its code. Slots: default, code. Events: copy.",
+    deprecated: false,
+    spec: [] as string[],
+  },
+  DemoCode: {
+    tag: "md-gb-demo-code",
+    props: z
+      .object({
+        /** The accessible name (aria-label). */
+        ariaLabel: dynamic(z.string()).optional(),
+        /** The code, as plain text. */
+        code: dynamic(z.string()).optional(),
+        /** Whether only the first lines show (the demo's Show code expands it). */
+        collapsed: dynamic(z.boolean()).optional(),
+        /** The file's name in the demo's tabs (default: the language). */
+        label: dynamic(z.string()).optional(),
+        /** Its language: `html`, `css`, `js` or `ts` (others aren't highlighted). */
+        language: dynamic(z.string()).optional(),
+      })
+      .strict(),
+    slots: [] as string[],
+    events: [] as string[],
+    attributes: {ariaLabel: "aria-label", code: "code", collapsed: "collapsed", label: "label", language: "language"} as Record<string, string>,
+    booleans: ["collapsed"] as string[],
+    description: "One highlighted file of a demo's code. No children.",
+    deprecated: false,
+    spec: [] as string[],
+  },
   Dialog: {
     tag: "md-gb-dialog",
     props: z

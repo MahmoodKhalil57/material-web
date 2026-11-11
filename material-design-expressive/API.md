@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 227 |
-| Custom elements | 58 |
-| Classes | 98 |
-| Functions | 334 |
-| Constants and variables | 305 |
-| Types and interfaces | 314 |
+| Public modules | 232 |
+| Custom elements | 60 |
+| Classes | 100 |
+| Functions | 335 |
+| Constants and variables | 306 |
+| Types and interfaces | 317 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2145 of 2145 (100%) |
+| JSDoc coverage | 2166 of 2166 (100%) |
 
 ## Contents
 
@@ -3665,6 +3665,85 @@ A Material Design plain or rich tooltip.
 ## Extras
 
 The library's own components, with no page of their own in the M3 components index.
+
+### `extras/demo/`
+
+#### `<md-gb-demo>`
+
+An example and its code.
+
+- Class: `DemoElement` in `extras/demo/demo-element.js`
+- Import: `import '@material/web/extras/demo/md-gb-demo.js';`
+- Spec: none (No M3 page: an example and its code, as documentation shows them.)
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `expanded` | `expanded` (reflects) | `boolean` | `false` | Whether long code shows in full. |
+| `label` | `label` | `string` | `''` | The accessible name of the demo (what it shows). |
+| `previewHeight` | `preview-height` | `number` | `0` | The block size the preview reserves (px), so the page doesn't move as it loads. |
+
+| Event | Type | Description |
+| --- | --- | --- |
+| `copy` | `CustomEvent<{code: string}>` | Fired when the code is copied. --bubbles --composed |
+
+| Slot | Description |
+| --- | --- |
+| (default) | The example: elements, or an iframe. |
+| `code` | The code: one `md-gb-demo-code` per file. |
+
+| CSS part | Description |
+| --- | --- |
+| `code` | The code's container. |
+| `preview` | The example's container. |
+
+#### `<md-gb-demo-code>`
+
+One highlighted file of a demo's code.
+
+- Class: `DemoCodeElement` in `extras/demo/demo-code-element.js`
+- Import: `import '@material/web/extras/demo/md-gb-demo-code.js';`
+- Spec: none (No M3 page: an example and its code, as documentation shows them.)
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `code` | `code` | `string` | `''` | The code, as plain text. |
+| `collapsed` | `collapsed` (reflects) | `boolean` | `false` | Whether only the first lines show (the demo's Show code expands it). |
+| `label` | `label` | `string` | `''` | The file's name in the demo's tabs (default: the language). |
+| `language` | `language` (reflects) | `string` | `'html'` | Its language: `html`, `css`, `js` or `ts` (others aren't highlighted). |
+
+<details><summary>1 CSS custom properties</summary>
+
+`--max-lines`
+
+</details>
+
+#### `extras/demo/demo-code-element.js`
+
+- Spec: none (No M3 page: an example and its code, as documentation shows them.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `DemoCodeElement` | class | `class DemoCodeElement extends LitElement` | One file of a demo's code, highlighted: the `code` of a `language`, shown in a `md-gb-demo` under its `label`. The code is a property (not markup), so a JSON spec can carry it. |
+
+#### `extras/demo/demo-element.js`
+
+- Spec: none (No M3 page: an example and its code, as documentation shows them.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `DEMO_HEIGHT_MESSAGE` | variable | `"md-gb-demo-height"` | The message an iframe preview posts to size its frame. |
+| `DemoElement` | class | `class DemoElement extends LitElement` | An example and its code, as documentation shows them: the live example (the default slot), then its code files (`md-gb-demo-code` in the `code` slot) with a tab per file, a copy button, and Show code / Hide code for code longer than four lines. |
+
+#### `extras/demo/highlight.js`
+
+- Spec: none (No M3 page: an example and its code, as documentation shows them.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `CodeLanguage` | type | `'html' \| 'css' \| 'js' \| 'ts'` | The languages highlighted (others are plain text). |
+| `Token` | interface | `{kind; text}` | A run of code of one kind. |
+| `tokenize` | function | `(code: string, language: string): Token[]` | Splits code into tokens; consecutive plain characters are one token. |
+| `TokenKind` | type | `'' \| 'comment' \| 'tag' \| 'attr' \| 'string' \| 'keyword' \| 'number' \| 'property' \| 'punctuation'` | A token kind; `''` is plain text. |
 
 ### `extras/prose/`
 

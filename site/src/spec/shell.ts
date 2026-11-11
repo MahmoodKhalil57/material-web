@@ -126,9 +126,27 @@ function boot() {
     }
   };
   applyThemeIfChanged();
+
+  // Demo iframes (md-gb-demo previews with a script) get the page's theme:
+  // its generated CSS and color scheme, when they're ready and on changes.
+  const theme = () => ({
+    type: 'gb-demo-theme',
+    css: document.getElementById('gb-theme-style')?.textContent ?? '',
+    colorScheme: document.documentElement.style.colorScheme,
+  });
+  addEventListener('message', (e) => {
+    if (e.data?.type === 'gb-demo-ready') (e.source as Window | null)?.postMessage(theme(), '*');
+  });
+  const broadcast = () => {
+    for (const frame of document.querySelectorAll<HTMLIFrameElement>('md-gb-demo iframe')) {
+      frame.contentWindow?.postMessage(theme(), '*');
+    }
+  };
+
   store.subscribe(() => {
     apply(store.getSnapshot());
     applyThemeIfChanged();
+    broadcast();
   });
   if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
 }
