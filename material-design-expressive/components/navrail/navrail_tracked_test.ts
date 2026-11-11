@@ -9,7 +9,7 @@
 // import 'jasmine'; (google3-only)
 import '../fab/md-gb-fab.js';
 import '../iconbutton/md-gb-icon-button.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import './md-gb-nav-rail.js';
 import './md-gb-nav-rail-item.js';
 

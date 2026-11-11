@@ -85,7 +85,7 @@ const sources = [
     (f) => f.endsWith('.js') && !/(_test|\.stories|[\\/]demo[\\/]|[\\/]skill[\\/])/.test(f) && !f.includes('node_modules'),
   ),
   // The ARIA elements the pages use beside labs/gb (md-aria-tabpanel).
-  ...(await walk(join(ROOT, 'material-design-expressive', 'aria'))).filter((f) => /[\\/]md-aria-[a-z0-9-]+\.js$/.test(f) && !f.includes('_test')),
+  ...(await walk(join(ROOT, 'material-design-expressive', 'foundations', 'accessibility', 'aria'))).filter((f) => /[\\/]md-aria-[a-z0-9-]+\.js$/.test(f) && !f.includes('_test')),
 ];
 const cssAsStylesheet = {
   name: 'css-modules-as-stylesheets',

@@ -18,15 +18,15 @@ import { mixinDelegatesAria } from "../../internal/aria/delegate.js";
 import {
   internals,
   mixinElementInternals,
-} from "../../behaviors/element-internals.js";
+} from "../../internal/behaviors/element-internals.js";
 import { DisclosureController } from "../shared/disclosure.js";
-import { DragSettleController } from "../shared/drag-settle.js";
+import { DragSettleController } from "../../foundations/interaction/gestures/drag-settle.js";
 import { hasSlotted } from "../shared/has-slotted.js";
 
-import focusRingStyles from "../focus/focus-ring.css" with { type: "css" }; // github-only
-// import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from "../ripple/ripple.css" with { type: "css" }; // github-only
-// import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from "../../foundations/interaction/states/focus/focus-ring.css" with { type: "css" }; // github-only
+// import {styles as focusRingStyles} from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from "../../foundations/interaction/states/ripple/ripple.css" with { type: "css" }; // github-only
+// import {styles as rippleStyles} from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import listStyles from "./list.css" with { type: "css" }; // github-only
 // import {styles as listStyles} from './list.cssresult.js'; // google3-only
 

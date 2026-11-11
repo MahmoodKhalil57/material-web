@@ -5,7 +5,7 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {DragGesture} from '../shared/drag-gesture.js';
+import {DragGesture} from '../../foundations/interaction/gestures/drag-gesture.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /**

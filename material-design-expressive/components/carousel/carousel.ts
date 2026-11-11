@@ -5,12 +5,12 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
+import {FOCUS_RING_CLASSES} from '../../foundations/interaction/states/focus/focus-ring.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {DragGesture} from '../shared/drag-gesture.js';
-import {isReducedMotion, onReducedMotionChange} from '../shared/motion.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
-import {nextFocusIndex} from '../shared/roving-focus.js';
+import {DragGesture} from '../../foundations/interaction/gestures/drag-gesture.js';
+import {isReducedMotion, onReducedMotionChange} from '../../styles/motion/motion.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
+import {nextFocusIndex} from '../../foundations/interaction/inputs/roving-focus.js';
 import {
   fullScreenKeylineList,
   heroKeylineList,

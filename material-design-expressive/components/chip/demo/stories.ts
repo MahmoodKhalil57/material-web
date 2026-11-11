@@ -6,7 +6,7 @@
 
 import "@material/web/components/chip/md-gb-chip.js";
 import "@material/web/components/chip/md-gb-chip-set.js";
-import "@material/web/styles/icon/md-gb-icon.js";
+import "@material/web/styles/icons/md-gb-icon.js";
 
 import { MaterialStoryInit } from "./material-collection.js";
 import { type ChipType } from "@material/web/components/chip/chip.js";

@@ -20,22 +20,22 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
+} from '../../internal/behaviors/constraint-validation.js';
 import {
   getFormState,
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/form-associated.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
 import {button} from '../button/button.js';
 import {iconButton} from '../iconbutton/icon-button.js';
-import {ripple} from '../ripple/ripple.js';
-import {AnnouncerController} from '../shared/announcer.js';
-import {clampDensity, type Density} from '../shared/density.js';
+import {ripple} from '../../foundations/interaction/states/ripple/ripple.js';
+import {AnnouncerController} from '../../foundations/accessibility/announcer.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
 import {FormDisabledController} from '../shared/form-field.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {TimePickerValidator} from './time-picker-validator.js';
-import {waitForMotion} from '../shared/motion.js';
+import {waitForMotion} from '../../styles/motion/motion.js';
 import {
   angleToValue,
   displayHour12,
@@ -55,12 +55,12 @@ import {
 
 import buttonStyles from '../button/button.css' with {type: 'css'}; // github-only
 // import buttonStyles from '../button/button.cssresult.js'; // google3-only
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
 import iconButtonStyles from '../iconbutton/icon-button.css' with {type: 'css'}; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import timePickerStyles from './time-picker.css' with {type: 'css'}; // github-only
 // import timePickerStyles from './time-picker.cssresult.js'; // google3-only
 

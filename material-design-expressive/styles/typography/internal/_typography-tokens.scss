@@ -8,7 +8,7 @@
 @use 'sass:map';
 @use 'sass:meta';
 @use 'sass:string';
-@use '../../../sass/ext/map_ext';
+@use '../../../internal/sass/ext/map_ext';
 @use '../../../tokens/versions/latest/sass/md-ref-typeface';
 @use '../../../tokens/versions/latest/sass/md-sys-typescale';
 @use '../../../tokens/versions/latest/sass/md-sys-typescale-emphasized';

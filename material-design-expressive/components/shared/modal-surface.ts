@@ -10,7 +10,7 @@ import {
   BackHandler,
   closeRequestSource,
   ESCAPE_REASON,
-} from './predictive-back.js';
+} from '../../foundations/interaction/gestures/predictive-back.js';
 
 /**
  * Shared behavior of modal surfaces: dialogs, modal bottom and side sheets,

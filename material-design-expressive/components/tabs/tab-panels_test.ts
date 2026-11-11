@@ -6,7 +6,7 @@
 
 // import 'jasmine'; (google3-only)
 
-import '../../aria/tabs/md-aria-tabpanel.js';
+import '../../foundations/accessibility/aria/tabs/md-aria-tabpanel.js';
 import './md-gb-tab.js';
 import './md-gb-tab-panels.js';
 import './md-gb-tabs.js';
@@ -14,7 +14,7 @@ import './md-gb-tabs.js';
 import {html, type TemplateResult} from 'lit';
 import {Environment} from '../../testing/environment.js';
 import {freezeSpringClock, untilTicking} from '../shared/test-dom.js';
-import {internals} from '../../behaviors/element-internals.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {styles as tabPanelsStyles} from './tab-panels.cssresult.js';

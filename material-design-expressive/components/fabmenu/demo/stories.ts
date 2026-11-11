@@ -6,7 +6,7 @@
 
 import '@material/web/components/fabmenu/md-gb-fab-menu.js';
 import '@material/web/components/fabmenu/md-gb-fab-menu-item.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {MaterialStoryInit} from './material-collection.js';
 import {type FabSize} from '@material/web/components/fab/fab.js';
@@ -19,8 +19,8 @@ import {
   type FabMenuColor,
 } from '@material/web/components/fabmenu/fab-menu.js';
 import {styles as fabMenuStyles} from '@material/web/components/fabmenu/fab-menu.cssresult.js';
-import {styles as focusRingStyles} from '@material/web/components/focus/focus-ring.cssresult.js';
-import {styles as rippleStyles} from '@material/web/components/ripple/ripple.cssresult.js';
+import {styles as focusRingStyles} from '@material/web/foundations/interaction/states/focus/focus-ring.cssresult.js';
+import {styles as rippleStyles} from '@material/web/foundations/interaction/states/ripple/ripple.cssresult.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
 import {styles as m3Styles} from '@material/web/styles/m3.cssresult.js';
 import {css, html, nothing} from 'lit';

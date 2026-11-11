@@ -9,7 +9,7 @@ import './md-gb-radio.js';
 
 import {sendKeys, sendMouse} from '@web/test-runner-commands';
 import {html} from 'lit';
-import {internals} from '../../behaviors/element-internals.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {Environment} from '../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';

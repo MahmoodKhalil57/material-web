@@ -19,8 +19,8 @@ import {
   SCROLL_LOCK_ATTRIBUTE,
   trapTabFocus,
 } from './modal-surface.js';
-import {FakeCloseWatcher, useCloseWatcher} from './predictive-back-harness.js';
-import {resetEscapeTracking} from './predictive-back.js';
+import {FakeCloseWatcher, useCloseWatcher} from '../../foundations/interaction/gestures/predictive-back-harness.js';
+import {resetEscapeTracking} from '../../foundations/interaction/gestures/predictive-back.js';
 import {until} from './test-dom.js';
 
 /** A surface on a native `<dialog>` with two buttons. */

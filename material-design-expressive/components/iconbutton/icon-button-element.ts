@@ -10,16 +10,16 @@ import {ARIAMixinStrict} from '../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
 import {safeHref} from '../../internal/directives/safe-href.js';
 import {redispatchEvent} from '../../internal/events/redispatch-event.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
-import {mixinFormAssociated} from '../../behaviors/form-associated.js';
-import {mixinFormSubmitter} from '../../behaviors/form-submitter.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
+import {mixinFormAssociated} from '../../internal/behaviors/form-associated.js';
+import {mixinFormSubmitter} from '../../internal/behaviors/form-submitter.js';
 
-import focusRingStyles from '../focus/focus-ring.cssresult.js';
-import rippleStyles from '../ripple/ripple.cssresult.js';
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js';
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js';
 import iconButtonStyles from './icon-button.cssresult.js';
 
-import {clampDensity, type Density} from '../shared/density.js';
-import {InvokerController} from '../shared/invoker.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
+import {InvokerController} from '../../foundations/interaction/inputs/invoker.js';
 import type {
   IconButtonColor,
   IconButtonSize,

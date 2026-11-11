@@ -14,7 +14,7 @@ import {html} from 'lit';
 import {Environment} from '../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {isHoverMedia, sheetsOf, walkRules} from '../shared/central/subjects.js';
+import {isHoverMedia, sheetsOf, walkRules} from '../../testing/subjects.js';
 import {type TextFieldElement} from './text-field-element.js';
 
 adoptStyles(document, [m3Styles]);

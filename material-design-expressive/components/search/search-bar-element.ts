@@ -8,16 +8,16 @@ import {css, type CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {live} from 'lit/directives/live.js';
-import {focusRingClasses} from '../focus/focus-ring.js';
-import {ripple, rippleClasses} from '../ripple/ripple.js';
+import {focusRingClasses} from '../../foundations/interaction/states/focus/focus-ring.js';
+import {ripple, rippleClasses} from '../../foundations/interaction/states/ripple/ripple.js';
 import {hasSlotted} from '../shared/has-slotted.js';
 import {SEARCH_BAR_CLASSES, searchBarClasses} from './search.js';
 import {type SearchViewElement} from './search-view-element.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import searchBarStyles from './search-bar.css' with {type: 'css'}; // github-only
 // import searchBarStyles from './search-bar.cssresult.js'; // google3-only
 

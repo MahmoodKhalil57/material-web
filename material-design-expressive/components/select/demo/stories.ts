@@ -7,7 +7,7 @@
 import '@material/web/components/button/md-gb-button.js';
 import '@material/web/components/select/md-gb-autocomplete.js';
 import '@material/web/components/select/md-gb-select.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {

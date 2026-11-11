@@ -5,8 +5,8 @@
  */
 
 // import 'jasmine'; (google3-only)
-import { internals } from "../../behaviors/element-internals.js";
-import "../../styles/icon/md-gb-icon.js";
+import { internals } from "../../internal/behaviors/element-internals.js";
+import "../../styles/icons/md-gb-icon.js";
 import "../button/md-gb-button.js";
 import "./md-gb-button-group.js";
 

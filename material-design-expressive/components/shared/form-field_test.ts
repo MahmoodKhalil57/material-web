@@ -13,14 +13,14 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/constraint-validation.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
 import {
   getFormState,
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
-import {CheckboxValidator} from '../../behaviors/validators/checkbox-validator.js';
+} from '../../internal/behaviors/form-associated.js';
+import {CheckboxValidator} from '../../internal/behaviors/validators/checkbox-validator.js';
 import {
   FormDisabledController,
   FormScopedSelectionController,

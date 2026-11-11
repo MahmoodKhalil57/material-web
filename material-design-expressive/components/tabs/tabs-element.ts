@@ -6,13 +6,13 @@
 
 import {type CSSResultOrNative, type PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
-import {AriaTablistElement} from '../../aria/tabs/tablist.js';
+import {AriaTablistElement} from '../../foundations/accessibility/aria/tabs/tablist.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
-import {AdaptiveController} from '../shared/adaptive.js';
-import {clampDensity, type Density} from '../shared/density.js';
-import {RovingFocusController} from '../shared/roving-focus.js';
-import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
-import {SelectionController} from '../shared/selection.js';
+import {AdaptiveController} from '../../foundations/layout/adaptive.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
+import {RovingFocusController} from '../../foundations/interaction/inputs/roving-focus.js';
+import {ScrollBehaviorController} from '../../foundations/interaction/gestures/scroll-behavior.js';
+import {SelectionController} from '../../foundations/interaction/selection/selection.js';
 import {updateClassList} from '../shared/update-class-list.js';
 
 import tabsStyles from './tabs.css' with {type: 'css'}; // github-only

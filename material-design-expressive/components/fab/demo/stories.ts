@@ -5,7 +5,7 @@
  */
 
 import '@material/web/components/fab/md-gb-fab.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {MaterialStoryInit} from './material-collection.js';
 import {FabColor, FabSize} from '@material/web/components/fab/fab.js';

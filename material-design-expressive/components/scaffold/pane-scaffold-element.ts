@@ -13,8 +13,8 @@ import {
   type PropertyValues,
 } from 'lit';
 import {property, query, state} from 'lit/decorators.js';
-import {DragGesture} from '../shared/drag-gesture.js';
-import {DragSettleController} from '../shared/drag-settle.js';
+import {DragGesture} from '../../foundations/interaction/gestures/drag-gesture.js';
+import {DragSettleController} from '../../foundations/interaction/gestures/drag-settle.js';
 import {getFocusableElements} from '../shared/modal-surface.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
@@ -23,12 +23,12 @@ import {
   type Fold,
   foldWithin,
   observeFold,
-} from '../../styles/layout/viewport-segments.js';
+} from '../../foundations/layout/viewport-segments.js';
 import {
   type WindowHeightClass,
   WindowSizeClassController,
   type WindowSizeClass,
-} from '../../styles/layout/window-size-class.js';
+} from '../../foundations/layout/window-size-class.js';
 import {
   nextPaneSnapTarget,
   type PaneArrangement,
@@ -45,8 +45,8 @@ import {
   planPanes,
 } from './pane-scaffold.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
 import paneScaffoldStyles from './pane-scaffold.css' with {type: 'css'}; // github-only
 // import paneScaffoldStyles from './pane-scaffold.cssresult.js'; // google3-only
 

@@ -5,9 +5,9 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
-import {RIPPLE_CLASSES} from '../ripple/ripple.js';
-import {densityClasses, densityClassNames} from '../shared/density.js';
+import {FOCUS_RING_CLASSES} from '../../foundations/interaction/states/focus/focus-ring.js';
+import {RIPPLE_CLASSES} from '../../foundations/interaction/states/ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../../foundations/layout/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /** The visual variant of a tabs container. */

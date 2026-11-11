@@ -36,8 +36,8 @@
  *   node scripts/m3/gen-layout.mjs --check   # exit 1 if a file is out of date
  *
  * Writes:
- *   styles/layout/_md-layout-values.scss
- *   styles/layout/layout-values.ts
+ *   foundations/layout/_md-layout-values.scss
+ *   foundations/layout/layout-values.ts
  *   components/scaffold/_drag-handle-tokens.scss
  *   components/scaffold/_levitated-pane-tokens.scss
  */
@@ -50,10 +50,10 @@ import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 const PAGES = '.m3-specs/pages/foundations/layout';
 const DRAG_HANDLE_KT =
   '.m3-specs/compose/material3/commonMain/androidx/compose/material3/tokens/DragHandleTokens.kt';
-const OUT_SCSS = 'styles/layout/_md-layout-values.scss';
-const OUT_TS = 'styles/layout/layout-values.ts';
-const OUT_DRAG = 'components/scaffold/_drag-handle-tokens.scss';
-const OUT_LEVITATED = 'components/scaffold/_levitated-pane-tokens.scss';
+const OUT_SCSS = 'material-design-expressive/foundations/layout/_md-layout-values.scss';
+const OUT_TS = 'material-design-expressive/foundations/layout/layout-values.ts';
+const OUT_DRAG = 'material-design-expressive/components/scaffold/_drag-handle-tokens.scss';
+const OUT_LEVITATED = 'material-design-expressive/components/scaffold/_levitated-pane-tokens.scss';
 const check = process.argv.includes('--check');
 
 // The pages use non-breaking spaces in places; match them as spaces.

@@ -8,14 +8,14 @@
 import './md-gb-icon-button.js';
 import '../buttongroup/md-gb-button-group.js';
 import '../tooltip/md-gb-tooltip.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 
 import {sendMouse} from '@web/test-runner-commands';
 import {html} from 'lit';
 import {Environment} from '../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {center} from '../shared/central/subjects.js';
+import {center} from '../../testing/subjects.js';
 import {type IconButtonElement} from './icon-button-element.js';
 
 adoptStyles(document, [m3Styles]);

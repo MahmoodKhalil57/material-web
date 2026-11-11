@@ -10,10 +10,10 @@ import {type ARIAMixinStrict} from '../../internal/aria/aria.js';
 import {
   createValidator,
   getValidityAnchor,
-} from '../../behaviors/constraint-validation.js';
-import {getFormValue} from '../../behaviors/form-associated.js';
-import {SelectValidator} from '../../behaviors/validators/select-validator.js';
-import {type Validator} from '../../behaviors/validators/validator.js';
+} from '../../internal/behaviors/constraint-validation.js';
+import {getFormValue} from '../../internal/behaviors/form-associated.js';
+import {SelectValidator} from '../../internal/behaviors/validators/select-validator.js';
+import {type Validator} from '../../internal/behaviors/validators/validator.js';
 import {SelectBase} from './select-base.js';
 import {
   SELECTED_CHANGE_EVENT,

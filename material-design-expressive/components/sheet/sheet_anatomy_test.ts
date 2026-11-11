@@ -15,7 +15,7 @@ import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import './md-gb-bottom-sheet.js';
 import './md-gb-side-sheet.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import type {ReactiveElement} from 'lit';
 
 adoptStyles(document, [m3Styles]);

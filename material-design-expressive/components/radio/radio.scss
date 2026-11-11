@@ -4,7 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
-@use '../shared/density';
+@use '../../foundations/layout/density';
 @use 'radio-tokens';
 // go/keep-sorted end
 

@@ -5,14 +5,14 @@
  */
 
 import {type CSSResultOrNative, html} from 'lit';
-import {AriaTabElement} from '../../aria/tabs/tab.js';
+import {AriaTabElement} from '../../foundations/accessibility/aria/tabs/tab.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {updateClassList} from '../shared/update-class-list.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import tabsStyles from './tabs.css' with {type: 'css'}; // github-only
 // import tabsStyles from './tabs.cssresult.js'; // google3-only
 

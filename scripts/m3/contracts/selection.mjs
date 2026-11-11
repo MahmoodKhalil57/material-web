@@ -6,7 +6,7 @@
 
 /**
  * Contract tests for the shared selection controller
- * (`components/shared/selection.ts`): each component's selection mode,
+ * (`foundations/interaction/selection/selection.ts`): each component's selection mode,
  * Space / Enter selection, `required`, ARIA state, events and form value,
  * proven through the real element and real key presses. The controller's own
  * rules are tested once in `shared/selection_test.ts`.
@@ -513,7 +513,7 @@ function formEntries(f: SelectionFixture) {
     // ride along in the module specifier.
     imports: [
       ...c.imports,
-      ...(usesInternals ? ["../../../behaviors/element-internals.js';\nimport {internals} from '../../../behaviors/element-internals.js"] : []),
+      ...(usesInternals ? ["../../../internal/behaviors/element-internals.js';\nimport {internals} from '../../../internal/behaviors/element-internals.js"] : []),
       ...(c.m3Styles
         ? ["../../styles/adopt-styles.js';\nimport {adoptStyles} from '../../styles/adopt-styles.js';\nimport {styles as m3Styles} from '../../styles/m3.cssresult.js"]
         : []),

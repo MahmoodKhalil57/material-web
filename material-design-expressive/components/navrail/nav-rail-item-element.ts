@@ -6,16 +6,16 @@
 
 import {css, CSSResultOrNative, html, nothing, type PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
-import {AriaTabElement} from '../../aria/tabs/tab.js';
-import {internals} from '../../behaviors/element-internals.js';
-import {isFocusable} from '../../behaviors/focusable.js';
+import {AriaTabElement} from '../../foundations/accessibility/aria/tabs/tab.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
+import {isFocusable} from '../../internal/behaviors/focusable.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {NavLinkController, navLinkStyles} from '../shared/nav-link.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import {styles as focusRingStyles} from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import {styles as rippleStyles} from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import navRailStyles from './nav-rail.css' with {type: 'css'}; // github-only
 // import {styles as navRailStyles} from './nav-rail.cssresult.js'; // google3-only
 

@@ -16,20 +16,20 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
+} from '../behaviors/constraint-validation.js';
 import {
   internals,
   mixinElementInternals,
-} from '../../behaviors/element-internals.js';
-import {mixinFocusable} from '../../behaviors/focusable.js';
+} from '../behaviors/element-internals.js';
+import {mixinFocusable} from '../behaviors/focusable.js';
 import {
   getFormState,
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
-import {RadioValidator} from '../../behaviors/validators/radio-validator.js';
+} from '../behaviors/form-associated.js';
+import {RadioValidator} from '../behaviors/validators/radio-validator.js';
 
-import {SingleSelectionController} from './single-selection-controller.js';
+import {SingleSelectionController} from '../../foundations/interaction/selection/single-selection-controller.js';
 
 const CHECKED = Symbol('checked');
 let maskId = 0;

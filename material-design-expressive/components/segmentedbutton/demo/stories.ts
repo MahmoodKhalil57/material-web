@@ -5,7 +5,7 @@
  */
 
 import '@material/web/components/segmentedbutton/md-gb-segmented-button-set.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type SegmentedButtonSetElement} from '@material/web/components/segmentedbutton/segmented-button-set-element.js';

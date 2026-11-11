@@ -18,7 +18,7 @@ import '@material/web/components/divider/md-gb-divider.js';
 import '@material/web/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/components/tabs/md-gb-tab.js';
 import '@material/web/components/tabs/md-gb-tabs.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import './shell.js';
 import './download.js';

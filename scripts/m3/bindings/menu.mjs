@@ -19,7 +19,7 @@
  *   of the vertical menus the web supports.
  * - state layers: the shared ripple paints them in the label color, which is
  *   the state layer color of every menu-item state in both color styles.
- * - `focus.indicator.*`: the shared focus ring (`components/focus`).
+ * - `focus.indicator.*`: the shared focus ring (`foundations/interaction/states/focus`).
  * - `container.shadow-color`: shadows use the elevation tokens.
  * Disabled `*.opacity` tokens are folded into their colors
  * (`hsl(from <color> h s l / 38%)`), as Compose does (`copy(alpha = ...)`).

@@ -216,9 +216,9 @@ describe('<md-gb-nav-rail> drag and settle contract (DragSettleController: follo
   });
 });
 
-import {resetEscapeTracking} from '../shared/predictive-back.js';
+import {resetEscapeTracking} from '../../foundations/interaction/gestures/predictive-back.js';
 
-import {FakeCloseWatcher} from '../shared/predictive-back-harness.js';
+import {FakeCloseWatcher} from '../../foundations/interaction/gestures/predictive-back-harness.js';
 
 /** The modal rail: the host owns `expanded`. */
 interface ModalToggleElement extends HTMLElement {

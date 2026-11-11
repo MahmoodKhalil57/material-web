@@ -199,7 +199,7 @@ const css = [
   '',
   ...roboto.css,
   ...symbols.css,
-  // md-gb-icon's font (styles/icon: 'Material Symbols' by default)
+  // md-gb-icon's font (styles/icons: 'Material Symbols' by default)
   // is this family wherever the fonts are loaded: the site, and the
   // documents without its stylesheet (demo frames, component test pages).
   ":root {\n  --md-icon-font: 'Material Symbols Outlined';\n}",

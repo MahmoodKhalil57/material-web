@@ -385,7 +385,7 @@ describe('<md-gb-nav-drawer> drag and settle contract (DragSettleController: fol
   });
 });
 
-import {resetEscapeTracking} from '../shared/predictive-back.js';
+import {resetEscapeTracking} from '../../foundations/interaction/gestures/predictive-back.js';
 import {until} from '../shared/test-dom.js';
 
 /** What the lifecycle surfaces share: `show()`, `close()`, `open` and events. */

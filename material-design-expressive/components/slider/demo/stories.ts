@@ -11,7 +11,7 @@ import {
   type SliderSize,
 } from '@material/web/components/slider/slider.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 import {styles as m3Styles} from '@material/web/styles/m3.cssresult.js';
 import {css, html, nothing} from 'lit';
 

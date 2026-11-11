@@ -6,15 +6,15 @@
 
 import '@material/web/components/button/md-gb-button.js';
 import '@material/web/components/tooltip/md-gb-tooltip.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {button} from '@material/web/components/button/button.js';
 import {styles as buttonStyles} from '@material/web/components/button/button.cssresult.js';
-import {styles as focusRingStyles} from '@material/web/components/focus/focus-ring.cssresult.js';
+import {styles as focusRingStyles} from '@material/web/foundations/interaction/states/focus/focus-ring.cssresult.js';
 import {iconButton} from '@material/web/components/iconbutton/icon-button.js';
 import {styles as iconButtonStyles} from '@material/web/components/iconbutton/icon-button.cssresult.js';
-import {styles as rippleStyles} from '@material/web/components/ripple/ripple.cssresult.js';
+import {styles as rippleStyles} from '@material/web/foundations/interaction/states/ripple/ripple.cssresult.js';
 import {
   tooltip,
   type TooltipPlacement,

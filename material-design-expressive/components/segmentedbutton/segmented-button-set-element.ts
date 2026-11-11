@@ -10,25 +10,25 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
+} from '../../internal/behaviors/constraint-validation.js';
 import {
   internals,
   mixinElementInternals,
-} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/element-internals.js';
 import {
   type FormRestoreState,
   type FormValue,
   getFormState,
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
-import {type Validator} from '../../behaviors/validators/validator.js';
+} from '../../internal/behaviors/form-associated.js';
+import {type Validator} from '../../internal/behaviors/validators/validator.js';
 import {
   FormDisabledController,
   SelectionGroupValidator,
 } from '../shared/form-field.js';
-import {RovingFocusController} from '../shared/roving-focus.js';
-import {SelectionController} from '../shared/selection.js';
+import {RovingFocusController} from '../../foundations/interaction/inputs/roving-focus.js';
+import {SelectionController} from '../../foundations/interaction/selection/selection.js';
 import {
   clampDensity,
   type SegmentedButtonDensity,

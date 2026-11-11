@@ -87,7 +87,7 @@ const DIALOG_ICON = DIALOG('', `<md-gb-icon slot="icon">delete</md-gb-icon><span
 const LONG = 'Long body text. '.repeat(120);
 
 const dialog = {
-  imports: ['./md-gb-dialog.js', '../button/md-gb-button.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-dialog.js', '../button/md-gb-button.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'dialogs',
@@ -178,7 +178,7 @@ function drawerRows(modal) {
 }
 
 const navdrawer = {
-  imports: ['./md-gb-nav-drawer.js', './md-gb-nav-drawer-item.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-nav-drawer.js', './md-gb-nav-drawer-item.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'navigation-drawer',
@@ -205,7 +205,7 @@ const AVATAR = '<img slot="avatar" alt="" width="30" height="30" src="data:image
 const VIEW = (attrs = '') => `<md-gb-search-view open quick placeholder="Search"${attrs}></md-gb-search-view>`;
 
 const search = {
-  imports: ['./md-gb-search-bar.js', './md-gb-search-view.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-search-bar.js', './md-gb-search-view.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'search',
@@ -281,7 +281,7 @@ function textFieldRows(variant) {
 }
 
 const textfield = {
-  imports: ['./md-gb-text-field.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-text-field.js', '../../styles/icons/md-gb-icon.js'],
   sections: ['filled', 'outlined'].map((variant) => ({
     page: 'text-fields',
     section: `text-fields/specs/${variant}-text-field/${variant}-text-field-measurements`,
@@ -298,7 +298,7 @@ const MENU_DIVIDED = '<md-gb-menu open><md-gb-menu-item>One</md-gb-menu-item><md
 const MI = 'light:md-gb-menu-item >> [part=menu-item]';
 
 const menu = {
-  imports: ['./md-gb-menu.js', './md-gb-menu-item.js', '../divider/md-gb-divider.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-menu.js', './md-gb-menu-item.js', '../divider/md-gb-divider.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'menus',
@@ -388,7 +388,7 @@ function sideSheetRows(modal) {
 }
 
 const sheet = {
-  imports: ['./md-gb-bottom-sheet.js', './md-gb-side-sheet.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-bottom-sheet.js', './md-gb-side-sheet.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'bottom-sheets',
@@ -500,7 +500,7 @@ const LIST_SEGMENTED = `<div style="width: 360px"><md-gb-list segmented selectab
 const LI_N = (n) => `light:md-gb-list-item:nth-child(${n}) >> [part=list-item]`;
 
 const list = {
-  imports: ['./md-gb-list.js', './md-gb-list-item.js', '../divider/md-gb-divider.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-list.js', './md-gb-list-item.js', '../divider/md-gb-divider.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'lists',
@@ -611,7 +611,7 @@ const SPLIT = (size) =>
 const SPLIT_SIZES = ['xs', 'sm', 'md', 'lg', 'xl'];
 
 const splitbutton = {
-  imports: ['./md-gb-split-button.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-split-button.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'split-button',
@@ -640,7 +640,7 @@ const caption = (text, why = 'an image caption; no value of its own') => ({cells
 
 const FAB_MENU = '<md-gb-fab-menu open><md-gb-fab-menu-item>One</md-gb-fab-menu-item></md-gb-fab-menu>';
 const fabmenu = {
-  imports: ['./md-gb-fab-menu.js', './md-gb-fab-menu-item.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-fab-menu.js', './md-gb-fab-menu-item.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'fab-menu',
@@ -674,7 +674,7 @@ const fabmenu = {
 const DOCKED_TOOLBAR = '<md-gb-toolbar docked><md-gb-icon-button><md-gb-icon>edit</md-gb-icon></md-gb-icon-button><md-gb-icon-button><md-gb-icon>share</md-gb-icon></md-gb-icon-button></md-gb-toolbar>';
 const TOOLBAR = '<md-gb-toolbar><md-gb-icon-button><md-gb-icon>edit</md-gb-icon></md-gb-icon-button><md-gb-icon-button><md-gb-icon>share</md-gb-icon></md-gb-icon-button></md-gb-toolbar>';
 const toolbar = {
-  imports: ['./md-gb-toolbar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
+  imports: ['./md-gb-toolbar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icons/md-gb-icon.js'],
   sections: [
     {
       page: 'toolbars',

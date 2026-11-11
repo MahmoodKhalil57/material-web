@@ -6,7 +6,7 @@
 
 import '@material/web/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/components/pulltorefresh/md-gb-pull-to-refresh.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type PullToRefreshElement} from '@material/web/components/pulltorefresh/pull-to-refresh-element.js';

@@ -12,8 +12,8 @@ import {
 import {
   SingleSelectionController,
   type SingleSelectionElement,
-} from '../../internal/radio/single-selection-controller.js';
-import {Validator} from '../../behaviors/validators/validator.js';
+} from '../../foundations/interaction/selection/single-selection-controller.js';
+import {Validator} from '../../internal/behaviors/validators/validator.js';
 
 /**
  * The form layer shared by the labs/gb toggle controls (checkbox, radio,

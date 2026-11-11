@@ -10,9 +10,9 @@ import {property, state} from 'lit/decorators.js';
 import {
   AdaptiveController,
   type AdaptiveOptions,
-} from '../shared/adaptive.js';
+} from '../../foundations/layout/adaptive.js';
 
-import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
+import {ScrollBehaviorController} from '../../foundations/interaction/gestures/scroll-behavior.js';
 
 import {appBar, type AppBarSize, type AppBarVariant} from './app-bar.js';
 import {styles as appBarStyles} from './app-bar.cssresult.js';

@@ -13,7 +13,7 @@ Each variable font axis of `md-gb-icon` is a custom property. See
 <md-gb-icon>star</md-gb-icon>
 ```
 ```js
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 ```
 {% enddemo %}
 

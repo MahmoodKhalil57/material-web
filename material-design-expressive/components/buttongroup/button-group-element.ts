@@ -16,21 +16,21 @@ import { property, queryAssignedElements } from "lit/decorators.js";
 import {
   internals,
   mixinElementInternals,
-} from "../../behaviors/element-internals.js";
+} from "../../internal/behaviors/element-internals.js";
 import { adoptStyles } from "../../styles/adopt-styles.js";
 import { type ButtonElement } from "../button/button-element.js";
 import "../iconbutton/md-gb-icon-button.js";
 import "../menu/md-gb-menu.js";
 import "../menu/md-gb-menu-item.js";
-import { clampDensity, type Density } from "../shared/density.js";
+import { clampDensity, type Density } from "../../foundations/layout/density.js";
 import {
   OverflowController,
   overflowIcon,
   overflowStyles,
   renderOverflowMenu,
-} from "../shared/overflow.js";
-import { RovingFocusController } from "../shared/roving-focus.js";
-import { SelectionController } from "../shared/selection.js";
+} from "../../foundations/layout/overflow.js";
+import { RovingFocusController } from "../../foundations/interaction/inputs/roving-focus.js";
+import { SelectionController } from "../../foundations/interaction/selection/selection.js";
 import { updateClassList } from "../shared/update-class-list.js";
 import {
   buttonGroupClasses,

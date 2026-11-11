@@ -9,10 +9,10 @@ import {
   afterDispatch,
   setupDispatchHooks,
 } from '../../internal/events/dispatch-hooks.js';
-import {focusRingClasses} from '../focus/focus-ring.js';
-import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {focusRingClasses} from '../../foundations/interaction/states/focus/focus-ring.js';
+import {rippleClasses, setupRipple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {isDisabled, PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {isDisabled, PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 
 /** Button color configuration types. */
 export type ButtonColor = 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text';

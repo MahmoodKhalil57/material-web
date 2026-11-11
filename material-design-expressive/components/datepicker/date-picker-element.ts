@@ -27,32 +27,32 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/constraint-validation.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
 import {
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
+} from '../../internal/behaviors/form-associated.js';
 import {
   mixinOnReportValidity,
   onReportValidity,
-} from '../../behaviors/on-report-validity.js';
+} from '../../internal/behaviors/on-report-validity.js';
 import {button} from '../button/button.js';
 import {divider} from '../divider/divider.js';
 import {iconButton} from '../iconbutton/icon-button.js';
-import {ripple} from '../ripple/ripple.js';
+import {ripple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {
   AnchoredOverlayController,
   composedContains,
 } from '../shared/anchored-overlay.js';
-import {AnnouncerController} from '../shared/announcer.js';
-import {clampDensity, type Density} from '../shared/density.js';
+import {AnnouncerController} from '../../foundations/accessibility/announcer.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
 import {
   FormDisabledController,
   ValueFieldController,
 } from '../shared/form-field.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
-import {isReducedMotion, waitForMotion} from '../shared/motion.js';
+import {isReducedMotion, waitForMotion} from '../../styles/motion/motion.js';
 import {
   addMonths,
   type CalendarDate,
@@ -90,12 +90,12 @@ import buttonStyles from '../button/button.css' with {type: 'css'}; // github-on
 // import buttonStyles from '../button/button.cssresult.js'; // google3-only
 import dividerStyles from '../divider/divider.css' with {type: 'css'}; // github-only
 // import dividerStyles from '../divider/divider.cssresult.js'; // google3-only
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
 import iconButtonStyles from '../iconbutton/icon-button.css' with {type: 'css'}; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import datePickerStyles from './date-picker.css' with {type: 'css'}; // github-only
 // import datePickerStyles from './date-picker.cssresult.js'; // google3-only
 

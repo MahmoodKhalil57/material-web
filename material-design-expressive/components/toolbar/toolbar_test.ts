@@ -8,7 +8,7 @@
 
 import '../fab/md-gb-fab.js';
 import '../iconbutton/md-gb-icon-button.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import './md-gb-toolbar.js';
 
 import {html, type TemplateResult} from 'lit';

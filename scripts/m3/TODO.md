@@ -25,17 +25,17 @@ reason, 0 tracked, 0 unaccounted; 18,938 tests pass; every `*_gap.ts` is a
 Measured 2026-11-07: 75s full run; 451s of page time across 301 files = 243s
 in specs (about 200s waiting on fixed sleeps, real transitions and mouse and
 keyboard round trips) + 148s module loading; the critical path is
-`central/state-layers_test.ts` at 30s.
+`foundations/interaction/states/state-layers_test.ts` at 30s.
 
 - [x] Cache esbuild transforms in `web-test-runner.config.js` (keyed by path + mtime).
 - [x] `gb-check --watch <dirs>` (needs an interactive terminal; the runner refuses watch mode otherwise): keep the runner and browser alive, rerun the
       test files whose imports changed (target: 1-2s per save).
-- [x] `until(cond, {timeout})` in `shared/central/subjects.ts`: poll per frame
+- [x] `until(cond, {timeout})` in `testing/subjects.ts`: poll per frame
       instead of fixed sleeps.
 
 ## Wave 1: Haiku 5.5 (7 agents)
 
-### H1. Speed: central suites (owns `shared/central/*_test.ts`)
+### H1. Speed: central suites (owns the `*_test.ts` over `testing/subjects.ts` in `foundations/` and `styles/`)
 - [x] Replace every `sleep(n)` with `until(...)` on the state the test then
       checks, or `waitForMotion`. Keep each assertion's meaning.
 - [x] (done; five split files still 4.5-6s: the pressed state layer files, focus-indicator, disabled buttons, selection-foundation) Split `state-layers_test.ts` (30s), `focus-indicator_test.ts` (14s),
@@ -76,7 +76,7 @@ otherwise exclude as baseline (same reason as `exclusions/navigation.md`).
 - [x] (4 tested, edc895 excluded) spacing-69a83a spacing-4e4961 spacing-17a38e spacing-edc895 spacing-780579: search bar padding 8dp, gaps 8dp, margins 24dp (12dp when focused)
 
 ### H7. Elevation table (owns token `// EDIT:` lines for elevation only; reads every component)
-- [x] (41 rows in central/elevation_test.ts; Opus wave 3: app bar scrolled tone check for elevation-4aa184, docked date picker) elevation-2dc660 elevation-23a31c elevation-55fb01 elevation-4aa184
+- [x] (41 rows in styles/elevation/elevation-components_test.ts; Opus wave 3: app bar scrolled tone check for elevation-4aa184, docked date picker) elevation-2dc660 elevation-23a31c elevation-55fb01 elevation-4aa184
       elevation-7f1215 elevation-7d2103: one central test that renders each
       component in the table and checks its resting elevation level; fix
       token bindings that disagree. Resting levels 0-3 only (+4/+5 for
@@ -279,7 +279,7 @@ problems are fixed only in ways the M3 accessibility sections allow.
 
 - [x] Role model extracted (`scripts/m3/gen-aria-model.mjs` ->
       `.m3-specs/aria/`, gitignored) and checked by
-      `shared/central/aria_test.ts` (every subject and open overlay).
+      `foundations/accessibility/aria_test.ts` (every subject and open overlay).
 - [x] Fixed: tooltip `aria-haspopup`, slider `aria-*-start/end` attributes
       renamed (`label-start`, `label-end`, `valuetext-start`, `valuetext-end`),
       empty dialog and side sheet headlines, disabled list options, deprecated
@@ -380,7 +380,7 @@ scripts/catalog-3.0/about/compliance.md (expressiveOnly; order after the intro).
       excluded (counts by reason) and tracked (.m3-specs/spec-checks/units.json);
       the token audit (match, drift with reason, gaps) from
       `node scripts/m3/audit-gb.mjs --gaps`; axe and ARIA 1.3 rows and known
-      gaps (components/shared/central/axe-helpers.ts, aria-rows.ts);
+      gaps (foundations/accessibility/axe-helpers.ts, aria-rows.ts);
       the Baseline summary (`npm run gb:baseline`); the size budgets
       (scripts/size/gb-budgets.json).
 - [x] Numbers and unit ids only, no spec text. Say how each number is made
@@ -410,14 +410,14 @@ Owns: scripts/catalog-3.0/foundations/{motion,interaction-states,density}.md.
       motion.ts helpers, which components morph their shape on press.
 - [x] Interaction states: hover 8%, focus 10%, pressed 10%, dragged 16%;
       hover only on hover-capable pointers; the ripple timing (75ms fade in,
-      225ms expansion, 150ms fade out; components/ripple/).
+      225ms expansion, 150ms fade out; foundations/interaction/states/ripple/).
 - [x] Density: the `density` attribute (0 to -3), the components that
       support it, and touch targets staying 48dp.
 
 ## H-3 (Haiku): Foundations: accessibility, adaptive layout
 Owns: scripts/catalog-3.0/foundations/{accessibility,adaptive-layout}.md.
 - [x] Accessibility: keyboard (roving focus, Escape clears focus), the focus
-      ring, the WAI-ARIA 1.3 checks (shared/central/aria_test.ts) and axe
+      ring, the WAI-ARIA 1.3 checks (foundations/accessibility/aria_test.ts) and axe
       (axe_test.ts), the rule that M3 wins where it and ARIA disagree,
       reduced motion.
 - [x] Adaptive layout: window size classes (shared/adaptive.ts), the app and
@@ -467,8 +467,8 @@ scripts/catalog-3.0/theming/color.md.
       report it (MCU 0.4 doesn't implement them; don't hand-roll).
 
 ## G-2 (Sonnet): spring physics for gestures
-Owns: a new components/shared/spring.ts (+ test), the settle
-animation in components/shared/drag-settle.ts, and the Overview
+Owns: a new styles/motion/spring.ts (+ test), the settle
+animation in foundations/interaction/gestures/drag-settle.ts, and the Overview
 "gestures" paragraph of scripts/catalog-3.0/styles/motion.md (only that
 section; another agent edits Transitions).
 - [x] A small spring solver driven by requestAnimationFrame: damping ratio
@@ -488,7 +488,7 @@ Owns: styles/motion/transitions/ (transitions.ts and tests), the
 Transitions section of scripts/catalog-3.0/styles/motion.md.
 - [x] Scroll-driven enter and exit (transitions.md "beyond screen bounds"):
       a helper that hides/reveals an element by scroll direction with the
-      enter/exit motion (reuse components/shared/scroll-behavior.ts
+      enter/exit motion (reuse foundations/interaction/gestures/scroll-behavior.ts
       if it fits instead of duplicating it).
 - [x] Coplanar side sheet: a helper (or md-gb-side-sheet option, if the
       sheet already has the hook) where the sheet slides in beside the content

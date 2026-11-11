@@ -5,12 +5,12 @@
  */
 
 // import 'jasmine'; (google3-only)
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import './md-gb-segmented-button-set.js';
 
 import {html, type TemplateResult} from 'lit';
 import {Environment} from '../../testing/environment.js';
-import {internals} from '../../behaviors/element-internals.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {

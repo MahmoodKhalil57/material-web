@@ -8,7 +8,7 @@ import '@material/web/components/button/md-gb-button.js';
 import '@material/web/components/fab/md-gb-fab.js';
 import '@material/web/components/snackbar/md-gb-snackbar.js';
 import '@material/web/components/snackbar/md-gb-snackbar-host.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type SnackbarElement} from '@material/web/components/snackbar/snackbar-element.js';

@@ -9,7 +9,7 @@ import {
   isWindowSizeClassAtLeast,
   type WindowHeightClass,
   type WindowSizeClass,
-} from '../../styles/layout/window-size-class.js';
+} from '../../foundations/layout/window-size-class.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /**

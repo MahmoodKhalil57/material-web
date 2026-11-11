@@ -15,7 +15,7 @@ import {
   BACK_REASON,
   playPredictiveBack,
   type PredictiveBackAnimation,
-} from '../shared/predictive-back.js';
+} from '../../foundations/interaction/gestures/predictive-back.js';
 import {
   getResultOptions,
   moveResultFocus,
@@ -24,12 +24,12 @@ import {
   searchViewClasses,
 } from './search.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
 import iconButtonStyles from '../iconbutton/icon-button.css' with {type: 'css'}; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import searchViewStyles from './search-view.css' with {type: 'css'}; // github-only
 // import searchViewStyles from './search-view.cssresult.js'; // google3-only
 

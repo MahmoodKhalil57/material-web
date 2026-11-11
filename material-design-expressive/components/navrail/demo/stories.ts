@@ -9,7 +9,7 @@ import '@material/web/components/fab/md-gb-fab.js';
 import '@material/web/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/components/navrail/md-gb-nav-rail.js';
 import '@material/web/components/navrail/md-gb-nav-rail-item.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type NavRailAlignment} from '@material/web/components/navrail/nav-rail.js';

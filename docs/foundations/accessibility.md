@@ -11,7 +11,7 @@ The rules below are the ones the components follow and the tests check.
 ## Keyboard
 
 Composite components (button groups, chip sets, lists, menus, tabs, navigation,
-pickers) share one roving focus model in `components/shared/roving-focus.ts`:
+pickers) share one roving focus model in `foundations/interaction/inputs/roving-focus.ts`:
 
 - Arrow keys move between items along the orientation. Left and Right follow
   the reading direction, so they mirror in RTL.
@@ -57,7 +57,7 @@ dialog.addEventListener('cancel', (event) => {
 ## Focus ring
 
 The focus ring is drawn with `outline`, using the `--focus-ring-outline` and
-`--focus-ring-offset` variables from `components/focus/focus-ring.scss`.
+`--focus-ring-offset` variables from `foundations/interaction/states/focus/focus-ring.scss`.
 The thickness, color and offsets come from the state focus indicator tokens, so
 a theme changes them in one place. Do not remove the outline with CSS unless
 you draw a replacement that passes the same tests.
@@ -66,8 +66,8 @@ you draw a replacement that passes the same tests.
 
 Components use WAI-ARIA 1.3 roles, states and properties. The model of the
 draft and the checks that report misuse live in
-`components/shared/central/aria_test.ts`. Axe-core runs against every
-component in `components/shared/central/axe_test.ts`, so a missing
+`foundations/accessibility/aria_test.ts`. Axe-core runs against every
+component in `foundations/accessibility/axe_test.ts`, so a missing
 label or an invalid attribute fails the suite.
 
 Material Design 3 wins where it and WAI-ARIA 1.3 disagree. In every other case
@@ -77,7 +77,7 @@ for its behavior first, then check the ARIA role and attributes it uses.
 ## Reduced motion
 
 Motion respects `prefers-reduced-motion: reduce`. The motion helpers in
-`components/shared/motion.ts` resolve to 0 ms under that setting and
+`styles/motion/motion.ts` resolve to 0 ms under that setting and
 inside an ancestor with the `md-motion-reduced` class. The motion tokens in
 `styles/motion/` follow the same rule. Ripples skip the animated press
 and show their end state, and the effect tokens (color, opacity, shape) do not

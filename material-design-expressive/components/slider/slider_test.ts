@@ -6,7 +6,7 @@
 
 // import 'jasmine'; (google3-only)
 
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import './md-gb-slider.js';
 
 import {html} from 'lit';

@@ -6,11 +6,11 @@
 
 import '@material/web/components/list/md-gb-list.js';
 import '@material/web/components/list/md-gb-list-item.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {MaterialStoryInit} from './material-collection.js';
 import {styles as checkboxStyles} from '@material/web/components/checkbox/checkbox.cssresult.js';
-import {styles as focusRingStyles} from '@material/web/components/focus/focus-ring.cssresult.js';
+import {styles as focusRingStyles} from '@material/web/foundations/interaction/states/focus/focus-ring.cssresult.js';
 import {
   type ListReorderEvent,
   type ListSelectionChangeEvent,
@@ -18,7 +18,7 @@ import {
 import {list, listItem} from '@material/web/components/list/list.js';
 import {styles as listStyles} from '@material/web/components/list/list.cssresult.js';
 import {styles as radioStyles} from '@material/web/components/radio/radio.cssresult.js';
-import {styles as rippleStyles} from '@material/web/components/ripple/ripple.cssresult.js';
+import {styles as rippleStyles} from '@material/web/foundations/interaction/states/ripple/ripple.cssresult.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
 import {styles as m3Styles} from '@material/web/styles/m3.cssresult.js';
 import {css, html} from 'lit';

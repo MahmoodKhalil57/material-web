@@ -7,7 +7,7 @@
 // Tests for spec units that were tracked as gaps and are now built.
 
 // import 'jasmine'; (google3-only)
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import './md-gb-nav-drawer.js';
 import './md-gb-nav-drawer-item.js';
 

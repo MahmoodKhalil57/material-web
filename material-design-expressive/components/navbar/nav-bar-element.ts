@@ -6,12 +6,12 @@
 
 import {css, CSSResultOrNative, html, type PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
-import {AriaTablistElement} from '../../aria/tabs/tablist.js';
-import {internals} from '../../behaviors/element-internals.js';
+import {AriaTablistElement} from '../../foundations/accessibility/aria/tabs/tablist.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {hasLinkItems, NAV_LINK_CHANGE} from '../shared/nav-link.js';
-import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
-import {SelectionController} from '../shared/selection.js';
+import {ScrollBehaviorController} from '../../foundations/interaction/gestures/scroll-behavior.js';
+import {SelectionController} from '../../foundations/interaction/selection/selection.js';
 
 import navBarStyles from './nav-bar.css' with {type: 'css'}; // github-only
 // import {styles as navBarStyles} from './nav-bar.cssresult.js'; // google3-only

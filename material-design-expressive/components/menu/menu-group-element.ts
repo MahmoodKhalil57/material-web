@@ -11,7 +11,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {
   internals,
   mixinElementInternals,
-} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/element-internals.js';
 
 import menuStyles from './menu.css' with {type: 'css'}; // github-only
 // import {styles as menuStyles} from './menu.cssresult.js'; // google3-only

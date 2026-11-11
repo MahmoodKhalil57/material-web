@@ -6,7 +6,7 @@
 
 import '@material/web/components/navbar/md-gb-nav-bar.js';
 import '@material/web/components/navbar/md-gb-nav-bar-item.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type NavBarLayout} from '@material/web/components/navbar/nav-bar.js';

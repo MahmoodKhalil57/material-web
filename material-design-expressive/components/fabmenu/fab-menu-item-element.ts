@@ -8,12 +8,12 @@ import {css, CSSResultOrNative, html, LitElement} from 'lit';
 import {
   internals,
   mixinElementInternals,
-} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/element-internals.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import fabMenuStyles from './fab-menu.css' with {type: 'css'}; // github-only
 // import {styles as fabMenuStyles} from './fab-menu.cssresult.js'; // google3-only
 

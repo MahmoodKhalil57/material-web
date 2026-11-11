@@ -10,8 +10,8 @@ import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {
   BACK_REASON,
   type PredictiveBackAnimation,
-} from '../shared/predictive-back.js';
-import {isReducedMotion} from '../shared/motion.js';
+} from '../../foundations/interaction/gestures/predictive-back.js';
+import {isReducedMotion} from '../../styles/motion/motion.js';
 import {CLOSE_REASONS} from './sheet.js';
 
 /**

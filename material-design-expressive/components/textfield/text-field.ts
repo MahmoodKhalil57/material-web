@@ -6,8 +6,8 @@
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {densityClasses, densityClassNames} from '../shared/density.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {densityClasses, densityClassNames} from '../../foundations/layout/density.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 
 /** Text field variants. */
 export type TextFieldVariant = 'filled' | 'outlined';

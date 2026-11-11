@@ -51,10 +51,9 @@ export async function buildLibrary({log = (s) => console.log(`\n[build] ${s}`)} 
   nodeScript(['scripts/generate-sass-token-meta.js', ...tokenFiles]);
 
   log('Compiling Sass');
-  // The library's Sass: components and styles (labs/gb before the layout
-  // refactor), plus the aria and behaviors folders. sass/ext is loaded by
-  // path from these.
-  const dirs = ['components', 'styles', 'aria', 'behaviors'].map((d) => `material-design-expressive/${d}:material-design-expressive/${d}`);
+  // The library's Sass: foundations, styles and components. internal/ is not
+  // compiled (internal/sass/ext is loaded by path from these).
+  const dirs = ['foundations', 'styles', 'components'].map((d) => `material-design-expressive/${d}:material-design-expressive/${d}`);
   npx([
     'sass',
     '--style=compressed',

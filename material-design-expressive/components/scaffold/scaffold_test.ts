@@ -9,7 +9,7 @@
 import {html, type TemplateResult} from 'lit';
 import {Environment} from '../../testing/environment.js';
 
-import {simulateViewportSegments} from '../../styles/layout/viewport-segments.js';
+import {simulateViewportSegments} from '../../foundations/layout/viewport-segments.js';
 
 import {type AppScaffoldElement} from './app-scaffold-element.js';
 import {resolveNavigation, shouldExpandRail} from './app-scaffold.js';
@@ -28,7 +28,7 @@ import {
 } from './pane-scaffold.js';
 
 import {adoptStyles} from '../../styles/adopt-styles.js';
-import {styles as m3Styles} from '../../styles/space/md-space-tokens.cssresult.js';
+import {styles as m3Styles} from '../../styles/spacing/md-space-tokens.cssresult.js';
 
 adoptStyles(document, [m3Styles]);
 

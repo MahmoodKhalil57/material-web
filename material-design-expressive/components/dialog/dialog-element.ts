@@ -11,18 +11,18 @@ import {ARIAMixinStrict} from '../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
 import {divider} from '../divider/divider.js';
 import {iconButton} from '../iconbutton/icon-button.js';
-import {AdaptiveController} from '../shared/adaptive.js';
+import {AdaptiveController} from '../../foundations/layout/adaptive.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
 import {dialogClasses} from './dialog.js';
 
 import dividerStyles from '../divider/divider.css' with {type: 'css'}; // github-only
 // import dividerStyles from '../divider/divider.cssresult.js'; // google3-only
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
 import iconButtonStyles from '../iconbutton/icon-button.css' with {type: 'css'}; // github-only
 // import iconButtonStyles from '../iconbutton/icon-button.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import dialogStyles from './dialog.css' with {type: 'css'}; // github-only
 // import dialogStyles from './dialog.cssresult.js'; // google3-only
 

@@ -50,7 +50,7 @@ To react in code, observe the class of the window or of an element:
 <output id="size-class" aria-live="polite"></output>
 ```
 ```js
-import {observeWindowSizeClass} from '@material/web/styles/layout/window-size-class.js';
+import {observeWindowSizeClass} from '@material/web/foundations/layout/window-size-class.js';
 
 const output = document.querySelector('#size-class');
 observeWindowSizeClass(window, (sizeClass) => {
@@ -71,7 +71,7 @@ To react in code, observe the fold. The callback gets `null` when there is none.
 <output id="fold" aria-live="polite">No fold</output>
 ```
 ```js
-import {observeFold} from '@material/web/styles/layout/viewport-segments.js';
+import {observeFold} from '@material/web/foundations/layout/viewport-segments.js';
 
 const output = document.querySelector('#fold');
 observeFold((fold) => {

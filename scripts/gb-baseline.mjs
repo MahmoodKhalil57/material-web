@@ -379,6 +379,9 @@ async function main() {
       [/\bassignedElements\b/, 'api.HTMLSlotElement.assignedElements'],
       [/\bfocusVisible\b/, 'api.FocusEvent'], // option name only; resolved below if absent
     ];
+    // Test helpers of the central suites (in foundations/ next to the suites
+    // and in testing/) are not shipped code.
+    const CENTRAL_HELPERS = /^(aria-helpers|aria-internals|aria-rows|axe-helpers|axe-internals|states-helpers|rtl-helpers|subjects|style-helpers|scale-helpers)\.ts$/;
     // ARIA reflection on ElementInternals: internals.ariaLabel, internals.role ...
     const ariaRe = /\b(?:internals|#internals|_internals)\.(aria[A-Z]\w*|role)\b/g;
     // Element-reference ARIA reflection on Element (ariaActiveDescendantElement ...).
@@ -390,7 +393,7 @@ async function main() {
         if (name === 'node_modules' || name === 'demo' || name === 'skill') continue;
         const p = join(dir, name);
         if (statSync(p).isDirectory()) walkDir(p);
-        else if (/\.ts$/.test(name) && !/(_test|_gap|\.cssresult|\.d)\.ts$/.test(name) && !p.includes(join('shared', 'central'))) srcFiles.push(p);
+        else if (/\.ts$/.test(name) && !/(_test|_gap|\.cssresult|\.d)\.ts$/.test(name) && !CENTRAL_HELPERS.test(name)) srcFiles.push(p);
       }
     };
     walkDir(ROOT);

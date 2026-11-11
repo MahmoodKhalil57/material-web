@@ -5,7 +5,7 @@
  */
 
 import '@material/web/components/button/md-gb-button.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {MaterialStoryInit} from './material-collection.js';
 import {

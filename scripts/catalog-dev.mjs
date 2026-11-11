@@ -157,7 +157,7 @@ let snapshotAgain = false;
 const LIB_PORT = Number(arg('lib-port', 8001));
 const LIB = `http://localhost:${LIB_PORT}/`;
 // The library folders, served from material-design-expressive/ at the library server's root.
-const LIB_FOLDERS = /^\/(components|styles|aria|behaviors|internal|skill|testing|types|tokens|sass|all(_test)?\.(js|ts|d\.ts))(\/|$)/;
+const LIB_FOLDERS = /^\/(foundations|styles|components|internal|skill|testing|types|tokens|all(_test)?\.(js|ts|d\.ts))(\/|$)/;
 // Each step prints the time since the previous one, to see where a run spends it.
 const started = Date.now();
 let lastStep = started;
@@ -452,28 +452,30 @@ function watchSources() {
 }
 
 /**
- * labs/gb styles with a demo, shown as their own pages: page key -> folder
- * under styles.
+ * Foundations and styles with a demo, shown as their own pages: page key ->
+ * folder under material-design-expressive.
  */
 function styleDemos() {
   return {
-    'style-color': 'color',
-    'style-icon': 'icon',
-    'style-layout': 'layout',
-    'style-transitions': 'motion/transitions',
+    'focus': 'foundations/interaction/states/focus',
+    'ripple': 'foundations/interaction/states/ripple',
+    'style-color': 'styles/color',
+    'style-icon': 'styles/icons',
+    'style-layout': 'foundations/layout',
+    'style-transitions': 'styles/motion/transitions',
   };
 }
 
 /** Source folder of a component (or style) key. */
 function srcDir(dir) {
   const styles = styleDemos();
-  return dir in styles ? join(ROOT, 'material-design-expressive', 'styles', styles[dir]) : join(GB, dir);
+  return dir in styles ? join(ROOT, 'material-design-expressive', styles[dir]) : join(GB, dir);
 }
 
 /** labs/gb components (and styles) that have a demo. */
 async function gbDemoDirs() {
   const dirs = [];
-  for (const dir of [...(await readdir(GB)), ...Object.keys(styleDemos())].sort()) {
+  for (const dir of [...new Set([...(await readdir(GB)), ...Object.keys(styleDemos())])].sort()) {
     if (existsSync(join(srcDir(dir), 'demo', 'demo.ts'))) dirs.push(dir);
   }
   return dirs;

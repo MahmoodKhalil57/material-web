@@ -75,7 +75,7 @@ function loadTagModules() {
     scan(join(ROOT, 'material-design-expressive', 'components'), 'components');
     scan(join(ROOT, 'material-design-expressive', 'styles'), 'styles');
     // The ARIA elements the gb ones pair with (md-aria-tabpanel for tabs).
-    scan(join(ROOT, 'material-design-expressive', 'aria'), 'aria');
+    scan(join(ROOT, 'material-design-expressive', 'foundations', 'accessibility', 'aria'), 'foundations/accessibility/aria');
   }
   return tagModules;
 }

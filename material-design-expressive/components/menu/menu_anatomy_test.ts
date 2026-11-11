@@ -18,7 +18,7 @@ import './md-gb-menu-item.js';
 import './md-gb-menu-group.js';
 import '../divider/md-gb-divider.js';
 import '../badge/md-gb-badge.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import type {ReactiveElement} from 'lit';
 
 adoptStyles(document, [m3Styles]);

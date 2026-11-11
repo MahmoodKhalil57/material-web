@@ -29,14 +29,14 @@ function registerPressProperty() {
 
 import {type CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
-import {ripple} from '../ripple/ripple.js';
+import {ripple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {hasSlotted} from '../shared/has-slotted.js';
 import {CAROUSEL_ITEM_FRAME_CLASSES, carouselItem} from './carousel.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import carouselItemStyles from './carousel-item.css' with {type: 'css'}; // github-only
 // import carouselItemStyles from './carousel-item.cssresult.js'; // google3-only
 

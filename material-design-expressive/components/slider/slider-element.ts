@@ -23,11 +23,11 @@ import {
   isActivationClick,
 } from '../../internal/events/form-label-activation.js';
 import {redispatchEvent} from '../../internal/events/redispatch-event.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
 import {
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
+} from '../../internal/behaviors/form-associated.js';
 import {
   FormDisabledController,
   numberAttribute,
@@ -44,8 +44,8 @@ import {
   type SliderSize,
 } from './slider.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
 import sliderStyles from './slider.css' with {type: 'css'}; // github-only
 // import sliderStyles from './slider.cssresult.js'; // google3-only
 

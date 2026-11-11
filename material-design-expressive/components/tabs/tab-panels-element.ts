@@ -12,9 +12,9 @@ import {
   type PropertyValues,
 } from 'lit';
 import {property} from 'lit/decorators.js';
-import {AriaTablistElement} from '../../aria/tabs/tablist.js';
-import {DragSettleController} from '../shared/drag-settle.js';
-import {isReducedMotion, parseDuration} from '../shared/motion.js';
+import {AriaTablistElement} from '../../foundations/accessibility/aria/tabs/tablist.js';
+import {DragSettleController} from '../../foundations/interaction/gestures/drag-settle.js';
+import {isReducedMotion, parseDuration} from '../../styles/motion/motion.js';
 import {updateClassList} from '../shared/update-class-list.js';
 
 import tabPanelsStyles from './tab-panels.css' with {type: 'css'}; // github-only

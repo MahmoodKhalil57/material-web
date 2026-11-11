@@ -26,12 +26,12 @@ import {
   overflowIcon,
   overflowStyles,
   renderOverflowMenu,
-} from '../shared/overflow.js';
-import {ScrollBehaviorController} from '../shared/scroll-behavior.js';
+} from '../../foundations/layout/overflow.js';
+import {ScrollBehaviorController} from '../../foundations/interaction/gestures/scroll-behavior.js';
 import {
   RovingFocusController,
   type RovingFocusOptions,
-} from '../shared/roving-focus.js';
+} from '../../foundations/interaction/inputs/roving-focus.js';
 import toolbarStyles from './toolbar.css' with {type: 'css'}; // github-only
 // import {styles as toolbarStyles} from './toolbar.cssresult.js'; // google3-only
 

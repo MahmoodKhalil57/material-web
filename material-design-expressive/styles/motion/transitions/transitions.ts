@@ -28,7 +28,7 @@ import {
   SCROLL_THRESHOLD,
   type ScrollStep,
   stepScroll,
-} from '../../../components/shared/scroll-behavior.js';
+} from '../../../foundations/interaction/gestures/scroll-behavior.js';
 
 /** Changes the DOM from the old state to the new one. */
 export type TransitionUpdate = () => void | Promise<void>;

@@ -5,7 +5,7 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {densityClasses, densityClassNames} from '../shared/density.js';
+import {densityClasses, densityClassNames} from '../../foundations/layout/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /** Time picker display modes: a clock dial or hour and minute text fields. */

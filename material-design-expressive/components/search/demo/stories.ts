@@ -9,7 +9,7 @@ import '@material/web/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/components/list/md-gb-list-item.js';
 import '@material/web/components/search/md-gb-search-bar.js';
 import '@material/web/components/search/md-gb-search-view.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type SearchViewElement} from '@material/web/components/search/search-view-element.js';

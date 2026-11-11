@@ -6,20 +6,20 @@
 
 import {css, CSSResultOrNative, html, nothing, type PropertyValues} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
-import {AriaTablistElement} from '../../aria/tabs/tablist.js';
-import {internals} from '../../behaviors/element-internals.js';
+import {AriaTablistElement} from '../../foundations/accessibility/aria/tabs/tablist.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {hasLinkItems, NAV_LINK_CHANGE} from '../shared/nav-link.js';
-import {setupRipple} from '../ripple/ripple.js';
-import {DragSettleController} from '../shared/drag-settle.js';
+import {setupRipple} from '../../foundations/interaction/states/ripple/ripple.js';
+import {DragSettleController} from '../../foundations/interaction/gestures/drag-settle.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
-import {RovingFocusController} from '../shared/roving-focus.js';
-import {BACK_REASON, playPredictiveBack} from '../shared/predictive-back.js';
+import {RovingFocusController} from '../../foundations/interaction/inputs/roving-focus.js';
+import {BACK_REASON, playPredictiveBack} from '../../foundations/interaction/gestures/predictive-back.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import {styles as focusRingStyles} from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import {styles as rippleStyles} from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import navRailStyles from './nav-rail.css' with {type: 'css'}; // github-only
 // import {styles as navRailStyles} from './nav-rail.cssresult.js'; // google3-only
 

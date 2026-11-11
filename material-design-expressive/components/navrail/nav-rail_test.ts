@@ -18,7 +18,7 @@ import {FabElement} from '../fab/fab-element.js';
 import {
   FakeCloseWatcher,
   useCloseWatcher,
-} from '../shared/predictive-back-harness.js';
+} from '../../foundations/interaction/gestures/predictive-back-harness.js';
 import {NavRailElement} from './nav-rail-element.js';
 
 adoptStyles(document, [m3Styles]);

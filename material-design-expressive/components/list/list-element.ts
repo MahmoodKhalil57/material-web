@@ -16,13 +16,13 @@ import { property, query } from "lit/decorators.js";
 import {
   internals,
   mixinElementInternals,
-} from "../../behaviors/element-internals.js";
+} from "../../internal/behaviors/element-internals.js";
 
 import listStyles from "./list.css" with { type: "css" }; // github-only
 // import {styles as listStyles} from './list.cssresult.js'; // google3-only
 
-import { DragGesture } from "../shared/drag-gesture.js";
-import { isRtl, nextFocusIndex } from "../shared/roving-focus.js";
+import { DragGesture } from "../../foundations/interaction/gestures/drag-gesture.js";
+import { isRtl, nextFocusIndex } from "../../foundations/interaction/inputs/roving-focus.js";
 import {
   LIST_ITEM_CLASSES,
   type ListDensity,

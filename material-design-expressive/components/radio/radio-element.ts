@@ -14,27 +14,27 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
+} from '../../internal/behaviors/constraint-validation.js';
 import {
   internals,
   mixinElementInternals,
-} from '../../behaviors/element-internals.js';
-import {mixinFocusable} from '../../behaviors/focusable.js';
+} from '../../internal/behaviors/element-internals.js';
+import {mixinFocusable} from '../../internal/behaviors/focusable.js';
 import {
   getFormState,
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
-import {RadioValidator} from '../../behaviors/validators/radio-validator.js';
+} from '../../internal/behaviors/form-associated.js';
+import {RadioValidator} from '../../internal/behaviors/validators/radio-validator.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import radioStyles from './radio.css' with {type: 'css'}; // github-only
 // import {styles as radioStyles} from './radio.cssresult.js'; // google3-only
 
-import {clampDensity, type Density} from '../shared/density.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
 import {
   FormDisabledController,
   FormScopedSelectionController,

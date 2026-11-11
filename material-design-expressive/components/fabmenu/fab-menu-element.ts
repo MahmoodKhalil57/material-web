@@ -12,10 +12,10 @@ import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
 import {type FabSize} from '../fab/fab.js';
 import {applyDisclosure} from '../shared/disclosure.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import fabStyles from '../fab/fab.css' with {type: 'css'}; // github-only
 // import {styles as fabStyles} from '../fab/fab.cssresult.js'; // google3-only
 import fabMenuStyles from './fab-menu.css' with {type: 'css'}; // github-only

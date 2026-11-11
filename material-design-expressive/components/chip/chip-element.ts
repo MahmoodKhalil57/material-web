@@ -16,9 +16,9 @@ import {
 import { property, query, state } from "lit/decorators.js";
 import { safeHref } from "../../internal/directives/safe-href.js";
 import { redispatchEvent } from "../../internal/events/redispatch-event.js";
-import { clampDensity, type Density } from "../shared/density.js";
-import focusRingStyles from "../focus/focus-ring.cssresult.js";
-import rippleStyles from "../ripple/ripple.cssresult.js";
+import { clampDensity, type Density } from "../../foundations/layout/density.js";
+import focusRingStyles from "../../foundations/interaction/states/focus/focus-ring.cssresult.js";
+import rippleStyles from "../../foundations/interaction/states/ripple/ripple.cssresult.js";
 import {
   CHIP_CLASSES,
   chip,

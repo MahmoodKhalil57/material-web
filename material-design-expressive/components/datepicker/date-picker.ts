@@ -6,7 +6,7 @@
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {rippleClasses} from '../ripple/ripple.js';
+import {rippleClasses} from '../../foundations/interaction/states/ripple/ripple.js';
 import {
   addDays,
   addMonths,

@@ -10,13 +10,13 @@ import {property, state} from 'lit/decorators.js';
 import {
   internals,
   mixinElementInternals,
-} from '../../behaviors/element-internals.js';
-import {mixinFocusable} from '../../behaviors/focusable.js';
+} from '../../internal/behaviors/element-internals.js';
+import {mixinFocusable} from '../../internal/behaviors/focusable.js';
 
 import {AnchoredOverlayController} from '../shared/anchored-overlay.js';
-import {clampDensity, type Density} from '../shared/density.js';
-import {isReducedMotion, springDuration} from '../shared/motion.js';
-import {nextFocusIndex} from '../shared/roving-focus.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
+import {isReducedMotion, springDuration} from '../../styles/motion/motion.js';
+import {nextFocusIndex} from '../../foundations/interaction/inputs/roving-focus.js';
 import menuStyles from './menu.css' with {type: 'css'}; // github-only
 // import {styles as menuStyles} from './menu.cssresult.js'; // google3-only
 

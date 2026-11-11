@@ -9,14 +9,14 @@ import {property, state} from 'lit/decorators.js';
 import {
   internals,
   mixinElementInternals,
-} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/element-internals.js';
 import {hasSlotted} from '../shared/has-slotted.js';
 import {selectOption} from './select.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import menuStyles from '../menu/menu.css' with {type: 'css'}; // github-only
 // import {styles as menuStyles} from '../menu/menu.cssresult.js'; // google3-only
 

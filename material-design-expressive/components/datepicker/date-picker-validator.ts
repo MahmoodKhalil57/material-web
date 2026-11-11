@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Validator} from '../../behaviors/validators/validator.js';
+import {Validator} from '../../internal/behaviors/validators/validator.js';
 
 /** Constraint validation properties for a date picker. */
 export interface DatePickerState {

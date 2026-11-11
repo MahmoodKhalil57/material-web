@@ -16,7 +16,7 @@ import {sendKeys} from '@web/test-runner-commands';
 import {html, render as litRender, type TemplateResult} from 'lit';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {until} from '../shared/central/subjects.js';
+import {until} from '../../testing/subjects.js';
 
 // Real timers and frames: the menu focuses its first item in a timeout, which
 // the Environment's mocked clock would hold back.

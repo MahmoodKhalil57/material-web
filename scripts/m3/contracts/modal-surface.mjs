@@ -459,9 +459,9 @@ export function tests(dir, config) {
   const lifecycle = surfaces.some((s) => s.mode === 'lifecycle');
   const toggle = surfaces.some((s) => s.mode === 'toggle');
   const common = [
-    "import {resetEscapeTracking} from '../shared/predictive-back.js';\n",
+    "import {resetEscapeTracking} from '../../foundations/interaction/gestures/predictive-back.js';\n",
     toggle
-      ? "import {FakeCloseWatcher} from '../shared/predictive-back-harness.js';\n"
+      ? "import {FakeCloseWatcher} from '../../foundations/interaction/gestures/predictive-back-harness.js';\n"
       : '',
     lifecycle
       ? `/** What the lifecycle surfaces share: \`show()\`, \`close()\`, \`open\` and events. */

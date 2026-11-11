@@ -9,11 +9,11 @@ import {
   afterDispatch,
   setupDispatchHooks,
 } from '../../internal/events/dispatch-hooks.js';
-import {focusRingClasses} from '../focus/focus-ring.js';
-import {rippleClasses, setupRipple} from '../ripple/ripple.js';
-import {densityClasses, densityClassNames} from '../shared/density.js';
+import {focusRingClasses} from '../../foundations/interaction/states/focus/focus-ring.js';
+import {rippleClasses, setupRipple} from '../../foundations/interaction/states/ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../../foundations/layout/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES, isDisabled} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES, isDisabled} from '../../foundations/interaction/states/pseudo-classes.js';
 
 /** Switch classes. */
 export const SWITCH_CLASSES = {

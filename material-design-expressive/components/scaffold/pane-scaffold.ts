@@ -5,7 +5,7 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {type FoldOrientation} from '../../styles/layout/viewport-segments.js';
+import {type FoldOrientation} from '../../foundations/layout/viewport-segments.js';
 import {
   DOCKED_PANE_FLOATS_FROM,
   isWindowSizeClassAtLeast,
@@ -13,7 +13,7 @@ import {
   PANE_SNAP_WIDTHS,
   type WindowSizeClass,
   windowSizeClassValues,
-} from '../../styles/layout/window-size-class.js';
+} from '../../foundations/layout/window-size-class.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /**

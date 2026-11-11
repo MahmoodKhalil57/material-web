@@ -16,7 +16,7 @@ import {adoptStyles} from '../../styles/adopt-styles.js';
 import './md-gb-nav-rail.js';
 import './md-gb-nav-rail-item.js';
 import '../fab/md-gb-fab.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import type {ReactiveElement} from 'lit';
 
 adoptStyles(document, [m3Styles]);

@@ -12,7 +12,7 @@ import '@material/web/components/fab/md-gb-fab.js';
 import '@material/web/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/components/slider/md-gb-slider.js';
 import '@material/web/components/switch/md-gb-switch.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';

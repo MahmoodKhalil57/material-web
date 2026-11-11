@@ -6,7 +6,7 @@
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'sass:map';
 @use 'sass:meta';
-@use '../../../sass/ext/map_ext';
+@use '../../../internal/sass/ext/map_ext';
 @use '../../../tokens/versions/latest/sass/md-ref-palette';
 @use '../../../tokens/versions/latest/sass/md-sys-color';
 @use '../../../tokens/versions/latest/sass/md-sys-color-meta';

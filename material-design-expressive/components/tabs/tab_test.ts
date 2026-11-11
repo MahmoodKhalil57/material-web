@@ -11,12 +11,12 @@ import './md-gb-tabs.js';
 
 import {html} from 'lit';
 import {Environment} from '../../testing/environment.js';
-import {hasState} from '../../behaviors/custom-state-set.js';
-import {internals} from '../../behaviors/element-internals.js';
+import {hasState} from '../../internal/behaviors/custom-state-set.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import focusRingStyles from '../focus/focus-ring.cssresult.js';
-import rippleStyles from '../ripple/ripple.cssresult.js';
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js';
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js';
 import {styles as tabsStyles} from './tabs.cssresult.js';
 
 adoptStyles(document, [m3Styles, focusRingStyles, rippleStyles, tabsStyles]);

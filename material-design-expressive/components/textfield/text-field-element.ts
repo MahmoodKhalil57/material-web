@@ -24,27 +24,27 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/constraint-validation.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
 import {
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
+} from '../../internal/behaviors/form-associated.js';
 import {
   mixinOnReportValidity,
   onReportValidity,
-} from '../../behaviors/on-report-validity.js';
-import {TextFieldValidator} from '../../behaviors/validators/text-field-validator.js';
-import {type Validator} from '../../behaviors/validators/validator.js';
-import {AnnouncerController} from '../shared/announcer.js';
-import {clampDensity, type Density} from '../shared/density.js';
+} from '../../internal/behaviors/on-report-validity.js';
+import {TextFieldValidator} from '../../internal/behaviors/validators/text-field-validator.js';
+import {type Validator} from '../../internal/behaviors/validators/validator.js';
+import {AnnouncerController} from '../../foundations/accessibility/announcer.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
 import {
   FormDisabledController,
   ValueFieldController,
 } from '../shared/form-field.js';
 // Escape leaves the field: the caret goes away, the text stays (spec:
 // interaction-inputs-e456f0), also when no other component loaded it.
-import '../shared/focus-reset.js';
+import '../../foundations/interaction/inputs/focus-reset.js';
 import {
   TEXT_FIELD_CLASSES,
   textFieldClasses,

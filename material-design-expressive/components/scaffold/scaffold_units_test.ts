@@ -6,7 +6,7 @@
 
 // import 'jasmine'; (google3-only)
 
-import {WINDOW_SIZE_CLASSES} from '../../styles/layout/window-size-class.js';
+import {WINDOW_SIZE_CLASSES} from '../../foundations/layout/window-size-class.js';
 
 import {planPanes} from './pane-scaffold.js';
 

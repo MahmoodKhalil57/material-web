@@ -5,11 +5,11 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {focusRingClasses} from '../focus/focus-ring.js';
-import {rippleClasses, setupRipple} from '../ripple/ripple.js';
-import {densityClasses, densityClassNames} from '../shared/density.js';
+import {focusRingClasses} from '../../foundations/interaction/states/focus/focus-ring.js';
+import {rippleClasses, setupRipple} from '../../foundations/interaction/states/ripple/ripple.js';
+import {densityClasses, densityClassNames} from '../../foundations/layout/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 
 /** Checkbox classes. */
 export const CHECKBOX_CLASSES = {

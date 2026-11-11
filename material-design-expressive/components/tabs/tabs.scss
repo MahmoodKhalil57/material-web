@@ -4,7 +4,7 @@
  */
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
-@use '../shared/density';
+@use '../../foundations/layout/density';
 @use 'tabs-tokens';
 // go/keep-sorted end
 
@@ -17,7 +17,7 @@ $selected: ':is(.selected, [aria-selected="true"], :state(selected))';
 
 // A tab stacks its icon above its label when it has both. Every gb icon host
 // carries `.md-icon` — IconElement.connectedCallback adds it
-// (styles/icon/icon-element.ts:25) — so the structure can be read directly and
+// (styles/icons/icon-element.ts:25) — so the structure can be read directly and
 // no `.tab-icon` class is needed. Primary tabs with icon + label are always
 // stacked and secondary tabs are always inline, so structure is sufficient and
 // no modifier class is required.

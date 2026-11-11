@@ -22,7 +22,7 @@ import {styleMap} from 'lit/directives/style-map.js';
 import pullToRefreshStyles from './pull-to-refresh.css' with {type: 'css'}; // github-only
 // import {styles as pullToRefreshStyles} from './pull-to-refresh.cssresult.js'; // google3-only
 
-import {AnnouncerController} from '../shared/announcer.js';
+import {AnnouncerController} from '../../foundations/accessibility/announcer.js';
 import {
   PULL_TO_REFRESH_THRESHOLD_PX,
   pullToRefreshArrow,

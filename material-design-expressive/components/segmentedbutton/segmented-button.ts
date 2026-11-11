@@ -6,11 +6,11 @@
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 import {
   isRtl as sharedIsRtl,
   nextFocusIndex as sharedNextFocusIndex,
-} from '../shared/roving-focus.js';
+} from '../../foundations/interaction/inputs/roving-focus.js';
 
 /** Segmented button densities: 0 (default) to -3, 4px shorter per step. */
 export type SegmentedButtonDensity = 0 | -1 | -2 | -3;

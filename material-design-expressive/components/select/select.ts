@@ -11,7 +11,7 @@ import {
   setupMenuItem,
 } from '../menu/menu.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 import {
   setupTextField,
   type TextFieldClassesState,

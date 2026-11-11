@@ -5,10 +5,10 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {focusRingClasses} from '../focus/focus-ring.js';
-import {rippleClasses, setupRipple} from '../ripple/ripple.js';
+import {focusRingClasses} from '../../foundations/interaction/states/focus/focus-ring.js';
+import {rippleClasses, setupRipple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 
 /** Fab color configuration types. */
 export type FabColor =

@@ -5,8 +5,8 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
-import {RIPPLE_CLASSES, setupRipple} from '../ripple/ripple.js';
+import {FOCUS_RING_CLASSES} from '../../foundations/interaction/states/focus/focus-ring.js';
+import {RIPPLE_CLASSES, setupRipple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {createClassMapDirective} from '../shared/directives.js';
 
 /** Navigation rail vertical alignment configuration types. */

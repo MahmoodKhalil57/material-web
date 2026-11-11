@@ -18,16 +18,16 @@ import {ARIAMixinStrict} from '../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import {styles as focusRingStyles} from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import {styles as rippleStyles} from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import navDrawerStyles from './nav-drawer.css' with {type: 'css'}; // github-only
 // import {styles as navDrawerStyles} from './nav-drawer.cssresult.js'; // google3-only
 
-import {DragSettleController} from '../shared/drag-settle.js';
+import {DragSettleController} from '../../foundations/interaction/gestures/drag-settle.js';
 import {ModalSurfaceController} from '../shared/modal-surface.js';
-import {RovingFocusController} from '../shared/roving-focus.js';
+import {RovingFocusController} from '../../foundations/interaction/inputs/roving-focus.js';
 import {
   NAV_DRAWER_CLASSES,
   NAV_DRAWER_CLOSE_REASONS,

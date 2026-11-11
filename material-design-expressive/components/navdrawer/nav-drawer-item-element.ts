@@ -12,10 +12,10 @@ import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
 import {safeHref} from '../../internal/directives/safe-href.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import {styles as focusRingStyles} from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import {styles as rippleStyles} from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import {styles as focusRingStyles} from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import {styles as rippleStyles} from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import navDrawerStyles from './nav-drawer.css' with {type: 'css'}; // github-only
 // import {styles as navDrawerStyles} from './nav-drawer.cssresult.js'; // google3-only
 

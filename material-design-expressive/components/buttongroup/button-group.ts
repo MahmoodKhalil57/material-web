@@ -5,13 +5,13 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {densityClasses, densityClassNames} from '../shared/density.js';
+import {densityClasses, densityClassNames} from '../../foundations/layout/density.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 import {
   nextSelection,
   normalizeSelection as normalizeSelectionState,
-} from '../shared/selection.js';
+} from '../../foundations/interaction/selection/selection.js';
 
 /** Button group variant layout types. */
 export type ButtonGroupVariant = 'standard' | 'connected';

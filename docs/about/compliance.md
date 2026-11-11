@@ -196,7 +196,7 @@ which spec token a declaration belongs to).
 
 ## Accessibility
 
-Two central suites render rows in `components/shared/central` and run in a real browser:
+Two central suites render rows in `material-design-expressive/foundations/accessibility` and run in a real browser:
 
 - **axe** (`axe_test.ts`): axe-core with no rule disabled, on every subject of
   the central table (`subjects.ts`) plus 29 overlay rows in their

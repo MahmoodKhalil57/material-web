@@ -17,13 +17,13 @@ import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {keyed} from 'lit/directives/keyed.js';
 import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
-import {mixinConstraintValidation} from '../../behaviors/constraint-validation.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
-import {mixinFormAssociated} from '../../behaviors/form-associated.js';
+import {mixinConstraintValidation} from '../../internal/behaviors/constraint-validation.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
+import {mixinFormAssociated} from '../../internal/behaviors/form-associated.js';
 import {
   mixinOnReportValidity,
   onReportValidity,
-} from '../../behaviors/on-report-validity.js';
+} from '../../internal/behaviors/on-report-validity.js';
 import {menu} from '../menu/menu.js';
 import {
   AnchoredOverlayController,

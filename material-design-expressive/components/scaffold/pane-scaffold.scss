@@ -5,7 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'sass:math';
-@use '../../styles/layout/md-layout';
+@use '../../foundations/layout/md-layout';
 @use 'drag-handle-tokens';
 @use 'levitated-pane-tokens';
 @use '../shared/scrollbar';

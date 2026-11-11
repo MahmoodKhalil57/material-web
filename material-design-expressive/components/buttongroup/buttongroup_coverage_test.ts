@@ -8,7 +8,7 @@
 import './md-gb-button-group.js';
 import '../button/md-gb-button.js';
 import '../iconbutton/md-gb-icon-button.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import type {ReactiveElement} from 'lit';

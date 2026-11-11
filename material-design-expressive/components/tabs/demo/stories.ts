@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import '@material/web/aria/tabs/md-aria-tabpanel.js';
+import '@material/web/foundations/accessibility/aria/tabs/md-aria-tabpanel.js';
 import '@material/web/components/tabs/md-gb-tab.js';
 import '@material/web/components/tabs/md-gb-tab-panels.js';
 import '@material/web/components/tabs/md-gb-tabs.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {MaterialStoryInit} from './material-collection.js';
 import {styles as badgeStyles} from '@material/web/components/badge/badge.cssresult.js';
-import {styles as focusRingStyles} from '@material/web/components/focus/focus-ring.cssresult.js';
-import {styles as rippleStyles} from '@material/web/components/ripple/ripple.cssresult.js';
+import {styles as focusRingStyles} from '@material/web/foundations/interaction/states/focus/focus-ring.cssresult.js';
+import {styles as rippleStyles} from '@material/web/foundations/interaction/states/ripple/ripple.cssresult.js';
 import {styles as tabsStyles} from '@material/web/components/tabs/tabs.cssresult.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
 import {styles as m3Styles} from '@material/web/styles/m3.cssresult.js';

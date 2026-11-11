@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@use '../shared/density';
+@use '../../foundations/layout/density';
 @use 'button-group-tokens';
 
 @layer md.sys, md.comp.ripple, md.comp.focus-ring, md.comp.button;

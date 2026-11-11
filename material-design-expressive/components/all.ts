@@ -14,7 +14,7 @@
 
 // LINT.IfChange(imports)
 // go/keep-sorted start
-import '../styles/icon/md-gb-icon.js';
+import '../styles/icons/md-gb-icon.js';
 import '../styles/motion/transitions/md-gb-skeleton.js';
 import './appbar/md-gb-app-bar.js';
 import './badge/md-gb-badge.js';
@@ -30,7 +30,7 @@ import './datepicker/md-gb-date-picker.js';
 import './dialog/md-gb-dialog.js';
 import './divider/md-gb-divider.js';
 import './fab/md-gb-fab.js';
-import './focus/focus-ring.js';
+import '../foundations/interaction/states/focus/focus-ring.js';
 import './iconbutton/md-gb-icon-button.js';
 import './list/md-gb-list.js';
 import './list/md-gb-list-item.js';
@@ -45,7 +45,7 @@ import './navrail/md-gb-nav-rail.js';
 import './navrail/md-gb-nav-rail-item.js';
 import './pulltorefresh/md-gb-pull-to-refresh.js';
 import './radio/md-gb-radio.js';
-import './ripple/ripple.js';
+import '../foundations/interaction/states/ripple/ripple.js';
 import './scaffold/md-gb-app-scaffold.js';
 import './scaffold/md-gb-pane-scaffold.js';
 import './search/md-gb-search-bar.js';
@@ -74,7 +74,7 @@ import './tooltip/md-gb-tooltip.js';
 
 // LINT.IfChange(exports)
 // go/keep-sorted start
-export * from '../styles/icon/md-gb-icon.js';
+export * from '../styles/icons/md-gb-icon.js';
 export * from '../styles/motion/transitions/md-gb-skeleton.js';
 export * from './appbar/md-gb-app-bar.js';
 export * from './badge/md-gb-badge.js';
@@ -90,7 +90,7 @@ export * from './datepicker/md-gb-date-picker.js';
 export * from './dialog/md-gb-dialog.js';
 export * from './divider/md-gb-divider.js';
 export * from './fab/md-gb-fab.js';
-export * from './focus/focus-ring.js';
+export * from '../foundations/interaction/states/focus/focus-ring.js';
 export * from './iconbutton/md-gb-icon-button.js';
 export * from './list/md-gb-list.js';
 export * from './list/md-gb-list-item.js';
@@ -105,7 +105,7 @@ export * from './navrail/md-gb-nav-rail.js';
 export * from './navrail/md-gb-nav-rail-item.js';
 export * from './pulltorefresh/md-gb-pull-to-refresh.js';
 export * from './radio/md-gb-radio.js';
-export * from './ripple/ripple.js';
+export * from '../foundations/interaction/states/ripple/ripple.js';
 export * from './scaffold/md-gb-app-scaffold.js';
 export * from './scaffold/md-gb-pane-scaffold.js';
 export * from './search/md-gb-search-bar.js';

@@ -80,7 +80,7 @@ const TIMEPICKER_INPUT = '<md-gb-time-picker hour-cycle="12" mode="input"></md-g
 
 export const ANATOMY = {
   switch: {
-    imports: ['./md-gb-switch.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-switch.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'switch',
@@ -95,7 +95,7 @@ export const ANATOMY = {
     ],
   },
   button: {
-    imports: ['./md-gb-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-button.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'buttons',
@@ -110,7 +110,7 @@ export const ANATOMY = {
     ],
   },
   iconbutton: {
-    imports: ['./md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-icon-button.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'icon-buttons',
@@ -124,7 +124,7 @@ export const ANATOMY = {
     ],
   },
   fab: {
-    imports: ['./md-gb-fab.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-fab.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'floating-action-button',
@@ -179,7 +179,7 @@ export const ANATOMY = {
     ],
   },
   chip: {
-    imports: ['./md-gb-chip.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-chip.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'chips',
@@ -241,7 +241,7 @@ export const ANATOMY = {
     ],
   },
   slider: {
-    imports: ['./md-gb-slider.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-slider.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'sliders',
@@ -259,7 +259,7 @@ export const ANATOMY = {
     ],
   },
   segmentedbutton: {
-    imports: ['./md-gb-segmented-button-set.js', './md-gb-segmented-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-segmented-button-set.js', './md-gb-segmented-button.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'segmented-buttons',
@@ -276,7 +276,7 @@ export const ANATOMY = {
     ],
   },
   appbar: {
-    imports: ['./md-gb-app-bar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-app-bar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'app-bars',
@@ -310,7 +310,7 @@ export const ANATOMY = {
     ],
   },
   fabmenu: {
-    imports: ['./md-gb-fab-menu.js', './md-gb-fab-menu-item.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-fab-menu.js', './md-gb-fab-menu-item.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'fab-menu',
@@ -354,7 +354,7 @@ export const ANATOMY = {
     ],
   },
   splitbutton: {
-    imports: ['./md-gb-split-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-split-button.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'split-button',
@@ -372,7 +372,7 @@ export const ANATOMY = {
     ],
   },
   toolbar: {
-    imports: ['./md-gb-toolbar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-toolbar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'toolbars',
@@ -387,7 +387,7 @@ export const ANATOMY = {
     ],
   },
   list: {
-    imports: ['./md-gb-list.js', './md-gb-list-item.js', '../../styles/icon/md-gb-icon.js', '../divider/md-gb-divider.js'],
+    imports: ['./md-gb-list.js', './md-gb-list-item.js', '../../styles/icons/md-gb-icon.js', '../divider/md-gb-divider.js'],
     pages: [
       {
         page: 'lists',
@@ -412,7 +412,7 @@ export const ANATOMY = {
     ],
   },
   menu: {
-    imports: ['./md-gb-menu.js', './md-gb-menu-item.js', './md-gb-menu-group.js', '../divider/md-gb-divider.js', '../badge/md-gb-badge.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-menu.js', './md-gb-menu-item.js', './md-gb-menu-group.js', '../divider/md-gb-divider.js', '../badge/md-gb-badge.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'menus',
@@ -439,7 +439,7 @@ export const ANATOMY = {
     ],
   },
   navbar: {
-    imports: ['./md-gb-nav-bar.js', './md-gb-nav-bar-item.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-nav-bar.js', './md-gb-nav-bar-item.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'navigation-bar',
@@ -458,7 +458,7 @@ export const ANATOMY = {
     ],
   },
   navrail: {
-    imports: ['./md-gb-nav-rail.js', './md-gb-nav-rail-item.js', '../fab/md-gb-fab.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-nav-rail.js', './md-gb-nav-rail-item.js', '../fab/md-gb-fab.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'navigation-rail',
@@ -484,7 +484,7 @@ export const ANATOMY = {
     ],
   },
   navdrawer: {
-    imports: ['./md-gb-nav-drawer.js', './md-gb-nav-drawer-item.js', '../divider/md-gb-divider.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-nav-drawer.js', './md-gb-nav-drawer-item.js', '../divider/md-gb-divider.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'navigation-drawer',
@@ -550,7 +550,7 @@ export const ANATOMY = {
     ],
   },
   tabs: {
-    imports: ['./md-gb-tabs.js', './md-gb-tab.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-tabs.js', './md-gb-tab.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'tabs',
@@ -586,7 +586,7 @@ export const ANATOMY = {
     ],
   },
   search: {
-    imports: ['./md-gb-search-bar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-search-bar.js', '../iconbutton/md-gb-icon-button.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'search',
@@ -605,7 +605,7 @@ export const ANATOMY = {
     ],
   },
   sheet: {
-    imports: ['./md-gb-bottom-sheet.js', './md-gb-side-sheet.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-bottom-sheet.js', './md-gb-side-sheet.js', '../../styles/icons/md-gb-icon.js'],
     pages: [
       {
         page: 'bottom-sheets',

@@ -5,9 +5,9 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {focusRingClasses} from '../focus/focus-ring.js';
+import {focusRingClasses} from '../../foundations/interaction/states/focus/focus-ring.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 
 /** Slider size configuration types. */
 export type SliderSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

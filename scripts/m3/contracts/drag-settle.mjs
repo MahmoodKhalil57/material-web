@@ -6,7 +6,7 @@
 
 /**
  * Contract tests of the drag-and-settle behavior
- * (`components/shared/drag-settle.ts`): each component that drags a
+ * (`foundations/interaction/gestures/drag-settle.ts`): each component that drags a
  * surface between anchors does it as its spec page says: the surface follows
  * the pointer, settles at an anchor on release, mirrors in right-to-left,
  * returns on cancel, honors reduced motion, and has a single-pointer

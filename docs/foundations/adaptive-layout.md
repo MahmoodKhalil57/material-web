@@ -24,7 +24,7 @@ and up). Most layouts scroll, so only use the height class when a component
 needs it.
 
 A component gets its class from `AdaptiveController` in
-`components/shared/adaptive.ts`. The controller sets the
+`foundations/layout/adaptive.ts`. The controller sets the
 `window-size-class` attribute on the host, so CSS can match it. Options are
 keyed by class and apply from that class up. Match the attribute in CSS and
 use `atLeast('expanded')` in code. Do not read the window width directly.
@@ -38,7 +38,7 @@ Lit:
 <div id="bar"></div>
 ```
 ```ts
-import {AdaptiveController} from '@material/web/components/shared/adaptive.js';
+import {AdaptiveController} from '@material/web/foundations/layout/adaptive.js';
 
 const bar = document.querySelector<HTMLElement>('#bar')!;
 const controllers: any[] = [];

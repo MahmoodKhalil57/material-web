@@ -11,7 +11,7 @@ import '../navrail/md-gb-nav-rail.js';
 import '../navrail/md-gb-nav-rail-item.js';
 
 import {sendKeys} from '@web/test-runner-commands';
-import {internals} from '../../behaviors/element-internals.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {until} from './test-dom.js';

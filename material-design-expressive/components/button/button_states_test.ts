@@ -171,7 +171,7 @@ function expectLook(container: HTMLElement, btn: HTMLElement, look: Look, what: 
 // spec: buttons-feea87, buttons-78e204, buttons-c29d50, buttons-3ac35e, buttons-0dbd05, buttons-e6c1e1, buttons-76428a, buttons-76a95e, buttons-c7515f, buttons-19044a, buttons-1e47bb, buttons-52f191, buttons-52ff0f, buttons-cc8374, buttons-9785e2, buttons-ce7192, buttons-a43626, buttons-0d48ee, buttons-734a9e, buttons-bcfe7d, buttons-7fa735, buttons-79b9de, buttons-f62fb2, buttons-648a21, buttons-61440a, buttons-4532c3, buttons-6b36b2, buttons-5c4bc5, buttons-1a4d22, buttons-6f5b32, buttons-e7e4f0, buttons-19836f, buttons-ce4357, buttons-b91180, buttons-5c27c6, buttons-8c9e53, buttons-2e2904, buttons-40ec9b, buttons-b75629, buttons-3b607c, buttons-418230, buttons-aa1a43, buttons-7b3ee6, buttons-b03462, buttons-d79394, buttons-2e878a, buttons-bcfcd6, buttons-16a5b6, buttons-c1abef, buttons-f4cc91, buttons-3754d2
 // The Hovered units of the elevated, filled and tonal styles (hover
 // elevation) and the Disabled units of the outlined style (outline opacity)
-// are not cited: see button_gap.ts and shared/central/disabled_gap.ts.
+// are not cited: see button_gap.ts and foundations/interaction/states/disabled_gap.ts.
 describe('<md-gb-button> color styles and states (spec)', () => {
   afterEach(async () => {
     await sendMouse({type: 'up'}).catch(() => {});

@@ -1,0 +1,245 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// Sass API for the M3 window size classes (breakpoints).
+//
+//   @use '.../foundations/layout/md-layout';
+//
+//   .list {
+//     @include md-layout.media-up(expanded) { ... }       // viewport width
+//     @include md-layout.container-up(medium, pane) { ... } // container width
+//   }
+//
+// Values are generated from the spec into `_md-layout-values.scss`
+// (node scripts/m3/gen-layout.mjs).
+
+// go/keep-sorted start by_regex='(.+) prefix_order=sass:
+@use 'sass:list';
+@use 'sass:map';
+@use 'md-layout-values' as values;
+// go/keep-sorted end
+
+/// Window size classes, smallest first.
+$window-classes: values.$window-classes;
+
+/// Per-class values (see `_md-layout-values.scss`).
+$values: values.$values;
+
+/// Window height size classes, smallest first.
+$window-height-classes: values.$window-height-classes;
+
+/// Per-height-class ranges (see `_md-layout-values.scss`).
+$height-values: values.$height-values;
+
+$third-pane-max-width: values.$third-pane-max-width;
+$pane-snap-widths: values.$pane-snap-widths;
+
+/// Returns a layout value (`margin`, `spacer`, `columns`, ...) of a class.
+@function value($class, $key) {
+  @if not map.has-key($values, $class) {
+    @error 'Unknown window size class "#{$class}". Use one of: #{$window-classes}';
+  }
+  @return map.get($values, $class, $key);
+}
+
+/// Smallest width of a class (inclusive).
+@function min-width($class) {
+  @return value($class, min-width);
+}
+
+/// Width where the next class starts (exclusive), or null.
+@function max-width($class) {
+  @return value($class, max-width);
+}
+
+/// Smallest height of a height class (inclusive).
+@function min-height($class) {
+  @if not map.has-key($height-values, $class) {
+    @error 'Unknown window height class "#{$class}". Use one of: #{$window-height-classes}';
+  }
+  @return map.get($height-values, $class, min-height);
+}
+
+/// Height where the next height class starts (exclusive), or null.
+@function max-height($class) {
+  @return map.get($height-values, $class, max-height);
+}
+
+@function _range($min, $max, $axis: width) {
+  $parts: ();
+  @if $min != null and $min > 0 {
+    $parts: list.append($parts, '(#{$axis} >= #{$min})');
+  }
+  @if $max != null {
+    $parts: list.append($parts, '(#{$axis} < #{$max})');
+  }
+  @return $parts;
+}
+
+@function _join($parts) {
+  $query: '';
+  @each $part in $parts {
+    @if $query == '' {
+      $query: $part;
+    } @else {
+      $query: '#{$query} and #{$part}';
+    }
+  }
+  @return $query;
+}
+
+@mixin _media($parts) {
+  @if list.length($parts) == 0 {
+    @content;
+  } @else {
+    @media #{_join($parts)} {
+      @content;
+    }
+  }
+}
+
+@mixin _container($parts, $name) {
+  @if list.length($parts) == 0 {
+    @content;
+  } @else {
+    $prefix: '';
+    @if $name {
+      $prefix: '#{$name} ';
+    }
+    @container #{$prefix}#{_join($parts)} {
+      @content;
+    }
+  }
+}
+
+/// Viewport is exactly in `$class`.
+@mixin media($class) {
+  @include _media(_range(min-width($class), max-width($class))) {
+    @content;
+  }
+}
+
+/// Viewport is `$class` or larger.
+@mixin media-up($class) {
+  @include _media(_range(min-width($class), null)) {
+    @content;
+  }
+}
+
+/// Viewport is smaller than `$class`.
+@mixin media-down($class) {
+  @if min-width($class) == 0 {
+    @error 'Nothing is smaller than #{$class}.';
+  }
+  @include _media(_range(null, min-width($class))) {
+    @content;
+  }
+}
+
+/// Query container (optionally named) is exactly in `$class`.
+@mixin container($class, $name: null) {
+  @include _container(_range(min-width($class), max-width($class)), $name) {
+    @content;
+  }
+}
+
+/// Query container (optionally named) is `$class` or larger.
+@mixin container-up($class, $name: null) {
+  @include _container(_range(min-width($class), null), $name) {
+    @content;
+  }
+}
+
+/// Query container (optionally named) is smaller than `$class`.
+@mixin container-down($class, $name: null) {
+  @include _container(_range(null, min-width($class)), $name) {
+    @content;
+  }
+}
+
+/// Viewport height is exactly in the height class `$class`.
+@mixin media-height($class) {
+  @include _media(_range(min-height($class), max-height($class), height)) {
+    @content;
+  }
+}
+
+/// Viewport height is `$class` or larger.
+@mixin media-height-up($class) {
+  @include _media(_range(min-height($class), null, height)) {
+    @content;
+  }
+}
+
+/// Viewport height is smaller than `$class`.
+@mixin media-height-down($class) {
+  @if min-height($class) == 0 {
+    @error 'Nothing is smaller than #{$class}.';
+  }
+  @include _media(_range(null, min-height($class), height)) {
+    @content;
+  }
+}
+
+/// The viewport has a fold: `vertical` (two segments side by side, book
+/// posture) or `horizontal` (two segments above each other, tabletop
+/// posture). Uses the Viewport Segments media features; browsers without
+/// them never match.
+@mixin fold($orientation) {
+  @if $orientation == vertical {
+    @media (horizontal-viewport-segments: 2) {
+      @content;
+    }
+  } @else if $orientation == horizontal {
+    @media (vertical-viewport-segments: 2) {
+      @content;
+    }
+  } @else {
+    @error 'Unknown fold orientation "#{$orientation}". Use vertical or horizontal.';
+  }
+}
+
+/// The `--md-sys-layout-fold-*` custom properties for a fold: its position
+/// and size in the viewport, from `env(viewport-segment-*)`. Include inside
+/// `fold($orientation)`.
+@mixin fold-tokens($orientation) {
+  @if $orientation == vertical {
+    --md-sys-layout-fold-left: env(viewport-segment-right 0 0);
+    --md-sys-layout-fold-width: calc(
+      env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0)
+    );
+  } @else {
+    --md-sys-layout-fold-top: env(viewport-segment-bottom 0 0);
+    --md-sys-layout-fold-height: calc(
+      env(viewport-segment-top 0 1) - env(viewport-segment-bottom 0 0)
+    );
+  }
+}
+
+/// The `--md-sys-layout-*` custom properties that vary by window size class.
+@mixin tokens($class) {
+  --md-sys-layout-margin: #{value($class, margin)};
+  --md-sys-layout-spacer: #{value($class, spacer)};
+  --md-sys-layout-fixed-pane-width: #{value($class, fixed-pane-width)};
+  --md-sys-layout-columns: #{value($class, columns)};
+  --md-sys-layout-panes-recommended: #{value($class, panes-recommended)};
+  --md-sys-layout-panes-max: #{value($class, panes-max)};
+}
+
+/// The `--md-sys-layout-*` custom properties that are the same for every
+/// class: breakpoint widths and the third pane maximum width.
+@mixin constants() {
+  @each $class in $window-classes {
+    @if min-width($class) > 0 {
+      --md-sys-layout-breakpoint-#{$class}: #{min-width($class)};
+    }
+  }
+  @each $class in $window-height-classes {
+    @if min-height($class) > 0 {
+      --md-sys-layout-breakpoint-height-#{$class}: #{min-height($class)};
+    }
+  }
+  --md-sys-layout-third-pane-max-width: #{$third-pane-max-width};
+}

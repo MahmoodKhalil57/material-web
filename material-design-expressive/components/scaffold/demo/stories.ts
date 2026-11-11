@@ -14,7 +14,7 @@ import '@material/web/components/navrail/md-gb-nav-rail.js';
 import '@material/web/components/navrail/md-gb-nav-rail-item.js';
 import '@material/web/components/scaffold/md-gb-app-scaffold.js';
 import '@material/web/components/scaffold/md-gb-pane-scaffold.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {
@@ -24,7 +24,7 @@ import {
 } from '@material/web/components/scaffold/pane-scaffold.js';
 import {type PaneScaffoldElement} from '@material/web/components/scaffold/pane-scaffold-element.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
-import {simulateViewportSegments} from '@material/web/styles/layout/viewport-segments.js';
+import {simulateViewportSegments} from '@material/web/foundations/layout/viewport-segments.js';
 import {css, html, nothing, type TemplateResult} from 'lit';
 
 import {styles as m3Styles} from '@material/web/styles/m3.cssresult.js';

@@ -7,7 +7,7 @@
 import '@material/web/components/button/md-gb-button.js';
 import '@material/web/components/iconbutton/md-gb-icon-button.js';
 import '@material/web/components/textfield/md-gb-text-field.js';
-import '@material/web/styles/icon/md-gb-icon.js';
+import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {type TextFieldVariant} from '@material/web/components/textfield/text-field.js';

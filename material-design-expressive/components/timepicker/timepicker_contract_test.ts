@@ -230,7 +230,7 @@ describe('<md-gb-time-picker> form contract (shared form layer)', () => {
   });
 });
 
-import {resetEscapeTracking} from '../shared/predictive-back.js';
+import {resetEscapeTracking} from '../../foundations/interaction/gestures/predictive-back.js';
 
 /** What the lifecycle surfaces share: `show()`, `close()`, `open` and events. */
 interface ModalLifecycleElement extends HTMLElement {

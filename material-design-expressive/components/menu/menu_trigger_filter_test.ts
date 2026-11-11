@@ -21,7 +21,7 @@ import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 
 import {buttonClasses} from '../button/button.js';
 import {styles as buttonStyles} from '../button/button.cssresult.js';
-import {styles as rippleStyles} from '../ripple/ripple.cssresult.js';
+import {styles as rippleStyles} from '../../foundations/interaction/states/ripple/ripple.cssresult.js';
 import {MenuElement} from './menu-element.js';
 
 adoptStyles(document, [m3Styles, buttonStyles, rippleStyles]);

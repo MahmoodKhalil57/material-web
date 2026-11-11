@@ -6,7 +6,7 @@
 
 // import 'jasmine'; (google3-only)
 import './md-gb-fab.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 
 import {sendKeys} from '@web/test-runner-commands';
 import {adoptStyles} from '../../styles/adopt-styles.js';

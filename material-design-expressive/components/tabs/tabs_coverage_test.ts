@@ -10,22 +10,22 @@
 
 // import 'jasmine'; (google3-only)
 
-import '../../aria/tabs/md-aria-tabpanel.js';
+import '../../foundations/accessibility/aria/tabs/md-aria-tabpanel.js';
 import '../appbar/md-gb-app-bar.js';
 import './md-gb-tab.js';
 import './md-gb-tab-panels.js';
 import './md-gb-tabs.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 
 import {sendKeys, sendMouse} from '@web/test-runner-commands';
 import {html, type TemplateResult} from 'lit';
 import {Environment} from '../../testing/environment.js';
-import {internals} from '../../behaviors/element-internals.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
 import {styles as badgeStyles} from '../badge/badge.cssresult.js';
-import focusRingStyles from '../focus/focus-ring.cssresult.js';
-import rippleStyles from '../ripple/ripple.cssresult.js';
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js';
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js';
 import {center, prop} from '../shared/test-dom.js';
 import {type TabElement} from './tab-element.js';
 import {type TabPanelsElement} from './tab-panels-element.js';

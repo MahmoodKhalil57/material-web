@@ -8,14 +8,14 @@ import {css, CSSResultOrNative, html, LitElement, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {ARIAMixinStrict} from '../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
-import {ripple} from '../ripple/ripple.js';
+import {ripple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {fxSlot} from '../shared/fx.js';
 import {hasSlotted} from '../shared/has-slotted.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import cardStyles from './card.css' with {type: 'css'}; // github-only
 // import cardStyles from './card.cssresult.js'; // google3-only
 

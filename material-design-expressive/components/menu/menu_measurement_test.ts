@@ -16,7 +16,7 @@ import {adoptStyles} from '../../styles/adopt-styles.js';
 import './md-gb-menu.js';
 import './md-gb-menu-item.js';
 import '../divider/md-gb-divider.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import type {ReactiveElement} from 'lit';
 
 adoptStyles(document, [m3Styles]);

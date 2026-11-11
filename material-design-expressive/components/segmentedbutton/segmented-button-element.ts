@@ -9,16 +9,16 @@ import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ARIAMixinStrict} from '../../internal/aria/aria.js';
 import {mixinDelegatesAria} from '../../internal/aria/delegate.js';
-import {ripple} from '../ripple/ripple.js';
+import {ripple} from '../../foundations/interaction/states/ripple/ripple.js';
 import {
   SEGMENTED_BUTTON_CLASSES as C,
   segmentedButtonClasses,
 } from './segmented-button.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import segmentedButtonStyles from './segmented-button.css' with {type: 'css'}; // github-only
 // import segmentedButtonStyles from './segmented-button.cssresult.js'; // google3-only
 

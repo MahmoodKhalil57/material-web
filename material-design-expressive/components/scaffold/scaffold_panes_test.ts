@@ -8,11 +8,11 @@
 
 import {html, nothing} from 'lit';
 import {Environment} from '../../testing/environment.js';
-import {until} from '../shared/central/subjects.js';
+import {until} from '../../testing/subjects.js';
 import {
   WINDOW_SIZE_CLASSES,
   windowSizeClassValues,
-} from '../../styles/layout/window-size-class.js';
+} from '../../foundations/layout/window-size-class.js';
 
 import './md-gb-app-scaffold.js';
 import './md-gb-pane-scaffold.js';

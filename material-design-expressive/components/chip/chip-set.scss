@@ -6,7 +6,7 @@
 // Chip set (`md-gb-chip-set`, or `.chip-set` on any container): a row of
 // chips that wraps onto more lines, or scrolls in a single line.
 // The spec has no token for the space between chips.
-@use '../shared/density';
+@use '../../foundations/layout/density';
 
 @layer md.comp.chip-set {
   :host,

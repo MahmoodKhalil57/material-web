@@ -16,7 +16,7 @@ import {
   deepElements,
   prop,
   ripplesOf,
-} from '../shared/central/subjects.js';
+} from '../../testing/subjects.js';
 
 adoptStyles(document, [m3Styles]);
 

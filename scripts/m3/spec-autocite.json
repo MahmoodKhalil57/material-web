@@ -7738,7 +7738,7 @@
   "designing-274263": {
    "rule": "llm-review",
    "evidence": [
-    "styles/icon/md-icon.scss:27"
+    "styles/icons/md-icon.scss:27"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8476,8 +8476,8 @@
   "layout-breakpoints-06abf9": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/_md-layout-values.scss:77",
-    "styles/layout/layout-values.ts:94"
+    "foundations/layout/_md-layout-values.scss:77",
+    "foundations/layout/layout-values.ts:94"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8492,7 +8492,7 @@
   "layout-breakpoints-3017a2": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/_md-layout-values.scss:51"
+    "foundations/layout/_md-layout-values.scss:51"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8505,7 +8505,7 @@
   "layout-breakpoints-670b46": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/md-layout-tokens.scss:28"
+    "foundations/layout/md-layout-tokens.scss:28"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8522,7 +8522,7 @@
   "layout-breakpoints-a0ddab": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/_md-layout-values.scss:32"
+    "foundations/layout/_md-layout-values.scss:32"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8535,8 +8535,8 @@
   "layout-breakpoints-b24c30": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/_md-layout-values.scss:65",
-    "styles/layout/_md-layout-values.scss:65"
+    "foundations/layout/_md-layout-values.scss:65",
+    "foundations/layout/_md-layout-values.scss:65"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8551,7 +8551,7 @@
   "layout-breakpoints-b55986": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/md-layout-tokens.scss:28"
+    "foundations/layout/md-layout-tokens.scss:28"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8568,7 +8568,7 @@
   "layout-breakpoints-f4ca6b": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/md-layout-tokens.scss:28"
+    "foundations/layout/md-layout-tokens.scss:28"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8581,8 +8581,8 @@
   "layout-canonical-examples-6ca743": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/_md-layout-values.scss:49",
-    "styles/layout/_md-layout-values.scss:49"
+    "foundations/layout/_md-layout-values.scss:49",
+    "foundations/layout/_md-layout-values.scss:49"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8597,7 +8597,7 @@
   "layout-canonical-examples-7be4a8": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/md-layout-tokens.scss:65"
+    "foundations/layout/md-layout-tokens.scss:65"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8610,7 +8610,7 @@
   "layout-grids-spacing-56cf47": {
    "rule": "llm-review",
    "evidence": [
-    "components/shared/density.ts:16"
+    "foundations/layout/density.ts:16"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8623,8 +8623,8 @@
   "layout-grids-spacing-5e1d4b": {
    "rule": "llm-review",
    "evidence": [
-    "components/shared/density.ts:16",
-    "components/shared/density.ts:16"
+    "foundations/layout/density.ts:16",
+    "foundations/layout/density.ts:16"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8639,8 +8639,8 @@
   "layout-grids-spacing-b68eef": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/md-layout-tokens.scss:56",
-    "styles/layout/md-layout-tokens.scss:65"
+    "foundations/layout/md-layout-tokens.scss:56",
+    "foundations/layout/md-layout-tokens.scss:65"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8655,7 +8655,7 @@
   "layout-grids-spacing-d4614a": {
    "rule": "llm-review",
    "evidence": [
-    "components/shared/_density.scss:28"
+    "foundations/layout/_density.scss:28"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8668,7 +8668,7 @@
   "layout-overview-448001": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/md-layout-tokens.scss:54"
+    "foundations/layout/md-layout-tokens.scss:54"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8694,7 +8694,7 @@
   "layout-overview-83e1c6": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/md-layout-tokens.scss:55"
+    "foundations/layout/md-layout-tokens.scss:55"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8707,8 +8707,8 @@
   "layout-overview-b39fd6": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/_md-layout.scss:227",
-    "styles/layout/_md-layout.scss:227"
+    "foundations/layout/_md-layout.scss:227",
+    "foundations/layout/_md-layout.scss:227"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8723,7 +8723,7 @@
   "layout-overview-dc22e9": {
    "rule": "llm-review",
    "evidence": [
-    "styles/layout/window-size-class.ts:315"
+    "foundations/layout/window-size-class.ts:315"
    ],
    "models": [
     "claude-opus-5-5"
@@ -11085,7 +11085,7 @@
   "motion-overview-cbd5b1": {
    "rule": "llm-review",
    "evidence": [
-    "styles/icon/md-icon.scss:89",
+    "styles/icons/md-icon.scss:89",
     "styles/motion/md-motion-tokens-spring.scss:18"
    ],
    "models": [

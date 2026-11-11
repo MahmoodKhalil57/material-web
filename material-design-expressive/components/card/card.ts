@@ -5,9 +5,9 @@
  */
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
-import {FOCUS_RING_CLASSES} from '../focus/focus-ring.js';
+import {FOCUS_RING_CLASSES} from '../../foundations/interaction/states/focus/focus-ring.js';
 import {createClassMapDirective} from '../shared/directives.js';
-import {PSEUDO_CLASSES} from '../shared/pseudo-classes.js';
+import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 
 /** Card color configuration types. */
 export type CardColor = 'elevated' | 'filled' | 'outlined';

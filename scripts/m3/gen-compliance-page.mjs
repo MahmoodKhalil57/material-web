@@ -15,7 +15,7 @@
  * Sources: .m3-specs/spec-checks/units.json (spec-checks.mjs output),
  * scripts/m3/exclusions/*.md, `audit-gb.mjs --gaps`, `gb-baseline.mjs`,
  * scripts/size/gb-budgets.json, and the axe and ARIA row files in
- * components/shared/central/.
+ * material-design-expressive/foundations/accessibility/.
  */
 
 import {execFileSync} from 'node:child_process';
@@ -26,7 +26,7 @@ import {join} from 'node:path';
 const OUT = 'docs/about/compliance.md';
 const UNITS = '.m3-specs/spec-checks/units.json';
 const EXCLUSIONS = 'scripts/m3/exclusions';
-const CENTRAL = 'components/shared/central';
+const CENTRAL = 'material-design-expressive/foundations/accessibility';
 const BUILDABLE = 0.3;
 const check = process.argv.includes('--check');
 

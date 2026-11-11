@@ -6,8 +6,8 @@
 
 // import 'jasmine'; (google3-only)
 
-import {stepScroll} from './scroll-behavior.js';
-import {waitForDuration} from './motion.js';
+import {stepScroll} from '../../foundations/interaction/gestures/scroll-behavior.js';
+import {waitForDuration} from '../../styles/motion/motion.js';
 import {
   PERF_TRACK,
   PERF_TRACK_GROUP,

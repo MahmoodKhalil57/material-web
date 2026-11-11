@@ -96,7 +96,7 @@ scheme and reduced motion apply without extra code.
 A gesture has to keep its momentum: a fling that lets go at 2000px/s must not
 restart from rest, and a settle that is aimed at a new target half way must
 not jump. A CSS transition cannot do either, so `labs/gb` also has the same
-springs as physics, in `components/shared/spring.ts`. `readSpring()`
+springs as physics, in `styles/motion/spring.ts`. `readSpring()`
 returns the damping ratio and stiffness of a spring token (Expressive or
 Standard, whichever applies to the element), and `Spring` solves it in closed
 form and samples it every animation frame:
@@ -120,7 +120,7 @@ form and samples it every animation frame:
 import {
   readSpring,
   Spring,
-} from '@material/web/components/shared/spring.js';
+} from '@material/web/styles/motion/spring.js';
 
 const panel = document.querySelector<HTMLElement>('#panel')!;
 const spring = new Spring({
@@ -150,7 +150,7 @@ motion turns it off and keeps the color change.
 ### Component authors
 
 Components that script their motion use the helpers in
-`components/shared/motion.ts`:
+`styles/motion/motion.ts`:
 
 - `springDuration(element, speed, kind)` returns the duration of a spring in
   milliseconds, already 0 for spatial springs when motion is reduced.

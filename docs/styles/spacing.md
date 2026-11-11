@@ -50,7 +50,7 @@ an icon and its label.
 | `--md-sys-space-250` | 20px | | |
 | `--md-sys-space-300` | 24px | | |
 
-The tokens are defined in `styles/space/md-space-tokens.scss`. They
+The tokens are defined in `styles/spacing/md-space-tokens.scss`. They
 are fixed pixel values, so they do not grow with the text size.
 
 A product can add a token that follows the same pattern. For example,

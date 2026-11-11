@@ -12,7 +12,7 @@ import {
   type ReactiveControllerHost,
 } from 'lit';
 import {safeHref} from '../../internal/directives/safe-href.js';
-import {internals} from '../../behaviors/element-internals.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
 
 /**
  * Fired (bubbling, not composed) by a navigation bar or rail item when it

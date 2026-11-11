@@ -13,31 +13,31 @@ import {
   createValidator,
   getValidityAnchor,
   mixinConstraintValidation,
-} from '../../behaviors/constraint-validation.js';
+} from '../../internal/behaviors/constraint-validation.js';
 import {
   hasState,
   mixinCustomStateSet,
   toggleState,
-} from '../../behaviors/custom-state-set.js';
-import {mixinElementInternals} from '../../behaviors/element-internals.js';
+} from '../../internal/behaviors/custom-state-set.js';
+import {mixinElementInternals} from '../../internal/behaviors/element-internals.js';
 import {
   getFormState,
   getFormValue,
   mixinFormAssociated,
-} from '../../behaviors/form-associated.js';
-import {CheckboxValidator} from '../../behaviors/validators/checkbox-validator.js';
-import {clampDensity, type Density} from '../shared/density.js';
+} from '../../internal/behaviors/form-associated.js';
+import {CheckboxValidator} from '../../internal/behaviors/validators/checkbox-validator.js';
+import {clampDensity, type Density} from '../../foundations/layout/density.js';
 import {
   FormDisabledController,
   ToggleFieldController,
 } from '../shared/form-field.js';
 import {hasSlotted} from '../shared/has-slotted.js';
-import {LabelTextController} from '../shared/label-text.js';
+import {LabelTextController} from '../../foundations/accessibility/label-text.js';
 
-import focusRingStyles from '../focus/focus-ring.css' with {type: 'css'}; // github-only
-// import focusRingStyles from '../focus/focus-ring.cssresult.js'; // google3-only
-import rippleStyles from '../ripple/ripple.css' with {type: 'css'}; // github-only
-// import rippleStyles from '../ripple/ripple.cssresult.js'; // google3-only
+import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
+// import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
+import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
+// import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
 import switchStyles from './switch.css' with {type: 'css'}; // github-only
 // import switchStyles from './switch.cssresult.js'; // google3-only
 

@@ -26,7 +26,7 @@ export default {
     'shadow-color',
     // M3 has no surface tint on the web (tonal surfaces are color roles).
     'surface-tint',
-    // The focus indicator is the shared focus ring (`components/focus`).
+    // The focus indicator is the shared focus ring (`foundations/interaction/states/focus`).
     'focus-indicator',
     '^indicator-',
     // `hover.` / `focus.` tokens in the resting mixins (see above).

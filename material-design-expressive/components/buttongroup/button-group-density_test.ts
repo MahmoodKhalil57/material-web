@@ -5,7 +5,7 @@
  */
 
 // import 'jasmine'; (google3-only)
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import '../button/md-gb-button.js';
 import '../iconbutton/md-gb-icon-button.js';
 import './md-gb-button-group.js';

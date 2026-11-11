@@ -18,7 +18,7 @@ import {
   type WindowHeightClass,
   WindowSizeClassController,
   type WindowSizeClass,
-} from '../../styles/layout/window-size-class.js';
+} from '../../foundations/layout/window-size-class.js';
 import {
   type ActiveNavigation,
   appScaffoldClasses,

@@ -170,7 +170,7 @@ const SEGMENTED = (icon = '') =>
 export const MEASUREMENTS = {
   ...MORE_MEASUREMENTS,
   switch: {
-    imports: ['./md-gb-switch.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-switch.js', '../../styles/icons/md-gb-icon.js'],
     sections: [
       {
         page: 'switch',
@@ -253,7 +253,7 @@ export const MEASUREMENTS = {
     ],
   },
   slider: {
-    imports: ['./md-gb-slider.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-slider.js', '../../styles/icons/md-gb-icon.js'],
     sections: [
       {
         page: 'sliders',
@@ -273,11 +273,11 @@ export const MEASUREMENTS = {
     ],
   },
   chip: {
-    imports: ['./md-gb-chip.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-chip.js', '../../styles/icons/md-gb-icon.js'],
     sections: ['assist', 'suggestion', 'filter', 'input'].map((type) => chipSection(type)),
   },
   button: {
-    imports: ['./md-gb-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-button.js', '../../styles/icons/md-gb-icon.js'],
     sections: [
       {
         page: 'buttons',
@@ -289,7 +289,7 @@ export const MEASUREMENTS = {
     ],
   },
   iconbutton: {
-    imports: ['./md-gb-icon-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-icon-button.js', '../../styles/icons/md-gb-icon.js'],
     sections: [
       {
         page: 'icon-buttons',
@@ -301,7 +301,7 @@ export const MEASUREMENTS = {
     ],
   },
   fab: {
-    imports: ['./md-gb-fab.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-fab.js', '../../styles/icons/md-gb-icon.js'],
     sections: [
       {
         page: 'extended-fab',
@@ -361,7 +361,7 @@ export const MEASUREMENTS = {
     ],
   },
   segmentedbutton: {
-    imports: ['./md-gb-segmented-button-set.js', './md-gb-segmented-button.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-segmented-button-set.js', './md-gb-segmented-button.js', '../../styles/icons/md-gb-icon.js'],
     sections: [
       {
         page: 'segmented-buttons',
@@ -382,7 +382,7 @@ export const MEASUREMENTS = {
     ],
   },
   tabs: {
-    imports: ['./md-gb-tabs.js', './md-gb-tab.js', '../../styles/icon/md-gb-icon.js'],
+    imports: ['./md-gb-tabs.js', './md-gb-tab.js', '../../styles/icons/md-gb-icon.js'],
     sections: [
       {
         page: 'tabs',

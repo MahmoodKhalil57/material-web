@@ -10,7 +10,7 @@
 
 import '../divider/md-gb-divider.js';
 import '../iconbutton/md-gb-icon-button.js';
-import '../../styles/icon/md-gb-icon.js';
+import '../../styles/icons/md-gb-icon.js';
 import './md-gb-menu-group.js';
 import './md-gb-menu-item.js';
 import './md-gb-menu.js';

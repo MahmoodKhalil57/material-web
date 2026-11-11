@@ -24,7 +24,7 @@
  *   the web-features package), plus its newer JavaScript APIs.
  * - aria: the WAI-ARIA roles it renders (from its sources), the APG pattern
  *   of each, its rows in the central axe and WAI-ARIA 1.3 suites
- *   (components/shared/central) and their known gaps.
+ *   (foundations/accessibility) and their known gaps.
  * - lighthouse: the category scores and the failed audits of the
  *   component's test page (/3.0/lab/<slug>/: its first example alone,
  *   site/content/gb-lab.11ty.cjs), not of its docs page
@@ -45,7 +45,9 @@ const {values: args} = parseArgs({options: {lighthouse: {type: 'string'}}});
 const OUT = 'site/content/_data/gbCompat.json';
 const DOCS = 'docs/components';
 const LABS = 'material-design-expressive/components';
-const CENTRAL = join(LABS, 'shared', 'central');
+// The central axe and ARIA suites, and the table of subjects they render.
+const CENTRAL = 'material-design-expressive/foundations/accessibility';
+const SUBJECTS = 'material-design-expressive/testing/subjects.ts';
 const BUILDABLE = 0.3;
 
 const run = (script, argv = []) => {
@@ -177,8 +179,8 @@ const statusOf = (id) => {
 
 // --- ARIA ---------------------------------------------------------------------------
 
-const subjectsSrc = ['subjects.ts', 'aria-rows.ts', 'axe-helpers.ts']
-  .map((f) => (existsSync(join(CENTRAL, f)) ? readFileSync(join(CENTRAL, f), 'utf8') : ''))
+const subjectsSrc = [SUBJECTS, join(CENTRAL, 'aria-rows.ts'), join(CENTRAL, 'axe-helpers.ts')]
+  .map((f) => (existsSync(f) ? readFileSync(f, 'utf8') : ''))
   .join('\n');
 const rowChunks = subjectsSrc.split(/\bid: '/).slice(1);
 const gapCount = (name, file) => {

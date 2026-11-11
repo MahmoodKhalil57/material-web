@@ -12,10 +12,10 @@ import {stringConverter} from '../../internal/controller/string-converter.js';
 import {
   createValidator,
   getValidityAnchor,
-} from '../../behaviors/constraint-validation.js';
-import {getFormValue} from '../../behaviors/form-associated.js';
-import {TextFieldValidator} from '../../behaviors/validators/text-field-validator.js';
-import {type Validator} from '../../behaviors/validators/validator.js';
+} from '../../internal/behaviors/constraint-validation.js';
+import {getFormValue} from '../../internal/behaviors/form-associated.js';
+import {TextFieldValidator} from '../../internal/behaviors/validators/text-field-validator.js';
+import {type Validator} from '../../internal/behaviors/validators/validator.js';
 import {SelectBase} from './select-base.js';
 import {type SelectOptionElement} from './select-option-element.js';
 import {
