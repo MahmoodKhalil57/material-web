@@ -55,6 +55,8 @@ module.exports = function (eleventyConfig) {
   inlineCss(eleventyConfig, DEV);
   inlineJS(eleventyConfig, DEV, { jsDir });
   gbShortcodes(eleventyConfig);
+  // The spec shell (layout gb/spec.html; MWC_SPEC_SHELL=1 in catalog-dev).
+  require('./eleventy-helpers/shortcodes/gb-spec-shell.cjs')(eleventyConfig);
   require('./eleventy-helpers/shortcodes/gb-shadcn.cjs')(eleventyConfig);
   require('./eleventy-helpers/filters/gb-pager.cjs')(eleventyConfig);
   require('./eleventy-helpers/filters/gb-outline.cjs')(eleventyConfig);

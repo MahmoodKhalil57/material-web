@@ -26658,6 +26658,15 @@
        "description": "Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes."
       },
       {
+       "name": "fullscreen",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "fullscreen",
+       "default": "false",
+       "description": "Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content."
+      },
+      {
        "name": "navigation",
        "type": {
         "text": "\"none\" | \"auto\" | \"bar\" | \"rail\""
@@ -26696,6 +26705,18 @@
        "default": "false",
        "description": "Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes.",
        "attribute": "auto-expand-rail",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "fullscreen",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content.",
+       "attribute": "fullscreen",
        "reflects": true
       },
       {

@@ -101,8 +101,22 @@ export class AppScaffoldElement extends LitElement {
       :host([hidden]) {
         display: none;
       }
+
+      /* The app's root layout: the window, whatever the page's own margins. */
+      :host([fullscreen]) {
+        position: fixed;
+        inset: 0;
+        block-size: auto;
+      }
     `,
   ];
+
+  /**
+   * Whether the scaffold is the app's root layout and fills the window (the
+   * viewport, past the body's margins), so a page needs no styles of its own
+   * to lay out its bars, rails and content.
+   */
+  @property({type: Boolean, reflect: true}) fullscreen = false;
 
   /** Which navigation component to show. */
   @property({reflect: true}) navigation: ScaffoldNavigation = 'auto';

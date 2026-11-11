@@ -1242,3 +1242,15 @@ class FakeRail extends HTMLElement {
   expanded = false;
 }
 customElements.define('fake-rail', FakeRail);
+
+describe('<md-gb-app-scaffold fullscreen>', () => {
+  it('fills the window past the body margins', async () => {
+    const el = document.createElement('md-gb-app-scaffold');
+    el.fullscreen = true;
+    document.body.append(el);
+    await el.updateComplete;
+    const box = el.getBoundingClientRect();
+    expect([box.left, box.top, box.width, box.height]).toEqual([0, 0, innerWidth, innerHeight]);
+    el.remove();
+  });
+});

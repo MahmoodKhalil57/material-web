@@ -126,6 +126,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes. */
         autoExpandRail: dynamic(z.boolean()).optional(),
+        /** Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content. */
+        fullscreen: dynamic(z.boolean()).optional(),
         /** Which navigation component to show. */
         navigation: dynamic(z.enum(["none", "auto", "bar", "rail"])).optional(),
         /** What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. */
@@ -136,8 +138,8 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "companion-rail", "fab", "navigation-bar", "navigation-rail", "snackbar", "toolbar", "top-app-bar"] as string[],
     events: ["navigation-change", "window-class-change", "window-height-class-change"] as string[],
-    attributes: {ariaLabel: "aria-label", autoExpandRail: "auto-expand-rail", navigation: "navigation", sideSheetNavigation: "side-sheet-navigation", sideSheetOpen: "side-sheet-open"} as Record<string, string>,
-    booleans: ["autoExpandRail", "sideSheetOpen"] as string[],
+    attributes: {ariaLabel: "aria-label", autoExpandRail: "auto-expand-rail", fullscreen: "fullscreen", navigation: "navigation", sideSheetNavigation: "side-sheet-navigation", sideSheetOpen: "side-sheet-open"} as Record<string, string>,
+    booleans: ["autoExpandRail", "fullscreen", "sideSheetOpen"] as string[],
     description: "A Material Design app scaffold (bars, rails, FAB, snackbar). Slots: default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar. Events: navigation-change, window-class-change, window-height-class-change. M3: scaffold.",
     deprecated: false,
     spec: ["https://m3.material.io/foundations/layout/scaffold"] as string[],

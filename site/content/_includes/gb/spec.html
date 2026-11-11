@@ -1,0 +1,61 @@
+{#-
+  Layout `gb/spec.html`: the /3.0/ pages with the spec shell. The whole UI is
+  a json-render spec of the library's catalog (eleventy-helpers/
+  gb-shell-spec.cjs), checked at build time, rendered to static HTML and
+  hydrated by src/spec/shell.ts. Styles: the library's only (m3.css, and
+  each component's own); the site has none. The head keeps what isn't UI:
+  metadata, fonts, the color mode and reduced motion before first paint, and
+  speculation rules.
+-#}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% if title %}{{ title }} - {% endif %}Material Web 3.0</title>
+    {% if description %}<meta name="description" content="{{ description }}" />{% endif %}
+    <meta name="color-scheme" content="light dark" />
+    <link href="/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
+    {% gbhead title, description, section, page.url %}
+    {%- for href in gbFonts.preload %}
+    <link rel="preload" href="{{ href }}" as="font" type="font/woff2" crossorigin />
+    {%- endfor %}
+    <link rel="stylesheet" href="{{ gbFonts.stylesheet }}" />
+    {% gbstyles %}
+    <script>
+      // Before first paint: the saved color mode, and reduced motion (while
+      // it's on, prefers-reduced-motion queries from scripts answer "reduce",
+      // so the components take their reduced-motion paths).
+      (() => {
+        const root = document.documentElement;
+        const matchMedia = window.matchMedia.bind(window);
+        window.matchMedia = (query) =>
+          root.dataset.motion === 'reduce' && /prefers-reduced-motion/.test(query)
+            ? matchMedia(/no-preference/.test(query) ? 'not all' : 'all')
+            : matchMedia(query);
+        try {
+          if (localStorage.getItem('gb-reduce-motion') === '1') root.dataset.motion = 'reduce';
+          const mode = localStorage.getItem('color-mode') || 'auto';
+          root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
+        } catch (e) {}
+      })();
+    </script>
+    <script type="speculationrules">
+      {
+        "prefetch": [{
+          "where": {"and": [
+            {"href_matches": "/3.0/*"},
+            {"not": {"href_matches": "/3.0/*.*"}},
+            {"not": {"selector_matches": "[target=_blank], [download], [rel~=external], [href^='#']"}}
+          ]},
+          "eagerness": "moderate"
+        }]
+      }
+    </script>
+    <script type="module" src="/js/spec/shell.js"></script>
+  </head>
+  <body>
+    {% gbshell content, title, description, section, collections.gb3 %}
+    {{ content | gbcomponents | safe }}
+  </body>
+</html>

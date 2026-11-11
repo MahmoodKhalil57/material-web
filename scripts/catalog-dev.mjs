@@ -296,7 +296,9 @@ async function copyGbDocs() {
     join(dest, '3.0.json'),
     JSON.stringify(
       {
-        layout: 'gb/default.html',
+        // MWC_SPEC_SHELL=1: the spec shell (every UI element a json-render
+        // spec of the library's catalog), while it replaces gb/default.html.
+        layout: process.env.MWC_SPEC_SHELL === '1' ? 'gb/spec.html' : 'gb/default.html',
         tags: ['gb3'],
         permalink: '/3.0/{{ section }}/{{ page.fileSlug }}/',
       },

@@ -73,7 +73,8 @@ await esbuild
       plugins: [...(config.plugins ?? []), cssModulePlugin],
       // shape-morphs.css: the morph paths (scripts/gb-shape-morphs.mjs),
       // linked by the pages with morphing shapes only.
-      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css', 'src/gb/shape-morphs.css', 'src/gb/sw.ts'],
+      // src/spec/shell.ts: the spec shell (layout gb/spec.html).
+      entryPoints: ['src/gb/gb.ts', 'src/gb/gb.css', 'src/gb/shape-morphs.css', 'src/gb/sw.ts', 'src/spec/shell.ts'],
       outbase: 'src',
       // The library is the repo root (the parent of this site folder):
       // '@material/web/components/...' imports resolve to its sources.

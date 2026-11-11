@@ -10,7 +10,7 @@ rules below.
 | Component | Tag | Props | Slots | Events | M3 spec |
 | --- | --- | --- | --- | --- | --- |
 | `AppBar` | `md-gb-app-bar` | 7 | default, image, leading, overflow, search, subtitle, tabs, trailing | overflowchange, scrollstatechange | [app-bars](https://m3.material.io/components/app-bars) |
-| `AppScaffold` | `md-gb-app-scaffold` | 5 | default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar | navigation-change, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
+| `AppScaffold` | `md-gb-app-scaffold` | 6 | default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar | navigation-change, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
 | `Autocomplete` | `md-gb-autocomplete` | 15 | default, leading-icon, trailing-icon | change, closed, closing, input, invalid, opened, opening | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) |
 | `Badge` | `md-gb-badge` | 5 | default |   | [badges](https://m3.material.io/components/badges) |
 | `BottomSheet` | `md-gb-bottom-sheet` | 11 | default | close, closed, open, opened, state-change | [bottom-sheets](https://m3.material.io/components/bottom-sheets), [side-sheets](https://m3.material.io/components/side-sheets) |
