@@ -286,7 +286,7 @@ async function copySkill() {
 const SNAPSHOT_VERSION = 7;
 export const SNAPSHOT_NAME = 'material-web-3.0.mhtml';
 const SNAPSHOT_CACHE = join(OUT, 'mhtml-cache');
-const SITE_DIR = join(CATALOG, process.env.NODE_ENV === 'DEV' ? '_dev' : '_prod');
+const SITE_DIR = join(CATALOG, '_dev');
 
 /** Hash of what the snapshot is made from: the all-pages document and the shell script. */
 async function snapshotHash(siteDir) {

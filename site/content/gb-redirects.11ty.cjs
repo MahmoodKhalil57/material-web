@@ -6,8 +6,7 @@
 
 /**
  * Pages that moved: a small page at the old URL with a meta refresh, a
- * canonical link and a link. (On Firebase Hosting site/firebase.json
- * redirects the old URLs with a 301 before these pages are served.)
+ * canonical link and a link (GitHub Pages has no server redirects).
  */
 
 const {absolute} = require('../eleventy-helpers/gb-site.cjs');

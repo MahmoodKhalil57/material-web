@@ -27,9 +27,6 @@ const {frameDoc} = require('./shortcodes/gb-demo.cjs');
 const {shapeProps} = require('./gb-shapes.cjs');
 
 const DROP = new Set(['script', 'style', 'template', 'noscript']);
-/** The old shell's copy button around code blocks (plugins/copy-code-button.cjs):
-    md-gb-demo-code, which the code block becomes, has its own. */
-const COPY_WRAPPERS = new Set(['lit-island', 'copy-code-button']);
 /** Html attribute -> prop. */
 const HTML_ATTRS = {
   id: 'id',
@@ -217,8 +214,6 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
       // with its slot set by its parent component's spec (keys in `slots`).
       return [add({type: 'Html', props, children: [...children, ...Object.values(slots).flat()]})];
     }
-
-    if (COPY_WRAPPERS.has(tag)) return convertChildren(node, issues, inPre).children;
 
     // Not in the catalog: keep what it holds.
     count(`unwrapped <${tag}>`);

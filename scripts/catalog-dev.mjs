@@ -20,10 +20,8 @@
  * labs/gb demos, rebuilding the pages in place (~15s) without restarting.
  *   npm run catalog:dev -- --port 8000 --lib-port 8001 --no-open
  *
- * On material-web.dev, stories run in a playground that loads the published
- * @material/web from unpkg. Here the playground sandbox and an import map
- * point at a second local server that serves this repo, so every story (old
- * and new components) runs the code in your working tree.
+ * The demos load the library from a second local server that serves this
+ * repo, so every demo runs the code in your working tree.
  */
 
 import * as fsSync from 'node:fs';
@@ -170,9 +168,8 @@ const log = (s) => {
 [catalog:dev] (+${((now - lastStep) / 1000).toFixed(1)}s) ${s}`);
   lastStep = now;
 };
-// MWC_EXPRESSIVE turns on the version select of "/" (site/_data/expressive.cjs).
 // MWC_GB_LIB is the library server the /3.0/ demos (gbexample) load from.
-const DEV_ENV = {NODE_ENV: 'DEV', MWC_EXPRESSIVE: '1', MWC_GB_LIB: LIB};
+const DEV_ENV = {NODE_ENV: 'DEV', MWC_GB_LIB: LIB};
 
 /** Runs the dev catalog (not when this file is imported for its helpers). */
 async function main() {
@@ -193,12 +190,12 @@ async function main() {
   log(
     `Catalog: http://localhost:${PORT}/3.0/  (${pages} pages, demos for ${demos} components)
 ` +
-      `[catalog:dev] Library: ${LIB} (serves this repo for the playground)\n` +
+      `[catalog:dev] Library: ${LIB} (serves this repo for the demos)\n` +
       (watching
         ? `[catalog:dev] Watching docs, docs/3.0, catalog sources and gb demos: edits rebuild the pages in place.\n` +
           `[catalog:dev] Wait for a rebuild with: node scripts/catalog-wait.mjs\n`
         : '') +
-      `[catalog:dev] Library (labs/gb, material-web) source changes need \`npm run catalog:dev\` again (or gb-check --emit), since the playground serves compiled .js.`,
+      `[catalog:dev] Library source changes need \`npm run catalog:dev\` again (or gb-check --emit), since the demos load compiled .js.`,
   );
 }
 
@@ -229,7 +226,6 @@ async function buildSite({first = false} = {}) {
       ),
     ),
   );
-  await addStories(gbDirs);
   const pages = await copyGbDocs();
 
   // Open Graph images and manifest icons (cached; Eleventy copies them).
@@ -248,9 +244,6 @@ async function buildSite({first = false} = {}) {
   // The single-file download of the docs, when its inputs are unchanged (a
   // copy; the Chromium run for a changed one starts after the build is ready).
   await restoreSnapshot({siteDir: OUT});
-
-  log('Pointing playgrounds at the local build');
-  await useLocalLibrary();
   return {pages, demos: examples.size};
 }
 
@@ -575,26 +568,6 @@ async function captureExamples(dirs) {
   return examples;
 }
 
-/**
- * Adds a stories folder and a docs page for every labs/gb component that has
- * a demo. Both land in gitignored catalog folders.
- */
-async function addStories(dirs) {
-  for (const dir of dirs) {
-    const stories = join(CATALOG, 'stories', `gb-${dir}`);
-    await rm(stories, {recursive: true, force: true});
-    await cp(join(srcDir(dir), 'demo'), stories, {recursive: true});
-    await writeFile(
-      join(stories, 'project.json'),
-      JSON.stringify(
-        {extends: '/assets/stories/base.json', files: {'demo.ts': {hidden: true}, 'stories.ts': {}}},
-        null,
-        2,
-      ) + '\n',
-    );
-  }
-}
-
 /** Minimal HTML pretty-printer for captured story markup. */
 function formatHtml(html) {
   const VOID = /^(area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr)$/i;
@@ -634,36 +607,6 @@ function formatHtml(html) {
   return lines.join('\n');
 }
 
-/** Points the playground sandbox and import map at the local library. */
-async function useLocalLibrary() {
-  const sandbox = `${LIB}node_modules/playground-elements/`;
-  const importMap = {
-    imports: {
-      '@material/web/': LIB,
-      'lit': `${LIB}node_modules/lit/index.js`,
-      'lit/': `${LIB}node_modules/lit/`,
-      '@lit/context': `${LIB}node_modules/@lit/context/index.js`,
-      'postdoc-lib': `${LIB}node_modules/postdoc-lib/lib/postdoc.js`,
-    },
-  };
-  let pages = 0;
-  let projects = 0;
-  for (const file of await walk(OUT)) {
-    if (file.endsWith('.html')) {
-      const html = await readFile(file, 'utf8');
-      if (!html.includes('<playground-project')) continue;
-      await writeFile(file, html.replace(/<playground-project(?![^>]*sandbox-base-url)/g, `<playground-project sandbox-base-url="${sandbox}"`));
-      pages++;
-    } else if (file.endsWith('project.json')) {
-      const project = JSON.parse(await readFile(file, 'utf8'));
-      project.importMap = importMap;
-      await writeFile(file, JSON.stringify(project, null, 2));
-      projects++;
-    }
-  }
-  console.log(`${pages} pages and ${projects} playground projects use ${LIB}`);
-}
-
 async function walk(dir, out = []) {
   for (const entry of await readdir(dir, {withFileTypes: true})) {
     const p = join(dir, entry.name);
@@ -673,7 +616,7 @@ async function walk(dir, out = []) {
   return out;
 }
 
-/** The library: this repo, with bare imports resolved (playground + examples). */
+/** The library: this repo, with bare imports resolved (the demos). */
 async function startLibraryServer() {
   const {startDevServer} = await import('@web/dev-server');
   await startDevServer({
@@ -712,8 +655,7 @@ async function startCatalogServer() {
           if (ctx.status !== 200) return;
           if (/\.md$/.test(ctx.path)) ctx.type = 'text/markdown; charset=utf-8';
           else if (/\.webmanifest$/.test(ctx.path)) ctx.type = 'application/manifest+json';
-          // Content-hashed fonts (scripts/gb-fonts.mjs), as in firebase.json:
-          // the browser keeps them without asking again, in dev too.
+          // Content-hashed fonts (scripts/gb-fonts.mjs): the browser keeps them without asking again, in dev too.
           if (/^\/fonts\/gb\/[^/]+\.woff2$/.test(ctx.path)) {
             ctx.set('Cache-Control', 'public, max-age=31536000, immutable');
           }

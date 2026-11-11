@@ -6,8 +6,8 @@
  */
 
 /**
- * Publishes the catalog (/ is v2.5.0, /3.0/ is labs/gb) as a static site on
- * a GitHub Pages branch, built here, with no Actions:
+ * Publishes the docs site (/3.0/; / redirects to it) as a static site on a
+ * GitHub Pages branch, built here, with no Actions:
  *
  *   node scripts/catalog-pages.mjs [--base /material-web/] [--src site/_dev]
  *     [--branch gh-pages] [--remote origin] [--push]
@@ -21,9 +21,7 @@
  * 3. Rewrites the site for its base path on Pages (--base): root-relative
  *    links, the 3.0 shell's script strings and JSON urls get the prefix,
  *    and the dev library server (http://localhost:8001/) becomes <base>lib/.
- *    The v2.5 scripts are left alone (their server-rendered templates must
- *    hydrate), and its code playgrounds load the published @material/web
- *    from jsDelivr. Each 3.0 page gets modulepreload links for the whole
+ *    Each page gets modulepreload links for the whole
  *    module graph of the components it imports.
  * 4. Commits the result to --branch (an orphan branch, in a worktree under
  *    the system temp directory, replaced wholesale) with .nojekyll, and with
@@ -53,7 +51,6 @@ const BASE = args.base.endsWith('/') ? args.base : `${args.base}/`;
 const DEV_LIB = 'http://localhost:8001/';
 const OUT = join(tmpdir(), 'catalog-pages-site');
 const TREE = join(tmpdir(), 'catalog-pages-branch');
-const VERSION = JSON.parse(await readFile('package.json', 'utf8')).version;
 
 const log = (...m) => console.log('[catalog-pages]', ...m);
 const git = (argv, cwd = ROOT) => execFileSync('git', argv, {cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit']}).trim();
@@ -155,37 +152,16 @@ const top = (await readdir(OUT)).filter((n) => n !== 'lib').map((n) => n.replace
 // of the site's top-level files or folders, or the root itself.
 const rooted = new RegExp(`(["'\`(=]|&quot;|&#39;)/((?:${top.join('|')})(?=[/"'\`?#)&\\s]|$))`, 'g');
 const TEXT = new Set(['.html', '.js', '.mjs', '.css', '.json', '.webmanifest', '.xml', '.txt', '.md', '.svg']);
-const playgroundMap = {
-  imports: {
-    '@material/web/': `https://cdn.jsdelivr.net/npm/@material/web@${VERSION}/`,
-    lit: 'https://cdn.jsdelivr.net/npm/lit@3/index.js',
-    'lit/': 'https://cdn.jsdelivr.net/npm/lit@3/',
-    '@lit/context': 'https://cdn.jsdelivr.net/npm/@lit/context@1/index.js',
-    'postdoc-lib': 'https://cdn.jsdelivr.net/npm/postdoc-lib/lib/postdoc.js',
-  },
-};
-const PLAYGROUND = JSON.parse(await readFile('node_modules/playground-elements/package.json', 'utf8')).version;
-// The v2.5 pages' scripts (js/, but not the 3.0 site's js/spec/) keep their
-// strings: Lit's server-rendered pages carry a digest of each template's
-// static strings, and a rewritten one no longer hydrates. Their links are
-// in the pages' HTML, rewritten, which hydration leaves as it is.
-const v25Scripts = (file) => file.startsWith(join(OUT, 'js')) && !file.startsWith(join(OUT, 'js', 'spec'));
 let files = 0;
 let preloaded = 0;
 for (const file of await walk(OUT)) {
-  if (!TEXT.has(extname(file)) || file.startsWith(join(OUT, 'lib')) || v25Scripts(file)) continue;
+  if (!TEXT.has(extname(file)) || file.startsWith(join(OUT, 'lib'))) continue;
   let text = await readFile(file, 'utf8');
   const before = text;
-  if (file.endsWith('project.json')) {
-    const project = JSON.parse(text);
-    if (project.importMap) project.importMap = playgroundMap;
-    text = JSON.stringify(project, null, 2);
-  }
   text = text
-    .replaceAll(`${DEV_LIB}node_modules/playground-elements/`, `https://cdn.jsdelivr.net/npm/playground-elements@${PLAYGROUND}/`)
     .replaceAll(DEV_LIB, `${BASE}lib/`)
     .replace(rooted, `$1${BASE}$2`)
-    // Links to the root itself: the v2.5 home.
+    // Links to the root itself (it redirects to /3.0/).
     .replace(/(href=|href=\\?&quot;|assign\()(["'])\/\2/g, `$1$2${BASE}$2`)
     .replace(/href="\/"/g, `href="${BASE}"`);
   if (file.endsWith('.html')) {
