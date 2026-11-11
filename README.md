@@ -19,7 +19,10 @@ Material Web 2.5 components are on `main`.
     them share.
   - `extras/`: the library's own components with no page in the M3
     components index (select, the app and pane scaffolds, pull to refresh,
-    prose for long-form text), each following the spec pages that cover it.
+    prose for long-form text, demos of code, and Material shapes that
+    morph), each following the spec pages that cover it. The shapes' morph
+    paths come from the Compose `Morph` port in `scripts/m3/shapes`
+    (`scripts/gb-shape-morphs.mjs`, checked by `gb:check --all`).
   - `SPEC-MAP.md` maps each spec page to its folder, elements and docs page;
     `scripts/m3/gen-spec-map.mjs` writes it and fails when a folder is in
     the wrong one of `components/` and `extras/`.

@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 232 |
-| Custom elements | 60 |
-| Classes | 100 |
+| Public modules | 236 |
+| Custom elements | 61 |
+| Classes | 101 |
 | Functions | 335 |
-| Constants and variables | 306 |
-| Types and interfaces | 317 |
+| Constants and variables | 308 |
+| Types and interfaces | 320 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2169 of 2169 (100%) |
+| JSDoc coverage | 2185 of 2185 (100%) |
 
 ## Contents
 
@@ -4253,6 +4253,52 @@ A Material Design component.
 | `SelectVariant` | type | `TextFieldVariant` | Select (and autocomplete) variants: the anchor text field's variants. |
 | `setupSelect` | function | `(select: HTMLElement, opts?: { signal?: AbortSignal; }): void` | Sets up a Light DOM select: the text field behavior (clicking the container focuses the field). Opening the menu and selection are left to the page; use `md-gb-select` for the full behavior. |
 
+### `extras/shape/`
+
+#### `<md-gb-shape>`
+
+A decorative Material shape that can morph into another.
+
+- Class: `ShapeElement` in `extras/shape/shape-element.js`
+- Import: `import '@material/web/extras/shape/md-gb-shape.js';`
+- Spec: [shape](https://m3.material.io/styles/shape) (No page of its own: the shape library and shape morph of the shape page.)
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `color` | `color` (reflects) | `"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertia…` | `'current'` | The color role of the fill. |
+| `delay` | `delay` | `0 \| 1 \| 2 \| 3` | `0` | Starts the loop 1, 2 or 3 quarters later, so shapes don't morph together. |
+| `loop` | `loop` (reflects) | `boolean` | `false` | Morphs into `to` and back, in a loop. |
+| `morphed` | `morphed` (reflects) | `boolean` | `false` | Shows the `to` shape, morphing into it. |
+| `shape` | `shape` | `"circle" \| "square" \| "slanted" \| "arch" \| "fan" \| "arrow" \| "semiCircle" \| "ov…` | `'circle'` | The Material shape. |
+| `size` | `size` | `number` | `48` | The width and height, in pixels. |
+| `to` | `to` | `"" \| "circle" \| "square" \| "slanted" \| "arch" \| "fan" \| "arrow" \| "semiCircle" …` | `''` | The Material shape it morphs into (with `morphed` or `loop`). |
+
+| Slot | Description |
+| --- | --- |
+| (default) | Content centered on the shape. |
+
+| CSS part | Description |
+| --- | --- |
+| `shape` | The SVG of the shape. |
+
+#### `extras/shape/shape-element.js`
+
+- Spec: [shape](https://m3.material.io/styles/shape) (No page of its own: the shape library and shape morph of the shape page.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `MaterialShapeName` | type | `keyof typeof MATERIAL_SHAPES` | The name of one of the 35 Material shapes. |
+| `ShapeColor` | type | `\| 'current' \| 'primary' \| 'secondary' \| 'tertiary' \| 'primary-container' \| 'secondary-container' \| 'tertiary-container' \| 'error-container' \| 'surface-container-highest'` | The color role that fills a shape; `current` is the text color. |
+| `ShapeElement` | class | `class ShapeElement extends LitElement` | A Material shape (m3.material.io/styles/shape), for decorative moments such as illustrations and backgrounds. The shape is decorative: it is hidden from assistive technology, so put its meaning in text. |
+
+#### `extras/shape/shape-morphs.js`
+
+- Spec: [shape](https://m3.material.io/styles/shape) (No page of its own: the shape library and shape morph of the shape page.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `SHAPE_MORPHS` | variable | `Readonly<Record<string, readonly [string, string]>>` | Morph paths by `"<from>:<to>"`: [start (the from shape), end (the to shape)]. |
+
 ## Foundations
 
 Accessibility, interaction, layout and the design tokens.
@@ -4707,7 +4753,7 @@ Color, elevation, icons, motion, shape, spacing and typography.
 | `PaletteName` | type | `"primary" \| "secondary" \| "tertiary" \| "neutral" \| "neutralVariant" \| "error"` | The tonal palettes a custom color role can take its tone from. |
 | `Platform` | type | `(typeof PLATFORMS)[number]` | A target platform. |
 | `PLATFORMS` | variable | `readonly ["phone", "watch"]` | Target platforms: `phone` (also right for the web) and `watch`. |
-| `rolesFromScheme` | function | `(scheme: DynamicScheme): Record<"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertiary" \| "tertiary-container" \| "scrim" \| "error" \| "on-primary" \| "on-primary-container" \| "primary-fixed" \| "primary-fixed-dim" \|…` | Resolves every built-in color role of a scheme to hex. |
+| `rolesFromScheme` | function | `(scheme: DynamicScheme): Record<"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertiary" \| "tertiary-container" \| "scrim" \| "error" \| "error-container" \| "surface-container-highest" \| "on-primary" \| "on-primary-co…` | Resolves every built-in color role of a scheme to hex. |
 | `SCHEME_VARIANTS` | variable | `readonly ["tonal-spot", "neutral", "vibrant", "expressive", "fidelity", "content", "monochrome", "rainbow", "fruit-salad"]` | Scheme variants ("styles") from MCU, as listed by the M3 color spec. |
 | `SchemeOptions` | interface | `{specVersion; platform}` | Options for `createScheme()` beyond variant, theme and contrast. |
 | `SchemePalettes` | interface | `{primary; secondary; tertiary; neutral; neutralVariant; error}` | Your own key colors for the scheme's tonal palettes (advanced.md "Adjust existing schemes"). Palettes you leave out come from the variant. |
@@ -4814,7 +4860,7 @@ A Material Design skeleton loader.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `loading` | `loading` (reflects) | `boolean` | `false` | Whether the content is loading: shows the placeholder. |
-| `shape` | `shape` (reflects) | `"text" \| "rect" \| "circle"` | `'rect'` | The placeholder's shape: a block, a line of text, or a circle. |
+| `shape` | `shape` (reflects) | `"text" \| "circle" \| "rect"` | `'rect'` | The placeholder's shape: a block, a line of text, or a circle. |
 
 | Slot | Description |
 | --- | --- |
@@ -4883,6 +4929,17 @@ A Material Design skeleton loader.
 | `transitionTiming` | function | `(name: "container-transform" \| "shared-axis" \| "fade-through" \| "lateral" \| "reduced" \| "enter" \| "exit", element?: Element, overrides?: Pick<TransitionOptions, "duration" \| "easing">): { duration: number; easing: string; }` | Duration (ms) and easing of a pattern, from its custom properties. |
 | `TransitionUpdate` | type | `() => void \| Promise<void>` | Changes the DOM from the old state to the new one. |
 | `VIEW_TRANSITION_NAMES` | variable | `{ readonly containerTransform: "md-container-transform"; readonly scope: "md-transition-scope"; }` | View transition names used by the patterns. |
+
+### `styles/shape/`
+
+#### `styles/shape/material-shapes.js`
+
+- Spec: [shape](https://m3.material.io/styles/shape)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `MATERIAL_SHAPES` | variable | `{ readonly circle: "M 1 0.5 C 1 0.5517 0.9919 0.6035 0.9757 0.6533 C 0.9434 0.7529 0.8803 0.8397 0.7956 0.9012 C 0.7108 0.9628 0.6088 0.996 0.504 0.996 C 0.3993 0.996 0.2973 0.9628 0.2125 0.9012 C 0.1278 0.8397 0.0647 0.7529 0.0324 0.6533 …` | Material 3 Expressive shapes as SVG path data in a 0..1 unit box. |
+| `MaterialShapeName` | type | `keyof typeof MATERIAL_SHAPES` | Name of a Material 3 Expressive shape. |
 
 ## json-render
 

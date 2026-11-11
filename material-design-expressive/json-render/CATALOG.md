@@ -55,6 +55,7 @@ rules below.
 | `SegmentedButtonSet` | `md-gb-segmented-button-set` | 6 | default | change, input | [segmented-buttons](https://m3.material.io/components/segmented-buttons) |
 | `Select` | `md-gb-select` | 16 | default, leading-icon, trailing-icon | change, closed, closing, input, invalid, opened, opening | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) |
 | `SelectOption` | `md-gb-select-option` | 6 | default, leading, supporting-text, trailing, trailing-text |   | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) |
+| `Shape` | `md-gb-shape` | 8 | default |   | [shape](https://m3.material.io/styles/shape) |
 | `SideSheet` | `md-gb-side-sheet` | 13 | default, actions, headline | back, close, closed, open, opened | [bottom-sheets](https://m3.material.io/components/bottom-sheets), [side-sheets](https://m3.material.io/components/side-sheets) |
 | `Skeleton` | `md-gb-skeleton` | 3 | default |   | [transitions](https://m3.material.io/styles/motion/transitions) |
 | `Slider` | `md-gb-slider` | 22 | icon | change, input | [sliders](https://m3.material.io/components/sliders) |

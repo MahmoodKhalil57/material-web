@@ -1555,6 +1555,36 @@ export const COMPONENTS = {
     deprecated: false,
     spec: ["https://m3.material.io/components/menus", "https://m3.material.io/components/text-fields"] as string[],
   },
+  Shape: {
+    tag: "md-gb-shape",
+    props: z
+      .object({
+        /** The accessible name (aria-label). */
+        ariaLabel: dynamic(z.string()).optional(),
+        /** The color role of the fill. */
+        color: dynamic(z.enum(["primary", "primary-container", "secondary", "secondary-container", "tertiary", "tertiary-container", "current", "error-container", "surface-container-highest"])).optional(),
+        /** Starts the loop 1, 2 or 3 quarters later, so shapes don't morph together. */
+        delay: dynamic(z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)])).optional(),
+        /** Morphs into `to` and back, in a loop. */
+        loop: dynamic(z.boolean()).optional(),
+        /** Shows the `to` shape, morphing into it. */
+        morphed: dynamic(z.boolean()).optional(),
+        /** The Material shape. */
+        shape: dynamic(z.enum(["circle", "square", "slanted", "arch", "fan", "arrow", "semiCircle", "oval", "pill", "triangle", "diamond", "clamShell", "pentagon", "gem", "sunny", "verySunny", "cookie4Sided", "cookie6Sided", "cookie7Sided", "cookie9Sided", "cookie12Sided", "ghostish", "clover4Leaf", "clover8Leaf", "burst", "softBurst", "boom", "softBoom", "flower", "puffy", "puffyDiamond", "pixelCircle", "pixelTriangle", "bun", "heart"])).optional(),
+        /** The width and height, in pixels. */
+        size: dynamic(z.number()).optional(),
+        /** The Material shape it morphs into (with `morphed` or `loop`). */
+        to: dynamic(z.enum(["", "circle", "square", "slanted", "arch", "fan", "arrow", "semiCircle", "oval", "pill", "triangle", "diamond", "clamShell", "pentagon", "gem", "sunny", "verySunny", "cookie4Sided", "cookie6Sided", "cookie7Sided", "cookie9Sided", "cookie12Sided", "ghostish", "clover4Leaf", "clover8Leaf", "burst", "softBurst", "boom", "softBoom", "flower", "puffy", "puffyDiamond", "pixelCircle", "pixelTriangle", "bun", "heart"])).optional(),
+      })
+      .strict(),
+    slots: ["default"] as string[],
+    events: [] as string[],
+    attributes: {ariaLabel: "aria-label", color: "color", delay: "delay", loop: "loop", morphed: "morphed", shape: "shape", size: "size", to: "to"} as Record<string, string>,
+    booleans: ["loop", "morphed"] as string[],
+    description: "A decorative Material shape that can morph into another. Slots: default. M3: shape.",
+    deprecated: false,
+    spec: ["https://m3.material.io/styles/shape"] as string[],
+  },
   SideSheet: {
     tag: "md-gb-side-sheet",
     props: z
@@ -1604,7 +1634,7 @@ export const COMPONENTS = {
         /** Whether the content is loading: shows the placeholder. */
         loading: dynamic(z.boolean()).optional(),
         /** The placeholder's shape: a block, a line of text, or a circle. */
-        shape: dynamic(z.enum(["text", "rect", "circle"])).optional(),
+        shape: dynamic(z.enum(["text", "circle", "rect"])).optional(),
       })
       .strict(),
     slots: ["default"] as string[],

@@ -62,6 +62,7 @@ pages listed.
 | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) | `extras/select/` | `md-gb-autocomplete`, `md-gb-select`, `md-gb-select-option` | [select](../docs/components/select.md) | No page of its own: a menu opened from a text field. |
 | - | `extras/demo/` | `md-gb-demo`, `md-gb-demo-code` | - | No M3 page: an example and its code, as documentation shows them. |
 | [typography](https://m3.material.io/styles/typography) | `extras/prose/` | `md-gb-prose` | - | No page of its own: long-form text styled with the type scale (Applying type). |
+| [shape](https://m3.material.io/styles/shape) | `extras/shape/` | `md-gb-shape` | - | No page of its own: the shape library and shape morph of the shape page. |
 | [loading-indicator](https://m3.material.io/components/loading-indicator) | `extras/pulltorefresh/` | `md-gb-pull-to-refresh` | [pull-to-refresh](../docs/components/pull-to-refresh.md) | No page of its own: the loading indicator page covers pull to refresh. |
 
 ## Other elements

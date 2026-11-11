@@ -29776,6 +29776,227 @@
   },
   {
    "kind": "javascript-module",
+   "path": "extras/shape/md-gb-shape.js",
+   "exports": [
+    {
+     "kind": "custom-element-definition",
+     "name": "md-gb-shape",
+     "declaration": {
+      "name": "ShapeElement",
+      "module": "/extras/shape/shape-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/shape/shape-element.js",
+   "declarations": [
+    {
+     "kind": "class",
+     "name": "ShapeElement",
+     "tagName": "md-gb-shape",
+     "customElement": true,
+     "description": "A decorative Material shape that can morph into another.",
+     "summary": "A decorative Material shape that can morph into another.",
+     "attributes": [
+      {
+       "name": "color",
+       "type": {
+        "text": "\"primary\" | \"primary-container\" | \"secondary\" | \"secondary-container\" | \"tertiary\" | \"tertiary-container\" | \"current\" | \"error-container\" | \"surface-container-highest\""
+       },
+       "fieldName": "color",
+       "default": "'current'",
+       "description": "The color role of the fill."
+      },
+      {
+       "name": "delay",
+       "type": {
+        "text": "0 | 1 | 2 | 3"
+       },
+       "fieldName": "delay",
+       "default": "0",
+       "description": "Starts the loop 1, 2 or 3 quarters later, so shapes don't morph together."
+      },
+      {
+       "name": "loop",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "loop",
+       "default": "false",
+       "description": "Morphs into `to` and back, in a loop."
+      },
+      {
+       "name": "morphed",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "morphed",
+       "default": "false",
+       "description": "Shows the `to` shape, morphing into it."
+      },
+      {
+       "name": "shape",
+       "type": {
+        "text": "\"circle\" | \"square\" | \"slanted\" | \"arch\" | \"fan\" | \"arrow\" | \"semiCircle\" | \"oval\" | \"pill\" | \"triangle\" | \"diamond\" | \"clamShell\" | \"pentagon\" | \"gem\" | \"sunny\" | \"verySunny\" | \"cookie4Sided\" | \"cookie6Sided\" | \"cookie7Sided\" | \"cookie9Sided\" | \"cookie12Sided\" | \"ghostish\" | \"clover4Leaf\" | \"clover8Leaf\" | \"burst\" | \"softBurst\" | \"boom\" | \"softBoom\" | \"flower\" | \"puffy\" | \"puffyDiamond\" | \"pixelCircle\" | \"pixelTriangle\" | \"bun\" | \"heart\""
+       },
+       "fieldName": "shape",
+       "default": "'circle'",
+       "description": "The Material shape."
+      },
+      {
+       "name": "size",
+       "type": {
+        "text": "number"
+       },
+       "fieldName": "size",
+       "default": "48",
+       "description": "The width and height, in pixels."
+      },
+      {
+       "name": "to",
+       "type": {
+        "text": "\"\" | \"circle\" | \"square\" | \"slanted\" | \"arch\" | \"fan\" | \"arrow\" | \"semiCircle\" | \"oval\" | \"pill\" | \"triangle\" | \"diamond\" | \"clamShell\" | \"pentagon\" | \"gem\" | \"sunny\" | \"verySunny\" | \"cookie4Sided\" | \"cookie6Sided\" | \"cookie7Sided\" | \"cookie9Sided\" | \"cookie12Sided\" | \"ghostish\" | \"clover4Leaf\" | \"clover8Leaf\" | \"burst\" | \"softBurst\" | \"boom\" | \"softBoom\" | \"flower\" | \"puffy\" | \"puffyDiamond\" | \"pixelCircle\" | \"pixelTriangle\" | \"bun\" | \"heart\""
+       },
+       "fieldName": "to",
+       "default": "''",
+       "description": "The Material shape it morphs into (with `morphed` or `loop`)."
+      }
+     ],
+     "members": [
+      {
+       "kind": "field",
+       "name": "color",
+       "type": {
+        "text": "\"primary\" | \"primary-container\" | \"secondary\" | \"secondary-container\" | \"tertiary\" | \"tertiary-container\" | \"current\" | \"error-container\" | \"surface-container-highest\""
+       },
+       "privacy": "public",
+       "default": "'current'",
+       "description": "The color role of the fill.",
+       "attribute": "color",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "delay",
+       "type": {
+        "text": "0 | 1 | 2 | 3"
+       },
+       "privacy": "public",
+       "default": "0",
+       "description": "Starts the loop 1, 2 or 3 quarters later, so shapes don't morph together.",
+       "attribute": "delay"
+      },
+      {
+       "kind": "field",
+       "name": "loop",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Morphs into `to` and back, in a loop.",
+       "attribute": "loop",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "morphed",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Shows the `to` shape, morphing into it.",
+       "attribute": "morphed",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "shape",
+       "type": {
+        "text": "\"circle\" | \"square\" | \"slanted\" | \"arch\" | \"fan\" | \"arrow\" | \"semiCircle\" | \"oval\" | \"pill\" | \"triangle\" | \"diamond\" | \"clamShell\" | \"pentagon\" | \"gem\" | \"sunny\" | \"verySunny\" | \"cookie4Sided\" | \"cookie6Sided\" | \"cookie7Sided\" | \"cookie9Sided\" | \"cookie12Sided\" | \"ghostish\" | \"clover4Leaf\" | \"clover8Leaf\" | \"burst\" | \"softBurst\" | \"boom\" | \"softBoom\" | \"flower\" | \"puffy\" | \"puffyDiamond\" | \"pixelCircle\" | \"pixelTriangle\" | \"bun\" | \"heart\""
+       },
+       "privacy": "public",
+       "default": "'circle'",
+       "description": "The Material shape.",
+       "attribute": "shape"
+      },
+      {
+       "kind": "field",
+       "name": "size",
+       "type": {
+        "text": "number"
+       },
+       "privacy": "public",
+       "default": "48",
+       "description": "The width and height, in pixels.",
+       "attribute": "size"
+      },
+      {
+       "kind": "field",
+       "name": "to",
+       "type": {
+        "text": "\"\" | \"circle\" | \"square\" | \"slanted\" | \"arch\" | \"fan\" | \"arrow\" | \"semiCircle\" | \"oval\" | \"pill\" | \"triangle\" | \"diamond\" | \"clamShell\" | \"pentagon\" | \"gem\" | \"sunny\" | \"verySunny\" | \"cookie4Sided\" | \"cookie6Sided\" | \"cookie7Sided\" | \"cookie9Sided\" | \"cookie12Sided\" | \"ghostish\" | \"clover4Leaf\" | \"clover8Leaf\" | \"burst\" | \"softBurst\" | \"boom\" | \"softBoom\" | \"flower\" | \"puffy\" | \"puffyDiamond\" | \"pixelCircle\" | \"pixelTriangle\" | \"bun\" | \"heart\""
+       },
+       "privacy": "public",
+       "default": "''",
+       "description": "The Material shape it morphs into (with `morphed` or `loop`).",
+       "attribute": "to"
+      }
+     ],
+     "slots": [
+      {
+       "name": "",
+       "description": "Content centered on the shape."
+      }
+     ],
+     "cssParts": [
+      {
+       "name": "shape",
+       "description": "The SVG of the shape."
+      }
+     ]
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "ShapeElement",
+     "declaration": {
+      "name": "ShapeElement",
+      "module": "/extras/shape/shape-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/shape/shape-morphs.js",
+   "declarations": [
+    {
+     "kind": "variable",
+     "name": "SHAPE_MORPHS",
+     "type": {
+      "text": "Readonly<Record<string, readonly [string, string]>>"
+     },
+     "description": "Morph paths by `\"<from>:<to>\"`: [start (the from shape), end (the to shape)]."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "SHAPE_MORPHS",
+     "declaration": {
+      "name": "SHAPE_MORPHS",
+      "module": "/extras/shape/shape-morphs.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "foundations/accessibility/announcer.js",
    "declarations": [
     {
@@ -34083,7 +34304,7 @@
       {
        "name": "shape",
        "type": {
-        "text": "\"text\" | \"rect\" | \"circle\""
+        "text": "\"text\" | \"circle\" | \"rect\""
        },
        "fieldName": "shape",
        "default": "'rect'",
@@ -34107,7 +34328,7 @@
        "kind": "field",
        "name": "shape",
        "type": {
-        "text": "\"text\" | \"rect\" | \"circle\""
+        "text": "\"text\" | \"circle\" | \"rect\""
        },
        "privacy": "public",
        "default": "'rect'",
@@ -34677,6 +34898,30 @@
      "declaration": {
       "name": "VIEW_TRANSITION_NAMES",
       "module": "/styles/motion/transitions/transitions.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "styles/shape/material-shapes.js",
+   "declarations": [
+    {
+     "kind": "variable",
+     "name": "MATERIAL_SHAPES",
+     "type": {
+      "text": "{ readonly circle: \"M 1 0.5 C 1 0.5517 0.9919 0.6035 0.9757 0.6533 C 0.9434 0.7529 0.8803 0.8397 0.7956 0.9012 C 0.7108 0.9628 0.6088 0.996 0.504 0.996 C 0.3993 0.996 0.2973 0.9628 0.2125 0.9012 C 0.1278 0.8397 0.0647 0.7529 0.0324 0.6533 C 0 0.5536 0 0.4464 0.0324 0.3467 C 0.0647 0.2471 0.1278 0.1603 0.2125 0.0988 C 0.2973 0.0372 0.3993 0.004 0.504 0.004 C 0.6088 0.004 0.7108 0.0372 0.7956 0.0988 C 0.8803 0.1603 0.9434 0.2471 0.9757 0.3467 C 0.9919 0.3965 1 0.4483 1 0.5 Z\"; readonly square: \"M…"
+     },
+     "description": "Material 3 Expressive shapes as SVG path data in a 0..1 unit box."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "MATERIAL_SHAPES",
+     "declaration": {
+      "name": "MATERIAL_SHAPES",
+      "module": "/styles/shape/material-shapes.js"
      }
     }
    ]

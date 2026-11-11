@@ -90,7 +90,9 @@ function shapeSvg(name, cls = '', {to = '', loop = false, delay = 0} = {}) {
     if (loop) morph += ' data-morph-mode="loop"';
     if (loop && delay) morph += ` data-delay="${Number(delay)}"`;
   }
-  return `<svg class="gb-shape ${cls}" viewBox="0 0 1 1" aria-hidden="true" focusable="false"${morph}><path d="${shapePath(name)}"/></svg>`;
+  // data-shape names it for the spec shell, which draws it with md-gb-shape
+  // (gb-content-spec.cjs).
+  return `<svg class="gb-shape ${cls}" viewBox="0 0 1 1" aria-hidden="true" focusable="false" data-shape="${name}"${morph}><path d="${shapePath(name)}"/></svg>`;
 }
 
 module.exports = {MORPHS, morphKey, shapePath, shapeSvg};

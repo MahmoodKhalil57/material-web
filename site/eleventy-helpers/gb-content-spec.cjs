@@ -44,6 +44,43 @@ const HTML_ATTRS = {
 };
 
 const attrsOf = (node) => Object.fromEntries((node.attrs ?? []).map((a) => [a.name, a.value]));
+
+/** A compatibility row's status (gb-compat.cjs) -> its shape's color role. */
+const STATE_COLORS = {
+  ok: 'secondary-container',
+  warn: 'error-container',
+  none: 'surface-container-highest',
+  info: 'surface-container-highest',
+};
+
+/** The value of `name` on the node or its closest ancestor that has it. */
+function closestAttr(node, name) {
+  for (let n = node; n; n = n.parentNode) {
+    const value = n.attrs?.find((a) => a.name === name)?.value;
+    if (value) return value;
+  }
+  return '';
+}
+
+/** The class list of the node and its ancestors, joined. */
+function classesUp(node) {
+  let out = '';
+  for (let n = node; n; n = n.parentNode) out += ' ' + (n.attrs?.find((a) => a.name === 'class')?.value ?? '');
+  return out;
+}
+
+/**
+ * A Material shape's size in the spec shell, which has no page styles: by
+ * what it decorates (the old shell sized them in home.css, sections.css and
+ * compat.css).
+ */
+function shapeSize(node) {
+  const classes = classesUp(node);
+  if (/\bgb-home-blob\b|\bgb-hero-shape\b/.test(classes)) return 96;
+  if (/\bgb-home-tile\b|\bgb-card\b|\bgb-home-card\b/.test(classes)) return 72;
+  if (/\bgb-compat-logo\b/.test(classes)) return 40;
+  return 48;
+}
 const textOf = (node) =>
   node.nodeName === '#text' ? node.value : (node.childNodes ?? []).map(textOf).join('');
 
@@ -63,6 +100,8 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
   const count = (key) => stats.set(key, (stats.get(key) ?? 0) + 1);
 
   const elements = {};
+  /** Nodes already converted as part of another (a tile's icon). */
+  const consumed = new WeakSet();
   let n = 0;
   const add = (el) => {
     const key = `${prefix}${(n++).toString(36)}`;
@@ -125,9 +164,34 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
 
     if (tag === 'md-gb-demo') return [demo(node, attrs)];
 
+    if (consumed.has(node)) return [];
+
+    // A Material shape (gb-shapes.cjs) is md-gb-shape, colored by the tone
+    // of the tile or card around it (or a compatibility row's status) and
+    // sized by what it decorates. A tile's icon, next to it, goes on it.
+    if (tag === 'svg' && attrs['data-shape']) {
+      const [, to = ''] = (attrs['data-morph'] ?? '').split(':');
+      const tone = closestAttr(node, 'data-tone');
+      const props = {
+        shape: attrs['data-shape'],
+        size: shapeSize(node),
+        color: tone ? `${tone}-container` : (STATE_COLORS[closestAttr(node, 'data-state')] ?? 'current'),
+      };
+      if (to) {
+        props.to = to;
+        if (attrs['data-morph-mode'] === 'loop') props.loop = true;
+        if (attrs['data-delay']) props.delay = Number(attrs['data-delay']);
+      }
+      const icon = (node.parentNode?.childNodes ?? []).find((c) => c.tagName === 'md-gb-icon');
+      const children = icon ? convert(icon, issues) : [];
+      if (icon) consumed.add(icon);
+      count('Material shape as md-gb-shape');
+      return [add({type: 'Shape', props, children})];
+    }
+
     // An SVG with its own colors (a logo) is an image of itself; a
-    // decorative one drawn in currentColor (an M3 shape bullet) is left out,
-    // since an image can't take the text color.
+    // decorative one drawn in currentColor (an icon-like bullet) is left
+    // out, since an image can't take the text color.
     if (tag === 'svg') {
       const markup = serializeOuter(node);
       const hidden = attrs['aria-hidden'] === 'true';

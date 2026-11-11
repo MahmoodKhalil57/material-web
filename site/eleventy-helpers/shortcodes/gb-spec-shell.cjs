@@ -99,7 +99,10 @@ function gbSpecShell(eleventyConfig) {
     const json = JSON.stringify(spec).replace(/</g, '\\u003c');
     return (
       `<div id="gb-shell">${html.replace(CONTENT_SLOT, `<div id="gb-content">${contentHtml}</div>`)}</div>` +
-      `<script type="application/json" id="gb-shell-spec">${json}</script>`
+      `<script type="application/json" id="gb-shell-spec">${json}</script>` +
+      // The elements of the converted content, which can differ from the
+      // Markdown's (md-gb-shape for shapes, md-gb-demo-code for code blocks).
+      eleventyConfig.getFilter('gbcomponents')(contentHtml)
     );
   });
 

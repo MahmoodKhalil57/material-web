@@ -145,7 +145,9 @@ function hero(section, count) {
 class GbSections {
   data() {
     return {
-      layout: 'gb/default.html',
+      // As the docs pages (catalog-dev's 3.0.json): the spec shell with
+      // MWC_SPEC_SHELL=1.
+      layout: process.env.MWC_SPEC_SHELL === '1' ? 'gb/spec.html' : 'gb/default.html',
       tags: ['gbsection'],
       gbIndex: true,
       order: 0,

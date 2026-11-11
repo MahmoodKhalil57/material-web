@@ -63,6 +63,8 @@ export const SPEC_MAP = [
     note: 'No M3 page: an example and its code, as documentation shows them.'},
   {dir: 'extras/prose', pages: ['styles/typography'], docs: null,
     note: 'No page of its own: long-form text styled with the type scale (Applying type).'},
+  {dir: 'extras/shape', pages: ['styles/shape'], docs: null,
+    note: 'No page of its own: the shape library and shape morph of the shape page.'},
   {dir: 'extras/pulltorefresh', pages: ['components/loading-indicator'], docs: 'components/pull-to-refresh',
     note: 'No page of its own: the loading indicator page covers pull to refresh.'},
   // Elements outside the component folders.
