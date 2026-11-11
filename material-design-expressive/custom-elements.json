@@ -9506,6 +9506,15 @@
        "description": "Whether the item is grabbed for reordering without dragging (with the keyboard or a tap on the drag handle). Set by the list; shows the move up and move down buttons."
       },
       {
+       "name": "href",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "href",
+       "default": "\"\"",
+       "description": "Makes the item a link to this URL: a single-action item whose action is navigating (lists.md, Single-action: \"the entire list item performs one action, such as navigating to a new page\"). Not for an expandable, selectable or disabled item, which stays a button."
+      },
+      {
        "name": "move-down-label",
        "type": {
         "text": "string"
@@ -9576,6 +9585,15 @@
        "fieldName": "selectionVisible",
        "default": "false",
        "description": "Whether the selection checkbox is always shown: the list sets it when selection is the primary activity or once an item is selected (selection.md, \"Click\"). Otherwise the checkbox shows on hover."
+      },
+      {
+       "name": "target",
+       "type": {
+        "text": "\"\" | \"_blank\" | \"_parent\" | \"_self\" | \"_top\""
+       },
+       "fieldName": "target",
+       "default": "\"\"",
+       "description": "The link target, when `href` is set."
       }
      ],
      "members": [
@@ -9658,6 +9676,18 @@
        "default": "false",
        "description": "Whether the item is grabbed for reordering without dragging (with the keyboard or a tap on the drag handle). Set by the list; shows the move up and move down buttons.",
        "attribute": "grabbed",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "href",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "default": "\"\"",
+       "description": "Makes the item a link to this URL: a single-action item whose action is navigating (lists.md, Single-action: \"the entire list item performs one action, such as navigating to a new page\"). Not for an expandable, selectable or disabled item, which stays a button.",
+       "attribute": "href",
        "reflects": true
       },
       {
@@ -9771,6 +9801,17 @@
        "description": "Whether the selection checkbox is always shown: the list sets it when selection is the primary activity or once an item is selected (selection.md, \"Click\"). Otherwise the checkbox shows on hover.",
        "attribute": "selection-visible",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "target",
+       "type": {
+        "text": "\"\" | \"_blank\" | \"_parent\" | \"_self\" | \"_top\""
+       },
+       "privacy": "public",
+       "default": "\"\"",
+       "description": "The link target, when `href` is set.",
+       "attribute": "target"
       },
       {
        "kind": "method",

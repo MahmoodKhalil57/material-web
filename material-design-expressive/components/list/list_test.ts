@@ -1218,3 +1218,56 @@ describe("<md-gb-list> keyboard navigation", () => {
     ).toBeFalse();
   });
 });
+
+describe("<md-gb-list-item> href (single-action: navigation)", () => {
+  const env = new Environment();
+
+  async function setupTest() {
+    const root = env.render(html`
+      <md-gb-list>
+        <md-gb-list-item href="#usage">Usage</md-gb-list-item>
+        <md-gb-list-item href="#api" target="_blank">API</md-gb-list-item>
+        <md-gb-list-item href="#off" disabled>Disabled</md-gb-list-item>
+        <md-gb-list-item href="#more" expandable>
+          More
+          <div slot="nested">Nested</div>
+        </md-gb-list-item>
+      </md-gb-list>
+    `);
+    await env.waitForStability();
+    await env.waitForStability();
+    return Array.from(root.querySelectorAll<ListItemElement>("md-gb-list-item"));
+  }
+
+  it("renders the item as a link to href, with its target", async () => {
+    const [usage, api] = await setupTest();
+    const link = itemOf(usage);
+    expect(link.tagName).toBe("A");
+    expect(link.getAttribute("href")).toBe("#usage");
+    expect(link.hasAttribute("target")).toBeFalse();
+    expect(itemOf(api).getAttribute("target")).toBe("_blank");
+    expect(usage.getAttribute("role") ?? "listitem").toBe("listitem");
+  });
+
+  it("keeps a disabled or expandable item a button", async () => {
+    const items = await setupTest();
+    expect(itemOf(items[2]).tagName).toBe("BUTTON");
+    expect(itemOf(items[3]).tagName).toBe("BUTTON");
+  });
+
+  it("takes part in the list's roving tab stop and arrow keys", async () => {
+    const [usage, api] = await setupTest();
+    expect((itemOf(usage) as HTMLElement).tabIndex).toBe(0);
+    itemOf(usage).focus();
+    key(itemOf(usage), "ArrowDown");
+    expect(document.activeElement).toBe(api);
+  });
+
+  it("follows the link when activated", async () => {
+    const [usage] = await setupTest();
+    const before = location.hash;
+    itemOf(usage).click();
+    expect(location.hash).toBe("#usage");
+    history.replaceState(null, "", before || location.pathname + location.search);
+  });
+});

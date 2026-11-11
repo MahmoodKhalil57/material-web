@@ -275,6 +275,17 @@ export class ListItemElement extends baseClass {
   nonInteractive = false;
 
   /**
+   * Makes the item a link to this URL: a single-action item whose action is
+   * navigating (lists.md, Single-action: "the entire list item performs one
+   * action, such as navigating to a new page"). Not for an expandable,
+   * selectable or disabled item, which stays a button.
+   */
+  @property({ reflect: true }) href = "";
+
+  /** The link target, when `href` is set. */
+  @property() target: "" | "_blank" | "_parent" | "_self" | "_top" = "";
+
+  /**
    * Whether the item expands to reveal the content in its `nested` slot.
    * Expandable items are always interactive.
    */
@@ -461,7 +472,7 @@ export class ListItemElement extends baseClass {
       ...slotted("leading-actions"),
       ...slotted("avatar"),
       ...slotted("leading"),
-      ...own("button#item"),
+      ...own("#item"),
       ...slotted("trailing"),
       ...own(".list-item-reveal-button"),
       ...own(".list-item-move-up"),
@@ -497,6 +508,11 @@ export class ListItemElement extends baseClass {
   }
 
   private isOption = false;
+
+  /** Whether the item renders a link (`href`): a single-action item only. */
+  private get isLink() {
+    return Boolean(this.href) && !this.expandable && !this.disabled && !this.selectable && !this.isOption;
+  }
 
   private syncOptionAria() {
     this[internals].role = this.isOption ? "option" : "listitem";
@@ -552,6 +568,21 @@ export class ListItemElement extends baseClass {
       >
         ${this.renderContent()}
       </div>`;
+    } else if (this.isLink) {
+      // Needed for closure conformance
+      const { ariaLabel } = this as ARIAMixinStrict;
+      item = html`<a
+        id="item"
+        part="list-item"
+        class="${listItem(state)}"
+        href=${this.href}
+        target=${this.target || nothing}
+        aria-label=${ariaLabel || nothing}
+        tabindex=${this.rovingTabIndex ?? nothing}
+        @click=${this.handleClick}
+      >
+        ${this.renderContent()}
+      </a>`;
     } else {
       // Needed for closure conformance
       const { ariaLabel } = this as ARIAMixinStrict;
@@ -771,8 +802,9 @@ export class ListItemElement extends baseClass {
   private handleClick(event: Event) {
     // The click that ends a swipe is suppressed by the swipe's drag gesture.
     if (this.revealed) {
-      // Tapping a swiped item puts it back.
+      // Tapping a swiped item puts it back (and doesn't follow its link).
       event.stopImmediatePropagation();
+      event.preventDefault();
       this.closeByUser();
       return;
     }

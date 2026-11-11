@@ -36,7 +36,7 @@ rules below.
 | `Icon` | `md-gb-icon` | 2 | default |   | [icons](https://m3.material.io/styles/icons) |
 | `IconButton` | `md-gb-icon-button` | 20 | default | change, input | [icon-buttons](https://m3.material.io/components/icon-buttons) |
 | `List` | `md-gb-list` | 7 (+1 not JSON) | default | itemselectionchange, reorder | [lists](https://m3.material.io/components/lists) |
-| `ListItem` | `md-gb-list-item` | 19 | default, avatar, leading, leading-actions, nested, overline, supporting-text, trailing, trailing-actions, trailing-text | reveal-change, toggle | [lists](https://m3.material.io/components/lists) |
+| `ListItem` | `md-gb-list-item` | 21 | default, avatar, leading, leading-actions, nested, overline, supporting-text, trailing, trailing-actions, trailing-text | reveal-change, toggle | [lists](https://m3.material.io/components/lists) |
 | `LoadingIndicator` | `md-gb-loading-indicator` | 4 |   |   | [loading-indicator](https://m3.material.io/components/loading-indicator) |
 | `Menu` | `md-gb-menu` | 7 | default |   | [menus](https://m3.material.io/components/menus) |
 | `MenuGroup` | `md-gb-menu-group` | 4 | default |   | [menus](https://m3.material.io/components/menus) |

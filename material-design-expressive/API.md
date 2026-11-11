@@ -21,7 +21,7 @@ source cites (`// spec-labels:`).
 | Types and interfaces | 325 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2214 of 2214 (100%) |
+| JSDoc coverage | 2216 of 2216 (100%) |
 
 ## Contents
 
@@ -1367,6 +1367,7 @@ A Material Design component.
 | `expandable` | `expandable` (reflects) | `boolean` | `false` | Whether the item expands to reveal the content in its `nested` slot. Expandable items are always interactive. |
 | `expanded` | `expanded` (reflects) | `boolean` | `false` | Whether an `expandable` item is expanded. |
 | `grabbed` | `grabbed` (reflects) | `boolean` | `false` | Whether the item is grabbed for reordering without dragging (with the keyboard or a tap on the drag handle). Set by the list; shows the move up and move down buttons. |
+| `href` | `href` (reflects) | `string` | `""` | Makes the item a link to this URL: a single-action item whose action is navigating (lists.md, Single-action: "the entire list item performs one action, such as navigating to a new page"). Not for an expandable, selectable or disabled item, which stays a button. |
 | `moveDownLabel` | `move-down-label` | `string` | `"Move down"` | The accessible label prefix of the move down button; the item's label text is appended. |
 | `moveUpLabel` | `move-up-label` | `string` | `"Move up"` | The accessible label prefix of the move up button; the item's label text is appended (e.g. "Move up Apples"). |
 | `nonInteractive` | `static` (reflects) | `boolean` | `false` | Whether the list item is non-interactive. |
@@ -1377,6 +1378,7 @@ A Material Design component.
 | `rovingTabIndex` |   | `number` | `null` | Set by a parent `md-gb-list` to make the list a single tab stop with arrow-key navigation (roving tabindex, lists.md Keyboard navigation): `0` on the list's tab stop, `-1` on the other items, `null` (default) for an item outside a list. While set, the item's other controls (drag handle, "more" and move buttons, actions) leave the tab order and are reached with Left/Right. |
 | `selectable` |   | `boolean` | `false` | Whether the item shows a selection checkbox (hover, or whenever `selectionVisible`). Set by a `selectable` parent `md-gb-list`. |
 | `selectionVisible` | `selection-visible` (reflects) | `boolean` | `false` | Whether the selection checkbox is always shown: the list sets it when selection is the primary activity or once an item is selected (selection.md, "Click"). Otherwise the checkbox shows on hover. |
+| `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `""` | The link target, when `href` is set. |
 
 | Method | Signature | Description |
 | --- | --- | --- |

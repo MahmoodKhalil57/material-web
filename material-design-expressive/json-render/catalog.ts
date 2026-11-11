@@ -955,6 +955,8 @@ export const COMPONENTS = {
         expanded: dynamic(z.boolean()).optional(),
         /** Whether the item is grabbed for reordering without dragging (with the keyboard or a tap on the drag handle). Set by the list; shows the move up and move down buttons. */
         grabbed: dynamic(z.boolean()).optional(),
+        /** Makes the item a link to this URL: a single-action item whose action is navigating (lists.md, Single-action: "the entire list item performs one action, such as navigating to a new page"). Not for an expandable, selectable or disabled item, which stays a button. */
+        href: dynamic(z.string()).optional(),
         /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
         id: dynamic(z.string()).optional(),
         /** The accessible label prefix of the move down button; the item's label text is appended. */
@@ -977,11 +979,13 @@ export const COMPONENTS = {
         selectable: dynamic(z.boolean()).optional(),
         /** Whether the selection checkbox is always shown: the list sets it when selection is the primary activity or once an item is selected (selection.md, "Click"). Otherwise the checkbox shows on hover. */
         selectionVisible: dynamic(z.boolean()).optional(),
+        /** The link target, when `href` is set. */
+        target: dynamic(z.enum(["", "_blank", "_parent", "_self", "_top"])).optional(),
       })
       .strict(),
     slots: ["default", "avatar", "leading", "leading-actions", "nested", "overline", "supporting-text", "trailing", "trailing-actions", "trailing-text"] as string[],
     events: ["reveal-change", "toggle"] as string[],
-    attributes: {ariaLabel: "aria-label", checked: "checked", disabled: "disabled", dragging: "dragging", dragHandleLabel: "drag-handle-label", expandable: "expandable", expanded: "expanded", grabbed: "grabbed", id: "id", moveDownLabel: "move-down-label", moveUpLabel: "move-up-label", nonInteractive: "static", noRevealButton: "no-reveal-button", reorderable: "reorderable", revealButtonLabel: "reveal-button-label", revealed: "revealed", selectionVisible: "selection-visible"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", checked: "checked", disabled: "disabled", dragging: "dragging", dragHandleLabel: "drag-handle-label", expandable: "expandable", expanded: "expanded", grabbed: "grabbed", href: "href", id: "id", moveDownLabel: "move-down-label", moveUpLabel: "move-up-label", nonInteractive: "static", noRevealButton: "no-reveal-button", reorderable: "reorderable", revealButtonLabel: "reveal-button-label", revealed: "revealed", selectionVisible: "selection-visible", target: "target"} as Record<string, string>,
     booleans: ["checked", "disabled", "dragging", "expandable", "expanded", "grabbed", "nonInteractive", "noRevealButton", "reorderable", "selectable", "selectionVisible"] as string[],
     description: "A Material Design component. Slots: default, avatar, leading, leading-actions, nested, overline, supporting-text, trailing, trailing-actions, trailing-text. Events: reveal-change, toggle. M3: lists.",
     deprecated: false,
