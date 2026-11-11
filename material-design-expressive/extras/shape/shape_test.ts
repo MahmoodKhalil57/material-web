@@ -65,6 +65,28 @@ describe('md-gb-shape', () => {
     expect(Math.abs(r.top + r.height / 2 - (box.top + box.height / 2))).toBeLessThan(1);
   });
 
+  it('keeps the shape and its content centered in a box its container sets', async () => {
+    // As a carousel item sizes its media: display block, 100% of the item.
+    const box = document.createElement('div');
+    box.style.cssText = 'inline-size: 300px; block-size: 200px';
+    box.append(shape);
+    document.body.append(box);
+    shape.style.cssText = 'display: block; inline-size: 100%; block-size: 100%';
+    shape.size = 80;
+    const icon = document.createElement('span');
+    icon.textContent = 'x';
+    shape.append(icon);
+    await settle();
+    const center = (r: DOMRect) => [r.left + r.width / 2, r.top + r.height / 2];
+    const [bx, by] = center(box.getBoundingClientRect());
+    for (const el of [svgEl(), icon]) {
+      const [x, y] = center(el.getBoundingClientRect());
+      expect(Math.abs(x - bx)).toBeLessThan(1);
+      expect(Math.abs(y - by)).toBeLessThan(1);
+    }
+    box.remove();
+  });
+
   it('fills with the text color by default', async () => {
     shape.style.color = 'rgb(4, 5, 6)';
     await settle();

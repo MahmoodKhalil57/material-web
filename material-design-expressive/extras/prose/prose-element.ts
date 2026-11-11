@@ -19,7 +19,8 @@ import proseStyles from './prose.css' with {type: 'css'}; // github-only
  * the page's: headings join the document outline, and links and text stay
  * searchable and selectable. Its stylesheet is adopted into its document or
  * shadow root, with low-specificity (`:where()`) selectors the app can
- * override.
+ * override. It leaves the examples of md-gb-demo, and the text of
+ * md-gb-typography (which has a type role of its own), as they are.
  *
  * @slot - The text: native elements such as `<h2>`, `<p>`, `<ul>`, `<a>`,
  *     `<pre>`, `<table>`, and components.

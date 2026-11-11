@@ -123,9 +123,16 @@ describe('md-gb-stack', () => {
     expect(stack.getAttribute('padding-block')).toBe('200');
   });
 
+  it("centers its children without centering their text (no legacy align attribute)", async () => {
+    stack.alignItems = 'center';
+    await stack.updateComplete;
+    expect(stack.hasAttribute('align')).toBeFalse();
+    expect(getComputedStyle(stack).textAlign).toBe('start');
+  });
+
   it('aligns and justifies its children', async () => {
     stack.direction = 'row';
-    stack.justify = 'end';
+    stack.justifyContent = 'end';
     stack.style.inlineSize = '400px';
     await stack.updateComplete;
     expect(Math.round(b().right)).toBe(Math.round(stack.getBoundingClientRect().right));

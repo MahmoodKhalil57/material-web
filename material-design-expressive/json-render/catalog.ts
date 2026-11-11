@@ -1940,8 +1940,8 @@ export const COMPONENTS = {
     tag: "md-gb-stack",
     props: z
       .object({
-        /** How the children line up across the stack. */
-        align: dynamic(z.enum(["start", "center", "end", "stretch", "baseline"])).optional(),
+        /** How the children line up across the stack (CSS align-items). */
+        alignItems: dynamic(z.enum(["start", "center", "end", "stretch", "baseline"])).optional(),
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
         /** Children one below the other (`column`) or side by side (`row`). */
@@ -1950,8 +1950,8 @@ export const COMPONENTS = {
         gap: dynamic(z.enum(["0", "25", "50", "75", "100", "125", "150", "175", "200", "250", "300", "400", "450", "500", "600", "700", "800", "900"])).optional(),
         /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
         id: dynamic(z.string()).optional(),
-        /** How the children share the space along the stack. */
-        justify: dynamic(z.enum(["start", "center", "end", "space-between"])).optional(),
+        /** How the children share the space along the stack (CSS justify-content). */
+        justifyContent: dynamic(z.enum(["start", "center", "end", "space-between"])).optional(),
         /** Space above and below the children: a step of the spacing scale. In a card, which pads only its sides (16px), 200 gives its content the padding of cards.md Measurements on all sides. */
         paddingBlock: dynamic(z.enum(["", "0", "25", "50", "75", "100", "125", "150", "175", "200", "250", "300", "400", "450", "500", "600", "700", "800", "900"])).optional(),
         /** Whether a row wraps onto more lines when its children don't fit. */
@@ -1960,7 +1960,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {align: "align", ariaLabel: "aria-label", direction: "direction", gap: "gap", id: "id", justify: "justify", paddingBlock: "padding-block", wrap: "wrap"} as Record<string, string>,
+    attributes: {alignItems: "align-items", ariaLabel: "aria-label", direction: "direction", gap: "gap", id: "id", justifyContent: "justify-content", paddingBlock: "padding-block", wrap: "wrap"} as Record<string, string>,
     booleans: ["wrap"] as string[],
     description: "A column or row of children spaced with the M3 spacing scale. Slots: default. M3: grids-spacing.",
     deprecated: false,

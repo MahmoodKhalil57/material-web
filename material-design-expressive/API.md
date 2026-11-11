@@ -3781,10 +3781,10 @@ A column or row of children spaced with the M3 spacing scale.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `align` | `align` (reflects) | `"start" \| "center" \| "end" \| "stretch" \| "baseline"` | `'stretch'` | How the children line up across the stack. |
+| `alignItems` | `align-items` (reflects) | `"start" \| "center" \| "end" \| "stretch" \| "baseline"` | `'stretch'` | How the children line up across the stack (CSS align-items). |
 | `direction` | `direction` (reflects) | `"column" \| "row"` | `'column'` | Children one below the other (`column`) or side by side (`row`). |
 | `gap` | `gap` (reflects) | `"0" \| "25" \| "50" \| "75" \| "100" \| "125" \| "150" \| "175" \| "200" \| "250" \| "300…` | `'200'` | The space between children: a step of the spacing scale (200 is 16px). |
-| `justify` | `justify` (reflects) | `"start" \| "center" \| "end" \| "space-between"` | `'start'` | How the children share the space along the stack. |
+| `justifyContent` | `justify-content` (reflects) | `"start" \| "center" \| "end" \| "space-between"` | `'start'` | How the children share the space along the stack (CSS justify-content). |
 | `paddingBlock` | `padding-block` (reflects) | `"" \| "0" \| "25" \| "50" \| "75" \| "100" \| "125" \| "150" \| "175" \| "200" \| "250" \|…` | `''` | Space above and below the children: a step of the spacing scale. In a card, which pads only its sides (16px), 200 gives its content the padding of cards.md Measurements on all sides. |
 | `wrap` | `wrap` (reflects) | `boolean` | `false` | Whether a row wraps onto more lines when its children don't fit. |
 
@@ -5071,7 +5071,7 @@ The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON 
 | --- | --- | --- | --- |
 | `catalog` | variable | `Catalog<{ spec: SchemaType<"object", { root: SchemaType<"string", unknown>; elements: SchemaType<"record", SchemaType<"object", { type: SchemaType<"ref", string>; props: SchemaType<"propsOf", string>; children: SchemaType<"array", SchemaTy…` | The catalog: the components above, and no actions beyond the built-in ones. |
 | `ComponentName` | type | `keyof typeof COMPONENTS` | The name of a catalog component. |
-| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ ariaLabel: ZodOptional<ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>>; color: ZodOptional<ZodUnion<readonly [ZodEnum<{ primary: "primary"; secondary: "…` | The catalog components: one per md-gb-* element and md-aria-tabpanel (the panel of md-gb-tab), plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
+| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: stri…` | The catalog components: one per md-gb-* element and md-aria-tabpanel (the panel of md-gb-tab), plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
 | `HTML_ATTRIBUTES` | variable | `{ readonly id: "id"; readonly role: "role"; readonly alt: "alt"; readonly type: "type"; readonly popovertarget: "popovertarget"; readonly target: "target"; readonly lang: "lang"; readonly colspan: "colspan"; readonly rowspan: "rowspan"; re…` | The attributes the Html primitive sets, by prop: plain values. The href and src props are sanitized separately; ariaLabel is aria-label. |
 | `HTML_TAG` | variable | `"#html"` | The tag of the Html primitive: its `tag` prop names the native element. |
 | `HTML_TAGS` | variable | `readonly ["div", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6", "a", "button", "label", "section", "header", "footer", "nav", "main", "aside", "article", "ul", "ol", "li", "dl", "dt", "dd", "strong", "em", "b", "i", "small", "sub", "sup"…` | The native elements the Html primitive may create. |

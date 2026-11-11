@@ -65,6 +65,18 @@ describe('md-gb-prose', () => {
     expect(getComputedStyle(h2).font).not.toBe(token('--md-sys-typescale-headline-sm'));
   });
 
+  it("leaves the text of md-gb-typography to its role", async () => {
+    await import('../typography/md-gb-typography.js');
+    const typography = document.createElement('md-gb-typography');
+    typography.setAttribute('scale', 'display-sm');
+    typography.innerHTML = '<h2>A display heading</h2>';
+    prose.append(typography);
+    await (typography as HTMLElement & {updateComplete: Promise<unknown>}).updateComplete;
+    const h2 = typography.querySelector('h2')!;
+    expect(getComputedStyle(h2).font).toBe(token('--md-sys-typescale-display-sm'));
+    expect(getComputedStyle(h2).marginBlockStart).toBe('0px');
+  });
+
   it('lets the app override its styles (zero specificity)', () => {
     const style = document.createElement('style');
     style.textContent = 'h2 { margin-block-start: 3px; }';

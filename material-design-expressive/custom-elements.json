@@ -26651,13 +26651,13 @@
      "summary": "A column or row of children spaced with the M3 spacing scale.",
      "attributes": [
       {
-       "name": "align",
+       "name": "align-items",
        "type": {
         "text": "\"start\" | \"center\" | \"end\" | \"stretch\" | \"baseline\""
        },
-       "fieldName": "align",
+       "fieldName": "alignItems",
        "default": "'stretch'",
-       "description": "How the children line up across the stack."
+       "description": "How the children line up across the stack (CSS align-items)."
       },
       {
        "name": "direction",
@@ -26678,13 +26678,13 @@
        "description": "The space between children: a step of the spacing scale (200 is 16px)."
       },
       {
-       "name": "justify",
+       "name": "justify-content",
        "type": {
         "text": "\"start\" | \"center\" | \"end\" | \"space-between\""
        },
-       "fieldName": "justify",
+       "fieldName": "justifyContent",
        "default": "'start'",
-       "description": "How the children share the space along the stack."
+       "description": "How the children share the space along the stack (CSS justify-content)."
       },
       {
        "name": "padding-block",
@@ -26708,14 +26708,14 @@
      "members": [
       {
        "kind": "field",
-       "name": "align",
+       "name": "alignItems",
        "type": {
         "text": "\"start\" | \"center\" | \"end\" | \"stretch\" | \"baseline\""
        },
        "privacy": "public",
        "default": "'stretch'",
-       "description": "How the children line up across the stack.",
-       "attribute": "align",
+       "description": "How the children line up across the stack (CSS align-items).",
+       "attribute": "align-items",
        "reflects": true
       },
       {
@@ -26744,14 +26744,14 @@
       },
       {
        "kind": "field",
-       "name": "justify",
+       "name": "justifyContent",
        "type": {
         "text": "\"start\" | \"center\" | \"end\" | \"space-between\""
        },
        "privacy": "public",
        "default": "'start'",
-       "description": "How the children share the space along the stack.",
-       "attribute": "justify",
+       "description": "How the children share the space along the stack (CSS justify-content).",
+       "attribute": "justify-content",
        "reflects": true
       },
       {
@@ -32955,7 +32955,7 @@
      "kind": "variable",
      "name": "COMPONENTS",
      "type": {
-      "text": "{ Text: { tag: string; props: ZodObject<{ ariaLabel: ZodOptional<ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>>; color: ZodOptional<ZodUnion<readonly [ZodEnum<{ primary: \"primary\"; secondary: \"secondary\"; tertiary: \"tertiary\"; error: \"error\"; inherit: \"inherit\"; \"on-surface\": \"on-surface\"; \"on-surface-variant\": \"on-surface-variant\"; }>, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>>; emphasized: ZodOptional<ZodUnion<readonly [ZodBool…"
+      "text": "{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: string[]; description: string; deprecated: boolean; spec: string[]; }; Html: { tag: string; props: ZodObject<{ tag: ZodEnum<{ button: \"button\"; details: \"details\"; label: \"label\"; div: \"div\"; span: \"span\"; p: \"p\"; h1: \"h1\"; h2: \"h2\"; h3: \"h3\"; h4: \"h4\"; h5: \"h5\"; …"
      },
      "description": "The catalog components: one per md-gb-* element and md-aria-tabpanel (the panel of md-gb-tab), plus the Text and Html primitives. Props are the elements' JSON-serializable properties."
     },

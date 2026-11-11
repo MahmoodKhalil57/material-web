@@ -68,32 +68,29 @@ export class StackElement extends LitElement {
     :host([wrap]) {
       flex-wrap: wrap;
     }
-    :host([align='start']) {
+    :host([align-items='start']) {
       align-items: flex-start;
     }
-    :host([align='center']) {
+    :host([align-items='center']) {
       align-items: center;
     }
-    :host([align='end']) {
+    :host([align-items='end']) {
       align-items: flex-end;
     }
-    :host([align='baseline']) {
+    :host([align-items='baseline']) {
       align-items: baseline;
     }
-    :host([justify='center']) {
+    :host([justify-content='center']) {
       justify-content: center;
     }
-    :host([justify='end']) {
+    :host([justify-content='end']) {
       justify-content: flex-end;
     }
-    :host([justify='space-between']) {
+    :host([justify-content='space-between']) {
       justify-content: space-between;
     }
     ::slotted(*) {
       min-inline-size: 0;
-    }
-    :host([direction='row'][wrap]) ::slotted(*) {
-      flex: 1 1 auto;
     }
   `,
     unsafeCSS(STEPS.map((s) => `:host([gap='${s}']) { --_gap: var(--md-sys-space-${s}); }`).join('\n')),
@@ -106,11 +103,11 @@ export class StackElement extends LitElement {
   /** The space between children: a step of the spacing scale (200 is 16px). */
   @property({reflect: true}) gap: SpaceStep = '200';
 
-  /** How the children line up across the stack. */
-  @property({reflect: true}) align: StackAlign = 'stretch';
+  /** How the children line up across the stack (CSS align-items). */
+  @property({attribute: 'align-items', reflect: true}) alignItems: StackAlign = 'stretch';
 
-  /** How the children share the space along the stack. */
-  @property({reflect: true}) justify: StackJustify = 'start';
+  /** How the children share the space along the stack (CSS justify-content). */
+  @property({attribute: 'justify-content', reflect: true}) justifyContent: StackJustify = 'start';
 
   /** Whether a row wraps onto more lines when its children don't fit. */
   @property({type: Boolean, reflect: true}) wrap = false;

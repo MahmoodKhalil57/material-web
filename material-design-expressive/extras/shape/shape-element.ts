@@ -112,6 +112,12 @@ export class ShapeElement extends LitElement {
         --_fill: var(--md-sys-color-surface-container-highest);
         color: var(--md-sys-color-on-surface-variant);
       }
+      .frame {
+        display: grid;
+        place-items: center;
+        inline-size: 100%;
+        block-size: 100%;
+      }
       svg,
       .content {
         grid-area: 1 / 1;
@@ -263,7 +269,9 @@ export class ShapeElement extends LitElement {
     const style = paths
       ? {'--_from': `path('${paths[0]}')`, '--_to': `path('${paths[1]}')`, '--_delay': String(this.delay)}
       : {};
-    return html`<svg
+    // The frame centers the shape and its content in whatever box the host
+    // gets (a container may size its slotted media, as a carousel item does).
+    return html`<div class="frame"><svg
       part="shape"
       class=${paths ? 'morph' : ''}
       viewBox="0 0 1 1"
@@ -272,6 +280,6 @@ export class ShapeElement extends LitElement {
       aria-hidden="true"
       focusable="false"
       style=${styleMap(style)}>${svg`<path d=${MATERIAL_SHAPES[this.shape] ?? MATERIAL_SHAPES.circle}></path>`}</svg
-      ><div class="content"><slot></slot></div>`;
+      ><div class="content"><slot></slot></div></div>`;
   }
 }
