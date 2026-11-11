@@ -8,8 +8,8 @@ Elements: `md-gb-pull-to-refresh`.
 
 A Material Design component.
 
-Source: `components/pulltorefresh/md-gb-pull-to-refresh.ts`  
-Import: `import '@material/web/components/pulltorefresh/md-gb-pull-to-refresh.js';`
+Source: `extras/pulltorefresh/md-gb-pull-to-refresh.ts`  
+Import: `import '@material/web/extras/pulltorefresh/md-gb-pull-to-refresh.js';`
 
 Attributes and properties
 

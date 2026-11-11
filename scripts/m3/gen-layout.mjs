@@ -38,8 +38,8 @@
  * Writes:
  *   foundations/layout/_md-layout-values.scss
  *   foundations/layout/layout-values.ts
- *   components/scaffold/_drag-handle-tokens.scss
- *   components/scaffold/_levitated-pane-tokens.scss
+ *   extras/scaffold/_drag-handle-tokens.scss
+ *   extras/scaffold/_levitated-pane-tokens.scss
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
@@ -52,8 +52,8 @@ const DRAG_HANDLE_KT =
   '.m3-specs/compose/material3/commonMain/androidx/compose/material3/tokens/DragHandleTokens.kt';
 const OUT_SCSS = 'material-design-expressive/foundations/layout/_md-layout-values.scss';
 const OUT_TS = 'material-design-expressive/foundations/layout/layout-values.ts';
-const OUT_DRAG = 'material-design-expressive/components/scaffold/_drag-handle-tokens.scss';
-const OUT_LEVITATED = 'material-design-expressive/components/scaffold/_levitated-pane-tokens.scss';
+const OUT_DRAG = 'material-design-expressive/extras/scaffold/_drag-handle-tokens.scss';
+const OUT_LEVITATED = 'material-design-expressive/extras/scaffold/_levitated-pane-tokens.scss';
 const check = process.argv.includes('--check');
 
 // The pages use non-breaking spaces in places; match them as spaces.

@@ -14,7 +14,7 @@ import '../../../components/menu/md-gb-menu.js';
 import '../../../components/menu/md-gb-menu-item.js';
 import '../../../components/navdrawer/md-gb-nav-drawer.js';
 import '../../../components/navdrawer/md-gb-nav-drawer-item.js';
-import '../../../components/scaffold/md-gb-pane-scaffold.js';
+import '../../../extras/scaffold/md-gb-pane-scaffold.js';
 import '../../../components/card/md-gb-card.js';
 import '../../../components/sheet/md-gb-bottom-sheet.js';
 import '../../../components/tooltip/md-gb-tooltip.js';

@@ -15,7 +15,7 @@ import {
 import {property, query, state} from 'lit/decorators.js';
 import {DragGesture} from '../../foundations/interaction/gestures/drag-gesture.js';
 import {DragSettleController} from '../../foundations/interaction/gestures/drag-settle.js';
-import {getFocusableElements} from '../shared/modal-surface.js';
+import {getFocusableElements} from '../../components/shared/modal-surface.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {

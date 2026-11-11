@@ -8,7 +8,7 @@
 @use '../../foundations/layout/md-layout';
 @use 'drag-handle-tokens';
 @use 'levitated-pane-tokens';
-@use '../shared/scrollbar';
+@use '../../components/shared/scrollbar';
 // go/keep-sorted end
 
 // Feed columns: the feed grid uses half of the layout grid's columns (one

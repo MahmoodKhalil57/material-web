@@ -20,13 +20,14 @@ import {createRequire} from 'node:module';
 import {join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readGbElements} from './gb-elements.mjs';
+import {elementDir, elementDirs} from '../element-dirs.mjs';
 
 const require = createRequire(import.meta.url);
 const names = require('../../site/eleventy-helpers/gb-shadcn.cjs');
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
-const COMPONENTS = join(ROOT, 'material-design-expressive', 'components');
-const PKG = '@material/web/components';
+/** The package path of a component folder (`@material/web/extras/scaffold`). */
+const pkgDir = (dir) => `@material/web/${elementDirs(ROOT).find((e) => e.name === dir)?.root ?? 'components'}/${dir}`;
 const SCHEMA_ITEM = 'https://ui.shadcn.com/schema/registry-item.json';
 const SCHEMA_REGISTRY = 'https://ui.shadcn.com/schema/registry.json';
 
@@ -40,7 +41,7 @@ const stringify = (value) => JSON.stringify(value, null, 2) + '\n';
 /** The names exported as types by the sources of a directory: name -> module. */
 function exportedTypes(dir) {
   const out = new Map();
-  const base = join(COMPONENTS, dir);
+  const base = elementDir(dir, ROOT);
   for (const f of readdirSync(base)) {
     if (!f.endsWith('.ts') || f.endsWith('.d.ts') || /_test\.ts$/.test(f)) continue;
     const text = readFileSync(join(base, f), 'utf8');
@@ -98,9 +99,9 @@ function wrapperSource(dir, elements, docs) {
 
   // One element module per tag registers the custom element; the class
   // modules give the typed props.
-  const registrations = elements.map((el) => `import '${PKG}/${dir}/${el.tag}.js';`);
-  const classImports = valueImports.map(([mod, cls]) => `import {${cls}} from '${PKG}/${dir}/${mod}';`);
-  const types = [...typeImports].map(([file, set]) => `import type {${[...set].sort().join(', ')}} from '${PKG}/${dir}/${file}';`);
+  const registrations = elements.map((el) => `import '${pkgDir(dir)}/${el.tag}.js';`);
+  const classImports = valueImports.map(([mod, cls]) => `import {${cls}} from '${pkgDir(dir)}/${mod}';`);
+  const types = [...typeImports].map(([file, set]) => `import type {${[...set].sort().join(', ')}} from '${pkgDir(dir)}/${file}';`);
   const usesEvents = elements.some((el) => el.events.length);
   const lit = `import {createComponent${usesEvents ? ', type EventName' : ''}} from '@lit/react';`;
   return [

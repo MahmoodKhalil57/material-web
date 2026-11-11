@@ -22,8 +22,10 @@ import {dirname, join} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {compileBinding, declValue, norm, parseMixins, sameValue, STATES} from './gb-compile.mjs';
 import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
+import {elementDir, elementDirs} from '../element-dirs.mjs';
 
 export const GB = 'material-design-expressive/components';
+export {elementDir, elementDirs} from '../element-dirs.mjs';
 
 /**
  * Spec token-set prefixes per gb component. This (one line per component) is
@@ -114,11 +116,10 @@ function posix(path) {
 /** Every `@include <namespace>.<mixin>` in the gb component stylesheets. */
 async function allIncludes() {
   const found = new Set();
-  for (const entry of await readdir(GB, {withFileTypes: true})) {
-    if (!entry.isDirectory()) continue;
-    for (const f of await readdir(join(GB, entry.name))) {
+  for (const entry of elementDirs()) {
+    for (const f of await readdir(entry.dir)) {
       if (!f.endsWith('.scss')) continue;
-      const source = await readFile(join(GB, entry.name, f), 'utf8');
+      const source = await readFile(join(entry.dir, f), 'utf8');
       for (const m of source.matchAll(/@include\s+([\w-]+)\.([\w-]+)\s*[;(]/g)) {
         found.add(`${m[1]}.${m[2]}`);
       }
@@ -150,7 +151,7 @@ export function namespaceOf(file) {
 async function analyze(db, usage, generated, includes, dir) {
   const prefixes = COMPONENT_SETS[dir];
   if (!prefixes) return undefined;
-  const tokenFiles = (await readdir(join(GB, dir)))
+  const tokenFiles = (await readdir(elementDir(dir)))
     .filter((f) => /^_.*-tokens\.scss$/.test(f))
     .sort();
   if (!tokenFiles.length) return undefined;
@@ -162,7 +163,7 @@ async function analyze(db, usage, generated, includes, dir) {
   const files = [];
 
   for (const tokenFile of tokenFiles) {
-    const path = join(GB, dir, tokenFile);
+    const path = join(elementDir(dir), tokenFile);
     const ns = namespaceOf(tokenFile);
     const source = await readFile(path, 'utf8');
     files.push({path, ns, source});

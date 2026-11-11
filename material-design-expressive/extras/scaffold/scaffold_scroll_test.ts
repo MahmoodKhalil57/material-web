@@ -10,7 +10,7 @@ import {html} from 'lit';
 import {Environment} from '../../testing/environment.js';
 import {until} from '../../testing/subjects.js';
 
-import '../button/md-gb-button.js';
+import '../../components/button/md-gb-button.js';
 import './md-gb-pane-scaffold.js';
 import {type PaneScaffoldElement} from './pane-scaffold-element.js';
 

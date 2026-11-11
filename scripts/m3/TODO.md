@@ -421,7 +421,7 @@ Owns: scripts/catalog-3.0/foundations/{accessibility,adaptive-layout}.md.
       (axe_test.ts), the rule that M3 wins where it and ARIA disagree,
       reduced motion.
 - [x] Adaptive layout: window size classes (shared/adaptive.ts), the app and
-      pane scaffolds (components/scaffold/), rails, safe areas,
+      pane scaffolds (extras/scaffold/), rails, safe areas,
       full-screen dialogs only on compact windows.
 
 ## H-4 (Haiku): browser support, AI agents, debugging, what's new

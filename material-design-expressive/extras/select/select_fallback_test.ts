@@ -14,7 +14,7 @@ import {html} from 'lit';
 import {Environment} from '../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {forceAnchorPositioningSupport} from '../shared/anchored-overlay.js';
+import {forceAnchorPositioningSupport} from '../../components/shared/anchored-overlay.js';
 
 import './md-gb-select.js';
 import {type SelectElement} from './select-element.js';

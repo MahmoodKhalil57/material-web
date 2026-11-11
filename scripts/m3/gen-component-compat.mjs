@@ -34,6 +34,7 @@
  */
 
 import {execFileSync} from 'node:child_process';
+import {elementDir} from '../element-dirs.mjs';
 import {existsSync, readdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {join} from 'node:path';
@@ -105,11 +106,11 @@ tooltip tree treegrid treeitem`.split(/\s+/));
 const slugs = readdirSync(DOCS).filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3)).sort();
 const dirOf = (slug) => /\{%\s*gbapi\s+"([\w-]+)"/.exec(readFileSync(join(DOCS, `${slug}.md`), 'utf8'))?.[1] ?? '';
 const sourcesOf = (dir) =>
-  existsSync(join(LABS, dir))
-    ? readdirSync(join(LABS, dir)).filter((f) => f.endsWith('.ts') && !/(_test|\.d|cssresult)\.ts$/.test(f)).map((f) => join(LABS, dir, f))
+  dir && existsSync(elementDir(dir))
+    ? readdirSync(elementDir(dir)).filter((f) => f.endsWith('.ts') && !/(_test|\.d|cssresult)\.ts$/.test(f)).map((f) => join(elementDir(dir), f))
     : [];
 const tagsOf = (dir) =>
-  existsSync(join(LABS, dir)) ? readdirSync(join(LABS, dir)).filter((f) => /^md-gb-[\w-]+\.ts$/.test(f) && !f.endsWith('.d.ts')).map((f) => f.slice(0, -3)) : [];
+  dir && existsSync(elementDir(dir)) ? readdirSync(elementDir(dir)).filter((f) => /^md-gb-[\w-]+\.ts$/.test(f) && !f.endsWith('.d.ts')).map((f) => f.slice(0, -3)) : [];
 
 // --- M3: spec units and the token audit -----------------------------------------
 

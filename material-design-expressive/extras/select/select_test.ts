@@ -15,7 +15,7 @@ import {Environment} from '../../testing/environment.js';
 import {internals} from '../../internal/behaviors/element-internals.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {TEXT_FIELD_CLASSES} from '../textfield/text-field.js';
+import {TEXT_FIELD_CLASSES} from '../../components/textfield/text-field.js';
 
 import './md-gb-select.js';
 import {type SelectBase} from './select-base.js';

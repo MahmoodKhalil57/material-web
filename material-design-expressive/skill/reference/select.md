@@ -8,8 +8,8 @@ Elements: `md-gb-autocomplete`, `md-gb-select`, `md-gb-select-option`.
 
 A Material Design component.
 
-Source: `components/select/md-gb-autocomplete.ts`  
-Import: `import '@material/web/components/select/md-gb-autocomplete.js';`
+Source: `extras/select/md-gb-autocomplete.ts`  
+Import: `import '@material/web/extras/select/md-gb-autocomplete.js';`
 
 Attributes and properties
 
@@ -79,8 +79,8 @@ CSS custom properties
 
 A Material Design component.
 
-Source: `components/select/md-gb-select.ts`  
-Import: `import '@material/web/components/select/md-gb-select.js';`
+Source: `extras/select/md-gb-select.ts`  
+Import: `import '@material/web/extras/select/md-gb-select.js';`
 
 Attributes and properties
 
@@ -173,8 +173,8 @@ CSS custom properties
 
 A Material Design component.
 
-Source: `components/select/md-gb-select-option.ts`  
-Import: `import '@material/web/components/select/md-gb-select-option.js';`
+Source: `extras/select/md-gb-select-option.ts`  
+Import: `import '@material/web/extras/select/md-gb-select-option.js';`
 
 Attributes and properties
 

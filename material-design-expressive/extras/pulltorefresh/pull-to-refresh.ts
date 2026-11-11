@@ -6,7 +6,7 @@
 
 import {type ClassInfo} from 'lit/directives/class-map.js';
 import {DragGesture} from '../../foundations/interaction/gestures/drag-gesture.js';
-import {createClassMapDirective} from '../shared/directives.js';
+import {createClassMapDirective} from '../../components/shared/directives.js';
 
 /**
  * Compose `PullToRefreshDefaults.PositionalThreshold` (80dp): how far the

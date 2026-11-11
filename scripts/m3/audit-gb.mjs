@@ -23,7 +23,8 @@
  */
 
 import {readdir, writeFile} from 'node:fs/promises';
-import {COMPONENT_SETS, GB, loadBindings} from './gb-bindings.mjs';
+import {COMPONENT_SETS, loadBindings} from './gb-bindings.mjs';
+import {elementNames} from '../element-dirs.mjs';
 
 const argv = process.argv.slice(2);
 const verbose = argv.includes('--verbose');
@@ -36,7 +37,7 @@ const INTERACTION = ['hover', 'hovered', 'focus', 'focused', 'pressed'];
 const totals = {decls: 0, match: 0, derived: 0, drift: 0, confident: 0, unbound: 0, gaps: 0, unwired: 0};
 const rows = [];
 
-for (const dir of (await readdir(GB)).sort()) {
+for (const dir of elementNames()) {
   if (!COMPONENT_SETS[dir] || (only.length && !only.includes(dir))) continue;
   const result = await analyze(dir);
   if (!result) continue;

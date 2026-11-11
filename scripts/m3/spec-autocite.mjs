@@ -43,6 +43,7 @@
 import {existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {COMPONENT_SETS, GB} from './gb-bindings.mjs';
+import {elementDir} from '../element-dirs.mjs';
 import {SpecDb} from './spec-db.mjs';
 import {slug} from './spec-units.mjs';
 
@@ -261,7 +262,7 @@ export function unitClaims(text, colorSection = false) {
  */
 function componentFacts(dir, db) {
   const facts = [];
-  const base = join(GB, dir);
+  const base = elementDir(dir);
   if (!existsSync(base)) return facts;
   // Spec tokens bound to a property, from the generated spec tests.
   const tokensOf = new Map(); // `${mixin}|${prop}` -> [{token, where}]
@@ -833,13 +834,13 @@ function dirIndex(dir) {
 export function findCandidates(units, extracted) {
   const indexes = new Map();
   const shared = dirIndex(`${GB}/shared`);
-  const styles = dirIndex('styles');
+  const styles = dirIndex('material-design-expressive/styles');
   const out = new Map();
   for (const u of units) {
     const dirs = PAGE_DIRS[u.slug] ?? [];
     const text = plain(u.text);
     const pools = dirs.map((d) => {
-      if (!indexes.has(d)) indexes.set(d, dirIndex(`${GB}/${d}`));
+      if (!indexes.has(d)) indexes.set(d, dirIndex(elementDir(d).replace(/\\/g, '/')));
       return indexes.get(d);
     });
     pools.push(shared);

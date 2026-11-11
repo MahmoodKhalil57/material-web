@@ -14,8 +14,15 @@ Material Web 2.5 components are on `main`.
     `inputs/`, `selection/`) and `layout/` (window size classes, density, RTL).
   - `styles/`: `color/`, `elevation/`, `icons/`, `motion/`, `shape/`,
     `spacing/` and `typography/`, each with its tokens, helpers and tests.
-  - `components/`: the `md-gb-*` elements of the M3 components index, and
-    `components/shared/` for behavior several of them share.
+  - `components/`: the `md-gb-*` elements of the M3 components index, one
+    folder per component, and `components/shared/` for behavior several of
+    them share.
+  - `extras/`: the library's own components with no page in the M3
+    components index (select, the app and pane scaffolds, pull to refresh),
+    each following the spec pages that cover it.
+  - `SPEC-MAP.md` maps each spec page to its folder, elements and docs page;
+    `scripts/m3/gen-spec-map.mjs` writes it and fails when a folder is in
+    the wrong one of `components/` and `extras/`.
   - `internal/`: plumbing with no docs page (form `behaviors/`, Sass `sass/ext`,
     TypeScript declarations in `types/`, controllers, events, directives).
     `testing/` holds the test helpers, and `skill/` is the agent skill for

@@ -14,7 +14,7 @@ import {html} from 'lit';
 import {Environment} from '../../testing/environment.js';
 import {adoptStyles} from '../../styles/adopt-styles.js';
 import {styles as m3Styles} from '../../styles/m3.cssresult.js';
-import {TEXT_FIELD_CLASSES} from '../textfield/text-field.js';
+import {TEXT_FIELD_CLASSES} from '../../components/textfield/text-field.js';
 
 import './md-gb-autocomplete.js';
 import {type AutocompleteElement} from './autocomplete-element.js';

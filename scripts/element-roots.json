@@ -1,0 +1,4 @@
+{
+  "//": "The library folders that hold md-gb-* element folders, relative to material-design-expressive/. components/ is the M3 components index; extras/ holds the library's own components (layout scaffolds, composites, behaviors) that have no page in the index. Read by scripts/element-dirs.mjs and the CommonJS and TypeScript scripts that can't import it.",
+  "roots": ["components", "extras"]
+}

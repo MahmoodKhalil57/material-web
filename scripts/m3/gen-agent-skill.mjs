@@ -39,7 +39,6 @@ import {readGbElements} from './gb-elements.mjs';
 
 const ROOT = process.cwd();
 const GB = resolve(ROOT, 'material-design-expressive');
-const COMPONENTS = join(GB, 'components');
 const OUT = join(GB, 'skill');
 const CHECKLIST = 'scripts/m3/CHECKLIST.md';
 const EXCLUSIONS = 'scripts/m3/exclusions';
@@ -116,7 +115,9 @@ function elementDoc(e) {
   const out = [];
   out.push(`### ${code('<' + e.tag + '>')}`, '');
   if (e.summary) out.push(e.summary, '');
-  out.push(`Source: ${code(e.file)}  `, `Import: ${code("import '@material/web/components/" + e.dir + "/" + e.tag + ".js';")}`, '');
+  // The import path follows the element's folder (components/ or extras/).
+  const modulePath = e.file.replace(/^material-design-expressive\//, '').replace(/\.ts$/, '.js');
+  out.push(`Source: ${code(e.file)}  `, `Import: ${code("import '@material/web/" + modulePath + "';")}`, '');
   if (e.props.length) {
     out.push('Attributes and properties', '', '| Property | Attribute | Type | Default | Notes |', '| --- | --- | --- | --- | --- |');
     for (const p of e.props) {

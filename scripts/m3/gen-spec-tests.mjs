@@ -23,7 +23,8 @@
 
 import {readdir, readFile, writeFile} from 'node:fs/promises';
 import {basename, join} from 'node:path';
-import {COMPONENT_SETS, GB, loadBindings} from './gb-bindings.mjs';
+import {COMPONENT_SETS, loadBindings} from './gb-bindings.mjs';
+import {elementDir, elementNames} from '../element-dirs.mjs';
 import {loadUnits} from './spec-units.mjs';
 
 const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
@@ -79,7 +80,7 @@ const SPEC_PAGES = {
 };
 
 const summary = [];
-for (const dir of (await readdir(GB)).sort()) {
+for (const dir of elementNames()) {
   if (!COMPONENT_SETS[dir] || (only.length && !only.includes(dir))) continue;
   const result = await analyze(dir);
   if (!result) continue;
@@ -129,7 +130,7 @@ for (const dir of (await readdir(GB)).sort()) {
   }
   if (!cases.length) continue;
 
-  const out = join(GB, dir, `${dir}_spec_test.ts`);
+  const out = join(elementDir(dir), `${dir}_spec_test.ts`);
   await writeFile(out, testFile(dir, styles.map((s) => s.file), cases));
   summary.push(`${dir}: ${cases.length} cases${unbuildable.size ? `, ${unbuildable.size} mixins with selectors that cannot be rendered statically (${[...unbuildable].join(', ')})` : ''}`);
 }
@@ -138,9 +139,9 @@ console.log(`Spec tests (spec ${db.version}):\n  ${summary.join('\n  ')}`);
 /** Stylesheets of a component that include its token mixins. */
 async function componentStyles(dir) {
   const out = [];
-  for (const f of await readdir(join(GB, dir))) {
+  for (const f of await readdir(elementDir(dir))) {
     if (!f.endsWith('.scss') || f.startsWith('_')) continue;
-    const source = await readFile(join(GB, dir, f), 'utf8');
+    const source = await readFile(join(elementDir(dir), f), 'utf8');
     if (/@include\s+[\w-]+-tokens\./.test(source)) out.push({file: basename(f, '.scss'), source});
   }
   return out;

@@ -15,7 +15,7 @@ import '../../components/iconbutton/md-gb-icon-button.js';
 import '../../components/navrail/md-gb-nav-rail.js';
 import '../../components/navrail/md-gb-nav-rail-item.js';
 import '../../components/progress/md-gb-progress.js';
-import '../../components/scaffold/md-gb-pane-scaffold.js';
+import '../../extras/scaffold/md-gb-pane-scaffold.js';
 import '../../components/timepicker/md-gb-time-picker.js';
 import '../../components/toolbar/md-gb-toolbar.js';
 

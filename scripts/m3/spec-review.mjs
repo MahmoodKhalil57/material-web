@@ -71,6 +71,7 @@
  */
 
 import {createHash} from 'node:crypto';
+import {elementDir} from '../element-dirs.mjs';
 import {appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -120,6 +121,8 @@ export const STAGES = Number(cliArg('--stages') ?? 3);
 export const REVIEW_FILE = '.m3-specs/spec-checks/review.jsonl';
 export const GAPS_DIR = '.m3-specs/spec-checks/review-gaps';
 const GB = 'material-design-expressive/components';
+/** A component folder by name, in components/ or extras/ (posix). */
+const dirPath = (d) => elementDir(d).replace(/\\/g, '/');
 const CONCURRENCY = 24;
 /** Concurrent requests per component after its cache-writing first unit. */
 const ANTHROPIC_CONCURRENCY = 32;
@@ -368,14 +371,14 @@ const numbered = (lines, from, to) => {
 /** Code around the top-3 candidates, and the component's file list. */
 function snippets(candidates, dirs) {
   const ranges = snippetRanges(candidates);
-  const files = dirs.length ? dirs.flatMap((d) => componentFiles(`${GB}/${d}`)) : componentFiles('material-design-expressive/styles');
+  const files = dirs.length ? dirs.flatMap((d) => componentFiles(dirPath(d))) : componentFiles('material-design-expressive/styles');
   const code = ranges.map((r) => `=== ${r.file} (lines ${r.from}-${r.to}) ===\n${numbered(fileLines(r.file), r.from, r.to)}`);
   return {ranges, files, code};
 }
 
 function snippetText(dirs, files, code) {
   return [
-    `gb component directory: ${dirs.length ? dirs.map((d) => `${GB}/${d}`).join(', ') : '(none; foundation page — shared styles in styles)'}`,
+    `gb component directory: ${dirs.length ? dirs.map(dirPath).join(', ') : '(none; foundation page — shared styles in styles)'}`,
     `Files:\n${files.map((f) => `- ${f}`).join('\n') || '(none)'}`,
     '',
     code.length ? `Code snippets:\n\n${code.join('\n\n')}` : 'Code snippets: (no keyword candidates found)',
@@ -392,7 +395,7 @@ function sharedImports(files) {
   const out = new Set();
   for (const f of files) {
     const text = (fileLines(f) ?? []).join('\n');
-    for (const m of text.matchAll(/(?:from\s+|import\s+|@use\s+|@forward\s+)['"]\.\.\/shared\/([\w./-]+?)(?:\.js)?['"]/g)) {
+    for (const m of text.matchAll(/(?:from\s+|import\s+|@use\s+|@forward\s+)['"](?:\.\.\/)+(?:components\/)?shared\/([\w./-]+?)(?:\.js)?['"]/g)) {
       const name = m[1];
       const candidates = [`${GB}/shared/${name}.ts`, `${GB}/shared/_${name}.scss`, `${GB}/shared/${name}.scss`];
       const hit = candidates.find((c) => existsSync(c) && statSync(c).size <= MAX_SHARED_BYTES);
@@ -410,7 +413,7 @@ const sources = new Map();
 function componentSource(dirs) {
   const key = dirs.join(',');
   if (!sources.has(key)) {
-    const own = dirs.flatMap((d) => sourceFiles(`${GB}/${d}`));
+    const own = dirs.flatMap((d) => sourceFiles(dirPath(d)));
     const files = [...own, ...sharedImports(own)];
     const text = files
       .map((f) => {
@@ -420,7 +423,7 @@ function componentSource(dirs) {
       .join('\n\n');
     // ~3 characters per token for line-numbered code (an overestimate).
     const tokens = Math.round(text.length / 3);
-    sources.set(key, {key, files, text: `Source of ${dirs.map((d) => `${GB}/${d}`).join(', ')}:\n\n${text}`, tokens, tooBig: tokens > MAX_SOURCE_TOKENS, hash: sha(text).slice(0, 16)});
+    sources.set(key, {key, files, text: `Source of ${dirs.map(dirPath).join(', ')}:\n\n${text}`, tokens, tooBig: tokens > MAX_SOURCE_TOKENS, hash: sha(text).slice(0, 16)});
   }
   return sources.get(key);
 }

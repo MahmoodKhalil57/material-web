@@ -24,7 +24,10 @@ import {join} from 'path';
 
 import {getSplitBrotliSize} from './bundle-size.js';
 
-const COMPONENTS = join('material-design-expressive', 'components');
+// Every element root (components/ and extras/), from scripts/element-roots.json.
+const ROOTS: string[] = (
+  JSON.parse(readFileSync(join('scripts', 'element-roots.json'), 'utf8')).roots as string[]
+).map((r) => join('material-design-expressive', r));
 const BUDGETS = join('scripts', 'size', 'gb-budgets.json');
 /** Headroom added to today's size when writing budgets. */
 const HEADROOM = 0.1;
@@ -36,8 +39,10 @@ interface Budget {
 
 function listComponents(): Array<{name: string; js: string[]; css: string[]}> {
   const out = [];
-  for (const name of readdirSync(COMPONENTS).sort()) {
-    const dir = join(COMPONENTS, name);
+  const dirs = ROOTS.filter((root) => existsSync(root))
+    .flatMap((root) => readdirSync(root).map((name) => ({name, dir: join(root, name)})))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  for (const {name, dir} of dirs) {
     if (!statSync(dir).isDirectory()) continue;
     const files = readdirSync(dir);
     const js = files

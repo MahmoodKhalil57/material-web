@@ -14,7 +14,7 @@ import {
   type WindowSizeClass,
   windowSizeClassValues,
 } from '../../foundations/layout/window-size-class.js';
-import {createClassMapDirective} from '../shared/directives.js';
+import {createClassMapDirective} from '../../components/shared/directives.js';
 
 /**
  * Canonical layouts (spec: foundations/layout/canonical-examples).

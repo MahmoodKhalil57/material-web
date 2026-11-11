@@ -8,8 +8,8 @@ Elements: `md-gb-app-scaffold`, `md-gb-pane-scaffold`.
 
 A Material Design app scaffold (bars, rails, FAB, snackbar).
 
-Source: `components/scaffold/md-gb-app-scaffold.ts`  
-Import: `import '@material/web/components/scaffold/md-gb-app-scaffold.js';`
+Source: `extras/scaffold/md-gb-app-scaffold.ts`  
+Import: `import '@material/web/extras/scaffold/md-gb-app-scaffold.js';`
 
 Attributes and properties
 
@@ -63,8 +63,8 @@ CSS custom properties
 
 A Material Design pane scaffold (list-detail, supporting pane, feed).
 
-Source: `components/scaffold/md-gb-pane-scaffold.ts`  
-Import: `import '@material/web/components/scaffold/md-gb-pane-scaffold.js';`
+Source: `extras/scaffold/md-gb-pane-scaffold.ts`  
+Import: `import '@material/web/extras/scaffold/md-gb-pane-scaffold.js';`
 
 Attributes and properties
 

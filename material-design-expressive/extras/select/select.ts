@@ -9,15 +9,15 @@ import {
   type MenuItemClassesState,
   menuItemClasses,
   setupMenuItem,
-} from '../menu/menu.js';
-import {createClassMapDirective} from '../shared/directives.js';
+} from '../../components/menu/menu.js';
+import {createClassMapDirective} from '../../components/shared/directives.js';
 import {PSEUDO_CLASSES} from '../../foundations/interaction/states/pseudo-classes.js';
 import {
   setupTextField,
   type TextFieldClassesState,
   textFieldClasses,
   type TextFieldVariant,
-} from '../textfield/text-field.js';
+} from '../../components/textfield/text-field.js';
 
 /** Select (and autocomplete) variants: the anchor text field's variants. */
 export type SelectVariant = TextFieldVariant;

@@ -81,7 +81,10 @@ await cp(args.src, OUT, {recursive: true});
 
 log('bundling labs/gb into lib/');
 const sources = [
-  ...(await walk(join(ROOT, 'material-design-expressive', 'components'))).concat(await walk(join(ROOT, 'material-design-expressive', 'styles'))).filter(
+  ...(await walk(join(ROOT, 'material-design-expressive', 'components')))
+    .concat(await walk(join(ROOT, 'material-design-expressive', 'extras')))
+    .concat(await walk(join(ROOT, 'material-design-expressive', 'styles')))
+    .filter(
     (f) => f.endsWith('.js') && !/(_test|\.stories|[\\/]demo[\\/]|[\\/]skill[\\/])/.test(f) && !f.includes('node_modules'),
   ),
   // The ARIA elements the pages use beside labs/gb (md-aria-tabpanel).

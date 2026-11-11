@@ -38,6 +38,7 @@
 import {execFileSync} from 'node:child_process';
 import {existsSync, readdirSync, readFileSync, statSync, watch as watchFs, writeFileSync} from 'node:fs';
 import {dirname, join, relative} from 'node:path';
+import {elementDirs} from './element-dirs.mjs';
 
 const argv = process.argv.slice(2);
 const all = argv.includes('--all');
@@ -56,7 +57,6 @@ const emit = argv.includes('--emit') || all || size;
 const dirs = argv.filter((a) => !a.startsWith('--'));
 
 const GB = join('material-design-expressive');
-const COMPONENTS = join(GB, 'components');
 if (!all && !dirs.length) {
   console.error('Name at least one components directory, or pass --all.');
   process.exit(2);
@@ -64,7 +64,10 @@ if (!all && !dirs.length) {
 const targets = all
   ? [GB]
   : dirs.map((d) => {
-      const dir = existsSync(join(COMPONENTS, d)) ? join(COMPONENTS, d) : d;
+      // A component name (`slider`, `scaffold`) is looked up in every
+      // element root; anything else is a path.
+      const named = elementDirs().find((e) => e.name === d);
+      const dir = named ? named.dir : d;
       if (!existsSync(dir)) {
         console.error(`No such directory: ${d}`);
         process.exit(2);

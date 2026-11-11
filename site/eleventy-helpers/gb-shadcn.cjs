@@ -18,7 +18,10 @@ const {join} = require('node:path');
 const {url: SITE_URL} = require('../content/_data/gbSite.cjs');
 
 const ROOT = join(__dirname, '..', '..');
-const COMPONENTS = join(ROOT, 'material-design-expressive', 'components');
+// The element roots (components/ and extras/), shared with the scripts.
+const ROOTS = require('../../scripts/element-roots.json').roots.map((r) =>
+  join(ROOT, 'material-design-expressive', r),
+);
 const DOCS = join(ROOT, 'docs', 'components');
 
 /** Directories whose item name is not the directory name. */
@@ -44,10 +47,13 @@ const itemName = (dir) => `md-${DIR_NAMES[dir] ?? dir}`;
 
 /** The directories that contain md-gb-* elements, sorted. */
 function elementDirs() {
-  return readdirSync(COMPONENTS, {withFileTypes: true})
-    .filter((d) => d.isDirectory() && d.name !== 'shared')
-    .filter((d) => readdirSync(join(COMPONENTS, d.name)).some((f) => /^md-gb-.*\.ts$/.test(f) && !f.endsWith('.d.ts')))
-    .map((d) => d.name)
+  return ROOTS.filter((root) => existsSync(root))
+    .flatMap((root) =>
+      readdirSync(root, {withFileTypes: true})
+        .filter((d) => d.isDirectory() && d.name !== 'shared')
+        .filter((d) => readdirSync(join(root, d.name)).some((f) => /^md-gb-.*\.ts$/.test(f) && !f.endsWith('.d.ts')))
+        .map((d) => d.name),
+    )
     .sort();
 }
 

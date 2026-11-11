@@ -6,7 +6,7 @@
 
 /**
  * Select and autocomplete (exposed dropdown menus,
- * `components/select`).
+ * `extras/select`).
  *
  * The four token sets hold two groups: `text-field.*` (the anchor field) and
  * `menu.*` (the dropdown). The field reuses the `md-gb-text-field` styles, so
@@ -43,7 +43,7 @@ const join = (...parts) => parts.filter(Boolean).join('-');
 
 export default {
   generate: true,
-  file: 'components/select/_select-tokens.scss',
+  file: 'extras/select/_select-tokens.scss',
   exclude: [
     '^(hover|focus|error|disabled)-',
     // `label-text.populated.size` / `.line-height` reference typescale parts;

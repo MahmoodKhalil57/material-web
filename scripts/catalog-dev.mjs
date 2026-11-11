@@ -32,10 +32,11 @@ import {cp, mkdir, readdir, readFile, rm, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {buildLibrary, nodeScript, npx, ROOT} from './build-local.mjs';
+import {elementDir, elementNames} from './element-dirs.mjs';
 import {buildSiteAssets, buildSnapshot, restoreSnapshot} from './gb-site-assets.mjs';
 
 const CATALOG = join(ROOT, 'site');
-const GB = join(ROOT, 'material-design-expressive', 'components');
+const gbDir = (dir) => elementDir(dir, ROOT);
 const OUT = join(CATALOG, '_dev');
 const EXAMPLES = join(CATALOG, '_dev-gb');
 
@@ -157,7 +158,7 @@ let snapshotAgain = false;
 const LIB_PORT = Number(arg('lib-port', 8001));
 const LIB = `http://localhost:${LIB_PORT}/`;
 // The library folders, served from material-design-expressive/ at the library server's root.
-const LIB_FOLDERS = /^\/(foundations|styles|components|internal|skill|testing|types|tokens|all(_test)?\.(js|ts|d\.ts))(\/|$)/;
+const LIB_FOLDERS = /^\/(foundations|styles|components|extras|internal|skill|testing|all(_test)?\.(js|ts|d\.ts))(\/|$)/;
 // Each step prints the time since the previous one, to see where a run spends it.
 const started = Date.now();
 let lastStep = started;
@@ -469,13 +470,13 @@ function styleDemos() {
 /** Source folder of a component (or style) key. */
 function srcDir(dir) {
   const styles = styleDemos();
-  return dir in styles ? join(ROOT, 'material-design-expressive', styles[dir]) : join(GB, dir);
+  return dir in styles ? join(ROOT, 'material-design-expressive', styles[dir]) : gbDir(dir);
 }
 
 /** labs/gb components (and styles) that have a demo. */
 async function gbDemoDirs() {
   const dirs = [];
-  for (const dir of [...new Set([...(await readdir(GB)), ...Object.keys(styleDemos())])].sort()) {
+  for (const dir of [...new Set([...elementNames(ROOT), ...Object.keys(styleDemos())])].sort()) {
     if (existsSync(join(srcDir(dir), 'demo', 'demo.ts'))) dirs.push(dir);
   }
   return dirs;

@@ -32,6 +32,7 @@ import {copyFile, cp, mkdir, readdir, readFile, rm, writeFile} from 'node:fs/pro
 import {createRequire} from 'node:module';
 import {join} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
+import {ELEMENT_ROOTS} from './element-dirs.mjs';
 
 const require = createRequire(import.meta.url);
 const ROOT = join(import.meta.dirname, '..');
@@ -216,7 +217,8 @@ async function buildIcons(browser, c, log) {
 // ---------------------------------------------------------------------------
 // API manifest and agent skill.
 
-const COMPONENTS = join(ROOT, 'material-design-expressive', 'components');
+// Every element root (components/ and extras/).
+const COMPONENT_ROOTS = ELEMENT_ROOTS.map((r) => join(ROOT, 'material-design-expressive', r));
 const SKILL = join(ROOT, 'material-design-expressive', 'skill');
 /** Bump to regenerate custom-elements.json after changing how it is written. */
 const API_VERSION = 2;
@@ -235,7 +237,7 @@ async function apiStamp() {
       }
     }
   };
-  await walkDir(COMPONENTS);
+  for (const root of COMPONENT_ROOTS) if (existsSync(root)) await walkDir(root);
   files.sort();
   for (const f of files) {
     const s = statSync(f);

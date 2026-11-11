@@ -5,11 +5,11 @@
  */
 
 import '@material/web/components/iconbutton/md-gb-icon-button.js';
-import '@material/web/components/pulltorefresh/md-gb-pull-to-refresh.js';
+import '@material/web/extras/pulltorefresh/md-gb-pull-to-refresh.js';
 import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
-import {type PullToRefreshElement} from '@material/web/components/pulltorefresh/pull-to-refresh-element.js';
+import {type PullToRefreshElement} from '@material/web/extras/pulltorefresh/pull-to-refresh-element.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
 import {css, html, render} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';

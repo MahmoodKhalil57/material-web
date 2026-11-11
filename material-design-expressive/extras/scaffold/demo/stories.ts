@@ -12,8 +12,8 @@ import '@material/web/components/navbar/md-gb-nav-bar.js';
 import '@material/web/components/navbar/md-gb-nav-bar-item.js';
 import '@material/web/components/navrail/md-gb-nav-rail.js';
 import '@material/web/components/navrail/md-gb-nav-rail-item.js';
-import '@material/web/components/scaffold/md-gb-app-scaffold.js';
-import '@material/web/components/scaffold/md-gb-pane-scaffold.js';
+import '@material/web/extras/scaffold/md-gb-app-scaffold.js';
+import '@material/web/extras/scaffold/md-gb-pane-scaffold.js';
 import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
@@ -21,8 +21,8 @@ import {
   type PaneArrangement,
   type PaneHandleTap,
   type PaneLevitate,
-} from '@material/web/components/scaffold/pane-scaffold.js';
-import {type PaneScaffoldElement} from '@material/web/components/scaffold/pane-scaffold-element.js';
+} from '@material/web/extras/scaffold/pane-scaffold.js';
+import {type PaneScaffoldElement} from '@material/web/extras/scaffold/pane-scaffold-element.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
 import {simulateViewportSegments} from '@material/web/foundations/layout/viewport-segments.js';
 import {css, html, nothing, type TemplateResult} from 'lit';

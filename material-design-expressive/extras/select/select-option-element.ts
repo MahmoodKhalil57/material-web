@@ -10,15 +10,15 @@ import {
   internals,
   mixinElementInternals,
 } from '../../internal/behaviors/element-internals.js';
-import {hasSlotted} from '../shared/has-slotted.js';
+import {hasSlotted} from '../../components/shared/has-slotted.js';
 import {selectOption} from './select.js';
 
 import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
 // import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
 import rippleStyles from '../../foundations/interaction/states/ripple/ripple.css' with {type: 'css'}; // github-only
 // import rippleStyles from '../../foundations/interaction/states/ripple/ripple.cssresult.js'; // google3-only
-import menuStyles from '../menu/menu.css' with {type: 'css'}; // github-only
-// import {styles as menuStyles} from '../menu/menu.cssresult.js'; // google3-only
+import menuStyles from '../../components/menu/menu.css' with {type: 'css'}; // github-only
+// import {styles as menuStyles} from '../../components/menu/menu.cssresult.js'; // google3-only
 
 /**
  * Fired (bubbling, not composed) when an option's `selected` property

@@ -8,7 +8,7 @@
 
 import {html} from 'lit';
 import {Environment} from '../../testing/environment.js';
-import '../navrail/md-gb-nav-rail.js';
+import '../../components/navrail/md-gb-nav-rail.js';
 
 import {type AppScaffoldElement} from './app-scaffold-element.js';
 import './md-gb-app-scaffold.js';

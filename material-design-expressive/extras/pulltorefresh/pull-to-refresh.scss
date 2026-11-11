@@ -5,7 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'pull-to-refresh-tokens';
-@use '../shared/scrollbar';
+@use '../../components/shared/scrollbar';
 // go/keep-sorted end
 
 @layer md.sys;

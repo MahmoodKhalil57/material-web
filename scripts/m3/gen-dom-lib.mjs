@@ -11,6 +11,7 @@
  */
 
 import {readFile, rm, writeFile} from 'node:fs/promises';
+import {elementDir} from '../element-dirs.mjs';
 import {join} from 'node:path';
 
 export const GB = 'material-design-expressive/components';
@@ -164,7 +165,7 @@ export async function emit(path, text, check) {
 }
 
 export function componentPath(dir, name) {
-  return join(GB, dir, name);
+  return join(elementDir(dir), name);
 }
 
 /** TypeScript helpers of the measurement tests. */

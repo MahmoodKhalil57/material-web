@@ -8,6 +8,11 @@ this table to go from a spec page to the code. The library's other folders
 follow the docs pillars directly (`foundations/`, `styles/`); see the
 repository README.
 
+## Components
+
+`components/` holds the components of the M3 components index, one folder
+per component.
+
 | Spec pages | Folder | Elements | Docs | Notes |
 | --- | --- | --- | --- | --- |
 | [app-bars](https://m3.material.io/components/app-bars) | `components/appbar/` | `md-gb-app-bar` | [app-bar](../docs/components/app-bar.md) |  |
@@ -31,12 +36,9 @@ repository README.
 | [navigation-drawer](https://m3.material.io/components/navigation-drawer) | `components/navdrawer/` | `md-gb-nav-drawer`, `md-gb-nav-drawer-item` | [navigation-drawer](../docs/components/navigation-drawer.md) | Deprecated: no longer recommended in M3 Expressive. Use the expanded navigation rail. |
 | [navigation-rail](https://m3.material.io/components/navigation-rail) | `components/navrail/` | `md-gb-nav-rail`, `md-gb-nav-rail-item` | [navigation-rail](../docs/components/navigation-rail.md) |  |
 | [progress-indicators](https://m3.material.io/components/progress-indicators) | `components/progress/` | `md-gb-progress` | [progress](../docs/components/progress.md) |  |
-| [loading-indicator](https://m3.material.io/components/loading-indicator) | `components/pulltorefresh/` | `md-gb-pull-to-refresh` | [pull-to-refresh](../docs/components/pull-to-refresh.md) | No page of its own: the loading indicator page covers pull to refresh. |
 | [radio-button](https://m3.material.io/components/radio-button) | `components/radio/` | `md-gb-radio` | [radio](../docs/components/radio.md) |  |
-| [scaffold](https://m3.material.io/foundations/layout/scaffold) | `components/scaffold/` | `md-gb-app-scaffold`, `md-gb-pane-scaffold` | [scaffold](../docs/foundations/scaffold.md) | A Foundations > Layout page, not a component. |
 | [search](https://m3.material.io/components/search) | `components/search/` | `md-gb-search-bar`, `md-gb-search-view` | [search](../docs/components/search.md) |  |
 | [segmented-buttons](https://m3.material.io/components/segmented-buttons) | `components/segmentedbutton/` | `md-gb-segmented-button`, `md-gb-segmented-button-set` | [segmented-button](../docs/components/segmented-button.md) |  |
-| [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) | `components/select/` | `md-gb-autocomplete`, `md-gb-select`, `md-gb-select-option` | [select](../docs/components/select.md) | No page of its own: a menu opened from a text field. |
 | [bottom-sheets](https://m3.material.io/components/bottom-sheets), [side-sheets](https://m3.material.io/components/side-sheets) | `components/sheet/` | `md-gb-bottom-sheet`, `md-gb-side-sheet` | [sheets](../docs/components/sheets.md) |  |
 | [sliders](https://m3.material.io/components/sliders) | `components/slider/` | `md-gb-slider` | [slider](../docs/components/slider.md) |  |
 | [snackbar](https://m3.material.io/components/snackbar) | `components/snackbar/` | `md-gb-snackbar`, `md-gb-snackbar-host` | [snackbar](../docs/components/snackbar.md) |  |
@@ -47,6 +49,23 @@ repository README.
 | [time-pickers](https://m3.material.io/components/time-pickers) | `components/timepicker/` | `md-gb-time-picker` | [time-picker](../docs/components/time-picker.md) |  |
 | [toolbars](https://m3.material.io/components/toolbars) | `components/toolbar/` | `md-gb-toolbar` | [toolbar](../docs/components/toolbar.md) |  |
 | [tooltips](https://m3.material.io/components/tooltips) | `components/tooltip/` | `md-gb-tooltip` | [tooltip](../docs/components/tooltip.md) |  |
+
+## Extras
+
+`extras/` holds the library's own components: a composite, a layout and a
+behavior that the M3 components index has no page for. Each follows the
+pages listed.
+
+| Spec pages | Folder | Elements | Docs | Notes |
+| --- | --- | --- | --- | --- |
+| [scaffold](https://m3.material.io/foundations/layout/scaffold) | `extras/scaffold/` | `md-gb-app-scaffold`, `md-gb-pane-scaffold` | [scaffold](../docs/foundations/scaffold.md) | A Foundations > Layout page, not a component. |
+| [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) | `extras/select/` | `md-gb-autocomplete`, `md-gb-select`, `md-gb-select-option` | [select](../docs/components/select.md) | No page of its own: a menu opened from a text field. |
+| [loading-indicator](https://m3.material.io/components/loading-indicator) | `extras/pulltorefresh/` | `md-gb-pull-to-refresh` | [pull-to-refresh](../docs/components/pull-to-refresh.md) | No page of its own: the loading indicator page covers pull to refresh. |
+
+## Other elements
+
+| Spec pages | Folder | Elements | Docs | Notes |
+| --- | --- | --- | --- | --- |
 | [icons](https://m3.material.io/styles/icons) | `styles/icons/` | `md-gb-icon` | [icons](../docs/styles/icons.md) |  |
 | [transitions](https://m3.material.io/styles/motion/transitions) | `styles/motion/transitions/` | `md-gb-skeleton` | [motion-transitions](../docs/styles/motion-transitions.md) |  |
 | - | `foundations/accessibility/aria/` | `md-aria-fieldset`, `md-aria-menubar`, `md-aria-menuitem`, `md-aria-menulist`, `md-aria-tab`, `md-aria-tablist`, `md-aria-tabpanel`, `md-aria-toggle` | - | Headless WAI-ARIA patterns that the components build on; M3 has no page for them. |

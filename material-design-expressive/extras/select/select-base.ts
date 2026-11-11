@@ -24,23 +24,23 @@ import {
   mixinOnReportValidity,
   onReportValidity,
 } from '../../internal/behaviors/on-report-validity.js';
-import {menu} from '../menu/menu.js';
+import {menu} from '../../components/menu/menu.js';
 import {
   AnchoredOverlayController,
   composedContains,
   type OverlayDismissReason,
-} from '../shared/anchored-overlay.js';
+} from '../../components/shared/anchored-overlay.js';
 import {
   FormDisabledController,
   ValueFieldController,
-} from '../shared/form-field.js';
+} from '../../components/shared/form-field.js';
 import {SELECT_CLASSES, selectClasses, type SelectVariant} from './select.js';
 import {SelectOptionElement} from './select-option-element.js';
 
-import textFieldStyles from '../textfield/text-field.css' with {type: 'css'}; // github-only
-// import textFieldStyles from '../textfield/text-field.cssresult.js'; // google3-only
-import menuStyles from '../menu/menu.css' with {type: 'css'}; // github-only
-// import {styles as menuStyles} from '../menu/menu.cssresult.js'; // google3-only
+import textFieldStyles from '../../components/textfield/text-field.css' with {type: 'css'}; // github-only
+// import textFieldStyles from '../../components/textfield/text-field.cssresult.js'; // google3-only
+import menuStyles from '../../components/menu/menu.css' with {type: 'css'}; // github-only
+// import {styles as menuStyles} from '../../components/menu/menu.cssresult.js'; // google3-only
 import selectStyles from './select.css' with {type: 'css'}; // github-only
 // import selectStyles from './select.cssresult.js'; // google3-only
 

@@ -20,6 +20,7 @@
  */
 
 import {readdir, readFile, writeFile} from 'node:fs/promises';
+import {elementDir} from '../element-dirs.mjs';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -391,7 +392,7 @@ for (const dir of dirs) {
   const parts = [];
   if (contract.rovingFocus) parts.push(rovingTests(dir, contract.rovingFocus));
   for (const m of MODULES) if (m.entries[dir]) parts.push(m.tests(dir, m.entries[dir]));
-  const out = join(GB, dir, `${dir}_contract_test.ts`);
+  const out = join(elementDir(dir), `${dir}_contract_test.ts`);
   const text = file(dir, parts);
   const old = await readFile(out, 'utf8').catch(() => '');
   if (old.replace(/\r\n/g, '\n') === text) continue;

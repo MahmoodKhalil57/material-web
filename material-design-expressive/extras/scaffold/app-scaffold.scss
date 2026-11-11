@@ -5,7 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use '../../foundations/layout/md-layout';
-@use '../shared/scrollbar';
+@use '../../components/shared/scrollbar';
 // go/keep-sorted end
 
 // Compose Scaffold: the FAB sits 16dp from the end edge and above the bottom

@@ -28,6 +28,7 @@
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
+import {elementDir} from '../element-dirs.mjs';
 import {join} from 'node:path';
 import {assignIds, normalize, pageUnits} from './spec-units.mjs';
 
@@ -1199,7 +1200,7 @@ for (const [dir, config] of Object.entries(COMPONENT_SETS)) {
     if (!units.length) console.log(`  ${where}: no spec unit to cite`);
     rows.push({...row, cases, units});
   }
-  const out = join(GB, dir, `${dir}_keyboard_spec_test.ts`);
+  const out = join(elementDir(dir), `${dir}_keyboard_spec_test.ts`);
   const source = testFile(dir, config, rows, manifest.carbonVersion);
   const count = rows.reduce((n, r) => n + r.cases.length, 0);
   if (check) {

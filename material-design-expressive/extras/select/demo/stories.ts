@@ -5,16 +5,16 @@
  */
 
 import '@material/web/components/button/md-gb-button.js';
-import '@material/web/components/select/md-gb-autocomplete.js';
-import '@material/web/components/select/md-gb-select.js';
+import '@material/web/extras/select/md-gb-autocomplete.js';
+import '@material/web/extras/select/md-gb-select.js';
 import '@material/web/styles/icons/md-gb-icon.js';
 
 import {type MaterialStoryInit} from './material-collection.js';
 import {
   type AutocompleteFilter,
   type SelectVariant,
-} from '@material/web/components/select/select.js';
-import {type SelectBase} from '@material/web/components/select/select-base.js';
+} from '@material/web/extras/select/select.js';
+import {type SelectBase} from '@material/web/extras/select/select-base.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
 import {styles as m3Styles} from '@material/web/styles/m3.cssresult.js';
 import {css, html} from 'lit';

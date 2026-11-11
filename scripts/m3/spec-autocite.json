@@ -8736,7 +8736,7 @@
   "layout-scaffold-005060": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.ts:222"
+    "extras/scaffold/pane-scaffold.ts:222"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8749,8 +8749,8 @@
   "layout-scaffold-0659d2": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.ts:210",
-    "components/scaffold/pane-scaffold.ts:90"
+    "extras/scaffold/pane-scaffold.ts:210",
+    "extras/scaffold/pane-scaffold.ts:90"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8765,7 +8765,7 @@
   "layout-scaffold-0df9f0": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.scss:238"
+    "extras/scaffold/pane-scaffold.scss:238"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8778,8 +8778,8 @@
   "layout-scaffold-278e1c": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/app-scaffold.scss:68",
-    "components/scaffold/app-scaffold-element.ts:286"
+    "extras/scaffold/app-scaffold.scss:68",
+    "extras/scaffold/app-scaffold-element.ts:286"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8794,8 +8794,8 @@
   "layout-scaffold-316936": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:1040",
-    "components/scaffold/pane-scaffold-element.ts:1040"
+    "extras/scaffold/pane-scaffold-element.ts:1040",
+    "extras/scaffold/pane-scaffold-element.ts:1040"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8810,7 +8810,7 @@
   "layout-scaffold-370605": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:353"
+    "extras/scaffold/pane-scaffold-element.ts:353"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8823,7 +8823,7 @@
   "layout-scaffold-3a1f0f": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.ts:210"
+    "extras/scaffold/pane-scaffold.ts:210"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8836,8 +8836,8 @@
   "layout-scaffold-3c9ccd": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:986",
-    "components/scaffold/pane-scaffold-element.ts:263"
+    "extras/scaffold/pane-scaffold-element.ts:986",
+    "extras/scaffold/pane-scaffold-element.ts:263"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8852,8 +8852,8 @@
   "layout-scaffold-3e7bb8": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.scss:117",
-    "components/scaffold/pane-scaffold.scss:104"
+    "extras/scaffold/pane-scaffold.scss:117",
+    "extras/scaffold/pane-scaffold.scss:104"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8868,8 +8868,8 @@
   "layout-scaffold-413f77": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:1082",
-    "components/scaffold/pane-scaffold-element.ts:1082"
+    "extras/scaffold/pane-scaffold-element.ts:1082",
+    "extras/scaffold/pane-scaffold-element.ts:1082"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8884,8 +8884,8 @@
   "layout-scaffold-432f4a": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/app-scaffold-element.ts:266",
-    "components/scaffold/app-scaffold-element.ts:266"
+    "extras/scaffold/app-scaffold-element.ts:266",
+    "extras/scaffold/app-scaffold-element.ts:266"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8900,8 +8900,8 @@
   "layout-scaffold-540796": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:1083",
-    "components/scaffold/pane-scaffold-element.ts:1083"
+    "extras/scaffold/pane-scaffold-element.ts:1083",
+    "extras/scaffold/pane-scaffold-element.ts:1083"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8916,7 +8916,7 @@
   "layout-scaffold-5f9f69": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:1082"
+    "extras/scaffold/pane-scaffold-element.ts:1082"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8929,7 +8929,7 @@
   "layout-scaffold-6251d1": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.ts:243"
+    "extras/scaffold/pane-scaffold.ts:243"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8946,7 +8946,7 @@
   "layout-scaffold-75102a": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.scss:255"
+    "extras/scaffold/pane-scaffold.scss:255"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8959,7 +8959,7 @@
   "layout-scaffold-82a649": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.ts:371"
+    "extras/scaffold/pane-scaffold.ts:371"
    ],
    "models": [
     "claude-opus-5-5"
@@ -8972,8 +8972,8 @@
   "layout-scaffold-9a3554": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.scss:104",
-    "components/scaffold/pane-scaffold.scss:104"
+    "extras/scaffold/pane-scaffold.scss:104",
+    "extras/scaffold/pane-scaffold.scss:104"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -8988,8 +8988,8 @@
   "layout-scaffold-9e0253": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:353",
-    "components/scaffold/pane-scaffold-element.ts:353"
+    "extras/scaffold/pane-scaffold-element.ts:353",
+    "extras/scaffold/pane-scaffold-element.ts:353"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9004,7 +9004,7 @@
   "layout-scaffold-9f98f0": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:629"
+    "extras/scaffold/pane-scaffold-element.ts:629"
    ],
    "models": [
     "claude-opus-5-5"
@@ -9017,8 +9017,8 @@
   "layout-scaffold-b156ea": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:353",
-    "components/scaffold/pane-scaffold-element.ts:353"
+    "extras/scaffold/pane-scaffold-element.ts:353",
+    "extras/scaffold/pane-scaffold-element.ts:353"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9033,8 +9033,8 @@
   "layout-scaffold-b794ca": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:597",
-    "components/scaffold/pane-scaffold-element.ts:597"
+    "extras/scaffold/pane-scaffold-element.ts:597",
+    "extras/scaffold/pane-scaffold-element.ts:597"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9049,8 +9049,8 @@
   "layout-scaffold-d2ad5b": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:1040",
-    "components/scaffold/pane-scaffold-element.ts:1041"
+    "extras/scaffold/pane-scaffold-element.ts:1040",
+    "extras/scaffold/pane-scaffold-element.ts:1041"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9065,8 +9065,8 @@
   "layout-scaffold-d9bc77": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.scss:259",
-    "components/scaffold/pane-scaffold.scss:255"
+    "extras/scaffold/pane-scaffold.scss:259",
+    "extras/scaffold/pane-scaffold.scss:255"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9081,8 +9081,8 @@
   "layout-scaffold-db18ee": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/app-scaffold.scss:39",
-    "components/scaffold/app-scaffold.scss:39"
+    "extras/scaffold/app-scaffold.scss:39",
+    "extras/scaffold/app-scaffold.scss:39"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9097,8 +9097,8 @@
   "layout-scaffold-e21f57": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:229",
-    "components/scaffold/pane-scaffold-element.ts:353"
+    "extras/scaffold/pane-scaffold-element.ts:229",
+    "extras/scaffold/pane-scaffold-element.ts:353"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9113,7 +9113,7 @@
   "layout-scaffold-e2f82c": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/app-scaffold.ts:88"
+    "extras/scaffold/app-scaffold.ts:88"
    ],
    "models": [
     "claude-opus-5-5"
@@ -9126,8 +9126,8 @@
   "layout-scaffold-e403f3": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold-element.ts:585",
-    "components/scaffold/pane-scaffold-element.ts:611"
+    "extras/scaffold/pane-scaffold-element.ts:585",
+    "extras/scaffold/pane-scaffold-element.ts:611"
    ],
    "models": [
     "claude-haiku-5-5",
@@ -9142,8 +9142,8 @@
   "layout-scaffold-fdb95d": {
    "rule": "llm-review",
    "evidence": [
-    "components/scaffold/pane-scaffold.scss:49",
-    "components/scaffold/pane-scaffold.scss:48"
+    "extras/scaffold/pane-scaffold.scss:49",
+    "extras/scaffold/pane-scaffold.scss:48"
    ],
    "models": [
     "claude-haiku-5-5",

@@ -176,6 +176,7 @@ await writeFile(
       exports: {
         '.': {types: './all.d.ts', default: './all.js'},
         './components/*': './components/*',
+        './extras/*': './extras/*',
         './foundations/*': './foundations/*',
         './styles/*': './styles/*',
         './package.json': './package.json',
@@ -218,8 +219,10 @@ import '${args.name}';
 
 For production, import individual components from
 \`${args.name}/components/<name>/<file>.js\` and adopt the styles
-yourself. The other entry points follow the Material docs:
-\`${args.name}/foundations/...\` (layout, interaction, accessibility) and
+yourself. The library's own components with no page in the M3 components
+index (select, the layout scaffolds, pull to refresh) are in
+\`${args.name}/extras/<name>/<file>.js\`. The other entry points follow the
+Material docs: \`${args.name}/foundations/...\` (layout, interaction, accessibility) and
 \`${args.name}/styles/...\` (color, motion, icons and the global
 stylesheets). \`internal/\` is not public API.
 

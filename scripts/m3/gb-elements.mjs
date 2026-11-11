@@ -14,16 +14,16 @@
  */
 
 import {readdirSync} from 'node:fs';
-import {join, relative, resolve, sep} from 'node:path';
+import {basename, dirname, join, relative, resolve, sep} from 'node:path';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
+import {elementDirs} from '../element-dirs.mjs';
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
 const GB = resolve(ROOT, 'material-design-expressive');
-const COMPONENTS = join(GB, 'components');
 const posix = (p) => p.split(sep).join('/');
 
 /**
@@ -31,12 +31,12 @@ const posix = (p) => p.split(sep).join('/');
  * slots, events, parts, cssProps}`, sorted by tag.
  */
 export function readGbElements() {
-  const entryFiles = readdirSync(COMPONENTS, {withFileTypes: true})
-    .filter((d) => d.isDirectory() && d.name !== 'shared')
+  // Every element root: components/ (the M3 index) and extras/.
+  const entryFiles = elementDirs(ROOT)
     .flatMap((d) =>
-      readdirSync(join(COMPONENTS, d.name))
+      readdirSync(d.dir)
         .filter((f) => /^md-gb-.*\.ts$/.test(f) && !f.endsWith('.d.ts'))
-        .map((f) => join(COMPONENTS, d.name, f)),
+        .map((f) => join(d.dir, f)),
     )
     .sort();
 
@@ -52,7 +52,8 @@ export function readGbElements() {
   const elements = [];
   for (const file of entryFiles) {
     const source = program.getSourceFile(file);
-    const dir = posix(relative(COMPONENTS, file)).split('/')[0];
+    // The component folder's name (`button`, `scaffold`), whatever its root.
+    const dir = basename(dirname(file));
     ts.forEachChild(source, function visit(node) {
       if (ts.isPropertySignature(node) && node.type && node.name) {
         const tag = node.name.text ?? node.name.getText().replace(/['"]/g, '');
@@ -219,9 +220,12 @@ export function readGbElements() {
 
   /** Methods of Lit and the mixins' plumbing are not part of the usage API. */
   function isFrameworkFile(decl) {
-    return /[\\/]internal[\\/]/.test(decl.getSourceFile().fileName) && !/(^|[\\/])(components|styles)[\\/]/.test(decl.getSourceFile().fileName)
-      ? true
-      : /[\\/]lit[\\/]|reactive-element/.test(decl.getSourceFile().fileName);
+    const file = decl.getSourceFile().fileName;
+    // internal/ (but not a styles/x/internal/ folder), and the ARIA mixins
+    // that moved from internal/aria to foundations/accessibility/aria.
+    if (/[\\/]internal[\\/]/.test(file) && !/(^|[\\/])(components|extras|styles)[\\/]/.test(file)) return true;
+    if (/[\\/]foundations[\\/]accessibility[\\/]aria[\\/](aria|delegate)\.(ts|d\.ts)$/.test(file)) return true;
+    return /[\\/]lit[\\/]|reactive-element/.test(file);
   }
 
   /** The options of a `@property(...)` decorator on a declaration, or undefined. */

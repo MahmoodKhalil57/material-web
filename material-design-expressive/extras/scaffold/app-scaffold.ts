@@ -10,7 +10,7 @@ import {
   type WindowHeightClass,
   type WindowSizeClass,
 } from '../../foundations/layout/window-size-class.js';
-import {createClassMapDirective} from '../shared/directives.js';
+import {createClassMapDirective} from '../../components/shared/directives.js';
 
 /**
  * Which navigation component the app scaffold shows.

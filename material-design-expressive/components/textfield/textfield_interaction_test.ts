@@ -6,8 +6,8 @@
 
 // import 'jasmine'; (google3-only)
 import './md-gb-text-field.js';
-import '../select/md-gb-select.js';
-import '../select/md-gb-autocomplete.js';
+import '../../extras/select/md-gb-select.js';
+import '../../extras/select/md-gb-autocomplete.js';
 
 import {sendKeys} from '@web/test-runner-commands';
 import {html} from 'lit';
