@@ -272,7 +272,9 @@ function shellSpec(page, pages, content) {
   // list of links (lists.md: navigation), one tab stop with arrow keys. An
   // h3 entry has a leading arrow under its h2.
   const outline = outlineOf(content);
-  const slots = {'top-app-bar': ['appbar'], 'navigation-rail': ['rail'], 'navigation-bar': ['bar']};
+  // The app bar (search, tools) in a header: the page's banner landmark.
+  const banner = add('banner', {type: 'Html', props: {tag: 'header'}, children: ['appbar']});
+  const slots = {'top-app-bar': [banner], 'navigation-rail': ['rail'], 'navigation-bar': ['bar']};
   if (outline.length) {
     const items = outline.map((h, i) =>
       add(`outline-${i}`, {
