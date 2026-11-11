@@ -23,6 +23,7 @@
 const {join} = require('node:path');
 const {pathToFileURL} = require('node:url');
 const {shellSpec} = require('../gb-shell-spec.cjs');
+const {contentSpec} = require('../gb-content-spec.cjs');
 // The site's public URL (MWC_SITE_URL), which the copy actions put in their text.
 const gbSite = require('../../content/_data/gbSite.cjs');
 
@@ -32,9 +33,17 @@ async function library() {
   modules ??= Promise.all([
     import(pathToFileURL(join(JSON_RENDER, 'check.js')).href),
     import(pathToFileURL(join(JSON_RENDER, 'static.js')).href),
-  ]).then(([check, render]) => ({checkSpec: check.checkSpec, renderSpecToString: render.renderSpecToString}));
+    import(pathToFileURL(join(JSON_RENDER, 'catalog.js')).href),
+  ]).then(([check, render, catalog]) => ({
+    checkSpec: check.checkSpec,
+    renderSpecToString: render.renderSpecToString,
+    COMPONENTS: catalog.COMPONENTS,
+  }));
   return modules;
 }
+
+/** What the content conversion left out, over the whole build. */
+const contentStats = new Map();
 
 const CONTENT_SLOT = '<div id="gb-content"></div>';
 const reported = new Set();
@@ -50,7 +59,25 @@ function gbSpecShell(eleventyConfig) {
       order: p.data.order,
     }));
     const spec = shellSpec({url: this.page?.url ?? '', title, description, section, siteUrl: gbSite.url}, pages, content ?? '');
-    const {checkSpec, renderSpecToString} = await library();
+    const {checkSpec, renderSpecToString, COMPONENTS} = await library();
+
+    // The content as a spec too (gb-content-spec.cjs), checked and rendered.
+    const {spec: contentSpecOf} = contentSpec(content ?? '', {
+      components: COMPONENTS,
+      lib: process.env.MWC_GB_LIB ?? '',
+      stats: contentStats,
+    });
+    const contentCheck = checkSpec(contentSpecOf);
+    if (!contentCheck.valid) {
+      const errors = contentCheck.issues.filter((i) => i.severity === 'error').slice(0, 20).map((i) => `  ${i.element ?? ''}: ${i.message}`);
+      throw new Error(`gbshell (${where}): the content spec breaks the catalog:\n${errors.join('\n')}`);
+    }
+    const contentHtml = renderSpecToString(contentSpecOf, {
+      onWarning: (m) => {
+        throw new Error(`gbshell (${where}): content: ${m}`);
+      },
+    });
+
     const {valid, issues} = checkSpec(spec);
     if (!valid) {
       const errors = issues.filter((i) => i.severity === 'error').map((i) => `  ${i.element ?? ''}: ${i.message}`);
@@ -71,9 +98,17 @@ function gbSpecShell(eleventyConfig) {
     if (html.split(CONTENT_SLOT).length !== 2) throw new Error(`gbshell (${where}): no single content element`);
     const json = JSON.stringify(spec).replace(/</g, '\\u003c');
     return (
-      `<div id="gb-shell">${html.replace(CONTENT_SLOT, `<div id="gb-content">${content ?? ''}</div>`)}</div>` +
+      `<div id="gb-shell">${html.replace(CONTENT_SLOT, `<div id="gb-content">${contentHtml}</div>`)}</div>` +
       `<script type="application/json" id="gb-shell-spec">${json}</script>`
     );
+  });
+
+  // The content conversion's report: what the catalog couldn't express.
+  eleventyConfig.on('eleventy.after', () => {
+    if (!contentStats.size) return;
+    const lines = [...contentStats].sort((a, b) => b[1] - a[1]).map(([what, n]) => `  ${n}\t${what}`);
+    console.log(`[gbshell] content as specs:\n${lines.join('\n')}`);
+    contentStats.clear();
   });
 
   eleventyConfig.addShortcode('gbstyles', () => {

@@ -41,6 +41,8 @@ import '@material/web/extras/select/md-gb-select-option.js';
 import '@material/web/extras/select/md-gb-select.js';
 
 import {createStateStore, type Spec} from '@json-render/core';
+import '@material/web/components/search/md-gb-search-bar.js';
+import {searchHandlers} from './search.js';
 import {applyTheme, savedTheme, toolHandlers} from './tools.js';
 import {hydrateSpec} from '@material/web/json-render/renderer.js';
 import {adoptStyles} from '@material/web/styles/adopt-styles.js';
@@ -101,6 +103,7 @@ function boot() {
     store,
     handlers: {
       ...toolHandlers(store, siteUrl),
+      ...searchHandlers(store),
       cycleColorMode: () => {
         const mode = store.get('/colorMode') as ColorMode;
         store.set('/colorMode', MODES[(MODES.indexOf(mode) + 1) % MODES.length]);
@@ -138,8 +141,11 @@ function boot() {
     if (e.data?.type === 'gb-demo-ready') (e.source as Window | null)?.postMessage(theme(), '*');
   });
   const broadcast = () => {
-    for (const frame of document.querySelectorAll<HTMLIFrameElement>('md-gb-demo iframe')) {
-      frame.contentWindow?.postMessage(theme(), '*');
+    // Slotted frames, and the frames md-gb-demo renders for `srcdoc`.
+    for (const demo of document.querySelectorAll('md-gb-demo')) {
+      for (const frame of [...demo.querySelectorAll('iframe'), ...(demo.shadowRoot?.querySelectorAll('iframe') ?? [])]) {
+        frame.contentWindow?.postMessage(theme(), '*');
+      }
     }
   };
 
@@ -149,6 +155,17 @@ function boot() {
     broadcast();
   });
   if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+
+  // Ctrl/Cmd+K and "/" (outside text fields) open search, as before.
+  addEventListener('keydown', (e) => {
+    const typing = (e.target as Element | null)?.closest?.('input, textarea, [contenteditable], md-gb-text-field, md-gb-search-bar');
+    const shortcut = ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') || (e.key === '/' && !typing);
+    if (!shortcut) return;
+    const bar = document.querySelector<HTMLElement & {expanded: boolean}>('md-gb-search-bar');
+    if (!bar) return;
+    e.preventDefault();
+    bar.expanded = true;
+  });
 }
 
 boot();

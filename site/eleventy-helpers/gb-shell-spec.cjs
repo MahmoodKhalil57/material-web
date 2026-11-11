@@ -97,12 +97,30 @@ function shellSpec(page, pages, content) {
   const url = page.url;
 
   // Top app bar.
+  // Search (app-bars.md, Search app bar): the results are a repeat over
+  // `/search/results`, which src/spec/search.ts fills as the query changes.
+  add('search', {
+    type: 'SearchBar',
+    props: {placeholder: 'Search Material Web', ariaLabel: 'Search Material Web', value: {$bindState: '/search/query'}},
+    repeat: {statePath: '/search/results', key: 'url'},
+    children: [
+      add('search-result', {
+        type: 'ListItem',
+        props: {},
+        children: [add('search-result-title', {type: 'Text', props: {text: {$item: 'title'}}})],
+        slots: {'supporting-text': [add('search-result-snippet', {type: 'Text', props: {text: {$item: 'snippet'}}})]},
+        on: {click: {action: 'openResult', params: {path: {$item: 'url'}}}},
+      }),
+    ],
+    on: {input: {action: 'search'}, search: {action: 'openTopResult'}},
+  });
   add('appbar', {
     type: 'AppBar',
-    props: {variant: 'standard', ariaLabel: 'Material Web 3.0'},
+    props: {variant: 'search', ariaLabel: 'Material Web 3.0'},
     // The headline; the site's home is the rail's first destination.
     children: [text('site-name', 'Material Web 3.0')],
     slots: {
+      search: ['search'],
       // Up to four trailing actions (app-bars.md, Search app bar).
       trailing: [
         add('theme-open', {
@@ -278,6 +296,7 @@ function shellSpec(page, pages, content) {
       feedback: {open: false, page: '', type: 'bug', message: '', error: false},
       install: {open: false},
       snack: {open: false, text: ''},
+      search: {query: '', results: []},
     },
   };
 }
