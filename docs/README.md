@@ -1,7 +1,7 @@
 # Component page template
 
 This file is the template for the pages in `docs/components/`. It is not
-published (`copyGbDocs` in `scripts/catalog-dev.mjs` leaves out every
+published (`copyGbDocs` in `site/scripts/dev.mjs` leaves out every
 README). Each section's `README.md` is its index page's text instead: the
 title, rail icon, order and meta description in its front matter, the
 intro paragraph as its text, and, for Components, the groups a page's

@@ -11,7 +11,7 @@
  *
  * - Page navigations: network first with a short timeout, then the cached
  *   copy; offline, the cached page (or the 3.0 start page).
- * - Fonts (/fonts/gb/*.woff2, self-hosted by scripts/gb-fonts.mjs): cache
+ * - Fonts (/fonts/gb/*.woff2, self-hosted by site/scripts/fonts.mjs): cache
  *   first, in a cache that outlives builds. Their file names carry a content
  *   hash, so a URL never changes content: once fetched they are never
  *   fetched again, in dev too.
@@ -55,7 +55,7 @@ const FONT_FILE = at('fonts/gb/[^/]+\\.woff2$');
 /** How long a page may take before the cached copy is used. */
 const NETWORK_TIMEOUT = 3000;
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-/** lib/ is the bundled labs/gb of a static build (scripts/catalog-pages.mjs). */
+/** lib/ is the bundled labs/gb of a static build (site/scripts/pages.mjs). */
 const ASSET_PATH = at('(js|css|fonts|images|lib)/');
 const DOWNLOADS = at(
   '3\\.0/(skill/|material-web-3\\.0\\.mhtml$|custom-elements\\.json$|llms-full\\.txt$)',

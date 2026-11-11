@@ -6,7 +6,7 @@
 
 /**
  * /3.0/manifest.webmanifest. Icons are generated from images/favicon.svg by
- * scripts/gb-site-assets.mjs into /3.0/icons/. Colors are baseline
+ * site/scripts/assets.mjs into /3.0/icons/. Colors are baseline
  * md-sys-color tokens (styles/m3.css).
  */
 

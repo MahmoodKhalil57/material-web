@@ -10,9 +10,9 @@
  * 250ms (it rebuilds the pages in place when watched files change, and marks
  * the state "pending" as soon as it sees a change).
  *
- *   node scripts/catalog-wait.mjs              # after an edit: pages rebuilt
- *   node scripts/catalog-wait.mjs --ready      # any finished build (just started)
- *   node scripts/catalog-wait.mjs --timeout 90 # seconds (default 90)
+ *   node site/scripts/wait.mjs              # after an edit: pages rebuilt
+ *   node site/scripts/wait.mjs --ready      # any finished build (just started)
+ *   node site/scripts/wait.mjs --timeout 90 # seconds (default 90)
  *
  * Without --ready it waits a short grace period (the watcher reports an edit
  * within milliseconds), then returns as soon as no build is pending or
@@ -32,7 +32,7 @@ const opt = (name, fallback) => {
   const i = argv.indexOf(`--${name}`);
   return i >= 0 ? argv[i + 1] : fallback;
 };
-const STATE = join(fileURLToPath(new URL('..', import.meta.url)), 'site', '.catalog-dev.json');
+const STATE = join(fileURLToPath(new URL('..', import.meta.url)), '.catalog-dev.json');
 const ready = argv.includes('--ready');
 const started = Date.now();
 const GRACE = 1500;

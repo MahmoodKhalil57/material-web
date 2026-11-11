@@ -28,7 +28,7 @@
  * - lighthouse: the category scores and the failed audits of the
  *   component's test page (/3.0/lab/<slug>/: its first example alone,
  *   site/content/lab.11ty.cjs), not of its docs page
- *   (scripts/catalog-lighthouse.mjs --desktop --out <dir> on those pages,
+ *   (site/scripts/lighthouse.mjs --desktop --out <dir> on those pages,
  *   read from <dir>/desktop); kept from the last run when no reports are
  *   given.
  */

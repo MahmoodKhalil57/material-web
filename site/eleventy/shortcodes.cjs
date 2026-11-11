@@ -12,7 +12,7 @@ const ROOT = join(__dirname, '..', '..');
 const EXAMPLES_JSON = join(__dirname, '..', '_dev-gb', 'examples.json');
 
 let examples;
-/** Captured demos written by scripts/catalog-dev.mjs: {dir: [{name, slug, html}]}. */
+/** Captured demos written by site/scripts/dev.mjs: {dir: [{name, slug, html}]}. */
 function loadExamples() {
   if (!examples) {
     examples = existsSync(EXAMPLES_JSON)

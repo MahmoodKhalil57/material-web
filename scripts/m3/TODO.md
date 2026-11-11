@@ -342,7 +342,7 @@ collection). The drawer lists About, Theming and Foundations (the
 `foundations` collection); "/" hides 3.0-only pages and redirects them. To
 replace a section of an existing About or Theming page in /3.0/ only, use a
 file with the same name and the same heading (`addExpressivePageSections` in
-scripts/catalog-dev.mjs).
+site/scripts/dev.mjs).
 
 ## S-A (Sonnet): theme picker and heading ids
 Owns: site/src/components/theme-changer.ts,
@@ -362,7 +362,7 @@ site/src/inline/apply-saved-theme.ts, site/content/_includes/default.html.
 ## S-B (Sonnet): API reference from the source
 Owns: a new scripts/m3/gen-api-docs.mjs, and the API part of
 `addExpressiveVariants` and the Expressive-only page template in
-scripts/catalog-dev.mjs.
+site/scripts/dev.mjs.
 - [x] Reuse the TypeScript reader in scripts/m3/gen-agent-skill.mjs (import it
       or move it to a shared module) for each element's attributes and
       properties (type, default, reflects, description), slots, events,
@@ -390,7 +390,7 @@ scripts/catalog-3.0/about/compliance.md (expressiveOnly; order after the intro).
 ## H-1 (Haiku): migration guide
 Owns: scripts/catalog-3.0/about/migration.md.
 - [x] A table: v2.5.0 element to 3.0 element and attributes, from
-      `transformToExpressive` in scripts/catalog-dev.mjs (read only that
+      `transformToExpressive` in site/scripts/dev.mjs (read only that
       function) and the components/*/md-gb-*.ts files.
 - [x] Call out: styles load with `adoptStyles(document, [m3Styles])`; slider
       `aria-label-start/end` and `aria-valuetext-start/end` became `label-start`,
@@ -558,7 +558,7 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
 - [x] Every "/" page: no md-gb, no data-variant, renders as before.
 
 Left after M-4:
-- [ ] Production build: only scripts/catalog-dev.mjs copies docs/3.0 and
+- [ ] Production build: only site/scripts/dev.mjs copies docs/3.0 and
       captures the gbexample demos (site/_dev-gb/examples.json); the
       catalog's prod build needs the same steps. The `gbcomponents`
       filter and live demos also need MWC_GB_LIB (a production library URL).

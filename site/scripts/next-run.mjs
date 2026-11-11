@@ -15,7 +15,7 @@
 // until its view transition has finished ("ready", when the next click would
 // land on the page rather than the transition).
 //
-//   node scripts/catalog-next-run.mjs [url] [--runs 3] [--headed]
+//   node site/scripts/next-run.mjs [url] [--runs 3] [--headed]
 //     [--reduce-motion] [--no-sw] [--json out.json]
 //
 // --no-sw blocks the site's service worker, to compare with it.

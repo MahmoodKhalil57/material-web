@@ -11,16 +11,16 @@
 // - the time from the click to the page being ready to click again;
 // - where the Next link sat (it should never move: paging through needs no
 //   mouse movement);
-// - the Core Web Vitals of the visit (scripts/catalog-vitals.mjs): LCP, CLS
+// - the Core Web Vitals of the visit (site/scripts/vitals.mjs): LCP, CLS
 //   and INP, the walker's click on Next being the interaction.
 //
 // With --shots it saves a screenshot of every page and layers them into a
-// heatmap of what stays the same and what changes (scripts/catalog-heatmap.mjs).
+// heatmap of what stays the same and what changes (site/scripts/heatmap.mjs).
 //
 // Exits 1 on a loop, a dead Next link, a link that moved, or a vital past
 // "good" (LCP 2.5 s, CLS 0.1, INP 200 ms; web.dev/articles/vitals).
 //
-//   node scripts/catalog-walk.mjs [--url http://localhost:8000/3.0/]
+//   node site/scripts/walk.mjs [--url http://localhost:8000/3.0/]
 //     [--width 1300] [--height 900] [--headed] [--motion]
 //     [--shots] [--out <dir>] [--rare 0.1]
 //
@@ -34,8 +34,8 @@ import {mkdirSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {parseArgs} from 'node:util';
-import {buildHeatmap} from './catalog-heatmap.mjs';
-import {collectVitals} from './catalog-vitals.mjs';
+import {buildHeatmap} from './heatmap.mjs';
+import {collectVitals} from './vitals.mjs';
 
 const {values: args} = parseArgs({
   options: {

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Layers same-size screenshots of the /3.0/ pages (scripts/catalog-walk.mjs
+// Layers same-size screenshots of the /3.0/ pages (site/scripts/walk.mjs
 // --shots) into a heatmap of what stays the same and what changes from page
 // to page:
 //
@@ -21,7 +21,7 @@
 //
 // It reports, per page, how many of the rare pixels it owns and where.
 //
-//   node scripts/catalog-heatmap.mjs <dir of .png> [--rare 0.1] [--top 8]
+//   node site/scripts/heatmap.mjs <dir of .png> [--rare 0.1] [--top 8]
 //     [--tolerance 24]
 
 import {mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs';
@@ -165,7 +165,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     },
   });
   const dir = positionals[0];
-  if (!dir) throw new Error('usage: node scripts/catalog-heatmap.mjs <dir of .png>');
+  if (!dir) throw new Error('usage: node site/scripts/heatmap.mjs <dir of .png>');
   const files = readdirSync(dir)
     .filter((f) => f.endsWith('.png'))
     .sort()

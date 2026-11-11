@@ -8,7 +8,7 @@
  * /3.0/all/: every /3.0/ page on one page, in the order of the navigation
  * drawer, each page's content under its own h1. It is the source of the
  * single-file download (/3.0/material-web-3.0.mhtml, saved from this page by
- * scripts/gb-site-assets.mjs) and prints well.
+ * site/scripts/assets.mjs) and prints well.
  *
  * - No drawer, search or table of contents; a contents list at the top.
  * - Links between /3.0/ pages, and links to a heading, become in-page

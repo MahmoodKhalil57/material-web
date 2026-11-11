@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// collectVitals() is injected by scripts/catalog-walk.mjs into every page
+// collectVitals() is injected by site/scripts/walk.mjs into every page
 // (page.addInitScript; it runs in the page, so it uses nothing from here),
 // top frame only. It collects the page's Core Web Vitals while the walker reads it, and when the
 // page is left (pagehide), appends them to sessionStorage, which outlives the

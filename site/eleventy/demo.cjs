@@ -282,7 +282,7 @@ function frameDoc({id, html, css, js, lib}) {
   return (
     '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    // The site's self-hosted fonts (scripts/gb-fonts.mjs); a srcdoc frame
+    // The site's self-hosted fonts (site/scripts/fonts.mjs); a srcdoc frame
     // resolves the path against the page, so it shares the page's cache.
     '<link rel="stylesheet" href="/fonts/gb/fonts.css">' +
     (lib ? `<link rel="stylesheet" href="${lib}styles/m3.css">` : '') +

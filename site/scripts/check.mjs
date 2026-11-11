@@ -10,7 +10,7 @@
  * against the running server: status 200, no console errors, no code block
  * outside a demo card (shell excepted), no raw ``` fences, no demo script
  * errors, and axe-core with the live previews excluded. Run from the repo
- * root: `node scripts/catalog-check.mjs`. Exits 1 when a page has problems.
+ * root: `node site/scripts/check.mjs`. Exits 1 when a page has problems.
  */
 import {chromium} from 'playwright';
 import {readFileSync, readdirSync, statSync} from 'node:fs';

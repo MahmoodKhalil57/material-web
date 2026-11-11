@@ -9,7 +9,7 @@
  * Publishes the docs site (/3.0/; / redirects to it) as a static site on a
  * GitHub Pages branch, built here, with no Actions:
  *
- *   node scripts/catalog-pages.mjs [--base /material-web/] [--src site/_dev]
+ *   node site/scripts/pages.mjs [--base /material-web/] [--src site/_dev]
  *     [--branch gh-pages] [--remote origin] [--push]
  *
  * 1. Copies the built site (`npm run catalog:dev` writes site/_dev; its

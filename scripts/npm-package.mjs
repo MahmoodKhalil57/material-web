@@ -7,7 +7,7 @@
 
 /**
  * Builds the labs/gb components as an npm package on a branch, the way
- * catalog-pages.mjs builds the site on gh-pages, and publishes from it:
+ * site/scripts/pages.mjs builds the site on gh-pages, and publishes from it:
  *
  *   node scripts/npm-package.mjs [--name @mahmoodkhalil/material-web-3-demo]
  *     [--version 0.1.0] [--branch npm-package] [--remote origin] [--push]
@@ -139,7 +139,7 @@ for (const css of cssTargets) {
   await writeFile(join(OUT, css), text);
   // `import sheet from './x.css' with {type: 'css'}` needs a browser or
   // bundler with CSS module scripts. The package ships a plain module instead
-  // (the same constructed stylesheet catalog-pages.mjs makes for Pages).
+  // (the same constructed stylesheet site/scripts/pages.mjs makes for Pages).
   await writeFile(
     join(OUT, `${css}.js`),
     `const sheet = new CSSStyleSheet();\nsheet.replaceSync(${JSON.stringify(text)});\nexport default sheet;\n`,

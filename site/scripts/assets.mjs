@@ -5,7 +5,7 @@
  */
 
 /**
- * Generated images of the /3.0/ docs, built by scripts/catalog-dev.mjs
+ * Generated images of the /3.0/ docs, built by site/scripts/dev.mjs
  * (buildSite) before Eleventy copies them to /3.0/og/ and /3.0/icons/:
  *
  * - site/_dev-gb/og/<section>-<slug>.png: the 1200x630 Open Graph image of
@@ -23,7 +23,7 @@
  * - buildSnapshot() (after the pages are served, off the critical path): the
  *   single-file download of the docs, /3.0/material-web-3.0.mhtml, made by
  *   Chromium from /3.0/all/ and cached by a hash of that page. Run alone with
- *   `node scripts/gb-site-assets.mjs --snapshot http://localhost:8000`.
+ *   `node site/scripts/assets.mjs --snapshot http://localhost:8000`.
  */
 
 import {createHash} from 'node:crypto';
@@ -32,14 +32,15 @@ import {copyFile, cp, mkdir, readdir, readFile, rm, writeFile} from 'node:fs/pro
 import {createRequire} from 'node:module';
 import {join} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {ELEMENT_ROOTS} from './element-dirs.mjs';
+import {ELEMENT_ROOTS} from '../../scripts/element-dirs.mjs';
 
 const require = createRequire(import.meta.url);
-const ROOT = join(import.meta.dirname, '..');
+const ROOT = join(import.meta.dirname, '..', '..');
 const CATALOG = join(ROOT, 'site');
 const OUT = join(CATALOG, '_dev-gb');
 const FAVICON = join(CATALOG, 'content', 'images', 'favicon.svg');
-const FONT = join(CATALOG, 'content', 'fonts', 'google-sans', 'regular.woff2');
+// The Open Graph images' font (not served: only this script uses it).
+const FONT = join(import.meta.dirname, 'google-sans-regular.woff2');
 const CONCURRENCY = 6;
 /** Bump to re-render every image after a change to the template. */
 const TEMPLATE_VERSION = 3;
@@ -649,7 +650,7 @@ async function cachedAll(list, c) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const at = process.argv.indexOf('--snapshot');
   if (at > 0) {
-    // node scripts/gb-site-assets.mjs --snapshot http://localhost:8000
+    // node site/scripts/assets.mjs --snapshot http://localhost:8000
     console.log(await buildSnapshot({baseUrl: process.argv[at + 1], log: console.log}));
   } else {
     await buildSiteAssets({log: console.log});

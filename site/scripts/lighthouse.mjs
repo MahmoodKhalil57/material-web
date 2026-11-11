@@ -6,12 +6,12 @@
 
 // Lighthouse (navigation mode: a cold load with a throttled phone, or a
 // desktop with --desktop) on a few /3.0/ pages of each kind, for the lab
-// scores and audits that scripts/catalog-walk.mjs doesn't cover (it measures
+// scores and audits that site/scripts/walk.mjs doesn't cover (it measures
 // warm page-to-page navigations). Runs Lighthouse through npx, so it adds no
 // dependency, with Playwright's Chromium. Reports go to --out (HTML and
 // JSON, a temporary directory by default) and never leave the machine.
 //
-//   node scripts/catalog-lighthouse.mjs [--desktop] [--out <dir>] [url ...]
+//   node site/scripts/lighthouse.mjs [--desktop] [--out <dir>] [url ...]
 //
 // The dev server must be running (npm run catalog:dev). Its build isn't
 // minified or compressed, so the performance score and the timing audits

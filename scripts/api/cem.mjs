@@ -6,7 +6,7 @@
 
 /**
  * @fileoverview Custom Elements Manifest (schema 2.1.0) conversions shared by
- * scripts/api/gen-api.mjs and scripts/gb-site-assets.mjs.
+ * scripts/api/gen-api.mjs and site/scripts/assets.mjs.
  */
 
 /** `(a: T, b?: U) => R` -> {parameters, returns} (top-level parts only). */
