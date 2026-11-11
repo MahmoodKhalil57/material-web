@@ -12,6 +12,7 @@ import './md-aria-tabpanel.js';
 
 import {html} from 'lit';
 import {Environment} from '../../../../testing/environment.js';
+import {AriaTabElement} from './tab.js';
 import {hasState} from '../../../../internal/behaviors/custom-state-set.js';
 import {internals} from '../../../../internal/behaviors/element-internals.js';
 
@@ -455,6 +456,30 @@ describe('md-aria-tablist', () => {
 
       expect(tabs[0].selected).toBeTrue();
       expect(newTab.selected).toBeFalse();
+    });
+
+    it('syncs the panels of tabs defined after the tab list', async () => {
+      const root = env.render(html`
+        <md-aria-tablist>
+          <test-late-tab id="late-one" tabpanel="late-panel-one">One</test-late-tab>
+          <test-late-tab id="late-two" tabpanel="late-panel-two">Two</test-late-tab>
+        </md-aria-tablist>
+        <md-aria-tabpanel id="late-panel-one">Panel one</md-aria-tabpanel>
+        <md-aria-tabpanel id="late-panel-two">Panel two</md-aria-tabpanel>
+      `);
+      // The tab list has seen its (not yet defined) children.
+      await root.querySelector('md-aria-tablist')!.updateComplete;
+      customElements.define('test-late-tab', class extends AriaTabElement {});
+      // whenDefined resolves in a microtask (the environment mocks timers).
+      await Promise.resolve();
+      await Promise.resolve();
+      await env.waitForStability();
+
+      const [one, two] = Array.from(root.querySelectorAll<AriaTabElement>('test-late-tab'));
+      expect(one.selected).toBeTrue();
+      expect(two.selected).toBeFalse();
+      expect(root.querySelector<HTMLElement>('#late-panel-one')!.hidden).toBeFalse();
+      expect(root.querySelector<HTMLElement>('#late-panel-two')!.hidden).toBeTrue();
     });
   });
 });

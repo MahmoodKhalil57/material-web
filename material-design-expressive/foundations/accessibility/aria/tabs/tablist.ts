@@ -222,6 +222,21 @@ export class AriaTablistElement extends baseClass {
   }
 
   protected handleSlotChange() {
+    // Tabs that upgrade after the tab list (their module loads later) aren't
+    // tabs yet: sync again once they are, so their panels are shown or
+    // hidden from the start.
+    const pending = [
+      ...new Set(
+        (this.slotElement?.assignedElements() ?? [])
+          .map((el) => el.localName)
+          .filter((name) => name.includes('-') && !customElements.get(name)),
+      ),
+    ];
+    if (pending.length) {
+      void Promise.all(pending.map((name) => customElements.whenDefined(name))).then(() =>
+        this.handleSlotChange(),
+      );
+    }
     const tabToSelect = this.selectedTab ?? this.tabs[0];
     if (tabToSelect) {
       // Sync tab selection state when slotted content changes. If the active
