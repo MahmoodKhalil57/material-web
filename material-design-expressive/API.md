@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 242 |
-| Custom elements | 64 |
-| Classes | 104 |
+| Public modules | 244 |
+| Custom elements | 65 |
+| Classes | 105 |
 | Functions | 335 |
 | Constants and variables | 308 |
-| Types and interfaces | 323 |
+| Types and interfaces | 325 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2205 of 2205 (100%) |
+| JSDoc coverage | 2214 of 2214 (100%) |
 
 ## Contents
 
@@ -3785,6 +3785,7 @@ A column or row of children spaced with the M3 spacing scale.
 | `direction` | `direction` (reflects) | `"column" \| "row"` | `'column'` | Children one below the other (`column`) or side by side (`row`). |
 | `gap` | `gap` (reflects) | `"0" \| "25" \| "50" \| "75" \| "100" \| "125" \| "150" \| "175" \| "200" \| "250" \| "300…` | `'200'` | The space between children: a step of the spacing scale (200 is 16px). |
 | `justify` | `justify` (reflects) | `"start" \| "center" \| "end" \| "space-between"` | `'start'` | How the children share the space along the stack. |
+| `paddingBlock` | `padding-block` (reflects) | `"" \| "0" \| "25" \| "50" \| "75" \| "100" \| "125" \| "150" \| "175" \| "200" \| "250" \|…` | `''` | Space above and below the children: a step of the spacing scale. In a card, which pads only its sides (16px), 200 gives its content the padding of cards.md Measurements on all sides. |
 | `wrap` | `wrap` (reflects) | `boolean` | `false` | Whether a row wraps onto more lines when its children don't fit. |
 
 | Slot | Description |
@@ -4359,6 +4360,37 @@ A decorative Material shape that can morph into another.
 | --- | --- | --- | --- |
 | `SHAPE_MORPHS` | variable | `Readonly<Record<string, readonly [string, string]>>` | Morph paths by `"<from>:<to>"`: [start (the from shape), end (the to shape)]. |
 
+### `extras/typography/`
+
+#### `<md-gb-typography>`
+
+Text in one role of the M3 type scale and a color role.
+
+- Class: `TypographyElement` in `extras/typography/typography-element.js`
+- Import: `import '@material/web/extras/typography/md-gb-typography.js';`
+- Spec: [typography](https://m3.material.io/styles/typography) (No page of its own: text in a role of the type scale (Applying type).)
+- Spec sections cited: `typography/applying-type`, `typography/type-scale-tokens`
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `color` | `color` (reflects) | `"primary" \| "secondary" \| "tertiary" \| "inherit" \| "on-surface" \| "on-surface-v…` | `'inherit'` | The color role of the text. |
+| `emphasized` | `emphasized` (reflects) | `boolean` | `false` | Whether to use the role's emphasized style (a heavier weight). |
+| `scale` | `scale` (reflects) | `"display-lg" \| "display-md" \| "display-sm" \| "headline-lg" \| "headline-md" \| "h…` | `'body-md'` | The role of the type scale. |
+
+| Slot | Description |
+| --- | --- |
+| (default) | The text, or a heading or paragraph with the text. |
+
+#### `extras/typography/typography-element.js`
+
+- Spec: [typography](https://m3.material.io/styles/typography) (No page of its own: text in a role of the type scale (Applying type).)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `TextColor` | type | `\| 'inherit' \| 'on-surface' \| 'on-surface-variant' \| 'primary' \| 'secondary' \| 'tertiary' \| 'error'` | The color role of the text; `inherit` keeps the surrounding color. |
+| `TypeScale` | type | `\| 'display-lg' \| 'display-md' \| 'display-sm' \| 'headline-lg' \| 'headline-md' \| 'headline-sm' \| 'title-lg' \| 'title-md' \| 'title-sm' \| 'label-lg' \| 'label-md' \| 'label-sm' \| 'body-lg' \| 'body-md' \| 'body-sm'` | A role of the M3 type scale (styles/typography: `--md-sys-typescale-<scale>`). |
+| `TypographyElement` | class | `class TypographyElement extends LitElement` | Text in one role of the M3 type scale (m3.material.io/styles/typography): display, headline, title, label or body, in large, medium or small, and optionally emphasized; and in a color role. |
+
 ## Foundations
 
 Accessibility, interaction, layout and the design tokens.
@@ -4837,7 +4869,7 @@ Color, elevation, icons, motion, shape, spacing and typography.
 | `PaletteName` | type | `"primary" \| "secondary" \| "tertiary" \| "neutral" \| "neutralVariant" \| "error"` | The tonal palettes a custom color role can take its tone from. |
 | `Platform` | type | `(typeof PLATFORMS)[number]` | A target platform. |
 | `PLATFORMS` | variable | `readonly ["phone", "watch"]` | Target platforms: `phone` (also right for the web) and `watch`. |
-| `rolesFromScheme` | function | `(scheme: DynamicScheme): Record<"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertiary" \| "tertiary-container" \| "scrim" \| "error" \| "error-container" \| "surface-container-highest" \| "on-primary" \| "on-primary-co…` | Resolves every built-in color role of a scheme to hex. |
+| `rolesFromScheme` | function | `(scheme: DynamicScheme): Record<"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertiary" \| "tertiary-container" \| "scrim" \| "error" \| "error-container" \| "surface-container-highest" \| "on-surface" \| "on-surface-va…` | Resolves every built-in color role of a scheme to hex. |
 | `SCHEME_VARIANTS` | variable | `readonly ["tonal-spot", "neutral", "vibrant", "expressive", "fidelity", "content", "monochrome", "rainbow", "fruit-salad"]` | Scheme variants ("styles") from MCU, as listed by the M3 color spec. |
 | `SchemeOptions` | interface | `{specVersion; platform}` | Options for `createScheme()` beyond variant, theme and contrast. |
 | `SchemePalettes` | interface | `{primary; secondary; tertiary; neutral; neutralVariant; error}` | Your own key colors for the scheme's tonal palettes (advanced.md "Adjust existing schemes"). Palettes you leave out come from the variant. |
@@ -5039,7 +5071,7 @@ The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON 
 | --- | --- | --- | --- |
 | `catalog` | variable | `Catalog<{ spec: SchemaType<"object", { root: SchemaType<"string", unknown>; elements: SchemaType<"record", SchemaType<"object", { type: SchemaType<"ref", string>; props: SchemaType<"propsOf", string>; children: SchemaType<"array", SchemaTy…` | The catalog: the components above, and no actions beyond the built-in ones. |
 | `ComponentName` | type | `keyof typeof COMPONENTS` | The name of a catalog component. |
-| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: stri…` | The catalog components: one per md-gb-* element and md-aria-tabpanel (the panel of md-gb-tab), plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
+| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ ariaLabel: ZodOptional<ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>>; color: ZodOptional<ZodUnion<readonly [ZodEnum<{ primary: "primary"; secondary: "…` | The catalog components: one per md-gb-* element and md-aria-tabpanel (the panel of md-gb-tab), plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
 | `HTML_ATTRIBUTES` | variable | `{ readonly id: "id"; readonly role: "role"; readonly alt: "alt"; readonly type: "type"; readonly popovertarget: "popovertarget"; readonly target: "target"; readonly lang: "lang"; readonly colspan: "colspan"; readonly rowspan: "rowspan"; re…` | The attributes the Html primitive sets, by prop: plain values. The href and src props are sanitized separately; ariaLabel is aria-label. |
 | `HTML_TAG` | variable | `"#html"` | The tag of the Html primitive: its `tag` prop names the native element. |
 | `HTML_TAGS` | variable | `readonly ["div", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6", "a", "button", "label", "section", "header", "footer", "nav", "main", "aside", "article", "ul", "ol", "li", "dl", "dt", "dd", "strong", "em", "b", "i", "small", "sub", "sup"…` | The native elements the Html primitive may create. |

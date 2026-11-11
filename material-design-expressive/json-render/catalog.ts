@@ -1952,13 +1952,15 @@ export const COMPONENTS = {
         id: dynamic(z.string()).optional(),
         /** How the children share the space along the stack. */
         justify: dynamic(z.enum(["start", "center", "end", "space-between"])).optional(),
+        /** Space above and below the children: a step of the spacing scale. In a card, which pads only its sides (16px), 200 gives its content the padding of cards.md Measurements on all sides. */
+        paddingBlock: dynamic(z.enum(["", "0", "25", "50", "75", "100", "125", "150", "175", "200", "250", "300", "400", "450", "500", "600", "700", "800", "900"])).optional(),
         /** Whether a row wraps onto more lines when its children don't fit. */
         wrap: dynamic(z.boolean()).optional(),
       })
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {align: "align", ariaLabel: "aria-label", direction: "direction", gap: "gap", id: "id", justify: "justify", wrap: "wrap"} as Record<string, string>,
+    attributes: {align: "align", ariaLabel: "aria-label", direction: "direction", gap: "gap", id: "id", justify: "justify", paddingBlock: "padding-block", wrap: "wrap"} as Record<string, string>,
     booleans: ["wrap"] as string[],
     description: "A column or row of children spaced with the M3 spacing scale. Slots: default. M3: grids-spacing.",
     deprecated: false,
@@ -2301,6 +2303,30 @@ export const COMPONENTS = {
     description: "A Material Design plain or rich tooltip. Slots: default, action, subhead. Events: close, closed, open, opened. M3: tooltips.",
     deprecated: false,
     spec: ["https://m3.material.io/components/tooltips"] as string[],
+  },
+  Typography: {
+    tag: "md-gb-typography",
+    props: z
+      .object({
+        /** The accessible name (aria-label). */
+        ariaLabel: dynamic(z.string()).optional(),
+        /** The color role of the text. */
+        color: dynamic(z.enum(["primary", "secondary", "tertiary", "inherit", "on-surface", "on-surface-variant", "error"])).optional(),
+        /** Whether to use the role's emphasized style (a heavier weight). */
+        emphasized: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
+        /** The role of the type scale. */
+        scale: dynamic(z.enum(["display-lg", "display-md", "display-sm", "headline-lg", "headline-md", "headline-sm", "title-lg", "title-md", "title-sm", "label-lg", "label-md", "label-sm", "body-lg", "body-md", "body-sm"])).optional(),
+      })
+      .strict(),
+    slots: ["default"] as string[],
+    events: [] as string[],
+    attributes: {ariaLabel: "aria-label", color: "color", emphasized: "emphasized", id: "id", scale: "scale"} as Record<string, string>,
+    booleans: ["emphasized"] as string[],
+    description: "Text in one role of the M3 type scale and a color role. Slots: default. M3: typography.",
+    deprecated: false,
+    spec: ["https://m3.material.io/styles/typography"] as string[],
   },
 };
 

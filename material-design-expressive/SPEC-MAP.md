@@ -63,6 +63,7 @@ pages listed.
 | - | `extras/demo/` | `md-gb-demo`, `md-gb-demo-code` | - | No M3 page: an example and its code, as documentation shows them. |
 | [typography](https://m3.material.io/styles/typography) | `extras/prose/` | `md-gb-prose` | - | No page of its own: long-form text styled with the type scale (Applying type). |
 | [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) | `extras/layout/` | `md-gb-grid`, `md-gb-stack` | - | No page of its own: the layout grid and spacing of the grids & spacing page. |
+| [typography](https://m3.material.io/styles/typography) | `extras/typography/` | `md-gb-typography` | - | No page of its own: text in a role of the type scale (Applying type). |
 | [shape](https://m3.material.io/styles/shape) | `extras/shape/` | `md-gb-shape` | - | No page of its own: the shape library and shape morph of the shape page. |
 | [loading-indicator](https://m3.material.io/components/loading-indicator) | `extras/pulltorefresh/` | `md-gb-pull-to-refresh` | [pull-to-refresh](../docs/components/pull-to-refresh.md) | No page of its own: the loading indicator page covers pull to refresh. |
 

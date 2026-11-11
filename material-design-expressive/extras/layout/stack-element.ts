@@ -97,6 +97,7 @@ export class StackElement extends LitElement {
     }
   `,
     unsafeCSS(STEPS.map((s) => `:host([gap='${s}']) { --_gap: var(--md-sys-space-${s}); }`).join('\n')),
+    unsafeCSS(STEPS.map((s) => `:host([padding-block='${s}']) { padding-block: var(--md-sys-space-${s}); }`).join('\n')),
   ];
 
   /** Children one below the other (`column`) or side by side (`row`). */
@@ -113,6 +114,13 @@ export class StackElement extends LitElement {
 
   /** Whether a row wraps onto more lines when its children don't fit. */
   @property({type: Boolean, reflect: true}) wrap = false;
+
+  /**
+   * Space above and below the children: a step of the spacing scale. In a
+   * card, which pads only its sides (16px), 200 gives its content the
+   * padding of cards.md Measurements on all sides.
+   */
+  @property({attribute: 'padding-block', reflect: true}) paddingBlock: SpaceStep | '' = '';
 
   protected override render() {
     return html`<slot></slot>`;

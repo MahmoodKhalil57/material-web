@@ -115,6 +115,14 @@ describe('md-gb-stack', () => {
     expect(b().top).toBeGreaterThan(a().top);
   });
 
+  it('pads its block edges with a step of the spacing scale', async () => {
+    const top = a().top - stack.getBoundingClientRect().top;
+    stack.paddingBlock = '200';
+    await stack.updateComplete;
+    expect(a().top - stack.getBoundingClientRect().top - top).toBe(space('200'));
+    expect(stack.getAttribute('padding-block')).toBe('200');
+  });
+
   it('aligns and justifies its children', async () => {
     stack.direction = 'row';
     stack.justify = 'end';

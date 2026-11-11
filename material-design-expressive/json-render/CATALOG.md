@@ -65,7 +65,7 @@ rules below.
 | `Snackbar` | `md-gb-snackbar` | 12 (+1 not JSON) | default, action, dismiss | close, closed, open, opened | [snackbar](https://m3.material.io/components/snackbar) |
 | `SnackbarHost` | `md-gb-snackbar-host` | 6 (+1 not JSON) | default | close, closed | [snackbar](https://m3.material.io/components/snackbar) |
 | `SplitButton` | `md-gb-split-button` | 5 | default, leading, trailing |   | [split-button](https://m3.material.io/components/split-button) |
-| `Stack` | `md-gb-stack` | 7 | default |   | [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) |
+| `Stack` | `md-gb-stack` | 8 | default |   | [grids-spacing](https://m3.material.io/foundations/layout/grids-spacing) |
 | `Switch` | `md-gb-switch` | 8 | off-icon, on-icon | change, input | [switch](https://m3.material.io/components/switch) |
 | `Tab` | `md-gb-tab` | 4 | default, badge, label |   | [tabs](https://m3.material.io/components/tabs) |
 | `TabPanels` | `md-gb-tab-panels` | 4 | default |   | [tabs](https://m3.material.io/components/tabs) |
@@ -74,6 +74,7 @@ rules below.
 | `TimePicker` | `md-gb-time-picker` | 27 |   | cancel, change, close, input, open | [time-pickers](https://m3.material.io/components/time-pickers) |
 | `Toolbar` | `md-gb-toolbar` | 10 | default, fab, leading, trailing |   | [toolbars](https://m3.material.io/components/toolbars) |
 | `Tooltip` | `md-gb-tooltip` | 14 | default, action, subhead | close, closed, open, opened | [tooltips](https://m3.material.io/components/tooltips) |
+| `Typography` | `md-gb-typography` | 5 | default |   | [typography](https://m3.material.io/styles/typography) |
 
 ## M3 rules
 

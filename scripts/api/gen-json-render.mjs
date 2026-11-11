@@ -124,7 +124,15 @@ function components(elements) {
         .join(' ');
       return {name: pascal(e.tag), tag: e.tag, props, skipped, slots, events, description, deprecated, spec, pages};
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((c, i, list) => {
+      // One component per name: a second one would overwrite the first in
+      // the catalog object (Text and Html are the primitives).
+      if (['Text', 'Html'].includes(c.name) || list[i - 1]?.name === c.name) {
+        throw new Error(`gen-json-render: <${c.tag}> is named ${c.name}, which the catalog already has; rename the element.`);
+      }
+      return c;
+    });
 }
 
 /** catalog.ts */

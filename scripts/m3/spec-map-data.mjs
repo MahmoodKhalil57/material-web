@@ -65,6 +65,8 @@ export const SPEC_MAP = [
     note: 'No page of its own: long-form text styled with the type scale (Applying type).'},
   {dir: 'extras/layout', pages: ['foundations/layout/grids-spacing'], docs: null,
     note: 'No page of its own: the layout grid and spacing of the grids & spacing page.'},
+  {dir: 'extras/typography', pages: ['styles/typography'], docs: null,
+    note: 'No page of its own: text in a role of the type scale (Applying type).'},
   {dir: 'extras/shape', pages: ['styles/shape'], docs: null,
     note: 'No page of its own: the shape library and shape morph of the shape page.'},
   {dir: 'extras/pulltorefresh', pages: ['components/loading-indicator'], docs: 'components/pull-to-refresh',
