@@ -2,7 +2,7 @@
   "stylesheet": "/fonts/gb/fonts.css",
   "preload": [
     "/fonts/gb/roboto-flex-6ccf7a9846bd.woff2",
-    "/fonts/gb/material-symbols-outlined-d2d48aff0393.woff2"
+    "/fonts/gb/material-symbols-outlined-7d969c3ebbce.woff2"
   ],
   "icons": [
     "accessibility_new",
@@ -175,6 +175,7 @@
     "splitscreen_right",
     "star",
     "stop",
+    "subdirectory_arrow_right",
     "sunny",
     "support_agent",
     "swap_horiz",

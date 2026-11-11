@@ -217,10 +217,20 @@ function shellSpec(page, pages, content) {
         ? [icon(`${key}-icon`, 'arrow_back'), text(`${key}-label`, `Previous: ${entry.title}`)]
         : [text(`${key}-label`, `Next: ${entry.title}`), icon(`${key}-icon`, 'arrow_forward')],
     });
+  // Previous at the start, next at the end (alone, next stays at the end).
   const pagerNav = add('pager', {
     type: 'Html',
     props: {tag: 'nav', ariaLabel: 'Previous and next pages'},
-    children: [...(prev ? [pagerLink('pager-prev', prev, 'prev')] : []), ...(next ? [pagerLink('pager-next', next, 'next')] : [])],
+    children: [
+      add('pager-row', {
+        type: 'Stack',
+        props: {direction: 'row', wrap: true, justifyContent: 'space-between', gap: '200'},
+        children: [
+          prev ? pagerLink('pager-prev', prev, 'prev') : add('pager-start', {type: 'Html', props: {tag: 'span'}}),
+          ...(next ? [pagerLink('pager-next', next, 'next')] : []),
+        ],
+      }),
+    ],
   });
   const article = [];
   // Route progress (client/navigation.ts sets `/route`), following the M3
@@ -244,42 +254,45 @@ function shellSpec(page, pages, content) {
   }
   article.push(add('content', {type: 'Html', props: {tag: 'div', id: 'gb-content'}}));
   article.push(pagerNav);
+  // The page in a single pane: the pane scaffold gives it the window
+  // margins of its window size class (16px compact, 24px and up).
   add('main', {
     type: 'Html',
     props: {tag: 'main', id: 'main'},
-    children: [add('article', {type: 'Prose', props: {}, children: article})],
+    children: [
+      add('panes', {
+        type: 'PaneScaffold',
+        props: {layout: 'supporting-pane', ariaLabel: page.title || 'Page'},
+        children: [add('article', {type: 'Prose', props: {}, children: article})],
+      }),
+    ],
   });
 
-  // Outline (large windows): the content's h2 and h3.
+  // Outline (large windows): the content's h2 and h3 as a single-action
+  // list of links (lists.md: navigation), one tab stop with arrow keys. An
+  // h3 entry has a leading arrow under its h2.
   const outline = outlineOf(content);
   const slots = {'top-app-bar': ['appbar'], 'navigation-rail': ['rail'], 'navigation-bar': ['bar']};
   if (outline.length) {
-    // h2 entries, each with its h3 entries in a nested list.
-    const items = [];
-    let parent;
-    for (const [i, h] of outline.entries()) {
-      const link = add(`outline-${i}-link`, {type: 'Html', props: {tag: 'a', href: `#${h.id}`, text: h.text}});
-      const item = add(`outline-${i}`, {type: 'Html', props: {tag: 'li'}, children: [link]});
-      if (h.level === 3 && parent) {
-        const sub = `${parent}-sub`;
-        if (!elements[sub]) {
-          add(sub, {type: 'Html', props: {tag: 'ul'}});
-          elements[parent].children.push(sub);
-        }
-        elements[sub].children.push(item);
-      } else {
-        items.push(item);
-        parent = item;
-      }
-    }
+    const items = outline.map((h, i) =>
+      add(`outline-${i}`, {
+        type: 'ListItem',
+        props: {href: `#${h.id}`},
+        children: [text(`outline-${i}-label`, h.text)],
+        ...(h.level === 3 ? {slots: {leading: [icon(`outline-${i}-icon`, 'subdirectory_arrow_right')]}} : {}),
+      }),
+    );
     add('outline', {
       type: 'Html',
       props: {tag: 'nav', ariaLabel: 'On this page'},
       children: [
-        add('outline-prose', {
-          type: 'Prose',
-          props: {},
-          children: [add('outline-title', {type: 'Html', props: {tag: 'p', text: 'On this page'}}), add('outline-list', {type: 'Html', props: {tag: 'ul'}, children: items})],
+        add('outline-stack', {
+          type: 'Stack',
+          props: {gap: '100', paddingBlock: '200'},
+          children: [
+            add('outline-title', {type: 'Typography', props: {scale: 'title-sm', color: 'on-surface-variant'}, children: [text('outline-title-text', 'On this page')]}),
+            add('outline-list', {type: 'List', props: {density: -2, ariaLabel: 'On this page'}, children: items}),
+          ],
         }),
       ],
     });

@@ -30,7 +30,10 @@ import '@material/web/components/navbar/md-gb-nav-bar.js';
 import '@material/web/components/navrail/md-gb-nav-rail-item.js';
 import '@material/web/components/navrail/md-gb-nav-rail.js';
 import '@material/web/extras/prose/md-gb-prose.js';
+import '@material/web/extras/layout/md-gb-stack.js';
 import '@material/web/extras/scaffold/md-gb-app-scaffold.js';
+import '@material/web/extras/scaffold/md-gb-pane-scaffold.js';
+import '@material/web/extras/typography/md-gb-typography.js';
 import '@material/web/styles/icons/md-gb-icon.js';
 
 import '@material/web/components/chip/md-gb-chip-set.js';

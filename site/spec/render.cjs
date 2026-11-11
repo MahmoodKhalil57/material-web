@@ -20,6 +20,7 @@
  * the library build).
  */
 
+const {readFileSync} = require('node:fs');
 const {join} = require('node:path');
 const {pathToFileURL} = require('node:url');
 const {shellSpec} = require('./shell.cjs');
@@ -46,6 +47,26 @@ async function library() {
 const contentStats = new Map();
 
 const CONTENT_SLOT = '<div id="gb-content"></div>';
+
+/**
+ * The shell's elements are defined by the client bundle (client/shell.ts),
+ * which imports each one: fails when the shell spec uses a component the
+ * bundle doesn't import (it would stay an unupgraded element).
+ */
+let bundled;
+function checkBundled(spec, components) {
+  bundled ??= new Set(
+    [...readFileSync(join(__dirname, '..', 'client', 'shell.ts'), 'utf8').matchAll(/import '@material\/web\/[^']*\/(md-gb-[a-z-]+)\.js';/g)].map((m) => m[1]),
+  );
+  const missing = new Set();
+  for (const el of Object.values(spec.elements)) {
+    const tag = components[el.type]?.tag;
+    if (tag && !tag.startsWith('#') && !bundled.has(tag)) missing.add(tag);
+  }
+  if (missing.size) {
+    throw new Error(`gbshell: the shell spec uses ${[...missing].join(', ')}, which client/shell.ts doesn't import.`);
+  }
+}
 const reported = new Set();
 
 function gbSpecShell(eleventyConfig) {
@@ -84,6 +105,7 @@ function gbSpecShell(eleventyConfig) {
 
     const page = {url: this.page?.url ?? '', title, description, section, ownTitle: Boolean(ownTitle), siteUrl: gbSite.url};
     const spec = shellSpec(page, pages, contentHtml);
+    checkBundled(spec, COMPONENTS);
 
     const {valid, issues} = checkSpec(spec);
     if (!valid) {
