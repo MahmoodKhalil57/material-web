@@ -27,7 +27,9 @@ Material Web 2.5 components are on `main`.
     element, function, constant, type, global stylesheet and design token a
     user can import, with the spec pages each implements and its JSDoc.
     `scripts/api/gen-api.mjs` writes both; `npm run gb:check -- --all` fails
-    when they are stale, and the npm package ships them.
+    when they are stale, and the npm package ships them. Every module ships
+    with its `.d.ts`; `scripts/api/check-package-types.mjs` type-checks the
+    built package as a user's project would on every package build.
   - `internal/`: plumbing with no docs page (form `behaviors/`, Sass `sass/ext`,
     TypeScript declarations in `types/`, controllers, events, directives).
     `testing/` holds the test helpers, and `skill/` is the agent skill for

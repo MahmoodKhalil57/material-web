@@ -175,6 +175,8 @@ await writeFile(
       // reachable only from the package's own modules.
       exports: {
         '.': {types: './all.d.ts', default: './all.js'},
+        // The docs import the root by its file name too.
+        './all.js': {types: './all.d.ts', default: './all.js'},
         './components/*': './components/*',
         './extras/*': './extras/*',
         './foundations/*': './foundations/*',
@@ -236,6 +238,10 @@ stylesheets). \`internal/\` is not public API.
 Built from material-web ${main.version} at commit ${git(['rev-parse', '--short', 'HEAD'])}.
 `,
 );
+
+// The package's types as a user's project sees them (every public module,
+// typed elements, internal/ blocked), before anything is committed.
+execFileSync(process.execPath, [join(ROOT, 'scripts', 'api', 'check-package-types.mjs'), OUT], {stdio: 'inherit'});
 
 // --- 3. The branch ---------------------------------------------------------
 
