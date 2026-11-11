@@ -87,6 +87,8 @@ async function visit(path) {
   }
 }
 await visit(ENTRY);
+// The json-render schema, catalog and renderer: a separate entry point.
+await visit('json-render/index.js');
 
 // The standalone modules the docs tell people to import (dynamic color, the
 // transitions, the checkbox group, the global stylesheets) are not all
@@ -180,6 +182,7 @@ await writeFile(
         './components/*': './components/*',
         './extras/*': './extras/*',
         './foundations/*': './foundations/*',
+        './json-render/*': './json-render/*',
         './styles/*': './styles/*',
         './package.json': './package.json',
       },

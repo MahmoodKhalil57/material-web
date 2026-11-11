@@ -187,18 +187,20 @@ export function readGbElements({files, tags = /^md-gb-/} = {}) {
       const flags = decls.map((d) => ts.getCombinedModifierFlags(d));
       if (flags.some((f) => f & (ts.ModifierFlags.Private | ts.ModifierFlags.Protected))) continue;
       if (flags.some((f) => f & ts.ModifierFlags.Static)) continue;
-      const reactive = decls.map(propertyDecorator).find(Boolean);
+      const reactive = decls.map(propertyDecorator).find(Boolean) ?? inheritedReactive(type, name);
       // A member documented only by `@deprecated <reason>` is described by it.
       const deprecatedTag = sym.getJsDocTags(checker).find((t) => t.name === 'deprecated');
       const deprecation = deprecatedTag ? `Deprecated. ${clean(ts.displayPartsToString(deprecatedTag.text))}`.trim() : '';
       const doc = clean(ts.displayPartsToString(sym.getDocumentationComment(checker))) || deprecation;
       if (reactive) {
         const primary = decls.find((d) => ts.isPropertyDeclaration(d) && d.initializer);
-        const propType = checker.typeToString(
-          checker.getTypeOfSymbolAtLocation(sym, decls[0]),
-          undefined,
-          ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope,
-        );
+        const symType = checker.getTypeOfSymbolAtLocation(sym, decls[0]);
+        // Enumerations are written as their literals (`"xs" | "sm"`), not
+        // their alias (`SliderSize`): manifest tools (editor autocomplete,
+        // the json-render catalog) need the values.
+        const propType =
+          literalUnion(symType) ??
+          checker.typeToString(symType, undefined, ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope);
         props.push({
           name,
           attribute: reactive.attribute === false ? '' : (reactive.attribute ?? name.toLowerCase()),
@@ -240,6 +242,82 @@ export function readGbElements({files, tags = /^md-gb-/} = {}) {
     if (/[\\/]internal[\\/]/.test(file) && !/(^|[\\/])(components|extras|styles)[\\/]/.test(file)) return true;
     if (/[\\/]foundations[\\/]accessibility[\\/]aria[\\/](aria|delegate)\.(ts|d\.ts)$/.test(file)) return true;
     return /[\\/]lit[\\/]|reactive-element/.test(file);
+  }
+
+  /**
+   * The `@property` options of a member that a class overrides without the
+   * decorator (`override get disabled()` over the form mixin's
+   * `@property get disabled()`): the nearest decorated declaration in the
+   * base classes and mixins.
+   */
+  function inheritedReactive(type, name) {
+    const seen = new Set();
+    const bases = (t) => {
+      if (t.isIntersection()) return t.types;
+      if (t.objectFlags & ts.ObjectFlags.ClassOrInterface) return checker.getBaseTypes(t);
+      return [];
+    };
+    const visit = (t) => {
+      for (const base of bases(t)) {
+        if (seen.has(base)) continue;
+        seen.add(base);
+        const prop = checker.getPropertyOfType(base, name);
+        const found =
+          prop?.declarations?.map(propertyDecorator).find(Boolean) ??
+          // A mixin is typed by an interface (`FormAssociated`); its class,
+          // with the decorated member, is in the same file.
+          prop?.declarations?.map((d) => mixinClassMember(d, name)).find(Boolean);
+        if (found) return found;
+        const deeper = visit(base);
+        if (deeper) return deeper;
+      }
+      return undefined;
+    };
+    return visit(type);
+  }
+
+  /**
+   * The `@property` options of `name` on a class (declaration or expression)
+   * in the file of an interface member `decl`, for mixins typed by an
+   * interface.
+   */
+  function mixinClassMember(decl, name) {
+    if (!ts.isPropertySignature(decl) || !ts.isInterfaceDeclaration(decl.parent)) return undefined;
+    let found;
+    ts.forEachChild(decl.getSourceFile(), function visit(node) {
+      if (found) return;
+      if ((ts.isClassDeclaration(node) || ts.isClassExpression(node)) && node.members) {
+        for (const member of node.members) {
+          if (member.name?.getText() === name) {
+            const options = propertyDecorator(member);
+            if (options) {
+              found = options;
+              return;
+            }
+          }
+        }
+      }
+      ts.forEachChild(node, visit);
+    });
+    return found;
+  }
+
+  /**
+   * A union of string or number literals (with `undefined`, `null` or a
+   * `number`/`string` member) as text, or undefined for any other type.
+   * `boolean` (`true | false`) stays `boolean`.
+   */
+  function literalUnion(type) {
+    if (!type.isUnion()) return undefined;
+    const parts = type.types;
+    const isLiteral = (t) => t.isStringLiteral() || t.isNumberLiteral();
+    const isExtra = (t) => t.flags & (ts.TypeFlags.Undefined | ts.TypeFlags.Null | ts.TypeFlags.Number | ts.TypeFlags.String);
+    if (!parts.some(isLiteral) || !parts.every((t) => isLiteral(t) || isExtra(t))) return undefined;
+    const order = (t) => (isLiteral(t) ? 0 : 1);
+    return [...parts]
+      .sort((a, b) => order(a) - order(b))
+      .map((t) => checker.typeToString(t))
+      .join(' | ');
   }
 
   /** The options of a `@property(...)` decorator on a declaration, or undefined. */

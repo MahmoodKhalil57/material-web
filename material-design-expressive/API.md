@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 217 |
+| Public modules | 223 |
 | Custom elements | 57 |
 | Classes | 97 |
-| Functions | 321 |
-| Constants and variables | 293 |
-| Types and interfaces | 303 |
+| Functions | 330 |
+| Constants and variables | 302 |
+| Types and interfaces | 313 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2073 of 2073 (100%) |
+| JSDoc coverage | 2133 of 2133 (100%) |
 
 ## Contents
 
@@ -29,6 +29,7 @@ source cites (`// spec-labels:`).
 - [Extras](#extras)
 - [Foundations](#foundations)
 - [Styles](#styles)
+- [json-render](#json-render)
 - [All](#all)
 - [Global stylesheets](#global-stylesheets)
 - [Design tokens](#design-tokens)
@@ -63,8 +64,8 @@ A Material Design app bar component.
 | `scrollBehavior` | `scroll-behavior` (reflects) | `"hide" \| "compress"` |   | How the app bar reacts to scrolling: `hide` (hide on scroll down, reveal on scroll up) or `compress` (medium and large flexible app bars become small until scrolled back to the top). |
 | `scrolled` | `scrolled` (reflects) | `boolean` | `false` | Whether the app bar is in its scrolled state. Defaults to `false`. A medium or large flexible app bar in its scrolled state is shown as a small one (app-bars.md: "When scrolled, medium flexible and large flexible app bars can transform into small app bars"). |
 | `scrollTarget` | `scroll-target` | `string` | `''` | The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. |
-| `size` | `size` (reflects) | `AppBarSize` | `'sm'` | The size of the app bar (`sm`, `md`, `lg`). Defaults to `sm`. |
-| `variant` | `variant` (reflects) | `AppBarVariant` | `'standard'` | The behavioral variant of the app bar (`standard` or `search`). Defaults to `standard`. |
+| `size` | `size` (reflects) | `"sm" \| "md" \| "lg"` | `'sm'` | The size of the app bar (`sm`, `md`, `lg`). Defaults to `sm`. |
+| `variant` | `variant` (reflects) | `"standard" \| "search"` | `'standard'` | The behavioral variant of the app bar (`standard` or `search`). Defaults to `standard`. |
 
 | Event | Type | Description |
 | --- | --- | --- |
@@ -201,8 +202,10 @@ A Material Design button.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `color` | `color` | `"filled" \| "elevated" \| "tonal" \| "outlined" \| "text"` | `'text'` | The color of the button. |
+| `disabled` | `disabled` | `boolean` |   | Whether or not the element is disabled. |
 | `download` | `download` | `string` | `''` | The filename to use when downloading the linked resource. If not specified, the browser will determine a filename. This is only applicable when the button is used as a link (`href` is set). |
 | `href` | `href` | `string` | `''` | The URL that the link button points to. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission. |
 | `referrerPolicy` | `referrerpolicy` | `string` | `''` | Sets the underlying `HTMLAnchorElement`'s `referrerpolicy` attribute when `href` is set. |
 | `rel` | `rel` | `string` | `''` | Sets the underlying `HTMLAnchorElement`'s `rel` attribute when `href` is set. |
 | `selected` | `selected` (reflects) | `boolean` | `false` | Whether or not the button is selected, when `type="toggle"`. TODO: replace reflected `[selected]` with `:state(selected)` |
@@ -212,6 +215,7 @@ A Material Design button.
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to display the linked `href` URL for a link button. Common options include `_blank` to open in a new tab. |
 | `type` | `type` (reflects) | `string` |   | A string indicating the behavior of the button. - "submit" (default): A button that submits its associated form. - "reset": A button that resets its associated form. - "button": A normal button. - "toggle": A toggle button using the `selected` property. - "link": An anchor link (`<a>`). Type is always "link" when `href` is set. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Set when the icon has no filled version: a selected toggle button then shows the icon in semibold weight instead of filled. |
+| `value` | `value` (reflects) | `string` |   | The value of the button. When combined with a `name`, the submitting button's name/value will be added to the form. |
 
 | Event | Type | Description |
 | --- | --- | --- |
@@ -270,13 +274,13 @@ A Material Design button group.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `Density` |   | The density of the buttons inside, from 0 (default) to -3. Each step down removes 4px from the buttons' height (button-groups.md: "Button groups adapt to the height of the buttons inside, including when density is applied"); touch targets stay 48px. A button's own non-zero `density` wins. Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density of the buttons inside, from 0 (default) to -3. Each step down removes 4px from the buttons' height (button-groups.md: "Button groups adapt to the height of the buttons inside, including when density is applied"); touch targets stay 48px. A button's own non-zero `density` wins. Values are clamped to that range. |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the button group is disabled. |
 | `overflowMenu` | `overflow-menu` (reflects) | `boolean` | `false` | Whether the buttons at the trailing edge that do not fit collapse into a trailing overflow menu, and come back when the group has room again (button-groups.md, Adaptive design: "Buttons at the trailing edge of the button group can be customized to collapse into an overflow menu at smaller breakpoints, and become visible again at larger sizes."). The group is as wide as its container allows: give it a width, or put it in a narrower container, to make buttons overflow. Choosing a menu entry clicks the original button. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether selection is required in single-select mode. |
-| `resizing` | `resizing` (reflects) | `ButtonGroupResizing` | `""` | How the group and its buttons resize (button-groups.md, Resizing). `fixed`: every button keeps the width its own size and width give it. `flexible`: the group fills the width of its container and its buttons grow with it; an icon button does not stretch past its set width, and a button with `resizing="fixed"` keeps its width. A button with `resizing="flexible"` in a fixed group grows when the group is given more width. Unset: a connected group is flexible (it spans its surface), a standard group is fixed. |
-| `selection` | `selection` (reflects) | `ButtonGroupSelection` | `"none"` | The selection mode. |
-| `variant` | `variant` (reflects) | `ButtonGroupVariant` | `"standard"` | The visual variant of the button group. |
+| `resizing` | `resizing` (reflects) | `"" \| "fixed" \| "flexible"` | `""` | How the group and its buttons resize (button-groups.md, Resizing). `fixed`: every button keeps the width its own size and width give it. `flexible`: the group fills the width of its container and its buttons grow with it; an icon button does not stretch past its set width, and a button with `resizing="fixed"` keeps its width. A button with `resizing="flexible"` in a fixed group grows when the group is given more width. Unset: a connected group is flexible (it spans its surface), a standard group is fixed. |
+| `selection` | `selection` (reflects) | `"none" \| "single" \| "multiple"` | `"none"` | The selection mode. |
+| `variant` | `variant` (reflects) | `"standard" \| "connected"` | `"standard"` | The visual variant of the button group. |
 
 | Event | Type | Description |
 | --- | --- | --- |
@@ -337,7 +341,7 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `CardColor` | `'outlined'` | The color of the card. |
+| `color` | `color` | `"filled" \| "elevated" \| "outlined"` | `'outlined'` | The color of the card. |
 | `disabled` | `disabled` | `boolean` | `false` | Whether the card is disabled. |
 | `dragged` | `dragged` (reflects) | `boolean` | `false` | Whether the card is picked up and being dragged (raised elevation). The app moves the card. Spec Cards > Accessibility > Dragging and dismissing (WCAG 2.5.7): also offer a single-pointer alternative, e.g. a menu opened by tapping a "more" button or pressing and holding the card, with move and delete actions (see the "Reorder (drag or menu)" demo). Don't let the menu cover the card. |
 | `href` | `href` | `string` | `''` | Makes an interactive card a link (spec: directly actionable cards have the button or link role). |
@@ -396,10 +400,10 @@ A Material Design carousel.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `alignment` | `alignment` (reflects) | `CarouselAlignment` | `'start'` | Start or center alignment of the hero layout. |
-| `layout` | `layout` (reflects) | `CarouselLayout` | `'multi-browse'` | The carousel layout. |
-| `orientation` | `orientation` (reflects) | `CarouselOrientation` |   | The scrolling axis. Defaults to vertical for the full-screen layout and horizontal for the others. |
-| `scrollMode` | `scroll-mode` (reflects) | `CarouselScrollMode` |   | `snap` snaps items into the layout when released; `free` lets them stop anywhere. Defaults to `free` for uncontained layouts and `snap` for the others. |
+| `alignment` | `alignment` (reflects) | `"start" \| "center"` | `'start'` | Start or center alignment of the hero layout. |
+| `layout` | `layout` (reflects) | `"multi-browse" \| "uncontained" \| "uncontained-multi-aspect" \| "hero" \| "full-sc…` | `'multi-browse'` | The carousel layout. |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` |   | The scrolling axis. Defaults to vertical for the full-screen layout and horizontal for the others. |
+| `scrollMode` | `scroll-mode` (reflects) | `"snap" \| "free"` |   | `snap` snaps items into the layout when released; `free` lets them stop anywhere. Defaults to `free` for uncontained layouts and `snap` for the others. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -563,9 +567,11 @@ A Material Design component.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `checked` | `checked` | `boolean` | `false` | Whether or not the checkbox is selected. |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3. Each step down removes 4px from the checkbox's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. checkbox.md: don't apply density by default; let people opt in to a denser layout. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the checkbox's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. checkbox.md: don't apply density by default; let people opt in to a denser layout. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` | `boolean` | `false` | Whether or not the checkbox is invalid. |
 | `indeterminate` | `indeterminate` | `boolean` | `false` | Whether or not the checkbox is indeterminate. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#indeterminate_state_checkboxes |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `required` | `required` | `boolean` | `false` | When true, require the checkbox to be selected when participating in form submission. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#validation |
 | `value` | `value` | `string` | `'on'` | The value of the checkbox that is submitted with a form when selected. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value |
 
@@ -631,8 +637,8 @@ A Material Design Expressive Chip component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `ChipColor` | `"flat"` | Deprecated. Use `elevated`. `color="elevated"` sets the elevated style. |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3. Each step down removes 4px from the container height (32px); the label and icons keep their size and the touch target stays 48px (chips.md: "regardless of placement or density"). Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-chip-set`. chips.md: don't apply density by default; let people opt in to a denser layout. |
+| `color` | `color` | `"filled" \| "elevated" \| "tonal" \| "outlined" \| "flat"` | `"flat"` | Deprecated. Use `elevated`. `color="elevated"` sets the elevated style. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the container height (32px); the label and icons keep their size and the touch target stays 48px (chips.md: "regardless of placement or density"). Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-chip-set`. chips.md: don't apply density by default; let people opt in to a denser layout. |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the chip is disabled. |
 | `dragged` | `dragged` (reflects) | `boolean` | `false` | Whether the chip is being dragged (spec dragged state elevation). |
 | `editable` | `editable` (reflects) | `boolean` | `false` | Whether the text of an input chip can be edited (chips.md "Input chips": "Input chips can support editing to change their contents, such as correcting an email address"). Editing starts by interacting with the chip: a second click, Enter or Space on the selected chip, or a double click. Committing with Enter or by leaving the field changes the chip's text and fires `edit`; Escape (or emptying the text) keeps the old text. |
@@ -646,7 +652,7 @@ A Material Design Expressive Chip component.
 | `selected` | `selected` (reflects) | `boolean` | `false` | Whether the filter (or input) chip is selected. |
 | `softDisabled` | `soft-disabled` (reflects) | `boolean` | `false` | Whether the chip is soft-disabled (`aria-disabled="true"` while preserving focusability). |
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `""` | Where to display the linked `href` URL for a link chip. |
-| `type` | `type` | `ChipType` | `"assist"` | The chip type: `assist` (default), `filter`, `input` or `suggestion`. |
+| `type` | `type` | `"assist" \| "filter" \| "input" \| "suggestion" \| "action" \| "toggle" \| "link"` | `"assist"` | The chip type: `assist` (default), `filter`, `input` or `suggestion`. |
 | `value` | `value` | `string` |   | The value a chip set submits while the chip is selected. Defaults to the label text, like a native `<option>`. |
 
 | Method | Signature | Description |
@@ -691,9 +697,11 @@ A Material Design Expressive chip set.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `Density` |   | The density of the chips, from 0 (default) to -3: each step down removes 4px from the chips' height. A chip's own non-zero `density` wins. Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density of the chips, from 0 (default) to -3: each step down removes 4px from the chips' height. A chip's own non-zero `density` wins. Values are clamped to that range. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `required` | `required` (reflects) | `boolean` | `false` | Single-select: the selected chip can't be unselected. |
-| `selection` | `selection` (reflects) | `SelectionMode` | `"multiple"` | How many filter chips can be selected: `none`, `single` or `multiple`. |
+| `selection` | `selection` (reflects) | `"none" \| "single" \| "multiple"` | `"multiple"` | How many filter chips can be selected: `none`, `single` or `multiple`. |
 | `singleLine` | `single-line` (reflects) | `boolean` | `false` | Keep the chips on one line and scroll horizontally instead of wrapping. |
 
 | Method | Signature | Description |
@@ -790,7 +798,8 @@ A Material Design date picker (docked or modal, single date or range).
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `clearable` | `clearable` | `boolean` | `false` | Shows a Clear button that removes the selection. |
-| `density` | `density` (reflects) | `Density` |   | The density of the picker's text fields (the docked field and the modal input mode's fields), from 0 (default) to -3, as `md-gb-text-field` `density`. Values are clamped to that range. The calendar itself never gets denser (date-pickers.md, Accessibility: "Interactive targets for all elements meet Material's 48x48dp minimum touch target requirement. Increasing density would negatively impact accessibility by limiting tappable/clickable targets"): its dates, menus and buttons keep their size, including inside a dense container. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density of the picker's text fields (the docked field and the modal input mode's fields), from 0 (default) to -3, as `md-gb-text-field` `density`. Values are clamped to that range. The calendar itself never gets denser (date-pickers.md, Accessibility: "Interactive targets for all elements meet Material's 48x48dp minimum touch target requirement. Increasing density would negatively impact accessibility by limiting tappable/clickable targets"): its dates, menus and buttons keep their size, including inside a dense container. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` (reflects) | `boolean` | `false` | Forces the error state of the docked field. |
 | `errorText` | `error-text` | `string` | `''` | The message shown on the docked field while `error` is set. |
 | `firstDayOfWeek` | `first-day-of-week` | `number` | `-1` | The first day of the week, 0 (Sunday) to 6 (Saturday). -1 (default) uses the locale's. |
@@ -802,7 +811,8 @@ A Material Design date picker (docked or modal, single date or range).
 | `locale` | `locale` | `string` | `''` | A BCP 47 locale. Defaults to the document's `lang`, else the browser's. |
 | `max` | `max` | `string` | `''` | The latest selectable date (ISO). |
 | `min` | `min` | `string` | `''` | The earliest selectable date (ISO). |
-| `mode` | `mode` (reflects) | `DatePickerMode` | `'picker'` | Modal: shows the calendar (`picker`) or the date input (`input`). |
+| `mode` | `mode` (reflects) | `"input" \| "picker"` | `'picker'` | Modal: shows the calendar (`picker`) or the date input (`input`). |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `open` | `open` (reflects) | `boolean` |   | Whether the popup (docked) or dialog (modal) is open. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips animations. |
 | `range` | `range` (reflects) | `boolean` | `false` | Selects a start and end date. |
@@ -810,7 +820,7 @@ A Material Design date picker (docked or modal, single date or range).
 | `strings` |   | `Partial<DatePickerStrings>` | `{}` | Overrides for the user-facing strings. |
 | `supportingText` | `supporting-text` | `string` | `''` | Docked: the field's supporting text. Defaults to the date format, e.g. MM/DD/YYYY. |
 | `value` | `value` | `string` | `''` | The committed value: an ISO date (`YYYY-MM-DD`), or an ISO interval (`start/end`) when `range` is set. Empty when nothing is selected. |
-| `variant` | `variant` (reflects) | `DatePickerVariant` | `'docked'` | `docked` (default) or `modal`. |
+| `variant` | `variant` (reflects) | `"docked" \| "modal"` | `'docked'` | `docked` (default) or `modal`. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -943,7 +953,7 @@ A Material Design dialog component.
 | `open` | `open` (reflects) | `boolean` |   | Opens the dialog when set to `true` and closes it when set to `false`. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips the opening and closing animations. |
 | `returnValue` |   | `string` | `''` | The dialog's return value, usually which button closed it. Set by `close(returnValue)` and by `<form method="dialog">` submitters' `value`. Canceling (Escape, scrim, close button) leaves it unchanged. https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/returnValue |
-| `type` | `type` | `DialogType` | `''` | The dialog's accessibility role. `alert` (`role="alertdialog"`) or `dialog` (`role="dialog"`). When empty, basic dialogs are alert dialogs, as the spec asks for on the web, and full-screen dialogs are dialogs. |
+| `type` | `type` | `"" \| "alert" \| "dialog"` | `''` | The dialog's accessibility role. `alert` (`role="alertdialog"`) or `dialog` (`role="dialog"`). When empty, basic dialogs are alert dialogs, as the spec asks for on the web, and full-screen dialogs are dialogs. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -1064,11 +1074,11 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `FabColor` | `'primary-container'` | The color set: `primary-container` (default), `secondary-container`, `tertiary-container`, or the stronger `primary`, `secondary` and `tertiary`. |
+| `color` | `color` | `"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertia…` | `'primary-container'` | The color set: `primary-container` (default), `secondary-container`, `tertiary-container`, or the stronger `primary`, `secondary` and `tertiary`. |
 | `expanded` | `expanded` | `boolean` | `true` | Whether the extended FAB shows its label. When `false`, the label collapses and the FAB becomes an icon-only FAB. Set the attribute to `expanded="false"` to collapse it from markup. |
 | `label` | `label` | `string` | `''` | The extended FAB's label. Without one, the FAB is icon-only. |
 | `scrollTarget` | `scroll-target` | `string` | `''` | Opt-in: the `id` of a scroll container (in the same root), or `window`. The FAB collapses while it scrolls down and expands while it scrolls up. |
-| `size` | `size` | `FabSize` | `'default'` | The size. With a `label`, `default`, `md` and `lg` are the small, medium and large extended FABs. `sm` is the small (40dp) icon-only FAB, which the spec no longer recommends. |
+| `size` | `size` | `"sm" \| "md" \| "lg" \| "default"` | `'default'` | The size. With a `label`, `default`, `md` and `lg` are the small, medium and large extended FABs. `sm` is the small (40dp) icon-only FAB, which the spec no longer recommends. |
 | `tooltip` | `tooltip` | `boolean` | `true` | Shows a tooltip with the FAB's name (the `label`, else `aria-label`) on hover and keyboard focus. On by default for an icon-only FAB, whose icon has no visible text (floating-action-button.md: on web, a FAB should display a tooltip with its text label); `tooltip="false"` turns it off. |
 
 | Slot | Description |
@@ -1125,10 +1135,10 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `align` | `align` | `FabMenuAlign` | `FAB_MENU_ALIGNS.end` | The alignment of the items. Defaults to the end, as the FAB. |
-| `color` | `color` | `FabMenuColor` | `FAB_MENU_COLORS.primary` | The color of the FAB, close button and items. |
+| `align` | `align` | `"start" \| "end"` | `FAB_MENU_ALIGNS.end` | The alignment of the items. Defaults to the end, as the FAB. |
+| `color` | `color` | `"primary" \| "secondary" \| "tertiary"` | `FAB_MENU_COLORS.primary` | The color of the FAB, close button and items. |
 | `open` | `open` (reflects) | `boolean` | `false` | Whether the menu is open. |
-| `size` | `size` | `FabSize` | `'default'` | The size of the FAB. The close button is always the same size. |
+| `size` | `size` | `"sm" \| "md" \| "lg" \| "default"` | `'default'` | The size of the FAB. The close button is always the same size. |
 
 | Event | Type | Description |
 | --- | --- | --- |
@@ -1226,21 +1236,24 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `IconButtonColor` | `'standard'` | The color of the button. |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3. Each step down removes 4px from the container height (and the width of a default-width button); the icon keeps its size and the touch target stays at least 48px. Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-button-group`. icon-buttons.md: don't apply density by default; let people opt in to a denser layout. |
+| `color` | `color` | `"standard" \| "filled" \| "tonal" \| "outlined"` | `'standard'` | The color of the button. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the container height (and the width of a default-width button); the icon keeps its size and the touch target stays at least 48px. Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-button-group`. icon-buttons.md: don't apply density by default; let people opt in to a denser layout. |
+| `disabled` | `disabled` | `boolean` |   | Whether or not the element is disabled. |
 | `download` | `download` | `string` | `''` | The filename to use when downloading the linked resource. |
 | `href` | `href` | `string` | `''` | The URL that the link button points to. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission. |
 | `referrerPolicy` | `referrerpolicy` | `string` | `''` | Sets the underlying `HTMLAnchorElement`'s `referrerpolicy` attribute when `href` is set. |
 | `rel` | `rel` | `string` | `''` | Sets the underlying `HTMLAnchorElement`'s `rel` attribute when `href` is set. |
 | `selected` | `selected` (reflects) | `boolean` | `false` | Whether or not the button is selected, when `type="toggle"`. TODO: replace reflected `[selected]` with `:state(selected)` |
-| `size` | `size` | `IconButtonSize` | `'sm'` | The size of the button. |
+| `size` | `size` | `"sm" \| "md" \| "lg" \| "xs" \| "xl"` | `'sm'` | The size of the button. |
 | `softDisabled` | `soft-disabled` (reflects) | `boolean` | `false` | Whether or not the button is "soft-disabled" (disabled but still focusable). |
 | `square` | `square` | `boolean` | `false` | Changes the shape of the button to be square. |
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to display the linked `href` URL for a link button. |
 | `tooltip` | `tooltip` (reflects) | `boolean` | `false` | Shows a tooltip with the button's accessibility label (`aria-label`) on hover and keyboard focus. The label should describe the action, not name the icon. |
 | `type` | `type` (reflects) | `string` |   | A string indicating the behavior of the button. - "submit" (default): A button that submits its associated form. - "reset": A button that resets its associated form. - "button": A normal button. - "toggle": A toggle button using the `selected` property. - "link": An anchor link (`<a>`). Type is always "link" when `href` is set. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Set when the icon has no filled version: a selected toggle button then shows the icon in semibold weight instead of filled. |
-| `width` | `width` | `IconButtonWidth` | `''` | Changes the width of the button. |
+| `value` | `value` (reflects) | `string` |   | The value of the button. When combined with a `name`, the submitting button's name/value will be added to the form. |
+| `width` | `width` | `"" \| "narrow" \| "wide"` | `''` | Changes the width of the button. |
 
 | Event | Type | Description |
 | --- | --- | --- |
@@ -1309,7 +1322,7 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `ListDensity` |   | The density, from 0 (default) to -3. Each step down removes 4px from the items' height (spec foundations Density: "decreasing the top and bottom padding or overall height by 4dp"). Values are clamped to that range. Like `md-gb-segmented-button-set`'s `density`. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the items' height (spec foundations Density: "decreasing the top and bottom padding or overall height by 4dp"). Values are clamped to that range. Like `md-gb-segmented-button-set`'s `density`. |
 | `reorderable` | `reorderable` (reflects) | `boolean` | `false` | Whether the items can be reordered. Shows a drag handle on every item. |
 | `reorderMessages` |   | `ListReorderMessages` | `LIST_REORDER_MESSAGES` | The screen reader announcements made while reordering. |
 | `segmented` | `segmented` | `boolean` | `false` | Whether to render the list with segmented items. |
@@ -1360,7 +1373,7 @@ A Material Design component.
 | `noRevealButton` | `no-reveal-button` | `boolean` | `false` | Hides the "more" button that reveals the swipe actions with a tap. Only set it when the app offers another single-pointer way to reach them (e.g. a menu), as the spec requires one. |
 | `reorderable` | `reorderable` (reflects) | `boolean` | `false` | Whether to show a drag handle to reorder the item within its `md-gb-list`. Set by the list when the list is `reorderable`. |
 | `revealButtonLabel` | `reveal-button-label` | `string` | `"More actions"` | The accessible label prefix of the "more" button; the item's label text is appended (e.g. "More actions Apples"). |
-| `revealed` | `revealed` (reflects) | `ListItemRevealed` | `""` | The side whose swipe actions are revealed, or `''` when closed. |
+| `revealed` | `revealed` (reflects) | `"" \| "leading" \| "trailing"` | `""` | The side whose swipe actions are revealed, or `''` when closed. |
 | `rovingTabIndex` |   | `number` | `null` | Set by a parent `md-gb-list` to make the list a single tab stop with arrow-key navigation (roving tabindex, lists.md Keyboard navigation): `0` on the list's tab stop, `-1` on the other items, `null` (default) for an item outside a list. While set, the item's other controls (drag handle, "more" and move buttons, actions) leave the tab order and are reached with Left/Right. |
 | `selectable` |   | `boolean` | `false` | Whether the item shows a selection checkbox (hover, or whenever `selectionVisible`). Set by a `selectable` parent `md-gb-list`. |
 | `selectionVisible` | `selection-visible` (reflects) | `boolean` | `false` | Whether the selection checkbox is always shown: the list sets it when selection is the primary activity or once an item is selected (selection.md, "Click"). Otherwise the checkbox shows on hover. |
@@ -1526,11 +1539,11 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `MenuColor` | `MENU_COLORS.standard` | The color style: `standard` (surface-based) or `vibrant` (tertiary). |
+| `color` | `color` | `"standard" \| "vibrant"` | `MENU_COLORS.standard` | The color style: `standard` (surface-based) or `vibrant` (tertiary). |
 | `contextFor` | `context-for` | `string` | `''` | The id of an element (in the same root) that opens this menu as a context menu on a secondary click, the context menu key or a long press (menus.md "Context menus ... usually open with a secondary click"; "Performs a specific action to trigger the menu, like right-click or press-and-hold"). |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3 (menus.md "Density": "On web only, density levels control the spacing between elements. Increasing density decreases the top and bottom padding"). Each step removes 4px from the items' height; submenus inherit it. Values are clamped to that range. Dense items are smaller than the 48px recommended target, so don't apply density by default; let people opt in (grids-spacing.md "Avoid applying component scaling by default"). |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3 (menus.md "Density": "On web only, density levels control the spacing between elements. Increasing density decreases the top and bottom padding"). Each step removes 4px from the items' height; submenus inherit it. Values are clamped to that range. Dense items are smaller than the 48px recommended target, so don't apply density by default; let people opt in (grids-spacing.md "Avoid applying component scaling by default"). |
 | `filterFor` | `filter-for` | `string` | `''` | The id of a text field (in the same root) the menu is attached to. As the person types in it, the menu opens (without taking focus) and shows only the items whose label contains the text, case-insensitively (menus.md "Filtering": "As someone types, the list of menu options filters to show relevant results"). The remaining items ease into their new position ("Menu items ease into their new position as the menu is filtered"), unless motion is reduced. Fires `filter` with the query. |
-| `layout` | `layout` (reflects) | `MenuLayout` | `'standard'` | The layout: `standard` items on one surface, or `grouped` `md-gb-menu-group`s on separate surfaces with gaps between them. |
+| `layout` | `layout` (reflects) | `"standard" \| "grouped"` | `'standard'` | The layout: `standard` items on one surface, or `grouped` `md-gb-menu-group`s on separate surfaces with gaps between them. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -1562,7 +1575,7 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `checkable` | `checkable` (reflects) | `MenuItemCheckable` | `null` | Whether the group's items can be checked: `single` (one at a time, like radio buttons) or `multiple` (like checkboxes). Unset, items aren't checkable. |
+| `checkable` | `checkable` (reflects) | `"single" \| "multiple"` | `null` | Whether the group's items can be checked: `single` (one at a time, like radio buttons) or `multiple` (like checkboxes). Unset, items aren't checkable. |
 | `label` | `label` | `string` | `''` | The section label shown above the group's items. |
 
 | Slot | Description |
@@ -1682,7 +1695,7 @@ A Material Design gBreeze navigation bar custom element.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `autoSelect` | `autoselect` | `boolean` | `false` | Whether or not to automatically select a tab when it is focused. |
-| `itemLayout` | `item-layout` (reflects) | `NavBarLayout` | `'vertical'` | The layout orientation of items: `vertical`, `horizontal`, or `auto` (vertical in compact windows, horizontal from medium windows, 600px). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical" \| "auto"` | `'vertical'` | The layout orientation of items: `vertical`, `horizontal`, or `auto` (vertical in compact windows, horizontal from medium windows, 600px). |
 | `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | Orientation of the tablist ('horizontal' or 'vertical'). |
 | `scrollBehavior` | `scroll-behavior` (reflects) | `"hide"` |   | How the bar reacts to scrolling: `hide` hides it on scroll down. |
 | `scrollTarget` | `scroll-target` | `string` | `''` | The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. |
@@ -1722,9 +1735,10 @@ A Material Design gBreeze navigation bar item custom element.
 | `badge` | `badge` | `string` | `''` | Optional badge text (or 'dot' / 'true' for a small dot badge). |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the navigation bar item is disabled. |
 | `href` | `href` | `string` | `''` | The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. |
-| `itemLayout` | `item-layout` (reflects) | `NavBarItemLayout` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
 | `label` | `label` | `string` | `''` | Optional label text if not provided via default slot. |
 | `rel` | `rel` | `string` | `''` | The link's `rel` attribute, when `href` is set. |
+| `selected` | `selected` (reflects) | `boolean` |   | Whether the tab is selected. |
 | `tabpanel` | `tabpanel` (reflects) | `string` |   | ID of the associated `md-aria-tabpanel` element. |
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to open the linked `href`, e.g. `_blank`. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Whether the icon has no filled style. The active destination then uses the semibold icon weight instead of the filled icon. |
@@ -1922,16 +1936,17 @@ A Material Design navigation rail custom element.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `alignment` | `alignment` (reflects) | `NavRailAlignment` | `'top'` | Vertical alignment of items ('top', 'center', or 'bottom'). |
+| `alignment` | `alignment` (reflects) | `"center" \| "top" \| "bottom"` | `'top'` | Vertical alignment of items ('top', 'center', or 'bottom'). |
 | `autoSelect` | `autoselect` | `boolean` | `false` | Whether or not to automatically select a tab when it is focused. |
 | `collapsible` | `collapsible` (reflects) | `boolean` | `false` | Whether the navigation rail renders a built-in expand/collapse menu button in the header when no toggle button is slotted into `slot="header"`. |
 | `divider` | `divider` (reflects) | `boolean` | `false` | Whether a vertical divider marks the edge of the rail next to the app's content. |
 | `elevated` | `elevated` (reflects) | `boolean` | `false` | Whether the rail is elevated to level 1, to distinguish it from content that scrolls underneath it. |
 | `expanded` | `expanded` (reflects) | `boolean` | `false` | Whether the navigation rail is expanded to show horizontal items. |
 | `hideWhenCollapsed` | `hide-when-collapsed` (reflects) | `boolean` | `false` | Hide when collapsed (navigation-rail.md): the collapsed rail is not shown and takes no space, so the body content fills in. The expanded rail (always modal in this mode) appears over the content when the app's menu button calls `expand()` or `toggle()`; keep that menu button accessible. |
-| `itemLayout` | `item-layout` (reflects) | `NavRailItemLayout` | `'vertical'` | The layout orientation of items ('vertical' or 'horizontal'). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of items ('vertical' or 'horizontal'). |
 | `modal` | `modal` (reflects) | `boolean` | `false` | Whether the expanded navigation rail is modal: it opens over the content with a scrim, with modal elevation and shape. |
 | `narrow` | `narrow` (reflects) | `boolean` | `false` | Whether the collapsed rail uses the narrow width (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp). |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | Orientation of the tablist ('horizontal' or 'vertical'). |
 | `selectedIndex` | `selected-index` | `number` |   | The 0-based index of the currently active navigation rail item. Alias for `selectedTabIndex`. |
 | `selectedTabIndex` | `selectedtabindex` | `number` |   | The index of the currently selected tab. |
 
@@ -1980,10 +1995,11 @@ A Material Design navigation rail item custom element.
 | `badge` | `badge` | `string` | `''` | Optional badge text (or 'dot' / 'true' for a small dot badge). |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the navigation rail item is disabled. |
 | `href` | `href` | `string` | `''` | The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. |
-| `itemLayout` | `item-layout` (reflects) | `NavRailItemLayout` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
 | `label` | `label` | `string` | `''` | Optional label text if not provided via default slot. |
 | `rel` | `rel` | `string` | `''` | The link's `rel` attribute, when `href` is set. |
 | `secondary` | `secondary` (reflects) | `boolean` | `false` | Whether the destination is secondary: it shows only while the rail is expanded. |
+| `selected` | `selected` (reflects) | `boolean` |   | Whether the tab is selected. |
 | `tabpanel` | `tabpanel` (reflects) | `string` |   | ID of the associated `md-aria-tabpanel` element. |
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to open the linked `href`, e.g. `_blank`. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Whether the icon has no filled style. The active destination then uses the semibold icon weight instead of the filled icon. |
@@ -2120,7 +2136,9 @@ A Material Design component.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `checked` | `checked` | `boolean` |   | Whether or not the radio is selected. |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3. Each step down removes 4px from the radio's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. radio-button.md: don't apply density by default; let people opt in to a denser layout. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the radio's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. radio-button.md: don't apply density by default; let people opt in to a denser layout. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `required` | `required` | `boolean` | `false` | Whether or not the radio is required. If any radio is required in a group, all radios are implicitly required. |
 | `value` | `value` | `string` | `'on'` | The element value to use in form submission when checked. |
 
@@ -2349,7 +2367,7 @@ One segment of a Material Design segmented button set.
 | `focusable` |   | `boolean` | `true` | Whether the segment is the set's tab stop (roving `tabindex`). Set by `md-gb-segmented-button-set`. |
 | `groupDisabled` |   | `boolean` | `false` | Whether the parent set is disabled. Set by `md-gb-segmented-button-set`. |
 | `label` | `label` | `string` | `''` | Label text, rendered before the default slot's content. |
-| `mode` |   | `SegmentedButtonMode` | `'single'` | The selection mode of the parent set: `radio` semantics for `single`, `checkbox` for `multiple`. Set by `md-gb-segmented-button-set`. |
+| `mode` |   | `"single" \| "multiple"` | `'single'` | The selection mode of the parent set: `radio` semantics for `single`, `checkbox` for `multiple`. Set by `md-gb-segmented-button-set`. |
 | `noCheckmark` | `no-checkmark` | `boolean` | `false` | Whether to hide the checkmark that shows when selected. |
 | `selected` | `selected` (reflects) | `boolean` | `false` | Whether the segment is selected. |
 | `value` | `value` | `string` | `''` | The value submitted with the set's form when selected. |
@@ -2380,8 +2398,10 @@ A Material Design segmented button set.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `SegmentedButtonDensity` |   | The density, from 0 (default, 40px) to -3. Each step down removes 4px from the height. Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default, 40px) to -3. Each step down removes 4px from the height. Values are clamped to that range. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `multiselect` | `multiselect` (reflects) | `boolean` | `false` | Whether more than one segment can be selected. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `required` | `required` (reflects) | `boolean` | `false` | In single-select mode, whether a segment must stay selected: the selected segment can't be unselected. |
 
 | Method | Signature | Description |
@@ -2619,7 +2639,7 @@ A Material Design bottom sheet.
 | `open` | `open` (reflects) | `boolean` |   | Whether the sheet is open. Setting it calls `show()` or `close()`. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Whether to skip the opening and closing motion. |
 | `skipPartiallyExpanded` | `skip-partially-expanded` | `boolean` | `false` | Whether the sheet has no partially expanded height: it opens expanded and the drag handle closes it. |
-| `state` | `state` (reflects) | `BottomSheetState` | `BOTTOM_SHEET_STATES.partiallyExpanded` | The resting height while open: `partially-expanded` or `expanded`. Updated when the user drags or activates the drag handle. |
+| `state` | `state` (reflects) | `"expanded" \| "partially-expanded"` | `BOTTOM_SHEET_STATES.partiallyExpanded` | The resting height while open: `partially-expanded` or `expanded`. Updated when the user drags or activates the drag handle. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -2797,13 +2817,15 @@ A Material Design slider component.
 | `ariaValueTextEnd` | `valuetext-end` | `string` | `''` | The accessible value text of the upper handle (default: `value-label-end`, then the number). |
 | `ariaValueTextStart` | `valuetext-start` | `string` | `''` | The accessible value text of the lower handle (default: `value-label-start`, then the number). |
 | `centered` | `centered` (reflects) | `boolean` | `false` | Whether the active track starts at the middle of the range, for values with a neutral point. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `labeled` | `labeled` | `boolean` | `false` | Whether to show the value indicator above the handle while it is hovered, pressed or keyboard-focused. |
 | `max` | `max` | `number` | `100` | The largest value. |
 | `min` | `min` | `number` | `0` | The smallest value. |
-| `orientation` | `orientation` (reflects) | `SliderOrientation` | `'horizontal'` | The orientation of the slider. Vertical orientation applies to standard, discrete, and centered variants (range is not supported in vertical orientation). |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | The orientation of the slider. Vertical orientation applies to standard, discrete, and centered variants (range is not supported in vertical orientation). |
 | `range` | `range` (reflects) | `boolean` | `false` | Whether the slider selects a range with two handles (`value-start`, `value-end`). |
-| `size` | `size` (reflects) | `SliderSize` | `'xs'` | The size: `xs` (default), `sm`, `md`, `lg` or `xl`. |
-| `step` | `step` | `number \| "any"` | `1` | The step between values, or `'any'` for a continuous slider. Arrow keys move by one step; with `ticks`, a stop shows at each step. |
+| `size` | `size` (reflects) | `"sm" \| "md" \| "lg" \| "xs" \| "xl"` | `'xs'` | The size: `xs` (default), `sm`, `md`, `lg` or `xl`. |
+| `step` | `step` | `"any" \| number` | `1` | The step between values, or `'any'` for a continuous slider. Arrow keys move by one step; with `ticks`, a stop shows at each step. |
 | `ticks` | `ticks` | `boolean` | `false` | Whether to show a stop indicator at each `step`. |
 | `value` | `value` | `number` |   | The value of a standard or centered slider (not `range`). |
 | `valueEnd` | `value-end` | `number` |   | The upper value of a `range` slider. |
@@ -3014,9 +3036,9 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `SplitButtonColor` | `'filled'` | The color style: `filled` (default), `elevated`, `tonal` or `outlined`. |
+| `color` | `color` | `"filled" \| "elevated" \| "tonal" \| "outlined"` | `'filled'` | The color style: `filled` (default), `elevated`, `tonal` or `outlined`. |
 | `selected` | `selected` | `boolean` | `false` | Whether the trailing button shows its selected (open) state. Set while the menu the trailing button opens (its `popovertarget`) is open. |
-| `size` | `size` | `SplitButtonSize` | `'sm'` | The size: `xs`, `sm` (default), `md`, `lg` or `xl`. |
+| `size` | `size` | `"sm" \| "md" \| "lg" \| "xs" \| "xl"` | `'sm'` | The size: `xs`, `sm` (default), `md`, `lg` or `xl`. |
 
 | Slot | Description |
 | --- | --- |
@@ -3070,7 +3092,9 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3. Each step down removes 4px from the state layer (40px); the track keeps its size and the touch target stays 48px. Values are clamped to that range. switch.md: don't apply density by default; let people opt in to a denser layout. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the state layer (40px); the track keeps its size and the touch target stays 48px. Values are clamped to that range. switch.md: don't apply density by default; let people opt in to a denser layout. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `required` | `required` | `boolean` | `false` | When true, require the switch to be selected when participating in form submission. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#validation |
 | `selected` | `selected` | `boolean` |   | Puts the switch in the selected state and sets the form submission value to the `value` property. |
 | `value` | `value` | `string` | `'on'` | The value associated with this switch on form submission. `null` is submitted when `selected` is `false`. |
@@ -3184,13 +3208,13 @@ A Material Design tabs component.
 | --- | --- | --- | --- | --- |
 | `align` | `align` (reflects) | `"start" \| "center"` | `'center'` | Where fixed tabs sit when the window is wider than compact: `center` (default) or `start`, the leading edge. tabs.md, Responsive layout: "The group of tabs should use a fluid margin and align to the center or leading edge of the body region." At compact windows the tabs fill the full width. |
 | `autoSelect` | `autoselect` | `boolean` | `false` | Whether or not to automatically select a tab when it is focused. |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3. Each step down removes 4px from the tabs' height (48px, or 64px with icon and label); values are clamped to that range. tabs.md "Avoid applying density by default": dense tabs are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the tabs' height (48px, or 64px with icon and label); values are clamped to that range. tabs.md "Avoid applying density by default": dense tabs are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
 | `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | Orientation of the tablist ('horizontal' or 'vertical'). |
 | `scrollable` | `scrollable` (reflects) | `boolean` | `false` | Scrollable tabs: each tab's width is defined by its label (tabs.md) rather than every tab taking the width of the widest, and the bar scrolls when they overflow. Fixed tabs (the default) are equal. |
 | `scrollBehavior` | `scroll-behavior` (reflects) | `"hide"` |   | How the tabs react to scrolling: `hide` scrolls them off the screen when the page scrolls down and returns them when it scrolls up (tabs.md). Tabs attached to an app bar (its `tabs` slot) leave this unset: the app bar moves them with itself as one unit. |
 | `scrollTarget` | `scroll-target` | `string` | `''` | The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. |
 | `selectedTabIndex` | `selectedtabindex` | `number` |   | The index of the currently selected tab. |
-| `variant` | `variant` (reflects) | `TabsVariant` | `'primary'` | The visual variant of the tabs. |
+| `variant` | `variant` (reflects) | `"primary" \| "secondary"` | `'primary'` | The visual variant of the tabs. |
 
 | Slot | Description |
 | --- | --- |
@@ -3269,9 +3293,10 @@ A Material Design text field (filled or outlined).
 | --- | --- | --- | --- | --- |
 | `autocomplete` | `autocomplete` (reflects) | `string` | `''` | The input's `autocomplete` hint. |
 | `cols` | `cols` | `number` | `20` | The number of columns of a `type="textarea"` field. |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3. Each step down removes 4px from the container height (56px), half above and half below the content; text keeps its size. Values are clamped to that range. text-fields.md "Avoid applying density by default": dense fields are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3. Each step down removes 4px from the container height (56px), half above and half below the content; text keeps its size. Values are clamped to that range. text-fields.md "Avoid applying density by default": dense fields are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` (reflects) | `boolean` | `false` | Whether the field is in a visually invalid state. Overrides the error state set by `reportValidity()`. |
-| `errorIcon` | `error-icon` | `ErrorIconVisibility` | `'always'` | When the error icon shows in the trailing edge: `always` (default) in the error state, or `focus` only while the field has focus. Its space stays reserved, so focusing the field does not move the text. |
+| `errorIcon` | `error-icon` | `"always" \| "focus"` | `'always'` | When the error icon shows in the trailing edge: `always` (default) in the error state, or `focus` only while the field has focus. Its space stays reserved, so focusing the field does not move the text. |
 | `errorText` | `error-text` | `string` | `''` | The message that replaces the supporting text while `error` is true. If empty, the supporting text keeps showing. Overrides the message shown by `reportValidity()`. |
 | `hasLeadingIcon` | `has-leading-icon` | `boolean` | `false` | Whether a leading icon is slotted. Set it for SSR. |
 | `hasTrailingIcon` | `has-trailing-icon` | `boolean` | `false` | Whether a trailing icon is slotted. Set it for SSR. |
@@ -3282,6 +3307,7 @@ A Material Design text field (filled or outlined).
 | `min` | `min` | `string` | `''` | The least permitted value. |
 | `minLength` | `minlength` | `number` | `-1` | The minimum number of characters. -1 for none. |
 | `multiple` | `multiple` (reflects) | `boolean` | `false` | Whether an email field accepts multiple addresses. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `noAsterisk` | `no-asterisk` | `boolean` | `false` | Hides the asterisk added to the label of a required field. |
 | `noSpinner` | `no-spinner` | `boolean` | `false` | Hides the spinner of `type="number"` fields. |
 | `pattern` | `pattern` | `string` | `''` | A regular expression the value must match. |
@@ -3293,11 +3319,11 @@ A Material Design text field (filled or outlined).
 | `step` | `step` | `string` | `''` | The step between permitted numeric values. |
 | `suffixText` | `suffix-text` | `string` | `''` | Text shown after the input value, such as a unit. |
 | `supportingText` | `supporting-text` | `string` | `''` | Additional information shown below the field. |
-| `supportingTextVisibility` | `supporting-text-visibility` | `SupportingTextVisibility` | `'always'` | When the supporting text shows: `always` (default), or `focus` only while the field has focus (text-fields-aed1bf). Its space stays reserved so the layout does not move, it stays in the input's accessible description, and an error message always shows. |
+| `supportingTextVisibility` | `supporting-text-visibility` | `"always" \| "focus"` | `'always'` | When the supporting text shows: `always` (default), or `focus` only while the field has focus (text-fields-aed1bf). Its space stays reserved so the layout does not move, it stays in the input's accessible description, and an error message always shows. |
 | `textDirection` | `text-direction` | `string` | `''` | Overrides the input's CSS `direction`. |
-| `type` | `type` (reflects) | `TextFieldType \| UnsupportedTextFieldType` | `'text'` | The input type, `text` by default. `textarea` renders a multi-line `<textarea>`. |
+| `type` | `type` (reflects) | `"number" \| "search" \| "text" \| "email" \| "password" \| "tel" \| "url" \| "textarea…` | `'text'` | The input type, `text` by default. `textarea` renders a multi-line `<textarea>`. |
 | `value` | `value` | `string` | `''` | The current value. It is always a string. |
-| `variant` | `variant` (reflects) | `TextFieldVariant` | `'filled'` | The variant: `filled` (default) or `outlined`. |
+| `variant` | `variant` (reflects) | `"filled" \| "outlined"` | `'filled'` | The variant: `filled` (default) or `outlined`. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -3380,25 +3406,27 @@ A Material Design time picker component.
 | --- | --- | --- | --- | --- |
 | `cancelLabel` | `cancel-label` | `string` | `'Cancel'` | Cancel action label. |
 | `confirmLabel` | `confirm-label` | `string` | `'OK'` | OK action label. |
-| `density` | `density` (reflects) | `Density` |   | The density, from 0 (default) to -3 (time-pickers.md "Density", "High-density time picker"). Each step down removes 4px from the time selectors (80px), input fields (72px), the period selector (which follows their height) and the dial (256px); the time selectors, fields and dial labels stay at least 48px. The horizontal layout, used when the viewport is short, keeps the full-size dial ("Don't apply density to the time picker dial when the viewport is constrained. Instead, use an input picker"). Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |   | The density, from 0 (default) to -3 (time-pickers.md "Density", "High-density time picker"). Each step down removes 4px from the time selectors (80px), input fields (72px), the period selector (which follows their height) and the dial (256px); the time selectors, fields and dial labels stay at least 48px. The horizontal layout, used when the viewport is short, keeps the full-size dial ("Don't apply density to the time picker dial when the viewport is constrained. Instead, use an input picker"). Values are clamped to that range. |
 | `dialModeLabel` | `dial-mode-label` | `string` | `'Switch to clock mode'` | Accessible label of the mode toggle in input mode. |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `headline` | `headline` | `string` | `''` | The headline. Defaults to "Select time" (dial) or "Enter time" (input). |
 | `hideActions` | `hide-actions` (reflects) | `boolean` | `false` | Hides the Cancel and OK actions; every change commits the value. |
 | `hideModeToggle` | `hide-mode-toggle` (reflects) | `boolean` | `false` | Hides the dial / input mode toggle button. |
-| `hourCycle` | `hour-cycle` | `TimePickerHourCycle` | `''` | `12` (with an AM/PM period selector), `24`, or `''` (default) to follow the locale's clock (`Intl.DateTimeFormat`). |
+| `hourCycle` | `hour-cycle` | `"" \| "12" \| "24"` | `''` | `12` (with an AM/PM period selector), `24`, or `''` (default) to follow the locale's clock (`Intl.DateTimeFormat`). |
 | `hourLabel` | `hour-label` | `string` | `'Hour'` | Hour field label (input mode). |
 | `inputModeLabel` | `input-mode-label` | `string` | `'Switch to text input mode'` | Accessible label of the mode toggle in dial mode. |
 | `locale` | `locale` | `string` | `''` | The locale used for the 12/24-hour default and the AM/PM labels. Defaults to the browser locale. |
 | `minuteLabel` | `minute-label` | `string` | `'Minute'` | Minute field label (input mode). |
 | `modal` | `modal` (reflects) | `boolean` | `false` | Renders the picker as a modal dialog, shown with `show()` or `open`. |
-| `mode` | `mode` (reflects) | `TimePickerMode` | `'dial'` | `dial` (clock dial) or `input` (hour and minute text fields). |
+| `mode` | `mode` (reflects) | `"input" \| "dial"` | `'dial'` | `dial` (clock dial) or `input` (hour and minute text fields). |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `open` | `open` (reflects) | `boolean` |   | Whether a modal picker is open. Setting it opens or closes the picker. |
-| `orientation` | `orientation` (reflects) | `"" \| TimePickerOrientation` | `''` | The dial layout: `vertical`, `horizontal`, or `''` (default) to pick one from the viewport (horizontal in short landscape viewports). |
+| `orientation` | `orientation` (reflects) | `"" \| "horizontal" \| "vertical"` | `''` | The dial layout: `vertical`, `horizontal`, or `''` (default) to pick one from the viewport (horizontal in short landscape viewports). |
 | `periodLabel` | `period-label` | `string` | `'Select AM or PM'` | Accessible label of the period selector. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips transitions. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether a time is required: with no time the picker is invalid (`valueMissing`) and blocks the form's submit. |
 | `selectHourLabel` | `select-hour-label` | `string` | `'Select hour'` | Accessible label of the hour selector and the dial in hour mode. |
-| `selection` |   | `TimePickerSelection` | `'hour'` | Which part of the time the dial edits. |
+| `selection` |   | `"hour" \| "minute"` | `'hour'` | Which part of the time the dial edits. |
 | `selectMinuteLabel` | `select-minute-label` | `string` | `'Select minutes'` | Accessible label of the minute selector and the dial in minute mode. |
 | `value` | `value` | `string` |   | The committed time as a 24-hour `HH:MM` string (`<input type="time">` format), or `''` when no time is set. |
 
@@ -3493,11 +3521,11 @@ A Material Design gBreeze toolbar custom element.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `color` (reflects) | `ToolbarColor` | `'standard'` | The color scheme of the toolbar. |
+| `color` | `color` (reflects) | `"standard" \| "vibrant"` | `'standard'` | The color scheme of the toolbar. |
 | `docked` | `docked` (reflects) | `boolean` | `false` | Whether the toolbar is docked across full width. |
 | `expanded` | `expanded` (reflects) | `boolean` | `true` | Whether a floating toolbar with a FAB shows its items. When `false`, the toolbar collapses and its FAB grows to the medium size (Compose floating toolbar `expanded`). Set `expanded="false"` from markup. |
 | `fabPosition` | `fab-position` (reflects) | `"start" \| "end"` | `'end'` | Which side of a floating toolbar the FAB is on (`end` or `start`). |
-| `orientation` | `orientation` (reflects) | `ToolbarOrientation` | `'horizontal'` | The layout orientation. |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | The layout orientation. |
 | `overflowMenu` | `overflow-menu` (reflects) | `boolean` | `false` | Whether trailing actions that do not fit move into an overflow menu in the trailing slot (toolbars.md, Adaptive design). On by itself when an `overflow` slot trigger is provided; this turns it on with the default "More actions" button. |
 | `scrollBehavior` | `scroll-behavior` (reflects) | `"hide"` |   | How a docked or floating toolbar reacts to scrolling: `hide` slides it beyond the bottom edge when the page scrolls down and back on scroll up (toolbars.md: docked and floating toolbars "can animate offscreen"). |
 | `scrollTarget` | `scroll-target` | `string` | `''` | The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. |
@@ -3563,11 +3591,11 @@ A Material Design plain or rich tooltip.
 | `noBoundary` | `no-boundary` (reflects) | `boolean` | `false` | Plain only: the anchor has no visual boundary, such as a text baseline, so the tooltip sits 8dp from it instead of 4dp. |
 | `open` | `open` (reflects) | `boolean` |   | Whether the tooltip is open. |
 | `persistent` | `persistent` (reflects) | `boolean` | `false` | Rich only: opens when the anchor is clicked instead of on hover / focus, and stays open until the user interacts with another element. |
-| `placement` | `placement` (reflects) | `"" \| TooltipPlacement` | `''` | Preferred side of the anchor. Defaults to `above` for plain tooltips and `below` for rich ones. Flips when there isn't room. |
+| `placement` | `placement` (reflects) | `"" \| "start" \| "end" \| "above" \| "below"` | `''` | Preferred side of the anchor. Defaults to `above` for plain tooltips and `below` for rich ones. Flips when there isn't room. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips the open / close animation. |
 | `showDelay` | `show-delay` | `number` | `TOOLTIP_SHOW_DELAY_MS` | Hover delay before showing, in milliseconds. |
 | `subhead` | `subhead` | `string` | `''` | Rich only: subhead text. Replaced by content in the `subhead` slot. |
-| `variant` | `variant` (reflects) | `TooltipVariant` | `TOOLTIP_VARIANTS.plain` | Plain or rich. |
+| `variant` | `variant` (reflects) | `"plain" \| "rich"` | `TOOLTIP_VARIANTS.plain` | Plain or rich. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -3651,7 +3679,7 @@ A Material Design component.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether pulling is turned off (Compose `enabled = false`). |
-| `indicator` | `indicator` (reflects) | `PullToRefreshIndicator` | `'loading'` | The indicator: `loading` (M3 Expressive contained loading indicator) or `circular` (circular arrow and progress indicator). |
+| `indicator` | `indicator` (reflects) | `"loading" \| "circular"` | `'loading'` | The indicator: `loading` (M3 Expressive contained loading indicator) or `circular` (circular arrow and progress indicator). |
 | `indicatorLabel` | `indicator-label` | `string` | `DEFAULT_LABEL` | Accessible label of the indicator, e.g. "Refreshing news". |
 | `refreshing` | `refreshing` (reflects) | `boolean` | `false` | Whether content is refreshing. Set by a pull past the threshold (or `refresh()`); set it back to false once the content has refreshed. |
 | `threshold` | `threshold` | `number` | `PULL_TO_REFRESH_THRESHOLD_PX` | How far (px) the indicator must be pulled before releasing it refreshes (Compose `PullToRefreshDefaults.PositionalThreshold`, 80dp). |
@@ -3721,8 +3749,8 @@ A Material Design app scaffold (bars, rails, FAB, snackbar).
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `autoExpandRail` | `auto-expand-rail` (reflects) | `boolean` | `false` | Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes. |
-| `navigation` | `navigation` (reflects) | `ScaffoldNavigation` | `'auto'` | Which navigation component to show. |
-| `sideSheetNavigation` | `side-sheet-navigation` (reflects) | `SideSheetNavigation` | `'keep'` | What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. |
+| `navigation` | `navigation` (reflects) | `"none" \| "auto" \| "bar" \| "rail"` | `'auto'` | Which navigation component to show. |
+| `sideSheetNavigation` | `side-sheet-navigation` (reflects) | `"hide" \| "keep" \| "collapse"` | `'keep'` | What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. |
 | `sideSheetOpen` | `side-sheet-open` (reflects) | `boolean` | `false` | Whether an app-managed side sheet is open. |
 
 | Event | Type | Description |
@@ -3770,13 +3798,13 @@ A Material Design pane scaffold (list-detail, supporting pane, feed).
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `arrangement` | `arrangement` (reflects) | `PaneArrangement` | `'fixed-flexible'` | How two panes share the width. |
+| `arrangement` | `arrangement` (reflects) | `"fixed-flexible" \| "split"` | `'fixed-flexible'` | How two panes share the width. |
 | `collapsedPane` | `collapsed-pane` (reflects) | `"primary" \| "secondary"` | `null` | A pane collapsed with the drag handle, or null. |
 | `detailOpen` | `detail-open` (reflects) | `boolean` | `false` | List-detail: whether an item is selected. Single-pane windows show the detail (primary) pane when true and the list (secondary) pane when false; two-pane windows show the `placeholder` slot instead of the detail while false. |
 | `dragHandleLabel` | `drag-handle-label` | `string` | `'Resize panes'` | Accessible label of the drag handle. |
-| `handleTap` | `handle-tap` | `PaneHandleTap` | `'toggle'` | What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. |
-| `layout` | `layout` (reflects) | `PaneScaffoldLayout` | `'list-detail'` | The canonical layout. |
-| `levitate` | `levitate` (reflects) | `PaneLevitate` | `'none'` | The levitate strategy for the secondary pane of supporting pane and feed layouts in windows too small for two panes: `none` reflows it below the primary pane, `floating` floats it above, `docked` docks it to the bottom edge at compact (floating from medium). |
+| `handleTap` | `handle-tap` | `"toggle" \| "cycle"` | `'toggle'` | What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. |
+| `layout` | `layout` (reflects) | `"list-detail" \| "supporting-pane" \| "feed"` | `'list-detail'` | The canonical layout. |
+| `levitate` | `levitate` (reflects) | `"none" \| "docked" \| "floating"` | `'none'` | The levitate strategy for the secondary pane of supporting pane and feed layouts in windows too small for two panes: `none` reflows it below the primary pane, `floating` floats it above, `docked` docks it to the bottom edge at compact (floating from medium). |
 | `levitateCoplanar` | `levitate-coplanar` (reflects) | `boolean` | `false` | Keeps a levitated pane co-planar at large and extra-large windows. By default it floats there (spec: scaffold, "On large screens: floating panes are the default"). |
 | `levitateDraggable` | `levitate-draggable` (reflects) | `boolean` | `false` | Lets a floating pane be dragged by its handle, or moved with the arrow keys while the handle is focused (spec: scaffold, floating panes "can be customized to be dragged or resized"). |
 | `levitateLabel` | `levitate-label` | `string` | `''` | Accessible label of a modal levitated pane (its dialog role). |
@@ -3788,9 +3816,9 @@ A Material Design pane scaffold (list-detail, supporting pane, feed).
 | `mediumTwoPane` | `medium-two-pane` (reflects) | `boolean` | `false` | Whether medium windows show two panes (50% each) instead of one. The spec limits this to low-density content such as settings. |
 | `paneWidth` | `pane-width` | `number` | `null` | Width in px of the secondary pane set with the drag handle, or null for the default width. Set it to restore a persisted width. |
 | `resizable` | `resizable` (reflects) | `boolean` | `false` | Whether two-pane layouts render a drag handle to resize the panes. |
-| `resizeBehavior` | `resize-behavior` | `PaneResizeBehavior` | `undefined` | `persistent` keeps a resized width or collapsed pane across window size class changes; `temporary` returns to the default layout. Defaults to persistent for list-detail and temporary for the other layouts. |
+| `resizeBehavior` | `resize-behavior` | `"persistent" \| "temporary"` | `undefined` | `persistent` keeps a resized width or collapsed pane across window size class changes; `temporary` returns to the default layout. Defaults to persistent for list-detail and temporary for the other layouts. |
 | `scrollLabel` | `scroll-label` | `string` | `'Panes'` | Accessible label of the stacked panes' scroll region. Only used while the stacked panes overflow and hold nothing focusable: the region is then focusable (so the keyboard can scroll it) and a labelled `region`. |
-| `secondaryPosition` | `secondary-position` (reflects) | `PanePosition` | `undefined` | Where the secondary pane sits in two-pane layouts. Defaults to `start` for list-detail and `end` for supporting pane and feed layouts. Mirrors in right-to-left. |
+| `secondaryPosition` | `secondary-position` (reflects) | `"start" \| "end"` | `undefined` | Where the secondary pane sits in two-pane layouts. Defaults to `start` for list-detail and `end` for supporting pane and feed layouts. Mirrors in right-to-left. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -3909,18 +3937,20 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` (reflects) | `boolean` | `false` | Whether the field is in a visually invalid state. Overrides the error state set by `reportValidity()`. |
 | `errorText` | `error-text` | `string` | `''` | The message that replaces the supporting text while `error` is true. Overrides the message shown by `reportValidity()`. |
-| `filter` | `filter` | `AutocompleteFilter` | `'contains'` | How options are filtered by the typed text: `contains` (default), `starts-with`, or `none` (the page updates the options itself, e.g. from a server, on `input`). |
+| `filter` | `filter` | `"none" \| "contains" \| "starts-with"` | `'contains'` | How options are filtered by the typed text: `contains` (default), `starts-with`, or `none` (the page updates the options itself, e.g. from a server, on `input`). |
 | `hasLeadingIcon` | `has-leading-icon` | `boolean` | `false` | Whether a leading icon is slotted. Set it for SSR. |
 | `label` | `label` | `string` | `''` | The floating label; also the field's accessible name. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `noAsterisk` | `no-asterisk` | `boolean` | `false` | Hides the asterisk added to the label of a required field. |
 | `open` | `open` (reflects) | `boolean` | `false` | Whether the menu is open. |
 | `placeholder` | `placeholder` (reflects) | `string` | `''` | Hint text shown in the input while it is empty and the label floats. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether a value is required. Adds an asterisk to the label. |
 | `supportingText` | `supporting-text` | `string` | `''` | Additional information shown below the field. |
 | `value` | `value` | `string` | `''` | The text in the field. |
-| `variant` | `variant` (reflects) | `TextFieldVariant` | `'filled'` | The variant: `filled` (default) or `outlined`. |
+| `variant` | `variant` (reflects) | `"filled" \| "outlined"` | `'filled'` | The variant: `filled` (default) or `outlined`. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -3975,11 +4005,13 @@ A Material Design component.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` |   | Disabled by the attribute or by a disabled fieldset. |
 | `displayText` | `display-text` | `string` |   | The text shown in the field. Defaults to the selected option's `displayText`; set it for SSR. |
 | `error` | `error` (reflects) | `boolean` | `false` | Whether the field is in a visually invalid state. Overrides the error state set by `reportValidity()`. |
 | `errorText` | `error-text` | `string` | `''` | The message that replaces the supporting text while `error` is true. Overrides the message shown by `reportValidity()`. |
 | `hasLeadingIcon` | `has-leading-icon` | `boolean` | `false` | Whether a leading icon is slotted. Set it for SSR. |
 | `label` | `label` | `string` | `''` | The floating label; also the field's accessible name. |
+| `name` | `name` | `string` |   | The HTML name to use in form submission. |
 | `noAsterisk` | `no-asterisk` | `boolean` | `false` | Hides the asterisk added to the label of a required field. |
 | `open` | `open` (reflects) | `boolean` | `false` | Whether the menu is open. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether a value is required. Adds an asterisk to the label. |
@@ -3987,7 +4019,7 @@ A Material Design component.
 | `supportingText` | `supporting-text` | `string` | `''` | Additional information shown below the field. |
 | `typeaheadDelay` | `typeahead-delay` | `number` | `DEFAULT_TYPEAHEAD_DELAY` | The longest time between typeahead keystrokes, in milliseconds. |
 | `value` | `value` | `string` |   | The value of the selected option, or `''`. Setting it selects the first option with that value (or none). |
-| `variant` | `variant` (reflects) | `TextFieldVariant` | `'filled'` | The variant: `filled` (default) or `outlined`. |
+| `variant` | `variant` (reflects) | `"filled" \| "outlined"` | `'filled'` | The variant: `filled` (default) or `outlined`. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -4598,6 +4630,10 @@ A Material Design icon component.
 - Import: `import '@material/web/styles/icons/md-gb-icon.js';`
 - Spec: [icons](https://m3.material.io/styles/icons)
 
+| Slot | Description |
+| --- | --- |
+| (default) | The icon's name as text: a Material Symbols ligature such as `search` (styles/icons.md), or an inline `<svg>`. |
+
 #### `styles/icons/icon-element.js`
 
 - Spec: [icons](https://m3.material.io/styles/icons)
@@ -4669,7 +4705,7 @@ A Material Design skeleton loader.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `loading` | `loading` (reflects) | `boolean` | `false` | Whether the content is loading: shows the placeholder. |
-| `shape` | `shape` (reflects) | `SkeletonShape` | `'rect'` | The placeholder's shape: a block, a line of text, or a circle. |
+| `shape` | `shape` (reflects) | `"text" \| "rect" \| "circle"` | `'rect'` | The placeholder's shape: a block, a line of text, or a circle. |
 
 | Slot | Description |
 | --- | --- |
@@ -4738,6 +4774,81 @@ A Material Design skeleton loader.
 | `transitionTiming` | function | `(name: "container-transform" \| "shared-axis" \| "fade-through" \| "lateral" \| "reduced" \| "enter" \| "exit", element?: Element, overrides?: Pick<TransitionOptions, "duration" \| "easing">): { duration: number; easing: string; }` | Duration (ms) and easing of a pattern, from its custom properties. |
 | `TransitionUpdate` | type | `() => void \| Promise<void>` | Changes the DOM from the old state to the new one. |
 | `VIEW_TRANSITION_NAMES` | variable | `{ readonly containerTransform: "md-container-transform"; readonly scope: "md-transition-scope"; }` | View transition names used by the patterns. |
+
+## json-render
+
+The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON specs).
+
+### `json-render/`
+
+#### `json-render/catalog.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `catalog` | variable | `Catalog<{ spec: SchemaType<"object", { root: SchemaType<"string", unknown>; elements: SchemaType<"record", SchemaType<"object", { type: SchemaType<"ref", string>; props: SchemaType<"propsOf", string>; children: SchemaType<"array", SchemaTy…` | The catalog: the components above, and no actions beyond the built-in ones. |
+| `ComponentName` | type | `keyof typeof COMPONENTS` | The name of a catalog component. |
+| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; description: string; deprecated: boolean; spec: st…` | The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
+| `HTML_TAG` | variable | `"#html"` | The tag of the Html primitive: its `tag` prop names the native element. |
+| `HTML_TAGS` | variable | `readonly ["div", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6", "a", "button", "label", "section", "header", "footer", "nav", "main", "ul", "ol", "li", "strong", "em", "img"]` | The native elements the Html primitive may create. |
+| `TEXT_TAG` | variable | `"#text"` | The tag of the Text primitive: a text node, not an element. |
+
+#### `json-render/check.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `checkSpec` | function | `(spec: Spec): SpecCheck` | Checks a spec against the catalog, the elements' API and the M3 rules. |
+| `m3Prompt` | function | `(customRules?: string[]): string` | The system prompt for generating specs of the catalog: json-render's prompt for the catalog, with the M3 rules (each with its spec quote). |
+| `SpecCheck` | interface | `{valid; issues}` | The result of `checkSpec()`. |
+| `SpecCheckIssue` | interface | `{kind; severity; element; message; rule; spec}` | A problem with a spec. |
+
+#### `json-render/index.js`
+
+- Spec: none
+
+Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` from `json-render/schema.js`, `catalog` from `json-render/catalog.js`, `checkM3` from `json-render/m3-rules.js`, `checkSpec` from `json-render/check.js`, `ComponentName` from `json-render/catalog.js`, `COMPONENTS` from `json-render/catalog.js`, `dynamic` from `json-render/schema.js`, `FORMAT_RULES` from `json-render/schema.js`, `HTML_TAGS` from `json-render/catalog.js`, `isExpression` from `json-render/schema.js`, `M3_RULES` from `json-render/m3-rules.js`, `M3Issue` from `json-render/m3-rules.js`, `m3Prompt` from `json-render/check.js`, `m3PromptRules` from `json-render/m3-rules.js`, `M3Rule` from `json-render/m3-rules.js`, `Md3Schema` from `json-render/schema.js`, `RenderedSpec` from `json-render/renderer.js`, `renderSpec` from `json-render/renderer.js`, `RenderSpecOptions` from `json-render/renderer.js`, `schema` from `json-render/schema.js`, `SpecCheck` from `json-render/check.js`, `SpecCheckIssue` from `json-render/check.js`
+
+#### `json-render/m3-rules.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `checkM3` | function | `(spec: Spec): M3Issue[]` | Checks a spec against the M3 rules. |
+| `indexSpec` | function | `(spec: Spec): SpecIndex` | Indexes a spec for the rules. |
+| `M3_RULES` | variable | `M3Rule[]` | The M3 rules, by component. |
+| `M3Issue` | interface | `{rule; severity; element; message; spec}` | A rule broken by a spec. |
+| `m3PromptRules` | function | `(): string[]` | The M3 rules as prompt rules, each with its spec page and quote. |
+| `M3Rule` | interface | `{id; component; severity; rule; source; check}` | An M3 rule with its source and its check. |
+| `ruleUrl` | function | `(rule: M3Rule): string` | The URL of a rule's spec page. |
+| `SpecIndex` | interface | `{spec; ofType; parentOf; slot; subtree}` | A spec with parent and child lookups. |
+
+#### `json-render/renderer.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `ActionHandler` | type | `(params: Record<string, unknown>) => unknown` | An app action: gets the resolved params. |
+| `RenderedSpec` | interface | `{store; update; dispose}` | A rendered spec. |
+| `renderSpec` | function | `(spec: Spec, container: HTMLElement \| DocumentFragment, options?: RenderSpecOptions): RenderedSpec` | Renders a json-render spec of the library's catalog into a container. |
+| `RenderSpecOptions` | interface | `{handlers; functions; store; onWarning}` | Options of `renderSpec()`. |
+
+#### `json-render/schema.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `BUILT_IN_ACTIONS` | variable | `readonly [{ readonly name: "setState"; readonly description: "Set the value at a state path. Params: { statePath: string, value: any }."; }, { readonly name: "pushState"; readonly description: "Append a value to the array at a state path. …` | The actions every renderer handles, whatever the catalog. |
+| `dynamic` | function | `<T extends z.ZodType>(type: T): ZodUnion<readonly [T, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>` | A prop type that also takes a json-render expression, which is only resolved when the spec renders. |
+| `FORMAT_RULES` | variable | `readonly ["Every element MUST include a \"children\" array; leaf elements use \"children\": []. Every key in \"children\" and \"slots\" MUST name an element of \"elements\".", "Text is a \"Text\" element ({\"type\":\"Text\",\"props\":{\"te…` | Rules of the spec format, given to every prompt before the M3 rules. |
+| `isExpression` | function | `(value: unknown): boolean` | Whether a prop value is a json-render expression (`{$state: ...}`, `{$bindState: ...}`, `{$item: ...}`, `{$cond: ...}`, `{$template: ...}` and so on) rather than a literal. |
+| `Md3Schema` | type | `typeof schema` | The schema's type. |
+| `schema` | variable | `Schema<{ spec: SchemaType<"object", { root: SchemaType<"string", unknown>; elements: SchemaType<"record", SchemaType<"object", { type: SchemaType<"ref", string>; props: SchemaType<"propsOf", string>; children: SchemaType<"array", SchemaTyp…` | The library's json-render schema: json-render's flat element spec, and a catalog of web components. |
 
 ## All
 

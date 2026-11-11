@@ -152,11 +152,13 @@ if (emit) {
   });
 }
 
-// --all: the generated public API (API.md, custom-elements.json) and the spec
-// map (SPEC-MAP.md) must match the sources.
+// --all: the generated public API (API.md, custom-elements.json), the
+// json-render catalog (catalog.ts, CATALOG.md, and its M3 rules' quotes) and
+// the spec map (SPEC-MAP.md) must match the sources.
 if (all) {
   step('api', () => {
     node(join('scripts', 'api', 'gen-api.mjs'), ['--check']);
+    node(join('scripts', 'api', 'gen-json-render.mjs'), ['--check']);
     node(join('scripts', 'm3', 'gen-spec-map.mjs'), ['--check']);
   });
 }

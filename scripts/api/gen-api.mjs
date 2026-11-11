@@ -53,7 +53,7 @@ const OUT_MD = join(LIB_ABS, 'API.md');
 const OUT_COVERAGE = join(ROOT, '.m3-specs', 'checklists', 'API-coverage.md');
 
 /** Folders the package exports. */
-const PUBLIC = /^(components|extras|foundations|styles)\//;
+const PUBLIC = /^(components|extras|foundations|styles|json-render)\//;
 /** Test code that lives next to the code it tests. */
 const TEST_CODE =
   /(_test|_gap)\.ts$|^testing\/|\/(aria-helpers|aria-internals|aria-rows|axe-helpers|axe-internals|states-helpers|rtl-helpers|predictive-back-harness)\.ts$/;
@@ -94,6 +94,8 @@ function publicModules() {
     }
   };
   visit('all.ts');
+  // The json-render schema, catalog and renderer: a separate entry point.
+  visit('json-render/index.ts');
   const docs = join(ROOT, 'docs');
   for (const name of readdirSync(docs, {recursive: true})) {
     if (!String(name).endsWith('.md')) continue;
@@ -113,14 +115,14 @@ function publicModules() {
 // --- 2. Spec pages ------------------------------------------------------------
 
 /** The URL of a spec page: its `Source:` line in the mirror, or the site path. */
-function specUrl(page) {
+export function specUrl(page) {
   const file = join(SPECS, `${page}.md`);
   const source = existsSync(file) && readFileSync(file, 'utf8').match(/^Source: (\S+)/m);
   return source ? source[1] : `https://m3.material.io/${page}`;
 }
 
 /** The spec pages of a library-relative path (SPEC_MAP first, then FOLDER_PAGES). */
-function pagesOf(rel) {
+export function pagesOf(rel) {
   const entry = SPEC_MAP.filter((e) => rel.startsWith(`${e.dir}/`)).sort((a, b) => b.dir.length - a.dir.length)[0];
   if (entry) return {pages: entry.pages, note: entry.note ?? ''};
   // A key matches a folder (`styles/color` for `styles/color/x.ts`) or one
@@ -326,6 +328,7 @@ const PILLARS = [
   ['extras', 'Extras', "The library's own components, with no page of their own in the M3 components index."],
   ['foundations', 'Foundations', 'Accessibility, interaction, layout and the design tokens.'],
   ['styles', 'Styles', 'Color, elevation, icons, motion, shape, spacing and typography.'],
+  ['json-render', 'json-render', 'The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON specs).'],
 ];
 
 function renderMarkdown({api, elements, stylesheets, tokens}) {

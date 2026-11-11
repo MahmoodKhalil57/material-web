@@ -13,6 +13,9 @@ import iconStyles from './md-icon.css' with {type: 'css'}; // github-only
 
 /**
  * A Material Design icon component.
+ *
+ * @slot - The icon's name as text: a Material Symbols ligature such as
+ *     `search` (styles/icons.md), or an inline `<svg>`.
  */
 export class IconElement extends IconBase {
   /** @nocollapse */

@@ -208,7 +208,7 @@
       {
        "name": "size",
        "type": {
-        "text": "AppBarSize"
+        "text": "\"sm\" | \"md\" | \"lg\""
        },
        "fieldName": "size",
        "default": "'sm'",
@@ -217,7 +217,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "AppBarVariant"
+        "text": "\"standard\" | \"search\""
        },
        "fieldName": "variant",
        "default": "'standard'",
@@ -275,7 +275,7 @@
        "kind": "field",
        "name": "size",
        "type": {
-        "text": "AppBarSize"
+        "text": "\"sm\" | \"md\" | \"lg\""
        },
        "privacy": "public",
        "default": "'sm'",
@@ -287,7 +287,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "AppBarVariant"
+        "text": "\"standard\" | \"search\""
        },
        "privacy": "public",
        "default": "'standard'",
@@ -940,6 +940,14 @@
        "description": "The color of the button."
       },
       {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Whether or not the element is disabled."
+      },
+      {
        "name": "download",
        "type": {
         "text": "string"
@@ -956,6 +964,14 @@
        "fieldName": "href",
        "default": "''",
        "description": "The URL that the link button points to."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission."
       },
       {
        "name": "referrerpolicy",
@@ -1036,6 +1052,14 @@
        "fieldName": "unfilledIcon",
        "default": "false",
        "description": "Set when the icon has no filled version: a selected toggle button then shows the icon in semibold weight instead of filled."
+      },
+      {
+       "name": "value",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "value",
+       "description": "The value of the button. When combined with a `name`, the submitting button's name/value will be added to the form."
       }
      ],
      "members": [
@@ -1049,6 +1073,16 @@
        "default": "'text'",
        "description": "The color of the button.",
        "attribute": "color"
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Whether or not the element is disabled.",
+       "attribute": "disabled"
       },
       {
        "kind": "field",
@@ -1071,6 +1105,16 @@
        "default": "''",
        "description": "The URL that the link button points to.",
        "attribute": "href"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -1172,6 +1216,17 @@
        "default": "false",
        "description": "Set when the icon has no filled version: a selected toggle button then shows the icon in semibold weight instead of filled.",
        "attribute": "unfilled-icon",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "value",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The value of the button. When combined with a `name`, the submitting button's name/value will be added to the form.",
+       "attribute": "value",
        "reflects": true
       }
      ],
@@ -1427,7 +1482,7 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density of the buttons inside, from 0 (default) to -3. Each step down removes 4px from the buttons' height (button-groups.md: \"Button groups adapt to the height of the buttons inside, including when density is applied\"); touch targets stay 48px. A button's own non-zero `density` wins. Values are clamped to that range."
@@ -1462,7 +1517,7 @@
       {
        "name": "resizing",
        "type": {
-        "text": "ButtonGroupResizing"
+        "text": "\"\" | \"fixed\" | \"flexible\""
        },
        "fieldName": "resizing",
        "default": "\"\"",
@@ -1471,7 +1526,7 @@
       {
        "name": "selection",
        "type": {
-        "text": "ButtonGroupSelection"
+        "text": "\"none\" | \"single\" | \"multiple\""
        },
        "fieldName": "selection",
        "default": "\"none\"",
@@ -1480,7 +1535,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "ButtonGroupVariant"
+        "text": "\"standard\" | \"connected\""
        },
        "fieldName": "variant",
        "default": "\"standard\"",
@@ -1492,7 +1547,7 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density of the buttons inside, from 0 (default) to -3. Each step down removes 4px from the buttons' height (button-groups.md: \"Button groups adapt to the height of the buttons inside, including when density is applied\"); touch targets stay 48px. A button's own non-zero `density` wins. Values are clamped to that range.",
@@ -1539,7 +1594,7 @@
        "kind": "field",
        "name": "resizing",
        "type": {
-        "text": "ButtonGroupResizing"
+        "text": "\"\" | \"fixed\" | \"flexible\""
        },
        "privacy": "public",
        "default": "\"\"",
@@ -1551,7 +1606,7 @@
        "kind": "field",
        "name": "selection",
        "type": {
-        "text": "ButtonGroupSelection"
+        "text": "\"none\" | \"single\" | \"multiple\""
        },
        "privacy": "public",
        "default": "\"none\"",
@@ -1563,7 +1618,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "ButtonGroupVariant"
+        "text": "\"standard\" | \"connected\""
        },
        "privacy": "public",
        "default": "\"standard\"",
@@ -1827,7 +1882,7 @@
       {
        "name": "color",
        "type": {
-        "text": "CardColor"
+        "text": "\"filled\" | \"elevated\" | \"outlined\""
        },
        "fieldName": "color",
        "default": "'outlined'",
@@ -1902,7 +1957,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "CardColor"
+        "text": "\"filled\" | \"elevated\" | \"outlined\""
        },
        "privacy": "public",
        "default": "'outlined'",
@@ -2149,7 +2204,7 @@
       {
        "name": "alignment",
        "type": {
-        "text": "CarouselAlignment"
+        "text": "\"start\" | \"center\""
        },
        "fieldName": "alignment",
        "default": "'start'",
@@ -2158,7 +2213,7 @@
       {
        "name": "layout",
        "type": {
-        "text": "CarouselLayout"
+        "text": "\"multi-browse\" | \"uncontained\" | \"uncontained-multi-aspect\" | \"hero\" | \"full-screen\""
        },
        "fieldName": "layout",
        "default": "'multi-browse'",
@@ -2167,7 +2222,7 @@
       {
        "name": "orientation",
        "type": {
-        "text": "CarouselOrientation"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "fieldName": "orientation",
        "description": "The scrolling axis. Defaults to vertical for the full-screen layout and horizontal for the others."
@@ -2175,7 +2230,7 @@
       {
        "name": "scroll-mode",
        "type": {
-        "text": "CarouselScrollMode"
+        "text": "\"snap\" | \"free\""
        },
        "fieldName": "scrollMode",
        "description": "`snap` snaps items into the layout when released; `free` lets them stop anywhere. Defaults to `free` for uncontained layouts and `snap` for the others."
@@ -2186,7 +2241,7 @@
        "kind": "field",
        "name": "alignment",
        "type": {
-        "text": "CarouselAlignment"
+        "text": "\"start\" | \"center\""
        },
        "privacy": "public",
        "default": "'start'",
@@ -2198,7 +2253,7 @@
        "kind": "field",
        "name": "layout",
        "type": {
-        "text": "CarouselLayout"
+        "text": "\"multi-browse\" | \"uncontained\" | \"uncontained-multi-aspect\" | \"hero\" | \"full-screen\""
        },
        "privacy": "public",
        "default": "'multi-browse'",
@@ -2210,7 +2265,7 @@
        "kind": "field",
        "name": "orientation",
        "type": {
-        "text": "CarouselOrientation"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "privacy": "public",
        "description": "The scrolling axis. Defaults to vertical for the full-screen layout and horizontal for the others.",
@@ -2221,7 +2276,7 @@
        "kind": "field",
        "name": "scrollMode",
        "type": {
-        "text": "CarouselScrollMode"
+        "text": "\"snap\" | \"free\""
        },
        "privacy": "public",
        "description": "`snap` snaps items into the layout when released; `free` lets them stop anywhere. Defaults to `free` for uncontained layouts and `snap` for the others.",
@@ -3653,10 +3708,18 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the checkbox's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. checkbox.md: don't apply density by default; let people opt in to a denser layout."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
       },
       {
        "name": "error",
@@ -3675,6 +3738,14 @@
        "fieldName": "indeterminate",
        "default": "false",
        "description": "Whether or not the checkbox is indeterminate. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#indeterminate_state_checkboxes"
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "required",
@@ -3711,12 +3782,22 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the checkbox's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. checkbox.md: don't apply density by default; let people opt in to a denser layout.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
       },
       {
        "kind": "field",
@@ -3739,6 +3820,16 @@
        "default": "false",
        "description": "Whether or not the checkbox is indeterminate. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#indeterminate_state_checkboxes",
        "attribute": "indeterminate"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -4038,7 +4129,7 @@
       {
        "name": "color",
        "type": {
-        "text": "ChipColor"
+        "text": "\"filled\" | \"elevated\" | \"tonal\" | \"outlined\" | \"flat\""
        },
        "fieldName": "color",
        "default": "\"flat\"",
@@ -4047,7 +4138,7 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the container height (32px); the label and icons keep their size and the touch target stays 48px (chips.md: \"regardless of placement or density\"). Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-chip-set`. chips.md: don't apply density by default; let people opt in to a denser layout."
@@ -4163,7 +4254,7 @@
       {
        "name": "type",
        "type": {
-        "text": "ChipType"
+        "text": "\"assist\" | \"filter\" | \"input\" | \"suggestion\" | \"action\" | \"toggle\" | \"link\""
        },
        "fieldName": "type",
        "default": "\"assist\"",
@@ -4183,7 +4274,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "ChipColor"
+        "text": "\"filled\" | \"elevated\" | \"tonal\" | \"outlined\" | \"flat\""
        },
        "privacy": "public",
        "default": "\"flat\"",
@@ -4194,7 +4285,7 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the container height (32px); the label and icons keep their size and the touch target stays 48px (chips.md: \"regardless of placement or density\"). Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-chip-set`. chips.md: don't apply density by default; let people opt in to a denser layout.",
@@ -4354,7 +4445,7 @@
        "kind": "field",
        "name": "type",
        "type": {
-        "text": "ChipType"
+        "text": "\"assist\" | \"filter\" | \"input\" | \"suggestion\" | \"action\" | \"toggle\" | \"link\""
        },
        "privacy": "public",
        "default": "\"assist\"",
@@ -4579,10 +4670,26 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density of the chips, from 0 (default) to -3: each step down removes 4px from the chips' height. A chip's own non-zero `density` wins. Values are clamped to that range."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "required",
@@ -4596,7 +4703,7 @@
       {
        "name": "selection",
        "type": {
-        "text": "SelectionMode"
+        "text": "\"none\" | \"single\" | \"multiple\""
        },
        "fieldName": "selection",
        "default": "\"multiple\"",
@@ -4617,12 +4724,32 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density of the chips, from 0 (default) to -3: each step down removes 4px from the chips' height. A chip's own non-zero `density` wins. Values are clamped to that range.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -4640,7 +4767,7 @@
        "kind": "field",
        "name": "selection",
        "type": {
-        "text": "SelectionMode"
+        "text": "\"none\" | \"single\" | \"multiple\""
        },
        "privacy": "public",
        "default": "\"multiple\"",
@@ -5642,10 +5769,18 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density of the picker's text fields (the docked field and the modal input mode's fields), from 0 (default) to -3, as `md-gb-text-field` `density`. Values are clamped to that range. The calendar itself never gets denser (date-pickers.md, Accessibility: \"Interactive targets for all elements meet Material's 48x48dp minimum touch target requirement. Increasing density would negatively impact accessibility by limiting tappable/clickable targets\"): its dates, menus and buttons keep their size, including inside a dense container."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
       },
       {
        "name": "error",
@@ -5740,11 +5875,19 @@
       {
        "name": "mode",
        "type": {
-        "text": "DatePickerMode"
+        "text": "\"input\" | \"picker\""
        },
        "fieldName": "mode",
        "default": "'picker'",
        "description": "Modal: shows the calendar (`picker`) or the date input (`input`)."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "open",
@@ -5802,7 +5945,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "DatePickerVariant"
+        "text": "\"docked\" | \"modal\""
        },
        "fieldName": "variant",
        "default": "'docked'",
@@ -5825,12 +5968,22 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density of the picker's text fields (the docked field and the modal input mode's fields), from 0 (default) to -3, as `md-gb-text-field` `density`. Values are clamped to that range. The calendar itself never gets denser (date-pickers.md, Accessibility: \"Interactive targets for all elements meet Material's 48x48dp minimum touch target requirement. Increasing density would negatively impact accessibility by limiting tappable/clickable targets\"): its dates, menus and buttons keep their size, including inside a dense container.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
       },
       {
        "kind": "field",
@@ -5959,13 +6112,23 @@
        "kind": "field",
        "name": "mode",
        "type": {
-        "text": "DatePickerMode"
+        "text": "\"input\" | \"picker\""
        },
        "privacy": "public",
        "default": "'picker'",
        "description": "Modal: shows the calendar (`picker`) or the date input (`input`).",
        "attribute": "mode",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -6050,7 +6213,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "DatePickerVariant"
+        "text": "\"docked\" | \"modal\""
        },
        "privacy": "public",
        "default": "'docked'",
@@ -6741,7 +6904,7 @@
       {
        "name": "type",
        "type": {
-        "text": "DialogType"
+        "text": "\"\" | \"alert\" | \"dialog\""
        },
        "fieldName": "type",
        "default": "''",
@@ -6832,7 +6995,7 @@
        "kind": "field",
        "name": "type",
        "type": {
-        "text": "DialogType"
+        "text": "\"\" | \"alert\" | \"dialog\""
        },
        "privacy": "public",
        "default": "''",
@@ -7477,7 +7640,7 @@
       {
        "name": "color",
        "type": {
-        "text": "FabColor"
+        "text": "\"primary\" | \"primary-container\" | \"secondary\" | \"secondary-container\" | \"tertiary\" | \"tertiary-container\""
        },
        "fieldName": "color",
        "default": "'primary-container'",
@@ -7513,7 +7676,7 @@
       {
        "name": "size",
        "type": {
-        "text": "FabSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"default\""
        },
        "fieldName": "size",
        "default": "'default'",
@@ -7534,7 +7697,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "FabColor"
+        "text": "\"primary\" | \"primary-container\" | \"secondary\" | \"secondary-container\" | \"tertiary\" | \"tertiary-container\""
        },
        "privacy": "public",
        "default": "'primary-container'",
@@ -7578,7 +7741,7 @@
        "kind": "field",
        "name": "size",
        "type": {
-        "text": "FabSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"default\""
        },
        "privacy": "public",
        "default": "'default'",
@@ -7830,7 +7993,7 @@
       {
        "name": "align",
        "type": {
-        "text": "FabMenuAlign"
+        "text": "\"start\" | \"end\""
        },
        "fieldName": "align",
        "default": "FAB_MENU_ALIGNS.end",
@@ -7839,7 +8002,7 @@
       {
        "name": "color",
        "type": {
-        "text": "FabMenuColor"
+        "text": "\"primary\" | \"secondary\" | \"tertiary\""
        },
        "fieldName": "color",
        "default": "FAB_MENU_COLORS.primary",
@@ -7857,7 +8020,7 @@
       {
        "name": "size",
        "type": {
-        "text": "FabSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"default\""
        },
        "fieldName": "size",
        "default": "'default'",
@@ -7869,7 +8032,7 @@
        "kind": "field",
        "name": "align",
        "type": {
-        "text": "FabMenuAlign"
+        "text": "\"start\" | \"end\""
        },
        "privacy": "public",
        "default": "FAB_MENU_ALIGNS.end",
@@ -7880,7 +8043,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "FabMenuColor"
+        "text": "\"primary\" | \"secondary\" | \"tertiary\""
        },
        "privacy": "public",
        "default": "FAB_MENU_COLORS.primary",
@@ -7903,7 +8066,7 @@
        "kind": "field",
        "name": "size",
        "type": {
-        "text": "FabSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"default\""
        },
        "privacy": "public",
        "default": "'default'",
@@ -8345,7 +8508,7 @@
       {
        "name": "color",
        "type": {
-        "text": "IconButtonColor"
+        "text": "\"standard\" | \"filled\" | \"tonal\" | \"outlined\""
        },
        "fieldName": "color",
        "default": "'standard'",
@@ -8354,10 +8517,18 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the container height (and the width of a default-width button); the icon keeps its size and the touch target stays at least 48px. Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-button-group`. icon-buttons.md: don't apply density by default; let people opt in to a denser layout."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Whether or not the element is disabled."
       },
       {
        "name": "download",
@@ -8376,6 +8547,14 @@
        "fieldName": "href",
        "default": "''",
        "description": "The URL that the link button points to."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission."
       },
       {
        "name": "referrerpolicy",
@@ -8407,7 +8586,7 @@
       {
        "name": "size",
        "type": {
-        "text": "IconButtonSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"xs\" | \"xl\""
        },
        "fieldName": "size",
        "default": "'sm'",
@@ -8467,9 +8646,17 @@
        "description": "Set when the icon has no filled version: a selected toggle button then shows the icon in semibold weight instead of filled."
       },
       {
+       "name": "value",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "value",
+       "description": "The value of the button. When combined with a `name`, the submitting button's name/value will be added to the form."
+      },
+      {
        "name": "width",
        "type": {
-        "text": "IconButtonWidth"
+        "text": "\"\" | \"narrow\" | \"wide\""
        },
        "fieldName": "width",
        "default": "''",
@@ -8481,7 +8668,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "IconButtonColor"
+        "text": "\"standard\" | \"filled\" | \"tonal\" | \"outlined\""
        },
        "privacy": "public",
        "default": "'standard'",
@@ -8492,12 +8679,22 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the container height (and the width of a default-width button); the icon keeps its size and the touch target stays at least 48px. Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-button-group`. icon-buttons.md: don't apply density by default; let people opt in to a denser layout.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Whether or not the element is disabled.",
+       "attribute": "disabled"
       },
       {
        "kind": "field",
@@ -8520,6 +8717,16 @@
        "default": "''",
        "description": "The URL that the link button points to.",
        "attribute": "href"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -8559,7 +8766,7 @@
        "kind": "field",
        "name": "size",
        "type": {
-        "text": "IconButtonSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"xs\" | \"xl\""
        },
        "privacy": "public",
        "default": "'sm'",
@@ -8637,9 +8844,20 @@
       },
       {
        "kind": "field",
+       "name": "value",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The value of the button. When combined with a `name`, the submitting button's name/value will be added to the form.",
+       "attribute": "value",
+       "reflects": true
+      },
+      {
+       "kind": "field",
        "name": "width",
        "type": {
-        "text": "IconButtonWidth"
+        "text": "\"\" | \"narrow\" | \"wide\""
        },
        "privacy": "public",
        "default": "''",
@@ -8963,7 +9181,7 @@
       {
        "name": "density",
        "type": {
-        "text": "ListDensity"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the items' height (spec foundations Density: \"decreasing the top and bottom padding or overall height by 4dp\"). Values are clamped to that range. Like `md-gb-segmented-button-set`'s `density`."
@@ -9010,7 +9228,7 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "ListDensity"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the items' height (spec foundations Density: \"decreasing the top and bottom padding or overall height by 4dp\"). Values are clamped to that range. Like `md-gb-segmented-button-set`'s `density`.",
@@ -9344,7 +9562,7 @@
       {
        "name": "revealed",
        "type": {
-        "text": "ListItemRevealed"
+        "text": "\"\" | \"leading\" | \"trailing\""
        },
        "fieldName": "revealed",
        "default": "\"\"",
@@ -9514,7 +9732,7 @@
        "kind": "field",
        "name": "revealed",
        "type": {
-        "text": "ListItemRevealed"
+        "text": "\"\" | \"leading\" | \"trailing\""
        },
        "privacy": "public",
        "default": "\"\"",
@@ -10450,7 +10668,7 @@
       {
        "name": "color",
        "type": {
-        "text": "MenuColor"
+        "text": "\"standard\" | \"vibrant\""
        },
        "fieldName": "color",
        "default": "MENU_COLORS.standard",
@@ -10468,7 +10686,7 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3 (menus.md \"Density\": \"On web only, density levels control the spacing between elements. Increasing density decreases the top and bottom padding\"). Each step removes 4px from the items' height; submenus inherit it. Values are clamped to that range. Dense items are smaller than the 48px recommended target, so don't apply density by default; let people opt in (grids-spacing.md \"Avoid applying component scaling by default\")."
@@ -10485,7 +10703,7 @@
       {
        "name": "layout",
        "type": {
-        "text": "MenuLayout"
+        "text": "\"standard\" | \"grouped\""
        },
        "fieldName": "layout",
        "default": "'standard'",
@@ -10497,7 +10715,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "MenuColor"
+        "text": "\"standard\" | \"vibrant\""
        },
        "privacy": "public",
        "default": "MENU_COLORS.standard",
@@ -10519,7 +10737,7 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3 (menus.md \"Density\": \"On web only, density levels control the spacing between elements. Increasing density decreases the top and bottom padding\"). Each step removes 4px from the items' height; submenus inherit it. Values are clamped to that range. Dense items are smaller than the 48px recommended target, so don't apply density by default; let people opt in (grids-spacing.md \"Avoid applying component scaling by default\").",
@@ -10541,7 +10759,7 @@
        "kind": "field",
        "name": "layout",
        "type": {
-        "text": "MenuLayout"
+        "text": "\"standard\" | \"grouped\""
        },
        "privacy": "public",
        "default": "'standard'",
@@ -10698,7 +10916,7 @@
       {
        "name": "checkable",
        "type": {
-        "text": "MenuItemCheckable"
+        "text": "\"single\" | \"multiple\""
        },
        "fieldName": "checkable",
        "default": "null",
@@ -10719,7 +10937,7 @@
        "kind": "field",
        "name": "checkable",
        "type": {
-        "text": "MenuItemCheckable"
+        "text": "\"single\" | \"multiple\""
        },
        "privacy": "public",
        "default": "null",
@@ -11278,7 +11496,7 @@
       {
        "name": "item-layout",
        "type": {
-        "text": "NavBarLayout"
+        "text": "\"horizontal\" | \"vertical\" | \"auto\""
        },
        "fieldName": "itemLayout",
        "default": "'vertical'",
@@ -11343,7 +11561,7 @@
        "kind": "field",
        "name": "itemLayout",
        "type": {
-        "text": "NavBarLayout"
+        "text": "\"horizontal\" | \"vertical\" | \"auto\""
        },
        "privacy": "public",
        "default": "'vertical'",
@@ -11574,7 +11792,7 @@
       {
        "name": "item-layout",
        "type": {
-        "text": "NavBarItemLayout"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "fieldName": "itemLayout",
        "default": "'vertical'",
@@ -11597,6 +11815,14 @@
        "fieldName": "rel",
        "default": "''",
        "description": "The link's `rel` attribute, when `href` is set."
+      },
+      {
+       "name": "selected",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "selected",
+       "description": "Whether the tab is selected."
       },
       {
        "name": "tabpanel",
@@ -11675,7 +11901,7 @@
        "kind": "field",
        "name": "itemLayout",
        "type": {
-        "text": "NavBarItemLayout"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "privacy": "public",
        "default": "'vertical'",
@@ -11704,6 +11930,17 @@
        "default": "''",
        "description": "The link's `rel` attribute, when `href` is set.",
        "attribute": "rel"
+      },
+      {
+       "kind": "field",
+       "name": "selected",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Whether the tab is selected.",
+       "attribute": "selected",
+       "reflects": true
       },
       {
        "kind": "field",
@@ -12927,7 +13164,7 @@
       {
        "name": "alignment",
        "type": {
-        "text": "NavRailAlignment"
+        "text": "\"center\" | \"top\" | \"bottom\""
        },
        "fieldName": "alignment",
        "default": "'top'",
@@ -12990,7 +13227,7 @@
       {
        "name": "item-layout",
        "type": {
-        "text": "NavRailItemLayout"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "fieldName": "itemLayout",
        "default": "'vertical'",
@@ -13015,6 +13252,15 @@
        "description": "Whether the collapsed rail uses the narrow width (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp)."
       },
       {
+       "name": "orientation",
+       "type": {
+        "text": "\"horizontal\" | \"vertical\""
+       },
+       "fieldName": "orientation",
+       "default": "'vertical'",
+       "description": "Orientation of the tablist ('horizontal' or 'vertical')."
+      },
+      {
        "name": "selected-index",
        "type": {
         "text": "number"
@@ -13036,7 +13282,7 @@
        "kind": "field",
        "name": "alignment",
        "type": {
-        "text": "NavRailAlignment"
+        "text": "\"center\" | \"top\" | \"bottom\""
        },
        "privacy": "public",
        "default": "'top'",
@@ -13119,7 +13365,7 @@
        "kind": "field",
        "name": "itemLayout",
        "type": {
-        "text": "NavRailItemLayout"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "privacy": "public",
        "default": "'vertical'",
@@ -13149,6 +13395,18 @@
        "default": "false",
        "description": "Whether the collapsed rail uses the narrow width (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp).",
        "attribute": "narrow",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "orientation",
+       "type": {
+        "text": "\"horizontal\" | \"vertical\""
+       },
+       "privacy": "public",
+       "default": "'vertical'",
+       "description": "Orientation of the tablist ('horizontal' or 'vertical').",
+       "attribute": "orientation",
        "reflects": true
       },
       {
@@ -13527,7 +13785,7 @@
       {
        "name": "item-layout",
        "type": {
-        "text": "NavRailItemLayout"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "fieldName": "itemLayout",
        "default": "'vertical'",
@@ -13559,6 +13817,14 @@
        "fieldName": "secondary",
        "default": "false",
        "description": "Whether the destination is secondary: it shows only while the rail is expanded."
+      },
+      {
+       "name": "selected",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "selected",
+       "description": "Whether the tab is selected."
       },
       {
        "name": "tabpanel",
@@ -13637,7 +13903,7 @@
        "kind": "field",
        "name": "itemLayout",
        "type": {
-        "text": "NavRailItemLayout"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "privacy": "public",
        "default": "'vertical'",
@@ -13677,6 +13943,17 @@
        "default": "false",
        "description": "Whether the destination is secondary: it shows only while the rail is expanded.",
        "attribute": "secondary",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "selected",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Whether the tab is selected.",
+       "attribute": "selected",
        "reflects": true
       },
       {
@@ -14363,10 +14640,26 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the radio's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. radio-button.md: don't apply density by default; let people opt in to a denser layout."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "required",
@@ -14402,12 +14695,32 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the radio's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. radio-button.md: don't apply density by default; let people opt in to a denser layout.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -16249,7 +16562,7 @@
        "kind": "field",
        "name": "mode",
        "type": {
-        "text": "SegmentedButtonMode"
+        "text": "\"single\" | \"multiple\""
        },
        "privacy": "public",
        "default": "'single'",
@@ -16392,10 +16705,18 @@
       {
        "name": "density",
        "type": {
-        "text": "SegmentedButtonDensity"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default, 40px) to -3. Each step down removes 4px from the height. Values are clamped to that range."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
       },
       {
        "name": "multiselect",
@@ -16405,6 +16726,14 @@
        "fieldName": "multiselect",
        "default": "false",
        "description": "Whether more than one segment can be selected."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "required",
@@ -16421,12 +16750,22 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "SegmentedButtonDensity"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default, 40px) to -3. Each step down removes 4px from the height. Values are clamped to that range.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
       },
       {
        "kind": "field",
@@ -16439,6 +16778,16 @@
        "description": "Whether more than one segment can be selected.",
        "attribute": "multiselect",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -18020,7 +18369,7 @@
       {
        "name": "state",
        "type": {
-        "text": "BottomSheetState"
+        "text": "\"expanded\" | \"partially-expanded\""
        },
        "fieldName": "state",
        "default": "BOTTOM_SHEET_STATES.partiallyExpanded",
@@ -18133,7 +18482,7 @@
        "kind": "field",
        "name": "state",
        "type": {
-        "text": "BottomSheetState"
+        "text": "\"expanded\" | \"partially-expanded\""
        },
        "privacy": "public",
        "default": "BOTTOM_SHEET_STATES.partiallyExpanded",
@@ -19271,6 +19620,14 @@
        "description": "Whether the active track starts at the middle of the range, for values with a neutral point."
       },
       {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
+      },
+      {
        "name": "labeled",
        "type": {
         "text": "boolean"
@@ -19298,9 +19655,17 @@
        "description": "The smallest value."
       },
       {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
+      },
+      {
        "name": "orientation",
        "type": {
-        "text": "SliderOrientation"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "fieldName": "orientation",
        "default": "'horizontal'",
@@ -19318,7 +19683,7 @@
       {
        "name": "size",
        "type": {
-        "text": "SliderSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"xs\" | \"xl\""
        },
        "fieldName": "size",
        "default": "'xs'",
@@ -19327,7 +19692,7 @@
       {
        "name": "step",
        "type": {
-        "text": "number | \"any\""
+        "text": "\"any\" | number"
        },
        "fieldName": "step",
        "default": "1",
@@ -19453,6 +19818,16 @@
       },
       {
        "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
+      },
+      {
+       "kind": "field",
        "name": "labeled",
        "type": {
         "text": "boolean"
@@ -19486,9 +19861,19 @@
       },
       {
        "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
+      },
+      {
+       "kind": "field",
        "name": "orientation",
        "type": {
-        "text": "SliderOrientation"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "privacy": "public",
        "default": "'horizontal'",
@@ -19512,7 +19897,7 @@
        "kind": "field",
        "name": "size",
        "type": {
-        "text": "SliderSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"xs\" | \"xl\""
        },
        "privacy": "public",
        "default": "'xs'",
@@ -19524,7 +19909,7 @@
        "kind": "field",
        "name": "step",
        "type": {
-        "text": "number | \"any\""
+        "text": "\"any\" | number"
        },
        "privacy": "public",
        "default": "1",
@@ -20962,7 +21347,7 @@
       {
        "name": "color",
        "type": {
-        "text": "SplitButtonColor"
+        "text": "\"filled\" | \"elevated\" | \"tonal\" | \"outlined\""
        },
        "fieldName": "color",
        "default": "'filled'",
@@ -20980,7 +21365,7 @@
       {
        "name": "size",
        "type": {
-        "text": "SplitButtonSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"xs\" | \"xl\""
        },
        "fieldName": "size",
        "default": "'sm'",
@@ -20992,7 +21377,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "SplitButtonColor"
+        "text": "\"filled\" | \"elevated\" | \"tonal\" | \"outlined\""
        },
        "privacy": "public",
        "default": "'filled'",
@@ -21014,7 +21399,7 @@
        "kind": "field",
        "name": "size",
        "type": {
-        "text": "SplitButtonSize"
+        "text": "\"sm\" | \"md\" | \"lg\" | \"xs\" | \"xl\""
        },
        "privacy": "public",
        "default": "'sm'",
@@ -21170,10 +21555,26 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the state layer (40px); the track keeps its size and the touch target stays 48px. Values are clamped to that range. switch.md: don't apply density by default; let people opt in to a denser layout."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "required",
@@ -21207,12 +21608,32 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the state layer (40px); the track keeps its size and the touch target stays 48px. Values are clamped to that range. switch.md: don't apply density by default; let people opt in to a denser layout.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -21862,7 +22283,7 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the tabs' height (48px, or 64px with icon and label); values are clamped to that range. tabs.md \"Avoid applying density by default\": dense tabs are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48."
@@ -21913,7 +22334,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "TabsVariant"
+        "text": "\"primary\" | \"secondary\""
        },
        "fieldName": "variant",
        "default": "'primary'",
@@ -21948,7 +22369,7 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the tabs' height (48px, or 64px with icon and label); values are clamped to that range. tabs.md \"Avoid applying density by default\": dense tabs are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48.",
@@ -22015,7 +22436,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "TabsVariant"
+        "text": "\"primary\" | \"secondary\""
        },
        "privacy": "public",
        "default": "'primary'",
@@ -22262,10 +22683,18 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the container height (56px), half above and half below the content; text keeps its size. Values are clamped to that range. text-fields.md \"Avoid applying density by default\": dense fields are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
       },
       {
        "name": "error",
@@ -22279,7 +22708,7 @@
       {
        "name": "error-icon",
        "type": {
-        "text": "ErrorIconVisibility"
+        "text": "\"always\" | \"focus\""
        },
        "fieldName": "errorIcon",
        "default": "'always'",
@@ -22374,6 +22803,14 @@
        "fieldName": "multiple",
        "default": "false",
        "description": "Whether an email field accepts multiple addresses."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "no-asterisk",
@@ -22477,7 +22914,7 @@
       {
        "name": "supporting-text-visibility",
        "type": {
-        "text": "SupportingTextVisibility"
+        "text": "\"always\" | \"focus\""
        },
        "fieldName": "supportingTextVisibility",
        "default": "'always'",
@@ -22495,7 +22932,7 @@
       {
        "name": "type",
        "type": {
-        "text": "TextFieldType | UnsupportedTextFieldType"
+        "text": "\"number\" | \"search\" | \"text\" | \"email\" | \"password\" | \"tel\" | \"url\" | \"textarea\" | \"color\" | \"date\" | \"datetime-local\" | \"file\" | \"month\" | \"time\" | \"week\""
        },
        "fieldName": "type",
        "default": "'text'",
@@ -22513,7 +22950,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "TextFieldVariant"
+        "text": "\"filled\" | \"outlined\""
        },
        "fieldName": "variant",
        "default": "'filled'",
@@ -22548,12 +22985,22 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3. Each step down removes 4px from the container height (56px), half above and half below the content; text keeps its size. Values are clamped to that range. text-fields.md \"Avoid applying density by default\": dense fields are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48.",
        "attribute": "density",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
       },
       {
        "kind": "field",
@@ -22571,7 +23018,7 @@
        "kind": "field",
        "name": "errorIcon",
        "type": {
-        "text": "ErrorIconVisibility"
+        "text": "\"always\" | \"focus\""
        },
        "privacy": "public",
        "default": "'always'",
@@ -22689,6 +23136,16 @@
        "description": "Whether an email field accepts multiple addresses.",
        "attribute": "multiple",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -22818,7 +23275,7 @@
        "kind": "field",
        "name": "supportingTextVisibility",
        "type": {
-        "text": "SupportingTextVisibility"
+        "text": "\"always\" | \"focus\""
        },
        "privacy": "public",
        "default": "'always'",
@@ -22840,7 +23297,7 @@
        "kind": "field",
        "name": "type",
        "type": {
-        "text": "TextFieldType | UnsupportedTextFieldType"
+        "text": "\"number\" | \"search\" | \"text\" | \"email\" | \"password\" | \"tel\" | \"url\" | \"textarea\" | \"color\" | \"date\" | \"datetime-local\" | \"file\" | \"month\" | \"time\" | \"week\""
        },
        "privacy": "public",
        "default": "'text'",
@@ -22863,7 +23320,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "TextFieldVariant"
+        "text": "\"filled\" | \"outlined\""
        },
        "privacy": "public",
        "default": "'filled'",
@@ -23465,7 +23922,7 @@
       {
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "fieldName": "density",
        "description": "The density, from 0 (default) to -3 (time-pickers.md \"Density\", \"High-density time picker\"). Each step down removes 4px from the time selectors (80px), input fields (72px), the period selector (which follows their height) and the dial (256px); the time selectors, fields and dial labels stay at least 48px. The horizontal layout, used when the viewport is short, keeps the full-size dial (\"Don't apply density to the time picker dial when the viewport is constrained. Instead, use an input picker\"). Values are clamped to that range."
@@ -23478,6 +23935,14 @@
        "fieldName": "dialModeLabel",
        "default": "'Switch to clock mode'",
        "description": "Accessible label of the mode toggle in input mode."
+      },
+      {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
       },
       {
        "name": "headline",
@@ -23509,7 +23974,7 @@
       {
        "name": "hour-cycle",
        "type": {
-        "text": "TimePickerHourCycle"
+        "text": "\"\" | \"12\" | \"24\""
        },
        "fieldName": "hourCycle",
        "default": "''",
@@ -23563,11 +24028,19 @@
       {
        "name": "mode",
        "type": {
-        "text": "TimePickerMode"
+        "text": "\"input\" | \"dial\""
        },
        "fieldName": "mode",
        "default": "'dial'",
        "description": "`dial` (clock dial) or `input` (hour and minute text fields)."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "open",
@@ -23580,7 +24053,7 @@
       {
        "name": "orientation",
        "type": {
-        "text": "\"\" | TimePickerOrientation"
+        "text": "\"\" | \"horizontal\" | \"vertical\""
        },
        "fieldName": "orientation",
        "default": "''",
@@ -23667,7 +24140,7 @@
        "kind": "field",
        "name": "density",
        "type": {
-        "text": "Density"
+        "text": "0 | -1 | -2 | -3"
        },
        "privacy": "public",
        "description": "The density, from 0 (default) to -3 (time-pickers.md \"Density\", \"High-density time picker\"). Each step down removes 4px from the time selectors (80px), input fields (72px), the period selector (which follows their height) and the dial (256px); the time selectors, fields and dial labels stay at least 48px. The horizontal layout, used when the viewport is short, keeps the full-size dial (\"Don't apply density to the time picker dial when the viewport is constrained. Instead, use an input picker\"). Values are clamped to that range.",
@@ -23684,6 +24157,16 @@
        "default": "'Switch to clock mode'",
        "description": "Accessible label of the mode toggle in input mode.",
        "attribute": "dial-mode-label"
+      },
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
       },
       {
        "kind": "field",
@@ -23724,7 +24207,7 @@
        "kind": "field",
        "name": "hourCycle",
        "type": {
-        "text": "TimePickerHourCycle"
+        "text": "\"\" | \"12\" | \"24\""
        },
        "privacy": "public",
        "default": "''",
@@ -23791,13 +24274,23 @@
        "kind": "field",
        "name": "mode",
        "type": {
-        "text": "TimePickerMode"
+        "text": "\"input\" | \"dial\""
        },
        "privacy": "public",
        "default": "'dial'",
        "description": "`dial` (clock dial) or `input` (hour and minute text fields).",
        "attribute": "mode",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -23814,7 +24307,7 @@
        "kind": "field",
        "name": "orientation",
        "type": {
-        "text": "\"\" | TimePickerOrientation"
+        "text": "\"\" | \"horizontal\" | \"vertical\""
        },
        "privacy": "public",
        "default": "''",
@@ -23872,7 +24365,7 @@
        "kind": "field",
        "name": "selection",
        "type": {
-        "text": "TimePickerSelection"
+        "text": "\"hour\" | \"minute\""
        },
        "privacy": "public",
        "default": "'hour'",
@@ -24663,7 +25156,7 @@
       {
        "name": "color",
        "type": {
-        "text": "ToolbarColor"
+        "text": "\"standard\" | \"vibrant\""
        },
        "fieldName": "color",
        "default": "'standard'",
@@ -24699,7 +25192,7 @@
       {
        "name": "orientation",
        "type": {
-        "text": "ToolbarOrientation"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "fieldName": "orientation",
        "default": "'horizontal'",
@@ -24737,7 +25230,7 @@
        "kind": "field",
        "name": "color",
        "type": {
-        "text": "ToolbarColor"
+        "text": "\"standard\" | \"vibrant\""
        },
        "privacy": "public",
        "default": "'standard'",
@@ -24785,7 +25278,7 @@
        "kind": "field",
        "name": "orientation",
        "type": {
-        "text": "ToolbarOrientation"
+        "text": "\"horizontal\" | \"vertical\""
        },
        "privacy": "public",
        "default": "'horizontal'",
@@ -25124,7 +25617,7 @@
       {
        "name": "placement",
        "type": {
-        "text": "\"\" | TooltipPlacement"
+        "text": "\"\" | \"start\" | \"end\" | \"above\" | \"below\""
        },
        "fieldName": "placement",
        "default": "''",
@@ -25160,7 +25653,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "TooltipVariant"
+        "text": "\"plain\" | \"rich\""
        },
        "fieldName": "variant",
        "default": "TOOLTIP_VARIANTS.plain",
@@ -25254,7 +25747,7 @@
        "kind": "field",
        "name": "placement",
        "type": {
-        "text": "\"\" | TooltipPlacement"
+        "text": "\"\" | \"start\" | \"end\" | \"above\" | \"below\""
        },
        "privacy": "public",
        "default": "''",
@@ -25300,7 +25793,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "TooltipVariant"
+        "text": "\"plain\" | \"rich\""
        },
        "privacy": "public",
        "default": "TOOLTIP_VARIANTS.plain",
@@ -25741,7 +26234,7 @@
       {
        "name": "indicator",
        "type": {
-        "text": "PullToRefreshIndicator"
+        "text": "\"loading\" | \"circular\""
        },
        "fieldName": "indicator",
        "default": "'loading'",
@@ -25792,7 +26285,7 @@
        "kind": "field",
        "name": "indicator",
        "type": {
-        "text": "PullToRefreshIndicator"
+        "text": "\"loading\" | \"circular\""
        },
        "privacy": "public",
        "default": "'loading'",
@@ -26123,7 +26616,7 @@
       {
        "name": "navigation",
        "type": {
-        "text": "ScaffoldNavigation"
+        "text": "\"none\" | \"auto\" | \"bar\" | \"rail\""
        },
        "fieldName": "navigation",
        "default": "'auto'",
@@ -26132,7 +26625,7 @@
       {
        "name": "side-sheet-navigation",
        "type": {
-        "text": "SideSheetNavigation"
+        "text": "\"hide\" | \"keep\" | \"collapse\""
        },
        "fieldName": "sideSheetNavigation",
        "default": "'keep'",
@@ -26165,7 +26658,7 @@
        "kind": "field",
        "name": "navigation",
        "type": {
-        "text": "ScaffoldNavigation"
+        "text": "\"none\" | \"auto\" | \"bar\" | \"rail\""
        },
        "privacy": "public",
        "default": "'auto'",
@@ -26177,7 +26670,7 @@
        "kind": "field",
        "name": "sideSheetNavigation",
        "type": {
-        "text": "SideSheetNavigation"
+        "text": "\"hide\" | \"keep\" | \"collapse\""
        },
        "privacy": "public",
        "default": "'keep'",
@@ -26448,7 +26941,7 @@
       {
        "name": "arrangement",
        "type": {
-        "text": "PaneArrangement"
+        "text": "\"fixed-flexible\" | \"split\""
        },
        "fieldName": "arrangement",
        "default": "'fixed-flexible'",
@@ -26484,7 +26977,7 @@
       {
        "name": "handle-tap",
        "type": {
-        "text": "PaneHandleTap"
+        "text": "\"toggle\" | \"cycle\""
        },
        "fieldName": "handleTap",
        "default": "'toggle'",
@@ -26493,7 +26986,7 @@
       {
        "name": "layout",
        "type": {
-        "text": "PaneScaffoldLayout"
+        "text": "\"list-detail\" | \"supporting-pane\" | \"feed\""
        },
        "fieldName": "layout",
        "default": "'list-detail'",
@@ -26502,7 +26995,7 @@
       {
        "name": "levitate",
        "type": {
-        "text": "PaneLevitate"
+        "text": "\"none\" | \"docked\" | \"floating\""
        },
        "fieldName": "levitate",
        "default": "'none'",
@@ -26610,7 +27103,7 @@
       {
        "name": "resize-behavior",
        "type": {
-        "text": "PaneResizeBehavior"
+        "text": "\"persistent\" | \"temporary\""
        },
        "fieldName": "resizeBehavior",
        "default": "undefined",
@@ -26628,7 +27121,7 @@
       {
        "name": "secondary-position",
        "type": {
-        "text": "PanePosition"
+        "text": "\"start\" | \"end\""
        },
        "fieldName": "secondaryPosition",
        "default": "undefined",
@@ -26640,7 +27133,7 @@
        "kind": "field",
        "name": "arrangement",
        "type": {
-        "text": "PaneArrangement"
+        "text": "\"fixed-flexible\" | \"split\""
        },
        "privacy": "public",
        "default": "'fixed-flexible'",
@@ -26687,7 +27180,7 @@
        "kind": "field",
        "name": "handleTap",
        "type": {
-        "text": "PaneHandleTap"
+        "text": "\"toggle\" | \"cycle\""
        },
        "privacy": "public",
        "default": "'toggle'",
@@ -26698,7 +27191,7 @@
        "kind": "field",
        "name": "layout",
        "type": {
-        "text": "PaneScaffoldLayout"
+        "text": "\"list-detail\" | \"supporting-pane\" | \"feed\""
        },
        "privacy": "public",
        "default": "'list-detail'",
@@ -26710,7 +27203,7 @@
        "kind": "field",
        "name": "levitate",
        "type": {
-        "text": "PaneLevitate"
+        "text": "\"none\" | \"docked\" | \"floating\""
        },
        "privacy": "public",
        "default": "'none'",
@@ -26850,7 +27343,7 @@
        "kind": "field",
        "name": "resizeBehavior",
        "type": {
-        "text": "PaneResizeBehavior"
+        "text": "\"persistent\" | \"temporary\""
        },
        "privacy": "public",
        "default": "undefined",
@@ -26872,7 +27365,7 @@
        "kind": "field",
        "name": "secondaryPosition",
        "type": {
-        "text": "PanePosition"
+        "text": "\"start\" | \"end\""
        },
        "privacy": "public",
        "default": "undefined",
@@ -27241,6 +27734,14 @@
      },
      "attributes": [
       {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
+      },
+      {
        "name": "error",
        "type": {
         "text": "boolean"
@@ -27261,7 +27762,7 @@
       {
        "name": "filter",
        "type": {
-        "text": "AutocompleteFilter"
+        "text": "\"none\" | \"contains\" | \"starts-with\""
        },
        "fieldName": "filter",
        "default": "'contains'",
@@ -27284,6 +27785,14 @@
        "fieldName": "label",
        "default": "''",
        "description": "The floating label; also the field's accessible name."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "no-asterisk",
@@ -27342,7 +27851,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "TextFieldVariant"
+        "text": "\"filled\" | \"outlined\""
        },
        "fieldName": "variant",
        "default": "'filled'",
@@ -27350,6 +27859,16 @@
       }
      ],
      "members": [
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
+      },
       {
        "kind": "field",
        "name": "error",
@@ -27377,7 +27896,7 @@
        "kind": "field",
        "name": "filter",
        "type": {
-        "text": "AutocompleteFilter"
+        "text": "\"none\" | \"contains\" | \"starts-with\""
        },
        "privacy": "public",
        "default": "'contains'",
@@ -27405,6 +27924,16 @@
        "default": "''",
        "description": "The floating label; also the field's accessible name.",
        "attribute": "label"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -27479,7 +28008,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "TextFieldVariant"
+        "text": "\"filled\" | \"outlined\""
        },
        "privacy": "public",
        "default": "'filled'",
@@ -27830,6 +28359,14 @@
      },
      "attributes": [
       {
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "disabled",
+       "description": "Disabled by the attribute or by a disabled fieldset."
+      },
+      {
        "name": "display-text",
        "type": {
         "text": "string"
@@ -27872,6 +28409,14 @@
        "fieldName": "label",
        "default": "''",
        "description": "The floating label; also the field's accessible name."
+      },
+      {
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "name",
+       "description": "The HTML name to use in form submission."
       },
       {
        "name": "no-asterisk",
@@ -27937,7 +28482,7 @@
       {
        "name": "variant",
        "type": {
-        "text": "TextFieldVariant"
+        "text": "\"filled\" | \"outlined\""
        },
        "fieldName": "variant",
        "default": "'filled'",
@@ -27945,6 +28490,16 @@
       }
      ],
      "members": [
+      {
+       "kind": "field",
+       "name": "disabled",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "description": "Disabled by the attribute or by a disabled fieldset.",
+       "attribute": "disabled"
+      },
       {
        "kind": "field",
        "name": "displayText",
@@ -27999,6 +28554,16 @@
        "default": "''",
        "description": "The floating label; also the field's accessible name.",
        "attribute": "label"
+      },
+      {
+       "kind": "field",
+       "name": "name",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "The HTML name to use in form submission.",
+       "attribute": "name"
       },
       {
        "kind": "field",
@@ -28081,7 +28646,7 @@
        "kind": "field",
        "name": "variant",
        "type": {
-        "text": "TextFieldVariant"
+        "text": "\"filled\" | \"outlined\""
        },
        "privacy": "public",
        "default": "'filled'",
@@ -31290,6 +31855,474 @@
   },
   {
    "kind": "javascript-module",
+   "path": "json-render/catalog.js",
+   "declarations": [
+    {
+     "kind": "variable",
+     "name": "catalog",
+     "type": {
+      "text": "Catalog<{ spec: SchemaType<\"object\", { root: SchemaType<\"string\", unknown>; elements: SchemaType<\"record\", SchemaType<\"object\", { type: SchemaType<\"ref\", string>; props: SchemaType<\"propsOf\", string>; children: SchemaType<\"array\", SchemaType<\"string\", unknown>>; slots: { optional: true; kind: \"record\"; inner?: SchemaType<\"array\", SchemaType<\"string\", unknown>>; }; visible: { optional: true; kind: \"any\"; inner?: unknown; }; repeat: { optional: true; kind: \"any\"; inner?: unknown; }; on: { optiona…"
+     },
+     "description": "The catalog: the components above, and no actions beyond the built-in ones."
+    },
+    {
+     "kind": "variable",
+     "name": "COMPONENTS",
+     "type": {
+      "text": "{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; description: string; deprecated: boolean; spec: string[]; }; Html: { tag: string; props: ZodObject<{ tag: ZodEnum<{ button: \"button\"; label: \"label\"; div: \"div\"; span: \"span\"; p: \"p\"; h1: \"h1\"; h2: \"h2\"; h3: \"h3\"; h4: \"h4\"; h5: \"h5\"; h6: \"h6\"; a: \"a\"; section: \"section\"; header: \"header\"; footer: \"footer\"; na…"
+     },
+     "description": "The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties."
+    },
+    {
+     "kind": "variable",
+     "name": "HTML_TAG",
+     "type": {
+      "text": "\"#html\""
+     },
+     "description": "The tag of the Html primitive: its `tag` prop names the native element."
+    },
+    {
+     "kind": "variable",
+     "name": "HTML_TAGS",
+     "type": {
+      "text": "readonly [\"div\", \"span\", \"p\", \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", \"h6\", \"a\", \"button\", \"label\", \"section\", \"header\", \"footer\", \"nav\", \"main\", \"ul\", \"ol\", \"li\", \"strong\", \"em\", \"img\"]"
+     },
+     "description": "The native elements the Html primitive may create."
+    },
+    {
+     "kind": "variable",
+     "name": "TEXT_TAG",
+     "type": {
+      "text": "\"#text\""
+     },
+     "description": "The tag of the Text primitive: a text node, not an element."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "catalog",
+     "declaration": {
+      "name": "catalog",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "COMPONENTS",
+     "declaration": {
+      "name": "COMPONENTS",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "HTML_TAG",
+     "declaration": {
+      "name": "HTML_TAG",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "HTML_TAGS",
+     "declaration": {
+      "name": "HTML_TAGS",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "TEXT_TAG",
+     "declaration": {
+      "name": "TEXT_TAG",
+      "module": "/json-render/catalog.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "json-render/check.js",
+   "declarations": [
+    {
+     "kind": "function",
+     "name": "checkSpec",
+     "parameters": [
+      {
+       "name": "spec",
+       "type": {
+        "text": "Spec"
+       }
+      }
+     ],
+     "description": "Checks a spec against the catalog, the elements' API and the M3 rules."
+    },
+    {
+     "kind": "function",
+     "name": "m3Prompt",
+     "parameters": [
+      {
+       "name": "customRules",
+       "type": {
+        "text": "string[]"
+       },
+       "optional": true
+      }
+     ],
+     "description": "The system prompt for generating specs of the catalog: json-render's prompt for the catalog, with the M3 rules (each with its spec quote)."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "checkSpec",
+     "declaration": {
+      "name": "checkSpec",
+      "module": "/json-render/check.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "m3Prompt",
+     "declaration": {
+      "name": "m3Prompt",
+      "module": "/json-render/check.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "json-render/index.js",
+   "exports": [
+    {
+     "kind": "js",
+     "name": "BUILT_IN_ACTIONS",
+     "declaration": {
+      "name": "BUILT_IN_ACTIONS",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "catalog",
+     "declaration": {
+      "name": "catalog",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "checkM3",
+     "declaration": {
+      "name": "checkM3",
+      "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "checkSpec",
+     "declaration": {
+      "name": "checkSpec",
+      "module": "/json-render/check.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "COMPONENTS",
+     "declaration": {
+      "name": "COMPONENTS",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "dynamic",
+     "declaration": {
+      "name": "dynamic",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "FORMAT_RULES",
+     "declaration": {
+      "name": "FORMAT_RULES",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "HTML_TAGS",
+     "declaration": {
+      "name": "HTML_TAGS",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "isExpression",
+     "declaration": {
+      "name": "isExpression",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "M3_RULES",
+     "declaration": {
+      "name": "M3_RULES",
+      "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "m3Prompt",
+     "declaration": {
+      "name": "m3Prompt",
+      "module": "/json-render/check.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "m3PromptRules",
+     "declaration": {
+      "name": "m3PromptRules",
+      "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "renderSpec",
+     "declaration": {
+      "name": "renderSpec",
+      "module": "/json-render/renderer.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "schema",
+     "declaration": {
+      "name": "schema",
+      "module": "/json-render/schema.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "json-render/m3-rules.js",
+   "declarations": [
+    {
+     "kind": "function",
+     "name": "checkM3",
+     "parameters": [
+      {
+       "name": "spec",
+       "type": {
+        "text": "Spec"
+       }
+      }
+     ],
+     "description": "Checks a spec against the M3 rules."
+    },
+    {
+     "kind": "function",
+     "name": "indexSpec",
+     "parameters": [
+      {
+       "name": "spec",
+       "type": {
+        "text": "Spec"
+       }
+      }
+     ],
+     "description": "Indexes a spec for the rules."
+    },
+    {
+     "kind": "variable",
+     "name": "M3_RULES",
+     "type": {
+      "text": "M3Rule[]"
+     },
+     "description": "The M3 rules, by component."
+    },
+    {
+     "kind": "function",
+     "name": "m3PromptRules",
+     "description": "The M3 rules as prompt rules, each with its spec page and quote."
+    },
+    {
+     "kind": "function",
+     "name": "ruleUrl",
+     "parameters": [
+      {
+       "name": "rule",
+       "type": {
+        "text": "M3Rule"
+       }
+      }
+     ],
+     "description": "The URL of a rule's spec page."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "checkM3",
+     "declaration": {
+      "name": "checkM3",
+      "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "indexSpec",
+     "declaration": {
+      "name": "indexSpec",
+      "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "M3_RULES",
+     "declaration": {
+      "name": "M3_RULES",
+      "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "m3PromptRules",
+     "declaration": {
+      "name": "m3PromptRules",
+      "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "ruleUrl",
+     "declaration": {
+      "name": "ruleUrl",
+      "module": "/json-render/m3-rules.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "json-render/renderer.js",
+   "declarations": [
+    {
+     "kind": "function",
+     "name": "renderSpec",
+     "description": "Renders a json-render spec of the library's catalog into a container."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "renderSpec",
+     "declaration": {
+      "name": "renderSpec",
+      "module": "/json-render/renderer.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "json-render/schema.js",
+   "declarations": [
+    {
+     "kind": "variable",
+     "name": "BUILT_IN_ACTIONS",
+     "type": {
+      "text": "readonly [{ readonly name: \"setState\"; readonly description: \"Set the value at a state path. Params: { statePath: string, value: any }.\"; }, { readonly name: \"pushState\"; readonly description: \"Append a value to the array at a state path. Params: { statePath: string, value: any }.\"; }, { readonly name: \"removeState\"; readonly description: \"Remove the item at an index from the array at a state path. Params: { statePath: string, index: number }.\"; }]"
+     },
+     "description": "The actions every renderer handles, whatever the catalog."
+    },
+    {
+     "kind": "function",
+     "name": "dynamic",
+     "description": "A prop type that also takes a json-render expression, which is only resolved when the spec renders."
+    },
+    {
+     "kind": "variable",
+     "name": "FORMAT_RULES",
+     "type": {
+      "text": "readonly [\"Every element MUST include a \\\"children\\\" array; leaf elements use \\\"children\\\": []. Every key in \\\"children\\\" and \\\"slots\\\" MUST name an element of \\\"elements\\\".\", \"Text is a \\\"Text\\\" element ({\\\"type\\\":\\\"Text\\\",\\\"props\\\":{\\\"text\\\":\\\"Save\\\"},\\\"children\\\":[]}) in the parent's children. A component label that is a slot (a button label, an icon name) is a Text child.\", \"Use \\\"children\\\" for a component's default slot. For its named slots use a top-level \\\"slots\\\" object on the element …"
+     },
+     "description": "Rules of the spec format, given to every prompt before the M3 rules."
+    },
+    {
+     "kind": "function",
+     "name": "isExpression",
+     "parameters": [
+      {
+       "name": "value",
+       "type": {
+        "text": "unknown"
+       }
+      }
+     ],
+     "description": "Whether a prop value is a json-render expression (`{$state: ...}`, `{$bindState: ...}`, `{$item: ...}`, `{$cond: ...}`, `{$template: ...}` and so on) rather than a literal."
+    },
+    {
+     "kind": "variable",
+     "name": "schema",
+     "type": {
+      "text": "Schema<{ spec: SchemaType<\"object\", { root: SchemaType<\"string\", unknown>; elements: SchemaType<\"record\", SchemaType<\"object\", { type: SchemaType<\"ref\", string>; props: SchemaType<\"propsOf\", string>; children: SchemaType<\"array\", SchemaType<\"string\", unknown>>; slots: { optional: true; kind: \"record\"; inner?: SchemaType<\"array\", SchemaType<\"string\", unknown>>; }; visible: { optional: true; kind: \"any\"; inner?: unknown; }; repeat: { optional: true; kind: \"any\"; inner?: unknown; }; on: { optional…"
+     },
+     "description": "The library's json-render schema: json-render's flat element spec, and a catalog of web components."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "BUILT_IN_ACTIONS",
+     "declaration": {
+      "name": "BUILT_IN_ACTIONS",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "dynamic",
+     "declaration": {
+      "name": "dynamic",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "FORMAT_RULES",
+     "declaration": {
+      "name": "FORMAT_RULES",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "isExpression",
+     "declaration": {
+      "name": "isExpression",
+      "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "schema",
+     "declaration": {
+      "name": "schema",
+      "module": "/json-render/schema.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "styles/adopt-styles.js",
    "declarations": [
     {
@@ -31893,7 +32926,13 @@
      "superclass": {
       "name": "Icon",
       "module": "/styles/icons/icon.js"
-     }
+     },
+     "slots": [
+      {
+       "name": "",
+       "description": "The icon's name as text: a Material Symbols ligature such as `search` (styles/icons.md), or an inline `<svg>`."
+      }
+     ]
     }
    ],
    "exports": [
@@ -32425,7 +33464,7 @@
       {
        "name": "shape",
        "type": {
-        "text": "SkeletonShape"
+        "text": "\"text\" | \"rect\" | \"circle\""
        },
        "fieldName": "shape",
        "default": "'rect'",
@@ -32449,7 +33488,7 @@
        "kind": "field",
        "name": "shape",
        "type": {
-        "text": "SkeletonShape"
+        "text": "\"text\" | \"rect\" | \"circle\""
        },
        "privacy": "public",
        "default": "'rect'",

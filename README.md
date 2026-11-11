@@ -30,6 +30,11 @@ Material Web 2.5 components are on `main`.
     when they are stale, and the npm package ships them. Every module ships
     with its `.d.ts`; `scripts/api/check-package-types.mjs` type-checks the
     built package as a user's project would on every package build.
+  - `json-render/`: UIs from JSON specs (https://json-render.dev). The
+    schema (`schema.ts`), the catalog of the components generated from the
+    public API (`catalog.ts`, reviewed in `CATALOG.md`), M3 rules that quote
+    the spec (`m3-rules.ts`), `checkSpec()` and `m3Prompt()` (`check.ts`),
+    and `renderSpec()` (`renderer.ts`).
   - `internal/`: plumbing with no docs page (form `behaviors/`, Sass `sass/ext`,
     TypeScript declarations in `types/`, controllers, events, directives).
     `testing/` holds the test helpers, and `skill/` is the agent skill for
@@ -37,6 +42,20 @@ Material Web 2.5 components are on `main`.
 - `docs/`: the docs pages (Markdown).
 - `site/`: the docs site (Eleventy). `site/content/` holds the pages.
 - `scripts/`: build, site and publishing scripts.
+
+## From the spec to the library and back
+
+The sources of truth go into the code, and everything generated from the
+code is checked back against them:
+
+| Step | Made by | Checked by |
+| --- | --- | --- |
+| M3 spec (`.m3-specs/`, local mirror), Jetpack Compose Material 3 sources (`.m3-specs/compose`), WAI-ARIA 1.3, Baseline, Lighthouse | `scripts/download-m3-specs.mjs`, `scripts/m3/download-compose-sources.mjs`, `scripts/m3/` | |
+| The code (`material-design-expressive/`) | by hand, and the token and test generators in `scripts/m3/` | spec, anatomy, measurement and contract tests per component; the central axe and ARIA suites; `gb-baseline.mjs`; Lighthouse in the catalog |
+| `SPEC-MAP.md`: spec page -> folder -> elements | `scripts/m3/gen-spec-map.mjs` | fails when a folder or spec page is unmapped, or in the wrong one of `components/` and `extras/` |
+| `custom-elements.json`, `API.md`: the public API | `scripts/api/gen-api.mjs` | `gb:check --all` (stale), `check-package-types.mjs` (types), every element reachable from `all.js`, JSDoc coverage |
+| `json-render/catalog.ts`: the json-render catalog | `scripts/api/gen-json-render.mjs`, from the public API | `gb:check --all` (stale); each M3 rule's quote must still be on its spec page |
+| A spec (from a model, or by hand) | `m3Prompt()` gives the model the catalog and the M3 rules | `checkSpec()`: structure, props, slots, events and M3 rules; `renderSpec()` output passes axe in the tests |
 
 ## Develop
 
