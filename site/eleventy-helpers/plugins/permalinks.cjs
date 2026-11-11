@@ -14,8 +14,10 @@ const slugifyLib = require('slugify');
  * @param markdownIt The markdown-it instance to use.
  */
 function permalinks(markdownIt) {
-  // Use the same slugify as 11ty for markdownItAnchor.
-  const slugify = (s) => slugifyLib(s, { lower: true });
+  // Use the same slugify as 11ty for markdownItAnchor. Angle brackets are
+  // dropped first, or slugify spells them out: `<md-gb-button>` would become
+  // `lessmd-gb-buttongreater` instead of `md-gb-button` (as webmcp.ts does).
+  const slugify = (s) => slugifyLib(s.replace(/[<>]/g, ' '), { lower: true });
 
   const linkAfterHeaderBase = markdownItAnchor.permalink.linkAfterHeader({
     style: 'visually-hidden',
