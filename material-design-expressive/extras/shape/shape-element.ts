@@ -27,6 +27,21 @@ export type ShapeColor =
 
 type MorphPaths = readonly [string, string];
 
+/** The surfaces a shape decorates, for `morphOnHover`. */
+const SURFACE =
+  'a[href], button, summary, label, [tabindex], md-gb-card, md-gb-list-item, md-gb-carousel-item';
+const SURFACE_EVENTS = ['pointerenter', 'pointerleave', 'focusin', 'focusout'];
+
+/** The closest surface around `element` (across shadow roots), or its parent. */
+function surfaceOf(element: Element): Element | null {
+  let node: Node | null = element.parentNode;
+  while (node) {
+    if (node instanceof Element && node.matches(SURFACE)) return node;
+    node = node instanceof ShadowRoot ? node.host : node.parentNode;
+  }
+  return element.parentElement;
+}
+
 /** The morph paths, loaded once, by the first shape that morphs. */
 let morphs: Promise<Readonly<Record<string, MorphPaths>>> | undefined;
 function loadMorphs() {
@@ -41,8 +56,8 @@ function loadMorphs() {
  *
  * With `to`, the shape can morph into another Material shape
  * (m3.material.io/styles/shape/shape-morph): set `morphed` to show `to`,
- * for example while the surface around it is hovered or focused, or `loop`
- * to morph back and forth. Morphs follow the spatial springs of the motion
+ * `morph-on-hover` to morph while the surface around it is hovered or
+ * focused, or `loop` to morph back and forth. Morphs follow the spatial springs of the motion
  * tokens, so they stop when motion is reduced. The pairs that morph are the
  * keys of `SHAPE_MORPHS` (`shape-morphs.js`), in either direction; a shape
  * without a morph to `to` stays still.
@@ -164,6 +179,13 @@ export class ShapeElement extends LitElement {
   /** Morphs into `to` and back, in a loop. */
   @property({type: Boolean, reflect: true}) loop = false;
 
+  /**
+   * Morphs into `to` while the surface it decorates is hovered or holds
+   * focus (it sets `morphed`): its closest link, button, card, list item,
+   * carousel item, summary or focusable ancestor, or else its parent.
+   */
+  @property({type: Boolean, attribute: 'morph-on-hover'}) morphOnHover = false;
+
   /** Starts the loop 1, 2 or 3 quarters later, so shapes don't morph together. */
   @property({type: Number}) delay: 0 | 1 | 2 | 3 = 0;
 
@@ -175,9 +197,52 @@ export class ShapeElement extends LitElement {
 
   @state() private paths: MorphPaths | null = null;
 
+  /** The surface whose hover and focus morph the shape (`morphOnHover`). */
+  private surface: Element | null = null;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.watchSurface();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.unwatchSurface();
+  }
+
   protected override willUpdate(changed: PropertyValues<this>) {
     if (changed.has('shape') || changed.has('to')) this.loadPaths();
+    if (changed.has('morphOnHover') && this.isConnected) this.watchSurface();
   }
+
+  private watchSurface() {
+    this.unwatchSurface();
+    if (!this.morphOnHover) return;
+    const surface = surfaceOf(this);
+    if (!surface) return;
+    this.surface = surface;
+    for (const type of SURFACE_EVENTS) surface.addEventListener(type, this.onSurfaceChange);
+  }
+
+  private unwatchSurface() {
+    for (const type of SURFACE_EVENTS) this.surface?.removeEventListener(type, this.onSurfaceChange);
+    this.surface = null;
+  }
+
+  /** Morphed while the surface is hovered or holds focus. */
+  private readonly onSurfaceChange = (event: Event) => {
+    const surface = this.surface;
+    if (!surface) return;
+    if (event.type === 'pointerenter' || event.type === 'focusin') {
+      this.morphed = true;
+      return;
+    }
+    // After a focus move, the surface may still hold focus or the pointer.
+    setTimeout(() => {
+      if (this.surface !== surface) return;
+      this.morphed = surface.matches(':hover') || surface.matches(':focus-within');
+    });
+  };
 
   private async loadPaths() {
     const {shape, to} = this;

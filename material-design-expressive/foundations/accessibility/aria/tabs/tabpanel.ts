@@ -17,7 +17,10 @@ import {mixinFocusable} from '../../../../internal/behaviors/focusable.js';
 const baseClass = mixinFocusable(mixinElementInternals(LitElement));
 
 /**
- * An ARIA tabpanel element.
+ * An ARIA tabpanel element: the panel of an `md-gb-tab` (its `tabpanel` is
+ * the panel's id), shown while that tab is selected.
+ *
+ * @slot - The panel's content.
  */
 export class AriaTabpanelElement extends baseClass {
   static override styles = css`

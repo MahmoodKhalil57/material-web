@@ -26,6 +26,9 @@ const {parseFragment, serialize, serializeOuter} = require('parse5');
 const {frameDoc} = require('./shortcodes/gb-demo.cjs');
 
 const DROP = new Set(['script', 'style', 'template', 'noscript']);
+/** The old shell's copy button around code blocks (plugins/copy-code-button.cjs):
+    md-gb-demo-code, which the code block becomes, has its own. */
+const COPY_WRAPPERS = new Set(['lit-island', 'copy-code-button']);
 /** Html attribute -> prop. */
 const HTML_ATTRS = {
   id: 'id',
@@ -179,7 +182,10 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
       };
       if (to) {
         props.to = to;
+        // Heroes loop; a card's or tile's shape morphs while it's hovered
+        // or focused, as in the old shell (morph.css).
         if (attrs['data-morph-mode'] === 'loop') props.loop = true;
+        else props.morphOnHover = true;
         if (attrs['data-delay']) props.delay = Number(attrs['data-delay']);
       }
       const icon = (node.parentNode?.childNodes ?? []).find((c) => c.tagName === 'md-gb-icon');
@@ -241,6 +247,8 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
       return [add({type: 'Html', props, children: [...children, ...Object.values(slots).flat()]})];
     }
 
+    if (COPY_WRAPPERS.has(tag)) return convertChildren(node, issues, inPre).children;
+
     // Not in the catalog: keep what it holds.
     count(`unwrapped <${tag}>`);
     issues.push(tag);
@@ -265,12 +273,16 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
     if (!props.srcdoc && preview) {
       const issues = [];
       const before = n;
+      const counted = new Map(stats);
       const tried = convert(preview, issues);
       if (!css && !issues.length) {
         children = tried;
       } else {
-        // Its own styles, or elements the catalog doesn't have: a document.
+        // Its own styles, or elements the catalog doesn't have: a document,
+        // which keeps them, so what the attempt unwrapped isn't reported.
         for (let i = before; i < n; i++) delete elements[`${prefix}${i.toString(36)}`];
+        stats.clear();
+        for (const [k, v] of counted) stats.set(k, v);
         const id = attrsOf(preview).id ?? 'demo';
         props.srcdoc = frameDoc({id: attrs.id ?? id, html: `<div id="${id}">${serialize(preview)}</div>`, css, js: '', lib});
         count('demo as a document');

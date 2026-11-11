@@ -29837,6 +29837,15 @@
        "description": "Shows the `to` shape, morphing into it."
       },
       {
+       "name": "morph-on-hover",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "morphOnHover",
+       "default": "false",
+       "description": "Morphs into `to` while the surface it decorates is hovered or holds focus (it sets `morphed`): its closest link, button, card, list item, carousel item, summary or focusable ancestor, or else its parent."
+      },
+      {
        "name": "shape",
        "type": {
         "text": "\"circle\" | \"square\" | \"slanted\" | \"arch\" | \"fan\" | \"arrow\" | \"semiCircle\" | \"oval\" | \"pill\" | \"triangle\" | \"diamond\" | \"clamShell\" | \"pentagon\" | \"gem\" | \"sunny\" | \"verySunny\" | \"cookie4Sided\" | \"cookie6Sided\" | \"cookie7Sided\" | \"cookie9Sided\" | \"cookie12Sided\" | \"ghostish\" | \"clover4Leaf\" | \"clover8Leaf\" | \"burst\" | \"softBurst\" | \"boom\" | \"softBoom\" | \"flower\" | \"puffy\" | \"puffyDiamond\" | \"pixelCircle\" | \"pixelTriangle\" | \"bun\" | \"heart\""
@@ -29911,6 +29920,17 @@
        "description": "Shows the `to` shape, morphing into it.",
        "attribute": "morphed",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "morphOnHover",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Morphs into `to` while the surface it decorates is hovered or holds focus (it sets `morphed`): its closest link, button, card, list item, carousel item, summary or focusable ancestor, or else its parent.",
+       "attribute": "morph-on-hover"
       },
       {
        "kind": "field",
@@ -30294,6 +30314,20 @@
   },
   {
    "kind": "javascript-module",
+   "path": "foundations/accessibility/aria/tabs/md-aria-tabpanel.js",
+   "exports": [
+    {
+     "kind": "custom-element-definition",
+     "name": "md-aria-tabpanel",
+     "declaration": {
+      "name": "AriaTabpanelElement",
+      "module": "/foundations/accessibility/aria/tabs/tabpanel.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "foundations/accessibility/aria/tabs/tab.js",
    "declarations": [
     {
@@ -30330,6 +30364,59 @@
      "declaration": {
       "name": "AriaTablistElement",
       "module": "/foundations/accessibility/aria/tabs/tablist.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "foundations/accessibility/aria/tabs/tabpanel.js",
+   "declarations": [
+    {
+     "kind": "class",
+     "name": "AriaTabpanelElement",
+     "tagName": "md-aria-tabpanel",
+     "customElement": true,
+     "description": "An ARIA tabpanel element: the panel of an `md-gb-tab` (its `tabpanel` is the panel's id), shown while that tab is selected.",
+     "summary": "An ARIA tabpanel element: the panel of an `md-gb-tab` (its `tabpanel` is the panel's id), shown while that tab is selected.",
+     "attributes": [
+      {
+       "name": "tab",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "tab",
+       "description": "ID of the tab element that controls this tabpanel."
+      }
+     ],
+     "members": [
+      {
+       "kind": "field",
+       "name": "tab",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "description": "ID of the tab element that controls this tabpanel.",
+       "attribute": "tab",
+       "reflects": true
+      }
+     ],
+     "slots": [
+      {
+       "name": "",
+       "description": "The panel's content."
+      }
+     ]
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "AriaTabpanelElement",
+     "declaration": {
+      "name": "AriaTabpanelElement",
+      "module": "/foundations/accessibility/aria/tabs/tabpanel.js"
      }
     }
    ]
@@ -32516,7 +32603,7 @@
      "type": {
       "text": "{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: string[]; description: string; deprecated: boolean; spec: string[]; }; Html: { tag: string; props: ZodObject<{ tag: ZodEnum<{ button: \"button\"; details: \"details\"; label: \"label\"; div: \"div\"; span: \"span\"; p: \"p\"; h1: \"h1\"; h2: \"h2\"; h3: \"h3\"; h4: \"h4\"; h5: \"h5\"; …"
      },
-     "description": "The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties."
+     "description": "The catalog components: one per md-gb-* element and md-aria-tabpanel (the panel of md-gb-tab), plus the Text and Html primitives. Props are the elements' JSON-serializable properties."
     },
     {
      "kind": "variable",

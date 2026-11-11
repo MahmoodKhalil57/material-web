@@ -46,8 +46,9 @@ export const HTML_ATTRIBUTES = {
 } as const;
 
 /**
- * The catalog components: one per md-gb-* element, plus the Text and Html
- * primitives. Props are the elements' JSON-serializable properties.
+ * The catalog components: one per md-gb-* element and md-aria-tabpanel (the
+ * panel of md-gb-tab), plus the Text and Html primitives. Props are the
+ * elements' JSON-serializable properties.
  */
 export const COMPONENTS = {
   Text: {
@@ -98,6 +99,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether the title and subtitle are centered instead of leading-aligned (the M3 Expressive "centered text" configuration). Defaults to `false`. */
         centered: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** How the app bar reacts to scrolling: `hide` (hide on scroll down, reveal on scroll up) or `compress` (medium and large flexible app bars become small until scrolled back to the top). */
         scrollBehavior: dynamic(z.enum(["hide", "compress"])).optional(),
         /** Whether the app bar is in its scrolled state. Defaults to `false`. A medium or large flexible app bar in its scrolled state is shown as a small one (app-bars.md: "When scrolled, medium flexible and large flexible app bars can transform into small app bars"). */
@@ -112,7 +115,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "image", "leading", "overflow", "search", "subtitle", "tabs", "trailing"] as string[],
     events: ["overflowchange", "scrollstatechange"] as string[],
-    attributes: {ariaLabel: "aria-label", centered: "centered", scrollBehavior: "scroll-behavior", scrolled: "scrolled", scrollTarget: "scroll-target", size: "size", variant: "variant"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", centered: "centered", id: "id", scrollBehavior: "scroll-behavior", scrolled: "scrolled", scrollTarget: "scroll-target", size: "size", variant: "variant"} as Record<string, string>,
     booleans: ["centered", "scrolled"] as string[],
     description: "A Material Design app bar component. Slots: default, image, leading, overflow, search, subtitle, tabs, trailing. Events: overflowchange, scrollstatechange. M3: app-bars.",
     deprecated: false,
@@ -128,6 +131,8 @@ export const COMPONENTS = {
         autoExpandRail: dynamic(z.boolean()).optional(),
         /** Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content. */
         fullscreen: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Which navigation component to show. */
         navigation: dynamic(z.enum(["none", "auto", "bar", "rail"])).optional(),
         /** What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. */
@@ -138,11 +143,31 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "companion-rail", "fab", "navigation-bar", "navigation-rail", "snackbar", "toolbar", "top-app-bar"] as string[],
     events: ["navigation-change", "window-class-change", "window-height-class-change"] as string[],
-    attributes: {ariaLabel: "aria-label", autoExpandRail: "auto-expand-rail", fullscreen: "fullscreen", navigation: "navigation", sideSheetNavigation: "side-sheet-navigation", sideSheetOpen: "side-sheet-open"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", autoExpandRail: "auto-expand-rail", fullscreen: "fullscreen", id: "id", navigation: "navigation", sideSheetNavigation: "side-sheet-navigation", sideSheetOpen: "side-sheet-open"} as Record<string, string>,
     booleans: ["autoExpandRail", "fullscreen", "sideSheetOpen"] as string[],
     description: "A Material Design app scaffold (bars, rails, FAB, snackbar). Slots: default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar. Events: navigation-change, window-class-change, window-height-class-change. M3: scaffold.",
     deprecated: false,
     spec: ["https://m3.material.io/foundations/layout/scaffold"] as string[],
+  },
+  AriaTabpanel: {
+    tag: "md-aria-tabpanel",
+    props: z
+      .object({
+        /** The accessible name (aria-label). */
+        ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
+        /** ID of the tab element that controls this tabpanel. */
+        tab: dynamic(z.string()).optional(),
+      })
+      .strict(),
+    slots: ["default"] as string[],
+    events: [] as string[],
+    attributes: {ariaLabel: "aria-label", id: "id", tab: "tab"} as Record<string, string>,
+    booleans: [] as string[],
+    description: "An ARIA tabpanel element: the panel of an `md-gb-tab` (its `tabpanel` is the panel's id), shown while that tab is selected. Slots: default.",
+    deprecated: false,
+    spec: [] as string[],
   },
   Autocomplete: {
     tag: "md-gb-autocomplete",
@@ -160,6 +185,8 @@ export const COMPONENTS = {
         filter: dynamic(z.enum(["none", "contains", "starts-with"])).optional(),
         /** Whether a leading icon is slotted. Set it for SSR. */
         hasLeadingIcon: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The floating label; also the field's accessible name. */
         label: dynamic(z.string()).optional(),
         /** The HTML name to use in form submission. */
@@ -182,7 +209,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "leading-icon", "trailing-icon"] as string[],
     events: ["change", "closed", "closing", "input", "invalid", "opened", "opening"] as string[],
-    attributes: {ariaLabel: "aria-label", disabled: "disabled", error: "error", errorText: "error-text", filter: "filter", hasLeadingIcon: "has-leading-icon", label: "label", name: "name", noAsterisk: "no-asterisk", open: "open", placeholder: "placeholder", required: "required", supportingText: "supporting-text", value: "value", variant: "variant"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", disabled: "disabled", error: "error", errorText: "error-text", filter: "filter", hasLeadingIcon: "has-leading-icon", id: "id", label: "label", name: "name", noAsterisk: "no-asterisk", open: "open", placeholder: "placeholder", required: "required", supportingText: "supporting-text", value: "value", variant: "variant"} as Record<string, string>,
     booleans: ["disabled", "error", "hasLeadingIcon", "noAsterisk", "open", "required"] as string[],
     description: "A Material Design component. Slots: default, leading-icon, trailing-icon. Events: change, closed, closing, input, invalid, opened, opening. M3: menus, text-fields.",
     deprecated: false,
@@ -196,6 +223,8 @@ export const COMPONENTS = {
         anchored: dynamic(z.boolean()).optional(),
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Screen reader text for a small (non-counting) badge. Spec: non-counting badges announce "New notification", read after the destination's label. */
         label: dynamic(z.string()).optional(),
         /** The largest count shown before it is truncated to `max+`. */
@@ -206,7 +235,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {anchored: "anchored", ariaLabel: "aria-label", label: "label", max: "max", value: "value"} as Record<string, string>,
+    attributes: {anchored: "anchored", ariaLabel: "aria-label", id: "id", label: "label", max: "max", value: "value"} as Record<string, string>,
     booleans: ["anchored"] as string[],
     description: "A Material Design badge component. Slots: default. M3: badges.",
     deprecated: false,
@@ -226,6 +255,8 @@ export const COMPONENTS = {
         dragHandleLabel: dynamic(z.string()).optional(),
         /** Whether to hide the drag handle (which also disables dragging). */
         hideDragHandle: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Accessible label of the sheet dialog. */
         label: dynamic(z.string()).optional(),
         /** Whether the sheet is modal: shown above a scrim, blocking the rest of the page, and closed by Escape or a scrim click. */
@@ -242,7 +273,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: ["close", "closed", "open", "opened", "state-change"] as string[],
-    attributes: {ariaLabel: "aria-label", closeLabel: "close-label", collapseLabel: "collapse-label", dragHandleLabel: "drag-handle-label", hideDragHandle: "hide-drag-handle", label: "label", modal: "modal", open: "open", quick: "quick", skipPartiallyExpanded: "skip-partially-expanded", state: "state"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", closeLabel: "close-label", collapseLabel: "collapse-label", dragHandleLabel: "drag-handle-label", hideDragHandle: "hide-drag-handle", id: "id", label: "label", modal: "modal", open: "open", quick: "quick", skipPartiallyExpanded: "skip-partially-expanded", state: "state"} as Record<string, string>,
     booleans: ["hideDragHandle", "modal", "open", "quick", "skipPartiallyExpanded"] as string[],
     description: "A Material Design bottom sheet. Slots: default. Events: close, closed, open, opened, state-change. M3: bottom-sheets, side-sheets.",
     deprecated: false,
@@ -262,6 +293,8 @@ export const COMPONENTS = {
         download: dynamic(z.string()).optional(),
         /** The URL that the link button points to. */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission. */
         name: dynamic(z.string()).optional(),
         /** Sets the underlying `HTMLAnchorElement`'s `referrerpolicy` attribute when `href` is set. */
@@ -288,7 +321,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "container"] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", disabled: "disabled", download: "download", href: "href", name: "name", referrerPolicy: "referrerpolicy", rel: "rel", selected: "selected", size: "size", softDisabled: "soft-disabled", square: "square", target: "target", type: "type", unfilledIcon: "unfilled-icon", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", disabled: "disabled", download: "download", href: "href", id: "id", name: "name", referrerPolicy: "referrerpolicy", rel: "rel", selected: "selected", size: "size", softDisabled: "soft-disabled", square: "square", target: "target", type: "type", unfilledIcon: "unfilled-icon", value: "value"} as Record<string, string>,
     booleans: ["disabled", "selected", "softDisabled", "square", "unfilledIcon"] as string[],
     description: "A Material Design button. Slots: default, container. Events: change, input. M3: buttons, all-buttons.",
     deprecated: false,
@@ -304,6 +337,8 @@ export const COMPONENTS = {
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
         /** Whether the button group is disabled. */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the buttons at the trailing edge that do not fit collapse into a trailing overflow menu, and come back when the group has room again (button-groups.md, Adaptive design: "Buttons at the trailing edge of the button group can be customized to collapse into an overflow menu at smaller breakpoints, and become visible again at larger sizes."). The group is as wide as its container allows: give it a width, or put it in a narrower container, to make buttons overflow. Choosing a menu entry clicks the original button. */
         overflowMenu: dynamic(z.boolean()).optional(),
         /** Whether selection is required in single-select mode. */
@@ -318,7 +353,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "overflow"] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", overflowMenu: "overflow-menu", required: "required", resizing: "resizing", selection: "selection", variant: "variant"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", id: "id", overflowMenu: "overflow-menu", required: "required", resizing: "resizing", selection: "selection", variant: "variant"} as Record<string, string>,
     booleans: ["disabled", "overflowMenu", "required"] as string[],
     description: "A Material Design button group. Slots: default, overflow. Events: change, input. M3: button-groups.",
     deprecated: false,
@@ -338,6 +373,8 @@ export const COMPONENTS = {
         dragged: dynamic(z.boolean()).optional(),
         /** Makes an interactive card a link (spec: directly actionable cards have the button or link role). */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the card is interactive. */
         interactive: dynamic(z.boolean()).optional(),
         /** Whether an interactive card can be selected: activating it toggles `selected` (selection.md lists cards among the components that can be selected). */
@@ -350,7 +387,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "container"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", disabled: "disabled", dragged: "dragged", href: "href", interactive: "interactive", selectable: "selectable", selected: "selected", target: "target"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", disabled: "disabled", dragged: "dragged", href: "href", id: "id", interactive: "interactive", selectable: "selectable", selected: "selected", target: "target"} as Record<string, string>,
     booleans: ["disabled", "dragged", "interactive", "selectable", "selected"] as string[],
     description: "A Material Design component. Slots: default, container. M3: cards.",
     deprecated: false,
@@ -364,6 +401,8 @@ export const COMPONENTS = {
         alignment: dynamic(z.enum(["start", "center"])).optional(),
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The carousel layout. */
         layout: dynamic(z.enum(["multi-browse", "uncontained", "uncontained-multi-aspect", "hero", "full-screen"])).optional(),
         /** The scrolling axis. Defaults to vertical for the full-screen layout and horizontal for the others. */
@@ -374,7 +413,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {alignment: "alignment", ariaLabel: "aria-label", layout: "layout", orientation: "orientation", scrollMode: "scroll-mode"} as Record<string, string>,
+    attributes: {alignment: "alignment", ariaLabel: "aria-label", id: "id", layout: "layout", orientation: "orientation", scrollMode: "scroll-mode"} as Record<string, string>,
     booleans: [] as string[],
     description: "A Material Design carousel. Slots: default. M3: carousel.",
     deprecated: false,
@@ -390,6 +429,8 @@ export const COMPONENTS = {
         disabled: dynamic(z.boolean()).optional(),
         /** Makes the item a link to this URL. */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The accessible name of the item. Defaults to its label text. */
         label: dynamic(z.string()).optional(),
         /** Whether the item has an outline (`with-outline` tokens). */
@@ -400,7 +441,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "label"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", disabled: "disabled", href: "href", label: "label", outlined: "outlined", target: "target"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", disabled: "disabled", href: "href", id: "id", label: "label", outlined: "outlined", target: "target"} as Record<string, string>,
     booleans: ["disabled", "outlined"] as string[],
     description: "A Material Design carousel item. Slots: default, label. M3: carousel.",
     deprecated: false,
@@ -420,6 +461,8 @@ export const COMPONENTS = {
         disabled: dynamic(z.boolean()).optional(),
         /** Whether or not the checkbox is invalid. */
         error: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether or not the checkbox is indeterminate. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#indeterminate_state_checkboxes */
         indeterminate: dynamic(z.boolean()).optional(),
         /** The HTML name to use in form submission. */
@@ -432,7 +475,7 @@ export const COMPONENTS = {
       .strict(),
     slots: [] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", checked: "checked", density: "density", disabled: "disabled", error: "error", indeterminate: "indeterminate", name: "name", required: "required", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", checked: "checked", density: "density", disabled: "disabled", error: "error", id: "id", indeterminate: "indeterminate", name: "name", required: "required", value: "value"} as Record<string, string>,
     booleans: ["checked", "disabled", "error", "indeterminate", "required"] as string[],
     description: "A Material Design component. No children. Events: change, input. M3: checkbox.",
     deprecated: false,
@@ -460,6 +503,8 @@ export const COMPONENTS = {
         groupDisabled: dynamic(z.boolean()).optional(),
         /** The URL destination; makes an assist chip a link. */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Sets the underlying `HTMLAnchorElement`'s `referrerpolicy` attribute when `href` is set. */
         referrerPolicy: dynamic(z.string()).optional(),
         /** Sets the underlying `HTMLAnchorElement`'s `rel` attribute when `href` is set. */
@@ -482,7 +527,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "icon", "remove-icon", "trailing-icon"] as string[],
     events: ["change", "edit", "input", "remove", "update-focus"] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", density: "density", disabled: "disabled", dragged: "dragged", editable: "editable", elevated: "elevated", href: "href", referrerPolicy: "referrerpolicy", rel: "rel", removable: "removable", removeLabel: "remove-label", selected: "selected", softDisabled: "soft-disabled", target: "target", type: "type", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", density: "density", disabled: "disabled", dragged: "dragged", editable: "editable", elevated: "elevated", href: "href", id: "id", referrerPolicy: "referrerpolicy", rel: "rel", removable: "removable", removeLabel: "remove-label", selected: "selected", softDisabled: "soft-disabled", target: "target", type: "type", value: "value"} as Record<string, string>,
     booleans: ["disabled", "dragged", "editable", "elevated", "groupDisabled", "removable", "selected", "softDisabled"] as string[],
     description: "A Material Design Expressive Chip component. Slots: default, icon, remove-icon, trailing-icon. Events: change, edit, input, remove, update-focus. M3: chips.",
     deprecated: false,
@@ -498,6 +543,8 @@ export const COMPONENTS = {
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
         /** Disabled by the attribute or by a disabled fieldset. */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The HTML name to use in form submission. */
         name: dynamic(z.string()).optional(),
         /** Single-select: the selected chip can't be unselected. */
@@ -510,7 +557,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", name: "name", required: "required", selection: "selection", singleLine: "single-line"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", id: "id", name: "name", required: "required", selection: "selection", singleLine: "single-line"} as Record<string, string>,
     booleans: ["disabled", "required", "singleLine"] as string[],
     description: "A Material Design Expressive chip set. Slots: default. M3: chips.",
     deprecated: false,
@@ -538,6 +585,8 @@ export const COMPONENTS = {
         fullscreen: dynamic(z.boolean()).optional(),
         /** Hides the Cancel and OK buttons; a selection is committed right away. */
         hideActions: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Renders the calendar surface in the page flow, always visible, instead of a docked popup (without the text field) or a modal dialog. */
         inline: dynamic(z.boolean()).optional(),
         /** Docked: the text field label. Defaults to "Date" (range: "Dates"). */
@@ -571,7 +620,7 @@ export const COMPONENTS = {
     // Not JSON-serializable, so not in the catalog: isDateDisabled: (date: string) => boolean; strings: Partial<DatePickerStrings>
     slots: [] as string[],
     events: ["cancel", "change", "close", "input", "open"] as string[],
-    attributes: {ariaLabel: "aria-label", clearable: "clearable", density: "density", disabled: "disabled", error: "error", errorText: "error-text", firstDayOfWeek: "first-day-of-week", fullscreen: "fullscreen", hideActions: "hide-actions", inline: "inline", label: "label", locale: "locale", max: "max", min: "min", mode: "mode", name: "name", open: "open", quick: "quick", range: "range", required: "required", supportingText: "supporting-text", value: "value", variant: "variant"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", clearable: "clearable", density: "density", disabled: "disabled", error: "error", errorText: "error-text", firstDayOfWeek: "first-day-of-week", fullscreen: "fullscreen", hideActions: "hide-actions", id: "id", inline: "inline", label: "label", locale: "locale", max: "max", min: "min", mode: "mode", name: "name", open: "open", quick: "quick", range: "range", required: "required", supportingText: "supporting-text", value: "value", variant: "variant"} as Record<string, string>,
     booleans: ["clearable", "disabled", "error", "fullscreen", "hideActions", "inline", "open", "quick", "range", "required"] as string[],
     description: "A Material Design date picker (docked or modal, single date or range). No children. Events: cancel, change, close, input, open. M3: date-pickers.",
     deprecated: false,
@@ -585,6 +634,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether long code shows in full. */
         expanded: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The accessible name of the demo (what it shows). */
         label: dynamic(z.string()).optional(),
         /** The block size the preview reserves (px), so the page doesn't move as it loads. */
@@ -597,7 +648,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "code"] as string[],
     events: ["copy"] as string[],
-    attributes: {ariaLabel: "aria-label", expanded: "expanded", label: "label", previewHeight: "preview-height", sandbox: "sandbox", srcdoc: "srcdoc"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", expanded: "expanded", id: "id", label: "label", previewHeight: "preview-height", sandbox: "sandbox", srcdoc: "srcdoc"} as Record<string, string>,
     booleans: ["expanded"] as string[],
     description: "An example and its code. Slots: default, code. Events: copy.",
     deprecated: false,
@@ -613,6 +664,8 @@ export const COMPONENTS = {
         code: dynamic(z.string()).optional(),
         /** Whether only the first lines show (the demo's Show code expands it). */
         collapsed: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The file's name in the demo's tabs (default: the language). */
         label: dynamic(z.string()).optional(),
         /** Its language: `html`, `css`, `js` or `ts` (others aren't highlighted). */
@@ -621,7 +674,7 @@ export const COMPONENTS = {
       .strict(),
     slots: [] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", code: "code", collapsed: "collapsed", label: "label", language: "language"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", code: "code", collapsed: "collapsed", id: "id", label: "label", language: "language"} as Record<string, string>,
     booleans: ["collapsed"] as string[],
     description: "One highlighted file of a demo's code. No children.",
     deprecated: false,
@@ -639,6 +692,8 @@ export const COMPONENTS = {
         closeLabel: dynamic(z.string()).optional(),
         /** Uses the full-screen variant: the dialog fills the window, with a header holding a close icon button, the headline and the confirm action. Meant for compact windows; use a basic dialog at larger breakpoints. */
         fullScreen: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Turns off focus trapping, which keeps Tab and Shift+Tab cycling inside the dialog. Trapping is recommended for accessibility. */
         noFocusTrap: dynamic(z.boolean()).optional(),
         /** Opens the dialog when set to `true` and closes it when set to `false`. */
@@ -653,7 +708,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "actions", "headline", "icon"] as string[],
     events: ["cancel", "close", "closed", "open", "opened"] as string[],
-    attributes: {alwaysFullScreen: "always-full-screen", ariaLabel: "aria-label", closeLabel: "close-label", fullScreen: "full-screen", noFocusTrap: "no-focus-trap", open: "open", quick: "quick", type: "type"} as Record<string, string>,
+    attributes: {alwaysFullScreen: "always-full-screen", ariaLabel: "aria-label", closeLabel: "close-label", fullScreen: "full-screen", id: "id", noFocusTrap: "no-focus-trap", open: "open", quick: "quick", type: "type"} as Record<string, string>,
     booleans: ["alwaysFullScreen", "fullScreen", "noFocusTrap", "open", "quick"] as string[],
     description: "A Material Design dialog component. Slots: default, actions, headline, icon. Events: cancel, close, closed, open, opened. M3: dialogs.",
     deprecated: false,
@@ -665,6 +720,8 @@ export const COMPONENTS = {
       .object({
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Indents both ends 16dp (spec: middle-inset divider). */
         inset: dynamic(z.boolean()).optional(),
         /** Indents the trailing end 16dp. */
@@ -677,7 +734,7 @@ export const COMPONENTS = {
       .strict(),
     slots: [] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", inset: "inset", insetEnd: "inset-end", insetStart: "inset-start", vertical: "vertical"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", id: "id", inset: "inset", insetEnd: "inset-end", insetStart: "inset-start", vertical: "vertical"} as Record<string, string>,
     booleans: ["inset", "insetEnd", "insetStart", "vertical"] as string[],
     description: "A Material Design component. No children. M3: divider.",
     deprecated: false,
@@ -693,6 +750,8 @@ export const COMPONENTS = {
         color: dynamic(z.enum(["primary", "primary-container", "secondary", "secondary-container", "tertiary", "tertiary-container"])).optional(),
         /** Whether the extended FAB shows its label. When `false`, the label collapses and the FAB becomes an icon-only FAB. Set the attribute to `expanded="false"` to collapse it from markup. */
         expanded: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The extended FAB's label. Without one, the FAB is icon-only. */
         label: dynamic(z.string()).optional(),
         /** Opt-in: the `id` of a scroll container (in the same root), or `window`. The FAB collapses while it scrolls down and expands while it scrolls up. */
@@ -705,7 +764,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", expanded: "expanded", label: "label", scrollTarget: "scroll-target", size: "size", tooltip: "tooltip"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", expanded: "expanded", id: "id", label: "label", scrollTarget: "scroll-target", size: "size", tooltip: "tooltip"} as Record<string, string>,
     booleans: ["expanded", "tooltip"] as string[],
     description: "A Material Design component. Slots: default. M3: floating-action-button, extended-fab.",
     deprecated: false,
@@ -721,6 +780,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** The color of the FAB, close button and items. */
         color: dynamic(z.enum(["primary", "secondary", "tertiary"])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the menu is open. */
         open: dynamic(z.boolean()).optional(),
         /** The size of the FAB. The close button is always the same size. */
@@ -729,7 +790,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "close-icon", "icon"] as string[],
     events: ["activate", "toggle"] as string[],
-    attributes: {align: "align", ariaLabel: "aria-label", color: "color", open: "open", size: "size"} as Record<string, string>,
+    attributes: {align: "align", ariaLabel: "aria-label", color: "color", id: "id", open: "open", size: "size"} as Record<string, string>,
     booleans: ["open"] as string[],
     description: "A Material Design component. Slots: default, close-icon, icon. Events: activate, toggle. M3: fab-menu.",
     deprecated: false,
@@ -741,11 +802,13 @@ export const COMPONENTS = {
       .object({
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
       })
       .strict(),
     slots: ["default", "icon"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", id: "id"} as Record<string, string>,
     booleans: [] as string[],
     description: "A Material Design component. Slots: default, icon. M3: fab-menu.",
     deprecated: false,
@@ -757,11 +820,13 @@ export const COMPONENTS = {
       .object({
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
       })
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", id: "id"} as Record<string, string>,
     booleans: [] as string[],
     description: "A Material Design icon component. Slots: default. M3: icons.",
     deprecated: false,
@@ -783,6 +848,8 @@ export const COMPONENTS = {
         download: dynamic(z.string()).optional(),
         /** The URL that the link button points to. */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission. */
         name: dynamic(z.string()).optional(),
         /** Sets the underlying `HTMLAnchorElement`'s `referrerpolicy` attribute when `href` is set. */
@@ -813,7 +880,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", density: "density", disabled: "disabled", download: "download", href: "href", name: "name", referrerPolicy: "referrerpolicy", rel: "rel", selected: "selected", size: "size", softDisabled: "soft-disabled", square: "square", target: "target", tooltip: "tooltip", type: "type", unfilledIcon: "unfilled-icon", value: "value", width: "width"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", density: "density", disabled: "disabled", download: "download", href: "href", id: "id", name: "name", referrerPolicy: "referrerpolicy", rel: "rel", selected: "selected", size: "size", softDisabled: "soft-disabled", square: "square", target: "target", tooltip: "tooltip", type: "type", unfilledIcon: "unfilled-icon", value: "value", width: "width"} as Record<string, string>,
     booleans: ["disabled", "selected", "softDisabled", "square", "tooltip", "unfilledIcon"] as string[],
     description: "A Material Design component. Slots: default. Events: change, input. M3: icon-buttons.",
     deprecated: false,
@@ -827,6 +894,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** The density, from 0 (default) to -3. Each step down removes 4px from the items' height (spec foundations Density: "decreasing the top and bottom padding or overall height by 4dp"). Values are clamped to that range. Like `md-gb-segmented-button-set`'s `density`. */
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the items can be reordered. Shows a drag handle on every item. */
         reorderable: dynamic(z.boolean()).optional(),
         /** Whether to render the list with segmented items. */
@@ -840,7 +909,7 @@ export const COMPONENTS = {
     // Not JSON-serializable, so not in the catalog: reorderMessages: ListReorderMessages
     slots: ["default"] as string[],
     events: ["itemselectionchange", "reorder"] as string[],
-    attributes: {ariaLabel: "aria-label", density: "density", reorderable: "reorderable", segmented: "segmented", selectable: "selectable", selectionPrimary: "selection-primary"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", density: "density", id: "id", reorderable: "reorderable", segmented: "segmented", selectable: "selectable", selectionPrimary: "selection-primary"} as Record<string, string>,
     booleans: ["reorderable", "segmented", "selectable", "selectionPrimary"] as string[],
     description: "A Material Design component. Slots: default. Events: itemselectionchange, reorder. M3: lists.",
     deprecated: false,
@@ -866,6 +935,8 @@ export const COMPONENTS = {
         expanded: dynamic(z.boolean()).optional(),
         /** Whether the item is grabbed for reordering without dragging (with the keyboard or a tap on the drag handle). Set by the list; shows the move up and move down buttons. */
         grabbed: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The accessible label prefix of the move down button; the item's label text is appended. */
         moveDownLabel: dynamic(z.string()).optional(),
         /** The accessible label prefix of the move up button; the item's label text is appended (e.g. "Move up Apples"). */
@@ -890,7 +961,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "avatar", "leading", "leading-actions", "nested", "overline", "supporting-text", "trailing", "trailing-actions", "trailing-text"] as string[],
     events: ["reveal-change", "toggle"] as string[],
-    attributes: {ariaLabel: "aria-label", checked: "checked", disabled: "disabled", dragging: "dragging", dragHandleLabel: "drag-handle-label", expandable: "expandable", expanded: "expanded", grabbed: "grabbed", moveDownLabel: "move-down-label", moveUpLabel: "move-up-label", nonInteractive: "static", noRevealButton: "no-reveal-button", reorderable: "reorderable", revealButtonLabel: "reveal-button-label", revealed: "revealed", selectionVisible: "selection-visible"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", checked: "checked", disabled: "disabled", dragging: "dragging", dragHandleLabel: "drag-handle-label", expandable: "expandable", expanded: "expanded", grabbed: "grabbed", id: "id", moveDownLabel: "move-down-label", moveUpLabel: "move-up-label", nonInteractive: "static", noRevealButton: "no-reveal-button", reorderable: "reorderable", revealButtonLabel: "reveal-button-label", revealed: "revealed", selectionVisible: "selection-visible"} as Record<string, string>,
     booleans: ["checked", "disabled", "dragging", "expandable", "expanded", "grabbed", "nonInteractive", "noRevealButton", "reorderable", "selectable", "selectionVisible"] as string[],
     description: "A Material Design component. Slots: default, avatar, leading, leading-actions, nested, overline, supporting-text, trailing, trailing-actions, trailing-text. Events: reveal-change, toggle. M3: lists.",
     deprecated: false,
@@ -904,13 +975,15 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether the indicator has a container. */
         contained: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Progress from 0 to 1. When set, the indicator is determinate; when unset (the default), it is indeterminate. */
         value: dynamic(z.number()).optional(),
       })
       .strict(),
     slots: [] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", contained: "contained", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", contained: "contained", id: "id", value: "value"} as Record<string, string>,
     booleans: ["contained"] as string[],
     description: "A Material Design component. No children. M3: loading-indicator.",
     deprecated: false,
@@ -930,13 +1003,15 @@ export const COMPONENTS = {
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
         /** The id of a text field (in the same root) the menu is attached to. As the person types in it, the menu opens (without taking focus) and shows only the items whose label contains the text, case-insensitively (menus.md "Filtering": "As someone types, the list of menu options filters to show relevant results"). The remaining items ease into their new position ("Menu items ease into their new position as the menu is filtered"), unless motion is reduced. Fires `filter` with the query. */
         filterFor: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The layout: `standard` items on one surface, or `grouped` `md-gb-menu-group`s on separate surfaces with gaps between them. */
         layout: dynamic(z.enum(["standard", "grouped"])).optional(),
       })
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", contextFor: "context-for", density: "density", filterFor: "filter-for", layout: "layout"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", contextFor: "context-for", density: "density", filterFor: "filter-for", id: "id", layout: "layout"} as Record<string, string>,
     booleans: [] as string[],
     description: "A Material Design component. Slots: default. M3: menus.",
     deprecated: false,
@@ -950,13 +1025,15 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether the group's items can be checked: `single` (one at a time, like radio buttons) or `multiple` (like checkboxes). Unset, items aren't checkable. */
         checkable: dynamic(z.enum(["single", "multiple"])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The section label shown above the group's items. */
         label: dynamic(z.string()).optional(),
       })
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", checkable: "checkable", label: "label"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", checkable: "checkable", id: "id", label: "label"} as Record<string, string>,
     booleans: [] as string[],
     description: "A Material Design component. Slots: default. M3: menus.",
     deprecated: false,
@@ -972,11 +1049,13 @@ export const COMPONENTS = {
         checked: dynamic(z.boolean()).optional(),
         /** Whether the item is disabled: it can't be focused or activated. */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
       })
       .strict(),
     slots: ["default", "leading", "submenu", "supporting-text", "trailing", "trailing-text"] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", checked: "checked", disabled: "disabled"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", checked: "checked", disabled: "disabled", id: "id"} as Record<string, string>,
     booleans: ["checked", "disabled"] as string[],
     description: "A Material Design component. Slots: default, leading, submenu, supporting-text, trailing, trailing-text. Events: change, input. M3: menus.",
     deprecated: false,
@@ -990,6 +1069,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether or not to automatically select a tab when it is focused. */
         autoSelect: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The layout orientation of items: `vertical`, `horizontal`, or `auto` (vertical in compact windows, horizontal from medium windows, 600px). */
         itemLayout: dynamic(z.enum(["horizontal", "vertical", "auto"])).optional(),
         /** Orientation of the tablist ('horizontal' or 'vertical'). */
@@ -1006,7 +1087,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: ["change"] as string[],
-    attributes: {ariaLabel: "aria-label", autoSelect: "autoselect", itemLayout: "item-layout", orientation: "orientation", scrollBehavior: "scroll-behavior", scrollTarget: "scroll-target", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", autoSelect: "autoselect", id: "id", itemLayout: "item-layout", orientation: "orientation", scrollBehavior: "scroll-behavior", scrollTarget: "scroll-target", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex"} as Record<string, string>,
     booleans: ["autoSelect"] as string[],
     description: "A Material Design gBreeze navigation bar custom element. Slots: default. Events: change. M3: navigation-bar.",
     deprecated: false,
@@ -1026,6 +1107,8 @@ export const COMPONENTS = {
         disabled: dynamic(z.boolean()).optional(),
         /** The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The layout orientation of the item ('vertical' or 'horizontal'). */
         itemLayout: dynamic(z.enum(["horizontal", "vertical"])).optional(),
         /** Optional label text if not provided via default slot. */
@@ -1044,7 +1127,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "badge", "icon"] as string[],
     events: [] as string[],
-    attributes: {active: "active", ariaLabel: "aria-label", badge: "badge", disabled: "disabled", href: "href", itemLayout: "item-layout", label: "label", rel: "rel", selected: "selected", tabpanel: "tabpanel", target: "target", unfilledIcon: "unfilled-icon"} as Record<string, string>,
+    attributes: {active: "active", ariaLabel: "aria-label", badge: "badge", disabled: "disabled", href: "href", id: "id", itemLayout: "item-layout", label: "label", rel: "rel", selected: "selected", tabpanel: "tabpanel", target: "target", unfilledIcon: "unfilled-icon"} as Record<string, string>,
     booleans: ["active", "disabled", "selected", "unfilledIcon"] as string[],
     description: "A Material Design gBreeze navigation bar item custom element. Slots: default, badge, icon. M3: navigation-bar.",
     deprecated: false,
@@ -1058,6 +1141,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether swiping a modal drawer closed is turned off (Compose `gesturesEnabled = false`). Escape, the scrim and `close()` still close it. */
         gesturesDisabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The accessible name of the navigation landmark. Use it instead of `aria-label` when the host sits outside any landmark: the host's `aria-label` moves to a data attribute that checkers (axe `region`) still read as a name on a host that has no landmark role. */
         label: dynamic(z.string()).optional(),
         /** Whether the drawer is modal: it opens over a scrim that blocks the rest of the app, instead of sitting next to the content. */
@@ -1070,7 +1155,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "headline"] as string[],
     events: ["change", "close", "closed", "open", "opened"] as string[],
-    attributes: {ariaLabel: "aria-label", gesturesDisabled: "gestures-disabled", label: "label", modal: "modal", open: "open", quick: "quick"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", gesturesDisabled: "gestures-disabled", id: "id", label: "label", modal: "modal", open: "open", quick: "quick"} as Record<string, string>,
     booleans: ["gesturesDisabled", "modal", "open", "quick"] as string[],
     description: "A Material Design navigation drawer custom element. DEPRECATED in M3 Expressive, do not use. Slots: default, headline. Events: change, close, closed, open, opened. M3: navigation-drawer.",
     deprecated: true,
@@ -1088,6 +1173,8 @@ export const COMPONENTS = {
         disabled: dynamic(z.boolean()).optional(),
         /** The URL the item links to. Renders a link (`<a>`) when set. */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The link's `rel` attribute, when `href` is set. */
         rel: dynamic(z.string()).optional(),
         /** Whether the item is the selected (current) destination. */
@@ -1100,7 +1187,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "badge", "icon"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", badge: "badge", disabled: "disabled", href: "href", rel: "rel", selected: "selected", target: "target"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", badge: "badge", disabled: "disabled", href: "href", id: "id", rel: "rel", selected: "selected", target: "target"} as Record<string, string>,
     booleans: ["disabled", "selected", "tabStop"] as string[],
     description: "A Material Design navigation drawer item custom element. Slots: default, badge, icon. M3: navigation-drawer.",
     deprecated: false,
@@ -1126,6 +1213,8 @@ export const COMPONENTS = {
         expanded: dynamic(z.boolean()).optional(),
         /** Hide when collapsed (navigation-rail.md): the collapsed rail is not shown and takes no space, so the body content fills in. The expanded rail (always modal in this mode) appears over the content when the app's menu button calls `expand()` or `toggle()`; keep that menu button accessible. */
         hideWhenCollapsed: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The layout orientation of items ('vertical' or 'horizontal'). */
         itemLayout: dynamic(z.enum(["horizontal", "vertical"])).optional(),
         /** Whether the expanded navigation rail is modal: it opens over the content with a scrim, with modal elevation and shape. */
@@ -1142,7 +1231,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "header"] as string[],
     events: ["change", "toggle"] as string[],
-    attributes: {alignment: "alignment", ariaLabel: "aria-label", autoSelect: "autoselect", collapsible: "collapsible", divider: "divider", elevated: "elevated", expanded: "expanded", hideWhenCollapsed: "hide-when-collapsed", itemLayout: "item-layout", modal: "modal", narrow: "narrow", orientation: "orientation", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex"} as Record<string, string>,
+    attributes: {alignment: "alignment", ariaLabel: "aria-label", autoSelect: "autoselect", collapsible: "collapsible", divider: "divider", elevated: "elevated", expanded: "expanded", hideWhenCollapsed: "hide-when-collapsed", id: "id", itemLayout: "item-layout", modal: "modal", narrow: "narrow", orientation: "orientation", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex"} as Record<string, string>,
     booleans: ["autoSelect", "collapsible", "divider", "elevated", "expanded", "hideWhenCollapsed", "modal", "narrow"] as string[],
     description: "A Material Design navigation rail custom element. Slots: default, header. Events: change, toggle. M3: navigation-rail.",
     deprecated: false,
@@ -1162,6 +1251,8 @@ export const COMPONENTS = {
         disabled: dynamic(z.boolean()).optional(),
         /** The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. */
         href: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The layout orientation of the item ('vertical' or 'horizontal'). */
         itemLayout: dynamic(z.enum(["horizontal", "vertical"])).optional(),
         /** Optional label text if not provided via default slot. */
@@ -1182,7 +1273,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "badge", "icon"] as string[],
     events: [] as string[],
-    attributes: {active: "active", ariaLabel: "aria-label", badge: "badge", disabled: "disabled", href: "href", itemLayout: "item-layout", label: "label", rel: "rel", secondary: "secondary", selected: "selected", tabpanel: "tabpanel", target: "target", unfilledIcon: "unfilled-icon"} as Record<string, string>,
+    attributes: {active: "active", ariaLabel: "aria-label", badge: "badge", disabled: "disabled", href: "href", id: "id", itemLayout: "item-layout", label: "label", rel: "rel", secondary: "secondary", selected: "selected", tabpanel: "tabpanel", target: "target", unfilledIcon: "unfilled-icon"} as Record<string, string>,
     booleans: ["active", "disabled", "secondary", "selected", "unfilledIcon"] as string[],
     description: "A Material Design navigation rail item custom element. Slots: default, badge, icon. M3: navigation-rail.",
     deprecated: false,
@@ -1204,6 +1295,8 @@ export const COMPONENTS = {
         dragHandleLabel: dynamic(z.string()).optional(),
         /** What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. */
         handleTap: dynamic(z.enum(["toggle", "cycle"])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The canonical layout. */
         layout: dynamic(z.enum(["list-detail", "supporting-pane", "feed"])).optional(),
         /** The levitate strategy for the secondary pane of supporting pane and feed layouts in windows too small for two panes: `none` reflows it below the primary pane, `floating` floats it above, `docked` docks it to the bottom edge at compact (floating from medium). */
@@ -1240,7 +1333,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "placeholder", "secondary", "tertiary"] as string[],
     events: ["levitate-close", "pane-layout-change", "pane-resize", "window-class-change", "window-height-class-change"] as string[],
-    attributes: {ariaLabel: "aria-label", arrangement: "arrangement", collapsedPane: "collapsed-pane", detailOpen: "detail-open", dragHandleLabel: "drag-handle-label", handleTap: "handle-tap", layout: "layout", levitate: "levitate", levitateCoplanar: "levitate-coplanar", levitateDraggable: "levitate-draggable", levitateLabel: "levitate-label", levitateModal: "levitate-modal", levitateMoveLabel: "levitate-move-label", levitateOpen: "levitate-open", levitateResizable: "levitate-resizable", levitateResizeLabel: "levitate-resize-label", mediumTwoPane: "medium-two-pane", paneWidth: "pane-width", resizable: "resizable", resizeBehavior: "resize-behavior", scrollLabel: "scroll-label", secondaryPosition: "secondary-position"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", arrangement: "arrangement", collapsedPane: "collapsed-pane", detailOpen: "detail-open", dragHandleLabel: "drag-handle-label", handleTap: "handle-tap", id: "id", layout: "layout", levitate: "levitate", levitateCoplanar: "levitate-coplanar", levitateDraggable: "levitate-draggable", levitateLabel: "levitate-label", levitateModal: "levitate-modal", levitateMoveLabel: "levitate-move-label", levitateOpen: "levitate-open", levitateResizable: "levitate-resizable", levitateResizeLabel: "levitate-resize-label", mediumTwoPane: "medium-two-pane", paneWidth: "pane-width", resizable: "resizable", resizeBehavior: "resize-behavior", scrollLabel: "scroll-label", secondaryPosition: "secondary-position"} as Record<string, string>,
     booleans: ["detailOpen", "levitateCoplanar", "levitateDraggable", "levitateModal", "levitateOpen", "levitateResizable", "mediumTwoPane", "resizable"] as string[],
     description: "A Material Design pane scaffold (list-detail, supporting pane, feed). Slots: default, placeholder, secondary, tertiary. Events: levitate-close, pane-layout-change, pane-resize, window-class-change, window-height-class-change. M3: scaffold.",
     deprecated: false,
@@ -1254,6 +1347,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether the indicator is circular instead of linear. */
         circular: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Progress from 0 to 1. When set, the indicator is determinate; when unset (the default), it is indeterminate. */
         value: dynamic(z.number()).optional(),
         /** Whether the active indicator is wavy instead of flat (the default). */
@@ -1262,7 +1357,7 @@ export const COMPONENTS = {
       .strict(),
     slots: [] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", circular: "circular", value: "value", wavy: "wavy"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", circular: "circular", id: "id", value: "value", wavy: "wavy"} as Record<string, string>,
     booleans: ["circular", "wavy"] as string[],
     description: "A Material Design component. No children. M3: progress-indicators.",
     deprecated: false,
@@ -1274,11 +1369,13 @@ export const COMPONENTS = {
       .object({
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
       })
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", id: "id"} as Record<string, string>,
     booleans: [] as string[],
     description: "A container that styles long-form text with the M3 type scale. Slots: default. M3: typography.",
     deprecated: false,
@@ -1292,6 +1389,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Whether pulling is turned off (Compose `enabled = false`). */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The indicator: `loading` (M3 Expressive contained loading indicator) or `circular` (circular arrow and progress indicator). */
         indicator: dynamic(z.enum(["loading", "circular"])).optional(),
         /** Accessible label of the indicator, e.g. "Refreshing news". */
@@ -1304,7 +1403,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: ["refresh"] as string[],
-    attributes: {ariaLabel: "aria-label", disabled: "disabled", indicator: "indicator", indicatorLabel: "indicator-label", refreshing: "refreshing", threshold: "threshold"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", disabled: "disabled", id: "id", indicator: "indicator", indicatorLabel: "indicator-label", refreshing: "refreshing", threshold: "threshold"} as Record<string, string>,
     booleans: ["disabled", "refreshing"] as string[],
     description: "A Material Design component. Slots: default. Events: refresh. M3: loading-indicator.",
     deprecated: false,
@@ -1322,6 +1421,8 @@ export const COMPONENTS = {
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
         /** Disabled by the attribute or by a disabled fieldset. */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The HTML name to use in form submission. */
         name: dynamic(z.string()).optional(),
         /** Whether or not the radio is required. If any radio is required in a group, all radios are implicitly required. */
@@ -1332,7 +1433,7 @@ export const COMPONENTS = {
       .strict(),
     slots: [] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", checked: "checked", density: "density", disabled: "disabled", name: "name", required: "required", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", checked: "checked", density: "density", disabled: "disabled", id: "id", name: "name", required: "required", value: "value"} as Record<string, string>,
     booleans: ["checked", "disabled", "required"] as string[],
     description: "A Material Design component. No children. Events: change, input. M3: radio-button.",
     deprecated: false,
@@ -1356,6 +1457,8 @@ export const COMPONENTS = {
         docked: dynamic(z.boolean()).optional(),
         /** Whether the search view is open. */
         expanded: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Accessible label of the inputs. Defaults to `placeholder`, per the spec. */
         label: dynamic(z.string()).optional(),
         /** Hinted search text, e.g. "Search messages". */
@@ -1376,7 +1479,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "avatar", "leading", "trailing", "view-trailing"] as string[],
     events: ["change", "close", "closed", "input", "open", "opened", "search"] as string[],
-    attributes: {ariaLabel: "aria-label", backLabel: "back-label", clearLabel: "clear-label", disabled: "disabled", divided: "divided", docked: "docked", expanded: "expanded", label: "label", placeholder: "placeholder", quick: "quick", resultsLabel: "results-label", searching: "searching", searchingLabel: "searching-label", suggestionsLabel: "suggestions-label", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", backLabel: "back-label", clearLabel: "clear-label", disabled: "disabled", divided: "divided", docked: "docked", expanded: "expanded", id: "id", label: "label", placeholder: "placeholder", quick: "quick", resultsLabel: "results-label", searching: "searching", searchingLabel: "searching-label", suggestionsLabel: "suggestions-label", value: "value"} as Record<string, string>,
     booleans: ["disabled", "divided", "docked", "expanded", "quick", "searching"] as string[],
     description: "A Material Design search bar. Slots: default, avatar, leading, trailing, view-trailing. Events: change, close, closed, input, open, opened, search. M3: search.",
     deprecated: false,
@@ -1396,6 +1499,8 @@ export const COMPONENTS = {
         divided: dynamic(z.boolean()).optional(),
         /** Docked layout: a drop-down below the search bar over a scrim. Otherwise the view is full-screen. */
         docked: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Accessible label of the input and dialog. Defaults to `placeholder`. */
         label: dynamic(z.string()).optional(),
         /** Whether the view is open. */
@@ -1419,7 +1524,7 @@ export const COMPONENTS = {
     // Not JSON-serializable, so not in the catalog: bar: HTMLElement
     slots: ["default", "leading", "trailing"] as string[],
     events: ["change", "close", "closed", "input", "open", "opened", "search"] as string[],
-    attributes: {ariaLabel: "aria-label", backLabel: "back-label", clearLabel: "clear-label", divided: "divided", docked: "docked", label: "label", open: "open", placeholder: "placeholder", quick: "quick", resultsLabel: "results-label", searching: "searching", searchingLabel: "searching-label", suggestionsLabel: "suggestions-label", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", backLabel: "back-label", clearLabel: "clear-label", divided: "divided", docked: "docked", id: "id", label: "label", open: "open", placeholder: "placeholder", quick: "quick", resultsLabel: "results-label", searching: "searching", searchingLabel: "searching-label", suggestionsLabel: "suggestions-label", value: "value"} as Record<string, string>,
     booleans: ["divided", "docked", "open", "quick", "searching"] as string[],
     description: "Focused search: suggestions or results opened from a search bar. Slots: default, leading, trailing. Events: change, close, closed, input, open, opened, search. M3: search.",
     deprecated: false,
@@ -1437,6 +1542,8 @@ export const COMPONENTS = {
         focusable: dynamic(z.boolean()).optional(),
         /** Whether the parent set is disabled. Set by `md-gb-segmented-button-set`. */
         groupDisabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Label text, rendered before the default slot's content. */
         label: dynamic(z.string()).optional(),
         /** The selection mode of the parent set: `radio` semantics for `single`, `checkbox` for `multiple`. Set by `md-gb-segmented-button-set`. */
@@ -1451,7 +1558,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "icon"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", disabled: "disabled", label: "label", noCheckmark: "no-checkmark", selected: "selected", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", disabled: "disabled", id: "id", label: "label", noCheckmark: "no-checkmark", selected: "selected", value: "value"} as Record<string, string>,
     booleans: ["disabled", "focusable", "groupDisabled", "noCheckmark", "selected"] as string[],
     description: "One segment of a Material Design segmented button set. Slots: default, icon. M3: segmented-buttons.",
     deprecated: false,
@@ -1467,6 +1574,8 @@ export const COMPONENTS = {
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
         /** Disabled by the attribute or by a disabled fieldset. */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether more than one segment can be selected. */
         multiselect: dynamic(z.boolean()).optional(),
         /** The HTML name to use in form submission. */
@@ -1477,7 +1586,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", multiselect: "multiselect", name: "name", required: "required"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", id: "id", multiselect: "multiselect", name: "name", required: "required"} as Record<string, string>,
     booleans: ["disabled", "multiselect", "required"] as string[],
     description: "A Material Design segmented button set. Slots: default. Events: change, input. M3: segmented-buttons.",
     deprecated: false,
@@ -1499,6 +1608,8 @@ export const COMPONENTS = {
         errorText: dynamic(z.string()).optional(),
         /** Whether a leading icon is slotted. Set it for SSR. */
         hasLeadingIcon: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The floating label; also the field's accessible name. */
         label: dynamic(z.string()).optional(),
         /** The HTML name to use in form submission. */
@@ -1523,7 +1634,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "leading-icon", "trailing-icon"] as string[],
     events: ["change", "closed", "closing", "input", "invalid", "opened", "opening"] as string[],
-    attributes: {ariaLabel: "aria-label", disabled: "disabled", displayText: "display-text", error: "error", errorText: "error-text", hasLeadingIcon: "has-leading-icon", label: "label", name: "name", noAsterisk: "no-asterisk", open: "open", required: "required", selectedIndex: "selected-index", supportingText: "supporting-text", typeaheadDelay: "typeahead-delay", value: "value", variant: "variant"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", disabled: "disabled", displayText: "display-text", error: "error", errorText: "error-text", hasLeadingIcon: "has-leading-icon", id: "id", label: "label", name: "name", noAsterisk: "no-asterisk", open: "open", required: "required", selectedIndex: "selected-index", supportingText: "supporting-text", typeaheadDelay: "typeahead-delay", value: "value", variant: "variant"} as Record<string, string>,
     booleans: ["disabled", "error", "hasLeadingIcon", "noAsterisk", "open", "required"] as string[],
     description: "A Material Design component. Slots: default, leading-icon, trailing-icon. Events: change, closed, closing, input, invalid, opened, opening. M3: menus, text-fields.",
     deprecated: false,
@@ -1539,6 +1650,8 @@ export const COMPONENTS = {
         disabled: dynamic(z.boolean()).optional(),
         /** The text shown in the field when the option is selected. Defaults to the option's label text. */
         displayText: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the option is selected. The `selected` attribute is the default selection restored on form reset. */
         selected: dynamic(z.boolean()).optional(),
         /** The text matched by typeahead and filtering. Defaults to `displayText`. */
@@ -1549,7 +1662,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "leading", "supporting-text", "trailing", "trailing-text"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", disabled: "disabled", displayText: "display-text", selected: "selected", typeaheadText: "typeahead-text", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", disabled: "disabled", displayText: "display-text", id: "id", selected: "selected", typeaheadText: "typeahead-text", value: "value"} as Record<string, string>,
     booleans: ["disabled", "selected"] as string[],
     description: "A Material Design component. Slots: default, leading, supporting-text, trailing, trailing-text. M3: menus, text-fields.",
     deprecated: false,
@@ -1565,10 +1678,14 @@ export const COMPONENTS = {
         color: dynamic(z.enum(["primary", "primary-container", "secondary", "secondary-container", "tertiary", "tertiary-container", "current", "error-container", "surface-container-highest"])).optional(),
         /** Starts the loop 1, 2 or 3 quarters later, so shapes don't morph together. */
         delay: dynamic(z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Morphs into `to` and back, in a loop. */
         loop: dynamic(z.boolean()).optional(),
         /** Shows the `to` shape, morphing into it. */
         morphed: dynamic(z.boolean()).optional(),
+        /** Morphs into `to` while the surface it decorates is hovered or holds focus (it sets `morphed`): its closest link, button, card, list item, carousel item, summary or focusable ancestor, or else its parent. */
+        morphOnHover: dynamic(z.boolean()).optional(),
         /** The Material shape. */
         shape: dynamic(z.enum(["circle", "square", "slanted", "arch", "fan", "arrow", "semiCircle", "oval", "pill", "triangle", "diamond", "clamShell", "pentagon", "gem", "sunny", "verySunny", "cookie4Sided", "cookie6Sided", "cookie7Sided", "cookie9Sided", "cookie12Sided", "ghostish", "clover4Leaf", "clover8Leaf", "burst", "softBurst", "boom", "softBoom", "flower", "puffy", "puffyDiamond", "pixelCircle", "pixelTriangle", "bun", "heart"])).optional(),
         /** The width and height, in pixels. */
@@ -1579,8 +1696,8 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", delay: "delay", loop: "loop", morphed: "morphed", shape: "shape", size: "size", to: "to"} as Record<string, string>,
-    booleans: ["loop", "morphed"] as string[],
+    attributes: {ariaLabel: "aria-label", color: "color", delay: "delay", id: "id", loop: "loop", morphed: "morphed", morphOnHover: "morph-on-hover", shape: "shape", size: "size", to: "to"} as Record<string, string>,
+    booleans: ["loop", "morphed", "morphOnHover"] as string[],
     description: "A decorative Material shape that can morph into another. Slots: default. M3: shape.",
     deprecated: false,
     spec: ["https://m3.material.io/styles/shape"] as string[],
@@ -1607,6 +1724,8 @@ export const COMPONENTS = {
         headline: dynamic(z.string()).optional(),
         /** Whether to hide the close icon button. Material requires a close affordance in every side sheet; provide another one when hiding it. */
         hideCloseButton: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Accessible label of the sheet dialog, used when it has no headline. */
         label: dynamic(z.string()).optional(),
         /** Whether the sheet is modal: shown above a scrim, blocking the rest of the page, and closed by Escape or a scrim click. */
@@ -1619,7 +1738,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "actions", "headline"] as string[],
     events: ["back", "close", "closed", "open", "opened"] as string[],
-    attributes: {ariaLabel: "aria-label", backLabel: "back-label", closeLabel: "close-label", detached: "detached", divider: "divider", gesturesDisabled: "gestures-disabled", hasBackButton: "has-back-button", headline: "headline", hideCloseButton: "hide-close-button", label: "label", modal: "modal", open: "open", quick: "quick"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", backLabel: "back-label", closeLabel: "close-label", detached: "detached", divider: "divider", gesturesDisabled: "gestures-disabled", hasBackButton: "has-back-button", headline: "headline", hideCloseButton: "hide-close-button", id: "id", label: "label", modal: "modal", open: "open", quick: "quick"} as Record<string, string>,
     booleans: ["detached", "divider", "gesturesDisabled", "hasBackButton", "hideCloseButton", "modal", "open", "quick"] as string[],
     description: "A Material Design side sheet. Slots: default, actions, headline. Events: back, close, closed, open, opened. M3: bottom-sheets, side-sheets.",
     deprecated: false,
@@ -1631,6 +1750,8 @@ export const COMPONENTS = {
       .object({
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the content is loading: shows the placeholder. */
         loading: dynamic(z.boolean()).optional(),
         /** The placeholder's shape: a block, a line of text, or a circle. */
@@ -1639,7 +1760,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", loading: "loading", shape: "shape"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", id: "id", loading: "loading", shape: "shape"} as Record<string, string>,
     booleans: ["loading"] as string[],
     description: "A Material Design skeleton loader. Slots: default. M3: transitions.",
     deprecated: false,
@@ -1663,6 +1784,8 @@ export const COMPONENTS = {
         centered: dynamic(z.boolean()).optional(),
         /** Disabled by the attribute or by a disabled fieldset. */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether to show the value indicator above the handle while it is hovered, pressed or keyboard-focused. */
         labeled: dynamic(z.boolean()).optional(),
         /** The largest value. */
@@ -1697,7 +1820,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["icon"] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", ariaLabelEnd: "label-end", ariaLabelStart: "label-start", ariaValueTextEnd: "valuetext-end", ariaValueTextStart: "valuetext-start", centered: "centered", disabled: "disabled", labeled: "labeled", max: "max", min: "min", name: "name", orientation: "orientation", range: "range", size: "size", step: "step", ticks: "ticks", value: "value", valueEnd: "value-end", valueLabel: "value-label", valueLabelEnd: "value-label-end", valueLabelStart: "value-label-start", valueStart: "value-start"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", ariaLabelEnd: "label-end", ariaLabelStart: "label-start", ariaValueTextEnd: "valuetext-end", ariaValueTextStart: "valuetext-start", centered: "centered", disabled: "disabled", id: "id", labeled: "labeled", max: "max", min: "min", name: "name", orientation: "orientation", range: "range", size: "size", step: "step", ticks: "ticks", value: "value", valueEnd: "value-end", valueLabel: "value-label", valueLabelEnd: "value-label-end", valueLabelStart: "value-label-start", valueStart: "value-start"} as Record<string, string>,
     booleans: ["centered", "disabled", "labeled", "range", "ticks"] as string[],
     description: "A Material Design slider component. Slots: icon. Events: change, input. M3: sliders.",
     deprecated: false,
@@ -1721,6 +1844,8 @@ export const COMPONENTS = {
         fixed: dynamic(z.boolean()).optional(),
         /** Whether to display a close icon button. */
         hasCloseButton: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Supporting message text to display. Rendered before default slot content. */
         labelText: dynamic(z.string()).optional(),
         /** Whether the snackbar is currently open. */
@@ -1734,7 +1859,7 @@ export const COMPONENTS = {
     // Not JSON-serializable, so not in the catalog: anchorElement: HTMLElement
     slots: ["default", "action", "dismiss"] as string[],
     events: ["close", "closed", "open", "opened"] as string[],
-    attributes: {actionLabel: "action-label", align: "align", anchor: "anchor", ariaLabel: "aria-label", closeLabel: "close-label", fixed: "fixed", hasCloseButton: "has-close-button", labelText: "label-text", open: "open", quick: "quick", timeoutMs: "timeout-ms"} as Record<string, string>,
+    attributes: {actionLabel: "action-label", align: "align", anchor: "anchor", ariaLabel: "aria-label", closeLabel: "close-label", fixed: "fixed", hasCloseButton: "has-close-button", id: "id", labelText: "label-text", open: "open", quick: "quick", timeoutMs: "timeout-ms"} as Record<string, string>,
     booleans: ["fixed", "hasCloseButton", "open", "quick"] as string[],
     description: "A Material Design snackbar component. Slots: default, action, dismiss. Events: close, closed, open, opened. M3: snackbar.",
     deprecated: false,
@@ -1752,6 +1877,8 @@ export const COMPONENTS = {
         closeLabel: dynamic(z.string()).optional(),
         /** Whether the built-in snackbar is positioned in the viewport (fixed). */
         fixed: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether to skip the snackbar's opening and closing motion. */
         quick: dynamic(z.boolean()).optional(),
       })
@@ -1759,7 +1886,7 @@ export const COMPONENTS = {
     // Not JSON-serializable, so not in the catalog: anchorElement: HTMLElement
     slots: ["default"] as string[],
     events: ["close", "closed"] as string[],
-    attributes: {anchor: "anchor", ariaLabel: "aria-label", closeLabel: "close-label", fixed: "fixed", quick: "quick"} as Record<string, string>,
+    attributes: {anchor: "anchor", ariaLabel: "aria-label", closeLabel: "close-label", fixed: "fixed", id: "id", quick: "quick"} as Record<string, string>,
     booleans: ["fixed", "quick"] as string[],
     description: "Shows queued snackbars one at a time. Slots: default. Events: close, closed. M3: snackbar.",
     deprecated: false,
@@ -1773,6 +1900,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** The color style: `filled` (default), `elevated`, `tonal` or `outlined`. */
         color: dynamic(z.enum(["filled", "elevated", "tonal", "outlined"])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the trailing button shows its selected (open) state. Set while the menu the trailing button opens (its `popovertarget`) is open. */
         selected: dynamic(z.boolean()).optional(),
         /** The size: `xs`, `sm` (default), `md`, `lg` or `xl`. */
@@ -1781,7 +1910,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "leading", "trailing"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", selected: "selected", size: "size"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", id: "id", selected: "selected", size: "size"} as Record<string, string>,
     booleans: ["selected"] as string[],
     description: "A Material Design component. Slots: default, leading, trailing. M3: split-button.",
     deprecated: false,
@@ -1797,6 +1926,8 @@ export const COMPONENTS = {
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
         /** Disabled by the attribute or by a disabled fieldset. */
         disabled: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The HTML name to use in form submission. */
         name: dynamic(z.string()).optional(),
         /** When true, require the switch to be selected when participating in form submission. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#validation */
@@ -1809,7 +1940,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["off-icon", "on-icon"] as string[],
     events: ["change", "input"] as string[],
-    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", name: "name", required: "required", selected: "selected", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", density: "density", disabled: "disabled", id: "id", name: "name", required: "required", selected: "selected", value: "value"} as Record<string, string>,
     booleans: ["disabled", "required", "selected"] as string[],
     description: "A Material Design component. Slots: off-icon, on-icon. Events: change, input. M3: switch.",
     deprecated: false,
@@ -1821,6 +1952,8 @@ export const COMPONENTS = {
       .object({
         /** The accessible name (aria-label). */
         ariaLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Whether the tab is selected. */
         selected: dynamic(z.boolean()).optional(),
         /** ID of the associated `md-aria-tabpanel` element. */
@@ -1829,7 +1962,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "badge", "label"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", selected: "selected", tabpanel: "tabpanel"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", id: "id", selected: "selected", tabpanel: "tabpanel"} as Record<string, string>,
     booleans: ["selected"] as string[],
     description: "A Material Design tab component. Slots: default, badge, label. M3: tabs.",
     deprecated: false,
@@ -1845,11 +1978,13 @@ export const COMPONENTS = {
         gesturesDisabled: dynamic(z.boolean()).optional(),
         /** The id of the `<md-gb-tabs>` these panels belong to. */
         htmlFor: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
       })
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", gesturesDisabled: "gestures-disabled", htmlFor: "for"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", gesturesDisabled: "gestures-disabled", htmlFor: "for", id: "id"} as Record<string, string>,
     booleans: ["gesturesDisabled"] as string[],
     description: "The swipeable content panels of a set of Material Design tabs. Slots: default. M3: tabs.",
     deprecated: false,
@@ -1867,6 +2002,8 @@ export const COMPONENTS = {
         autoSelect: dynamic(z.boolean()).optional(),
         /** The density, from 0 (default) to -3. Each step down removes 4px from the tabs' height (48px, or 64px with icon and label); values are clamped to that range. tabs.md "Avoid applying density by default": dense tabs are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. */
         density: dynamic(z.union([z.literal(0), z.literal(-1), z.literal(-2), z.literal(-3)])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Orientation of the tablist ('horizontal' or 'vertical'). */
         orientation: dynamic(z.enum(["horizontal", "vertical"])).optional(),
         /** Scrollable tabs: each tab's width is defined by its label (tabs.md) rather than every tab taking the width of the widest, and the bar scrolls when they overflow. Fixed tabs (the default) are equal. */
@@ -1883,7 +2020,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default"] as string[],
     events: [] as string[],
-    attributes: {align: "align", ariaLabel: "aria-label", autoSelect: "autoselect", density: "density", orientation: "orientation", scrollable: "scrollable", scrollBehavior: "scroll-behavior", scrollTarget: "scroll-target", selectedTabIndex: "selectedtabindex", variant: "variant"} as Record<string, string>,
+    attributes: {align: "align", ariaLabel: "aria-label", autoSelect: "autoselect", density: "density", id: "id", orientation: "orientation", scrollable: "scrollable", scrollBehavior: "scroll-behavior", scrollTarget: "scroll-target", selectedTabIndex: "selectedtabindex", variant: "variant"} as Record<string, string>,
     booleans: ["autoSelect", "scrollable"] as string[],
     description: "A Material Design tabs component. Slots: default. M3: tabs.",
     deprecated: false,
@@ -1913,6 +2050,8 @@ export const COMPONENTS = {
         hasLeadingIcon: dynamic(z.boolean()).optional(),
         /** Whether a trailing icon is slotted. Set it for SSR. */
         hasTrailingIcon: dynamic(z.boolean()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/inputMode) */
         inputMode: dynamic(z.string()).optional(),
         /** The floating label. It is also the input's accessible name, unless `aria-label` is set. */
@@ -1965,7 +2104,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["leading-icon", "trailing-icon"] as string[],
     events: ["change", "input", "invalid", "select"] as string[],
-    attributes: {ariaLabel: "aria-label", autocomplete: "autocomplete", cols: "cols", density: "density", disabled: "disabled", error: "error", errorIcon: "error-icon", errorText: "error-text", hasLeadingIcon: "has-leading-icon", hasTrailingIcon: "has-trailing-icon", inputMode: "inputmode", label: "label", max: "max", maxLength: "maxlength", min: "min", minLength: "minlength", multiple: "multiple", name: "name", noAsterisk: "no-asterisk", noSpinner: "no-spinner", pattern: "pattern", placeholder: "placeholder", prefixText: "prefix-text", readOnly: "readonly", required: "required", rows: "rows", step: "step", suffixText: "suffix-text", supportingText: "supporting-text", supportingTextVisibility: "supporting-text-visibility", textDirection: "text-direction", type: "type", value: "value", variant: "variant"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", autocomplete: "autocomplete", cols: "cols", density: "density", disabled: "disabled", error: "error", errorIcon: "error-icon", errorText: "error-text", hasLeadingIcon: "has-leading-icon", hasTrailingIcon: "has-trailing-icon", id: "id", inputMode: "inputmode", label: "label", max: "max", maxLength: "maxlength", min: "min", minLength: "minlength", multiple: "multiple", name: "name", noAsterisk: "no-asterisk", noSpinner: "no-spinner", pattern: "pattern", placeholder: "placeholder", prefixText: "prefix-text", readOnly: "readonly", required: "required", rows: "rows", step: "step", suffixText: "suffix-text", supportingText: "supporting-text", supportingTextVisibility: "supporting-text-visibility", textDirection: "text-direction", type: "type", value: "value", variant: "variant"} as Record<string, string>,
     booleans: ["disabled", "error", "hasLeadingIcon", "hasTrailingIcon", "multiple", "noAsterisk", "noSpinner", "readOnly", "required"] as string[],
     description: "A Material Design text field (filled or outlined). Slots: leading-icon, trailing-icon. Events: change, input, invalid, select. M3: text-fields.",
     deprecated: false,
@@ -1997,6 +2136,8 @@ export const COMPONENTS = {
         hourCycle: dynamic(z.enum(["", "12", "24"])).optional(),
         /** Hour field label (input mode). */
         hourLabel: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Accessible label of the mode toggle in dial mode. */
         inputModeLabel: dynamic(z.string()).optional(),
         /** The locale used for the 12/24-hour default and the AM/PM labels. Defaults to the browser locale. */
@@ -2031,7 +2172,7 @@ export const COMPONENTS = {
       .strict(),
     slots: [] as string[],
     events: ["cancel", "change", "close", "input", "open"] as string[],
-    attributes: {ariaLabel: "aria-label", cancelLabel: "cancel-label", confirmLabel: "confirm-label", density: "density", dialModeLabel: "dial-mode-label", disabled: "disabled", headline: "headline", hideActions: "hide-actions", hideModeToggle: "hide-mode-toggle", hourCycle: "hour-cycle", hourLabel: "hour-label", inputModeLabel: "input-mode-label", locale: "locale", minuteLabel: "minute-label", modal: "modal", mode: "mode", name: "name", open: "open", orientation: "orientation", periodLabel: "period-label", quick: "quick", required: "required", selectHourLabel: "select-hour-label", selectMinuteLabel: "select-minute-label", value: "value"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", cancelLabel: "cancel-label", confirmLabel: "confirm-label", density: "density", dialModeLabel: "dial-mode-label", disabled: "disabled", headline: "headline", hideActions: "hide-actions", hideModeToggle: "hide-mode-toggle", hourCycle: "hour-cycle", hourLabel: "hour-label", id: "id", inputModeLabel: "input-mode-label", locale: "locale", minuteLabel: "minute-label", modal: "modal", mode: "mode", name: "name", open: "open", orientation: "orientation", periodLabel: "period-label", quick: "quick", required: "required", selectHourLabel: "select-hour-label", selectMinuteLabel: "select-minute-label", value: "value"} as Record<string, string>,
     booleans: ["disabled", "hideActions", "hideModeToggle", "modal", "open", "quick", "required"] as string[],
     description: "A Material Design time picker component. No children. Events: cancel, change, close, input, open. M3: time-pickers.",
     deprecated: false,
@@ -2051,6 +2192,8 @@ export const COMPONENTS = {
         expanded: dynamic(z.boolean()).optional(),
         /** Which side of a floating toolbar the FAB is on (`end` or `start`). */
         fabPosition: dynamic(z.enum(["start", "end"])).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** The layout orientation. */
         orientation: dynamic(z.enum(["horizontal", "vertical"])).optional(),
         /** Whether trailing actions that do not fit move into an overflow menu in the trailing slot (toolbars.md, Adaptive design). On by itself when an `overflow` slot trigger is provided; this turns it on with the default "More actions" button. */
@@ -2063,7 +2206,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "fab", "leading", "trailing"] as string[],
     events: [] as string[],
-    attributes: {ariaLabel: "aria-label", color: "color", docked: "docked", expanded: "expanded", fabPosition: "fab-position", orientation: "orientation", overflowMenu: "overflow-menu", scrollBehavior: "scroll-behavior", scrollTarget: "scroll-target"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", color: "color", docked: "docked", expanded: "expanded", fabPosition: "fab-position", id: "id", orientation: "orientation", overflowMenu: "overflow-menu", scrollBehavior: "scroll-behavior", scrollTarget: "scroll-target"} as Record<string, string>,
     booleans: ["docked", "expanded", "overflowMenu"] as string[],
     description: "A Material Design gBreeze toolbar custom element. Slots: default, fab, leading, trailing. M3: toolbars.",
     deprecated: false,
@@ -2083,6 +2226,8 @@ export const COMPONENTS = {
         hideDelay: dynamic(z.number()).optional(),
         /** The id of the anchor element, in the same root as the tooltip. */
         htmlFor: dynamic(z.string()).optional(),
+        /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
+        id: dynamic(z.string()).optional(),
         /** Plain only: the anchor has no visual boundary, such as a text baseline, so the tooltip sits 8dp from it instead of 4dp. */
         noBoundary: dynamic(z.boolean()).optional(),
         /** Whether the tooltip is open. */
@@ -2103,7 +2248,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "action", "subhead"] as string[],
     events: ["close", "closed", "open", "opened"] as string[],
-    attributes: {align: "align", ariaLabel: "aria-label", caret: "caret", hideDelay: "hide-delay", htmlFor: "for", noBoundary: "no-boundary", open: "open", persistent: "persistent", placement: "placement", quick: "quick", showDelay: "show-delay", subhead: "subhead", variant: "variant"} as Record<string, string>,
+    attributes: {align: "align", ariaLabel: "aria-label", caret: "caret", hideDelay: "hide-delay", htmlFor: "for", id: "id", noBoundary: "no-boundary", open: "open", persistent: "persistent", placement: "placement", quick: "quick", showDelay: "show-delay", subhead: "subhead", variant: "variant"} as Record<string, string>,
     booleans: ["caret", "noBoundary", "open", "persistent", "quick"] as string[],
     description: "A Material Design plain or rich tooltip. Slots: default, action, subhead. Events: close, closed, open, opened. M3: tooltips.",
     deprecated: false,

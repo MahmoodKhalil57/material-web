@@ -103,6 +103,43 @@ describe('md-gb-shape', () => {
     expect(path().getAttribute('d')).toBe(MATERIAL_SHAPES.circle);
   });
 
+  it('with morph-on-hover, morphs while its link is hovered or focused', async () => {
+    const link = document.createElement('a');
+    link.href = '#card';
+    link.textContent = 'Card';
+    document.body.append(link);
+    link.append(shape);
+    shape.morphOnHover = true;
+    await settle();
+
+    link.dispatchEvent(new PointerEvent('pointerenter'));
+    await settle();
+    expect(shape.morphed).toBeTrue();
+    link.dispatchEvent(new PointerEvent('pointerleave'));
+    await new Promise((r) => setTimeout(r, 10));
+    expect(shape.morphed).toBeFalse();
+
+    link.focus();
+    await settle();
+    expect(shape.morphed).toBeTrue();
+    link.blur();
+    await new Promise((r) => setTimeout(r, 10));
+    expect(shape.morphed).toBeFalse();
+    link.remove();
+  });
+
+  it('without morph-on-hover, leaves morphed to the app', async () => {
+    const link = document.createElement('a');
+    link.href = '#card';
+    document.body.append(link);
+    link.append(shape);
+    await settle();
+    link.dispatchEvent(new PointerEvent('pointerenter'));
+    await settle();
+    expect(shape.morphed).toBeFalse();
+    link.remove();
+  });
+
   it('reflects morphed, loop and color for styling', async () => {
     shape.morphed = true;
     shape.loop = true;

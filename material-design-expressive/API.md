@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 236 |
-| Custom elements | 61 |
-| Classes | 101 |
+| Public modules | 238 |
+| Custom elements | 62 |
+| Classes | 102 |
 | Functions | 335 |
 | Constants and variables | 308 |
 | Types and interfaces | 320 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2185 of 2185 (100%) |
+| JSDoc coverage | 2190 of 2190 (100%) |
 
 ## Contents
 
@@ -4269,6 +4269,7 @@ A decorative Material shape that can morph into another.
 | `delay` | `delay` | `0 \| 1 \| 2 \| 3` | `0` | Starts the loop 1, 2 or 3 quarters later, so shapes don't morph together. |
 | `loop` | `loop` (reflects) | `boolean` | `false` | Morphs into `to` and back, in a loop. |
 | `morphed` | `morphed` (reflects) | `boolean` | `false` | Shows the `to` shape, morphing into it. |
+| `morphOnHover` | `morph-on-hover` | `boolean` | `false` | Morphs into `to` while the surface it decorates is hovered or holds focus (it sets `morphed`): its closest link, button, card, list item, carousel item, summary or focusable ancestor, or else its parent. |
 | `shape` | `shape` | `"circle" \| "square" \| "slanted" \| "arch" \| "fan" \| "arrow" \| "semiCircle" \| "ov…` | `'circle'` | The Material shape. |
 | `size` | `size` | `number` | `48` | The width and height, in pixels. |
 | `to` | `to` | `"" \| "circle" \| "square" \| "slanted" \| "arch" \| "fan" \| "arrow" \| "semiCircle" …` | `''` | The Material shape it morphs into (with `morphed` or `loop`). |
@@ -4374,6 +4375,22 @@ Accessibility, interaction, layout and the design tokens.
 
 ### `foundations/accessibility/aria/tabs/`
 
+#### `<md-aria-tabpanel>`
+
+An ARIA tabpanel element: the panel of an `md-gb-tab` (its `tabpanel` is the panel's id), shown while that tab is selected.
+
+- Class: `AriaTabpanelElement` in `foundations/accessibility/aria/tabs/tabpanel.js`
+- Import: `import '@material/web/foundations/accessibility/aria/tabs/md-aria-tabpanel.js';`
+- Spec: none (Headless WAI-ARIA patterns that the components build on; M3 has no page for them.)
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `tab` | `tab` (reflects) | `string` |   | ID of the tab element that controls this tabpanel. |
+
+| Slot | Description |
+| --- | --- |
+| (default) | The panel's content. |
+
 #### `foundations/accessibility/aria/tabs/tab.js`
 
 - Spec: none (Headless WAI-ARIA patterns that the components build on; M3 has no page for them.)
@@ -4389,6 +4406,14 @@ Accessibility, interaction, layout and the design tokens.
 | Export | Kind | Signature | Description |
 | --- | --- | --- | --- |
 | `AriaTablistElement` | class | `class AriaTablistElement extends baseClass` | An ARIA tablist element. |
+
+#### `foundations/accessibility/aria/tabs/tabpanel.js`
+
+- Spec: none (Headless WAI-ARIA patterns that the components build on; M3 has no page for them.)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `AriaTabpanelElement` | class | `class AriaTabpanelElement extends baseClass` | An ARIA tabpanel element: the panel of an `md-gb-tab` (its `tabpanel` is the panel's id), shown while that tab is selected. |
 
 ### `foundations/interaction/gestures/`
 
@@ -4955,7 +4980,7 @@ The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON 
 | --- | --- | --- | --- |
 | `catalog` | variable | `Catalog<{ spec: SchemaType<"object", { root: SchemaType<"string", unknown>; elements: SchemaType<"record", SchemaType<"object", { type: SchemaType<"ref", string>; props: SchemaType<"propsOf", string>; children: SchemaType<"array", SchemaTy…` | The catalog: the components above, and no actions beyond the built-in ones. |
 | `ComponentName` | type | `keyof typeof COMPONENTS` | The name of a catalog component. |
-| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: stri…` | The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
+| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: stri…` | The catalog components: one per md-gb-* element and md-aria-tabpanel (the panel of md-gb-tab), plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
 | `HTML_ATTRIBUTES` | variable | `{ readonly id: "id"; readonly role: "role"; readonly alt: "alt"; readonly type: "type"; readonly popovertarget: "popovertarget"; readonly target: "target"; readonly lang: "lang"; readonly colspan: "colspan"; readonly rowspan: "rowspan"; re…` | The attributes the Html primitive sets, by prop: plain values. The href and src props are sanitized separately; ariaLabel is aria-label. |
 | `HTML_TAG` | variable | `"#html"` | The tag of the Html primitive: its `tag` prop names the native element. |
 | `HTML_TAGS` | variable | `readonly ["div", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6", "a", "button", "label", "section", "header", "footer", "nav", "main", "aside", "article", "ul", "ol", "li", "dl", "dt", "dd", "strong", "em", "b", "i", "small", "sub", "sup"…` | The native elements the Html primitive may create. |
