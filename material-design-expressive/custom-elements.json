@@ -26198,6 +26198,50 @@
   },
   {
    "kind": "javascript-module",
+   "path": "extras/prose/md-gb-prose.js",
+   "exports": [
+    {
+     "kind": "custom-element-definition",
+     "name": "md-gb-prose",
+     "declaration": {
+      "name": "ProseElement",
+      "module": "/extras/prose/prose-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "extras/prose/prose-element.js",
+   "declarations": [
+    {
+     "kind": "class",
+     "name": "ProseElement",
+     "tagName": "md-gb-prose",
+     "customElement": true,
+     "description": "A container that styles long-form text with the M3 type scale.",
+     "summary": "A container that styles long-form text with the M3 type scale.",
+     "slots": [
+      {
+       "name": "",
+       "description": "The text: native elements such as `<h2>`, `<p>`, `<ul>`, `<a>`, `<pre>`, `<table>`, and components."
+      }
+     ]
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "ProseElement",
+     "declaration": {
+      "name": "ProseElement",
+      "module": "/extras/prose/prose-element.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "extras/pulltorefresh/md-gb-pull-to-refresh.js",
    "exports": [
     {
@@ -31869,9 +31913,17 @@
      "kind": "variable",
      "name": "COMPONENTS",
      "type": {
-      "text": "{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; description: string; deprecated: boolean; spec: string[]; }; Html: { tag: string; props: ZodObject<{ tag: ZodEnum<{ button: \"button\"; label: \"label\"; div: \"div\"; span: \"span\"; p: \"p\"; h1: \"h1\"; h2: \"h2\"; h3: \"h3\"; h4: \"h4\"; h5: \"h5\"; h6: \"h6\"; a: \"a\"; section: \"section\"; header: \"header\"; footer: \"footer\"; na…"
+      "text": "{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: string[]; description: string; deprecated: boolean; spec: string[]; }; Html: { tag: string; props: ZodObject<{ tag: ZodEnum<{ button: \"button\"; label: \"label\"; div: \"div\"; span: \"span\"; p: \"p\"; h1: \"h1\"; h2: \"h2\"; h3: \"h3\"; h4: \"h4\"; h5: \"h5\"; h6: \"h6\"; a: \"a\"; se…"
      },
      "description": "The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties."
+    },
+    {
+     "kind": "variable",
+     "name": "HTML_ATTRIBUTES",
+     "type": {
+      "text": "{ readonly id: \"id\"; readonly role: \"role\"; readonly alt: \"alt\"; readonly type: \"type\"; readonly popovertarget: \"popovertarget\"; readonly target: \"target\"; readonly lang: \"lang\"; readonly colspan: \"colspan\"; readonly rowspan: \"rowspan\"; readonly scope: \"scope\"; readonly ariaLabel: \"aria-label\"; }"
+     },
+     "description": "The attributes the Html primitive sets, by prop: plain values. The href and src props are sanitized separately; ariaLabel is aria-label."
     },
     {
      "kind": "variable",
@@ -31885,9 +31937,17 @@
      "kind": "variable",
      "name": "HTML_TAGS",
      "type": {
-      "text": "readonly [\"div\", \"span\", \"p\", \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", \"h6\", \"a\", \"button\", \"label\", \"section\", \"header\", \"footer\", \"nav\", \"main\", \"ul\", \"ol\", \"li\", \"strong\", \"em\", \"img\"]"
+      "text": "readonly [\"div\", \"span\", \"p\", \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", \"h6\", \"a\", \"button\", \"label\", \"section\", \"header\", \"footer\", \"nav\", \"main\", \"aside\", \"article\", \"ul\", \"ol\", \"li\", \"dl\", \"dt\", \"dd\", \"strong\", \"em\", \"b\", \"i\", \"small\", \"sub\", \"sup\", \"code\", \"kbd\", \"pre\", \"blockquote\", \"hr\", \"br\", \"figure\", \"figcaption\", \"img\", \"table\", \"thead\", \"tbody\", \"tfoot\", \"tr\", \"th\", \"td\", \"caption\"]"
      },
      "description": "The native elements the Html primitive may create."
+    },
+    {
+     "kind": "variable",
+     "name": "HTML_VOID_TAGS",
+     "type": {
+      "text": "readonly [\"hr\", \"br\", \"img\"]"
+     },
+     "description": "Native elements without content or a closing tag."
     },
     {
      "kind": "variable",
@@ -31917,6 +31977,14 @@
     },
     {
      "kind": "js",
+     "name": "HTML_ATTRIBUTES",
+     "declaration": {
+      "name": "HTML_ATTRIBUTES",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
      "name": "HTML_TAG",
      "declaration": {
       "name": "HTML_TAG",
@@ -31928,6 +31996,14 @@
      "name": "HTML_TAGS",
      "declaration": {
       "name": "HTML_TAGS",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "HTML_VOID_TAGS",
+     "declaration": {
+      "name": "HTML_VOID_TAGS",
       "module": "/json-render/catalog.js"
      }
     },
@@ -32054,6 +32130,14 @@
     },
     {
      "kind": "js",
+     "name": "HTML_ATTRIBUTES",
+     "declaration": {
+      "name": "HTML_ATTRIBUTES",
+      "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
      "name": "HTML_TAGS",
      "declaration": {
       "name": "HTML_TAGS",
@@ -32062,10 +32146,34 @@
     },
     {
      "kind": "js",
+     "name": "hydrateSpec",
+     "declaration": {
+      "name": "hydrateSpec",
+      "module": "/json-render/renderer.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "INNOCUOUS_URL",
+     "declaration": {
+      "name": "INNOCUOUS_URL",
+      "module": "/json-render/urls.js"
+     }
+    },
+    {
+     "kind": "js",
      "name": "isExpression",
      "declaration": {
       "name": "isExpression",
       "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "isSafeSrc",
+     "declaration": {
+      "name": "isSafeSrc",
+      "module": "/json-render/urls.js"
      }
     },
     {
@@ -32098,6 +32206,22 @@
      "declaration": {
       "name": "renderSpec",
       "module": "/json-render/renderer.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "renderSpecToString",
+     "declaration": {
+      "name": "renderSpecToString",
+      "module": "/json-render/static.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "safeHref",
+     "declaration": {
+      "name": "safeHref",
+      "module": "/json-render/urls.js"
      }
     },
     {
@@ -32216,11 +32340,24 @@
    "declarations": [
     {
      "kind": "function",
+     "name": "hydrateSpec",
+     "description": "Takes over a container that holds the spec's static HTML (`renderSpecToString()`, ./static.js): renders the spec live in its place, with its state, actions and bindings. The static markup is replaced, so render the same spec and state that produced it."
+    },
+    {
+     "kind": "function",
      "name": "renderSpec",
      "description": "Renders a json-render spec of the library's catalog into a container."
     }
    ],
    "exports": [
+    {
+     "kind": "js",
+     "name": "hydrateSpec",
+     "declaration": {
+      "name": "hydrateSpec",
+      "module": "/json-render/renderer.js"
+     }
+    },
     {
      "kind": "js",
      "name": "renderSpec",
@@ -32317,6 +32454,108 @@
      "declaration": {
       "name": "schema",
       "module": "/json-render/schema.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "json-render/static.js",
+   "declarations": [
+    {
+     "kind": "function",
+     "name": "renderSpecToString",
+     "parameters": [
+      {
+       "name": "spec",
+       "type": {
+        "text": "Spec"
+       }
+      },
+      {
+       "name": "options",
+       "type": {
+        "text": "RenderSpecToStringOptions"
+       },
+       "optional": true
+      }
+     ],
+     "description": "Renders a spec to HTML."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "renderSpecToString",
+     "declaration": {
+      "name": "renderSpecToString",
+      "module": "/json-render/static.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
+   "path": "json-render/urls.js",
+   "declarations": [
+    {
+     "kind": "variable",
+     "name": "INNOCUOUS_URL",
+     "type": {
+      "text": "\"about:invalid#zClosurez\""
+     },
+     "description": "What an unsafe URL becomes (as safevalues does)."
+    },
+    {
+     "kind": "function",
+     "name": "isSafeSrc",
+     "parameters": [
+      {
+       "name": "url",
+       "type": {
+        "text": "string"
+       }
+      }
+     ],
+     "description": "Whether a URL is safe for `src`: http(s), data images, or relative."
+    },
+    {
+     "kind": "function",
+     "name": "safeHref",
+     "parameters": [
+      {
+       "name": "url",
+       "type": {
+        "text": "string"
+       }
+      }
+     ],
+     "description": "A link target: http(s), mailto, tel, or relative; anything else is replaced."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "INNOCUOUS_URL",
+     "declaration": {
+      "name": "INNOCUOUS_URL",
+      "module": "/json-render/urls.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "isSafeSrc",
+     "declaration": {
+      "name": "isSafeSrc",
+      "module": "/json-render/urls.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "safeHref",
+     "declaration": {
+      "name": "safeHref",
+      "module": "/json-render/urls.js"
      }
     }
    ]

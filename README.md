@@ -18,8 +18,8 @@ Material Web 2.5 components are on `main`.
     folder per component, and `components/shared/` for behavior several of
     them share.
   - `extras/`: the library's own components with no page in the M3
-    components index (select, the app and pane scaffolds, pull to refresh),
-    each following the spec pages that cover it.
+    components index (select, the app and pane scaffolds, pull to refresh,
+    prose for long-form text), each following the spec pages that cover it.
   - `SPEC-MAP.md` maps each spec page to its folder, elements and docs page;
     `scripts/m3/gen-spec-map.mjs` writes it and fails when a folder is in
     the wrong one of `components/` and `extras/`.
@@ -34,7 +34,8 @@ Material Web 2.5 components are on `main`.
     schema (`schema.ts`), the catalog of the components generated from the
     public API (`catalog.ts`, reviewed in `CATALOG.md`), M3 rules that quote
     the spec (`m3-rules.ts`), `checkSpec()` and `m3Prompt()` (`check.ts`),
-    and `renderSpec()` (`renderer.ts`).
+    `renderSpec()` and `hydrateSpec()` (`renderer.ts`), and
+    `renderSpecToString()` for static HTML (`static.ts`).
   - `internal/`: plumbing with no docs page (form `behaviors/`, Sass `sass/ext`,
     TypeScript declarations in `types/`, controllers, events, directives).
     `testing/` holds the test helpers, and `skill/` is the agent skill for

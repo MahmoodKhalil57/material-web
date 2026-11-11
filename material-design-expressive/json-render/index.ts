@@ -21,12 +21,19 @@
  *
  * It renders the elements, so register them first (`all.js` or each
  * element's module).
+ *
+ * For static sites and servers, `renderSpecToString()` (./static.js) renders
+ * a spec to HTML without a DOM, and `hydrateSpec()` takes it over in the
+ * browser.
  */
 
-export {catalog, COMPONENTS, HTML_TAGS, type ComponentName} from './catalog.js';
+export {catalog, COMPONENTS, HTML_ATTRIBUTES, HTML_TAGS, type ComponentName} from './catalog.js';
+export {renderSpecToString, type RenderSpecToStringOptions} from './static.js';
+export {INNOCUOUS_URL, isSafeSrc, safeHref} from './urls.js';
 export {checkSpec, m3Prompt, type SpecCheck, type SpecCheckIssue} from './check.js';
 export {checkM3, M3_RULES, m3PromptRules, type M3Issue, type M3Rule} from './m3-rules.js';
 export {
+  hydrateSpec,
   renderSpec,
   type ActionHandler,
   type RenderedSpec,

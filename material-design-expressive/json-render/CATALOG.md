@@ -44,6 +44,7 @@ rules below.
 | `NavRailItem` | `md-gb-nav-rail-item` | 13 | default, badge, icon |   | [navigation-rail](https://m3.material.io/components/navigation-rail) |
 | `PaneScaffold` | `md-gb-pane-scaffold` | 22 | default, placeholder, secondary, tertiary | levitate-close, pane-layout-change, pane-resize, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
 | `Progress` | `md-gb-progress` | 4 |   |   | [progress-indicators](https://m3.material.io/components/progress-indicators) |
+| `Prose` | `md-gb-prose` | 1 | default |   | [typography](https://m3.material.io/styles/typography) |
 | `PullToRefresh` | `md-gb-pull-to-refresh` | 6 | default | refresh | [loading-indicator](https://m3.material.io/components/loading-indicator) |
 | `Radio` | `md-gb-radio` | 7 |   | change, input | [radio-button](https://m3.material.io/components/radio-button) |
 | `SearchBar` | `md-gb-search-bar` | 15 | default, avatar, leading, trailing, view-trailing | change, close, closed, input, open, opened, search | [search](https://m3.material.io/components/search) |

@@ -53,7 +53,8 @@ import {repeat} from 'lit/directives/repeat.js';
 import {html, unsafeStatic} from 'lit/static-html.js';
 import {setAnchorHref} from 'safevalues/dom';
 
-import {COMPONENTS, HTML_TAG, HTML_TAGS, TEXT_TAG} from './catalog.js';
+import {COMPONENTS, HTML_ATTRIBUTES, HTML_TAG, HTML_TAGS, TEXT_TAG} from './catalog.js';
+import {isSafeSrc} from './urls.js';
 
 /** An app action: gets the resolved params. */
 export type ActionHandler = (params: Record<string, unknown>) => unknown;
@@ -106,11 +107,6 @@ function builtIns(store: StateStore): Record<string, ActionHandler> {
   };
 }
 
-/** Whether a URL is safe for `src`: http(s), data images, or relative. */
-function safeSrc(url: string): boolean {
-  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(url.trim())?.[1]?.toLowerCase();
-  return !scheme || scheme === 'http' || scheme === 'https' || /^data:image\//i.test(url.trim());
-}
 
 /** What the props directive needs, refreshed on every render. */
 interface ElementState {
@@ -190,21 +186,21 @@ class ApplyDirective extends Directive {
 
   private applyHtml(el: Element, props: Record<string, unknown>) {
     // `text` renders in the template, before the children.
-    for (const name of ['id', 'role', 'alt', 'type', 'popovertarget'] as const) {
-      const value = props[name];
-      if (value === undefined) el.removeAttribute(name);
-      else el.setAttribute(name, String(value));
+    for (const [prop, attribute] of Object.entries(HTML_ATTRIBUTES)) {
+      const value = props[prop];
+      if (value === undefined) el.removeAttribute(attribute);
+      else el.setAttribute(attribute, String(value));
     }
-    const label = props['ariaLabel'];
-    if (label === undefined) el.removeAttribute('aria-label');
-    else el.setAttribute('aria-label', String(label));
+    // A new browsing context gets no opener (and no referrer).
+    if (props['target'] === '_blank') el.setAttribute('rel', 'noopener noreferrer');
+    else el.removeAttribute('rel');
     const href = props['href'];
     if (el instanceof HTMLAnchorElement && href !== undefined) {
       setAnchorHref(el, String(href));
     }
     const src = props['src'];
     if (el instanceof HTMLImageElement && typeof src === 'string') {
-      if (safeSrc(src)) el.src = src;
+      if (isSafeSrc(src)) el.src = src;
       else this.state?.runtime.warn(`Html img: unsafe src ignored: ${src}`);
     }
   }
@@ -348,6 +344,21 @@ function template(spec: Spec, runtime: Runtime): TemplateResult | typeof nothing
   if (!spec.root) return nothing;
   const root = node(spec.root, {stateModel, functions: runtime.functions});
   return html`${root}`;
+}
+
+/**
+ * Takes over a container that holds the spec's static HTML
+ * (`renderSpecToString()`, ./static.js): renders the spec live in its place,
+ * with its state, actions and bindings. The static markup is replaced, so
+ * render the same spec and state that produced it.
+ */
+export function hydrateSpec(
+  spec: Spec,
+  container: HTMLElement | DocumentFragment,
+  options: RenderSpecOptions = {},
+): RenderedSpec {
+  container.replaceChildren();
+  return renderSpec(spec, container, options);
 }
 
 /**

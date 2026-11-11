@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 223 |
-| Custom elements | 57 |
-| Classes | 97 |
-| Functions | 330 |
-| Constants and variables | 302 |
-| Types and interfaces | 313 |
+| Public modules | 227 |
+| Custom elements | 58 |
+| Classes | 98 |
+| Functions | 334 |
+| Constants and variables | 305 |
+| Types and interfaces | 314 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2133 of 2133 (100%) |
+| JSDoc coverage | 2144 of 2144 (100%) |
 
 ## Contents
 
@@ -3666,6 +3666,29 @@ A Material Design plain or rich tooltip.
 
 The library's own components, with no page of their own in the M3 components index.
 
+### `extras/prose/`
+
+#### `<md-gb-prose>`
+
+A container that styles long-form text with the M3 type scale.
+
+- Class: `ProseElement` in `extras/prose/prose-element.js`
+- Import: `import '@material/web/extras/prose/md-gb-prose.js';`
+- Spec: [typography](https://m3.material.io/styles/typography) (No page of its own: long-form text styled with the type scale (Applying type).)
+- Spec sections cited: `typography/applying-type`, `typography/type-scale-tokens`
+
+| Slot | Description |
+| --- | --- |
+| (default) | The text: native elements such as `<h2>`, `<p>`, `<ul>`, `<a>`, `<pre>`, `<table>`, and components. |
+
+#### `extras/prose/prose-element.js`
+
+- Spec: [typography](https://m3.material.io/styles/typography) (No page of its own: long-form text styled with the type scale (Applying type).)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `ProseElement` | class | `class ProseElement extends HTMLElement` | A container for long-form text in native elements (headings, paragraphs, lists, links, quotes, tables, code): it styles them with the M3 type scale, color roles, shape and spacing tokens. |
+
 ### `extras/pulltorefresh/`
 
 #### `<md-gb-pull-to-refresh>`
@@ -4789,9 +4812,11 @@ The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON 
 | --- | --- | --- | --- |
 | `catalog` | variable | `Catalog<{ spec: SchemaType<"object", { root: SchemaType<"string", unknown>; elements: SchemaType<"record", SchemaType<"object", { type: SchemaType<"ref", string>; props: SchemaType<"propsOf", string>; children: SchemaType<"array", SchemaTy…` | The catalog: the components above, and no actions beyond the built-in ones. |
 | `ComponentName` | type | `keyof typeof COMPONENTS` | The name of a catalog component. |
-| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; description: string; deprecated: boolean; spec: st…` | The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
+| `COMPONENTS` | variable | `{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: stri…` | The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties. |
+| `HTML_ATTRIBUTES` | variable | `{ readonly id: "id"; readonly role: "role"; readonly alt: "alt"; readonly type: "type"; readonly popovertarget: "popovertarget"; readonly target: "target"; readonly lang: "lang"; readonly colspan: "colspan"; readonly rowspan: "rowspan"; re…` | The attributes the Html primitive sets, by prop: plain values. The href and src props are sanitized separately; ariaLabel is aria-label. |
 | `HTML_TAG` | variable | `"#html"` | The tag of the Html primitive: its `tag` prop names the native element. |
-| `HTML_TAGS` | variable | `readonly ["div", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6", "a", "button", "label", "section", "header", "footer", "nav", "main", "ul", "ol", "li", "strong", "em", "img"]` | The native elements the Html primitive may create. |
+| `HTML_TAGS` | variable | `readonly ["div", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6", "a", "button", "label", "section", "header", "footer", "nav", "main", "aside", "article", "ul", "ol", "li", "dl", "dt", "dd", "strong", "em", "b", "i", "small", "sub", "sup"…` | The native elements the Html primitive may create. |
+| `HTML_VOID_TAGS` | variable | `readonly ["hr", "br", "img"]` | Native elements without content or a closing tag. |
 | `TEXT_TAG` | variable | `"#text"` | The tag of the Text primitive: a text node, not an element. |
 
 #### `json-render/check.js`
@@ -4809,7 +4834,7 @@ The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON 
 
 - Spec: none
 
-Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` from `json-render/schema.js`, `catalog` from `json-render/catalog.js`, `checkM3` from `json-render/m3-rules.js`, `checkSpec` from `json-render/check.js`, `ComponentName` from `json-render/catalog.js`, `COMPONENTS` from `json-render/catalog.js`, `dynamic` from `json-render/schema.js`, `FORMAT_RULES` from `json-render/schema.js`, `HTML_TAGS` from `json-render/catalog.js`, `isExpression` from `json-render/schema.js`, `M3_RULES` from `json-render/m3-rules.js`, `M3Issue` from `json-render/m3-rules.js`, `m3Prompt` from `json-render/check.js`, `m3PromptRules` from `json-render/m3-rules.js`, `M3Rule` from `json-render/m3-rules.js`, `Md3Schema` from `json-render/schema.js`, `RenderedSpec` from `json-render/renderer.js`, `renderSpec` from `json-render/renderer.js`, `RenderSpecOptions` from `json-render/renderer.js`, `schema` from `json-render/schema.js`, `SpecCheck` from `json-render/check.js`, `SpecCheckIssue` from `json-render/check.js`
+Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` from `json-render/schema.js`, `catalog` from `json-render/catalog.js`, `checkM3` from `json-render/m3-rules.js`, `checkSpec` from `json-render/check.js`, `ComponentName` from `json-render/catalog.js`, `COMPONENTS` from `json-render/catalog.js`, `dynamic` from `json-render/schema.js`, `FORMAT_RULES` from `json-render/schema.js`, `HTML_ATTRIBUTES` from `json-render/catalog.js`, `HTML_TAGS` from `json-render/catalog.js`, `hydrateSpec` from `json-render/renderer.js`, `INNOCUOUS_URL` from `json-render/urls.js`, `isExpression` from `json-render/schema.js`, `isSafeSrc` from `json-render/urls.js`, `M3_RULES` from `json-render/m3-rules.js`, `M3Issue` from `json-render/m3-rules.js`, `m3Prompt` from `json-render/check.js`, `m3PromptRules` from `json-render/m3-rules.js`, `M3Rule` from `json-render/m3-rules.js`, `Md3Schema` from `json-render/schema.js`, `RenderedSpec` from `json-render/renderer.js`, `renderSpec` from `json-render/renderer.js`, `RenderSpecOptions` from `json-render/renderer.js`, `renderSpecToString` from `json-render/static.js`, `RenderSpecToStringOptions` from `json-render/static.js`, `safeHref` from `json-render/urls.js`, `schema` from `json-render/schema.js`, `SpecCheck` from `json-render/check.js`, `SpecCheckIssue` from `json-render/check.js`
 
 #### `json-render/m3-rules.js`
 
@@ -4833,6 +4858,7 @@ Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` f
 | Export | Kind | Signature | Description |
 | --- | --- | --- | --- |
 | `ActionHandler` | type | `(params: Record<string, unknown>) => unknown` | An app action: gets the resolved params. |
+| `hydrateSpec` | function | `(spec: Spec, container: HTMLElement \| DocumentFragment, options?: RenderSpecOptions): RenderedSpec` | Takes over a container that holds the spec's static HTML (`renderSpecToString()`, ./static.js): renders the spec live in its place, with its state, actions and bindings. The static markup is replaced, so render the same spec and state that produced it. |
 | `RenderedSpec` | interface | `{store; update; dispose}` | A rendered spec. |
 | `renderSpec` | function | `(spec: Spec, container: HTMLElement \| DocumentFragment, options?: RenderSpecOptions): RenderedSpec` | Renders a json-render spec of the library's catalog into a container. |
 | `RenderSpecOptions` | interface | `{handlers; functions; store; onWarning}` | Options of `renderSpec()`. |
@@ -4849,6 +4875,25 @@ Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` f
 | `isExpression` | function | `(value: unknown): boolean` | Whether a prop value is a json-render expression (`{$state: ...}`, `{$bindState: ...}`, `{$item: ...}`, `{$cond: ...}`, `{$template: ...}` and so on) rather than a literal. |
 | `Md3Schema` | type | `typeof schema` | The schema's type. |
 | `schema` | variable | `Schema<{ spec: SchemaType<"object", { root: SchemaType<"string", unknown>; elements: SchemaType<"record", SchemaType<"object", { type: SchemaType<"ref", string>; props: SchemaType<"propsOf", string>; children: SchemaType<"array", SchemaTyp…` | The library's json-render schema: json-render's flat element spec, and a catalog of web components. |
+
+#### `json-render/static.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `renderSpecToString` | function | `(spec: Spec, options?: RenderSpecToStringOptions): string` | Renders a spec to HTML. |
+| `RenderSpecToStringOptions` | interface | `{state; functions; onWarning}` | Options of `renderSpecToString()`. |
+
+#### `json-render/urls.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `INNOCUOUS_URL` | variable | `"about:invalid#zClosurez"` | What an unsafe URL becomes (as safevalues does). |
+| `isSafeSrc` | function | `(url: string): boolean` | Whether a URL is safe for `src`: http(s), data images, or relative. |
+| `safeHref` | function | `(url: string): string` | A link target: http(s), mailto, tel, or relative; anything else is replaced. |
 
 ## All
 

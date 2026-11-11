@@ -113,6 +113,10 @@ export const schema = defineSchema(
         slots: s.array(s.string()),
         /** The DOM events `on` may bind (`click` is always allowed). */
         events: s.array(s.string()),
+        /** Prop -> attribute name, for props that have an attribute (static HTML). */
+        attributes: s.record(s.string()),
+        /** The boolean props (present/absent attributes in static HTML). */
+        booleans: s.array(s.string()),
         /** What the component is and when to use it. */
         description: s.string(),
         /** Whether the M3 spec no longer recommends the component. */

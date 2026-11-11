@@ -1,0 +1,151 @@
+//
+// Copyright 2026 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// Long-form text in native elements (articles, documentation, help pages),
+// styled with the M3 tokens: the type scale (styles/typography.md, Applying
+// type), the color roles and the spacing scale. The element has no shadow
+// root; this sheet is adopted into its document (or shadow root), and every
+// selector is wrapped in :where() so the app's own styles win.
+//
+// Type: headings take the headline and title roles, body text the body
+// roles; "body large" is for long-form writing (typography.md). Code has no
+// M3 typeface, so it uses the platform monospace at body size.
+
+md-gb-prose {
+  display: block;
+  color: var(--md-sys-color-on-surface);
+  font: var(--md-sys-typescale-body-lg);
+  letter-spacing: var(--md-sys-typescale-body-lg-tracking);
+  overflow-wrap: break-word;
+}
+
+:where(md-gb-prose) :where(h1) {
+  margin-block: 0 var(--md-sys-space-300);
+  font: var(--md-sys-typescale-headline-lg);
+  letter-spacing: var(--md-sys-typescale-headline-lg-tracking);
+}
+
+:where(md-gb-prose) :where(h2) {
+  margin-block: var(--md-sys-space-600) var(--md-sys-space-200);
+  font: var(--md-sys-typescale-headline-sm);
+  letter-spacing: var(--md-sys-typescale-headline-sm-tracking);
+}
+
+:where(md-gb-prose) :where(h3) {
+  margin-block: var(--md-sys-space-500) var(--md-sys-space-150);
+  font: var(--md-sys-typescale-title-lg);
+  letter-spacing: var(--md-sys-typescale-title-lg-tracking);
+}
+
+:where(md-gb-prose) :where(h4, h5, h6) {
+  margin-block: var(--md-sys-space-400) var(--md-sys-space-100);
+  font: var(--md-sys-typescale-title-md);
+  letter-spacing: var(--md-sys-typescale-title-md-tracking);
+}
+
+:where(md-gb-prose) :where(p, ul, ol, dl, blockquote, figure, pre, table) {
+  margin-block: 0 var(--md-sys-space-200);
+}
+
+:where(md-gb-prose) :where(:is(h1, h2, h3, h4, h5, h6):first-child, p:first-child) {
+  margin-block-start: 0;
+}
+
+:where(md-gb-prose) :where(small, figcaption) {
+  font: var(--md-sys-typescale-body-sm);
+  letter-spacing: var(--md-sys-typescale-body-sm-tracking);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+:where(md-gb-prose) :where(ul, ol) {
+  padding-inline-start: var(--md-sys-space-300);
+}
+
+:where(md-gb-prose) :where(li + li) {
+  margin-block-start: var(--md-sys-space-50);
+}
+
+:where(md-gb-prose) :where(a) {
+  color: var(--md-sys-color-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+:where(md-gb-prose) :where(a:focus-visible) {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-xs, 4px);
+}
+
+:where(md-gb-prose) :where(strong, b) {
+  font-weight: var(--md-ref-typeface-weight-medium, 500);
+}
+
+:where(md-gb-prose) :where(code, kbd, pre) {
+  font-family: ui-monospace, 'Roboto Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--md-sys-typescale-body-md-size);
+}
+
+:where(md-gb-prose) :where(:not(pre) > code, kbd) {
+  padding: 0.1em 0.35em;
+  border-radius: var(--md-sys-shape-corner-xs, 4px);
+  background: var(--md-sys-color-surface-container-high);
+}
+
+:where(md-gb-prose) :where(pre) {
+  padding: var(--md-sys-space-200);
+  overflow-x: auto;
+  border-radius: var(--md-sys-shape-corner-md);
+  background: var(--md-sys-color-surface-container);
+  line-height: var(--md-sys-typescale-body-md-line-height);
+}
+
+:where(md-gb-prose) :where(blockquote) {
+  margin-inline: 0;
+  padding: var(--md-sys-space-150) var(--md-sys-space-200);
+  border-inline-start: 4px solid var(--md-sys-color-outline-variant);
+  border-radius: 0 var(--md-sys-shape-corner-sm) var(--md-sys-shape-corner-sm) 0;
+  background: var(--md-sys-color-surface-container-low);
+}
+
+:where(md-gb-prose) :where(hr) {
+  margin-block: var(--md-sys-space-400);
+  border: 0;
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+}
+
+:where(md-gb-prose) :where(table) {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font: var(--md-sys-typescale-body-md);
+  letter-spacing: var(--md-sys-typescale-body-md-tracking);
+}
+
+:where(md-gb-prose) :where(th, td) {
+  padding: var(--md-sys-space-100) var(--md-sys-space-150);
+  border-block-end: 1px solid var(--md-sys-color-outline-variant);
+  text-align: start;
+  vertical-align: top;
+}
+
+:where(md-gb-prose) :where(th) {
+  font: var(--md-sys-typescale-title-sm);
+  letter-spacing: var(--md-sys-typescale-title-sm-tracking);
+}
+
+:where(md-gb-prose) :where(img) {
+  max-inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--md-sys-shape-corner-md);
+}
+
+:where(md-gb-prose) :where(dt) {
+  font: var(--md-sys-typescale-title-sm);
+}
+
+:where(md-gb-prose) :where(dd) {
+  margin-inline-start: var(--md-sys-space-300);
+}

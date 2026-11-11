@@ -86,12 +86,12 @@ function components(elements) {
       const skipped = [];
       for (const p of e.props) {
         const zod = zodOf(p.type);
-        if (zod) props.push({name: p.name, zod, description: clean(p.description)});
+        if (zod) props.push({name: p.name, zod, description: clean(p.description), attribute: p.attribute, boolean: p.type === 'boolean'});
         else skipped.push(`${p.name}: ${p.type}`);
       }
       // Every element takes an accessible name (ARIAMixin `ariaLabel`).
       if (!props.some((p) => p.name === 'ariaLabel')) {
-        props.push({name: 'ariaLabel', zod: 'z.string()', description: 'The accessible name (aria-label).'});
+        props.push({name: 'ariaLabel', zod: 'z.string()', description: 'The accessible name (aria-label).', attribute: 'aria-label', boolean: false});
       }
       props.sort((a, b) => a.name.localeCompare(b.name));
       const slots = e.slots.map(([name]) => name || 'default');
@@ -136,8 +136,32 @@ function renderCatalog(list) {
     '/** The native elements the Html primitive may create. */',
     'export const HTML_TAGS = [',
     "  'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'button', 'label',",
-    "  'section', 'header', 'footer', 'nav', 'main', 'ul', 'ol', 'li', 'strong', 'em', 'img',",
+    "  'section', 'header', 'footer', 'nav', 'main', 'aside', 'article', 'ul', 'ol', 'li',",
+    "  'dl', 'dt', 'dd', 'strong', 'em', 'b', 'i', 'small', 'sub', 'sup', 'code', 'kbd',",
+    "  'pre', 'blockquote', 'hr', 'br', 'figure', 'figcaption', 'img', 'table', 'thead',",
+    "  'tbody', 'tfoot', 'tr', 'th', 'td', 'caption',",
     '] as const;',
+    '',
+    '/** Native elements without content or a closing tag. */',
+    "export const HTML_VOID_TAGS = ['hr', 'br', 'img'] as const;",
+    '',
+    '/**',
+    ' * The attributes the Html primitive sets, by prop: plain values. The href',
+    ' * and src props are sanitized separately; ariaLabel is aria-label.',
+    ' */',
+    'export const HTML_ATTRIBUTES = {',
+    "  id: 'id',",
+    "  role: 'role',",
+    "  alt: 'alt',",
+    "  type: 'type',",
+    "  popovertarget: 'popovertarget',",
+    "  target: 'target',",
+    "  lang: 'lang',",
+    "  colspan: 'colspan',",
+    "  rowspan: 'rowspan',",
+    "  scope: 'scope',",
+    "  ariaLabel: 'aria-label',",
+    '} as const;',
     '',
     '/**',
     ' * The catalog components: one per md-gb-* element, plus the Text and Html',
@@ -149,6 +173,8 @@ function renderCatalog(list) {
     '    props: z.object({text: dynamic(z.string())}).strict(),',
     '    slots: [] as string[],',
     '    events: [] as string[],',
+    '    attributes: {} as Record<string, string>,',
+    '    booleans: [] as string[],',
     "    description: 'A text node: a label, an icon name or any text. Put it in a component\\'s children.',",
     '    deprecated: false,',
     '    spec: [] as string[],',
@@ -167,10 +193,17 @@ function renderCatalog(list) {
     '        alt: dynamic(z.string()).optional(),',
     "        type: z.enum(['button', 'submit', 'reset']).optional(),",
     '        popovertarget: z.string().optional(),',
+    "        target: z.enum(['_self', '_blank']).optional(),",
+    '        lang: z.string().optional(),',
+    '        colspan: z.number().int().positive().optional(),',
+    '        rowspan: z.number().int().positive().optional(),',
+    "        scope: z.enum(['row', 'col', 'rowgroup', 'colgroup']).optional(),",
     '      })',
     '      .strict(),',
     "    slots: ['default'],",
     "    events: ['click', 'input', 'change'],",
+    '    attributes: {} as Record<string, string>,',
+    '    booleans: [] as string[],',
     "    description: 'A native element for slots that take plain HTML (a heading, a button of a split button, a panel). Prefer a catalog component when one exists.',",
     '    deprecated: false,',
     '    spec: [] as string[],',
@@ -188,6 +221,8 @@ function renderCatalog(list) {
     lines.push(
       `    slots: [${c.slots.map(str).join(', ')}] as string[],`,
       `    events: [${c.events.map(str).join(', ')}] as string[],`,
+      `    attributes: {${c.props.filter((p) => p.attribute).map((p) => `${p.name}: ${str(p.attribute)}`).join(', ')}} as Record<string, string>,`,
+      `    booleans: [${c.props.filter((p) => p.boolean).map((p) => str(p.name)).join(', ')}] as string[],`,
       `    description: ${str(c.description)},`,
       `    deprecated: ${c.deprecated},`,
       `    spec: [${c.spec.map(str).join(', ')}] as string[],`,
