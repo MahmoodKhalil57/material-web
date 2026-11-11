@@ -62,10 +62,14 @@ export class DemoElement extends LitElement {
         background: var(--md-sys-color-surface-container-lowest);
         color: var(--md-sys-color-on-surface);
       }
-      ::slotted(iframe) {
+      ::slotted(iframe),
+      .frame {
         display: block;
         inline-size: 100%;
         border: 0;
+      }
+      .preview:has(.frame) {
+        padding: 0;
       }
       .code {
         border-block-start: 1px solid var(--md-sys-color-outline-variant);
@@ -105,13 +109,30 @@ export class DemoElement extends LitElement {
   /** Whether long code shows in full. */
   @property({type: Boolean, reflect: true}) expanded = false;
 
+  /**
+   * A document to show as the example instead of the slotted elements (an
+   * example with its own script or styles): it renders in a sandboxed iframe,
+   * sized to the height it posts.
+   */
+  @property() srcdoc = '';
+
+  /**
+   * The `sandbox` of the `srcdoc` frame. By default scripts and forms run in
+   * an opaque origin, so the document can't reach the page, and it can only
+   * load cross-origin resources that send CORS headers. Add
+   * `allow-same-origin` only for documents you trust, such as your own
+   * examples: they then share the page's origin, cache and fonts.
+   */
+  @property() sandbox = 'allow-scripts allow-forms';
+
   @state() private files: DemoCodeElement[] = [];
   @state() private selected = 0;
   @state() private copied = false;
 
   private readonly onMessage = (event: MessageEvent) => {
     if (event.data?.type !== DEMO_HEIGHT_MESSAGE) return;
-    for (const frame of this.querySelectorAll('iframe')) {
+    const own = this.shadowRoot?.querySelector('iframe');
+    for (const frame of [...this.querySelectorAll('iframe'), ...(own ? [own] : [])]) {
       if (frame.contentWindow === event.source && typeof event.data.height === 'number') {
         frame.style.blockSize = `${Math.ceil(event.data.height)}px`;
       }
@@ -185,7 +206,14 @@ export class DemoElement extends LitElement {
     return html`
       <figure role="figure" aria-label=${label} style="margin: 0">
         <div class="preview" part="preview" style=${this.previewHeight ? `min-block-size: ${this.previewHeight}px` : ''}>
-          <slot></slot>
+          ${this.srcdoc
+            ? html`<iframe
+                class="frame"
+                title="${label} preview"
+                loading="lazy"
+                sandbox=${this.sandbox}
+                .srcdoc=${this.srcdoc}></iframe>`
+            : html`<slot></slot>`}
         </div>
         <div class="code" part="code" ?hidden=${!this.files.length}>
           <slot name="code" @slotchange=${this.onCodeSlotChange}></slot>

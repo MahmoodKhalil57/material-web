@@ -21,7 +21,7 @@ source cites (`// spec-labels:`).
 | Types and interfaces | 317 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2166 of 2166 (100%) |
+| JSDoc coverage | 2169 of 2169 (100%) |
 
 ## Contents
 
@@ -2846,6 +2846,10 @@ A Material Design slider component.
 | `change` | `Event` | Fired when the slider value commit changes from user interaction. --bubbles |
 | `input` | `InputEvent` | Fired when the slider value changes from user interaction. --bubbles --composed |
 
+| Slot | Description |
+| --- | --- |
+| `icon` | An optional leading inset icon (`md-gb-icon`): the standard horizontal slider, sizes `md`, `lg` and `xl`. |
+
 <details><summary>26 CSS custom properties</summary>
 
 `--active-handle-leading-space`, `--active-track-color`, `--active-track-inner-corner-size`, `--focus-handle-width`, `--handle-color`, `--handle-height`, `--handle-shape`, `--handle-width`, `--icon-color`, `--icon-color-active`, `--icon-size`, `--inactive-track-color`, `--inactive-track-shape-trailing`, `--state-layer-size`, `--stop-indicator-color`, `--stop-indicator-color-selected`, `--stop-indicator-min-spacing`, `--stop-indicator-size`, `--track-height`, `--track-shape`, `--value-indicator-bottom-space`, `--value-indicator-color`, `--value-indicator-label-text-color`, `--value-indicator-width`, `--with-overlap-handle-outline-color`, `--with-overlap-handle-outline-width`
@@ -3681,6 +3685,8 @@ An example and its code.
 | `expanded` | `expanded` (reflects) | `boolean` | `false` | Whether long code shows in full. |
 | `label` | `label` | `string` | `''` | The accessible name of the demo (what it shows). |
 | `previewHeight` | `preview-height` | `number` | `0` | The block size the preview reserves (px), so the page doesn't move as it loads. |
+| `sandbox` | `sandbox` | `string` | `'allow-scripts allow-forms'` | The `sandbox` of the `srcdoc` frame. By default scripts and forms run in an opaque origin, so the document can't reach the page, and it can only load cross-origin resources that send CORS headers. Add `allow-same-origin` only for documents you trust, such as your own examples: they then share the page's origin, cache and fonts. |
+| `srcdoc` | `srcdoc` | `string` | `''` | A document to show as the example instead of the slotted elements (an example with its own script or styles): it renders in a sandboxed iframe, sized to the height it posts. |
 
 | Event | Type | Description |
 | --- | --- | --- |

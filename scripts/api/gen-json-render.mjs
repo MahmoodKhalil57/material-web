@@ -139,7 +139,7 @@ function renderCatalog(list) {
     "  'section', 'header', 'footer', 'nav', 'main', 'aside', 'article', 'ul', 'ol', 'li',",
     "  'dl', 'dt', 'dd', 'strong', 'em', 'b', 'i', 'small', 'sub', 'sup', 'code', 'kbd',",
     "  'pre', 'blockquote', 'hr', 'br', 'figure', 'figcaption', 'img', 'table', 'thead',",
-    "  'tbody', 'tfoot', 'tr', 'th', 'td', 'caption',",
+    "  'tbody', 'tfoot', 'tr', 'th', 'td', 'caption', 'details', 'summary',",
     '] as const;',
     '',
     '/** Native elements without content or a closing tag. */',

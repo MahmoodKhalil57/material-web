@@ -122,6 +122,25 @@ describe('md-gb-demo', () => {
     expect(demo.shadowRoot!.querySelector('[role=status]')!.textContent).toBe('Code copied');
   });
 
+  it('renders srcdoc in a sandboxed frame without same-origin, sized to its height', async () => {
+    demo.replaceChildren();
+    demo.srcdoc = `<script>parent.postMessage({type: 'md-gb-demo-height', height: 222}, '*');</script>`;
+    await settle();
+    const frame = demo.shadowRoot!.querySelector('iframe')!;
+    expect(frame.getAttribute('sandbox')).toBe('allow-scripts allow-forms');
+    await new Promise((resolve) => frame.addEventListener('load', resolve, {once: true}));
+    await new Promise((r) => setTimeout(r, 50));
+    expect(frame.style.blockSize).toBe('222px');
+  });
+
+  it('sets the srcdoc frame sandbox from the sandbox property', async () => {
+    demo.replaceChildren();
+    demo.sandbox = 'allow-scripts allow-same-origin';
+    demo.srcdoc = '<p>trusted</p>';
+    await settle();
+    expect(demo.shadowRoot!.querySelector('iframe')!.getAttribute('sandbox')).toBe('allow-scripts allow-same-origin');
+  });
+
   it('sizes an iframe preview to the height it posts', async () => {
     demo.replaceChildren();
     const frame = document.createElement('iframe');

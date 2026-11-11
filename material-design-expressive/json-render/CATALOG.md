@@ -23,7 +23,7 @@ rules below.
 | `Chip` | `md-gb-chip` | 18 | default, icon, remove-icon, trailing-icon | change, edit, input, remove, update-focus | [chips](https://m3.material.io/components/chips) |
 | `ChipSet` | `md-gb-chip-set` | 7 | default |   | [chips](https://m3.material.io/components/chips) |
 | `DatePicker` | `md-gb-date-picker` | 23 (+2 not JSON) |   | cancel, change, close, input, open | [date-pickers](https://m3.material.io/components/date-pickers) |
-| `Demo` | `md-gb-demo` | 4 | default, code | copy | none |
+| `Demo` | `md-gb-demo` | 6 | default, code | copy | none |
 | `DemoCode` | `md-gb-demo-code` | 5 |   |   | none |
 | `Dialog` | `md-gb-dialog` | 9 | default, actions, headline, icon | cancel, close, closed, open, opened | [dialogs](https://m3.material.io/components/dialogs) |
 | `Divider` | `md-gb-divider` | 5 |   |   | [divider](https://m3.material.io/components/divider) |
@@ -57,7 +57,7 @@ rules below.
 | `SelectOption` | `md-gb-select-option` | 6 | default, leading, supporting-text, trailing, trailing-text |   | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) |
 | `SideSheet` | `md-gb-side-sheet` | 13 | default, actions, headline | back, close, closed, open, opened | [bottom-sheets](https://m3.material.io/components/bottom-sheets), [side-sheets](https://m3.material.io/components/side-sheets) |
 | `Skeleton` | `md-gb-skeleton` | 3 | default |   | [transitions](https://m3.material.io/styles/motion/transitions) |
-| `Slider` | `md-gb-slider` | 22 |   | change, input | [sliders](https://m3.material.io/components/sliders) |
+| `Slider` | `md-gb-slider` | 22 | icon | change, input | [sliders](https://m3.material.io/components/sliders) |
 | `Snackbar` | `md-gb-snackbar` | 11 (+1 not JSON) | default, action, dismiss | close, closed, open, opened | [snackbar](https://m3.material.io/components/snackbar) |
 | `SnackbarHost` | `md-gb-snackbar-host` | 5 (+1 not JSON) | default | close, closed | [snackbar](https://m3.material.io/components/snackbar) |
 | `SplitButton` | `md-gb-split-button` | 4 | default, leading, trailing |   | [split-button](https://m3.material.io/components/split-button) |

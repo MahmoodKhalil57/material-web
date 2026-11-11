@@ -20067,6 +20067,12 @@
        "description": "Fired when the slider value changes from user interaction. --bubbles --composed"
       }
      ],
+     "slots": [
+      {
+       "name": "icon",
+       "description": "An optional leading inset icon (`md-gb-icon`): the standard horizontal slider, sizes `md`, `lg` and `xl`."
+      }
+     ],
      "cssProperties": [
       {
        "name": "--active-handle-leading-space"
@@ -26358,6 +26364,24 @@
        "fieldName": "previewHeight",
        "default": "0",
        "description": "The block size the preview reserves (px), so the page doesn't move as it loads."
+      },
+      {
+       "name": "sandbox",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "sandbox",
+       "default": "'allow-scripts allow-forms'",
+       "description": "The `sandbox` of the `srcdoc` frame. By default scripts and forms run in an opaque origin, so the document can't reach the page, and it can only load cross-origin resources that send CORS headers. Add `allow-same-origin` only for documents you trust, such as your own examples: they then share the page's origin, cache and fonts."
+      },
+      {
+       "name": "srcdoc",
+       "type": {
+        "text": "string"
+       },
+       "fieldName": "srcdoc",
+       "default": "''",
+       "description": "A document to show as the example instead of the slotted elements (an example with its own script or styles): it renders in a sandboxed iframe, sized to the height it posts."
       }
      ],
      "members": [
@@ -26394,6 +26418,28 @@
        "default": "0",
        "description": "The block size the preview reserves (px), so the page doesn't move as it loads.",
        "attribute": "preview-height"
+      },
+      {
+       "kind": "field",
+       "name": "sandbox",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "default": "'allow-scripts allow-forms'",
+       "description": "The `sandbox` of the `srcdoc` frame. By default scripts and forms run in an opaque origin, so the document can't reach the page, and it can only load cross-origin resources that send CORS headers. Add `allow-same-origin` only for documents you trust, such as your own examples: they then share the page's origin, cache and fonts.",
+       "attribute": "sandbox"
+      },
+      {
+       "kind": "field",
+       "name": "srcdoc",
+       "type": {
+        "text": "string"
+       },
+       "privacy": "public",
+       "default": "''",
+       "description": "A document to show as the example instead of the slotted elements (an example with its own script or styles): it renders in a sandboxed iframe, sized to the height it posts.",
+       "attribute": "srcdoc"
       }
      ],
      "events": [
@@ -32247,7 +32293,7 @@
      "kind": "variable",
      "name": "COMPONENTS",
      "type": {
-      "text": "{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: string[]; description: string; deprecated: boolean; spec: string[]; }; Html: { tag: string; props: ZodObject<{ tag: ZodEnum<{ button: \"button\"; label: \"label\"; div: \"div\"; span: \"span\"; p: \"p\"; h1: \"h1\"; h2: \"h2\"; h3: \"h3\"; h4: \"h4\"; h5: \"h5\"; h6: \"h6\"; a: \"a\"; se…"
+      "text": "{ Text: { tag: string; props: ZodObject<{ text: ZodUnion<readonly [ZodString, ZodCustom<Record<string, unknown>, Record<string, unknown>>]>; }, $strict>; slots: string[]; events: string[]; attributes: Record<string, string>; booleans: string[]; description: string; deprecated: boolean; spec: string[]; }; Html: { tag: string; props: ZodObject<{ tag: ZodEnum<{ button: \"button\"; details: \"details\"; label: \"label\"; div: \"div\"; span: \"span\"; p: \"p\"; h1: \"h1\"; h2: \"h2\"; h3: \"h3\"; h4: \"h4\"; h5: \"h5\"; …"
      },
      "description": "The catalog components: one per md-gb-* element, plus the Text and Html primitives. Props are the elements' JSON-serializable properties."
     },
@@ -32271,7 +32317,7 @@
      "kind": "variable",
      "name": "HTML_TAGS",
      "type": {
-      "text": "readonly [\"div\", \"span\", \"p\", \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", \"h6\", \"a\", \"button\", \"label\", \"section\", \"header\", \"footer\", \"nav\", \"main\", \"aside\", \"article\", \"ul\", \"ol\", \"li\", \"dl\", \"dt\", \"dd\", \"strong\", \"em\", \"b\", \"i\", \"small\", \"sub\", \"sup\", \"code\", \"kbd\", \"pre\", \"blockquote\", \"hr\", \"br\", \"figure\", \"figcaption\", \"img\", \"table\", \"thead\", \"tbody\", \"tfoot\", \"tr\", \"th\", \"td\", \"caption\"]"
+      "text": "readonly [\"div\", \"span\", \"p\", \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", \"h6\", \"a\", \"button\", \"label\", \"section\", \"header\", \"footer\", \"nav\", \"main\", \"aside\", \"article\", \"ul\", \"ol\", \"li\", \"dl\", \"dt\", \"dd\", \"strong\", \"em\", \"b\", \"i\", \"small\", \"sub\", \"sup\", \"code\", \"kbd\", \"pre\", \"blockquote\", \"hr\", \"br\", \"figure\", \"figcaption\", \"img\", \"table\", \"thead\", \"tbody\", \"tfoot\", \"tr\", \"th\", \"td\", \"caption\", \"details\", \"summary\"]"
      },
      "description": "The native elements the Html primitive may create."
     },

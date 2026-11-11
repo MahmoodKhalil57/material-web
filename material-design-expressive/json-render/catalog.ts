@@ -21,7 +21,7 @@ export const HTML_TAGS = [
   'section', 'header', 'footer', 'nav', 'main', 'aside', 'article', 'ul', 'ol', 'li',
   'dl', 'dt', 'dd', 'strong', 'em', 'b', 'i', 'small', 'sub', 'sup', 'code', 'kbd',
   'pre', 'blockquote', 'hr', 'br', 'figure', 'figcaption', 'img', 'table', 'thead',
-  'tbody', 'tfoot', 'tr', 'th', 'td', 'caption',
+  'tbody', 'tfoot', 'tr', 'th', 'td', 'caption', 'details', 'summary',
 ] as const;
 
 /** Native elements without content or a closing tag. */
@@ -589,11 +589,15 @@ export const COMPONENTS = {
         label: dynamic(z.string()).optional(),
         /** The block size the preview reserves (px), so the page doesn't move as it loads. */
         previewHeight: dynamic(z.number()).optional(),
+        /** The `sandbox` of the `srcdoc` frame. By default scripts and forms run in an opaque origin, so the document can't reach the page, and it can only load cross-origin resources that send CORS headers. Add `allow-same-origin` only for documents you trust, such as your own examples: they then share the page's origin, cache and fonts. */
+        sandbox: dynamic(z.string()).optional(),
+        /** A document to show as the example instead of the slotted elements (an example with its own script or styles): it renders in a sandboxed iframe, sized to the height it posts. */
+        srcdoc: dynamic(z.string()).optional(),
       })
       .strict(),
     slots: ["default", "code"] as string[],
     events: ["copy"] as string[],
-    attributes: {ariaLabel: "aria-label", expanded: "expanded", label: "label", previewHeight: "preview-height"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", expanded: "expanded", label: "label", previewHeight: "preview-height", sandbox: "sandbox", srcdoc: "srcdoc"} as Record<string, string>,
     booleans: ["expanded"] as string[],
     description: "An example and its code. Slots: default, code. Events: copy.",
     deprecated: false,
@@ -1661,11 +1665,11 @@ export const COMPONENTS = {
         valueStart: dynamic(z.number()).optional(),
       })
       .strict(),
-    slots: [] as string[],
+    slots: ["icon"] as string[],
     events: ["change", "input"] as string[],
     attributes: {ariaLabel: "aria-label", ariaLabelEnd: "label-end", ariaLabelStart: "label-start", ariaValueTextEnd: "valuetext-end", ariaValueTextStart: "valuetext-start", centered: "centered", disabled: "disabled", labeled: "labeled", max: "max", min: "min", name: "name", orientation: "orientation", range: "range", size: "size", step: "step", ticks: "ticks", value: "value", valueEnd: "value-end", valueLabel: "value-label", valueLabelEnd: "value-label-end", valueLabelStart: "value-label-start", valueStart: "value-start"} as Record<string, string>,
     booleans: ["centered", "disabled", "labeled", "range", "ticks"] as string[],
-    description: "A Material Design slider component. No children. Events: change, input. M3: sliders.",
+    description: "A Material Design slider component. Slots: icon. Events: change, input. M3: sliders.",
     deprecated: false,
     spec: ["https://m3.material.io/components/sliders"] as string[],
   },

@@ -74,6 +74,8 @@ const baseClass = mixinDelegatesAria(
  * `<md-gb-icon slot="icon">` (e.g.
  * `<md-gb-icon slot="icon">volume_up</md-gb-icon>`).
  *
+ * @slot icon - An optional leading inset icon (`md-gb-icon`): the standard
+ *     horizontal slider, sizes `md`, `lg` and `xl`.
  * @fires {InputEvent} input - Fired when the slider value changes from user interaction. --bubbles --composed
  * @fires {Event} change - Fired when the slider value commit changes from user interaction. --bubbles
  * @cssprop --active-track-color
