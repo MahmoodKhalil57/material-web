@@ -23,7 +23,7 @@ import {readGbElements} from './gb-elements.mjs';
 import {elementDir, elementDirs} from '../element-dirs.mjs';
 
 const require = createRequire(import.meta.url);
-const names = require('../../site/eleventy-helpers/gb-shadcn.cjs');
+const names = require('../../site/eleventy/shadcn.cjs');
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
 /** The package path of a component folder (`@material/web/extras/scaffold`). */

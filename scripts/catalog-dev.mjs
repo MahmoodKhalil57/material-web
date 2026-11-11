@@ -282,16 +282,16 @@ function slugify(name) {
  */
 async function copyGbDocs() {
   const dest = join(CATALOG, 'content', '3.0');
-  await cp(join(ROOT, 'docs'), dest, {recursive: true});
-  // docs/README.md is the page template for authors, not a page.
-  await rm(join(dest, 'README.md'), {force: true});
+  // The READMEs aren't pages: docs/README.md is the page template for
+  // authors, a section's README its index page's text (eleventy/site.cjs).
+  await cp(join(ROOT, 'docs'), dest, {recursive: true, filter: (src) => !src.endsWith('README.md')});
   await writeFile(
     join(dest, '3.0.json'),
     JSON.stringify(
       {
         // The spec shell: every UI element a json-render spec of the
         // library's catalog.
-        layout: 'gb/spec.html',
+        layout: 'spec.html',
         tags: ['gb3'],
         permalink: '/3.0/{{ section }}/{{ page.fileSlug }}/',
       },
@@ -363,12 +363,13 @@ function watchSources() {
   const {watch} = /** @type {typeof import('node:fs')} */ (fsSync);
   const roots = [
     join(ROOT, 'docs'),
-    join(CATALOG, 'src'),
+    join(CATALOG, 'client'),
     join(CATALOG, 'content', '_includes'),
     join(CATALOG, 'content', 'index.html'),
-    // Shortcodes, filters and the Eleventy config (each build runs a fresh
+    // The specs, shortcodes and the Eleventy config (each build runs a fresh
     // Eleventy process, so a rebuild picks up their changes).
-    join(CATALOG, 'eleventy-helpers'),
+    join(CATALOG, 'spec'),
+    join(CATALOG, 'eleventy'),
     join(CATALOG, 'eleventy.config.cjs'),
     // Site data and the generated-file templates (search index, llms.txt,
     // sitemap, Markdown pages...). Not all of site/site: builds write into it.

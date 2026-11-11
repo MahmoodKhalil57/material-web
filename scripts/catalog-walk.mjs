@@ -51,7 +51,7 @@ const {values: args} = parseArgs({
 });
 
 const GOOD = {lcp: 2500, cls: 0.1, inp: 200};
-// The spec shell's pager (eleventy-helpers/gb-shell-spec.cjs).
+// The spec shell's pager (spec/shell.cjs).
 const NEXT = 'nav[aria-label="Previous and next pages"] md-gb-button[rel="next"]';
 const LAYOUT_CSS = `
   #gb-content { visibility: hidden !important; }

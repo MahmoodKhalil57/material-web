@@ -1,7 +1,11 @@
 # Component page template
 
 This file is the template for the pages in `docs/components/`. It is not
-published (`copyGbDocs` in `scripts/catalog-dev.mjs` leaves it out). The
+published (`copyGbDocs` in `scripts/catalog-dev.mjs` leaves out every
+README). Each section's `README.md` is its index page's text instead: the
+title, rail icon, order and meta description in its front matter, the
+intro paragraph as its text, and, for Components, the groups a page's
+`category` names. The
 references to follow are `components/button.md`, `chip.md` and
 `navigation-drawer.md`. The page is laid out like
 [Base UI](https://base-ui.com/react/components/navigation-menu): the same

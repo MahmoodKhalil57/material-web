@@ -27,7 +27,7 @@
  *   (foundations/accessibility) and their known gaps.
  * - lighthouse: the category scores and the failed audits of the
  *   component's test page (/3.0/lab/<slug>/: its first example alone,
- *   site/content/gb-lab.11ty.cjs), not of its docs page
+ *   site/content/lab.11ty.cjs), not of its docs page
  *   (scripts/catalog-lighthouse.mjs --desktop --out <dir> on those pages,
  *   read from <dir>/desktop); kept from the last run when no reports are
  *   given.
@@ -229,7 +229,7 @@ function rolesOf(dir) {
 
 const previous = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
 function lighthouseOf(slug) {
-  // The component's test page (site/content/gb-lab.11ty.cjs), not its docs page.
+  // The component's test page (site/content/lab.11ty.cjs), not its docs page.
   const file = args.lighthouse ? join(args.lighthouse, 'desktop', `3.0-lab-${slug}.report.json`) : '';
   if (!file || !existsSync(file)) {
     // The last run's, when it was of the test page.

@@ -5,8 +5,8 @@
  */
 
 /**
- * Bundles the /3.0/ site's client (src/spec/): lib/spec/shell.js (layout
- * site/content/_includes/gb/spec.html, and the all-pages document) and
+ * Bundles the /3.0/ site's client (client/): lib/spec/shell.js (layout
+ * site/content/_includes/spec.html, and the all-pages document) and
  * lib/spec/sw.js (its service worker). The library's sources import their
  * styles as `with {type: 'css'}` modules, which become constructed
  * stylesheets here.
@@ -45,9 +45,8 @@ await esbuild
       bundle: true,
       format: 'esm',
       sourcemap: true,
-      outdir: 'lib',
-      outbase: 'src',
-      entryPoints: ['src/spec/shell.ts', 'src/spec/sw.ts'],
+      outdir: 'lib/spec',
+      entryPoints: ['client/shell.ts', 'client/sw.ts'],
       plugins: [cssModulePlugin],
       // '@material/web/...' imports resolve to the library's sources.
       alias: {'@material/web': fileURLToPath(new URL('../material-design-expressive/', import.meta.url))},

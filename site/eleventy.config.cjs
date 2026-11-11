@@ -5,15 +5,15 @@
  */
 
 const markdownIt = require('markdown-it');
-const gbShortcodes = require('./eleventy-helpers/shortcodes/gb.cjs');
-const {gbSite} = require('./eleventy-helpers/gb-site.cjs');
-const permalinks = require('./eleventy-helpers/plugins/permalinks.cjs');
+const gbShortcodes = require('./eleventy/shortcodes.cjs');
+const {gbSite} = require('./eleventy/site.cjs');
+const permalinks = require('./eleventy/permalinks.cjs');
 
 module.exports = function (eleventyConfig) {
   eleventyConfig
     // The client bundle (esbuild.config.mjs writes lib/spec/).
     .addPassthroughCopy({'lib/': 'js/'})
-    // The /3.0/ service worker is served from its scope (src/spec/sw.ts).
+    // The /3.0/ service worker is served from its scope (client/sw.ts).
     .addPassthroughCopy({'lib/spec/sw.js': '3.0/sw.js'})
     .addPassthroughCopy('content/fonts')
     .addPassthroughCopy('content/images');
@@ -31,9 +31,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addWatchTarget('./lib/**/*.js');
 
   gbShortcodes(eleventyConfig);
-  // The spec shell (layout gb/spec.html).
-  require('./eleventy-helpers/shortcodes/gb-spec-shell.cjs')(eleventyConfig);
-  require('./eleventy-helpers/shortcodes/gb-shadcn.cjs')(eleventyConfig);
+  // The spec shell (layout spec.html).
+  require('./spec/render.cjs')(eleventyConfig);
+  require('./eleventy/shadcn-shortcodes.cjs')(eleventyConfig);
   // /3.0/ site metadata: gbAll collection, gbhead shortcode.
   gbSite(eleventyConfig);
 

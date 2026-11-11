@@ -40,7 +40,6 @@ const CATALOG = join(ROOT, 'site');
 const OUT = join(CATALOG, '_dev-gb');
 const FAVICON = join(CATALOG, 'content', 'images', 'favicon.svg');
 const FONT = join(CATALOG, 'content', 'fonts', 'google-sans', 'regular.woff2');
-const SECTIONS = ['about', 'foundations', 'styles', 'components'];
 const CONCURRENCY = 6;
 /** Bump to re-render every image after a change to the template. */
 const TEMPLATE_VERSION = 3;
@@ -53,11 +52,11 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 /** The pages: {name, title, section, description} from docs/3.0 front matter. */
 async function pages() {
   const matter = require('gray-matter');
-  const {SECTIONS: SECTION_INFO, ogName, sectionLabel} = require(join(CATALOG, 'eleventy-helpers', 'gb-site.cjs'));
+  const {SECTIONS: SECTION_INFO, ogName, sectionLabel} = require(join(CATALOG, 'eleventy', 'site.cjs'));
   const list = [];
-  for (const section of SECTIONS) {
+  for (const info of SECTION_INFO) {
+    const section = info.id;
     // The section's index page (/3.0/<section>/).
-    const info = SECTION_INFO.find((s) => s.id === section);
     list.push({
       name: ogName(`/3.0/${section}/`, section),
       title: info.label,
@@ -611,7 +610,7 @@ export async function buildSnapshot({baseUrl, siteDir = SITE_DIR, log} = {}) {
 
 /** Builds the Open Graph images, the manifest icons, custom-elements.json and the skill files. */
 export async function buildSiteAssets({log} = {}) {
-  const {baselineColors} = require(join(CATALOG, 'eleventy-helpers', 'gb-site.cjs'));
+  const {baselineColors} = require(join(CATALOG, 'eleventy', 'site.cjs'));
   const c = baselineColors().light;
   await mkdir(OUT, {recursive: true});
   await copySkill();

@@ -7,7 +7,7 @@
 
 /**
  * Generates the shape morphs (m3.material.io/styles/shape/shape-morph): for
- * each pair in site/eleventy-helpers/gb-shapes.cjs (MORPHS), the start and
+ * each pair in site/eleventy/shapes.cjs (MORPHS), the start and
  * end paths of the Compose `Morph` between the two Material shapes
  * (scripts/m3/shapes, the port the loading indicator uses). `Morph` matches
  * the two shapes' cubics one to one, so CSS interpolates the SVG
@@ -26,7 +26,7 @@ import {Morph} from './m3/shapes/graphics-shapes.mjs';
 import {MaterialShapes} from './m3/shapes/material-shapes.mjs';
 
 const require = createRequire(import.meta.url);
-const {MORPHS, morphKey} = require('../site/eleventy-helpers/gb-shapes.cjs');
+const {MORPHS, morphKey} = require('../site/eleventy/shapes.cjs');
 
 const TS_OUT = 'material-design-expressive/extras/shape/shape-morphs.ts';
 const CHECK = process.argv.includes('--check');
