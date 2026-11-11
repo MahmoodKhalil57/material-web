@@ -63,7 +63,7 @@ description: Material Web 3.0 is a library of web components that follow Materia
 <div class="gb-home-card" data-corners="a" role="group" aria-label="Controls">
 <span class="gb-home-decor" data-tone="primary" data-place="bottom">{% gbshape "cookie6Sided", "", "cookie9Sided" %}</span>
 <div class="gb-home-row">
-<md-gb-button color="filled">Button<md-gb-icon slot="icon">arrow_forward</md-gb-icon></md-gb-button>
+<md-gb-button color="filled">Button<md-gb-icon>arrow_forward</md-gb-icon></md-gb-button>
 <md-gb-button color="tonal">Tonal</md-gb-button>
 <md-gb-button color="outlined">Outlined</md-gb-button>
 </div>

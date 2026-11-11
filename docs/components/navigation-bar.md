@@ -53,6 +53,10 @@ A navigation bar holds items. Each item has an icon, a label and an optional bad
     <md-gb-icon slot="icon">call</md-gb-icon>
     Calls
   </md-gb-nav-bar-item>
+  <md-gb-nav-bar-item>
+    <md-gb-icon slot="icon">person</md-gb-icon>
+    Contacts
+  </md-gb-nav-bar-item>
 </md-gb-nav-bar>
 {% enddemo %}
 

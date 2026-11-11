@@ -17,6 +17,10 @@ description: A scaffold arranges the bars, rails and panes around an app's conte
       <md-gb-icon slot="icon">send</md-gb-icon>
       Sent
     </md-gb-nav-bar-item>
+    <md-gb-nav-bar-item>
+      <md-gb-icon slot="icon">settings</md-gb-icon>
+      Settings
+    </md-gb-nav-bar-item>
   </md-gb-nav-bar>
   <md-gb-nav-rail slot="navigation-rail" aria-label="Primary">
     <md-gb-nav-rail-item selected>
