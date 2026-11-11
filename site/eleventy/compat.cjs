@@ -7,7 +7,7 @@
 /**
  * The Compatibility section of a /3.0/ component page (`{% gbcompat %}`,
  * added before the API reference of every component page by
- * shortcodes/gb.cjs): four rows, each a disclosure with a status, from
+ * shortcodes.cjs): a list of four expandable rows from
  * site/content/_data/gbCompat.json (scripts/m3/gen-component-compat.mjs):
  *
  * - Material Design 3: the spec units tested and the tokens that match.
@@ -17,36 +17,35 @@
  * - Lighthouse: the category scores and failed audits of the component's
  *   test page (/3.0/lab/<slug>/: its first example alone), not this page.
  *
- * The row's shape is md-gb-shape in its status color (eleventy/shapes.cjs shapeProps).
+ * Library elements only (md-gb-list, md-gb-list-item expandable, md-gb-shape,
+ * md-gb-icon, md-gb-progress, md-gb-stack, md-gb-typography) and native text
+ * elements: each row's logo or icon is on a shape in its status's color, its
+ * status is the supporting text, and its details are the nested content.
  */
 
 const {existsSync, readFileSync, statSync} = require('node:fs');
 const {join} = require('node:path');
 
 const DATA = join(__dirname, '..', 'content', '_data', 'gbCompat.json');
-const LOGOS = join(__dirname, 'compat-logos');
-const {shapeSvg} = require('./shapes.cjs');
 
-/** A logo of compat-logos/ as markup, without its comments, decorative. */
-const logos = new Map();
-function logo(file) {
-  if (!logos.has(file)) {
-    const svg = readFileSync(join(LOGOS, `${file}.svg`), 'utf8')
-      .trim()
-      .replace(/<!--[\s\S]*?-->\s*/g, '')
-      .replace(/<svg\b/, '<svg class="gb-compat-logo-svg" aria-hidden="true" focusable="false"');
-    logos.set(file, svg);
-  }
-  return logos.get(file);
-}
-
-/** Each row's logo, on an M3 Expressive shape of its own. */
+/**
+ * Each row's shape, and what is on it: a brand logo (an image served from
+ * /images/compat/) or a Material Symbol.
+ */
 const ROW_ART = {
-  m3: {logo: 'material-design-logo', shape: 'cookie9Sided'},
-  baseline: {logo: 'logos-baseline', shape: 'clover4Leaf'},
-  aria: {logo: 'custom-aria', shape: 'sunny'},
-  lighthouse: {logo: 'logos-lighthouse', shape: 'softBurst'},
+  m3: {shape: 'cookie9Sided', icon: 'palette'},
+  baseline: {shape: 'clover4Leaf', image: '/images/compat/baseline.svg'},
+  aria: {shape: 'sunny', icon: 'accessibility_new'},
+  lighthouse: {shape: 'softBurst', image: '/images/compat/lighthouse.svg'},
 };
+
+/** A row's status -> its shape's color role. */
+const STATUS_COLORS = {
+  ok: 'secondary-container',
+  warn: 'error-container',
+  none: 'surface-container-highest',
+};
+
 let cache = {mtime: 0, data: null};
 function data() {
   if (!existsSync(DATA)) return null;
@@ -59,7 +58,7 @@ const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
 const n = (x) => Number(x).toLocaleString('en-US');
 const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
-const link = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(text)}<span class="gb-visually-hidden"> (opens in a new tab)</span></a>`;
+const link = (url, text) => `<a href="${esc(url)}">${esc(text)}</a>`;
 
 const BROWSERS = [
   ['chrome', 'Chrome'],
@@ -69,29 +68,27 @@ const BROWSERS = [
 ];
 const STATUS = {widely: 'Widely available', newly: 'Newly available', limited: 'Limited availability'};
 
-/** One row: a disclosure with its logo on a shape, its name, a status
-    badge and a body. */
-function row({id, name, state, badge, extra = '', body}) {
+/** One row: an expandable list item with its art, name, status and body. */
+function row({id, name, state, status, body}) {
   const art = ROW_ART[id];
+  const content = art.icon ? `<md-gb-icon>${art.icon}</md-gb-icon>` : `<img src="${art.image}" alt="">`;
   return (
-    `<details class="gb-compat-row" data-state="${state}">` +
-    `<summary class="gb-compat-summary">` +
-    `<span class="gb-compat-logo" data-logo="${id}">${shapeSvg(art.shape, 'gb-compat-shape')}${logo(art.logo)}</span>` +
-    `<span class="gb-compat-main">` +
-    `<span class="gb-compat-name" id="gb-compat-${id}">${esc(name)}</span>` +
-    `<span class="gb-compat-badge">${esc(badge)}</span>` +
-    (extra ? `<span class="gb-compat-extra">${extra}</span>` : '') +
-    `</span>` +
-    `<md-gb-icon class="gb-compat-chevron" aria-hidden="true">expand_more</md-gb-icon>` +
-    `</summary><div class="gb-compat-body">${body}</div></details>`
+    `<md-gb-list-item expandable id="compat-${id}">` +
+    `<md-gb-shape slot="leading" shape="${art.shape}" color="${STATUS_COLORS[state]}" size="40">${content}</md-gb-shape>` +
+    `${esc(name)}<span slot="supporting-text">${esc(status)}</span>` +
+    `<div slot="nested">${body}</div>` +
+    `</md-gb-list-item>`
   );
 }
+
+/** Links under a row's text. */
+const links = (...list) => `<p>${list.join(' · ')}</p>`;
 
 function m3Row(c) {
   const {m3} = c;
   if (!m3.pages.length) {
     return row({
-      id: 'm3', name: 'Material Design 3', state: 'none', badge: 'No spec page',
+      id: 'm3', name: 'Material Design 3', state: 'none', status: 'No spec page',
       body: '<p>Material Design has no page for this component; it follows the general guidance (color, shape, motion, states).</p>',
     });
   }
@@ -106,44 +103,32 @@ function m3Row(c) {
         `${tokens.drift ? `, ${n(tokens.drift)} differ on purpose or are being fixed` : ''}` +
         `${tokens.none ? `, and ${n(tokens.none)} have no spec token` : ''}.`
       : '') +
-    `</p><p class="gb-compat-links">${m3.pages.map((p) => link(p.url, `${p.name} on m3.material.io`)).join(' ')}` +
-    ` <a href="/3.0/about/compliance/">How compliance is measured</a></p>`;
-  return row({
-    id: 'm3', name: 'Material Design 3', state: ok ? 'ok' : 'warn',
-    badge: ok ? 'Spec checked' : `${n(m3.uncovered)} uncovered`,
-    extra: tokens ? `<span class="gb-compat-chip">${pct(matched, tokens.decls)}% tokens</span>` : '',
-    body,
-  });
+    '</p>' +
+    links(...m3.pages.map((p) => link(p.url, `${p.name} on m3.material.io`)), link('/3.0/about/compliance/', 'How compliance is measured'));
+  const status = [ok ? 'Spec checked' : `${n(m3.uncovered)} uncovered`, tokens ? `${pct(matched, tokens.decls)}% of tokens match` : ''];
+  return row({id: 'm3', name: 'Material Design 3', state: ok ? 'ok' : 'warn', status: status.filter(Boolean).join(' · '), body});
 }
 
 function baselineRow(c, targets) {
   const {enhancements, js} = c.baseline;
   const unguarded = enhancements.filter((e) => e.how === 'unguarded');
   const ok = !unguarded.length;
-  const browsers = BROWSERS.map(
-    ([key, label]) => `<span class="gb-compat-chip">${label} ${esc(targets[key] ?? '')}<md-gb-icon aria-hidden="true">check</md-gb-icon></span>`,
-  ).join('');
+  const browsers = BROWSERS.map(([key, label]) => `${label} ${targets[key] ?? ''}`).join(', ');
   const items = [
     ...enhancements.map(
       (e) =>
-        `<li>${link(`https://webstatus.dev/features/${e.id}`, e.name)} <span class="gb-compat-tag" data-status="${e.status}">${STATUS[e.status]}</span> ` +
+        `<li>${link(`https://webstatus.dev/features/${e.id}`, e.name)} (${STATUS[e.status]}): ` +
         `${e.how === 'guarded' ? 'used inside an <code>@supports</code> guard' : e.how === 'allowed' ? 'degrades safely where it is missing' : '<strong>unguarded</strong>'}</li>`,
     ),
-    ...js.map(
-      (a) =>
-        `<li>${link(`https://webstatus.dev/features/${a.id}`, a.name)} <span class="gb-compat-tag" data-status="${a.status}">${STATUS[a.status]}</span> JavaScript, feature-detected or optional</li>`,
-    ),
+    ...js.map((a) => `<li>${link(`https://webstatus.dev/features/${a.id}`, a.name)} (${STATUS[a.status]}): JavaScript, feature-detected or optional</li>`),
   ];
   const body =
-    `<p>The component’s own CSS and JavaScript rely only on web platform features that are Baseline widely available: it works in ` +
-    `${BROWSERS.map(([key, label]) => `${label} ${esc(targets[key] ?? '')}`).join(', ')} and later.</p>` +
-    (items.length
-      ? `<p>Newer features it uses where the browser has them (progressive enhancements):</p><ul class="gb-compat-list">${items.join('')}</ul>`
-      : '<p>It uses no newer features.</p>') +
-    `<p class="gb-compat-links"><a href="/3.0/about/browser-support/">Browser support</a> ${link('https://web.dev/baseline', 'Learn more about Baseline')}</p>`;
+    `<p>The component’s own CSS and JavaScript rely only on web platform features that are Baseline widely available: it works in ${esc(browsers)} and later.</p>` +
+    (items.length ? `<p>Newer features it uses where the browser has them (progressive enhancements):</p><ul>${items.join('')}</ul>` : '<p>It uses no newer features.</p>') +
+    links(link('/3.0/about/browser-support/', 'Browser support'), link('https://web.dev/baseline', 'Learn more about Baseline'));
   return row({
     id: 'baseline', name: 'Baseline', state: ok ? 'ok' : 'warn',
-    badge: ok ? 'Widely available' : `${unguarded.length} unguarded`, extra: browsers, body,
+    status: `${ok ? 'Widely available' : `${unguarded.length} unguarded`} · ${browsers}`, body,
   });
 }
 
@@ -158,19 +143,15 @@ function ariaRow(c) {
     (patterns ? `<p>Follows the WAI-ARIA Authoring Practices: ${patterns}.</p>` : '') +
     `<p>${tested ? `${n(aria.rows)} rendered state${aria.rows === 1 ? '' : 's'} run through axe-core and the WAI-ARIA 1.3 role and attribute rules in a real browser` : 'Not in the central axe and WAI-ARIA suites yet'}` +
     `${tested ? (aria.gaps ? `, with ${n(aria.gaps)} known gap${aria.gaps === 1 ? '' : 's'}.` : ', with no known gaps.') : '.'}</p>` +
-    `<p class="gb-compat-links">${link('https://w3c.github.io/aria/', 'WAI-ARIA 1.3')} ${link('https://www.w3.org/WAI/ARIA/apg/', 'ARIA Authoring Practices')} <a href="/3.0/foundations/accessibility/">Accessibility</a></p>`;
-  return row({
-    id: 'aria', name: 'WAI-ARIA', state: ok ? 'ok' : tested ? 'warn' : 'none',
-    badge: ok ? 'axe and ARIA 1.3 pass' : tested ? `${n(aria.gaps)} known gaps` : 'Not checked yet',
-    extra: aria.patterns.slice(0, 2).map((p) => `<span class="gb-compat-chip">${esc(p.name)}</span>`).join(''),
-    body,
-  });
+    links(link('https://w3c.github.io/aria/', 'WAI-ARIA 1.3'), link('https://www.w3.org/WAI/ARIA/apg/', 'ARIA Authoring Practices'), link('/3.0/foundations/accessibility/', 'Accessibility'));
+  const status = [ok ? 'axe and ARIA 1.3 pass' : tested ? `${n(aria.gaps)} known gaps` : 'Not checked yet', ...aria.patterns.slice(0, 2).map((p) => p.name)];
+  return row({id: 'aria', name: 'WAI-ARIA', state: ok ? 'ok' : tested ? 'warn' : 'none', status: status.join(' · '), body});
 }
 
 function lighthouseRow(c) {
   const lh = c.lighthouse;
   if (!lh) {
-    return row({id: 'lighthouse', name: 'Lighthouse', state: 'none', badge: 'Not measured yet', body: '<p>Lighthouse hasn’t run on this component’s test page yet.</p>'});
+    return row({id: 'lighthouse', name: 'Lighthouse', state: 'none', status: 'Not measured yet', body: '<p>Lighthouse hasn’t run on this component’s test page yet.</p>'});
   }
   const scores = [
     ['Performance', lh.performance],
@@ -178,28 +159,25 @@ function lighthouseRow(c) {
     ['Best practices', lh.bestPractices],
     ['SEO', lh.seo],
   ];
-  const level = (s) => (s >= 90 ? 'good' : s >= 50 ? 'fair' : 'poor');
+  // Each score as a circular progress indicator with its value and name.
   const gauges = scores
     .map(
       ([label, s]) =>
-        `<li class="gb-compat-score" data-level="${level(s)}"><md-gb-progress circular value="${s / 100}" aria-label="${esc(label)}: ${s} out of 100"></md-gb-progress>` +
-        `<span class="gb-compat-score-value" aria-hidden="true">${s}</span><span class="gb-compat-score-label">${esc(label)}</span></li>`,
+        `<md-gb-stack align-items="center" gap="100">` +
+        `<md-gb-progress circular value="${s / 100}" aria-label="${esc(label)}: ${s} out of 100"></md-gb-progress>` +
+        `<md-gb-typography scale="title-md">${s}</md-gb-typography>` +
+        `<md-gb-typography scale="body-sm" color="on-surface-variant">${esc(label)}</md-gb-typography>` +
+        `</md-gb-stack>`,
     )
     .join('');
   const lowest = Math.min(...scores.map(([, s]) => s));
   const body =
-    `<ul class="gb-compat-scores">${gauges}</ul>` +
-    (lh.failed.length
-      ? `<p>Audits under 90:</p><ul class="gb-compat-list">${lh.failed.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
-      : '<p>Every other audit passes.</p>') +
-    `<p class="gb-compat-note">Lighthouse ${esc(lh.version)} (${esc(lh.preset)}, ${esc(lh.date)}) on the component alone: its first example on a page of its own, ` +
+    `<md-gb-stack direction="row" wrap gap="400">${gauges}</md-gb-stack>` +
+    (lh.failed.length ? `<p>Audits under 90:</p><ul>${lh.failed.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : '<p>Every other audit passes.</p>') +
+    `<p>Lighthouse ${esc(lh.version)} (${esc(lh.preset)}, ${esc(lh.date)}) on the component alone: its first example on a page of its own, ` +
     `without this site's shell. The modules are the development build (not bundled or minified), so the performance score is indicative.</p>` +
-    `<p class="gb-compat-links"><a href="${esc(lh.page)}">Open the test page</a> ${link('https://developer.chrome.com/docs/lighthouse/overview', 'About Lighthouse')}</p>`;
-  return row({
-    id: 'lighthouse', name: 'Lighthouse', state: lowest >= 90 ? 'ok' : 'warn',
-    badge: scores.map(([, s]) => s).join(' · '),
-    body,
-  });
+    links(link(lh.page, 'Open the test page'), link('https://developer.chrome.com/docs/lighthouse/overview', 'About Lighthouse'));
+  return row({id: 'lighthouse', name: 'Lighthouse', state: lowest >= 90 ? 'ok' : 'warn', status: scores.map(([, s]) => s).join(' · '), body});
 }
 
 /** The section for the component page `slug` (its file name). */
@@ -207,9 +185,9 @@ function compatSection(slug) {
   const d = data();
   const c = d?.components?.[slug];
   if (!c) return '';
-  return (
-    `<div class="gb-compat">${m3Row(c)}${baselineRow(c, d.targets)}${ariaRow(c)}${lighthouseRow(c)}</div>`
-  );
+  // The opening tag on a line of its own: Markdown takes a custom element as
+  // an HTML block only then (else it wraps the line in a paragraph).
+  return `<md-gb-list aria-label="Compatibility">\n${m3Row(c)}${baselineRow(c, d.targets)}${ariaRow(c)}${lighthouseRow(c)}\n</md-gb-list>`;
 }
 
 module.exports = {compatSection};

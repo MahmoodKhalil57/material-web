@@ -22,9 +22,8 @@
  *   template are dropped, both counted in `stats` for the build's report.
  */
 
-const {parseFragment, serialize, serializeOuter} = require('parse5');
+const {parseFragment, serialize} = require('parse5');
 const {frameDoc} = require('../eleventy/demo.cjs');
-const {shapeProps} = require('../eleventy/shapes.cjs');
 
 const DROP = new Set(['script', 'style', 'template', 'noscript']);
 /** Html attribute -> prop. */
@@ -46,22 +45,6 @@ const HTML_ATTRS = {
 
 const attrsOf = (node) => Object.fromEntries((node.attrs ?? []).map((a) => [a.name, a.value]));
 
-/** The value of `name` on the node or its closest ancestor that has it. */
-function closestAttr(node, name) {
-  for (let n = node; n; n = n.parentNode) {
-    const value = n.attrs?.find((a) => a.name === name)?.value;
-    if (value) return value;
-  }
-  return '';
-}
-
-/** The class list of the node and its ancestors, joined. */
-function classesUp(node) {
-  let out = '';
-  for (let n = node; n; n = n.parentNode) out += ' ' + (n.attrs?.find((a) => a.name === 'class')?.value ?? '');
-  return out;
-}
-
 const textOf = (node) =>
   node.nodeName === '#text' ? node.value : (node.childNodes ?? []).map(textOf).join('');
 
@@ -81,8 +64,6 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
   const count = (key) => stats.set(key, (stats.get(key) ?? 0) + 1);
 
   const elements = {};
-  /** Nodes already converted as part of another (a tile's icon). */
-  const consumed = new WeakSet();
   let n = 0;
   const add = (el) => {
     const key = `${prefix}${(n++).toString(36)}`;
@@ -144,44 +125,6 @@ function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map(
     }
 
     if (tag === 'md-gb-demo') return [demo(node, attrs)];
-
-    if (consumed.has(node)) return [];
-
-    // A Material shape (eleventy/shapes.cjs) is md-gb-shape, colored by the tone
-    // of the tile or card around it (or a compatibility row's status) and
-    // sized by what it decorates. A tile's icon, next to it, goes on it.
-    if (tag === 'svg' && attrs['data-shape']) {
-      const props = shapeProps(attrs, {
-        tone: closestAttr(node, 'data-tone'),
-        state: closestAttr(node, 'data-state'),
-        classes: classesUp(node),
-      });
-      const icon = (node.parentNode?.childNodes ?? []).find((c) => c.tagName === 'md-gb-icon');
-      const children = icon ? convert(icon, issues) : [];
-      if (icon) consumed.add(icon);
-      count('Material shape as md-gb-shape');
-      return [add({type: 'Shape', props, children})];
-    }
-
-    // An SVG with its own colors (a logo) is an image of itself; a
-    // decorative one drawn in currentColor (an icon-like bullet) is left
-    // out, since an image can't take the text color.
-    if (tag === 'svg') {
-      const markup = serializeOuter(node);
-      const hidden = attrs['aria-hidden'] === 'true';
-      if (/currentColor/i.test(markup) && hidden) {
-        count('dropped decorative <svg> (currentColor)');
-        return [];
-      }
-      const svg = markup.includes('xmlns=') ? markup : markup.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
-      count('<svg> as an image');
-      return [
-        add({
-          type: 'Html',
-          props: {tag: 'img', alt: hidden ? '' : (attrs['aria-label'] ?? ''), src: `data:image/svg+xml,${encodeURIComponent(svg)}`},
-        }),
-      ];
-    }
 
     const custom = byTag.get(tag);
     if (custom) {

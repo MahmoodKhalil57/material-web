@@ -71,6 +71,7 @@
     <script type="module" src="/js/spec/shell.js"></script>
   </head>
   <body>
-    {% gbshell content, title, description, section, collections.gb3 %}
+    {#- gbIndex: the page has its own h1; contentFormat 'spec': its content is a spec (JSON). #}
+    {% gbshell content, title, description, section, collections.gb3, gbIndex, contentFormat %}
   </body>
 </html>

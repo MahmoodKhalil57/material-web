@@ -66,9 +66,10 @@ function outlineOf(html) {
 /**
  * The shell spec of a page.
  *
- * @param {object} page `{url, title, description, section}` of the page.
+ * @param {object} page `{url, title, description, section, ownTitle}` of
+ *     the page; `ownTitle` when its content starts with its own h1.
  * @param {Array<{url, title, section, category, order}>} pages Every page.
- * @param {string} content The page's content HTML (for its outline).
+ * @param {string} content The page's rendered content (for its outline).
  */
 function shellSpec(page, pages, content) {
   const elements = {};
@@ -235,8 +236,12 @@ function shellSpec(page, pages, content) {
       ],
     }),
   );
-  if (page.title) article.push(add('title', {type: 'Html', props: {tag: 'h1', text: page.title}}));
-  if (page.description) article.push(add('lede', {type: 'Html', props: {tag: 'p', text: page.description}}));
+  // A page with a heading of its own (the home and section pages) has no
+  // title block.
+  if (!page.ownTitle) {
+    if (page.title) article.push(add('title', {type: 'Html', props: {tag: 'h1', text: page.title}}));
+    if (page.description) article.push(add('lede', {type: 'Html', props: {tag: 'p', text: page.description}}));
+  }
   article.push(add('content', {type: 'Html', props: {tag: 'div', id: 'gb-content'}}));
   article.push(pagerNav);
   add('main', {

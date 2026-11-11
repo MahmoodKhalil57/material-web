@@ -68,6 +68,7 @@ function sectionPages(section) {
         title: String(data.title ?? f.slice(0, -3)),
         description: String(data.description ?? '').replace(/\s+/g, ' ').trim(),
         summary: data.summary ? String(data.summary) : '',
+        icon: data.icon ? String(data.icon) : '',
         category: data.category,
         order: data.order ?? 0,
       };

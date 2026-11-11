@@ -26,7 +26,6 @@
 
 const cheerio = require('cheerio');
 const {SECTIONS, SITE, absolute, sorted} = require('../eleventy/site.cjs');
-const {shapeAttributes, shapeProps} = require('../eleventy/shapes.cjs');
 
 const esc = (s) =>
   String(s ?? '')
@@ -98,23 +97,6 @@ class GbAll {
         const d = docs.get(dest.url);
         $(el).attr('href', target.hash && d.ids.has(target.hash) ? `#${d.slug}--${target.hash}` : `#${d.slug}`);
       });
-      // Material shapes (eleventy/shapes.cjs) are md-gb-shape, as on the pages,
-      // with a tile's icon on its shape.
-      $('svg[data-shape]').each((_, el) => {
-        const shape = $(el);
-        const classes = [shape, ...shape.parents().toArray().map((p) => $(p))].map((n) => n.attr('class') ?? '').join(' ');
-        const props = shapeProps(el.attribs, {
-          tone: shape.closest('[data-tone]').attr('data-tone') ?? '',
-          state: shape.closest('[data-state]').attr('data-state') ?? '',
-          classes,
-        });
-        const icon = shape.siblings('md-gb-icon').first();
-        shape.replaceWith(`<md-gb-shape ${shapeAttributes(props)}>${icon.length ? $.html(icon) : ''}</md-gb-shape>`);
-        icon.remove();
-      });
-      // The compatibility rows' logos have no size of their own (the old
-      // shell's styles gave them one).
-      $('svg.gb-compat-logo-svg').attr('width', '24').attr('height', '24');
       // Demo iframes (srcdoc) load as they come near the viewport (the inline
       // script below): 84 of them at once exhaust the browser's resources.
       $('iframe[srcdoc]').each((_, el) => {

@@ -7,7 +7,7 @@
 
 /**
  * Generates the shape morphs (m3.material.io/styles/shape/shape-morph): for
- * each pair in site/eleventy/shapes.cjs (MORPHS), the start and
+ * each pair of MORPHS (below), the start and
  * end paths of the Compose `Morph` between the two Material shapes
  * (scripts/m3/shapes, the port the loading indicator uses). `Morph` matches
  * the two shapes' cubics one to one, so CSS interpolates the SVG
@@ -21,12 +21,45 @@
  */
 
 import {readFile, writeFile} from 'node:fs/promises';
-import {createRequire} from 'node:module';
 import {Morph} from './m3/shapes/graphics-shapes.mjs';
 import {MaterialShapes} from './m3/shapes/material-shapes.mjs';
 
-const require = createRequire(import.meta.url);
-const {MORPHS, morphKey} = require('../site/eleventy/shapes.cjs');
+/**
+ * The pairs md-gb-shape can morph between (`shape` -> `to`, and back), in
+ * the order of shape-morphs.ts. Add a pair to morph another two shapes.
+ */
+const MORPHS = [
+  ['cookie9Sided', 'flower'],
+  ['clover4Leaf', 'clover8Leaf'],
+  ['sunny', 'softBurst'],
+  ['pill', 'oval'],
+  ['clover4Leaf', 'sunny'],
+  ['sunny', 'flower'],
+  ['flower', 'puffy'],
+  ['puffy', 'cookie6Sided'],
+  ['cookie6Sided', 'softBurst'],
+  ['softBurst', 'pill'],
+  ['pill', 'pentagon'],
+  ['pentagon', 'cookie12Sided'],
+  ['cookie12Sided', 'gem'],
+  ['gem', 'burst'],
+  ['burst', 'cookie9Sided'],
+  ['cookie9Sided', 'clover4Leaf'],
+  ['cookie12Sided', 'cookie9Sided'],
+  ['clover4Leaf', 'puffy'],
+  ['sunny', 'verySunny'],
+  ['softBurst', 'burst'],
+  ['clover8Leaf', 'clover4Leaf'],
+  ['burst', 'softBurst'],
+  ['flower', 'cookie9Sided'],
+  ['puffy', 'puffyDiamond'],
+  ['gem', 'pentagon'],
+  ['cookie6Sided', 'cookie9Sided'],
+  ['puffyDiamond', 'puffy'],
+  ['cookie4Sided', 'cookie6Sided'],
+  ['softBoom', 'boom'],
+];
+const morphKey = (from, to) => `${from}:${to}`;
 
 const TS_OUT = 'material-design-expressive/extras/shape/shape-morphs.ts';
 const CHECK = process.argv.includes('--check');

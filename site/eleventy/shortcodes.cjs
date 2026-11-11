@@ -50,10 +50,8 @@ const {
  * - `{% gbapi "<dir>" %}`: the API tables (scripts/m3/gen-api-docs.mjs).
  * - `{% gbcompat %}`: the Compatibility section of a component page
  *   (eleventy/compat.cjs), added to every one by a preprocessor.
- * - `{% gbshape "<name>", "<class>", "<to>", "loop", <delay> %}`: a
- *   decorative M3 Expressive shape (eleventy/shapes.cjs) as
- *   inline SVG in currentColor; with `to`, it morphs into that shape, in a
- *   loop with "loop" (delay 0-3 staggers it), else on hover and focus.
+ *
+ * Shapes are md-gb-shape in the Markdown itself.
  *
  * @param eleventyConfig The 11ty config in which to attach the shortcodes.
  */
@@ -71,13 +69,6 @@ function gb(eleventyConfig) {
   eleventyConfig.addShortcode('gbcompat', function () {
     return require('./compat.cjs').compatSection(this.page.fileSlug);
   });
-  eleventyConfig.addShortcode('gbshape', (name, cls = '', to = '', mode = '', delay = 0) =>
-    require('./shapes.cjs').shapeSvg(String(name), String(cls), {
-      to: String(to),
-      loop: mode === 'loop',
-      delay: Number(delay) || 0,
-    }),
-  );
   // Nunjucks wants commas between arguments; the docs write
   // {% demo "label" height=240 %}.
   eleventyConfig.addPreprocessor('gb-demo-args', 'md', (data, content) =>

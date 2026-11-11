@@ -49,7 +49,7 @@ const CONTENT_SLOT = '<div id="gb-content"></div>';
 const reported = new Set();
 
 function gbSpecShell(eleventyConfig) {
-  eleventyConfig.addAsyncShortcode('gbshell', async function (content, title, description, section, collection) {
+  eleventyConfig.addAsyncShortcode('gbshell', async function (content, title, description, section, collection, ownTitle, contentFormat) {
     const where = this.page?.inputPath ?? '';
     const pages = (collection ?? []).map((p) => ({
       url: p.url,
@@ -58,15 +58,19 @@ function gbSpecShell(eleventyConfig) {
       category: p.data.category,
       order: p.data.order,
     }));
-    const spec = shellSpec({url: this.page?.url ?? '', title, description, section, siteUrl: gbSite.url}, pages, content ?? '');
     const {checkSpec, renderSpecToString, COMPONENTS} = await library();
 
-    // The content as a spec too (spec/content.cjs), checked and rendered.
-    const {spec: contentSpecOf} = contentSpec(content ?? '', {
-      components: COMPONENTS,
-      lib: process.env.MWC_GB_LIB ?? '',
-      stats: contentStats,
-    });
+    // The content as a spec: the page's own (a site page, content format
+    // `spec`, whose template renders its spec as JSON), or its Markdown's
+    // HTML converted (spec/content.cjs). Checked and rendered.
+    const contentSpecOf =
+      contentFormat === 'spec'
+        ? JSON.parse(content)
+        : contentSpec(content ?? '', {
+            components: COMPONENTS,
+            lib: process.env.MWC_GB_LIB ?? '',
+            stats: contentStats,
+          }).spec;
     const contentCheck = checkSpec(contentSpecOf);
     if (!contentCheck.valid) {
       const errors = contentCheck.issues.filter((i) => i.severity === 'error').slice(0, 20).map((i) => `  ${i.element ?? ''}: ${i.message}`);
@@ -77,6 +81,9 @@ function gbSpecShell(eleventyConfig) {
         throw new Error(`gbshell (${where}): content: ${m}`);
       },
     });
+
+    const page = {url: this.page?.url ?? '', title, description, section, ownTitle: Boolean(ownTitle), siteUrl: gbSite.url};
+    const spec = shellSpec(page, pages, contentHtml);
 
     const {valid, issues} = checkSpec(spec);
     if (!valid) {
