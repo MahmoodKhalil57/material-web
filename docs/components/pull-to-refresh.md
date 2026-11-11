@@ -31,7 +31,7 @@ news.addEventListener('refresh', async () => {
 
 {% gbshadcn "pulltorefresh" %}
 
-Pull to refresh is the pull-to-refresh behavior of the [loading indicator](/3.0/components/loading-indicator/), which it shows while the content reloads.
+Pull to refresh is the pull-to-refresh behavior of the [loading indicator](/3.0/components/loading-indicator/), which it shows while the content reloads. Material 3 has no separate page for it: the loading indicator page covers it ("loading indicators are used in the pull-to-refresh behavior", and "the container should be used with pull-to-refresh behavior"), so this component follows that page and shows the contained loading indicator by default.
 
 ## Usage guidelines
 

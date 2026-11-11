@@ -40,8 +40,12 @@
     scrollbar-width: thin;
     scrollbar-color: var(--md-sys-color-outline) transparent;
 
-    &:hover {
-      scrollbar-color: var(--md-sys-color-on-surface-variant) transparent;
+    // Hover applies only with a cursor (interaction/states.md): a touch
+    // leaves no stuck hover.
+    @media (hover: hover) {
+      &:hover {
+        scrollbar-color: var(--md-sys-color-on-surface-variant) transparent;
+      }
     }
   }
 
@@ -65,7 +69,9 @@
     border-radius: var(--md-sys-shape-corner-full);
     background: var(--md-sys-color-outline) padding-box;
   }
-  &:hover::-webkit-scrollbar-thumb {
-    background-color: var(--md-sys-color-on-surface-variant);
+  @media (hover: hover) {
+    &:hover::-webkit-scrollbar-thumb {
+      background-color: var(--md-sys-color-on-surface-variant);
+    }
   }
 }

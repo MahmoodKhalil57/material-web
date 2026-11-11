@@ -7,6 +7,12 @@ summary: Switch between destinations on large screens
 description: A Material Design navigation drawer.
 hero: navdrawer/standard-drawer
 ---
+> **Deprecated.** The navigation drawer is no longer recommended in the
+> Material 3 Expressive update. Use an
+> [expanded navigation rail](/3.0/components/navigation-rail/#collapsible) instead: it has
+> mostly the same functionality. `<md-gb-nav-drawer>` stays for apps that
+> haven't moved yet, and logs a warning once per page.
+
 {% demo "A standard navigation drawer with Inbox selected" %}
 <md-gb-nav-drawer open aria-label="Mail">
   <h2 slot="headline">Mail</h2>
@@ -30,7 +36,7 @@ hero: navdrawer/standard-drawer
 *   **Group with labels.** Use section labels and dividers to organize long lists.
 *   **Keep labels short.** Long [labels](#text-labels-only) truncate.
 
-This component is new in [M3 Expressive](https://m3.material.io/blog/building-with-m3-expressive).
+The [M3 Expressive](https://m3.material.io/blog/building-with-m3-expressive) update replaces this component with the expanded navigation rail.
 
 ## Anatomy
 

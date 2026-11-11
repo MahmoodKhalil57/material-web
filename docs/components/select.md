@@ -16,6 +16,13 @@ description: Select menus let people choose one option from a list that opens on
 
 {% gbshadcn "select" %}
 
+Material 3 has no separate select component. It treats a select as a menu
+opened from a text field: the menus page says "dropdown menu and exposed
+dropdown menu are now both referred to as menu", and the text fields page
+lists "text field dropdown menus". `md-gb-select` combines the
+[text field](/3.0/components/text-field/) and the [menu](/3.0/components/menu/)
+and follows both pages.
+
 ## Usage guidelines
 
 *   **Fixed list of choices.** Use a select to choose one value from a short, fixed list, like the native `<select>`. For a longer list that people can search, use the [autocomplete](#autocomplete).

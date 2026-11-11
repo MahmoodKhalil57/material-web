@@ -87,6 +87,27 @@ async function visit(path) {
   }
 }
 await visit(ENTRY);
+
+// The standalone modules the docs tell people to import (dynamic color, the
+// transitions, the checkbox group, the global stylesheets) are not all
+// reached from all.js: publish every one the docs name, so a documented
+// import always resolves.
+const DOC_IMPORT = /['"]@material\/web\/([^'"]+)['"]/g;
+for (const name of await readdir(join(ROOT, 'docs'), {recursive: true})) {
+  if (!name.endsWith('.md')) continue;
+  for (const [, path] of (await readFile(join(ROOT, 'docs', name), 'utf8')).matchAll(DOC_IMPORT)) {
+    if (path.endsWith('.js')) await visit(path);
+    else if (path.endsWith('.css')) cssTargets.add(path);
+    else throw new Error(`docs/${name} imports ${path}, which is neither a module nor a stylesheet.`);
+  }
+}
+
+// Test code never ships: the central suites' helpers live next to the code
+// they test (foundations/, styles/) and in testing/.
+const TEST_CODE =
+  /(_test|_gap)\.(js|d\.ts|js\.map)$|^testing\/|\/(aria-helpers|aria-internals|aria-rows|axe-helpers|axe-internals|states-helpers|rtl-helpers|predictive-back-harness)\.(js|d\.ts|js\.map)$/;
+const leaked = [...files].filter((f) => TEST_CODE.test(f));
+if (leaked.length) throw new Error(`Test code reached the package: ${leaked.join(', ')}`);
 log(`${files.size} files, bare imports: ${[...bare].sort().join(', ')}`);
 
 // --- 2. The package ---------------------------------------------------------
@@ -107,7 +128,11 @@ const sass = await import('sass');
 for (const css of cssTargets) {
   const scss = css.replace(/\.css$/, '.scss');
   if (!existsSync(join(LIB, scss))) throw new Error(`No ${scss} to compile ${css} from.`);
-  const {css: text} = sass.compile(join(LIB, scss), {style: 'compressed', loadPaths: [join(ROOT, 'node_modules')]});
+  // The same load paths as the build (internal/sass/ext forwards sass-true).
+  const {css: text} = sass.compile(join(LIB, scss), {
+    style: 'compressed',
+    loadPaths: [join(ROOT, 'node_modules'), join(ROOT, 'node_modules', 'sass-true', 'sass')],
+  });
   await mkdir(dirname(join(OUT, css)), {recursive: true});
   await writeFile(join(OUT, css), text);
   // `import sheet from './x.css' with {type: 'css'}` needs a browser or
@@ -146,7 +171,15 @@ await writeFile(
       main: ENTRY,
       module: ENTRY,
       types: ENTRY.replace(/\.js$/, '.d.ts'),
-      exports: {'.': {types: './all.d.ts', default: './all.js'}, './*': './*'},
+      // The public entry points follow the docs pillars. internal/ is
+      // reachable only from the package's own modules.
+      exports: {
+        '.': {types: './all.d.ts', default: './all.js'},
+        './components/*': './components/*',
+        './foundations/*': './foundations/*',
+        './styles/*': './styles/*',
+        './package.json': './package.json',
+      },
       sideEffects: true,
       dependencies,
       license: 'Apache-2.0',
@@ -185,7 +218,10 @@ import '${args.name}';
 
 For production, import individual components from
 \`${args.name}/components/<name>/<file>.js\` and adopt the styles
-yourself.
+yourself. The other entry points follow the Material docs:
+\`${args.name}/foundations/...\` (layout, interaction, accessibility) and
+\`${args.name}/styles/...\` (color, motion, icons and the global
+stylesheets). \`internal/\` is not public API.
 
 Built from material-web ${main.version} at commit ${git(['rev-parse', '--short', 'HEAD'])}.
 `,

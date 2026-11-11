@@ -41,6 +41,9 @@ import {NavDrawerItemElement} from './nav-drawer-item-element.js';
 /** Default accessible name of the drawer (Compose `Strings.NavigationMenu`). */
 const DEFAULT_LABEL = 'Navigation menu';
 
+/** Whether the deprecation warning was shown (once per page). */
+let deprecationWarned = false;
+
 // Separate variable needed for closure.
 const baseClass = mixinDelegatesAria(LitElement);
 
@@ -51,6 +54,11 @@ const baseClass = mixinDelegatesAria(LitElement);
 // spec-labels: navigation-drawer/guidelines/usage/modal-navigation-drawer, navigation-drawer/specs
 /**
  * A Material Design navigation drawer.
+ *
+ * @deprecated "The navigation drawer is no longer recommended in the Material
+ *     3 Expressive update" (navigation-drawer.md). Use an expanded
+ *     navigation rail (`<md-gb-nav-rail expanded>`), which has mostly the
+ *     same functionality. The drawer stays for apps that haven't moved yet.
  *
  * A standard drawer sits next to the app content and slides in and out with
  * `open`. A `modal` drawer opens over a scrim in a modal `<dialog>`: focus is
@@ -271,6 +279,14 @@ export class NavDrawerElement extends baseClass {
 
   override connectedCallback() {
     super.connectedCallback();
+    if (!deprecationWarned) {
+      deprecationWarned = true;
+      console.warn(
+        '<md-gb-nav-drawer> is deprecated: the navigation drawer is no ' +
+          'longer recommended in Material 3 Expressive. Use an expanded ' +
+          'navigation rail (<md-gb-nav-rail expanded>) instead.',
+      );
+    }
     adoptStyles(this, [focusRingStyles, rippleStyles, navDrawerStyles]);
     this.hiddenObserver.observe(this, {
       subtree: true,
