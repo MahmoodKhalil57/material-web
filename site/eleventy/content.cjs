@@ -24,6 +24,7 @@
 
 const {parseFragment, serialize} = require('parse5');
 const {frameDoc} = require('./demo.cjs');
+const {measuredHeight} = require('./frame-heights.cjs');
 
 /**
  * parse5 nodes as the library's HtmlNodes, and each HtmlNode's parse5 node
@@ -90,6 +91,10 @@ function contentSpec(html, {htmlToSpec, lib = '', prefix = 'c', stats = new Map(
     // The site's own examples: same origin, so the document loads the
     // page's fonts (frameDoc) without CORS.
     if (props.srcdoc) props.sandbox = 'allow-scripts allow-same-origin allow-forms';
+    // A frame reserves its measured height (frame-heights.cjs), so the page
+    // doesn't move as it loads.
+    const measured = props.srcdoc && measuredHeight(props.srcdoc);
+    if (measured) props.previewHeight = measured;
     count('demo');
     return [ctx.add({type: 'Demo', props, children, slots: {code: codes}})];
   };

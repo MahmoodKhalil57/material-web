@@ -18,8 +18,9 @@
 // With --shots it saves a screenshot of every page and layers them into a
 // heatmap of what stays the same and what changes (site/scripts/heatmap.mjs).
 //
-// Exits 1 on a loop, a dead Next link, a link that moved, or a vital past
-// "good" (LCP 2.5 s, CLS 0.1, INP 200 ms; web.dev/articles/vitals).
+// Exits 1 on a loop, a dead Next link, a link that moved, any layout shift
+// (CLS above 0, unless INTENDED_SHIFTS lists the page), or LCP or INP past
+// "good" (2.5 s, 200 ms; web.dev/articles/vitals).
 //
 //   node site/scripts/walk.mjs [--url http://localhost:8000/3.0/]
 //     [--width 1300] [--height 900] [--headed] [--motion]
@@ -51,7 +52,16 @@ const {values: args} = parseArgs({
   },
 });
 
-const GOOD = {lcp: 2500, cls: 0.1, inp: 200};
+// CLS: nothing moves that the reader didn't move (web.dev's "good" is 0.1).
+const GOOD = {lcp: 2500, cls: 0, inp: 200};
+/**
+ * Pages whose layout shift is intended (a landing animation, content that
+ * enters as it scrolls into view), by path, with why: their CLS is
+ * reported, not a problem.
+ */
+const INTENDED_SHIFTS = new Map([
+  // ['/3.0/some/page/', 'why the page moves on purpose'],
+]);
 // The spec shell's pager (specs/shell.cjs).
 // Its Next link: the md-gb-button's own <a> (rel and href are the button's
 // properties once the shell hydrates, so not attributes to select on).
@@ -175,6 +185,7 @@ for (const [i, s] of stops.entries()) {
   // on Next happened, so no entry means a shorter one.
   if (v.inp == null && s.box) v.inp = '<16';
   for (const key of ['lcp', 'cls', 'inp']) {
+    if (key === 'cls' && INTENDED_SHIFTS.has(s.url)) continue;
     if (v[key] != null && v[key] > GOOD[key]) problems.push(`${s.url}: ${key.toUpperCase()} ${v[key]} (good: ${GOOD[key]})`);
   }
   console.log(

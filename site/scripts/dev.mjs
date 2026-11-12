@@ -27,6 +27,7 @@
 import * as fsSync from 'node:fs';
 import {existsSync} from 'node:fs';
 import {cp, mkdir, readdir, readFile, rm, writeFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {buildLibrary, nodeScript, npx, ROOT} from '../../scripts/build-local.mjs';
@@ -47,6 +48,8 @@ const arg = (name, fallback) => {
   return i >= 0 ? argv[i + 1] : fallback;
 };
 const PORT = Number(arg('port', 8000));
+/** The window the framed demos are measured in: the one site/scripts/walk.mjs pages through. */
+const FRAME_WINDOW = {width: 1300, height: 900};
 // State of refreshSnapshot() (declared up here: main() runs before the rest of the module).
 let snapshotRunning = false;
 let snapshotAgain = false;
@@ -80,6 +83,7 @@ async function main() {
   await startLibraryServer();
   const {pages, demos} = await buildSite({first: true});
   await startCatalogServer();
+  await fitFrames();
   await writeState({status: 'ready'});
   refreshSnapshot();
   const watching = !argv.includes('--no-watch');
@@ -316,6 +320,7 @@ function watchSources() {
       await writeState({status: 'building'});
       const t = Date.now();
       await buildSite();
+      await fitFrames();
       // A change during the build queues another one: stay "building" so
       // site/scripts/wait.mjs doesn't report the stale pages as ready.
       await writeState({status: again ? 'building' : 'ready'});
@@ -422,6 +427,76 @@ const dir = new URLSearchParams(location.search).get('dir');
 import('./' + dir + '/demo.js').catch((e) => { window.__gbError = String(e); });
 </script></body></html>\n`,
   );
+}
+
+/**
+ * Measures the framed demos (md-gb-demo with a `srcdoc` document) of the
+ * built pages whose height isn't known yet, and builds the pages again when
+ * one is new: each frame then reserves its exact height
+ * (site/eleventy/frame-heights.cjs), and the page doesn't move as it loads.
+ * Heights are kept by the frame's document, so a build measures only new or
+ * changed frames.
+ */
+async function fitFrames() {
+  const {FILE, frameKey} = createRequire(import.meta.url)('../eleventy/frame-heights.cjs');
+  const known = existsSync(FILE) ? JSON.parse(await readFile(FILE, 'utf8')) : {};
+  const decode = (s) => s.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  // The pages with a frame whose height isn't known.
+  const pages = [];
+  for (const file of await walk(join(OUT, '3.0'))) {
+    if (!file.endsWith('index.html')) continue;
+    const html = await readFile(file, 'utf8');
+    const frames = [...html.matchAll(/<md-gb-demo [^>]*?srcdoc="([^"]*)"/g)].map((m) => decode(m[1]));
+    if (frames.some((srcdoc) => !(frameKey(srcdoc) in known))) {
+      pages.push('/' + file.slice(OUT.length + 1).replace(/\\/g, '/').replace(/index\.html$/, ''));
+    }
+  }
+  if (!pages.length) return;
+  log(`Measuring the framed demos of ${pages.length} pages`);
+  const {chromium} = await import('playwright');
+  const browser = await chromium.launch();
+  const page = await browser.newPage({viewport: FRAME_WINDOW});
+  // The heights the frames post (md-gb-demo-height), the latest by frame.
+  await page.addInitScript(() => {
+    window.__posted = new Map();
+    addEventListener('message', (e) => {
+      if (e.data?.type === 'md-gb-demo-height' && typeof e.data.height === 'number') window.__posted.set(e.source, Math.ceil(e.data.height));
+    });
+  });
+  let measured = 0;
+  for (const path of pages) {
+    await page.goto(`http://localhost:${PORT}${path}`, {waitUntil: 'networkidle'});
+    // Each frame loads when it nears the viewport (loading=lazy), then posts
+    // its settled height, which md-gb-demo gives its frame.
+    const heights = await page.evaluate(async () => {
+      const demos = [...document.querySelectorAll('md-gb-demo[srcdoc]')];
+      for (const demo of demos) {
+        demo.scrollIntoView({block: 'center'});
+        await new Promise((r) => setTimeout(r, 150));
+      }
+      const posted = (demo) => window.__posted.get(demo.shadowRoot?.querySelector('iframe')?.contentWindow);
+      // Settled: every frame posted, and nothing changed for 300ms (or 4s).
+      let last = '';
+      let still = 0;
+      for (let i = 0; i < 40 && still < 3; i++) {
+        await new Promise((r) => setTimeout(r, 100));
+        const now = demos.map(posted).join(',');
+        still = demos.every((d) => posted(d) !== undefined) && now === last ? still + 1 : 0;
+        last = now;
+      }
+      return demos.map((d) => [d.srcdoc, posted(d)]);
+    });
+    for (const [srcdoc, height] of heights) {
+      if (!Number.isFinite(height)) continue;
+      known[frameKey(srcdoc)] = height;
+      measured++;
+    }
+  }
+  await browser.close();
+  await mkdir(EXAMPLES, {recursive: true});
+  await writeFile(FILE, JSON.stringify(known, null, 2) + '\n');
+  log(`Measured ${measured} frames; building the pages again with their heights`);
+  npx(['eleventy'], {cwd: CATALOG, env: DEV_ENV});
 }
 
 /** Renders every story in headless Chromium and returns its HTML. */

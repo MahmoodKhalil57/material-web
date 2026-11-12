@@ -205,7 +205,11 @@ body { margin: 0; box-sizing: border-box; min-block-size: 100vh; padding: 24px; 
 const FRAME_BOOT = `(() => {
   const id = '__ID__';
   const html = document.documentElement;
-  const ro = new ResizeObserver(() => post());
+  // Reports its height once settled, then on every resize (a reader's
+  // interaction): an early report (before fonts and elements) would resize
+  // the frame twice as the page loads, a layout shift.
+  let ready = false;
+  const ro = new ResizeObserver(() => ready && post());
   const error = (text) => {
     let el = document.getElementById('gb-error');
     if (!el) {
@@ -245,7 +249,22 @@ const FRAME_BOOT = `(() => {
     html.dataset.themed = '';
   });
   parent.postMessage({type: 'gb-demo-ready', id}, '*');
-  setTimeout(() => { html.dataset.themed = ''; post(); }, 1500);
+  // Settled: the fonts loaded and the elements defined (or 1.5s), then laid
+  // out (two frames).
+  const root = document.getElementById('root');
+  const pending = [...new Set([...root.querySelectorAll(':not(:defined)')].map((el) => el.localName))];
+  Promise.race([
+    Promise.all([document.fonts.ready, ...pending.map((tag) => customElements.whenDefined(tag))]),
+    new Promise((r) => setTimeout(r, 1500)),
+  ])
+    .then(() => new Promise((r) => requestAnimationFrame(r)))
+    // The fonts the first layout asked for.
+    .then(() => document.fonts.ready)
+    .then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+      ready = true;
+      post();
+    })));
+  setTimeout(() => { html.dataset.themed = ''; }, 1500);
 })();`;
 
 /**
