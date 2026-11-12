@@ -27,7 +27,7 @@ description: A navigation bar lets people switch between a small number of top-l
 </md-gb-nav-bar>
 {% enddemo %}
 
-{% gbshadcn "navbar" %}
+{% shadcn "navbar" %}
 
 ## Usage guidelines
 
@@ -191,4 +191,4 @@ bar.addEventListener('change', () => {
 
 ## API reference
 
-{% gbapi "navbar" %}
+{% api "navbar" %}

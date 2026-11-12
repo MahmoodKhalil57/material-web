@@ -10,7 +10,7 @@ description: A date picker lets people select a date or a range of dates.
 <md-gb-date-picker label="Event date"></md-gb-date-picker>
 {% enddemo %}
 
-{% gbshadcn "datepicker" %}
+{% shadcn "datepicker" %}
 
 ## Usage guidelines
 
@@ -80,4 +80,4 @@ Add `fullscreen` to a modal picker for compact windows. It has a close button an
 
 ## API reference
 
-{% gbapi "datepicker" %}
+{% api "datepicker" %}

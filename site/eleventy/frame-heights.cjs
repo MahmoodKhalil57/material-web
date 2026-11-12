@@ -18,7 +18,7 @@ const {createHash} = require('node:crypto');
 const {existsSync, readFileSync} = require('node:fs');
 const {join} = require('node:path');
 
-const FILE = join(__dirname, '..', '_dev-gb', 'frame-heights.json');
+const FILE = join(__dirname, '..', '_generated', 'frame-heights.json');
 
 /** The key of a frame's document. */
 const frameKey = (srcdoc) => createHash('sha1').update(srcdoc).digest('hex').slice(0, 16);

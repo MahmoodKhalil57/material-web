@@ -19,7 +19,7 @@ description: An app bar sits at the top of a screen and shows its title, navigat
 </md-gb-app-bar>
 {% enddemo %}
 
-{% gbshadcn "appbar" %}
+{% shadcn "appbar" %}
 
 ## Usage guidelines
 
@@ -159,4 +159,4 @@ On small windows only a few trailing actions show. The rest are listed in the `o
 
 ## API reference
 
-{% gbapi "appbar" %}
+{% api "appbar" %}

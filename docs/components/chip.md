@@ -14,7 +14,7 @@ description: Chips help people enter information, make selections, filter conten
 </md-gb-chip-set>
 {% enddemo %}
 
-{% gbshadcn "chip" %}
+{% shadcn "chip" %}
 
 ## Usage guidelines
 
@@ -148,4 +148,4 @@ A `soft-disabled` chip stays focusable so screen reader users can discover actio
 
 ## API reference
 
-{% gbapi "chip" %}
+{% api "chip" %}

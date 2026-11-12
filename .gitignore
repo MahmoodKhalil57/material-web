@@ -17,7 +17,7 @@ custom-elements.json
 
 !site/**/*.css
 site/_dev
-site/_dev-gb
+site/_generated
 site/.catalog-dev.json
 site/node_modules
 site/lib/

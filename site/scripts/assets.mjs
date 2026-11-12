@@ -8,18 +8,18 @@
  * Generated images of the /3.0/ docs, built by site/scripts/dev.mjs
  * (buildSite) before Eleventy copies them to /3.0/og/ and /3.0/icons/:
  *
- * - site/_dev-gb/og/<section>-<slug>.png: the 1200x630 Open Graph image of
+ * - site/_generated/og/<section>-<slug>.png: the 1200x630 Open Graph image of
  *   every page (title, section, description, wordmark, M3 Expressive shapes,
  *   baseline md-sys-color tokens), rendered from an HTML template by
  *   Playwright. Cached by a hash of the page's text and the template in
- *   site/_dev-gb/og-cache, so a rebuild renders only changed pages.
- * - site/_dev-gb/icons/: icon-192.png, icon-512.png and
+ *   site/_generated/og-cache, so a rebuild renders only changed pages.
+ * - site/_generated/icons/: icon-192.png, icon-512.png and
  *   icon-maskable-512.png of the web app manifest, rendered from
  *   site/content/images/favicon.svg (re-rendered when it changes).
- * - site/_dev-gb/custom-elements.json: the API of every md-gb element as a
- *   Custom Elements Manifest (/3.0/custom-elements.json), read from the labs/gb
+ * - site/_generated/custom-elements.json: the API of every md-gb element as a
+ *   Custom Elements Manifest (/3.0/custom-elements.json), read from the library's
  *   sources; cached by a stamp of them.
- * - site/_dev-gb/skill/: the agent skill (skill) as /3.0/skill/.
+ * - site/_generated/skill/: the agent skill (skill) as /3.0/skill/.
  * - buildSnapshot() (after the pages are served, off the critical path): the
  *   single-file download of the docs, /3.0/material-web-3.0.mhtml, made by
  *   Chromium from /3.0/all/ and cached by a hash of that page. Run alone with
@@ -37,7 +37,7 @@ import {ELEMENT_ROOTS} from '../../scripts/element-dirs.mjs';
 const require = createRequire(import.meta.url);
 const ROOT = join(import.meta.dirname, '..', '..');
 const CATALOG = join(ROOT, 'site');
-const OUT = join(CATALOG, '_dev-gb');
+const OUT = join(CATALOG, '_generated');
 const FAVICON = join(CATALOG, 'content', 'images', 'favicon.svg');
 // The Open Graph images' font (not served: only this script uses it).
 const FONT = join(import.meta.dirname, 'google-sans-regular.woff2');
@@ -254,7 +254,7 @@ async function apiStamp() {
 /**
  * custom-elements.json (https://github.com/webcomponents/custom-elements-manifest,
  * schema 2.1.0): every md-gb element with its attributes, members, events,
- * slots, CSS parts and CSS custom properties, read from the labs/gb sources
+ * slots, CSS parts and CSS custom properties, read from the library's sources
  * (scripts/m3/gb-elements.mjs). Paths are relative to the @material/web
  * package root. Cached by a stamp of the sources; the type check of the
  * compiler API takes seconds.
@@ -336,14 +336,14 @@ const RECORD_STYLES = `(() => {
       return original.call(this, text);
     };
   }
-  window.__gbCssSource = (sheet) => sources.get(sheet);
+  window.__libraryCss = (sheet) => sources.get(sheet);
 })();`;
 
 /** Runs in the page: the static document, and the URLs it needs. */
 function serializeStatic() {
   const urls = new Set();
   const shared = new Map();
-  const lookup = (win, sheet) => win.__gbCssSource?.(sheet) ?? [...sheet.cssRules].map((r) => r.cssText).join('\n');
+  const lookup = (win, sheet) => win.__libraryCss?.(sheet) ?? [...sheet.cssRules].map((r) => r.cssText).join('\n');
 
   /** Static markup of a document; the documents of its iframes too (as srcdoc). */
   function serialize(doc) {
@@ -388,7 +388,7 @@ function serializeStatic() {
     keep.textContent = ':not(:defined) { visibility: visible !important; }';
     doc.head.append(keep);
     // Scripts would run again and fail offline; copy buttons do nothing without them.
-    for (const el of doc.querySelectorAll('script, link[rel~="modulepreload"], link[rel~="prefetch"], .gb-copy, .gb-demo-toggle')) {
+    for (const el of doc.querySelectorAll('script, link[rel~="modulepreload"], link[rel~="prefetch"]')) {
       el.remove();
     }
     for (const link of doc.querySelectorAll('link[rel~="stylesheet"], link[rel~="icon"]')) {
@@ -513,7 +513,7 @@ async function captureMhtml(browser, url) {
       };
       for (let i = 0; i < frames.length; i += 6) {
         const batch = frames.slice(i, i + 6);
-        batch.forEach((f) => window.gbLoadDemo?.(f));
+        batch.forEach((f) => window.loadDemo?.(f));
         const until = Date.now() + 30000;
         while (Date.now() < until && !batch.every(ready)) await new Promise((r) => setTimeout(r, 100));
       }

@@ -10,9 +10,9 @@
  * (specs/sections.cjs), rendered as JSON for the layout (contentFormat
  * `spec`); the text comes from docs/<section>/README.md.
  *
- * The pages carry the tag `gbsection` and `gbIndex: true`: the shell leaves
+ * The pages carry the tag `sectionIndex` and `indexPage: true`: the shell leaves
  * out its title block (the hero has the h1), and eleventy/site.cjs adds them
- * to the `gbAll` collection (sitemap, Markdown, llms.txt, search).
+ * to the `allPages` collection (sitemap, Markdown, llms.txt, search).
  */
 
 const {SECTIONS} = require('../eleventy/site.cjs');
@@ -23,22 +23,22 @@ class GbSections {
     return {
       layout: 'spec.html',
       contentFormat: 'spec',
-      tags: ['gbsection'],
-      gbIndex: true,
+      tags: ['sectionIndex'],
+      indexPage: true,
       order: 0,
-      pagination: {data: 'gbSectionList', size: 1, alias: 'gbsec', addAllPagesToCollections: true},
-      gbSectionList: SECTIONS,
-      permalink: (data) => `/3.0/${data.gbsec.id}/`,
+      pagination: {data: 'sectionList', size: 1, alias: 'sec', addAllPagesToCollections: true},
+      sectionList: SECTIONS,
+      permalink: (data) => `/3.0/${data.sec.id}/`,
       eleventyComputed: {
-        section: (data) => data.gbsec.id,
-        title: (data) => data.gbsec.label,
-        description: (data) => data.gbsec.description,
+        section: (data) => data.sec.id,
+        title: (data) => data.sec.label,
+        description: (data) => data.sec.description,
       },
     };
   }
 
   render(data) {
-    return JSON.stringify(sectionSpec(data.gbsec));
+    return JSON.stringify(sectionSpec(data.sec));
   }
 }
 

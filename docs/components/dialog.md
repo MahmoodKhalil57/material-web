@@ -24,7 +24,7 @@ document.querySelector('#open-delete').addEventListener('click', () => {
 ```
 {% enddemo %}
 
-{% gbshadcn "dialog" %}
+{% shadcn "dialog" %}
 
 ## Usage guidelines
 
@@ -155,4 +155,4 @@ document.querySelector('#close').addEventListener('click', () => dialog.close())
 
 ## API reference
 
-{% gbapi "dialog" %}
+{% api "dialog" %}

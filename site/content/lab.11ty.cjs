@@ -9,7 +9,7 @@
  * example (the first {% demo %} of docs/components/<slug>.md) alone in a
  * minimal document, without the docs shell (no header, rail, outline,
  * search or site scripts): the M3 styles, the fonts, and the modules of the
- * md-gb-* tags it uses (from the library server, MWC_GB_LIB, like the demos).
+ * md-gb-* tags it uses (from the library server, MWC_LIB_URL, like the demos).
  * Lighthouse audits these pages for the component pages' Compatibility
  * section (scripts/m3/gen-component-compat.mjs), so its scores are the
  * component's, not the documentation's. Out of the sitemap and search.
@@ -36,14 +36,14 @@ class GbLab {
   data() {
     return {
       eleventyExcludeFromCollections: true,
-      pagination: {data: 'gbLabList', size: 1, alias: 'lab'},
-      gbLabList: labs,
+      pagination: {data: 'labList', size: 1, alias: 'lab'},
+      labList: labs,
       permalink: (data) => `/3.0/lab/${data.lab.slug}/`,
     };
   }
 
   render({lab}) {
-    const lib = process.env.MWC_GB_LIB ?? '';
+    const lib = process.env.MWC_LIB_URL ?? '';
     const modules = loadTagModules();
     const tags = new Set(lab.html.match(/(?<=<)md-gb-[a-z0-9-]+/g) ?? []);
     const imports = [...tags]
@@ -69,7 +69,7 @@ class GbLab {
 <title>${name}: component test page - Material Web 3.0</title>
 <meta name="description" content="The ${name} component of Material Web 3.0 on its own, in its first example, for audits.">
 <link href="/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml">
-<link rel="stylesheet" href="/fonts/gb/fonts.css">
+<link rel="stylesheet" href="/fonts/fonts.css">
 ${lib ? `<link rel="stylesheet" href="${lib}styles/m3.css">` : ''}
 <script type="importmap">${importMap}</script>
 <style>

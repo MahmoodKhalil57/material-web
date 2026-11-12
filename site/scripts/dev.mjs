@@ -7,7 +7,7 @@
 
 /**
  * Runs the material-web.dev catalog locally against the local build, with the
- * M3 Expressive `labs/gb` components documented under /3.0/ (docs/3.0).
+ * library's M3 Expressive components documented under /3.0/ (docs/3.0).
  * Works on Windows, macOS and Linux.
  *
  *   npm run catalog:dev                    # build everything, serve, open
@@ -17,7 +17,7 @@
  *
  * A run stops the previous one (pid in site/.catalog-dev.json), then keeps
  * watching docs (including docs/3.0), site/src, site/content/_includes and
- * labs/gb demos, rebuilding the pages in place (~15s) without restarting.
+ * the library's demos, rebuilding the pages in place (~15s) without restarting.
  *   npm run catalog:dev -- --port 8000 --lib-port 8001 --no-open
  *
  * The demos load the library from a second local server that serves this
@@ -35,9 +35,9 @@ import {elementDir, elementNames} from '../../scripts/element-dirs.mjs';
 import {buildSiteAssets, buildSnapshot, restoreSnapshot} from './assets.mjs';
 
 const CATALOG = join(ROOT, 'site');
-const gbDir = (dir) => elementDir(dir, ROOT);
+const componentDir = (dir) => elementDir(dir, ROOT);
 const OUT = join(CATALOG, '_dev');
-const EXAMPLES = join(CATALOG, '_dev-gb');
+const EXAMPLES = join(CATALOG, '_generated');
 
 // The stand-in for the catalog story framework (demo-shim.mjs).
 const SHIM = await readFile(join(import.meta.dirname, 'demo-shim.mjs'), 'utf8');
@@ -68,8 +68,8 @@ const log = (s) => {
 [catalog:dev] (+${((now - lastStep) / 1000).toFixed(1)}s) ${s}`);
   lastStep = now;
 };
-// MWC_GB_LIB is the library server the /3.0/ demos (gbexample) load from.
-const DEV_ENV = {NODE_ENV: 'DEV', MWC_GB_LIB: LIB};
+// MWC_LIB_URL is the library server the /3.0/ demos (example) load from.
+const DEV_ENV = {NODE_ENV: 'DEV', MWC_LIB_URL: LIB};
 
 /** Runs the dev catalog (not when this file is imported for its helpers). */
 async function main() {
@@ -106,7 +106,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 
 /**
  * Builds the site pages: "/3.0/" (docs/3.0
- * as Markdown with the labs/gb demos), the catalog scripts and Eleventy. Run
+ * as Markdown with the library's demos), the catalog scripts and Eleventy. Run
  * once at start and again by the watcher; the servers keep running.
  */
 async function buildSite({first = false} = {}) {
@@ -115,10 +115,10 @@ async function buildSite({first = false} = {}) {
     await rm(join(CATALOG, 'content', dir), {recursive: true, force: true});
   }
 
-  log('Preparing the labs/gb demos');
-  const gbDirs = await gbDemoDirs();
-  await prepareExamples(gbDirs);
-  const examples = await captureExamples(gbDirs);
+  log("Preparing the library's demos");
+  const demoDirList = await demoDirs();
+  await prepareExamples(demoDirList);
+  const examples = await captureExamples(demoDirList);
   await writeFile(
     join(EXAMPLES, 'examples.json'),
     JSON.stringify(
@@ -127,7 +127,7 @@ async function buildSite({first = false} = {}) {
       ),
     ),
   );
-  const pages = await copyGbDocs();
+  const pages = await copyDocs();
 
   // Open Graph images and manifest icons (cached; Eleventy copies them).
   log('Rendering Open Graph images and icons');
@@ -171,17 +171,17 @@ function refreshSnapshot() {
     });
 }
 
-/** Story name -> the id used by {% gbexample "<dir>/<story>" %}. */
+/** Story name -> the id used by {% example "<dir>/<story>" %}. */
 function slugify(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 /**
  * Copies docs/3.0 (plain Markdown) into site/content/3.0, with the directory
- * data that gives every page the gb layout, the gb3 tag and its permalink
+ * data that gives every page the gb layout, the docs tag and its permalink
  * /3.0/<section>/<slug>/, and /3.0/ itself (the intro page).
  */
-async function copyGbDocs() {
+async function copyDocs() {
   const dest = join(CATALOG, 'content', '3.0');
   // The READMEs aren't pages: docs/README.md is the page template for
   // authors, a section's README its index page's text (eleventy/site.cjs).
@@ -193,7 +193,7 @@ async function copyGbDocs() {
         // The spec shell: every UI element a json-render spec of the
         // library's catalog.
         layout: 'spec.html',
-        tags: ['gb3'],
+        tags: ['docs'],
         permalink: '/3.0/{{ section }}/{{ page.fileSlug }}/',
       },
       null,
@@ -288,10 +288,10 @@ function watchSources() {
   // only read by it (Windows reports reads of watched folders as changes).
   let buildStarted = Date.now();
   // A source file changed (not a folder, not a file only read by the build);
-  // under labs/gb only demos affect the pages.
+  // in the library only demos affect the pages.
   const relevant = (root, name) => {
     if (!name || !/\.(md|html|njk|ts|js|mjs|cjs|json|scss|css)$/.test(name)) return false;
-    // Under labs/gb: demos, and compiled .js (gb-check --emit), which the
+    // In the library: demos, and compiled .js (gb-check --emit), which the
     // /3.0/ shell bundle (site/src/gb) includes; else the shell keeps the
     // old components and, defined first, wins over the library server's.
     if (
@@ -368,11 +368,11 @@ function styleDemos() {
 /** Source folder of a component (or style) key. */
 function srcDir(dir) {
   const styles = styleDemos();
-  return dir in styles ? join(ROOT, 'material-design-expressive', styles[dir]) : gbDir(dir);
+  return dir in styles ? join(ROOT, 'material-design-expressive', styles[dir]) : componentDir(dir);
 }
 
-/** labs/gb components (and styles) that have a demo. */
-async function gbDemoDirs() {
+/** The library's components (and styles) that have a demo. */
+async function demoDirs() {
   const dirs = [];
   for (const dir of [...new Set([...elementNames(ROOT), ...Object.keys(styleDemos())])].sort()) {
     if (existsSync(join(srcDir(dir), 'demo', 'demo.ts'))) dirs.push(dir);
@@ -382,7 +382,7 @@ async function gbDemoDirs() {
 
 /**
  * Transpiles each component's demo (demo.ts + stories.ts) into
- * site/_dev-gb/<dir>/ with a stand-in for the catalog story framework that
+ * site/_generated/<dir>/ with a stand-in for the catalog story framework that
  * renders each story into the docs page (or, in capture mode, records its
  * HTML). Served by the library server so bare imports resolve.
  */
@@ -410,7 +410,7 @@ async function prepareExamples(dirs) {
           .replace(/(['"])@material\/web\//g, '$1/')
           .replace(/(['"])\.\/(material-collection|index)\.js\1/g, '$1./_shim.js$1'),
       );
-      // The shim knows which component's stories it renders (hosts carry data-gb-dir).
+      // The shim knows which component's stories it renders (hosts carry data-demo-dir).
       await writeFile(
         join(EXAMPLES, dir, '_shim.js'),
         `import {setUpDemo as set} from '../_shim.js';\nexport * from '../_shim.js';\n` +
@@ -424,7 +424,7 @@ async function prepareExamples(dirs) {
     `<!doctype html><html data-gb-capture><head><meta charset="utf-8"></head><body>
 <script type="module">
 const dir = new URLSearchParams(location.search).get('dir');
-import('./' + dir + '/demo.js').catch((e) => { window.__gbError = String(e); });
+import('./' + dir + '/demo.js').catch((e) => { window.__demoError = String(e); });
 </script></body></html>\n`,
   );
 }
@@ -515,15 +515,15 @@ async function captureExamples(dirs) {
     // resources (net::ERR_INSUFFICIENT_RESOURCES).
     const page = await browser.newPage();
     try {
-      await page.goto(`${LIB}site/_dev-gb/capture.html?dir=${dir}`);
-      await page.waitForFunction(() => window.__gbCapture || window.__gbError, null, {timeout: 20000});
-      const {stories, error} = await page.evaluate(() => ({stories: window.__gbCapture, error: window.__gbError}));
+      await page.goto(`${LIB}site/_generated/capture.html?dir=${dir}`);
+      await page.waitForFunction(() => window.__demoCapture || window.__demoError, null, {timeout: 20000});
+      const {stories, error} = await page.evaluate(() => ({stories: window.__demoCapture, error: window.__demoError}));
       if (error) throw new Error(error);
       // Heights at the phone content width, in a phone-sized window (demos
       // can depend on the window size): 400px window, 16px gutters.
       await page.setViewportSize({width: 400, height: 900});
       const narrow = await page.evaluate(async () => {
-        const hosts = [...document.querySelectorAll('[data-gb-captured]')];
+        const hosts = [...document.querySelectorAll('[data-demo-captured]')];
         for (const h of hosts) h.style.inlineSize = '368px';
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         return hosts.map((h) => Math.ceil(h.getBoundingClientRect().height));
@@ -629,7 +629,7 @@ async function startCatalogServer() {
           if (/\.md$/.test(ctx.path)) ctx.type = 'text/markdown; charset=utf-8';
           else if (/\.webmanifest$/.test(ctx.path)) ctx.type = 'application/manifest+json';
           // Content-hashed fonts (site/scripts/fonts.mjs): the browser keeps them without asking again, in dev too.
-          if (/^\/fonts\/gb\/[^/]+\.woff2$/.test(ctx.path)) {
+          if (/^\/fonts\/[^/]+\.woff2$/.test(ctx.path)) {
             ctx.set('Cache-Control', 'public, max-age=31536000, immutable');
           }
         },

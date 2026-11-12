@@ -13,7 +13,7 @@ description: Switches toggle the state of an item on or off.
 </label>
 {% enddemo %}
 
-{% gbshadcn "switch" %}
+{% shadcn "switch" %}
 
 ## Usage guidelines
 
@@ -99,4 +99,4 @@ A switch submits its `value` (`on` by default) under its `name` when it is selec
 
 ## API reference
 
-{% gbapi "switch" %}
+{% api "switch" %}

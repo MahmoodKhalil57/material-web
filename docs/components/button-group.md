@@ -14,7 +14,7 @@ description: A button group arranges related buttons and can manage their select
 </md-gb-button-group>
 {% enddemo %}
 
-{% gbshadcn "buttongroup" %}
+{% shadcn "buttongroup" %}
 
 ## Usage guidelines
 
@@ -123,4 +123,4 @@ Add `overflow-menu` to collapse the buttons that don't fit into a menu at the tr
 
 ## API reference
 
-{% gbapi "buttongroup" %}
+{% api "buttongroup" %}

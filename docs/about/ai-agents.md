@@ -68,7 +68,7 @@ also available as Markdown at its URL plus `.md`.
 - `get_current_page` describes the page the user is on, with its outline.
 
 An agent calls them through the browser. This demo calls the same functions the
-page registers (`window.gbDocsTools`) and shows the first three results of a
+page registers (`window.docsTools`) and shows the first three results of a
 search.
 
 {% demo "Search result of the WebMCP tool" height=200 %}
@@ -79,7 +79,7 @@ search.
 // The page registers the tools once its script has loaded.
 const tools = await new Promise<any>((resolve) => {
   const check = () => {
-    const found = (parent as any).gbDocsTools;
+    const found = (parent as any).docsTools;
     if (found) resolve(found);
     else setTimeout(check, 50);
   };

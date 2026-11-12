@@ -14,7 +14,7 @@ description: A toolbar holds actions that relate to the content on the screen, d
 </md-gb-toolbar>
 {% enddemo %}
 
-{% gbshadcn "toolbar" %}
+{% shadcn "toolbar" %}
 
 ## Usage guidelines
 
@@ -156,4 +156,4 @@ Set `scroll-behavior="hide"` to move a docked or floating toolbar off screen whe
 
 ## API reference
 
-{% gbapi "toolbar" %}
+{% api "toolbar" %}

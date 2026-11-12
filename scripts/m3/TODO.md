@@ -520,12 +520,12 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
 - Front matter: `title`, `section`, `order` (number, sidebar order),
   `description` (one sentence), optional `hero` (example id).
 - Body: Markdown plus these shortcodes only:
-  `{% gbexample "<dir>/<story>" %}` (live demo with its code),
-  `{% gbapi "<dir>" %}` (generated API tables), `{% playgroundexample ... %}`.
+  `{% example "<dir>/<story>" %}` (live demo with its code),
+  `{% api "<dir>" %}` (generated API tables), `{% playgroundexample ... %}`.
   Generated pages (compliance) are written into docs/3.0 by their generator.
 - Layout: `spec.html` (the spec shell; it replaced gb/default.html), data
   it gets: `title`, `description`, `section`, `page.url`, `content`,
-  `collections.gb3` (all 3.0 pages with `data.section/order/title`).
+  `collections.docs` (all 3.0 pages with `data.section/order/title`).
 
 ## M-1 (Sonnet): export the pages
 - [x] A one-shot script writes every current 3.0 page (component pages with
@@ -538,7 +538,7 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
 
 ## M-2 (Sonnet, after M-1): build
 - [x] Eleventy renders docs/3.0 with layout `gb` to /3.0/; shortcodes
-      `gbexample` and `gbapi` implemented.
+      `example` and `api` implemented.
 - [x] Remove the overlay: addExpressiveVariants, addExpressivePageSections,
       transformToExpressive, data-variant CSS/JS, the /3.0 rewrite middleware,
       the 3.0 scripts in default.html. "/" builds as v2.5.0 only.
@@ -559,9 +559,9 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
 
 Left after M-4:
 - [ ] Production build: only site/scripts/dev.mjs copies docs/3.0 and
-      captures the gbexample demos (site/_dev-gb/examples.json); the
-      catalog's prod build needs the same steps. The `gbcomponents`
-      filter and live demos also need MWC_GB_LIB (a production library URL).
+      captures the example demos (site/_generated/examples.json); the
+      catalog's prod build needs the same steps. The `componentmodules`
+      filter and live demos also need MWC_LIB_URL (a production library URL).
 - [ ] axe: `aria-label` on the md-gb-fab and md-gb-text-field hosts is
       reported as aria-prohibited-attr (library attribute delegation).
 - [ ] axe inside live demos (~110 nodes: color-contrast, empty-table-header,
@@ -574,7 +574,7 @@ Left after M-4:
 - [ ] Figures still load placekitten.com images; use local images.
 - [ ] axe in demos: md-gb-chip-set aria-required-children/parent at 400px,
       carousel aria-required-children.
-- [ ] gbapi: CSS custom properties tables have no Default column (the
+- [ ] api: CSS custom properties tables have no Default column (the
       element docs carry none); read defaults from each _*-tokens.scss.
 - [ ] Carousel: an uncontained layout with 3 items and --item-width 186px
       throws "All KeylineLists must have at least one focal keyline"; with

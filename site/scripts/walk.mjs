@@ -82,7 +82,7 @@ async function settledBox(locator) {
   return last;
 }
 const LAYOUT_CSS = `
-  #gb-content { visibility: hidden !important; }
+  #page-content { visibility: hidden !important; }
   *, *::before, *::after { color: transparent !important; text-shadow: none !important; }
   /* Inherited into the components' shadow roots, which set their own color. */
   :root { -webkit-text-fill-color: transparent !important; }

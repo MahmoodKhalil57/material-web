@@ -57,14 +57,14 @@ function elementDirs() {
     .sort();
 }
 
-/** {dir: docs slug} from the `{% gbapi "dir" %}` of docs/components/*.md. */
+/** {dir: docs slug} from the `{% api "dir" %}` of docs/components/*.md. */
 function docsPages() {
   const pages = {};
   if (!existsSync(DOCS)) return pages;
   for (const f of readdirSync(DOCS)) {
     if (!f.endsWith('.md') || f === 'README.md') continue;
     const text = readFileSync(join(DOCS, f), 'utf8');
-    for (const m of text.matchAll(/\{%-?\s*gbapi\s+"([^"]+)"/g)) pages[m[1]] ??= f.slice(0, -3);
+    for (const m of text.matchAll(/\{%-?\s*api\s+"([^"]+)"/g)) pages[m[1]] ??= f.slice(0, -3);
   }
   return pages;
 }

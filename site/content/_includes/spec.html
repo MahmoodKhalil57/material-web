@@ -16,15 +16,15 @@
     {% if description %}<meta name="description" content="{{ description }}" />{% endif %}
     <meta name="color-scheme" content="light dark" />
     <link href="/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
-    {% gbhead title, description, section, page.url %}
+    {% pagehead title, description, section, page.url %}
     {%- for href in fonts.preload %}
     <link rel="preload" href="{{ href }}" as="font" type="font/woff2" crossorigin />
     {%- endfor %}
     <link rel="stylesheet" href="{{ fonts.stylesheet }}" />
-    {% gbstyles %}
+    {% librarystyles %}
     {#- Before first paint: the saved color mode, reduced motion and theme CSS
         (the library's styles/preferences.ts prePaintScript()). #}
-    {% gbprepaint %}
+    {% prepaint %}
     <script type="speculationrules">
       {
         "prefetch": [{
@@ -41,11 +41,11 @@
         the page isn't painted before they lay it out (a layout shift). #}
     <script type="module" src="/js/spec/shell.js" blocking="render"></script>
     {#- The shell and content, built once: the content's component modules
-        here (render-blocking), the shell in the body. gbIndex: the page has
+        here (render-blocking), the shell in the body. indexPage: the page has
         its own h1; contentFormat 'spec': its content is a spec (JSON). #}
-    {% gbshellhead content, title, description, section, collections.gb3, gbIndex, contentFormat %}
+    {% shellhead content, title, description, section, collections.docs, indexPage, contentFormat %}
   </head>
   <body>
-    {% gbshell content, title, description, section, collections.gb3, gbIndex, contentFormat %}
+    {% shell content, title, description, section, collections.docs, indexPage, contentFormat %}
   </body>
 </html>

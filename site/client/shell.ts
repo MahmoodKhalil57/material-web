@@ -7,7 +7,7 @@
 /**
  * The /3.0/ site in the browser (layout spec.html): hydrates the page's
  * shell spec (specs/shell.cjs, embedded by the build) with the library's
- * renderer, keeping the page's content (the shell's static `gb-content`
+ * renderer, keeping the page's content (the shell's static `page-content`
  * island) as it is, with the reader's preferences as its state.
  *
  * - Preferences: the library's styles/preferences.ts loads, saves and
@@ -16,7 +16,7 @@
  * - App actions: `cycleColorMode` (system -> light -> dark), `toggleMotion`,
  *   the tools' (tools.ts: download, copy, install, theme, feedback) and the
  *   search's (search.ts).
- * - Demo frames get the page's theme (`gb-demo-theme` messages).
+ * - Demo frames get the page's theme (`demo-theme` messages).
  * - Navigation (navigation.ts): route progress, speculation rules, the
  *   service worker. The WebMCP tools (webmcp.ts).
  * - A page without a shell spec (the all-pages document, /3.0/all/) gets
@@ -72,10 +72,10 @@ import './webmcp.js';
 
 const MODES: ColorMode[] = ['auto', 'light', 'dark'];
 /** The ids of the shell's embedded spec and of its content island (eleventy/render.cjs). */
-const SPEC_ID = 'gb-shell-spec';
-const CONTENT_ID = 'gb-content';
+const SPEC_ID = 'app-shell-spec';
+const CONTENT_ID = 'page-content';
 /** Whether the rail is expanded: the site's own preference. */
-const RAIL_KEY = 'gb-rail';
+const RAIL_KEY = 'rail-expanded';
 
 const readRail = () => {
   try {
@@ -108,12 +108,12 @@ function apply(preferences: ReturnType<typeof loadPreferences>) {
  */
 function serveDemoTheme(): () => void {
   const theme = () => ({
-    type: 'gb-demo-theme',
+    type: 'demo-theme',
     css: document.getElementById('md-theme')?.textContent ?? '',
     colorScheme: document.documentElement.style.colorScheme,
   });
   addEventListener('message', (e) => {
-    if (e.data?.type === 'gb-demo-ready') (e.source as Window | null)?.postMessage(theme(), '*');
+    if (e.data?.type === 'demo-ready') (e.source as Window | null)?.postMessage(theme(), '*');
   });
   return () => {
     // Slotted frames, and the frames md-gb-demo renders for `srcdoc`.
@@ -195,7 +195,7 @@ function bootShell(spec: Spec, shell: HTMLElement) {
 function boot() {
   adoptStyles(document, [m3Styles]);
   const spec = readEmbeddedSpec(SPEC_ID);
-  const shell = document.getElementById('gb-shell');
+  const shell = document.getElementById('app-shell');
   if (!spec || !shell) {
     bootPage();
     return;

@@ -45,10 +45,10 @@ const MAX_STEPS = 500;
 // Records when the incoming page's view transition finishes. Runs before the
 // page's own scripts, so the listener is in place before pagereveal fires.
 function watchTransition() {
-  window.__gbReady = Promise.resolve();
+  window.__demoReady = Promise.resolve();
   addEventListener('pagereveal', (event) => {
     const vt = event.viewTransition;
-    if (vt) window.__gbReady = vt.finished.catch(() => {});
+    if (vt) window.__demoReady = vt.finished.catch(() => {});
   });
 }
 
@@ -85,7 +85,7 @@ async function walk(page, label) {
         cached: nav.transferSize === 0,
       };
     }, clickedAt);
-    await page.evaluate(() => window.__gbReady);
+    await page.evaluate(() => window.__demoReady);
     const ready = performance.now() - start;
 
     steps.push({from, to: page.url(), load, ready, phases});

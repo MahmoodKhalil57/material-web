@@ -12,7 +12,7 @@ description: A divider is a thin line that groups content in lists and container
 <p>Delivery is expected on Friday.</p>
 {% enddemo %}
 
-{% gbshadcn "divider" %}
+{% shadcn "divider" %}
 
 ## Usage guidelines
 
@@ -95,4 +95,4 @@ document.querySelector('#rule')!.className = Object.keys(classes)
 
 ## API reference
 
-{% gbapi "divider" %}
+{% api "divider" %}

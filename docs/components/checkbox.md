@@ -13,7 +13,7 @@ description: Checkboxes let people select one or more items from a set, or turn 
 </label>
 {% enddemo %}
 
-{% gbshadcn "checkbox" %}
+{% shadcn "checkbox" %}
 
 ## Usage guidelines
 
@@ -123,4 +123,4 @@ linkParentCheckbox(parent, children);
 
 ## API reference
 
-{% gbapi "checkbox" %}
+{% api "checkbox" %}

@@ -27,7 +27,7 @@ hero: navdrawer/standard-drawer
 </md-gb-nav-drawer>
 {% enddemo %}
 
-{% gbshadcn "navdrawer" %}
+{% shadcn "navdrawer" %}
 
 ## Usage guidelines
 
@@ -124,4 +124,4 @@ Items work without icons. Labels that are too long truncate, and `disabled` item
 
 ## API reference
 
-{% gbapi "navdrawer" %}
+{% api "navdrawer" %}

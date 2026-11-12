@@ -23,7 +23,7 @@ description: A search bar lets people enter a query and find matching results, w
 </md-gb-search-bar>
 {% enddemo %}
 
-{% gbshadcn "search" %}
+{% shadcn "search" %}
 
 ## Usage guidelines
 
@@ -181,4 +181,4 @@ bar.addEventListener('search', async (event) => {
 
 ## API reference
 
-{% gbapi "search" %}
+{% api "search" %}

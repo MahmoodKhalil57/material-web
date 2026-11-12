@@ -14,7 +14,7 @@ description: Select menus let people choose one option from a list that opens on
 </md-gb-select>
 {% enddemo %}
 
-{% gbshadcn "select" %}
+{% shadcn "select" %}
 
 Material 3 has no separate select component. It treats a select as a menu
 opened from a text field: the menus page says "dropdown menu and exposed
@@ -170,4 +170,4 @@ A select takes part in a form through its `name` and `value`, and `required` is 
 
 ## API reference
 
-{% gbapi "select" %}
+{% api "select" %}

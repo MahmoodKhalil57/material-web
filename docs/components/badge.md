@@ -12,7 +12,7 @@ description: A badge shows a small dot or a count to signal new or changed infor
 <md-gb-badge>99+</md-gb-badge>
 {% enddemo %}
 
-{% gbshadcn "badge" %}
+{% shadcn "badge" %}
 
 ## Usage guidelines
 
@@ -57,4 +57,4 @@ Add `anchored` to place the badge on the top trailing corner of its positioned p
 
 ## API reference
 
-{% gbapi "badge" %}
+{% api "badge" %}

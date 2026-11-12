@@ -17,7 +17,7 @@ description: A split button pairs a main action with a trailing button that open
 </md-gb-split-button>
 {% enddemo %}
 
-{% gbshadcn "splitbutton" %}
+{% shadcn "splitbutton" %}
 
 ## Usage guidelines
 
@@ -100,4 +100,4 @@ The leading button can have an icon, a label, or both.
 
 ## API reference
 
-{% gbapi "splitbutton" %}
+{% api "splitbutton" %}

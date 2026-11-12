@@ -19,7 +19,7 @@
  *   expanded rail's secondary items (the components by group). Navigation
  *   bar: the sections.
  * - Content: in md-gb-prose, the title, the description, previous / next
- *   links, and the page's content (an element with id `gb-content` that the
+ *   links, and the page's content (an element with id `page-content` that the
  *   page's HTML fills until pages are specs too).
  * - Companion rail (large windows): the page outline.
  *
@@ -74,7 +74,7 @@ function outlineOf(html) {
 function shellSpec(page, pages, content) {
   const elements = {};
   const add = (key, el) => {
-    if (elements[key]) throw new Error(`gb-shell-spec: duplicate key ${key}`);
+    if (elements[key]) throw new Error(`app-shell-spec: duplicate key ${key}`);
     elements[key] = {children: [], ...el};
     return key;
   };
@@ -189,7 +189,7 @@ function shellSpec(page, pages, content) {
   }
   add('rail', {
     type: 'NavRail',
-    props: {id: 'gb-rail', collapsible: true, expanded: {$bindState: '/railExpanded'}, ariaLabel: 'Site'},
+    props: {id: 'rail-expanded', collapsible: true, expanded: {$bindState: '/railExpanded'}, ariaLabel: 'Site'},
     children: railItems,
   });
 
@@ -252,7 +252,7 @@ function shellSpec(page, pages, content) {
     if (page.title) article.push(add('title', {type: 'Html', props: {tag: 'h1', text: page.title}}));
     if (page.description) article.push(add('lede', {type: 'Html', props: {tag: 'p', text: page.description}}));
   }
-  article.push(add('content', {type: 'Html', props: {tag: 'div', id: 'gb-content'}}));
+  article.push(add('content', {type: 'Html', props: {tag: 'div', id: 'page-content'}}));
   article.push(pagerNav);
   // The page in a single pane: the pane scaffold gives it the window
   // margins of its window size class (16px compact, 24px and up).

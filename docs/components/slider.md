@@ -10,7 +10,7 @@ description: Sliders let people view and select a value, or a range of values, a
 <md-gb-slider aria-label="Volume" value="50" labeled></md-gb-slider>
 {% enddemo %}
 
-{% gbshadcn "slider" %}
+{% shadcn "slider" %}
 
 ## Usage guidelines
 
@@ -92,4 +92,4 @@ A `disabled` slider can't be changed and leaves the focus order.
 
 ## API reference
 
-{% gbapi "slider" %}
+{% api "slider" %}

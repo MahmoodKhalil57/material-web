@@ -11,7 +11,7 @@ description: Buttons help people initiate actions, from sending an email, to sha
 <md-gb-button color="outlined">Cancel</md-gb-button>
 {% enddemo %}
 
-{% gbshadcn "button" %}
+{% shadcn "button" %}
 
 ## Usage guidelines
 
@@ -124,4 +124,4 @@ Like a native button, an `md-gb-button` (and `md-gb-icon-button`) takes `popover
 
 ## API reference
 
-{% gbapi "button" %}
+{% api "button" %}

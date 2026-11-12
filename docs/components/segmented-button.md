@@ -14,7 +14,7 @@ description: A segmented button set lets people pick one or several options from
 </md-gb-segmented-button-set>
 {% enddemo %}
 
-{% gbshadcn "segmentedbutton" %}
+{% shadcn "segmentedbutton" %}
 
 ## Usage guidelines
 
@@ -151,4 +151,4 @@ show();
 
 ## API reference
 
-{% gbapi "segmentedbutton" %}
+{% api "segmentedbutton" %}

@@ -6,7 +6,7 @@
 
 /**
  * The search index of the /3.0/ docs (client: client/search-index.ts), written to
- * /3.0/search-index.json from collections.gb3.
+ * /3.0/search-index.json from collections.docs.
  *
  * Format (short keys, to stay small):
  *
@@ -38,7 +38,7 @@ const md = markdownIt({html: true, breaks: false, linkify: true});
 permalinks(md);
 
 /** Markup that is not prose: previews, anchors' hidden text, scripts. */
-const SKIP = 'script, style, iframe, svg, template, .gb-demo-preview, .offscreen, a.anchor, md-gb-tabs';
+const SKIP = 'script, style, iframe, svg, template, .demo-preview, .offscreen, a.anchor, md-gb-tabs';
 
 const INLINE = new Set(['a', 'abbr', 'b', 'code', 'em', 'i', 'kbd', 'mark', 'small', 'span', 'strong', 'sub', 'sup']);
 
@@ -80,7 +80,7 @@ function sectionsOf(html) {
       addIdents($(node).text());
       return;
     }
-    if (name === 'figure' && $(node).hasClass('gb-demo')) {
+    if (name === 'figure' && $(node).hasClass('demo')) {
       // The demo's caption; its code is not searched.
       const caption = node.attribs['aria-label'];
       if (caption) current.text.push(' ' + caption + ' ');
@@ -124,7 +124,7 @@ class SearchIndex {
   }
 
   async render(data) {
-    const items = [...(data.collections?.gb3 ?? []), ...(data.collections?.gbsection ?? [])]
+    const items = [...(data.collections?.docs ?? []), ...(data.collections?.sectionIndex ?? [])]
       .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
     const pages = [];
     for (const item of items) {

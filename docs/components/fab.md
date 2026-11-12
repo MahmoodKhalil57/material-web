@@ -12,7 +12,7 @@ description: A FAB represents the most important action on a screen, and an exte
 </md-gb-fab>
 {% enddemo %}
 
-{% gbshadcn "fab" %}
+{% shadcn "fab" %}
 
 ## Usage guidelines
 
@@ -137,4 +137,4 @@ md-gb-fab {
 
 ## API reference
 
-{% gbapi "fab" %}
+{% api "fab" %}

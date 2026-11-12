@@ -20,7 +20,7 @@ belongs in the library.
 | --- | --- |
 | [`specs/`](specs) | The JSON specs the site builds: `shell.cjs` (the shell: app bar, rail, outline, pager, tools) and `sections.cjs` (the section pages), with `builder.cjs` to write them. |
 | [`client/`](client) | The browser code, bundled to `/js/spec/`. `shell.ts` hydrates the shell spec and handles its actions. The others are the tools (downloads, copy, install, feedback), search, navigation (route progress, prefetch), the service worker and the WebMCP tools. |
-| [`eleventy/`](eleventy) | The build that turns `docs/` into pages. `render.cjs` checks, renders and embeds the specs (`gbshell`). `content.cjs` converts a page's HTML into a spec with the library's `htmlToSpec`. The rest is page metadata and collections (`site.cjs`), demos, shortcodes, the Compatibility section, the shadcn tables and heading permalinks. |
+| [`eleventy/`](eleventy) | The build that turns `docs/` into pages. `render.cjs` checks, renders and embeds the specs (`shell`). `content.cjs` converts a page's HTML into a spec with the library's `htmlToSpec`. The rest is page metadata and collections (`site.cjs`), demos, shortcodes, the Compatibility section, the shadcn tables and heading permalinks. |
 | [`content/`](content) | The Eleventy input: the layout (`_includes/spec.html`), site data, the templates of the generated files (search index, `llms.txt`, sitemap, Markdown pages, all-pages document, test pages), fonts and images. |
 | [`scripts/`](scripts) | Build, serve, publish and check scripts. |
 

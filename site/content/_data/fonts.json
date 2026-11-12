@@ -1,8 +1,8 @@
 {
-  "stylesheet": "/fonts/gb/fonts.css",
+  "stylesheet": "/fonts/fonts.css",
   "preload": [
-    "/fonts/gb/roboto-flex-6ccf7a9846bd.woff2",
-    "/fonts/gb/material-symbols-outlined-7d969c3ebbce.woff2"
+    "/fonts/roboto-flex-6ccf7a9846bd.woff2",
+    "/fonts/material-symbols-outlined-7d969c3ebbce.woff2"
   ],
   "icons": [
     "accessibility_new",

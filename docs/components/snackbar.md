@@ -18,7 +18,7 @@ document.querySelector('#archive')!.addEventListener('click', () => {
 ```
 {% enddemo %}
 
-{% gbshadcn "snackbar" %}
+{% shadcn "snackbar" %}
 
 ## Usage guidelines
 
@@ -125,4 +125,4 @@ document.querySelector('#compose')!.addEventListener('click', () => {
 
 ## API reference
 
-{% gbapi "snackbar" %}
+{% api "snackbar" %}

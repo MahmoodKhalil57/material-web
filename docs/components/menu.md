@@ -15,7 +15,7 @@ description: Menus show a temporary set of actions or choices, opened from a but
 </md-gb-menu>
 {% enddemo %}
 
-{% gbshadcn "menu" %}
+{% shadcn "menu" %}
 
 ## Usage guidelines
 
@@ -202,4 +202,4 @@ Set `density` from `0` (default) down to `-3` to remove 4px of height per item f
 
 ## API reference
 
-{% gbapi "menu" %}
+{% api "menu" %}

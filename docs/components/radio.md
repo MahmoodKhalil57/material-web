@@ -19,7 +19,7 @@ description: Radio buttons let people select one option from a set of options.
 </div>
 {% enddemo %}
 
-{% gbshadcn "radio" %}
+{% shadcn "radio" %}
 
 ## Usage guidelines
 
@@ -125,4 +125,4 @@ Set `density` from `0` (default) down to `-3` to shrink the radio by 4px per ste
 
 ## API reference
 
-{% gbapi "radio" %}
+{% api "radio" %}

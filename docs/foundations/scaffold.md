@@ -198,4 +198,4 @@ document.querySelector('#comments-button')!.addEventListener('click', () => {
 
 ## API reference
 
-{% gbapi "scaffold" %}
+{% api "scaffold" %}

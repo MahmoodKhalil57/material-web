@@ -11,7 +11,7 @@ description: Progress indicators inform people about the status of ongoing proce
 <md-gb-progress circular aria-label="Loading"></md-gb-progress>
 {% enddemo %}
 
-{% gbshadcn "progress" %}
+{% shadcn "progress" %}
 
 ## Usage guidelines
 
@@ -79,4 +79,4 @@ Add `wavy` to give the active indicator a wave. It works on linear and circular 
 
 ## API reference
 
-{% gbapi "progress" %}
+{% api "progress" %}

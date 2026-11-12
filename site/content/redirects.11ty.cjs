@@ -19,8 +19,8 @@ const MOVED = [
 class GbRedirects {
   data() {
     return {
-      pagination: {data: 'gbMoved', size: 1, alias: 'moved'},
-      gbMoved: MOVED,
+      pagination: {data: 'movedPages', size: 1, alias: 'moved'},
+      movedPages: MOVED,
       permalink: (data) => data.moved.from,
       eleventyExcludeFromCollections: true,
     };

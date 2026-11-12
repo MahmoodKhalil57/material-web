@@ -14,10 +14,10 @@
  *
  * 1. Copies the built site (`npm run catalog:dev` writes site/_dev; its
  *    build must be ready) to a work directory.
- * 2. Bundles labs/gb into lib/ (esbuild: every module, at its path, so the
+ * 2. Bundles the library into lib/ (esbuild: every module, at its path, so the
  *    pages' and demos' imports resolve as they do against the dev library
  *    server; CSS module scripts become constructed stylesheets, for every
- *    browser), and copies the labs/gb stylesheets.
+ *    browser), and copies the library's stylesheets.
  * 3. Rewrites the site for its base path on Pages (--base): root-relative
  *    links, the 3.0 shell's script strings and JSON urls get the prefix,
  *    and the dev library server (http://localhost:8001/) becomes <base>lib/.
@@ -74,9 +74,9 @@ log(`copying ${args.src}`);
 await rm(OUT, {recursive: true, force: true});
 await cp(args.src, OUT, {recursive: true});
 
-// --- 2. labs/gb as static modules -------------------------------------------------
+// --- 2. The library as static modules -------------------------------------------------
 
-log('bundling labs/gb into lib/');
+log('bundling the library into lib/');
 const sources = [
   ...(await walk(join(ROOT, 'material-design-expressive', 'components')))
     .concat(await walk(join(ROOT, 'material-design-expressive', 'extras')))
@@ -84,7 +84,7 @@ const sources = [
     .filter(
     (f) => f.endsWith('.js') && !/(_test|\.stories|[\\/]demo[\\/]|[\\/]skill[\\/])/.test(f) && !f.includes('node_modules'),
   ),
-  // The ARIA elements the pages use beside labs/gb (md-aria-tabpanel).
+  // The ARIA elements the pages use beside the md-gb ones (md-aria-tabpanel).
   ...(await walk(join(ROOT, 'material-design-expressive', 'foundations', 'accessibility', 'aria'))).filter((f) => /[\\/]md-aria-[a-z0-9-]+\.js$/.test(f) && !f.includes('_test')),
 ];
 const cssAsStylesheet = {

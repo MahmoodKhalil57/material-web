@@ -7,7 +7,7 @@
 
 /**
  * API reference for the `md-gb-*` elements of one labs/gb component directory,
- * as markdown for the /3.0/ catalog pages (used by the `gbapi` shortcode,
+ * as markdown for the /3.0/ catalog pages (used by the `api` shortcode,
  * site/eleventy/shortcodes.cjs). Per element: `### <tag>`, one
  * line about it, then only the tables that have rows, each under an `####`
  * title (the page outline shows H2 and H3 only). The data comes from the

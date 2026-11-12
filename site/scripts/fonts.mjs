@@ -16,15 +16,15 @@
  *   node site/scripts/fonts.mjs --check  # exit 1 if a used icon is missing from the subset
  *
  * Icons used: the text of <md-gb-icon> in docs/3.0, the layout, the site
- * scripts and labs/gb (components and their demos), `icon:` front matter,
+ * scripts and the library (components and their demos), `icon:` front matter,
  * ligatures in component styles (content: 'arrow_drop_down', or an icon
  * custom property it reads: --icon: 'radio_button_checked'), and quoted
  * strings in the site scripts and components that are Material Symbols
  * names (icons chosen in code, e.g. the theme toggle's). Candidates are
  * matched against Google's list of Material Symbols names.
  *
- * Output: site/content/fonts/gb/ (content-hash file names, served at
- * /fonts/gb/ with an immutable one-year Cache-Control, cache first in the
+ * Output: site/content/fonts/ (content-hash file names, served at
+ * /fonts/ with an immutable one-year Cache-Control, cache first in the
  * service worker), fonts.css with the @font-face rules, and
  * site/content/_data/fonts.json (stylesheet, preload list, icon list).
  */
@@ -33,7 +33,7 @@ import {createHash} from 'node:crypto';
 import {mkdir, readFile, readdir, rm, stat, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
-const OUT = join('site', 'content', 'fonts', 'gb');
+const OUT = join('site', 'content', 'fonts');
 const DATA = join('site', 'content', '_data', 'fonts.json');
 // A current Chrome user agent, so Google Fonts answers with woff2.
 const UA =
@@ -155,7 +155,7 @@ async function download(cssUrl, isPreloaded) {
     await writeFile(join(OUT, name), data);
     bytes += data.length;
     css.push(block.replace(url, `./${name}`).trim());
-    if (isPreloaded(block)) preload.push(`/fonts/gb/${name}`);
+    if (isPreloaded(block)) preload.push(`/fonts/${name}`);
   }
   return {css, preload, bytes};
 }
@@ -170,12 +170,12 @@ if (process.argv.includes('--check')) {
   const missing = [...certain].filter((name) => !subset.has(name)).sort();
   if (missing.length) {
     console.error(
-      `gb-fonts: ${missing.length} icon(s) used but not in the subset font: ${missing.join(', ')}.\n` +
-        'Run `node site/scripts/fonts.mjs` and commit site/content/fonts/gb and site/content/_data/fonts.json.',
+      `fonts: ${missing.length} icon(s) used but not in the subset font: ${missing.join(', ')}.\n` +
+        'Run `node site/scripts/fonts.mjs` and commit site/content/fonts and site/content/_data/fonts.json.',
     );
     process.exit(1);
   }
-  console.log(`gb-fonts: all ${certain.size} used icons are in the subset (${subset.size} icons).`);
+  console.log(`fonts: all ${certain.size} used icons are in the subset (${subset.size} icons).`);
   process.exit(0);
 }
 
@@ -187,7 +187,7 @@ const known = new Set(
 );
 const unknown = [...certain].filter((name) => !known.has(name));
 if (unknown.length) {
-  console.warn(`gb-fonts: not Material Symbols names (left out): ${unknown.sort().join(', ')}`);
+  console.warn(`fonts: not Material Symbols names (left out): ${unknown.sort().join(', ')}`);
 }
 const icons = [...new Set([...certain, ...maybe])].filter((name) => known.has(name)).sort();
 
@@ -214,11 +214,11 @@ const css = [
 await writeFile(join(OUT, 'fonts.css'), css.replace(/\n{3,}/g, '\n\n'));
 await writeFile(
   DATA,
-  JSON.stringify({stylesheet: '/fonts/gb/fonts.css', preload: [...roboto.preload, ...symbols.preload], icons}, null, 2) + '\n',
+  JSON.stringify({stylesheet: '/fonts/fonts.css', preload: [...roboto.preload, ...symbols.preload], icons}, null, 2) + '\n',
 );
 let total = 0;
 for (const f of await readdir(OUT)) total += (await stat(join(OUT, f))).size;
 console.log(
-  `gb-fonts: Roboto Flex ${(roboto.bytes / 1024).toFixed(0)} KB (all subsets), ` +
+  `fonts: Roboto Flex ${(roboto.bytes / 1024).toFixed(0)} KB (all subsets), ` +
     `Material Symbols ${(symbols.bytes / 1024).toFixed(0)} KB (${icons.length} icons); ${(total / 1024).toFixed(0)} KB in all.`,
 );

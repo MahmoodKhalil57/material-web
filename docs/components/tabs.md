@@ -14,7 +14,7 @@ description: Tabs organize groups of related content that are at the same level 
 </md-gb-tabs>
 {% enddemo %}
 
-{% gbshadcn "tabs" %}
+{% shadcn "tabs" %}
 
 ## Usage guidelines
 
@@ -184,4 +184,4 @@ tabs.addEventListener('change', () => {
 
 ## API reference
 
-{% gbapi "tabs" %}
+{% api "tabs" %}

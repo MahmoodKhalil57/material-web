@@ -1,7 +1,7 @@
 # Component page template
 
 This file is the template for the pages in `docs/components/`. It is not
-published (`copyGbDocs` in `site/scripts/dev.mjs` leaves out every
+published (`copyDocs` in `site/scripts/dev.mjs` leaves out every
 README). Each section's `README.md` is its index page's text instead: the
 title, rail icon, order and meta description in its front matter, the
 intro paragraph as its text, and, for Components, the groups a page's
@@ -20,7 +20,7 @@ section: components
 order: 20
 description: One sentence about what the component is for.   # rendered under the H1
 ---
-{% gbexample "dir/story" %}        <!-- Hero: the most representative demo, no heading -->
+{% example "dir/story" %}        <!-- Hero: the most representative demo, no heading -->
 
 ## Usage guidelines              <!-- Optional: only with real M3 guidance -->
 
@@ -43,7 +43,7 @@ One sentence about the parts.
 
 One or two sentences, then one demo card.
 
-{% gbexample "dir/story" %}
+{% example "dir/story" %}
 
 ## Accessibility
 
@@ -51,7 +51,7 @@ One or two sentences, then one demo card.
 
 ## API reference
 
-{% gbapi "dir" %}
+{% api "dir" %}
 ````
 
 ## Rules
@@ -69,7 +69,7 @@ One or two sentences, then one demo card.
     the hero as an example.
 5.  **Accessibility.** Short bullets: labels, keyboard, roles, and the
     soft-disabled note where it applies.
-6.  **API reference.** Only `{% gbapi "dir" %}`; it is generated (see
+6.  **API reference.** Only `{% api "dir" %}`; it is generated (see
     `scripts/m3/gen-api-docs.mjs`): per element a `### <md-gb-x>`, a line
     about it, and `####` tables for properties, slots, events, methods, CSS
     parts and CSS custom properties.
@@ -78,8 +78,8 @@ One or two sentences, then one demo card.
 
 ## Demo cards
 
-*   `{% gbexample "dir/story" %}` uses a story from the component's
-    `demo/stories.ts` (ids are in `site/_dev-gb/examples.json`: the
+*   `{% example "dir/story" %}` uses a story from the component's
+    `demo/stories.ts` (ids are in `site/_generated/examples.json`: the
     directory and the slugified story name). Prefer it when a story fits.
 *   `{% demo "Accessible label" %}html{% enddemo %}` shows HTML written once
     as the preview and the code. Use `md-gb-*` elements and Material Symbols
@@ -94,7 +94,7 @@ so keep it simple and best practice.
 
 1.  **One concept per example.** The smallest markup that shows it, roughly 3
     to 15 lines.
-2.  **Stories only when short.** Use `{% gbexample %}` only if its captured code
+2.  **Stories only when short.** Use `{% example %}` only if its captured code
     is short and focused. If the story is a gallery (several components,
     headings, demo art, more than about 20 lines), write a `{% demo %}` with
     minimal hand-written markup.

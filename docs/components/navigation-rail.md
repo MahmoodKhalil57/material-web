@@ -27,7 +27,7 @@ description: A navigation rail lets people switch between top-level destinations
 </md-gb-nav-rail>
 {% enddemo %}
 
-{% gbshadcn "navrail" %}
+{% shadcn "navrail" %}
 
 ## Usage guidelines
 
@@ -209,4 +209,4 @@ Add `divider` to draw a line at the rail's edge, `elevated` to lift it above scr
 
 ## API reference
 
-{% gbapi "navrail" %}
+{% api "navrail" %}

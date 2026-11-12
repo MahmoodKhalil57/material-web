@@ -8,10 +8,10 @@
  * Stand-in for the catalog story framework (./material-collection.js and
  * ./index.js) used by the library's demos (<component>/demo/). Renders each
  * story with its default knob
- * values into `[data-gb-story="<index>"]` on the docs page, inside a shadow
+ * values into `[data-demo-story="<index>"]` on the docs page, inside a shadow
  * root so story CSS stays scoped; in capture mode records the story HTML.
  *
- * Copied by site/scripts/dev.mjs to site/_dev-gb/_shim.js, which the
+ * Copied by site/scripts/dev.mjs to site/_generated/_shim.js, which the
  * transpiled demos import instead of ./material-collection.js and ./index.js.
  */
 import {render} from 'lit';
@@ -54,7 +54,7 @@ export function materialInitsToStoryInits(inits) {
 const base = new CSSStyleSheet();
 base.replaceSync(`
   :host { color: var(--md-sys-color-on-surface); }
-  .gb-story { box-sizing: border-box; max-width: 100%; padding-block: 16px; }
+  .demo-story { box-sizing: border-box; max-width: 100%; padding-block: 16px; }
 `);
 
 /**
@@ -90,13 +90,13 @@ export async function setUpDemo(collection, dir) {
           // one the page reserves (min-block-size) before the demo loads.
           style: 'inline-size: 656px',
         }))]
-      : [...document.querySelectorAll('[data-gb-dir="' + dir + '"][data-gb-story="' + i + '"]')];
+      : [...document.querySelectorAll('[data-demo-dir="' + dir + '"][data-demo-story="' + i + '"]')];
     for (const host of hosts) {
       const root = host.shadowRoot ?? host.attachShadow({mode: 'open'});
       const styles = [story.styles].flat().filter(Boolean).map((s) => s.styleSheet ?? s);
       root.adoptedStyleSheets = [base, ...styles];
       const container = document.createElement('div');
-      container.className = 'gb-story';
+      container.className = 'demo-story';
       root.replaceChildren(container);
       render(await story.render({...knobs}), container);
       if (capture) {
@@ -104,10 +104,10 @@ export async function setUpDemo(collection, dir) {
         await Promise.all([...container.querySelectorAll('*')].map((el) => el.updateComplete));
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         // captureExamples measures it again in a 400px window (narrowHeight).
-        host.dataset.gbCaptured = String(results.length);
+        host.dataset.demoCaptured = String(results.length);
         results.push({name: story.name, html: await sourceHtml(story, knobs), height: Math.ceil(host.getBoundingClientRect().height)});
       }
     }
   }
-  if (capture) window.__gbCapture = results;
+  if (capture) window.__demoCapture = results;
 }

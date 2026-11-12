@@ -15,14 +15,14 @@ const {mdUrl, pageMarkdown} = require('../eleventy/site.cjs');
 class GbMarkdown {
   data() {
     return {
-      pagination: {data: 'collections.gbAll', size: 1, alias: 'gbpage'},
-      permalink: (data) => mdUrl(data.gbpage.url),
+      pagination: {data: 'collections.allPages', size: 1, alias: 'mdPage'},
+      permalink: (data) => mdUrl(data.mdPage.url),
       eleventyExcludeFromCollections: true,
     };
   }
 
   async render(data) {
-    return pageMarkdown(data.gbpage);
+    return pageMarkdown(data.mdPage);
   }
 }
 

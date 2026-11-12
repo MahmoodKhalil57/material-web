@@ -20,7 +20,7 @@
  * - The library's styles only (m3.css, md-gb-prose), as the spec shell.
  * - The spec shell's script (/js/spec/shell.js: the theme, the demo frames'
  *   theme, the WebMCP tools) blocks rendering, so the page's tools
- *   (window.gbDocsTools) exist before a demo iframe runs.
+ *   (window.docsTools) exist before a demo iframe runs.
  * - noindex, and left out of the sitemap and the collections.
  */
 
@@ -56,12 +56,12 @@ class GbAll {
     return {
       permalink: '/3.0/all/',
       eleventyExcludeFromCollections: true,
-      eleventyImport: {collections: ['gb3']},
+      eleventyImport: {collections: ['docs']},
     };
   }
 
   async render(data) {
-    const pages = sorted(data.collections?.gb3 ?? []);
+    const pages = sorted(data.collections?.docs ?? []);
     const byPath = new Map(pages.map((p) => [p.url, p]));
     // Pass 1: parse every page and note its heading ids.
     const docs = new Map();
@@ -119,18 +119,18 @@ class GbAll {
       .map((p) => {
         const description = String(p.data.description ?? '').trim();
         return (
-          `<section class="gb-all-page" id="${docs.get(p.url).slug}" aria-labelledby="${docs.get(p.url).slug}-title">` +
+          `<section class="all-page" id="${docs.get(p.url).slug}" aria-labelledby="${docs.get(p.url).slug}-title">` +
           `<h1 id="${docs.get(p.url).slug}-title">${esc(p.data.title)}</h1>` +
-          (description ? `<p class="gb-lede">${esc(description)}</p>` : '') +
-          `<p class="gb-all-source">Online: <a href="${esc(absolute(p.url))}">${esc(absolute(p.url))}</a></p>` +
-          `<div class="gb-content">${docs.get(p.url).$.html()}</div></section>`
+          (description ? `<p class="lede">${esc(description)}</p>` : '') +
+          `<p class="all-source">Online: <a href="${esc(absolute(p.url))}">${esc(absolute(p.url))}</a></p>` +
+          `<div class="page-content">${docs.get(p.url).$.html()}</div></section>`
         );
       })
       .join('\n');
 
-    const components = this.gbcomponents ? this.gbcomponents(body) : '';
+    const components = this.componentmodules ? this.componentmodules(body) : '';
     // The library's styles only (m3.css, md-gb-prose), as the spec shell.
-    const styles = this.gbstyles ? this.gbstyles() : '';
+    const styles = this.librarystyles ? this.librarystyles() : '';
     const fonts = data.fonts?.stylesheet ? `<link rel="stylesheet" href="${esc(data.fonts.stylesheet)}" />` : '';
     // The reader's saved color mode, reduced motion and theme before the
     // first paint (the library's styles/preferences.ts), as on the pages.
@@ -149,16 +149,16 @@ class GbAll {
     ${styles}
     ${components}
     <script>
-      // Demo iframes run before shell.js registers window.gbDocsTools (modules
+      // Demo iframes run before shell.js registers window.docsTools (modules
       // are deferred): calls wait for the real tools.
       (() => {
         const stub = new Proxy({}, {
           get: (_, name) => async (...args) => {
-            for (let i = 0; i < 200 && window.gbDocsTools === stub; i++) await new Promise((r) => setTimeout(r, 50));
-            return window.gbDocsTools[name](...args);
+            for (let i = 0; i < 200 && window.docsTools === stub; i++) await new Promise((r) => setTimeout(r, 50));
+            return window.docsTools[name](...args);
           },
         });
-        window.gbDocsTools = stub;
+        window.docsTools = stub;
       })();
     </script>
     <script>${prePaintScript()}</script>
@@ -176,7 +176,7 @@ ${body}
       </md-gb-prose>
     </main>
     <script>
-      // Loads a demo iframe (gbLoadDemo is also what the snapshot step calls, a
+      // Loads a demo iframe (loadDemo is also what the snapshot step calls, a
       // few at a time) when it comes near the viewport.
       (() => {
         const load = (frame) => {
@@ -184,7 +184,7 @@ ${body}
           frame.srcdoc = frame.dataset.srcdoc;
           delete frame.dataset.srcdoc;
         };
-        window.gbLoadDemo = load;
+        window.loadDemo = load;
         const frames = document.querySelectorAll('iframe[data-srcdoc]');
         if (!('IntersectionObserver' in window)) return frames.forEach(load);
         const observer = new IntersectionObserver(
@@ -200,7 +200,7 @@ ${body}
         frames.forEach((frame) => observer.observe(frame));
       })();
     </script>
-    <div id="gb-status" role="status" aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></div>
+    <div id="page-status" role="status" aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></div>
   </body>
 </html>
 `;

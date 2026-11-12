@@ -33,7 +33,7 @@ const LONG_AFTER = 5000;
 const MIN_VISIBLE = 600;
 /** A navigation still pending after this is assumed lost. */
 const GIVE_UP = 60000;
-const ROUTE_KEY = 'gb-route-progress';
+const ROUTE_KEY = 'route-progress';
 
 type Stage = 'loading' | 'linear';
 interface Carry {

@@ -10,7 +10,7 @@ description: Text fields let people enter and edit text.
 <md-gb-text-field label="Name"></md-gb-text-field>
 {% enddemo %}
 
-{% gbshadcn "textfield" %}
+{% shadcn "textfield" %}
 
 ## Usage guidelines
 
@@ -144,4 +144,4 @@ Set `density` from 0 (default) to -3 to remove 4px of height per step.
 
 ## API reference
 
-{% gbapi "textfield" %}
+{% api "textfield" %}

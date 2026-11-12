@@ -16,7 +16,7 @@ class GbSitemap {
   }
 
   render(data) {
-    const urls = (data.collections?.gbAll ?? []).map(
+    const urls = (data.collections?.allPages ?? []).map(
       (p) => `  <url>\n    <loc>${xml(absolute(p.url))}</loc>\n    <lastmod>${pageDate(p).slice(0, 10)}</lastmod>\n  </url>`,
     );
     return (

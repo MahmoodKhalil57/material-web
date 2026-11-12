@@ -24,7 +24,7 @@ document.querySelector('#open-actions').addEventListener('click', () => {
 ```
 {% enddemo %}
 
-{% gbshadcn "sheet" %}
+{% shadcn "sheet" %}
 
 ## Usage guidelines
 
@@ -145,4 +145,4 @@ document.querySelector('#open-detail').addEventListener('click', () => {
 
 ## API reference
 
-{% gbapi "sheet" %}
+{% api "sheet" %}

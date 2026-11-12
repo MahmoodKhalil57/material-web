@@ -7,13 +7,13 @@
 
 /**
  * Writes site/content/_data/compat.json, the Compatibility section of each
- * /3.0/ component page (the `gbcompat` shortcode): numbers and ids only, no
+ * /3.0/ component page (the `compat` shortcode): numbers and ids only, no
  * spec text, from the repository's own checks.
  *
  *   node scripts/m3/gen-component-compat.mjs [--lighthouse <dir>]
  *
  * Per component (docs/components/<slug>.md, its labs/gb directory from
- * the page's `{% gbapi %}`):
+ * the page's `{% api %}`):
  *
  * - m3: its M3 spec pages (m3.material.io), the spec units of those pages
  *   (.m3-specs/spec-checks/units.json: buildable, tested, excluded, tracked,
@@ -104,7 +104,7 @@ tooltip tree treegrid treeitem`.split(/\s+/));
 // --- Pages and their labs/gb directories -------------------------------------
 
 const slugs = readdirSync(DOCS).filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3)).sort();
-const dirOf = (slug) => /\{%\s*gbapi\s+"([\w-]+)"/.exec(readFileSync(join(DOCS, `${slug}.md`), 'utf8'))?.[1] ?? '';
+const dirOf = (slug) => /\{%\s*api\s+"([\w-]+)"/.exec(readFileSync(join(DOCS, `${slug}.md`), 'utf8'))?.[1] ?? '';
 const sourcesOf = (dir) =>
   dir && existsSync(elementDir(dir))
     ? readdirSync(elementDir(dir)).filter((f) => f.endsWith('.ts') && !/(_test|\.d|cssresult)\.ts$/.test(f)).map((f) => join(elementDir(dir), f))

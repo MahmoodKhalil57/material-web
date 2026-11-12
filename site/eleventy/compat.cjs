@@ -5,7 +5,7 @@
  */
 
 /**
- * The Compatibility section of a /3.0/ component page (`{% gbcompat %}`,
+ * The Compatibility section of a /3.0/ component page (`{% compat %}`,
  * added before the API reference of every component page by
  * shortcodes.cjs): a list of four expandable rows from
  * site/content/_data/compat.json (scripts/m3/gen-component-compat.mjs):

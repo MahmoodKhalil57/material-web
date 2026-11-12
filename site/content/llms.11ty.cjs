@@ -18,7 +18,7 @@ class GbLlms {
 
   render(data) {
     // The section index pages (order 0) head their sections.
-    const pages = sorted([...(data.collections?.gb3 ?? []), ...(data.collections?.gbsection ?? [])]);
+    const pages = sorted([...(data.collections?.docs ?? []), ...(data.collections?.sectionIndex ?? [])]);
     const lines = [
       `# ${SITE.name}`,
       '',

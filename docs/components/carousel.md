@@ -23,7 +23,7 @@ description: A carousel is a scrollable list of visual items that change size as
 </md-gb-carousel>
 {% enddemo %}
 
-{% gbshadcn "carousel" %}
+{% shadcn "carousel" %}
 
 ## Usage guidelines
 
@@ -154,4 +154,4 @@ md-gb-carousel {
 
 ## API reference
 
-{% gbapi "carousel" %}
+{% api "carousel" %}

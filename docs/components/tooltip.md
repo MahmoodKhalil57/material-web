@@ -13,7 +13,7 @@ description: Tooltips add context to a button or other element, as a short plain
 <md-gb-tooltip for="edit">Edit</md-gb-tooltip>
 {% enddemo %}
 
-{% gbshadcn "tooltip" %}
+{% shadcn "tooltip" %}
 
 ## Usage guidelines
 
@@ -96,4 +96,4 @@ A tooltip opens right away and closes 1.5 seconds after the pointer leaves. Set 
 
 ## API reference
 
-{% gbapi "tooltip" %}
+{% api "tooltip" %}

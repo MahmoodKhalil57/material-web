@@ -19,7 +19,7 @@
  * they are shown, or outside /3.0/ (the v2.5 site). The tools reuse the search
  * index and ranking of search-index.ts (as the search bar) and the Markdown
  * of every page (URL + ".md").
- * `window.gbDocsTools` maps each tool name to its execute function, for the
+ * `window.docsTools` maps each tool name to its execute function, for the
  * demo on the AI agents page and for debugging.
  */
 
@@ -456,7 +456,7 @@ function modelContext(): ModelContext | undefined {
 
 function register() {
   // The execute functions by name, also without WebMCP (the AI agents page demo).
-  (window as unknown as {gbDocsTools: Record<string, ToolDefinition['execute']>}).gbDocsTools =
+  (window as unknown as {docsTools: Record<string, ToolDefinition['execute']>}).docsTools =
     Object.fromEntries(tools.map((t) => [t.name, t.execute]));
 
   const context = modelContext();

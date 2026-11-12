@@ -15,7 +15,7 @@ description: A card contains content and actions about a single subject.
 </md-gb-card>
 {% enddemo %}
 
-{% gbshadcn "card" %}
+{% shadcn "card" %}
 
 ## Usage guidelines
 
@@ -89,4 +89,4 @@ A `disabled` card can't be activated.
 
 ## API reference
 
-{% gbapi "card" %}
+{% api "card" %}

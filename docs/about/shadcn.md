@@ -87,7 +87,7 @@ Containers stay with their `on-` colors: each pair maps to a pair that shadcn
 already keeps readable together. The *-fixed roles, `scrim` and `shadow` keep
 the M3 baseline.
 
-{% gbshadcnmap %}
+{% shadcnmap %}
 
 shadcn has no tertiary role, so it follows primary. `outline` is the muted
 foreground and not `--border`, because M3 needs 3:1 against the surface for the
@@ -103,7 +103,7 @@ and dark) into the shadcn variables:
 npx shadcn@latest add https://material-web.dev/3.0/r/md-theme-m3.json
 ```
 
-{% gbshadcnreverse %}
+{% shadcnreverse %}
 
 It is independent of `md-theme`. With both installed, the bridge points the M3
 roles at shadcn variables that now hold the M3 colors, so the two agree.

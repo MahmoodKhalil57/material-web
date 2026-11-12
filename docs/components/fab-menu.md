@@ -23,7 +23,7 @@ description: A FAB menu opens from a FAB to show several related actions, and th
 </md-gb-fab-menu>
 {% enddemo %}
 
-{% gbshadcn "fabmenu" %}
+{% shadcn "fabmenu" %}
 
 ## Usage guidelines
 
@@ -144,4 +144,4 @@ menu.addEventListener('activate', (event) => {
 
 ## API reference
 
-{% gbapi "fabmenu" %}
+{% api "fabmenu" %}

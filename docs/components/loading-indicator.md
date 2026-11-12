@@ -10,7 +10,7 @@ description: A loading indicator shows that a short process is running, with a s
 <md-gb-loading-indicator aria-label="Loading"></md-gb-loading-indicator>
 {% enddemo %}
 
-{% gbshadcn "loadingindicator" %}
+{% shadcn "loadingindicator" %}
 
 ## Usage guidelines
 
@@ -55,4 +55,4 @@ Set `value` from 0 to 1 to show progress. Without it, the indicator is indetermi
 
 ## API reference
 
-{% gbapi "loadingindicator" %}
+{% api "loadingindicator" %}

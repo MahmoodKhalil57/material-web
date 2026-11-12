@@ -11,7 +11,7 @@
  *
  * - Page navigations: network first with a short timeout, then the cached
  *   copy; offline, the cached page (or the 3.0 start page).
- * - Fonts (/fonts/gb/*.woff2, self-hosted by site/scripts/fonts.mjs): cache
+ * - Fonts (/fonts/*.woff2, self-hosted by site/scripts/fonts.mjs): cache
  *   first, in a cache that outlives builds. Their file names carry a content
  *   hash, so a URL never changes content: once fetched they are never
  *   fetched again, in dev too.
@@ -23,7 +23,7 @@
  *   deletes the caches of the old one (not the font cache).
  */
 
-declare const __GB_BUILD_ID__: string;
+declare const __BUILD_ID__: string;
 
 interface ExtendableEvent extends Event {
   waitUntil(promise: Promise<unknown>): void;
@@ -39,11 +39,11 @@ interface Scope {
 }
 const sw = self as unknown as Scope & {registration: {scope: string}};
 
-const BUILD = typeof __GB_BUILD_ID__ === 'string' ? __GB_BUILD_ID__ : 'dev';
-const PAGES = `gb-pages-${BUILD}`;
-const ASSETS = `gb-assets-${BUILD}`;
+const BUILD = typeof __BUILD_ID__ === 'string' ? __BUILD_ID__ : 'dev';
+const PAGES = `mw-docs-pages-${BUILD}`;
+const ASSETS = `mw-docs-assets-${BUILD}`;
 /** Content-hashed font files: kept across builds. */
-const FONTS = 'gb-fonts-v1';
+const FONTS = 'mw-docs-fonts-v1';
 /** The 3.0 start page, from the scope: /3.0/, or under a base path on a
  * project site (/material-web/3.0/ on GitHub Pages). */
 const START = new URL(sw.registration.scope).pathname;
@@ -51,11 +51,11 @@ const START = new URL(sw.registration.scope).pathname;
 const SITE = START.replace(/3\.0\/$/, '');
 const at = (pattern: string) =>
   new RegExp('^' + SITE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + pattern);
-const FONT_FILE = at('fonts/gb/[^/]+\\.woff2$');
+const FONT_FILE = at('fonts/[^/]+\\.woff2$');
 /** How long a page may take before the cached copy is used. */
 const NETWORK_TIMEOUT = 3000;
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-/** lib/ is the bundled labs/gb of a static build (site/scripts/pages.mjs). */
+/** lib/ is the bundled library of a static build (site/scripts/pages.mjs). */
 const ASSET_PATH = at('(js|css|fonts|images|lib)/');
 const DOWNLOADS = at(
   '3\\.0/(skill/|material-web-3\\.0\\.mhtml$|custom-elements\\.json$|llms-full\\.txt$)',
@@ -69,7 +69,9 @@ sw.addEventListener('activate', (e: ExtendableEvent) => {
   e.waitUntil(
     (async () => {
       for (const name of await caches.keys()) {
-        if (name.startsWith('gb-') && ![PAGES, ASSETS, FONTS].includes(name)) {
+        // This site's caches only (the origin can be shared), and those of
+        // its versions that named them gb-.
+        if (/^(mw-docs-|gb-)/.test(name) && ![PAGES, ASSETS, FONTS].includes(name)) {
           await caches.delete(name);
         }
       }

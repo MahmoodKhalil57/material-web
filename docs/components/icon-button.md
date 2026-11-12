@@ -21,7 +21,7 @@ description: Icon buttons help people take supplementary actions with a single t
 </md-gb-icon-button>
 {% enddemo %}
 
-{% gbshadcn "iconbutton" %}
+{% shadcn "iconbutton" %}
 
 ## Usage guidelines
 
@@ -180,4 +180,4 @@ A disabled button can't be focused with the keyboard. A `soft-disabled` button s
 
 ## API reference
 
-{% gbapi "iconbutton" %}
+{% api "iconbutton" %}

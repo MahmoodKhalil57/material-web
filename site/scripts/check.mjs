@@ -61,7 +61,7 @@ for (const file of pages) {
   });
   await p.waitForTimeout(800);
   const r = await p.evaluate(() => {
-    const content = document.getElementById('gb-content');
+    const content = document.getElementById('page-content');
     const rawFences = (content?.textContent.match(/```/g) ?? []).length;
     // Code blocks become md-gb-demo-code: a native <pre> in the content wasn't converted.
     const loose = content?.querySelectorAll('pre').length ?? 0;
@@ -69,7 +69,7 @@ for (const file of pages) {
     const demoErrors = frames
       .map((f) => {
         try {
-          return f.contentDocument?.querySelector('.gb-demo-error')?.textContent ?? '';
+          return f.contentDocument?.querySelector('#demo-error')?.textContent ?? '';
         } catch {
           return '';
         }

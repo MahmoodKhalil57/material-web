@@ -10,7 +10,7 @@ description: Time pickers let people choose an hour and minute on a clock dial, 
 <md-gb-time-picker value="07:00"></md-gb-time-picker>
 {% enddemo %}
 
-{% gbshadcn "timepicker" %}
+{% shadcn "timepicker" %}
 
 ## Usage guidelines
 
@@ -89,4 +89,4 @@ Set `density` from 0 (default) to -3 to make the picker more compact.
 
 ## API reference
 
-{% gbapi "timepicker" %}
+{% api "timepicker" %}

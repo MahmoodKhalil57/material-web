@@ -59,7 +59,7 @@ const oneBlock = (text) =>
     .join('\n');
 
 let tagModules;
-/** md-gb-* tag name -> module path under the repo (labs/gb). */
+/** md-gb-* tag name -> module path under the repo (the library). */
 function loadTagModules() {
   if (!tagModules) {
     tagModules = new Map();
@@ -93,8 +93,8 @@ const resetDemoIds = () => usedIds.clear();
 /** An id for a demo, unique in the build. */
 function demoId(seed) {
   const h = (s) => createHash('sha1').update(s).digest('hex').slice(0, 6);
-  let id = 'gbd-' + h(seed);
-  for (let n = 2; usedIds.has(id); n++) id = 'gbd-' + h(seed + n);
+  let id = 'demo-' + h(seed);
+  for (let n = 2; usedIds.has(id); n++) id = 'demo-' + h(seed + n);
   usedIds.add(id);
   return id;
 }
@@ -199,7 +199,7 @@ body { margin: 0; box-sizing: border-box; min-block-size: 100vh; padding: 24px; 
   background: var(--md-sys-color-surface-container-lowest, canvas); color: var(--md-sys-color-on-surface, canvastext);
   font: 400 1rem/1.5 'Roboto Flex', Roboto, system-ui, sans-serif; }
 #root { box-sizing: border-box; inline-size: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }
-#gb-error { margin: 12px 0 0; font-size: .75rem; line-height: 1.4; color: var(--md-sys-color-error, red); font-family: ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; }
+#demo-error { margin: 12px 0 0; font-size: .75rem; line-height: 1.4; color: var(--md-sys-color-error, red); font-family: ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; }
 `;
 
 const FRAME_BOOT = `(() => {
@@ -211,10 +211,10 @@ const FRAME_BOOT = `(() => {
   let ready = false;
   const ro = new ResizeObserver(() => ready && post());
   const error = (text) => {
-    let el = document.getElementById('gb-error');
+    let el = document.getElementById('demo-error');
     if (!el) {
       el = document.createElement('p');
-      el.id = 'gb-error';
+      el.id = 'demo-error';
       el.setAttribute('role', 'alert');
       document.body.append(el);
       ro.observe(el);
@@ -229,7 +229,7 @@ const FRAME_BOOT = `(() => {
   }, true);
   function post() {
     const root = document.getElementById('root');
-    const err = document.getElementById('gb-error');
+    const err = document.getElementById('demo-error');
     const h = Math.ceil(root.getBoundingClientRect().height + (err ? err.getBoundingClientRect().height + 12 : 0)) + 48;
     // md-gb-demo sizes its iframe to this (material-design-expressive/extras/demo).
     parent.postMessage({type: 'md-gb-demo-height', id, height: h}, '*');
@@ -237,18 +237,18 @@ const FRAME_BOOT = `(() => {
   ro.observe(document.getElementById('root'));
   let sheet;
   addEventListener('message', (e) => {
-    if (e.source !== parent || e.data?.type !== 'gb-demo-theme') return;
+    if (e.source !== parent || e.data?.type !== 'demo-theme') return;
     if (!sheet) {
       sheet = document.createElement('style');
       // Before the demo's own CSS, in the layer of the baseline tokens, so a
       // theme the script applies still wins.
-      document.getElementById('gb-demo-css').before(sheet);
+      document.getElementById('demo-css').before(sheet);
     }
     sheet.textContent = e.data.css ? '@layer md.sys.color{' + e.data.css + '}' : '';
     html.style.colorScheme = e.data.colorScheme || 'light dark';
     html.dataset.themed = '';
   });
-  parent.postMessage({type: 'gb-demo-ready', id}, '*');
+  parent.postMessage({type: 'demo-ready', id}, '*');
   // Settled: the fonts loaded and the elements defined (or 1.5s), then laid
   // out (two frames).
   const root = document.getElementById('root');
@@ -303,11 +303,11 @@ function frameDoc({id, html, css, js, lib}) {
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     // The site's self-hosted fonts (site/scripts/fonts.mjs); a srcdoc frame
     // resolves the path against the page, so it shares the page's cache.
-    '<link rel="stylesheet" href="/fonts/gb/fonts.css">' +
+    '<link rel="stylesheet" href="/fonts/fonts.css">' +
     (lib ? `<link rel="stylesheet" href="${lib}styles/m3.css">` : '') +
     importMap +
     '<style>' + FRAME_CSS + '</style>' +
-    '<style id="gb-demo-css">' + safe(cssWithImports) + '</style>' +
+    '<style id="demo-css">' + safe(cssWithImports) + '</style>' +
     '</head><body><div id="root">' + html + '</div>' +
     '<script>' + FRAME_BOOT.replace('__ID__', id) + '</script>' +
     (imports ? '<script type="module">' + imports + '</script>' : '') +

@@ -1,7 +1,7 @@
 ---
 permalink: /3.0/
 eleventyExcludeFromCollections: true
-gbIndex: true
+indexPage: true
 title: Home
 section: about
 description: Material Web 3.0 is a library of web components that follow Material 3 Expressive, Google's design system, for any framework or none.
@@ -84,7 +84,7 @@ description: Material Web 3.0 is a library of web components that follow Materia
 <md-gb-chip type="filter">Code</md-gb-chip>
 </md-gb-chip-set>
 <md-gb-stack direction="row" align-items="center" gap="100">
-<md-gb-radio name="gb-home-plan" value="a" checked aria-label="Option A"></md-gb-radio>
+<md-gb-radio name="home-plan" value="a" checked aria-label="Option A"></md-gb-radio>
 <md-gb-checkbox checked aria-label="Subscribe"></md-gb-checkbox>
 <md-gb-switch selected aria-label="Notifications"></md-gb-switch>
 </md-gb-stack>

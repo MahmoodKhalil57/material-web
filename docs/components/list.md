@@ -29,7 +29,7 @@ description: Lists are continuous, vertical indexes of text and images, with opt
 </md-gb-list>
 {% enddemo %}
 
-{% gbshadcn "list" %}
+{% shadcn "list" %}
 
 ## Usage guidelines
 
@@ -214,4 +214,4 @@ Set `density` on the list from `0` (default) down to `-3` to remove 4px of heigh
 
 ## API reference
 
-{% gbapi "list" %}
+{% api "list" %}

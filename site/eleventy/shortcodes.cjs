@@ -9,7 +9,7 @@ const {join} = require('node:path');
 const {pathToFileURL} = require('node:url');
 
 const ROOT = join(__dirname, '..', '..');
-const EXAMPLES_JSON = join(__dirname, '..', '_dev-gb', 'examples.json');
+const EXAMPLES_JSON = join(__dirname, '..', '_generated', 'examples.json');
 
 let examples;
 /** Captured demos written by site/scripts/dev.mjs: {dir: [{name, slug, html}]}. */
@@ -40,15 +40,15 @@ const {
 /**
  * Shortcodes of the /3.0/ pages (docs/3.0, layout spec.html).
  *
- * - `{% gbexample "<dir>/<story>" %}`: the labs/gb demo story `<story>` (the
+ * - `{% example "<dir>/<story>" %}`: the library's demo story `<story>` (the
  *   slugified story name in .../<dir>/demo/stories.ts), live in a
  *   shadow root (needs the library server of `npm run catalog:dev`,
- *   MWC_GB_LIB) in a demo card with its markup as the code.
+ *   MWC_LIB_URL) in a demo card with its markup as the code.
  * - `{% demo "label" %}<html>{% enddemo %}`: the same card for HTML written
  *   once (preview and code).
- * - Filter `gbcomponents`: loads the md-gb-* elements a page uses.
- * - `{% gbapi "<dir>" %}`: the API tables (scripts/m3/gen-api-docs.mjs).
- * - `{% gbcompat %}`: the Compatibility section of a component page
+ * - Filter `componentmodules`: loads the md-gb-* elements a page uses.
+ * - `{% api "<dir>" %}`: the API tables (scripts/m3/gen-api-docs.mjs).
+ * - `{% compat %}`: the Compatibility section of a component page
  *   (eleventy/compat.cjs), added to every one by a preprocessor.
  *
  * Shapes are md-gb-shape in the Markdown itself.
@@ -59,40 +59,40 @@ function gb(eleventyConfig) {
   eleventyConfig.on('eleventy.before', resetDemoIds);
   // Every component page gets a Compatibility section (M3 spec, Baseline,
   // WAI-ARIA, Lighthouse) before its API reference, or at its end.
-  eleventyConfig.addPreprocessor('gb-compat', 'md', (data, content) => {
+  eleventyConfig.addPreprocessor('compat-section', 'md', (data, content) => {
     if (!/[\\/]3\.0[\\/]components[\\/][\w-]+\.md$/.test(String(data.page?.inputPath ?? ''))) return content;
-    const section = '## Compatibility\n\n{% gbcompat %}\n\n';
+    const section = '## Compatibility\n\n{% compat %}\n\n';
     return /^## API reference/m.test(content)
       ? content.replace(/^## API reference/m, `${section}## API reference`)
       : `${content.trimEnd()}\n\n${section}`;
   });
-  eleventyConfig.addShortcode('gbcompat', function () {
+  eleventyConfig.addShortcode('compat', function () {
     return require('./compat.cjs').compatSection(this.page.fileSlug);
   });
   // Nunjucks wants commas between arguments; the docs write
   // {% demo "label" height=240 %}.
-  eleventyConfig.addPreprocessor('gb-demo-args', 'md', (data, content) =>
+  eleventyConfig.addPreprocessor('demo-args', 'md', (data, content) =>
     content.replace(
       /(\{%-?\s*demo\s+(?:"[^"]*"|'[^']*'))([^%]*)%\}/g,
       (m, head, args) => head + args.replace(/[ \t]+(?=\w+\s*=)/g, ', ') + '%}',
     ),
   );
-  eleventyConfig.addShortcode('gbexample', function (id) {
+  eleventyConfig.addShortcode('example', function (id) {
     const [dir, slug] = String(id).split('/');
     const list = loadExamples()[dir];
     const index = list ? list.findIndex((s) => s.slug === slug) : -1;
     if (index < 0) {
       throw new Error(
-        `gbexample "${id}" (${this.page?.inputPath}): no such story. ` +
+        `example "${id}" (${this.page?.inputPath}): no such story. ` +
           `Known: ${(list ?? []).map((s) => s.slug).join(', ') || 'none for ' + dir}`,
       );
     }
     const story = list[index];
-    const lib = process.env.MWC_GB_LIB;
+    const lib = process.env.MWC_LIB_URL;
     const live = lib
-      ? `<div class="gb-example" data-gb-dir="${dir}" data-gb-story="${index}"></div>
+      ? `<div class="story-example" data-demo-dir="${dir}" data-demo-story="${index}"></div>
 ` +
-        `<script type="module">import('${lib}site/_dev-gb/${dir}/demo.js');</script>`
+        `<script type="module">import('${lib}site/_generated/${dir}/demo.js');</script>`
       : '';
     // The heights measured at capture (phone and desktop column widths), for
     // a page style that reserves them so the code doesn't move when the demo
@@ -125,7 +125,7 @@ function gb(eleventyConfig) {
     const css = files.css !== undefined ? dedent(files.css) : '';
     const script = files.ts !== undefined ? {lang: 'ts', code: files.ts} : files.js !== undefined ? {lang: 'js', code: files.js} : null;
     const id = demoId(where + '|' + label);
-    const lib = process.env.MWC_GB_LIB;
+    const lib = process.env.MWC_LIB_URL;
     const files_ = cardFiles(files);
     const style = height ? `--gb-demo-height: ${height}px` : '';
     // Headings in a demo belong to the demo's document, not the docs page's
@@ -136,25 +136,25 @@ function gb(eleventyConfig) {
       const doc = frameDoc({id, html, css, js, lib});
       const srcdoc = escapeHtml(doc).replace(/\n/g, '&#10;');
       const frame =
-        `<iframe class="gb-demo-frame" data-id="${id}" data-min="${height || 192}" title="${escapeHtml(label)} preview" ` +
+        `<iframe class="demo-frame" data-id="${id}" data-min="${height || 192}" title="${escapeHtml(label)} preview" ` +
         `loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms" srcdoc="${srcdoc}"></iframe>`;
       return demoCard(label, frame, files_, {id, style, frame: true});
     }
     const head = css ? `<style>${scopeCss(css, id + '-preview', lib)}</style>` : '';
-    const preview = `<div class="gb-demo-inline" id="${id}-preview">
+    const preview = `<div class="demo-inline" id="${id}-preview">
 ${html}
 </div>`;
     return demoCard(label, preview, files_, {id, style, head});
   });
 
   /**
-   * Filter `gbcomponents`: the script that defines the md-gb-* elements used
+   * Filter `componentmodules`: the script that defines the md-gb-* elements used
    * in a page's content (from the library server of `npm run catalog:dev`,
-   * MWC_GB_LIB); empty without it. The first definition of a tag wins, since
+   * MWC_LIB_URL); empty without it. The first definition of a tag wins, since
    * the page shell (/js/spec/shell.js) bundles some of the components.
    */
-  eleventyConfig.addFilter('gbcomponents', (html) => {
-    const lib = process.env.MWC_GB_LIB;
+  eleventyConfig.addFilter('componentmodules', (html) => {
+    const lib = process.env.MWC_LIB_URL;
     if (!lib) return '';
     const modules = loadTagModules();
     const tags = new Set(String(html).match(/(?<=<)md-(?:gb|aria)-[a-z0-9-]+/g) ?? []);
@@ -175,12 +175,12 @@ ${html}
     );
   });
 
-  eleventyConfig.addAsyncShortcode('gbapi', async (dir) => {
+  eleventyConfig.addAsyncShortcode('api', async (dir) => {
     const {gbApiMarkdown} = await import(
       pathToFileURL(join(ROOT, 'scripts', 'm3', 'gen-api-docs.mjs')).href
     );
     const api = gbApiMarkdown(dir);
-    if (!api) throw new Error(`gbapi "${dir}": no md-gb elements in that directory`);
+    if (!api) throw new Error(`api "${dir}": no md-gb elements in that directory`);
     return `\n\n${api}\n\n`;
   });
 
