@@ -151,3 +151,20 @@ describe('md-gb-demo', () => {
     expect(frame.style.blockSize).toBe('321px');
   });
 });
+
+describe('md-gb-demo-code', () => {
+  it('makes code that scrolls focusable, so the keyboard can scroll it (WCAG 2.1.1)', async () => {
+    const code = document.createElement('md-gb-demo-code') as DemoCodeElement;
+    code.style.inlineSize = '200px';
+    code.code = 'short';
+    document.body.append(code);
+    await code.updateComplete;
+    const pre = code.shadowRoot!.querySelector('pre')!;
+    expect(pre.hasAttribute('tabindex')).toBeFalse();
+    code.code = `const line = '${'x'.repeat(200)}';`;
+    await code.updateComplete;
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    expect(pre.getAttribute('tabindex')).toBe('0');
+    code.remove();
+  });
+});

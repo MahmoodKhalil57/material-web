@@ -30860,6 +30860,35 @@
   },
   {
    "kind": "javascript-module",
+   "path": "foundations/accessibility/scroll-focus.js",
+   "declarations": [
+    {
+     "kind": "function",
+     "name": "focusableWhileScrollable",
+     "parameters": [
+      {
+       "name": "element",
+       "type": {
+        "text": "HTMLElement"
+       }
+      }
+     ],
+     "description": "Keeps a scroll container reachable from the keyboard (WCAG 2.1.1 Keyboard): while its content overflows it, it is focusable (`tabindex=\"0\"`), so keyboard users can scroll it with the arrow keys; when the content fits, the tabindex it set is removed. A tabindex the app set is left as it is. It follows the element's size and its content's (a ResizeObserver on both). Returns a function that stops it."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "focusableWhileScrollable",
+     "declaration": {
+      "name": "focusableWhileScrollable",
+      "module": "/foundations/accessibility/scroll-focus.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "foundations/interaction/gestures/drag-gesture.js",
    "declarations": [
     {

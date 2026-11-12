@@ -5,8 +5,9 @@
  */
 
 import {css, html, LitElement, type CSSResultOrNative} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 
+import {focusableWhileScrollable} from '../../foundations/accessibility/scroll-focus.js';
 import {tokenize} from './highlight.js';
 
 /**
@@ -82,6 +83,25 @@ export class DemoCodeElement extends LitElement {
   /** The number of lines of the code. */
   get lines(): number {
     return this.code ? this.code.split('\n').length : 0;
+  }
+
+  @query('pre') private readonly pre!: HTMLElement | null;
+  private stopScrollFocus?: () => void;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    // Once rendered again (moved in the page).
+    if (this.hasUpdated && this.pre) this.stopScrollFocus = focusableWhileScrollable(this.pre);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.stopScrollFocus?.();
+  }
+
+  protected override firstUpdated() {
+    // A long line scrolls the code: the keyboard can reach and scroll it.
+    if (this.pre) this.stopScrollFocus = focusableWhileScrollable(this.pre);
   }
 
   protected override render() {

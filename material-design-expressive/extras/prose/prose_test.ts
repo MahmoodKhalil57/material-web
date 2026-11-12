@@ -84,4 +84,15 @@ describe('md-gb-prose', () => {
     expect(getComputedStyle(prose.querySelector('h2')!).marginBlockStart).toBe('3px');
     style.remove();
   });
+
+  it('makes a table that scrolls focusable, also one added later (WCAG 2.1.1)', async () => {
+    prose.style.inlineSize = '300px';
+    const wide = '<table><tr><td style="white-space: nowrap">' + 'wide '.repeat(80) + '</td></tr></table>';
+    prose.insertAdjacentHTML('beforeend', wide);
+    // The mutation observer and the resize observer run before the next frames.
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const tables = prose.querySelectorAll('table');
+    expect(tables[0].hasAttribute('tabindex')).withContext('the narrow table').toBeFalse();
+    expect(tables[1].getAttribute('tabindex')).withContext('the wide table').toBe('0');
+  });
 });

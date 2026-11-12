@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 245 |
+| Public modules | 246 |
 | Custom elements | 65 |
 | Classes | 105 |
-| Functions | 339 |
+| Functions | 340 |
 | Constants and variables | 308 |
 | Types and interfaces | 330 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2225 of 2225 (100%) |
+| JSDoc coverage | 2226 of 2226 (100%) |
 
 ## Contents
 
@@ -4424,6 +4424,14 @@ Accessibility, interaction, layout and the design tokens.
 | `labelText` | function | `(control: HTMLElement & { labels?: NodeList; }): string` | The text of the `<label>` elements that name a form-associated control, without the control itself, whitespace collapsed. |
 | `LabelTextController` | class | `class LabelTextController implements ReactiveController` | Gives a control whose focusable element lives in its shadow root the text of its adjacent `<label>` as the accessibility label (a label cannot name an element inside a shadow root). Read it in `render()` as `this.labelFromText.text`. |
 
+#### `foundations/accessibility/scroll-focus.js`
+
+- Spec: [designing](https://m3.material.io/foundations/designing), [building-for-all](https://m3.material.io/foundations/building-for-all)
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `focusableWhileScrollable` | function | `(element: HTMLElement): () => void` | Keeps a scroll container reachable from the keyboard (WCAG 2.1.1 Keyboard): while its content overflows it, it is focusable (`tabindex="0"`), so keyboard users can scroll it with the arrow keys; when the content fits, the tabindex it set is removed. A tabindex the app set is left as it is. It follows the element's size and its content's (a ResizeObserver on both). Returns a function that stops it. |
+
 ### `foundations/accessibility/aria/`
 
 #### `foundations/accessibility/aria/aria.js`
@@ -5101,7 +5109,7 @@ The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON 
 | `HtmlNode` | interface | `{tag; attrs; children; text}` | An HTML node: an element (`tag`, `attrs`, `children`) or text (`text`). |
 | `htmlToSpec` | function | `(nodes: HtmlNode[], options?: HtmlToSpecOptions): { spec: Spec; issues: HtmlToSpecIssue[]; }` | Converts HTML nodes into a spec of the catalog: a root `Html` div with the nodes' elements. |
 | `HtmlToSpecContext` | interface | `{add; convert; remove; textOf}` | What an `override` gets to convert a node. |
-| `HtmlToSpecIssue` | interface | `{kind; tag}` | Something the conversion left out: a dropped or an unwrapped element. |
+| `HtmlToSpecIssue` | interface | `{kind; tag}` | Something the conversion can't express: a dropped or an unwrapped element, or a stray slot: an element with a `slot` attribute outside a component, where it fills no slot (often HTML the parser restructured, such as a custom element a Markdown renderer put in a paragraph, split at its first block child). |
 | `HtmlToSpecOptions` | interface | `{prefix; override}` | Options of `htmlToSpec()`. |
 
 #### `json-render/index.js`
