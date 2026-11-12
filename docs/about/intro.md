@@ -20,7 +20,7 @@ only rely on web platform features that are
 [Baseline](https://web.dev/baseline) widely available (newer features are
 guarded and degrade gracefully).
 
-![An example of a Material Design application.](/about/images/what-is-material.webp "What is Material?")
+![An example of a Material Design application.](/3.0/images/what-is-material.webp "What is Material?")
 
 ## What are web components?
 

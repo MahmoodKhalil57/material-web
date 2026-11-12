@@ -22,9 +22,9 @@ color are chosen so text and icons stay legible. Each role has three contrast
 levels (standard, medium, high), so the same scheme can serve people who need
 more contrast.
 
-![Full palette derived from baseline colors](/theming/images/color-scheme-light.webp "From five key colors, roles are automatically assigned that map to light theme components")
+![Full palette derived from baseline colors](/3.0/images/color-scheme-light.webp "From five key colors, roles are automatically assigned that map to light theme components")
 
-![Dark palette derived from baseline colors](/theming/images/color-scheme-dark.webp "From five key colors, roles are automatically assigned that map to dark theme components")
+![Dark palette derived from baseline colors](/3.0/images/color-scheme-dark.webp "From five key colors, roles are automatically assigned that map to dark theme components")
 
 In labs/gb:
 

@@ -7,7 +7,7 @@ description: Material Design theming creates unique branded products with famili
 ---
 ![collage of views of a mobile UI that show a user's setting and preference for
 a green primary color flows through system UI
-harmoniously](/theming/images/theming.webp "A user-generated color scheme can flow through apps that use a custom theme.")
+harmoniously](/3.0/images/theming.webp "A user-generated color scheme can flow through apps that use a custom theme.")
 
 ## Tokens
 
