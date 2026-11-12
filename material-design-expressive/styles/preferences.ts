@@ -11,6 +11,9 @@ import {
   type SchemeVariant,
 } from './color/dynamic-color.js';
 import {REDUCED_MOTION_CLASS} from './motion/motion.js';
+import {PREFERENCES_KEY, THEME_CSS_VERSION, THEME_STYLE_ID} from './preferences-script.js';
+
+export {prePaintScript, PREFERENCES_KEY, THEME_STYLE_ID} from './preferences-script.js';
 
 /** The color mode: the system's (`auto`), or light or dark. */
 export type ColorMode = 'auto' | 'light' | 'dark';
@@ -62,8 +65,6 @@ export const DEFAULT_PREFERENCES: Readonly<Preferences> = Object.freeze({
 
 const COLOR_MODES: readonly ColorMode[] = ['auto', 'light', 'dark'];
 const CONTRASTS: readonly ThemeContrast[] = ['standard', 'medium', 'high'];
-/** Bump when the CSS of themeCss() changes: cached CSS of another version is regenerated. */
-const THEME_CSS_VERSION = 1;
 
 function storageOf(options: PreferencesOptions): Storage | null {
   if (options.storage !== undefined) return options.storage;
@@ -74,7 +75,7 @@ function storageOf(options: PreferencesOptions): Storage | null {
   }
 }
 
-const keyOf = (options: PreferencesOptions) => options.key ?? 'md-preferences';
+const keyOf = (options: PreferencesOptions) => options.key ?? PREFERENCES_KEY;
 
 function read(storage: Storage | null, key: string): string | null {
   try {
@@ -176,7 +177,7 @@ export function applyPreferences(
   root.style.colorScheme = p.colorMode === 'auto' ? 'light dark' : p.colorMode;
   root.classList.toggle(REDUCED_MOTION_CLASS, p.reduceMotion);
 
-  const styleId = options.styleId ?? 'md-theme';
+  const styleId = options.styleId ?? THEME_STYLE_ID;
   let style = doc.getElementById(styleId);
   if (isDefaultTheme(p.theme)) {
     style?.remove();
@@ -201,34 +202,4 @@ export function applyPreferences(
     doc.head.append(style);
   }
   if (style.textContent !== css) style.textContent = css;
-}
-
-/**
- * The source of an inline script for the page's `<head>` that applies the
- * saved preferences before the first paint, from storage alone: the color
- * scheme, reduced motion, and the theme's cached CSS (when the cache matches
- * the saved theme; else applyPreferences() generates it once the page's
- * modules run). Put it in a classic `<script>` before the stylesheets.
- */
-export function prePaintScript(options: Pick<PreferencesOptions, 'key' | 'styleId'> = {}): string {
-  const key = JSON.stringify(options.key ?? 'md-preferences');
-  const styleId = JSON.stringify(options.styleId ?? 'md-theme');
-  return `(() => {
-  try {
-    const root = document.documentElement;
-    const p = JSON.parse(localStorage.getItem(${key}) || 'null') || {};
-    const mode = ['light', 'dark'].includes(p.colorMode) ? p.colorMode : 'light dark';
-    root.style.colorScheme = mode;
-    if (p.reduceMotion === true) root.classList.add(${JSON.stringify(REDUCED_MOTION_CLASS)});
-    const t = p.theme || {};
-    const cached = JSON.parse(localStorage.getItem(${key} + '-theme-css') || 'null');
-    const themeKey = [${THEME_CSS_VERSION}, String(t.seed).toLowerCase(), t.variant, t.contrast].join('|');
-    if (cached && cached.key === themeKey && cached.css) {
-      const style = document.createElement('style');
-      style.id = ${styleId};
-      style.textContent = cached.css;
-      document.head.append(style);
-    }
-  } catch (e) {}
-})();`;
 }
