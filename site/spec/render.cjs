@@ -5,19 +5,23 @@
  */
 
 /**
- * The spec shell of the /3.0/ pages (layout spec.html):
+ * The spec shell of the /3.0/ pages (layout spec.html), with the library's
+ * json-render and preferences modules:
  *
- * - `{% gbshell content, title, description, section, collections.gb3 %}`:
- *   the page's shell spec (shell.cjs), checked with the library's
- *   checkSpec() (errors fail the build), rendered to static HTML with
- *   renderSpecToString(), the page's content in its `gb-content` element,
- *   and the spec as JSON for client/shell.ts to hydrate.
+ * - `{% gbshell content, title, description, section, collections.gb3,
+ *   gbIndex, contentFormat %}`: the page's content as a spec (its own, or
+ *   its HTML through content.cjs), and the shell spec (shell.cjs), both
+ *   checked with checkSpec() (errors fail the build) and rendered with
+ *   renderSpecToString(): the content is the shell's `gb-content` island,
+ *   and the shell spec is embedded (embedSpec) for client/shell.ts to
+ *   hydrate.
  * - `{% gbstyles %}`: the library's global stylesheet (m3.css) from the
  *   library server (MWC_GB_LIB), for the first paint before scripts run.
+ * - `{% gbprepaint %}`: the library's prePaintScript(): the reader's saved
+ *   color mode, reduced motion and theme, before the first paint.
  *
- * The library's json-render modules are its compiled ESM
- * (material-design-expressive/json-render/*.js; the site build runs after
- * the library build).
+ * The library's modules are its compiled ESM (the site build runs after the
+ * library build).
  */
 
 const {readFileSync} = require('node:fs');
@@ -28,25 +32,35 @@ const {contentSpec} = require('./content.cjs');
 // The site's public URL (MWC_SITE_URL), which the copy actions put in their text.
 const gbSite = require('../content/_data/gbSite.cjs');
 
-const JSON_RENDER = join(__dirname, '..', '..', 'material-design-expressive', 'json-render');
+const LIBRARY = join(__dirname, '..', '..', 'material-design-expressive');
+const load = (path) => import(pathToFileURL(join(LIBRARY, path)).href);
 let modules;
 async function library() {
   modules ??= Promise.all([
-    import(pathToFileURL(join(JSON_RENDER, 'check.js')).href),
-    import(pathToFileURL(join(JSON_RENDER, 'static.js')).href),
-    import(pathToFileURL(join(JSON_RENDER, 'catalog.js')).href),
-  ]).then(([check, render, catalog]) => ({
+    load('json-render/check.js'),
+    load('json-render/static.js'),
+    load('json-render/catalog.js'),
+    load('json-render/html.js'),
+    // The pre-paint script on its own: preferences.js needs a browser.
+    load('styles/preferences-script.js'),
+  ]).then(([check, render, catalog, html, preferences]) => ({
     checkSpec: check.checkSpec,
     renderSpecToString: render.renderSpecToString,
+    embedSpec: render.embedSpec,
     COMPONENTS: catalog.COMPONENTS,
+    htmlToSpec: html.htmlToSpec,
+    prePaintScript: preferences.prePaintScript,
   }));
   return modules;
 }
 
+/** The id of the shell's content island, and of its embedded spec. */
+const CONTENT_ID = 'gb-content';
+const SPEC_ID = 'gb-shell-spec';
+
 /** What the content conversion left out, over the whole build. */
 const contentStats = new Map();
-
-const CONTENT_SLOT = '<div id="gb-content"></div>';
+const reported = new Set();
 
 /**
  * The shell's elements are defined by the client bundle (client/shell.ts),
@@ -67,7 +81,22 @@ function checkBundled(spec, components) {
     throw new Error(`gbshell: the shell spec uses ${[...missing].join(', ')}, which client/shell.ts doesn't import.`);
   }
 }
-const reported = new Set();
+
+/** Checks a spec; throws with its errors, and reports its warnings once. */
+function check(checkSpec, spec, what) {
+  const {valid, issues} = checkSpec(spec);
+  if (!valid) {
+    const errors = issues.filter((i) => i.severity === 'error').slice(0, 20).map((i) => `  ${i.element ?? ''}: ${i.message}`);
+    throw new Error(`${what} breaks the catalog:\n${errors.join('\n')}`);
+  }
+  for (const issue of issues) {
+    const line = `gbshell: ${issue.kind} warning: ${issue.element ?? ''}: ${issue.message}`;
+    if (!reported.has(line)) {
+      reported.add(line);
+      console.warn(line);
+    }
+  }
+}
 
 function gbSpecShell(eleventyConfig) {
   eleventyConfig.addAsyncShortcode('gbshell', async function (content, title, description, section, collection, ownTitle, contentFormat) {
@@ -79,58 +108,32 @@ function gbSpecShell(eleventyConfig) {
       category: p.data.category,
       order: p.data.order,
     }));
-    const {checkSpec, renderSpecToString, COMPONENTS} = await library();
+    const {checkSpec, renderSpecToString, embedSpec, COMPONENTS, htmlToSpec} = await library();
+    const failOn = (what) => (m) => {
+      throw new Error(`gbshell (${where}): ${what}: ${m}`);
+    };
 
     // The content as a spec: the page's own (a site page, content format
-    // `spec`, whose template renders its spec as JSON), or its Markdown's
-    // HTML converted (spec/content.cjs). Checked and rendered.
+    // `spec`, whose template renders its spec as JSON), or its HTML
+    // converted (content.cjs).
     const contentSpecOf =
       contentFormat === 'spec'
         ? JSON.parse(content)
-        : contentSpec(content ?? '', {
-            components: COMPONENTS,
-            lib: process.env.MWC_GB_LIB ?? '',
-            stats: contentStats,
-          }).spec;
-    const contentCheck = checkSpec(contentSpecOf);
-    if (!contentCheck.valid) {
-      const errors = contentCheck.issues.filter((i) => i.severity === 'error').slice(0, 20).map((i) => `  ${i.element ?? ''}: ${i.message}`);
-      throw new Error(`gbshell (${where}): the content spec breaks the catalog:\n${errors.join('\n')}`);
-    }
-    const contentHtml = renderSpecToString(contentSpecOf, {
-      onWarning: (m) => {
-        throw new Error(`gbshell (${where}): content: ${m}`);
-      },
-    });
+        : contentSpec(content ?? '', {htmlToSpec, lib: process.env.MWC_GB_LIB ?? '', stats: contentStats}).spec;
+    check(checkSpec, contentSpecOf, `gbshell (${where}): the content spec`);
+    const contentHtml = renderSpecToString(contentSpecOf, {onWarning: failOn('content')});
 
     const page = {url: this.page?.url ?? '', title, description, section, ownTitle: Boolean(ownTitle), siteUrl: gbSite.url};
     const spec = shellSpec(page, pages, contentHtml);
     checkBundled(spec, COMPONENTS);
-
-    const {valid, issues} = checkSpec(spec);
-    if (!valid) {
-      const errors = issues.filter((i) => i.severity === 'error').map((i) => `  ${i.element ?? ''}: ${i.message}`);
-      throw new Error(`gbshell (${where}): the shell spec breaks the catalog:\n${errors.join('\n')}`);
-    }
-    for (const issue of issues) {
-      const line = `gbshell: ${issue.kind} warning: ${issue.element ?? ''}: ${issue.message}`;
-      if (!reported.has(line)) {
-        reported.add(line);
-        console.warn(line);
-      }
-    }
-    const html = renderSpecToString(spec, {
-      onWarning: (m) => {
-        throw new Error(`gbshell (${where}): ${m}`);
-      },
-    });
-    if (html.split(CONTENT_SLOT).length !== 2) throw new Error(`gbshell (${where}): no single content element`);
-    const json = JSON.stringify(spec).replace(/</g, '\\u003c');
+    check(checkSpec, spec, `gbshell (${where}): the shell spec`);
+    const html = renderSpecToString(spec, {islands: {[CONTENT_ID]: contentHtml}, onWarning: failOn('shell')});
+    if (!html.includes(`id="${CONTENT_ID}"`)) throw new Error(`gbshell (${where}): the shell has no ${CONTENT_ID} element`);
     return (
-      `<div id="gb-shell">${html.replace(CONTENT_SLOT, `<div id="gb-content">${contentHtml}</div>`)}</div>` +
-      `<script type="application/json" id="gb-shell-spec">${json}</script>` +
+      `<div id="gb-shell">${html}</div>` +
+      embedSpec(spec, SPEC_ID) +
       // The elements of the converted content, which can differ from the
-      // Markdown's (md-gb-shape for shapes, md-gb-demo-code for code blocks).
+      // Markdown's (md-gb-demo-code for code blocks).
       eleventyConfig.getFilter('gbcomponents')(contentHtml)
     );
   });
@@ -147,6 +150,12 @@ function gbSpecShell(eleventyConfig) {
     const lib = process.env.MWC_GB_LIB;
     return lib ? `<link rel="stylesheet" href="${lib}styles/m3.css" />` : '';
   });
+
+  eleventyConfig.addAsyncShortcode('gbprepaint', async () => {
+    const {prePaintScript} = await library();
+    return `<script>${prePaintScript()}</script>`;
+  });
 }
 
 module.exports = gbSpecShell;
+module.exports.library = library;

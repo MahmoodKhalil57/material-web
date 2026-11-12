@@ -26,6 +26,7 @@
 
 const cheerio = require('cheerio');
 const {SECTIONS, SITE, absolute, sorted} = require('../eleventy/site.cjs');
+const {library} = require('../spec/render.cjs');
 
 const esc = (s) =>
   String(s ?? '')
@@ -131,6 +132,9 @@ class GbAll {
     // The library's styles only (m3.css, md-gb-prose), as the spec shell.
     const styles = this.gbstyles ? this.gbstyles() : '';
     const fonts = data.gbFonts?.stylesheet ? `<link rel="stylesheet" href="${esc(data.gbFonts.stylesheet)}" />` : '';
+    // The reader's saved color mode, reduced motion and theme before the
+    // first paint (the library's styles/preferences.ts), as on the pages.
+    const {prePaintScript} = await library();
     return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -156,15 +160,7 @@ class GbAll {
         window.gbDocsTools = stub;
       })();
     </script>
-    <script>
-      (() => {
-        const root = document.documentElement;
-        try {
-          const mode = localStorage.getItem('color-mode') || 'auto';
-          root.style.colorScheme = mode === 'auto' ? 'light dark' : mode;
-        } catch (e) {}
-      })();
-    </script>
+    <script>${prePaintScript()}</script>
     <script type="module" src="/js/spec/shell.js" blocking="render"></script>
   </head>
   <body>

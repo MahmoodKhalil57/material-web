@@ -8,33 +8,16 @@
  * The spec shell's tools as action handlers over its state store
  * (spec/shell.cjs): Download & copy, Customize theme,
  * Send feedback and Install. The UI is the spec; this file only acts: it
- * copies, downloads, installs, generates the theme's CSS and opens the
- * feedback issue, and reports back through state (`/snack`, `/install`,
- * `/feedback`).
- *
- * The theme uses the old shell's storage keys and cache (gb-theme-css), so
- * the pre-paint script and the reader's saved theme carry over.
+ * copies, downloads, installs and opens the feedback issue, and reports
+ * back through state (`/snack`, `/install`, `/feedback`). The theme the
+ * Customize theme tool sets is applied by client/shell.ts with the
+ * library's preferences (styles/preferences.ts).
  */
 
 import type {StateStore} from '@json-render/core';
-import {
-  themeFromSource,
-  themeToCss,
-  type SchemeVariant,
-} from '@material/web/styles/color/dynamic-color.js';
+import {DEFAULT_THEME} from '@material/web/styles/preferences.js';
 
 import type {ActionHandler} from '@material/web/json-render/renderer.js';
-
-export const DEFAULT_SEED = '#6750a4';
-export const DEFAULT_VARIANT: SchemeVariant = 'tonal-spot';
-const VARIANTS: readonly SchemeVariant[] = [
-  'tonal-spot', 'neutral', 'vibrant', 'expressive', 'fidelity', 'content', 'monochrome', 'rainbow', 'fruit-salad',
-];
-const CONTRASTS = ['standard', 'medium', 'high'] as const;
-type Contrast = (typeof CONTRASTS)[number];
-/** Bump with themeToCss output changes (the pre-paint script checks it). */
-const THEME_CACHE_VERSION = 3;
-const KEYS = {seed: 'gb-seed-color', variant: 'gb-scheme-variant', contrast: 'gb-contrast', css: 'gb-theme-css'};
 
 const GITHUB_URL = 'https://github.com/material-components/material-web';
 const NPM_COMMAND = 'npm install @material/web';
@@ -42,75 +25,6 @@ const CDN_SNIPPET = `<script type="importmap">
   {"imports": {"@material/web/": "https://esm.run/@material/web/"}}
 </script>
 <script type="module" src="https://esm.run/@material/web/all.js"></script>`;
-
-const read = (key: string) => {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-};
-const write = (key: string, value: string | null) => {
-  try {
-    if (value === null) localStorage.removeItem(key);
-    else localStorage.setItem(key, value);
-  } catch {
-    // Storage is off: the choice lasts for the page.
-  }
-};
-
-/** The saved theme, as the spec's `/theme` state. */
-export function savedTheme() {
-  const seed = read(KEYS.seed);
-  const variant = read(KEYS.variant) as SchemeVariant | null;
-  const contrast = read(KEYS.contrast) as Contrast | null;
-  const hex = seed && /^#[0-9a-f]{6}$/i.test(seed) ? seed.toLowerCase() : DEFAULT_SEED;
-  return {
-    seed: hex,
-    seedInput: hex,
-    variant: variant && VARIANTS.includes(variant) ? variant : DEFAULT_VARIANT,
-    contrast: contrast && (CONTRASTS as readonly string[]).includes(contrast) ? contrast : 'standard',
-  };
-}
-
-/**
- * Applies a theme: the dynamic color CSS of its seed, variant and contrast
- * (light-dark() values, so it follows the color mode; standard contrast also
- * gets high contrast under prefers-contrast: more), cached and saved. The
- * default theme needs no CSS (the baseline tokens).
- */
-export function applyTheme({seed, variant, contrast}: {seed: string; variant: SchemeVariant; contrast: Contrast}) {
-  const style = document.getElementById('gb-theme-style');
-  if (seed === DEFAULT_SEED && variant === DEFAULT_VARIANT && contrast === 'standard') {
-    style?.remove();
-    for (const key of Object.values(KEYS)) write(key, null);
-    return;
-  }
-  write(KEYS.seed, seed);
-  write(KEYS.variant, variant);
-  write(KEYS.contrast, contrast);
-  const key = [seed, variant, contrast].join('|');
-  let css = '';
-  try {
-    const cached = JSON.parse(read(KEYS.css) ?? 'null');
-    if (cached?.v === THEME_CACHE_VERSION && cached.key === key) css = cached.css;
-  } catch {
-    // Regenerate below.
-  }
-  if (!css) {
-    const make = (level: Contrast) =>
-      themeToCss(themeFromSource({source: seed, variant, contrast: level}), {layer: ''});
-    css = contrast === 'standard' ? `${make('standard')}@media (prefers-contrast: more){${make('high')}}` : make(contrast);
-    write(KEYS.css, JSON.stringify({v: THEME_CACHE_VERSION, key, css}));
-  }
-  let el = style;
-  if (!el) {
-    el = document.createElement('style');
-    el.id = 'gb-theme-style';
-    document.head.append(el);
-  }
-  el.textContent = css;
-}
 
 /** The text of a copy action. */
 function copyText(id: string, site: string): string {
@@ -232,10 +146,10 @@ export function toolHandlers(store: StateStore, siteUrl: string): Record<string,
     },
     resetTheme: () => {
       store.update({
-        '/theme/seed': DEFAULT_SEED,
-        '/theme/seedInput': DEFAULT_SEED,
-        '/theme/variant': DEFAULT_VARIANT,
-        '/theme/contrast': 'standard',
+        '/theme/seed': DEFAULT_THEME.seed,
+        '/theme/seedInput': DEFAULT_THEME.seed,
+        '/theme/variant': DEFAULT_THEME.variant,
+        '/theme/contrast': DEFAULT_THEME.contrast,
         '/colorMode': 'auto',
       });
       notify('Theme reset');

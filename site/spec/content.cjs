@@ -6,210 +6,105 @@
 
 /**
  * A page's content (the HTML of its Markdown, with the shortcodes' output)
- * as a json-render spec of the library's catalog, so the docs' content, like
- * their shell, is only what a user of the library can build:
+ * as a json-render spec of the library's catalog, with the library's
+ * htmlToSpec() (json-render/html.ts), so the docs' content, like their
+ * shell, is only what a user of the library can build. What is the docs'
+ * own:
  *
- * - md-gb-* elements become their catalog components: attributes become
- *   props (coerced with each prop's schema), `slot` attributes named slots;
- * - native elements of the catalog's Html primitive become Html, with its
- *   allowed attributes; text becomes Text;
- * - a code block (<pre><code class="language-x">) becomes md-gb-demo-code;
+ * - the HTML comes from parse5 (Node has no DOM);
+ * - the heading permalinks (a.anchor, markdown-it-anchor) are left out
+ *   (the headings keep their ids);
  * - md-gb-demo keeps its code files; its example becomes its children, or,
- *   when the example has its own styles, script or elements the catalog
- *   doesn't have, a document in its `srcdoc` (eleventy/demo.cjs frameDoc);
- * - the heading permalinks (a.anchor) are left out (headings keep their id);
- * - anything else is unwrapped (its children kept) and script, style and
- *   template are dropped, both counted in `stats` for the build's report.
+ *   when the example has its own styles or elements the catalog doesn't
+ *   have, a document in its `srcdoc` (eleventy/demo.cjs frameDoc).
+ *
+ * What the catalog can't express (dropped and unwrapped elements) is in
+ * `issues`, and counted in `stats` for the build's report.
  */
 
 const {parseFragment, serialize} = require('parse5');
 const {frameDoc} = require('../eleventy/demo.cjs');
 
-const DROP = new Set(['script', 'style', 'template', 'noscript']);
-/** Html attribute -> prop. */
-const HTML_ATTRS = {
-  id: 'id',
-  role: 'role',
-  alt: 'alt',
-  type: 'type',
-  popovertarget: 'popovertarget',
-  target: 'target',
-  lang: 'lang',
-  colspan: 'colspan',
-  rowspan: 'rowspan',
-  scope: 'scope',
-  'aria-label': 'ariaLabel',
-  href: 'href',
-  src: 'src',
-};
-
-const attrsOf = (node) => Object.fromEntries((node.attrs ?? []).map((a) => [a.name, a.value]));
-
-const textOf = (node) =>
-  node.nodeName === '#text' ? node.value : (node.childNodes ?? []).map(textOf).join('');
+/**
+ * parse5 nodes as the library's HtmlNodes, and each HtmlNode's parse5 node
+ * (a demo's example is serialized into its frame as written).
+ */
+function toHtmlNodes(nodes, origin) {
+  const out = [];
+  for (const n of nodes) {
+    if (n.nodeName === '#text') {
+      out.push({text: n.value});
+    } else if (n.tagName) {
+      const node = {
+        tag: n.tagName,
+        attrs: Object.fromEntries((n.attrs ?? []).map((a) => [a.name, a.value])),
+        children: toHtmlNodes((n.tagName === 'template' ? n.content : n).childNodes ?? [], origin),
+      };
+      origin.set(node, n);
+      out.push(node);
+    }
+  }
+  return out;
+}
 
 /**
  * @param {string} html The content HTML.
- * @param {object} ctx `components` (the catalog's COMPONENTS), `lib` (the
- *     library URL for demo frames), `prefix` (element keys), `stats`.
- * @return {{spec: object, stats: Map<string, number>}}
+ * @param {object} ctx `htmlToSpec` (the library's), `lib` (the library URL
+ *     for demo frames), `prefix` (element keys), `stats` (counts by kind).
+ * @return {{spec: object, issues: Array<{kind: string, tag: string}>}}
  */
-function contentSpec(html, {components, lib = '', prefix = 'c', stats = new Map()}) {
-  const byTag = new Map();
-  for (const [name, c] of Object.entries(components)) {
-    if (!c.tag.startsWith('#')) byTag.set(c.tag, {name, c, propOf: Object.fromEntries(Object.entries(c.attributes).map(([p, a]) => [a, p]))});
-  }
-  const htmlTags = new Set(components.Html.props.shape.tag.options);
-  const htmlShape = components.Html.props.shape;
+function contentSpec(html, {htmlToSpec, lib = '', prefix = 'c', stats = new Map()}) {
   const count = (key) => stats.set(key, (stats.get(key) ?? 0) + 1);
-
-  const elements = {};
-  let n = 0;
-  const add = (el) => {
-    const key = `${prefix}${(n++).toString(36)}`;
-    elements[key] = {children: [], ...el};
-    return key;
-  };
-
-  /** A prop value from an attribute, coerced with the prop's schema. */
-  const coerce = (schema, value, isBoolean) => {
-    if (isBoolean) return value !== 'false';
-    if (!schema) return value;
-    if (schema.safeParse(value).success) return value;
-    const num = Number(value);
-    if (value.trim() !== '' && !Number.isNaN(num) && schema.safeParse(num).success) return num;
-    return undefined;
-  };
-
-  /**
-   * Converts the children of a node. Returns {children, slots}; `issues`
-   * collects what had to be unwrapped or dropped (for demo previews).
-   */
-  const convertChildren = (node, issues, inPre = false) => {
-    const children = [];
-    const slots = {};
-    for (const child of node.childNodes ?? []) {
-      const slot = (child.attrs ?? []).find((a) => a.name === 'slot')?.value;
-      for (const key of convert(child, issues, inPre)) {
-        if (slot && elements[key]) (slots[slot] ??= []).push(key);
-        else children.push(key);
-      }
-    }
-    return {children, slots};
-  };
-
-  /** Converts a node; returns the keys of the elements it became. */
-  const convert = (node, issues, inPre = false) => {
-    if (node.nodeName === '#text') {
-      // Whitespace collapses as the browser renders it (exact inside <pre>).
-      const value = inPre ? node.value : node.value.replace(/\s+/g, ' ');
-      return value ? [add({type: 'Text', props: {text: value}})] : [];
-    }
-    if (!node.tagName) return []; // comments, doctype
-    const tag = node.tagName;
-    const attrs = attrsOf(node);
-
-    if (DROP.has(tag)) {
-      count(`dropped <${tag}>`);
-      issues.push(tag);
-      return [];
-    }
-    // The heading permalinks: the heading keeps its id.
-    if (tag === 'a' && /(^|\s)anchor(\s|$)/.test(attrs.class ?? '')) return [];
-
-    // A code block: highlighted by md-gb-demo-code.
-    if (tag === 'pre') {
-      const code = (node.childNodes ?? []).find((c) => c.tagName === 'code');
-      const language = /language-([\w-]+)/.exec((code ?? node).attrs?.find((a) => a.name === 'class')?.value ?? '')?.[1] ?? 'text';
-      return [add({type: 'DemoCode', props: {code: textOf(code ?? node).replace(/\n$/, ''), language}})];
-    }
-
-    if (tag === 'md-gb-demo') return [demo(node, attrs)];
-
-    const custom = byTag.get(tag);
-    if (custom) {
-      const props = {};
-      const booleans = new Set(custom.c.booleans);
-      for (const [attr, value] of Object.entries(attrs)) {
-        const prop = custom.propOf[attr];
-        if (!prop) continue;
-        const v = coerce(custom.c.props.shape[prop], value, booleans.has(prop));
-        if (v !== undefined) props[prop] = v;
-      }
-      let {children, slots} = convertChildren(node, issues);
-      // Whitespace between slotted children isn't content of a component
-      // without a default slot.
-      if (!custom.c.slots.includes('default')) {
-        children = children.filter((k) => !(elements[k].type === 'Text' && !String(elements[k].props.text).trim()));
-      }
-      return [add({type: custom.name, props, children, ...(Object.keys(slots).length ? {slots} : {})})];
-    }
-
-    if (htmlTags.has(tag)) {
-      const props = {tag};
-      for (const [attr, prop] of Object.entries(HTML_ATTRS)) {
-        if (attrs[attr] === undefined) continue;
-        const v = coerce(htmlShape[prop], attrs[attr], false);
-        if (v !== undefined) props[prop] = v;
-      }
-      const {children, slots} = convertChildren(node, issues, inPre || tag === 'pre');
-      // Native elements have no named slots: a slotted child stays a child,
-      // with its slot set by its parent component's spec (keys in `slots`).
-      return [add({type: 'Html', props, children: [...children, ...Object.values(slots).flat()]})];
-    }
-
-    // Not in the catalog: keep what it holds.
-    count(`unwrapped <${tag}>`);
-    issues.push(tag);
-    return convertChildren(node, issues, inPre).children;
-  };
+  const origin = new WeakMap();
 
   /** A demo: its code files, and its example as children or a document. */
-  const demo = (node, attrs) => {
+  const demo = (node, ctx, issues) => {
+    const attrs = node.attrs ?? {};
     const props = {};
     if (attrs.label) props.label = attrs.label;
     if (attrs['preview-height']) props.previewHeight = Number(attrs['preview-height']);
     const codes = [];
     let css = '';
     let preview = null;
-    for (const child of node.childNodes ?? []) {
-      if (child.tagName === 'md-gb-demo-code') codes.push(...convert(child, []));
-      else if (child.tagName === 'style') css += textOf(child);
-      else if (child.tagName === 'iframe') props.srcdoc = attrsOf(child).srcdoc ?? '';
-      else if (child.tagName) preview = child;
+    for (const child of node.children ?? []) {
+      if (child.tag === 'md-gb-demo-code') codes.push(...ctx.convert(child, issues));
+      else if (child.tag === 'style') css += ctx.textOf(child);
+      else if (child.tag === 'iframe') props.srcdoc = child.attrs?.srcdoc ?? '';
+      else if (child.tag) preview = child;
     }
     let children = [];
     if (!props.srcdoc && preview) {
-      const issues = [];
-      const before = n;
-      const counted = new Map(stats);
-      const tried = convert(preview, issues);
-      if (!css && !issues.length) {
+      const attempt = [];
+      const tried = ctx.convert(preview, attempt);
+      if (!css && !attempt.length) {
         children = tried;
       } else {
         // Its own styles, or elements the catalog doesn't have: a document,
-        // which keeps them, so what the attempt unwrapped isn't reported.
-        for (let i = before; i < n; i++) delete elements[`${prefix}${i.toString(36)}`];
-        stats.clear();
-        for (const [k, v] of counted) stats.set(k, v);
-        const id = attrsOf(preview).id ?? 'demo';
-        props.srcdoc = frameDoc({id: attrs.id ?? id, html: `<div id="${id}">${serialize(preview)}</div>`, css, js: '', lib});
+        // which keeps them (so what the attempt left out isn't an issue).
+        ctx.remove(tried);
+        const id = preview.attrs?.id ?? 'demo';
+        props.srcdoc = frameDoc({id: attrs.id ?? id, html: `<div id="${id}">${serialize(origin.get(preview))}</div>`, css, js: '', lib});
         count('demo as a document');
       }
     }
-    // The site's own examples, as in the old shell: same origin, so the
-    // document loads the page's fonts (frameDoc) without CORS.
+    // The site's own examples: same origin, so the document loads the
+    // page's fonts (frameDoc) without CORS.
     if (props.srcdoc) props.sandbox = 'allow-scripts allow-same-origin allow-forms';
     count('demo');
-    return add({type: 'Demo', props, children, slots: {code: codes}});
+    return [ctx.add({type: 'Demo', props, children, slots: {code: codes}})];
   };
 
-  const root = add({type: 'Html', props: {tag: 'div'}});
-  const issues = [];
-  for (const child of parseFragment(html).childNodes) {
-    elements[root].children.push(...convert(child, issues));
-  }
-  return {spec: {root, elements}, stats};
+  const {spec, issues} = htmlToSpec(toHtmlNodes(parseFragment(html).childNodes, origin), {
+    prefix,
+    override: (node, ctx, issues) => {
+      // The heading permalinks: the heading keeps its id.
+      if (node.tag === 'a' && /(^|\s)anchor(\s|$)/.test(node.attrs?.class ?? '')) return [];
+      if (node.tag === 'md-gb-demo') return demo(node, ctx, issues);
+      return undefined;
+    },
+  });
+  for (const issue of issues) count(`${issue.kind} <${issue.tag}>`);
+  return {spec, issues};
 }
 
 module.exports = {contentSpec};
