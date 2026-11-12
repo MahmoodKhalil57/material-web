@@ -1243,6 +1243,8 @@ export const COMPONENTS = {
         id: dynamic(z.string()).optional(),
         /** The layout orientation of items ('vertical' or 'horizontal'). */
         itemLayout: dynamic(z.enum(["horizontal", "vertical"])).optional(),
+        /** The smallest window size class that shows the rail; in smaller windows it is hidden and takes no space (scaffold.md: "A navigation rail and companion rail occupy the leading and trailing sides of a large window"). Empty (default): always shown. */
+        minWindowClass: dynamic(z.enum(["", "compact", "medium", "expanded", "large", "extra-large"])).optional(),
         /** Whether the expanded navigation rail is modal: it opens over the content with a scrim, with modal elevation and shape. */
         modal: dynamic(z.boolean()).optional(),
         /** Whether the collapsed rail uses the narrow width (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp). */
@@ -1253,12 +1255,14 @@ export const COMPONENTS = {
         selectedIndex: dynamic(z.number()).optional(),
         /** The index of the currently selected tab. */
         selectedTabIndex: dynamic(z.number()).optional(),
+        /** Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit. */
+        sticky: dynamic(z.boolean()).optional(),
       })
       .strict(),
     slots: ["default", "header"] as string[],
     events: ["change", "toggle"] as string[],
-    attributes: {alignment: "alignment", ariaLabel: "aria-label", autoSelect: "autoselect", collapsible: "collapsible", divider: "divider", elevated: "elevated", expanded: "expanded", hideWhenCollapsed: "hide-when-collapsed", id: "id", itemLayout: "item-layout", modal: "modal", narrow: "narrow", orientation: "orientation", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex"} as Record<string, string>,
-    booleans: ["autoSelect", "collapsible", "divider", "elevated", "expanded", "hideWhenCollapsed", "modal", "narrow"] as string[],
+    attributes: {alignment: "alignment", ariaLabel: "aria-label", autoSelect: "autoselect", collapsible: "collapsible", divider: "divider", elevated: "elevated", expanded: "expanded", hideWhenCollapsed: "hide-when-collapsed", id: "id", itemLayout: "item-layout", minWindowClass: "min-window-class", modal: "modal", narrow: "narrow", orientation: "orientation", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex", sticky: "sticky"} as Record<string, string>,
+    booleans: ["autoSelect", "collapsible", "divider", "elevated", "expanded", "hideWhenCollapsed", "modal", "narrow", "sticky"] as string[],
     description: "A Material Design navigation rail custom element. Slots: default, header. Events: change, toggle. M3: navigation-rail.",
     deprecated: false,
     spec: ["https://m3.material.io/components/navigation-rail"] as string[],

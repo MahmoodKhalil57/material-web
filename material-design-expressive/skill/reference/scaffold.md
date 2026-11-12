@@ -59,6 +59,7 @@ CSS custom properties
 
 - `--container-color`: Scaffold background.
 - `--content-color`: Scaffold content color.
+- `--md-gb-scaffold-content-block-size`: Set by the scaffold on its content (read it, don't set it): the visible height (px) of the scrolling content region, for content that stays in view as it scrolls, such as a `sticky` `md-gb-nav-rail` beside the panes.
 - `--scrollbar-gutter`: `stable` reserves the content's scrollbar gutter, so a scrollbar that appears doesn't move the content (default `auto`: the pane widths are measured to the edges).
 
 ### `<md-gb-pane-scaffold>`

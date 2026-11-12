@@ -208,6 +208,11 @@ export class NavBarElement extends AriaTablistElement {
     }
   };
 
+  /** Links: no destination is current until one is selected. */
+  protected override get requiresSelection(): boolean {
+    return !hasLinkItems(this.tabs);
+  }
+
   protected override handleSlotChange() {
     super.handleSlotChange();
     this.syncRole();

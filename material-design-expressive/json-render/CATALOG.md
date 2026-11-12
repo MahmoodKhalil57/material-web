@@ -45,7 +45,7 @@ rules below.
 | `NavBarItem` | `md-gb-nav-bar-item` | 13 | default, badge, icon |   | [navigation-bar](https://m3.material.io/components/navigation-bar) |
 | `NavDrawer` (deprecated) | `md-gb-nav-drawer` | 7 | default, headline | change, close, closed, open, opened | [navigation-drawer](https://m3.material.io/components/navigation-drawer) |
 | `NavDrawerItem` | `md-gb-nav-drawer-item` | 9 | default, badge, icon |   | [navigation-drawer](https://m3.material.io/components/navigation-drawer) |
-| `NavRail` | `md-gb-nav-rail` | 15 | default, header | change, toggle | [navigation-rail](https://m3.material.io/components/navigation-rail) |
+| `NavRail` | `md-gb-nav-rail` | 17 | default, header | change, toggle | [navigation-rail](https://m3.material.io/components/navigation-rail) |
 | `NavRailItem` | `md-gb-nav-rail-item` | 14 | default, badge, icon |   | [navigation-rail](https://m3.material.io/components/navigation-rail) |
 | `PaneScaffold` | `md-gb-pane-scaffold` | 23 | default, placeholder, secondary, tertiary | levitate-close, pane-layout-change, pane-resize, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
 | `Progress` | `md-gb-progress` | 5 |   |   | [progress-indicators](https://m3.material.io/components/progress-indicators) |

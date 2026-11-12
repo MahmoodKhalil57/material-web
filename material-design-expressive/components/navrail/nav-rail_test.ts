@@ -291,4 +291,88 @@ describe('md-gb-nav-rail', () => {
       expect(rail.expanded).toBeFalse();
     });
   });
+
+  describe('link destinations', () => {
+    it('has no current destination until one is selected', async () => {
+      const rail = await render(html`
+        <md-gb-nav-rail expanded>
+          <md-gb-nav-rail-item href="#a">A</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="#b">B</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+      `);
+      expect(rail.selectedIndex).toBe(-1);
+      expect(rail.querySelectorAll('[selected]').length).toBe(0);
+    });
+
+    it('keeps a selected link destination', async () => {
+      const rail = await render(html`
+        <md-gb-nav-rail>
+          <md-gb-nav-rail-item href="#a">A</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="#b" selected>B</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+      `);
+      expect(rail.selectedIndex).toBe(1);
+    });
+
+    it('still selects the first tab of a tab list', async () => {
+      const rail = await render(html`
+        <md-gb-nav-rail>
+          <md-gb-nav-rail-item>A</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item>B</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+      `);
+      expect(rail.selectedIndex).toBe(0);
+    });
+  });
+
+  describe('sticky', () => {
+    async function renderInScroller() {
+      const root = env.render(html`
+        <div
+          class="scroller"
+          style="--md-gb-scaffold-content-block-size: 200px; block-size: 200px; overflow: auto">
+          <div style="display: flex">
+            <div style="block-size: 2000px; flex: 1"></div>
+            <md-gb-nav-rail sticky expanded>
+              ${Array.from({length: 12}, (_, i) => html`<md-gb-nav-rail-item href="#${i}">Section ${i}</md-gb-nav-rail-item>`)}
+            </md-gb-nav-rail>
+          </div>
+        </div>
+      `);
+      await env.waitForStability();
+      const rail = root.querySelector('md-gb-nav-rail') as NavRailElement;
+      await rail.updateComplete;
+      return {rail, scroller: root.querySelector<HTMLElement>('.scroller')!};
+    }
+
+    it('stays in view as the content scrolls, as tall as the visible region', async () => {
+      const {rail, scroller} = await renderInScroller();
+      scroller.scrollTop = 1000;
+      const top = rail.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+      expect(Math.round(top)).toBe(0);
+      expect(Math.round(rail.getBoundingClientRect().height)).toBe(200);
+    });
+
+    it('scrolls its destinations when they do not fit', async () => {
+      const {rail} = await renderInScroller();
+      const list = rail.shadowRoot!.querySelector<HTMLElement>('.nav-rail-items')!;
+      expect(getComputedStyle(list).overflowY).toBe('auto');
+      expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
+    });
+  });
+
+  // scaffold.md: "A navigation rail and companion rail occupy the leading
+  // and trailing sides of a large window".
+  it('shows from its min-window-class, and takes no space below it', async () => {
+    const rail = await render(html`<md-gb-nav-rail>${items}</md-gb-nav-rail>`);
+    const classes = {medium: 600, expanded: 840, large: 1200, 'extra-large': 1600} as const;
+    for (const [windowClass, minWidth] of Object.entries(classes)) {
+      rail.minWindowClass = windowClass as keyof typeof classes;
+      await rail.updateComplete;
+      // Shown: the host's own display (a flex parent blockifies it).
+      expect(getComputedStyle(rail).display === 'none')
+        .withContext(windowClass)
+        .toBe(window.innerWidth < minWidth);
+    }
+  });
 });

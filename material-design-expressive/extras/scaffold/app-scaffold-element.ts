@@ -80,6 +80,10 @@ export interface NavigationChangeDetail {
  *     gutter, so a scrollbar that appears doesn't move the content (default
  *     `auto`: the pane widths are measured to the edges).
  * @csspart navigation-bar - The navigation bar region.
+ * @cssprop --md-gb-scaffold-content-block-size - Set by the scaffold on its
+ *     content (read it, don't set it): the visible height (px) of the
+ *     scrolling content region, for content that stays in view as it
+ *     scrolls, such as a `sticky` `md-gb-nav-rail` beside the panes.
  * @cssprop --container-color - Scaffold background.
  * @cssprop --content-color - Scaffold content color.
  * @fires {CustomEvent<WindowClassChangeDetail>} window-class-change - Fired
@@ -178,6 +182,8 @@ export class AppScaffoldElement extends LitElement {
   @query('.app-scaffold-companion')
   private readonly companionRegion!: HTMLElement | null;
   @query('.app-scaffold-body') private readonly bodyRegion!: HTMLElement | null;
+  @query('.app-scaffold-content')
+  private readonly contentRegion!: HTMLElement | null;
   @query('slot[name="navigation-rail"]')
   private readonly railSlot!: HTMLSlotElement | null;
 
@@ -232,7 +238,7 @@ export class AppScaffoldElement extends LitElement {
   private observeRail() {
     this.railObserver?.disconnect();
     this.railObserver = new ResizeObserver(() => this.measureRegions());
-    for (const region of [this.railRegion, this.companionRegion]) {
+    for (const region of [this.railRegion, this.companionRegion, this.contentRegion]) {
       if (region) this.railObserver.observe(region);
     }
     this.measureRegions();
@@ -240,7 +246,9 @@ export class AppScaffoldElement extends LitElement {
 
   /**
    * Tells a nested pane scaffold how much space the rails take on each side
-   * (it keeps a split-pane spacer centered in the window).
+   * (it keeps a split-pane spacer centered in the window), and the content
+   * how tall its visible region is (for a sticky rail). Measured on the
+   * first update too, so the first frame already has the sizes.
    */
   private measureRegions() {
     const body = this.bodyRegion;
@@ -255,6 +263,12 @@ export class AppScaffoldElement extends LitElement {
       '--md-gb-scaffold-companion-inline-size',
       `${width(this.companionRegion)}px`,
     );
+    if (this.contentRegion) {
+      body.style.setProperty(
+        '--md-gb-scaffold-content-block-size',
+        `${this.contentRegion.clientHeight}px`,
+      );
+    }
   }
 
   private readonly handlePaneLayoutChange = (event: Event) => {

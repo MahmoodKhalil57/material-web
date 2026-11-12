@@ -74,19 +74,23 @@ const MODES: ColorMode[] = ['auto', 'light', 'dark'];
 /** The ids of the shell's embedded spec and of its content island (eleventy/render.cjs). */
 const SPEC_ID = 'app-shell-spec';
 const CONTENT_ID = 'page-content';
-/** Whether the rail is expanded: the site's own preference. */
+/**
+ * Whether the site rail and the outline rail are expanded: the site's own
+ * preferences (applied before the first paint: this script blocks rendering).
+ */
 const RAIL_KEY = 'rail-expanded';
+const OUTLINE_KEY = 'outline-expanded';
 
-const readRail = () => {
+const readExpanded = (key: string) => {
   try {
-    return localStorage.getItem(RAIL_KEY) !== 'collapsed';
+    return localStorage.getItem(key) !== 'collapsed';
   } catch {
     return true;
   }
 };
-const writeRail = (expanded: boolean) => {
+const writeExpanded = (key: string, expanded: boolean) => {
   try {
-    localStorage.setItem(RAIL_KEY, expanded ? 'expanded' : 'collapsed');
+    localStorage.setItem(key, expanded ? 'expanded' : 'collapsed');
   } catch {
     // Storage is off (private mode): the choice lasts for the page.
   }
@@ -138,7 +142,8 @@ function bootShell(spec: Spec, shell: HTMLElement) {
     ...spec.state,
     colorMode: saved.colorMode,
     reduceMotion: saved.reduceMotion,
-    railExpanded: readRail(),
+    railExpanded: readExpanded(RAIL_KEY),
+    outlineExpanded: readExpanded(OUTLINE_KEY),
     // The theme tool edits the seed as text (`seedInput`) before it applies.
     theme: {...saved.theme, seedInput: saved.theme.seed},
   });
@@ -168,7 +173,8 @@ function bootShell(spec: Spec, shell: HTMLElement) {
       apply(preferences);
       broadcast();
     }
-    writeRail(state['railExpanded'] !== false);
+    writeExpanded(RAIL_KEY, state['railExpanded'] !== false);
+    writeExpanded(OUTLINE_KEY, state['outlineExpanded'] !== false);
   };
   sync();
   store.subscribe(sync);

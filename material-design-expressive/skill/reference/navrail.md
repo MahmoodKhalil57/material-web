@@ -35,11 +35,13 @@ Attributes and properties
 | `expanded` | `expanded` (reflects) | `boolean` | `false` | Whether the navigation rail is expanded to show horizontal items. |
 | `hideWhenCollapsed` | `hide-when-collapsed` (reflects) | `boolean` | `false` | Hide when collapsed (navigation-rail.md): the collapsed rail is not shown and takes no space, so the body content fills in. The expanded rail (always modal in this mode) appears over the content when the app's menu button calls `expand()` or `toggle()`; keep that menu button accessible. |
 | `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of items ('vertical' or 'horizontal'). |
+| `minWindowClass` | `min-window-class` (reflects) | `"" \| "compact" \| "medium" \| "expanded" \| "large" \| "extra-large"` | `''` | The smallest window size class that shows the rail; in smaller windows it is hidden and takes no space (scaffold.md: "A navigation rail and companion rail occupy the leading and trailing sides of a large window"). Empty (default): always shown. |
 | `modal` | `modal` (reflects) | `boolean` | `false` | Whether the expanded navigation rail is modal: it opens over the content with a scrim, with modal elevation and shape. |
 | `narrow` | `narrow` (reflects) | `boolean` | `false` | Whether the collapsed rail uses the narrow width (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp). |
 | `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | Orientation of the tablist ('horizontal' or 'vertical'). |
 | `selectedIndex` | `selected-index` | `number` |  | The 0-based index of the currently active navigation rail item. Alias for `selectedTabIndex`. |
 | `selectedTabIndex` | `selectedtabindex` | `number` |  | The index of the currently selected tab. |
+| `sticky` | `sticky` (reflects) | `boolean` | `false` | Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit. |
 
 Slots
 

@@ -21,10 +21,11 @@
  * - Content: in md-gb-prose, the title, the description, previous / next
  *   links, and the page's content (an element with id `page-content` that the
  *   page's HTML fills until pages are specs too).
- * - Companion rail (large windows): the page outline.
+ * - Outline (large windows): a sticky, expanded navigation rail of the
+ *   page's headings, in the main landmark beside the pane scaffold.
  *
  * State: `/colorMode` ('auto' | 'light' | 'dark'), `/reduceMotion`,
- * `/railExpanded`, `/route` ('' | 'loading' | 'linear'), and the tools' and
+ * `/railExpanded`, `/outlineExpanded`, `/route` ('' | 'loading' | 'linear'), and the tools' and
  * search's. Actions (client/shell.ts): `cycleColorMode`, `toggleMotion`,
  * the tools' (tools.ts) and the search's (search.ts).
  */
@@ -224,7 +225,9 @@ function shellSpec(page, pages, content) {
     children: [
       add('pager-row', {
         type: 'Stack',
-        props: {direction: 'row', wrap: true, justifyContent: 'space-between', gap: '200'},
+        // Padded: the buttons' 48px touch targets stay inside the pane (no
+        // overflow that would make the pane a scroller of its own).
+        props: {direction: 'row', wrap: true, justifyContent: 'space-between', gap: '200', paddingBlock: '200'},
         children: [
           prev ? pagerLink('pager-prev', prev, 'prev') : add('pager-start', {type: 'Html', props: {tag: 'span'}}),
           ...(next ? [pagerLink('pager-next', next, 'next')] : []),
@@ -254,61 +257,79 @@ function shellSpec(page, pages, content) {
   }
   article.push(add('content', {type: 'Html', props: {tag: 'div', id: 'page-content'}}));
   article.push(pagerNav);
+
+  // Outline (large windows): the content's h2 and h3 as an expanded
+  // navigation rail of links on the trailing side (scaffold.md: "A
+  // navigation rail and companion rail occupy the leading and trailing
+  // sides of a large window"); arrow keys move between them. It is sticky:
+  // it stays in view as the page scrolls. It is collapsible: its menu
+  // button collapses it to the button alone (the entries are secondary
+  // destinations, shown only while it is expanded). An h3 entry has a
+  // leading arrow under its h2. The first entry is the page itself (the top
+  // of the main landmark), so every page has the rail and the content keeps
+  // one width from page to page.
+  const outline = [{level: 1, id: 'main', text: page.title || 'Top'}, ...outlineOf(content)];
+  const outlineRail = add('outline', {
+    type: 'NavRail',
+    props: {
+      collapsible: true,
+      expanded: {$bindState: '/outlineExpanded'},
+      sticky: true,
+      minWindowClass: 'large',
+      ariaLabel: 'On this page',
+    },
+    children: outline.map((h, i) =>
+      add(`outline-${i}`, {
+        type: 'NavRailItem',
+        props: {href: `#${h.id}`, secondary: true},
+        children: [text(`outline-${i}-label`, h.text)],
+        ...(h.level === 3 ? {slots: {icon: [icon(`outline-${i}-icon`, 'subdirectory_arrow_right')]}} : {}),
+      }),
+    ),
+    slots: {
+      header: [
+        add('outline-title', {
+          type: 'Typography',
+          props: {scale: 'title-sm', color: 'on-surface-variant'},
+          visible: {$state: '/outlineExpanded'},
+          children: [text('outline-title-text', 'On this page')],
+        }),
+      ],
+    },
+  });
+
   // The page in a single pane: the pane scaffold gives it the window
-  // margins of its window size class (16px compact, 24px and up).
+  // margins of its window size class (16px compact, 24px and up). The
+  // outline rail is beside it, in the same row.
   add('main', {
     type: 'Html',
     props: {tag: 'main', id: 'main'},
     children: [
-      add('panes', {
-        type: 'PaneScaffold',
-        props: {layout: 'supporting-pane', ariaLabel: page.title || 'Page'},
-        children: [add('article', {type: 'Prose', props: {}, children: article})],
+      add('main-row', {
+        type: 'Stack',
+        props: {direction: 'row', gap: '0'},
+        children: [
+          add('panes', {
+            type: 'PaneScaffold',
+            props: {layout: 'supporting-pane', ariaLabel: page.title || 'Page'},
+            children: [add('article', {type: 'Prose', props: {}, children: article})],
+          }),
+          outlineRail,
+        ],
       }),
     ],
   });
 
-  // Outline (large windows): the content's h2 and h3 as a single-action
-  // list of links (lists.md: navigation), one tab stop with arrow keys. An
-  // h3 entry has a leading arrow under its h2.
-  const outline = outlineOf(content);
   // The app bar (search, tools) in a header: the page's banner landmark.
   const banner = add('banner', {type: 'Html', props: {tag: 'header'}, children: ['appbar']});
   const slots = {'top-app-bar': [banner], 'navigation-rail': ['rail'], 'navigation-bar': ['bar']};
-  if (outline.length) {
-    const items = outline.map((h, i) =>
-      add(`outline-${i}`, {
-        type: 'ListItem',
-        props: {href: `#${h.id}`},
-        children: [text(`outline-${i}-label`, h.text)],
-        ...(h.level === 3 ? {slots: {leading: [icon(`outline-${i}-icon`, 'subdirectory_arrow_right')]}} : {}),
-      }),
-    );
-    add('outline', {
-      type: 'Html',
-      props: {tag: 'nav', ariaLabel: 'On this page'},
-      children: [
-        add('outline-stack', {
-          type: 'Stack',
-          props: {gap: '100', paddingBlock: '200'},
-          children: [
-            add('outline-title', {type: 'Typography', props: {scale: 'title-sm', color: 'on-surface-variant'}, children: [text('outline-title-text', 'On this page')]}),
-            add('outline-list', {type: 'List', props: {density: -2, ariaLabel: 'On this page'}, children: items}),
-          ],
-        }),
-      ],
-    });
-    slots['companion-rail'] = ['outline'];
-  }
 
   const overlays = tools({add, text, icon});
   slots.snackbar = ['snack'];
 
   add('root', {
     type: 'AppScaffold',
-    // A fixed companion rail (the outline): the content keeps one width from
-    // page to page, whatever the headings.
-    props: {fullscreen: true, navigation: 'auto', autoExpandRail: true, companionWidth: 280},
+    props: {fullscreen: true, navigation: 'auto', autoExpandRail: true},
     children: ['main', ...overlays],
     slots,
   });
@@ -320,6 +341,7 @@ function shellSpec(page, pages, content) {
       colorMode: 'auto',
       reduceMotion: false,
       railExpanded: true,
+      outlineExpanded: true,
       siteUrl: page.siteUrl ?? '',
       tool: '',
       theme: {seed: '#6750a4', seedInput: '#6750a4', variant: 'tonal-spot', contrast: 'standard'},

@@ -210,6 +210,10 @@ export class PaneScaffoldElement extends LitElement {
       :host {
         display: block;
         block-size: 100%;
+        /* In a row beside a rail (a sticky md-gb-nav-rail), the panes take
+           the rest of the width. */
+        flex-grow: 1;
+        min-inline-size: 0;
       }
 
       :host([hidden]),

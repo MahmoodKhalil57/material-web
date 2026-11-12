@@ -13275,6 +13275,15 @@
        "description": "The layout orientation of items ('vertical' or 'horizontal')."
       },
       {
+       "name": "min-window-class",
+       "type": {
+        "text": "\"\" | \"compact\" | \"medium\" | \"expanded\" | \"large\" | \"extra-large\""
+       },
+       "fieldName": "minWindowClass",
+       "default": "''",
+       "description": "The smallest window size class that shows the rail; in smaller windows it is hidden and takes no space (scaffold.md: \"A navigation rail and companion rail occupy the leading and trailing sides of a large window\"). Empty (default): always shown."
+      },
+      {
        "name": "modal",
        "type": {
         "text": "boolean"
@@ -13316,6 +13325,15 @@
        },
        "fieldName": "selectedTabIndex",
        "description": "The index of the currently selected tab."
+      },
+      {
+       "name": "sticky",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "sticky",
+       "default": "false",
+       "description": "Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit."
       }
      ],
      "members": [
@@ -13416,6 +13434,18 @@
       },
       {
        "kind": "field",
+       "name": "minWindowClass",
+       "type": {
+        "text": "\"\" | \"compact\" | \"medium\" | \"expanded\" | \"large\" | \"extra-large\""
+       },
+       "privacy": "public",
+       "default": "''",
+       "description": "The smallest window size class that shows the rail; in smaller windows it is hidden and takes no space (scaffold.md: \"A navigation rail and companion rail occupy the leading and trailing sides of a large window\"). Empty (default): always shown.",
+       "attribute": "min-window-class",
+       "reflects": true
+      },
+      {
+       "kind": "field",
        "name": "modal",
        "type": {
         "text": "boolean"
@@ -13469,6 +13499,18 @@
        "privacy": "public",
        "description": "The index of the currently selected tab.",
        "attribute": "selectedtabindex"
+      },
+      {
+       "kind": "field",
+       "name": "sticky",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit.",
+       "attribute": "sticky",
+       "reflects": true
       },
       {
        "kind": "method",
@@ -27518,6 +27560,10 @@
       {
        "name": "--content-color",
        "description": "Scaffold content color."
+      },
+      {
+       "name": "--md-gb-scaffold-content-block-size",
+       "description": "Set by the scaffold on its content (read it, don't set it): the visible height (px) of the scrolling content region, for content that stays in view as it scrolls, such as a `sticky` `md-gb-nav-rail` beside the panes."
       },
       {
        "name": "--scrollbar-gutter",

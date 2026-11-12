@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {css, CSSResultOrNative, html, nothing, type PropertyValues} from 'lit';
+import {css, CSSResultOrNative, html, nothing, type PropertyValues, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {AriaTablistElement} from '../../foundations/accessibility/aria/tabs/tablist.js';
 import {internals} from '../../internal/behaviors/element-internals.js';
@@ -30,6 +30,26 @@ import {
 } from './nav-rail.js';
 import {NavRailItemElement} from './nav-rail-item-element.js';
 import {isReducedMotion} from '../../styles/motion/motion.js';
+import {
+  WINDOW_SIZE_CLASS_VALUES,
+  WINDOW_SIZE_CLASSES,
+  type WindowSizeClass,
+} from '../../foundations/layout/layout-values.js';
+
+/**
+ * `min-window-class`: hidden (no space) below the class, shown from it. Media
+ * queries on the window width, like the window size classes, so the first
+ * frame is already right.
+ */
+const minWindowClassStyles = unsafeCSS(
+  WINDOW_SIZE_CLASSES.filter((c) => WINDOW_SIZE_CLASS_VALUES[c].minWidth > 0)
+    .map((c) => {
+      const host = `:host([min-window-class='${c}'])`;
+      const min = WINDOW_SIZE_CLASS_VALUES[c].minWidth;
+      return `${host}{display:none}@media (min-width:${min}px){${host}{display:inline-flex}}`;
+    })
+    .join(''),
+);
 
 const HEADER_TOGGLE_SELECTOR = [
   'md-gb-icon-button',
@@ -198,6 +218,16 @@ export class NavRailElement extends AriaTablistElement {
         inline-size: 0;
       }
 
+      /* Sticky: stays in view in scrolling content, as tall as the visible
+         region (md-gb-app-scaffold measures it), not the whole content. */
+      :host([sticky]) {
+        align-self: flex-start;
+        block-size: var(--md-gb-scaffold-content-block-size, 100svh);
+        flex-shrink: 0;
+        inset-block-start: 0;
+        position: sticky;
+      }
+
       /* Navigation rail, Divider: on the edge next to the content. */
       :host([divider]) .nav-rail {
         border-inline-end: 1px solid var(--md-sys-color-outline-variant);
@@ -220,6 +250,7 @@ export class NavRailElement extends AriaTablistElement {
         margin-inline-start: 8px;
       }
     `,
+    minWindowClassStyles,
   ];
 
   override orientation: 'horizontal' | 'vertical' = 'vertical';
@@ -286,6 +317,25 @@ export class NavRailElement extends AriaTablistElement {
    * (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp).
    */
   @property({type: Boolean, reflect: true}) narrow = false;
+
+  /**
+   * Whether the rail stays in view while the content around it scrolls: for
+   * a rail placed in scrolling content, such as beside an
+   * `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall
+   * as the visible region (the app scaffold's
+   * `--md-gb-scaffold-content-block-size`, else the viewport), and its
+   * destinations scroll when they don't fit.
+   */
+  @property({type: Boolean, reflect: true}) sticky = false;
+
+  /**
+   * The smallest window size class that shows the rail; in smaller windows it
+   * is hidden and takes no space (scaffold.md: "A navigation rail and
+   * companion rail occupy the leading and trailing sides of a large
+   * window"). Empty (default): always shown.
+   */
+  @property({reflect: true, attribute: 'min-window-class'})
+  minWindowClass: WindowSizeClass | '' = '';
 
   /** The swipe-to-dismiss offset (px toward the start edge) while dragging. */
   @state() private dragOffset: number | null = null;
@@ -688,6 +738,14 @@ export class NavRailElement extends AriaTablistElement {
         }
       }
     }
+  }
+
+  /**
+   * Links: no destination is current until one is selected (an outline of
+   * the page's headings, or a page that is not one of the destinations).
+   */
+  protected override get requiresSelection(): boolean {
+    return !hasLinkItems(this.tabs);
   }
 
   /**

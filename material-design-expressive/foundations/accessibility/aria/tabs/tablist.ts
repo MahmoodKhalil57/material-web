@@ -178,6 +178,16 @@ export class AriaTablistElement extends baseClass {
     }
   }
 
+  /**
+   * Whether a tab must always be selected (the tabs pattern: one selected
+   * tab while the list has tabs), so the first is selected when none is.
+   * Subclasses whose items can be links (a navigation landmark, where no
+   * destination may be the current one) return false for those.
+   */
+  protected get requiresSelection(): boolean {
+    return true;
+  }
+
   protected onTabChange(previousTab: HTMLElement | null): void {
     this.dispatchEvent(new Event('change', {bubbles: true}));
   }
@@ -237,11 +247,13 @@ export class AriaTablistElement extends baseClass {
         this.handleSlotChange(),
       );
     }
-    const tabToSelect = this.selectedTab ?? this.tabs[0];
+    const tabToSelect =
+      this.selectedTab ?? (this.requiresSelection ? this.tabs[0] : undefined);
     if (tabToSelect) {
       // Sync tab selection state when slotted content changes. If the active
       // tab was removed or none selected, auto-select the first tab. There
-      // should always be a single selected tab while the tablist has children.
+      // should always be a single selected tab while the tablist has children
+      // (not in a navigation of links: see requiresSelection).
       this.updateSelectedTab(tabToSelect);
     }
   }

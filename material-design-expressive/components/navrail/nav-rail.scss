@@ -5,6 +5,7 @@
 
 // go/keep-sorted start by_regex='(.+) prefix_order=sass:
 @use 'nav-rail-tokens';
+@use '../shared/scrollbar';
 // go/keep-sorted end
 
 @layer md.sys, md.comp.ripple, md.comp.focus-ring;
@@ -531,5 +532,13 @@
     .nav-rail-scrim {
       transition: none;
     }
+  }
+
+  // A sticky rail in scrolling content is as tall as the visible region:
+  // destinations that don't fit scroll inside it.
+  :host([sticky]) .nav-rail-items {
+    min-block-size: 0;
+    overflow-y: auto;
+    @include scrollbar.scroller($gutter: false);
   }
 }
