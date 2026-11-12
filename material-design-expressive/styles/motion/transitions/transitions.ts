@@ -29,6 +29,7 @@ import {
   type ScrollStep,
   stepScroll,
 } from '../../../foundations/interaction/gestures/scroll-behavior.js';
+import {isReducedMotion} from '../motion.js';
 
 /** Changes the DOM from the old state to the new one. */
 export type TransitionUpdate = () => void | Promise<void>;
@@ -36,8 +37,9 @@ export type TransitionUpdate = () => void | Promise<void>;
 /** Options shared by every transition. */
 export interface TransitionOptions {
   /**
-   * Use reduced motion (a quick fade). Defaults to the
-   * `prefers-reduced-motion: reduce` media query.
+   * Use reduced motion (a quick fade). Defaults to reduced motion for the
+   * animated element: the `prefers-reduced-motion: reduce` media query, or
+   * an ancestor with the `md-motion-reduced` class.
    */
   reducedMotion?: boolean;
   /**
@@ -253,8 +255,10 @@ function isRtl(element: Element): boolean {
   return getComputedStyle(element).direction === 'rtl';
 }
 
-function isReduced(options: {reducedMotion?: boolean}): boolean {
-  return options.reducedMotion ?? prefersReducedMotion();
+/** The option, else reduced motion for `element` (the platform setting or
+    an ancestor with .md-motion-reduced). */
+function isReduced(options: {reducedMotion?: boolean}, element: Element): boolean {
+  return options.reducedMotion ?? isReducedMotion(element);
 }
 
 /**
@@ -508,7 +512,7 @@ async function scopedTransition(
   choreograph: (scope: Element) => Choreography,
 ): Promise<void> {
   const scope = options.scope ?? document.documentElement;
-  const reduced = isReduced(options);
+  const reduced = isReduced(options, scope);
   const timing = transitionTiming(
     reduced ? 'reduced' : timingName,
     scope,
@@ -670,7 +674,7 @@ export async function containerTransform(
   options: ContainerTransformOptions = {},
 ): Promise<void> {
   const update = options.update ?? (() => {});
-  const reduced = isReduced(options);
+  const reduced = isReduced(options, from);
   const timing = transitionTiming(
     reduced ? 'reduced' : 'container-transform',
     from,
@@ -1136,7 +1140,7 @@ export async function coplanar(
     coplanarOverflow.set(element, element.style.overflow);
   }
   const block = options.axis === 'block';
-  const reduced = isReduced(options);
+  const reduced = isReduced(options, element);
   const timing = transitionTiming(
     reduced ? 'reduced' : open ? 'enter' : 'exit',
     element,

@@ -23,6 +23,7 @@ import {
   SEARCH_VIEW_CLASSES,
   searchViewClasses,
 } from './search.js';
+import {isReducedMotion} from '../../styles/motion/motion.js';
 
 import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.css' with {type: 'css'}; // github-only
 // import focusRingStyles from '../../foundations/interaction/states/focus/focus-ring.cssresult.js'; // google3-only
@@ -397,10 +398,7 @@ export class SearchViewElement extends LitElement {
   }
 
   private shouldAnimate() {
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    return !this.quick && !prefersReducedMotion;
+    return !this.quick && !isReducedMotion(this);
   }
 
   /**

@@ -407,5 +407,17 @@ describe('DisclosureController', () => {
       expect(motion.easing).toBe('linear');
       expect(motion.reduced).toBeTrue();
     });
+
+    it('has no duration under .md-motion-reduced on the page', async () => {
+      const {region} = await setup();
+      region!.style.setProperty('--md-sys-motion-spring-default-spatial-duration', '300ms');
+      document.documentElement.classList.add('md-motion-reduced');
+      try {
+        expect(readMotion(region!).duration).toBe(0);
+      } finally {
+        document.documentElement.classList.remove('md-motion-reduced');
+      }
+      expect(readMotion(region!).duration).toBe(300);
+    });
   });
 });

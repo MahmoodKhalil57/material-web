@@ -196,6 +196,16 @@ describe('predictive back', () => {
       motion.cancel();
       expect(el.getAnimations().length).toBe(0);
     });
+
+    it('does not play under .md-motion-reduced', () => {
+      const el = box(400, 300);
+      document.documentElement.classList.add('md-motion-reduced');
+      try {
+        expect(playPredictiveBack(el, {kind: 'bottom-sheet'})).toBeNull();
+      } finally {
+        document.documentElement.classList.remove('md-motion-reduced');
+      }
+    });
   });
 
   describe('<md-gb-bottom-sheet>', () => {

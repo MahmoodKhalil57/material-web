@@ -16,6 +16,7 @@ import {
 import {getFormValue} from '../../internal/behaviors/form-associated.js';
 import {TextFieldValidator} from '../../internal/behaviors/validators/text-field-validator.js';
 import {type Validator} from '../../internal/behaviors/validators/validator.js';
+import {isReducedMotion} from '../../styles/motion/motion.js';
 import {SelectBase} from './select-base.js';
 import {type SelectOptionElement} from './select-option-element.js';
 import {
@@ -282,7 +283,7 @@ export class AutocompleteElement extends SelectBase {
     const listbox = this.listbox;
     const animate =
       !!listbox?.matches(':popover-open') &&
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      !isReducedMotion(this);
     const before = new Map<HTMLElement, number>();
     if (animate) {
       for (const option of this.visibleOptions) {

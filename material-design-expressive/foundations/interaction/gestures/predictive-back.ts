@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {isReducedMotion} from '../../../styles/motion/motion.js';
+
 /**
  * Predictive back for modal surfaces (bottom and side sheets, the modal
  * navigation rail and the search view), per the M3 gestures page
@@ -359,7 +361,7 @@ export function playPredictiveBack(
   surface: HTMLElement,
   options: PredictiveBackOptions,
 ): PredictiveBackAnimation | null {
-  if (prefersReducedMotion() || typeof surface.animate !== 'function') {
+  if (isReducedMotion(surface) || typeof surface.animate !== 'function') {
     return null;
   }
   const transform = predictiveBackTransform(surface, options);

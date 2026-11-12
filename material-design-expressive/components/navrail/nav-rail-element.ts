@@ -29,6 +29,7 @@ import {
   type NavRailItemLayout,
 } from './nav-rail.js';
 import {NavRailItemElement} from './nav-rail-item-element.js';
+import {isReducedMotion} from '../../styles/motion/motion.js';
 
 const HEADER_TOGGLE_SELECTOR = [
   'md-gb-icon-button',
@@ -751,7 +752,7 @@ export class NavRailElement extends AriaTablistElement {
     const rail = this.railElement;
     const list = this.shadowRoot?.querySelector<HTMLElement>('.nav-rail-items');
     if (!rail || !list) return;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = isReducedMotion(this);
     const style = getComputedStyle(rail);
     const spatial: KeyframeAnimationOptions = {
       duration: parseFloat(style.getPropertyValue('--motion-duration')) || 420,

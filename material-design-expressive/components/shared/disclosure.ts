@@ -5,6 +5,7 @@
  */
 
 import {type ReactiveController, type ReactiveControllerHost} from 'lit';
+import {isReducedMotion} from '../../styles/motion/motion.js';
 
 /**
  * Shared expand/collapse (disclosure) behavior: list item expand, FAB menu
@@ -86,7 +87,7 @@ export function parseTime(value: string): number {
  * @param spring The spring token name. Default `default-spatial`.
  */
 export function readMotion(element: Element, spring = 'default-spatial'): MotionTiming {
-  const reduced = prefersReducedMotion();
+  const reduced = isReducedMotion(element);
   const style = getComputedStyle(element);
   const duration = parseTime(style.getPropertyValue(`--md-sys-motion-spring-${spring}-duration`));
   const easing = style.getPropertyValue(`--md-sys-motion-spring-${spring}`).trim();
