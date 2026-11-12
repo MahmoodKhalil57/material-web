@@ -9,6 +9,7 @@ import {
   type CSSResultOrNative,
   html,
   LitElement,
+  nothing,
   type PropertyValues,
 } from 'lit';
 import {property, query, state} from 'lit/decorators.js';
@@ -138,6 +139,14 @@ export class AppScaffoldElement extends LitElement {
    */
   @property({attribute: 'side-sheet-navigation', reflect: true})
   sideSheetNavigation: SideSheetNavigation = 'keep';
+
+  /**
+   * The width (px) of the companion rail region; 0 (default) sizes it to
+   * its content. A fixed width keeps the content beside it at the same
+   * width from page to page, whatever the rail holds (an outline of
+   * longer or shorter headings).
+   */
+  @property({type: Number, attribute: 'companion-width'}) companionWidth = 0;
 
   /** Whether an app-managed side sheet is open. */
   @property({type: Boolean, attribute: 'side-sheet-open', reflect: true})
@@ -368,6 +377,7 @@ export class AppScaffoldElement extends LitElement {
         <div
           class="app-scaffold-companion"
           part="companion-rail"
+          style=${this.companionWidth > 0 ? `inline-size: ${this.companionWidth}px` : nothing}
           ?hidden=${!companion}>
           <slot name="companion-rail"></slot>
         </div>

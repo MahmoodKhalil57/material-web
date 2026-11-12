@@ -21,7 +21,7 @@ source cites (`// spec-labels:`).
 | Types and interfaces | 330 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2226 of 2226 (100%) |
+| JSDoc coverage | 2227 of 2227 (100%) |
 
 ## Contents
 
@@ -3919,6 +3919,7 @@ A Material Design app scaffold (bars, rails, FAB, snackbar).
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `autoExpandRail` | `auto-expand-rail` (reflects) | `boolean` | `false` | Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes. |
+| `companionWidth` | `companion-width` | `number` | `0` | The width (px) of the companion rail region; 0 (default) sizes it to its content. A fixed width keeps the content beside it at the same width from page to page, whatever the rail holds (an outline of longer or shorter headings). |
 | `fullscreen` | `fullscreen` (reflects) | `boolean` | `false` | Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content. |
 | `navigation` | `navigation` (reflects) | `"none" \| "auto" \| "bar" \| "rail"` | `'auto'` | Which navigation component to show. |
 | `sideSheetNavigation` | `side-sheet-navigation` (reflects) | `"hide" \| "keep" \| "collapse"` | `'keep'` | What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. |

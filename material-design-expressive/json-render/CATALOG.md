@@ -11,7 +11,7 @@ rules below.
 | Component | Tag | Props | Slots | Events | M3 spec |
 | --- | --- | --- | --- | --- | --- |
 | `AppBar` | `md-gb-app-bar` | 8 | default, image, leading, overflow, search, subtitle, tabs, trailing | overflowchange, scrollstatechange | [app-bars](https://m3.material.io/components/app-bars) |
-| `AppScaffold` | `md-gb-app-scaffold` | 7 | default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar | navigation-change, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
+| `AppScaffold` | `md-gb-app-scaffold` | 8 | default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar | navigation-change, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
 | `AriaTabpanel` | `md-aria-tabpanel` | 3 | default |   | none |
 | `Autocomplete` | `md-gb-autocomplete` | 16 | default, leading-icon, trailing-icon | change, closed, closing, input, invalid, opened, opening | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) |
 | `Badge` | `md-gb-badge` | 6 | default |   | [badges](https://m3.material.io/components/badges) |

@@ -27301,6 +27301,15 @@
        "description": "Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes."
       },
       {
+       "name": "companion-width",
+       "type": {
+        "text": "number"
+       },
+       "fieldName": "companionWidth",
+       "default": "0",
+       "description": "The width (px) of the companion rail region; 0 (default) sizes it to its content. A fixed width keeps the content beside it at the same width from page to page, whatever the rail holds (an outline of longer or shorter headings)."
+      },
+      {
        "name": "fullscreen",
        "type": {
         "text": "boolean"
@@ -27349,6 +27358,17 @@
        "description": "Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes.",
        "attribute": "auto-expand-rail",
        "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "companionWidth",
+       "type": {
+        "text": "number"
+       },
+       "privacy": "public",
+       "default": "0",
+       "description": "The width (px) of the companion rail region; 0 (default) sizes it to its content. A fixed width keeps the content beside it at the same width from page to page, whatever the rail holds (an outline of longer or shorter headings).",
+       "attribute": "companion-width"
       },
       {
        "kind": "field",

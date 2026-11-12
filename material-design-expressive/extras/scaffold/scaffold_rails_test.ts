@@ -52,6 +52,22 @@ describe('<md-gb-app-scaffold> rail regions', () => {
     expect(companion.height).toBeCloseTo(frame.height, 0);
   });
 
+  it('gives the companion rail region a fixed width with companion-width', async () => {
+    const root = await setup(1300);
+    const scaffold = root.querySelector<AppScaffoldElement>('md-gb-app-scaffold')!;
+    const contentWidth = () => root.querySelector('.content')!.getBoundingClientRect().width;
+    const region = () => scaffold.shadowRoot!.querySelector('[part="companion-rail"]')!.getBoundingClientRect().width;
+    expect(region()).withContext('sized by its content').toBeCloseTo(96, 0);
+    scaffold.companionWidth = 240;
+    await env.waitForStability();
+    expect(region()).toBeCloseTo(240, 0);
+    const width = contentWidth();
+    // Whatever the rail holds, the content keeps its width.
+    (root.querySelector('.companion') as HTMLElement).style.width = '160px';
+    await env.waitForStability();
+    expect(contentWidth()).toBeCloseTo(width, 0);
+  });
+
   it('shows the companion rail on large and extra-large windows only', async () => {
     const root = await setup(1000);
     expect(
