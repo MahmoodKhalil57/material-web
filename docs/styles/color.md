@@ -26,7 +26,7 @@ more contrast.
 
 ![Dark palette derived from baseline colors](/3.0/images/color-scheme-dark.webp "From five key colors, roles are automatically assigned that map to dark theme components")
 
-In labs/gb:
+In Material Web 3.0:
 
 *   `md-color-tokens.css` is the static baseline: every role as a
     `--md-sys-color-<role>` custom property, with light and dark values.
@@ -134,7 +134,7 @@ content: a wallpaper, a profile color, an album cover. You can also mix
 both: a dynamic scheme for most of the UI and static colors for brand and
 semantic meaning.
 
-In labs/gb that is a choice of which stylesheet or function you load:
+In Material Web 3.0 that is a choice of which stylesheet or function you load:
 
 *   Static: import `md-color-tokens.css` (and `md-color-tokens-contrast.css`
     if you want contrast levels). No JavaScript.
@@ -148,7 +148,7 @@ and a good starting point for prototypes. **Custom brand** keeps the same
 roles but replaces the key colors with your brand colors, usually exported from
 the Material Theme Builder or a design tool.
 
-Baseline in labs/gb is the default stylesheet. It is also part of `m3Styles`,
+Baseline in Material Web 3.0 is the default stylesheet. It is also part of `m3Styles`,
 which `adoptStyles()` loads.
 
 {% demo "A sample colored with the baseline tokens" %}
@@ -226,7 +226,7 @@ The seed (or the core primary) is the source, other core colors become
 `palettes`, extended colors become harmonized or exact `customColors`, and a
 `variant` or `contrast` field in the file is used if present. The generated
 schemes and palettes in the export are ignored, so the roles match the rest of
-labs/gb. A second argument overrides any option.
+the library. A second argument overrides any option.
 
 ## Dynamic color
 
@@ -292,7 +292,7 @@ To get the theme without applying it, use `themeFromSource()` or
     not define these variants or any version of their rules; they come from
     Material Color Utilities, which has 2025 rules only for tonal spot,
     neutral, vibrant and expressive. The others use the original rules, so
-    labs/gb does too. `theme.specVersion` reports what was used.
+    the library does too. `theme.specVersion` reports what was used.
 *   Contrast: `standard`, `medium`, `high`, or a number from -1 to 1.
     `applyTheme()` accepts `contrast: 'auto'`, which uses high contrast when
     the user prefers more contrast.
@@ -301,7 +301,7 @@ To get the theme without applying it, use `themeFromSource()` or
     An element gets inline custom properties, so its subtree has its own
     scheme. `clearTheme()` removes it.
 *   Android's system-wide wallpaper source and the Material Theme Builder
-    preview are not part of labs/gb; the library only generates the scheme.
+    preview are not part of the library; the library only generates the scheme.
 
 When using content-based color, keep semantic colors (error, success) stable
 and make sure the surrounding UI stays readable if the image is very
@@ -310,10 +310,10 @@ pairs.
 
 ## Advanced customization
 
-The spec lists three kinds of customization. This table shows what labs/gb
+The spec lists three kinds of customization. This table shows what Material Web 3.0
 covers.
 
-Spec topic | In labs/gb
+Spec topic | In Material Web 3.0
 ---------- | ----------
 Combine multiple color schemes | Yes: call `applyTheme(element, ...)` on different elements, each with its own source, variant and contrast.
 Map or remap colors on UI elements | Yes: components read roles, so reassign a role in CSS (`--md-sys-color-surface: var(--md-sys-color-surface-container);`) on a subtree.

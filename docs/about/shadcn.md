@@ -155,9 +155,9 @@ export default defineConfig({
     import the file with
     `next/dynamic(() => import('...'), {ssr: false})` or render it after mount,
     unless you set up [Lit SSR](https://lit.dev/docs/ssr/overview/).
-*   **Labs.** The elements come from `@material/web/`. The registry
+*   **Package.** The elements come from `@material/web/`. The registry
     keeps `@material/web` as the dependency, and the path needs a version that
-    ships `labs/gb`.
+    ships Material Web 3.0.
 *   **Typography, motion and icons** are not bridged. Load the Material
     Symbols font as in the [quick start](/3.0/about/quick-start/).
 *   **Local testing.** When this site runs from the dev server the registry

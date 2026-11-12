@@ -95,7 +95,7 @@ scheme and reduced motion apply without extra code.
 
 A gesture has to keep its momentum: a fling that lets go at 2000px/s must not
 restart from rest, and a settle that is aimed at a new target half way must
-not jump. A CSS transition cannot do either, so `labs/gb` also has the same
+not jump. A CSS transition cannot do either, so the library also has the same
 springs as physics, in `styles/motion/spring.ts`. `readSpring()`
 returns the damping ratio and stiffness of a spring token (Expressive or
 Standard, whichever applies to the element), and `Spring` solves it in closed
@@ -239,7 +239,7 @@ approximation, so it is equal to `standard`.
 
 A transition is a short animation that connects elements or full-screen views
 and shows how they relate. The spec defines six patterns and notes that they
-still use the easing and duration tokens above, not springs. `labs/gb`
+still use the easing and duration tokens above, not springs. The library
 implements them in `styles/motion/transitions/` with the View Transitions API,
 and falls back to the Web Animations API when the browser lacks it (or when you
 pass `viewTransition: false`).

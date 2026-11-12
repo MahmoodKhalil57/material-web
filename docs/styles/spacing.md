@@ -98,7 +98,7 @@ viewport. The spacing unit does not change with the window.
 ```
 {% enddemo %}
 
-> The adaptive tokens are defined, but no labs/gb component reads them yet:
+> The adaptive tokens are defined, but no Material Web 3.0 component reads them yet:
 > component spacing is the same at every window size today. Use them in your
 > own layouts, or remap a component's own spacing property to one (see below).
 

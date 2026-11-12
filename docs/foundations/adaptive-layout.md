@@ -6,7 +6,7 @@ icon: devices
 description: Pages and components change with the window.
 ---
 
-labs/gb uses the M3 window size classes to pick the navigation, the number
+Material Web 3.0 uses the M3 window size classes to pick the navigation, the number
 of panes and how dialogs open.
 
 ## Window size classes

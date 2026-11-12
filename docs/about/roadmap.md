@@ -7,7 +7,7 @@ description: This roadmap describes current, future, and past goals for Material
 ---
 ## Current
 
-**Version 3.0 (`labs/gb`) is the M3 Expressive implementation of MWC.** It adds
+**Version 3.0 is the M3 Expressive implementation of MWC.** It adds
 Expressive components (such as the button group, split button, FAB menu,
 carousel, loading indicator, and toolbar), dynamic color, the Expressive shape,
 type, and motion systems, WAI-ARIA 1.3 conformance, and Web Platform Baseline
@@ -30,7 +30,7 @@ Version 3.0 builds every component in the list 2.5.0 planned except these:
 
 The badge, bottom sheet, card, date and time pickers, navigation bar, drawer
 and rail, search, segmented button, snackbar, tooltip and top app bar are in
-`labs/gb`. The toolbar replaces the bottom app bar in M3 Expressive.
+version 3.0. The toolbar replaces the bottom app bar in M3 Expressive.
 
 ### Expand Material Design tokens
 

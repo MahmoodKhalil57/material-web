@@ -20,7 +20,7 @@ used here, never spec text.
 
 A unit is **buildable** when the classifier scores it at 0.3 or more
 (it describes something a component can do, not a caption or designer advice).
-**Tested** units are cited from a `*_test.ts` file under `labs/gb` or
+**Tested** units are cited from a `*_test.ts` file under `material-design-expressive/` or
 `scripts/m3` (`spec: <unit id>`). **Excluded** units have a written reason in
 `scripts/m3/exclusions/*.md` (`spec-exclude:`). **Tracked** units are known
 gaps listed in `scripts/m3/CHECKLIST.md` (`spec-gap:`). **Uncovered** units
@@ -128,7 +128,7 @@ default it, it is tracked as a gap instead.
 ## Token audit
 
 `node scripts/m3/audit-gb.mjs --gaps` compares every token declaration in the
-`labs/gb` token files with the M3 token database. **Match** means the value
+library's token files with the M3 token database. **Match** means the value
 equals the spec; **derived** means it is computed from a matching token;
 **drift** differs from the spec; **no spec token** has no counterpart in the
 database; **gaps** are tokens the Compose reference uses that no gb
@@ -214,7 +214,7 @@ Suite files: `aria_gap.ts`, `aria_test.ts`, `axe_gap.ts`, `axe_test.ts`.
 
 ## Baseline
 
-`npm run gb:baseline` maps every CSS feature in the compiled `labs/gb` CSS
+`npm run gb:baseline` maps every CSS feature in the compiled library CSS
 to its web-features Baseline status. A feature that is not widely available
 must sit inside a matching `@supports` guard or be listed with a reason in
 `scripts/gb-baseline-allow.json`; anything else fails the run.

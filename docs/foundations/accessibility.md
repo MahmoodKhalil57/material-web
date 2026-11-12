@@ -3,7 +3,7 @@ title: Accessibility
 section: foundations
 order: 3
 icon: accessibility_new
-description: Every labs/gb component works with a keyboard, a screen reader and reduced motion.
+description: Every Material Web 3.0 component works with a keyboard, a screen reader and reduced motion.
 ---
 
 The rules below are the ones the components follow and the tests check.
