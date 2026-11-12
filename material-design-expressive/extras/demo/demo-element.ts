@@ -103,7 +103,12 @@ export class DemoElement extends LitElement {
   /** The accessible name of the demo (what it shows). */
   @property() label = '';
 
-  /** The block size the preview reserves (px), so the page doesn't move as it loads. */
+  /**
+   * The block size the preview reserves (px), so the page doesn't move as it
+   * loads. A `srcdoc` frame starts at this height (not the browser's default
+   * 150px), until its document posts its own: give its exact height and the
+   * page doesn't move at all.
+   */
   @property({type: Number, attribute: 'preview-height'}) previewHeight = 0;
 
   /** Whether long code shows in full. */
@@ -210,6 +215,7 @@ export class DemoElement extends LitElement {
             ? html`<iframe
                 class="frame"
                 title="${label} preview"
+                style=${this.previewHeight ? `block-size: ${this.previewHeight}px` : nothing}
                 loading="lazy"
                 sandbox=${this.sandbox}
                 .srcdoc=${this.srcdoc}></iframe>`

@@ -26404,7 +26404,7 @@
        },
        "fieldName": "previewHeight",
        "default": "0",
-       "description": "The block size the preview reserves (px), so the page doesn't move as it loads."
+       "description": "The block size the preview reserves (px), so the page doesn't move as it loads. A `srcdoc` frame starts at this height (not the browser's default 150px), until its document posts its own: give its exact height and the page doesn't move at all."
       },
       {
        "name": "sandbox",
@@ -26457,7 +26457,7 @@
        },
        "privacy": "public",
        "default": "0",
-       "description": "The block size the preview reserves (px), so the page doesn't move as it loads.",
+       "description": "The block size the preview reserves (px), so the page doesn't move as it loads. A `srcdoc` frame starts at this height (not the browser's default 150px), until its document posts its own: give its exact height and the page doesn't move at all.",
        "attribute": "preview-height"
       },
       {

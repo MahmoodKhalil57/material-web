@@ -133,6 +133,18 @@ describe('md-gb-demo', () => {
     expect(frame.style.blockSize).toBe('222px');
   });
 
+  it('starts a srcdoc frame at preview-height, so a reserved height that is right moves nothing', async () => {
+    demo.replaceChildren();
+    demo.previewHeight = 222;
+    demo.srcdoc = `<script>parent.postMessage({type: 'md-gb-demo-height', height: 222}, '*');</script>`;
+    await settle();
+    const frame = demo.shadowRoot!.querySelector('iframe')!;
+    expect(frame.getBoundingClientRect().height).withContext('before the frame loads').toBe(222);
+    await new Promise((resolve) => frame.addEventListener('load', resolve, {once: true}));
+    await new Promise((r) => setTimeout(r, 50));
+    expect(frame.getBoundingClientRect().height).withContext('after it posts its height').toBe(222);
+  });
+
   it('sets the srcdoc frame sandbox from the sandbox property', async () => {
     demo.replaceChildren();
     demo.sandbox = 'allow-scripts allow-same-origin';
