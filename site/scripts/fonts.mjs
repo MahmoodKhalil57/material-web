@@ -80,7 +80,7 @@ async function markupFiles() {
 async function codeFiles() {
   return [
     ...(await walk('site/client', (n) => n.endsWith('.ts'))),
-    ...(await walk('site/spec', (n) => n.endsWith('.cjs'))),
+    ...(await walk('site/specs', (n) => n.endsWith('.cjs'))),
     ...(await walk('site/eleventy', (n) => n.endsWith('.cjs'))),
     ...(await walk('material-design-expressive/components', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
     ...(await walk('material-design-expressive/extras', (n) => /\.ts$/.test(n) && !/(_test|\.d|cssresult)\.ts$/.test(n))),
@@ -101,7 +101,7 @@ async function collect() {
   }
   // The shell spec's icons: the sections ({icon: 'info'}) and icon(key,
   // 'palette') calls.
-  const shell = await readFile('site/spec/shell.cjs', 'utf8');
+  const shell = await readFile('site/specs/shell.cjs', 'utf8');
   for (const m of shell.matchAll(/\bicon:\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);
   for (const m of shell.matchAll(/\bicon\([^,()]+,\s*'([a-z][a-z0-9_]*)'\)/g)) certain.add(m[1]);
   for (const m of shell.matchAll(/\$(?:then|else):\s*'([a-z][a-z0-9_]*)'/g)) certain.add(m[1]);

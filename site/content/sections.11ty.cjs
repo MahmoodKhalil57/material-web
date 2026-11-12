@@ -7,7 +7,7 @@
 /**
  * The index pages of the /3.0/ sections: /3.0/about/, /3.0/foundations/,
  * /3.0/styles/ and /3.0/components/. Their content is a spec
- * (spec/sections.cjs), rendered as JSON for the layout (contentFormat
+ * (specs/sections.cjs), rendered as JSON for the layout (contentFormat
  * `spec`); the text comes from docs/<section>/README.md.
  *
  * The pages carry the tag `gbsection` and `gbIndex: true`: the shell leaves
@@ -16,7 +16,7 @@
  */
 
 const {SECTIONS} = require('../eleventy/site.cjs');
-const {sectionSpec} = require('../spec/sections.cjs');
+const {sectionSpec} = require('../specs/sections.cjs');
 
 class GbSections {
   data() {

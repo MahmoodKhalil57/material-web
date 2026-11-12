@@ -23,7 +23,7 @@
  */
 
 const {parseFragment, serialize} = require('parse5');
-const {frameDoc} = require('../eleventy/demo.cjs');
+const {frameDoc} = require('./demo.cjs');
 
 /**
  * parse5 nodes as the library's HtmlNodes, and each HtmlNode's parse5 node

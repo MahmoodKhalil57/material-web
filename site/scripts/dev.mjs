@@ -265,7 +265,7 @@ function watchSources() {
     join(CATALOG, 'content', 'index.html'),
     // The specs, shortcodes and the Eleventy config (each build runs a fresh
     // Eleventy process, so a rebuild picks up their changes).
-    join(CATALOG, 'spec'),
+    join(CATALOG, 'specs'),
     join(CATALOG, 'eleventy'),
     join(CATALOG, 'eleventy.config.cjs'),
     // Site data and the generated-file templates (search index, llms.txt,

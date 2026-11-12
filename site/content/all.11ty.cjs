@@ -26,7 +26,7 @@
 
 const cheerio = require('cheerio');
 const {SECTIONS, SITE, absolute, sorted} = require('../eleventy/site.cjs');
-const {library} = require('../spec/render.cjs');
+const {library} = require('../eleventy/render.cjs');
 
 const esc = (s) =>
   String(s ?? '')

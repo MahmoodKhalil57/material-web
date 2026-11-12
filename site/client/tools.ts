@@ -6,7 +6,7 @@
 
 /**
  * The spec shell's tools as action handlers over its state store
- * (spec/shell.cjs): Download & copy, Customize theme,
+ * (specs/shell.cjs): Download & copy, Customize theme,
  * Send feedback and Install. The UI is the spec; this file only acts: it
  * copies, downloads, installs and opens the feedback issue, and reports
  * back through state (`/snack`, `/install`, `/feedback`). The theme the

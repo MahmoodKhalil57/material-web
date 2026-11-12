@@ -162,7 +162,7 @@ function cardFiles(files) {
 
 /** `@material/web/x` in a CSS import -> the library server. */
 function libUrl(url, lib) {
-  return lib ? url.replace(/^@material\/web\/labs\/gb\//, lib + '') : url;
+  return lib ? url.replace(/^@material\/web\//, lib) : url;
 }
 
 /**

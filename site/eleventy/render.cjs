@@ -27,7 +27,7 @@
 const {readFileSync} = require('node:fs');
 const {join} = require('node:path');
 const {pathToFileURL} = require('node:url');
-const {shellSpec} = require('./shell.cjs');
+const {shellSpec} = require('../specs/shell.cjs');
 const {contentSpec} = require('./content.cjs');
 // The site's public URL (MWC_SITE_URL), which the copy actions put in their text.
 const gbSite = require('../content/_data/gbSite.cjs');
@@ -116,10 +116,22 @@ function gbSpecShell(eleventyConfig) {
     // The content as a spec: the page's own (a site page, content format
     // `spec`, whose template renders its spec as JSON), or its HTML
     // converted (content.cjs).
-    const contentSpecOf =
-      contentFormat === 'spec'
-        ? JSON.parse(content)
-        : contentSpec(content ?? '', {htmlToSpec, lib: process.env.MWC_GB_LIB ?? '', stats: contentStats}).spec;
+    let contentSpecOf;
+    if (contentFormat === 'spec') {
+      contentSpecOf = JSON.parse(content);
+    } else {
+      const converted = contentSpec(content ?? '', {htmlToSpec, lib: process.env.MWC_GB_LIB ?? '', stats: contentStats});
+      // Strict: the content is only what the catalog can express. Nothing
+      // dropped, unwrapped or in a stray slot (a demo's example that needs
+      // more is a framed document, which isn't an issue).
+      if (converted.issues.length) {
+        const counts = new Map();
+        for (const i of converted.issues) counts.set(`${i.kind} <${i.tag}>`, (counts.get(`${i.kind} <${i.tag}>`) ?? 0) + 1);
+        const list = [...counts].map(([what, n]) => `  ${what}${n > 1 ? ` (${n})` : ''}`).join('\n');
+        throw new Error(`gbshell (${where}): the content has HTML the catalog can't express:\n${list}`);
+      }
+      contentSpecOf = converted.spec;
+    }
     check(checkSpec, contentSpecOf, `gbshell (${where}): the content spec`);
     const contentHtml = renderSpecToString(contentSpecOf, {onWarning: failOn('content')});
 

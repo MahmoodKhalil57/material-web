@@ -6,7 +6,7 @@
 
 /**
  * The /3.0/ site in the browser (layout spec.html): hydrates the page's
- * shell spec (spec/shell.cjs, embedded by the build) with the library's
+ * shell spec (specs/shell.cjs, embedded by the build) with the library's
  * renderer, keeping the page's content (the shell's static `gb-content`
  * island) as it is, with the reader's preferences as its state.
  *
@@ -71,7 +71,7 @@ import {toolHandlers} from './tools.js';
 import './webmcp.js';
 
 const MODES: ColorMode[] = ['auto', 'light', 'dark'];
-/** The ids of the shell's embedded spec and of its content island (spec/render.cjs). */
+/** The ids of the shell's embedded spec and of its content island (eleventy/render.cjs). */
 const SPEC_ID = 'gb-shell-spec';
 const CONTENT_ID = 'gb-content';
 /** Whether the rail is expanded: the site's own preference. */
