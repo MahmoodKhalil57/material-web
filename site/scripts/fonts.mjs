@@ -26,7 +26,7 @@
  * Output: site/content/fonts/gb/ (content-hash file names, served at
  * /fonts/gb/ with an immutable one-year Cache-Control, cache first in the
  * service worker), fonts.css with the @font-face rules, and
- * site/content/_data/gbFonts.json (stylesheet, preload list, icon list).
+ * site/content/_data/fonts.json (stylesheet, preload list, icon list).
  */
 
 import {createHash} from 'node:crypto';
@@ -34,7 +34,7 @@ import {mkdir, readFile, readdir, rm, stat, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
 const OUT = join('site', 'content', 'fonts', 'gb');
-const DATA = join('site', 'content', '_data', 'gbFonts.json');
+const DATA = join('site', 'content', '_data', 'fonts.json');
 // A current Chrome user agent, so Google Fonts answers with woff2.
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
@@ -171,7 +171,7 @@ if (process.argv.includes('--check')) {
   if (missing.length) {
     console.error(
       `gb-fonts: ${missing.length} icon(s) used but not in the subset font: ${missing.join(', ')}.\n` +
-        'Run `node site/scripts/fonts.mjs` and commit site/content/fonts/gb and site/content/_data/gbFonts.json.',
+        'Run `node site/scripts/fonts.mjs` and commit site/content/fonts/gb and site/content/_data/fonts.json.',
     );
     process.exit(1);
   }

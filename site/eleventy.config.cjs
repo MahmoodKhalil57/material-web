@@ -6,7 +6,7 @@
 
 const markdownIt = require('markdown-it');
 const gbShortcodes = require('./eleventy/shortcodes.cjs');
-const {gbSite} = require('./eleventy/site.cjs');
+const {sitePlugin} = require('./eleventy/site.cjs');
 const permalinks = require('./eleventy/permalinks.cjs');
 
 module.exports = function (eleventyConfig) {
@@ -37,7 +37,7 @@ module.exports = function (eleventyConfig) {
   require('./eleventy/render.cjs')(eleventyConfig);
   require('./eleventy/shadcn-shortcodes.cjs')(eleventyConfig);
   // /3.0/ site metadata: gbAll collection, gbhead shortcode.
-  gbSite(eleventyConfig);
+  sitePlugin(eleventyConfig);
 
   // Markdown with HTML (the demos), and heading ids with permalinks.
   const md = markdownIt({html: true, breaks: false, linkify: true});

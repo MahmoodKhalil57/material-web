@@ -5,12 +5,13 @@
  */
 
 // Walks the /3.0/ docs the way a reader pages through them: opens the home
-// page in headless Chromium and clicks the top "Next" link until a page has
-// none. Per page it reports:
+// page in headless Chromium and clicks the "Next" link at the end of each
+// page until a page has none. Per page it reports:
 //
 // - the time from the click to the page being ready to click again;
-// - where the Next link sat (it should never move: paging through needs no
-//   mouse movement);
+// - where the Next link sat once scrolled into view: its end lines up at
+//   the end of the content on every page (the pager follows the content, so
+//   only its horizontal position is the same);
 // - the Core Web Vitals of the visit (site/scripts/vitals.mjs): LCP, CLS
 //   and INP, the walker's click on Next being the interaction.
 //
@@ -52,7 +53,24 @@ const {values: args} = parseArgs({
 
 const GOOD = {lcp: 2500, cls: 0.1, inp: 200};
 // The spec shell's pager (specs/shell.cjs).
-const NEXT = 'nav[aria-label="Previous and next pages"] md-gb-button[rel="next"]';
+// Its Next link: the md-gb-button's own <a> (rel and href are the button's
+// properties once the shell hydrates, so not attributes to select on).
+const nextLink = (page) => page.locator('nav[aria-label="Previous and next pages"]').getByRole('link', {name: /^Next:/});
+/**
+ * A locator's box once it stays put for 100 ms (up to 3 s): late layout
+ * (a demo frame reaching its height) can still move it after the page
+ * loads. The shifts themselves count in the page's CLS.
+ */
+async function settledBox(locator) {
+  let last = await locator.boundingBox();
+  for (let i = 0; i < 30; i++) {
+    await new Promise((r) => setTimeout(r, 100));
+    const box = await locator.boundingBox();
+    if (box && last && Math.abs(box.x - last.x) < 1 && Math.abs(box.y - last.y) < 1) return box;
+    last = box;
+  }
+  return last;
+}
 const LAYOUT_CSS = `
   #gb-content { visibility: hidden !important; }
   *, *::before, *::after { color: transparent !important; text-shadow: none !important; }
@@ -93,8 +111,10 @@ for (;;) {
   // Arrived once the view transition into the page has finished: while it
   // runs, the transition's pseudo-elements take the clicks.
   await page.waitForFunction(() => !document.documentElement.matches(':active-view-transition'), null, {polling: 16});
-  const next = page.locator(NEXT);
-  const box = (await next.count()) ? await next.boundingBox() : null;
+  const next = nextLink(page);
+  // The pager is at the end of the content: scroll it into view first.
+  if (await next.count()) await next.scrollIntoViewIfNeeded();
+  const box = (await next.count()) ? await settledBox(next) : null;
   stops.push({url, ms: Math.round(performance.now() - t), box});
   // The pointer rests on the link's arrow, as a reader's would.
   const pointer = box ? {x: box.x + box.width - 12, y: box.y + box.height / 2} : null;
@@ -138,8 +158,9 @@ const vitals = new Map(
     .map((v) => [v.url, v]),
 );
 
-// Where the Next link's end (its arrow) sits: the same on every page.
-const endOf = (box) => `${Math.round(box.x + box.width)},${Math.round(box.y)}`;
+// Where the Next link's end (its arrow) sits across the page: the same on
+// every page (its height follows the content).
+const endOf = (box) => `x ${Math.round(box.x + box.width)}`;
 const ends = stops.filter((s) => s.box).map((s) => endOf(s.box));
 const usual = [...ends.reduce((m, e) => m.set(e, (m.get(e) ?? 0) + 1), new Map())].sort((a, b) => b[1] - a[1])[0]?.[0];
 

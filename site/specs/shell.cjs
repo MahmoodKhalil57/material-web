@@ -306,7 +306,9 @@ function shellSpec(page, pages, content) {
 
   add('root', {
     type: 'AppScaffold',
-    props: {fullscreen: true, navigation: 'auto', autoExpandRail: true},
+    // A fixed companion rail (the outline): the content keeps one width from
+    // page to page, whatever the headings.
+    props: {fullscreen: true, navigation: 'auto', autoExpandRail: true, companionWidth: 280},
     children: ['main', ...overlays],
     slots,
   });

@@ -37,7 +37,9 @@ const START =
 const RUNS = Number(option('--runs', 1));
 const JSON_OUT = option('--json');
 // The spec shell's pager (site/specs/shell.cjs).
-const NEXT = 'nav[aria-label="Previous and next pages"] md-gb-button[rel="next"]';
+// Its Next link: the md-gb-button's own <a> (rel and href are the button's
+// properties once the shell hydrates, so not attributes to select on).
+const nextLink = (page) => page.locator('nav[aria-label="Previous and next pages"]').getByRole('link', {name: /^Next:/});
 const MAX_STEPS = 500;
 
 // Records when the incoming page's view transition finishes. Runs before the
@@ -57,7 +59,7 @@ async function walk(page, label) {
   const firstLoad = performance.now() - t0;
 
   for (let i = 0; i < MAX_STEPS; i++) {
-    const next = page.locator(NEXT);
+    const next = nextLink(page);
     if ((await next.count()) === 0) break;
     const href = new URL(await next.getAttribute('href'), page.url()).href;
     const from = page.url();

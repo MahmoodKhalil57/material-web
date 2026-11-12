@@ -160,11 +160,17 @@ ${html}
     const tags = new Set(String(html).match(/(?<=<)md-(?:gb|aria)-[a-z0-9-]+/g) ?? []);
     const paths = [...tags].map((t) => modules.get(t)).filter(Boolean);
     if (!paths.length) return '';
+    // The first definition of a tag wins (the library's modules define their
+    // tags unguarded), set before any module runs. Then the modules as static
+    // imports, render-blocking (in the head, the first paint waits for the
+    // content's components: they don't upgrade and grow after it).
     return (
-      '<script type="module">' +
+      '<script>(() => {' +
       'const define = customElements.define.bind(customElements);' +
       'customElements.define = (name, ctor, options) => { if (!customElements.get(name)) define(name, ctor, options); };' +
-      paths.map((p) => `import('${lib}${p}');`).join('') +
+      '})();</script>' +
+      '<script type="module" blocking="render">' +
+      paths.map((p) => `import '${lib}${p}';`).join('') +
       '</script>'
     );
   });

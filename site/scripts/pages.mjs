@@ -166,7 +166,8 @@ for (const file of await walk(OUT)) {
     .replace(/href="\/"/g, `href="${BASE}"`);
   if (file.endsWith('.html')) {
     const libPrefix = `${BASE}lib/`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const entries = [...text.matchAll(new RegExp(`import\\('(${libPrefix}[^']+\\.js)'\\)`, 'g'))].map((m) => m[1]);
+    // The pages' component modules: static imports (`import '…';`) or dynamic ones.
+    const entries = [...text.matchAll(new RegExp(`import ?\\(?'(${libPrefix}[^']+\\.js)'`, 'g'))].map((m) => m[1]);
     const graph = moduleGraph(entries);
     if (graph.length && text.includes('</head>')) {
       const links = graph.map((url) => `<link rel="modulepreload" href="${url}">`).join('');

@@ -6,7 +6,7 @@
  */
 
 /**
- * Writes site/content/_data/gbCompat.json, the Compatibility section of each
+ * Writes site/content/_data/compat.json, the Compatibility section of each
  * /3.0/ component page (the `gbcompat` shortcode): numbers and ids only, no
  * spec text, from the repository's own checks.
  *
@@ -43,7 +43,7 @@ import {parseArgs} from 'node:util';
 const require = createRequire(import.meta.url);
 const {values: args} = parseArgs({options: {lighthouse: {type: 'string'}}});
 
-const OUT = 'site/content/_data/gbCompat.json';
+const OUT = 'site/content/_data/compat.json';
 const DOCS = 'docs/components';
 const LABS = 'material-design-expressive/components';
 // The central axe and ARIA suites, and the table of subjects they render.

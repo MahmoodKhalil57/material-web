@@ -17,10 +17,10 @@
     <meta name="color-scheme" content="light dark" />
     <link href="/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
     {% gbhead title, description, section, page.url %}
-    {%- for href in gbFonts.preload %}
+    {%- for href in fonts.preload %}
     <link rel="preload" href="{{ href }}" as="font" type="font/woff2" crossorigin />
     {%- endfor %}
-    <link rel="stylesheet" href="{{ gbFonts.stylesheet }}" />
+    <link rel="stylesheet" href="{{ fonts.stylesheet }}" />
     {% gbstyles %}
     {#- Before first paint: the saved color mode, reduced motion and theme CSS
         (the library's styles/preferences.ts prePaintScript()). #}
@@ -37,10 +37,15 @@
         }]
       }
     </script>
-    <script type="module" src="/js/spec/shell.js"></script>
+    {#- Render-blocking: the first paint waits for the shell's components, so
+        the page isn't painted before they lay it out (a layout shift). #}
+    <script type="module" src="/js/spec/shell.js" blocking="render"></script>
+    {#- The shell and content, built once: the content's component modules
+        here (render-blocking), the shell in the body. gbIndex: the page has
+        its own h1; contentFormat 'spec': its content is a spec (JSON). #}
+    {% gbshellhead content, title, description, section, collections.gb3, gbIndex, contentFormat %}
   </head>
   <body>
-    {#- gbIndex: the page has its own h1; contentFormat 'spec': its content is a spec (JSON). #}
     {% gbshell content, title, description, section, collections.gb3, gbIndex, contentFormat %}
   </body>
 </html>

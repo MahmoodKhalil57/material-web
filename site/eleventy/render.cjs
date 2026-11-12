@@ -30,7 +30,7 @@ const {pathToFileURL} = require('node:url');
 const {shellSpec} = require('../specs/shell.cjs');
 const {contentSpec} = require('./content.cjs');
 // The site's public URL (MWC_SITE_URL), which the copy actions put in their text.
-const gbSite = require('../content/_data/gbSite.cjs');
+const siteData = require('../content/_data/site.cjs');
 
 const LIBRARY = join(__dirname, '..', '..', 'material-design-expressive');
 const load = (path) => import(pathToFileURL(join(LIBRARY, path)).href);
@@ -98,9 +98,16 @@ function check(checkSpec, spec, what) {
   }
 }
 
+/**
+ * A page's shell, built once and shared by `gbshellhead` (in the head) and
+ * `gbshell` (in the body), by page URL (a paginated template's pages share
+ * their input file).
+ */
+const built = new Map();
+
 function gbSpecShell(eleventyConfig) {
-  eleventyConfig.addAsyncShortcode('gbshell', async function (content, title, description, section, collection, ownTitle, contentFormat) {
-    const where = this.page?.inputPath ?? '';
+  const buildShell = async function (thisPage, content, title, description, section, collection, ownTitle, contentFormat) {
+    const where = thisPage?.inputPath ?? '';
     const pages = (collection ?? []).map((p) => ({
       url: p.url,
       title: p.data.title ?? '',
@@ -135,19 +142,37 @@ function gbSpecShell(eleventyConfig) {
     check(checkSpec, contentSpecOf, `gbshell (${where}): the content spec`);
     const contentHtml = renderSpecToString(contentSpecOf, {onWarning: failOn('content')});
 
-    const page = {url: this.page?.url ?? '', title, description, section, ownTitle: Boolean(ownTitle), siteUrl: gbSite.url};
+    const page = {url: thisPage?.url ?? '', title, description, section, ownTitle: Boolean(ownTitle), siteUrl: siteData.url};
     const spec = shellSpec(page, pages, contentHtml);
     checkBundled(spec, COMPONENTS);
     check(checkSpec, spec, `gbshell (${where}): the shell spec`);
     const html = renderSpecToString(spec, {islands: {[CONTENT_ID]: contentHtml}, onWarning: failOn('shell')});
     if (!html.includes(`id="${CONTENT_ID}"`)) throw new Error(`gbshell (${where}): the shell has no ${CONTENT_ID} element`);
-    return (
-      `<div id="gb-shell">${html}</div>` +
-      embedSpec(spec, SPEC_ID) +
-      // The elements of the converted content, which can differ from the
-      // Markdown's (md-gb-demo-code for code blocks).
-      eleventyConfig.getFilter('gbcomponents')(contentHtml)
-    );
+    return {
+      // The modules of the content's elements (they can differ from the
+      // Markdown's: md-gb-demo-code for code blocks): render-blocking, which
+      // works in the head only.
+      head: eleventyConfig.getFilter('gbcomponents')(contentHtml),
+      // The shell, with its embedded spec.
+      body: `<div id="gb-shell">${html}</div>` + embedSpec(spec, SPEC_ID),
+    };
+  };
+
+  const shellOf = (thisPage, args) => {
+    const key = thisPage?.url ?? '';
+    if (!built.has(key)) built.set(key, buildShell(thisPage, ...args));
+    return built.get(key);
+  };
+
+  // `{% gbshellhead content, title, ... %}` in the head, `{% gbshell content,
+  // title, ... %}` in the body: the same arguments.
+  eleventyConfig.addAsyncShortcode('gbshellhead', async function (...args) {
+    return (await shellOf(this.page, args)).head;
+  });
+  eleventyConfig.addAsyncShortcode('gbshell', async function (...args) {
+    const shell = await shellOf(this.page, args);
+    built.delete(this.page?.url ?? '');
+    return shell.body;
   });
 
   // The content conversion's report: what the catalog couldn't express.

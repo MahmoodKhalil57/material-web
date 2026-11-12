@@ -19,7 +19,7 @@ const names = require('./shadcn.cjs');
 
 const registry = () => names.registryBase();
 
-function gbShadcn(eleventyConfig) {
+function shadcnShortcodes(eleventyConfig) {
   eleventyConfig.addShortcode('gbshadcn', function (...dirs) {
     const known = names.elementDirs();
     for (const dir of dirs) {
@@ -55,4 +55,4 @@ function gbShadcn(eleventyConfig) {
   });
 }
 
-module.exports = gbShadcn;
+module.exports = shadcnShortcodes;

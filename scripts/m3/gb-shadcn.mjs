@@ -10,7 +10,7 @@
  * directory (a React wrapper file per item, made with @lit/react from the
  * element classes and the events read by gb-elements.mjs), the `md-theme`
  * and `md-theme-m3` themes, and the registry.json index. Used by the Eleventy
- * data file site/content/_data/gbShadcn.cjs; run it alone to write the files:
+ * data file site/content/_data/shadcn.cjs; run it alone to write the files:
  *
  *   node scripts/m3/gb-shadcn.mjs <out dir> [registry base URL]
  */

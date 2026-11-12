@@ -131,7 +131,7 @@ class GbAll {
     const components = this.gbcomponents ? this.gbcomponents(body) : '';
     // The library's styles only (m3.css, md-gb-prose), as the spec shell.
     const styles = this.gbstyles ? this.gbstyles() : '';
-    const fonts = data.gbFonts?.stylesheet ? `<link rel="stylesheet" href="${esc(data.gbFonts.stylesheet)}" />` : '';
+    const fonts = data.fonts?.stylesheet ? `<link rel="stylesheet" href="${esc(data.fonts.stylesheet)}" />` : '';
     // The reader's saved color mode, reduced motion and theme before the
     // first paint (the library's styles/preferences.ts), as on the pages.
     const {prePaintScript} = await library();
@@ -147,6 +147,7 @@ class GbAll {
     <link href="/images/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
     ${fonts}
     ${styles}
+    ${components}
     <script>
       // Demo iframes run before shell.js registers window.gbDocsTools (modules
       // are deferred): calls wait for the real tools.
@@ -174,7 +175,6 @@ class GbAll {
 ${body}
       </md-gb-prose>
     </main>
-    ${components}
     <script>
       // Loads a demo iframe (gbLoadDemo is also what the snapshot step calls, a
       // few at a time) when it comes near the viewport.

@@ -8,7 +8,7 @@
  * The Compatibility section of a /3.0/ component page (`{% gbcompat %}`,
  * added before the API reference of every component page by
  * shortcodes.cjs): a list of four expandable rows from
- * site/content/_data/gbCompat.json (scripts/m3/gen-component-compat.mjs):
+ * site/content/_data/compat.json (scripts/m3/gen-component-compat.mjs):
  *
  * - Material Design 3: the spec units tested and the tokens that match.
  * - Baseline: widely available, the browser targets, and the newer features
@@ -26,7 +26,7 @@
 const {existsSync, readFileSync, statSync} = require('node:fs');
 const {join} = require('node:path');
 
-const DATA = join(__dirname, '..', 'content', '_data', 'gbCompat.json');
+const DATA = join(__dirname, '..', 'content', '_data', 'compat.json');
 
 /**
  * Each row's shape, and what is on it: a brand logo (an image served from

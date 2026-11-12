@@ -9,7 +9,7 @@
  * (site/content/*.11ty.cjs), the shell spec, the head shortcode of the
  * layout and the Open Graph image step of site/scripts/dev.mjs:
  *
- * - the site URL (one value: site/content/_data/gbSite.cjs, env MWC_SITE_URL),
+ * - the site URL (one value: site/content/_data/site.cjs, env MWC_SITE_URL),
  * - the sections and the Components page's groups (docs/<section>/README.md),
  * - `pageMarkdown(item)`: a page as clean, self-contained Markdown (the
  *   `<page>.md` files and llms-full.txt),
@@ -24,7 +24,7 @@ const {pathToFileURL} = require('node:url');
 const matter = require('gray-matter');
 
 const ROOT = join(__dirname, '..', '..');
-const SITE = require('../content/_data/gbSite.cjs');
+const SITE = require('../content/_data/site.cjs');
 
 /**
  * The sections, from docs/<id>/README.md: `label` (its title), `icon` (the
@@ -382,7 +382,7 @@ function headMarkup({title, description, section, url, item}) {
 }
 
 /** Eleventy: the `gbAll` collection and the `gbhead` shortcode. */
-function gbSite(eleventyConfig) {
+function sitePlugin(eleventyConfig) {
   // Every /3.0/ page in navigation order: gb3 plus the start page (/3.0/).
   eleventyConfig.addCollection('gbAll', (api) => {
     // The start page (/3.0/) is the intro page's copy, excluded from
@@ -406,7 +406,7 @@ module.exports = {
   SITE,
   absolute,
   baselineColors,
-  gbSite,
+  sitePlugin,
   mdUrl,
   ogName,
   ogUrl,

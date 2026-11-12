@@ -15,7 +15,7 @@
 
 const {existsSync, readdirSync, readFileSync} = require('node:fs');
 const {join} = require('node:path');
-const {url: SITE_URL} = require('../content/_data/gbSite.cjs');
+const {url: SITE_URL} = require('../content/_data/site.cjs');
 
 const ROOT = join(__dirname, '..', '..');
 // The element roots (components/ and extras/), shared with the scripts.
