@@ -346,19 +346,59 @@ function template(spec: Spec, runtime: Runtime): TemplateResult | typeof nothing
   return html`${root}`;
 }
 
+/** Options of `hydrateSpec()`. */
+export interface HydrateSpecOptions extends RenderSpecOptions {
+  /**
+   * The ids of static islands (`renderSpecToString()` `islands`): their
+   * content is kept, as it is, in the live elements with the same ids.
+   */
+  islands?: string[];
+}
+
+/** The element with `id` in a container (or a fragment). */
+function byId(container: HTMLElement | DocumentFragment, id: string): Element | null {
+  return container.querySelector(`#${CSS.escape(id)}`);
+}
+
 /**
  * Takes over a container that holds the spec's static HTML
  * (`renderSpecToString()`, ./static.js): renders the spec live in its place,
  * with its state, actions and bindings. The static markup is replaced, so
- * render the same spec and state that produced it.
+ * render the same spec and state that produced it; the content of its
+ * `islands` is kept (the same nodes: their state and listeners survive).
  */
 export function hydrateSpec(
   spec: Spec,
   container: HTMLElement | DocumentFragment,
-  options: RenderSpecOptions = {},
+  options: HydrateSpecOptions = {},
 ): RenderedSpec {
+  const kept = new Map<string, Node[]>();
+  for (const id of options.islands ?? []) {
+    const island = byId(container, id);
+    if (island) kept.set(id, [...island.childNodes]);
+  }
   container.replaceChildren();
-  return renderSpec(spec, container, options);
+  const rendered = renderSpec(spec, container, options);
+  for (const [id, nodes] of kept) {
+    const island = byId(container, id);
+    if (island) island.append(...nodes);
+    else (options.onWarning ?? ((m: string) => console.warn(`json-render: ${m}`)))(`Island "${id}" is not in the spec.`);
+  }
+  return rendered;
+}
+
+/**
+ * The spec a page embeds with `embedSpec()` (./static.js), or null when
+ * there is none (or it isn't JSON).
+ */
+export function readEmbeddedSpec(id = 'json-render-spec', root: Document | DocumentFragment = document): Spec | null {
+  const script = root.querySelector(`script#${CSS.escape(id)}[type="application/json"]`);
+  if (!script?.textContent) return null;
+  try {
+    return JSON.parse(script.textContent) as Spec;
+  } catch {
+    return null;
+  }
 }
 
 /**

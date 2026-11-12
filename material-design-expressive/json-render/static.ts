@@ -41,6 +41,24 @@ export interface RenderSpecToStringOptions {
   functions?: Record<string, ComputedFunction>;
   /** Called for problems that skip part of the spec (unknown types, keys). */
   onWarning?: (message: string) => void;
+  /**
+   * Static islands: HTML to render as the content of the element with each
+   * id (in place of its children), such as a page's content inside an app
+   * shell. The HTML is inserted as it is: pass only HTML you trust (your own
+   * build's, or another spec's renderSpecToString()). `hydrateSpec()` keeps
+   * the islands with the same `islands` ids.
+   */
+  islands?: Record<string, string>;
+}
+
+/**
+ * A spec as a `<script type="application/json">` for a page, which
+ * readEmbeddedSpec() (./renderer.js) reads in the browser to hydrate it.
+ * `<` is escaped in the JSON, so the spec's text can't close the script.
+ */
+export function embedSpec(spec: Spec, id = 'json-render-spec'): string {
+  const json = JSON.stringify(spec).replace(/</g, '\\u003c');
+  return `<script type="application/json" id="${escapeAttr(id)}">${json}</script>`;
 }
 
 type Component = (typeof COMPONENTS)[keyof typeof COMPONENTS];
@@ -127,8 +145,9 @@ export function renderSpecToString(spec: Spec, options: RenderSpecToStringOption
     }
 
     visiting.add(key);
-    const children = childrenOf(el, ctx);
-    const named = Object.entries(el.slots ?? {})
+    const island = typeof props['id'] === 'string' ? options.islands?.[props['id']] : undefined;
+    const children = island ?? childrenOf(el, ctx);
+    const named = island !== undefined ? '' : Object.entries(el.slots ?? {})
       .map(([name, keys]) => keys.map((k) => node(k, ctx, name === 'default' ? undefined : name)).join(''))
       .join('');
     visiting.delete(key);

@@ -28,14 +28,24 @@
  */
 
 export {catalog, COMPONENTS, HTML_ATTRIBUTES, HTML_TAGS, type ComponentName} from './catalog.js';
-export {renderSpecToString, type RenderSpecToStringOptions} from './static.js';
+export {embedSpec, renderSpecToString, type RenderSpecToStringOptions} from './static.js';
+export {
+  domToHtmlNodes,
+  htmlToSpec,
+  type HtmlNode,
+  type HtmlToSpecContext,
+  type HtmlToSpecIssue,
+  type HtmlToSpecOptions,
+} from './html.js';
 export {INNOCUOUS_URL, isSafeSrc, safeHref} from './urls.js';
 export {checkSpec, m3Prompt, type SpecCheck, type SpecCheckIssue} from './check.js';
 export {checkM3, M3_RULES, m3PromptRules, type M3Issue, type M3Rule} from './m3-rules.js';
 export {
   hydrateSpec,
+  readEmbeddedSpec,
   renderSpec,
   type ActionHandler,
+  type HydrateSpecOptions,
   type RenderedSpec,
   type RenderSpecOptions,
 } from './renderer.js';

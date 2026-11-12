@@ -33153,6 +33153,63 @@
   },
   {
    "kind": "javascript-module",
+   "path": "json-render/html.js",
+   "declarations": [
+    {
+     "kind": "function",
+     "name": "domToHtmlNodes",
+     "parameters": [
+      {
+       "name": "nodes",
+       "type": {
+        "text": "Iterable<Node>"
+       }
+      }
+     ],
+     "description": "DOM nodes (a parsed document's body, a template's content) as HtmlNodes."
+    },
+    {
+     "kind": "function",
+     "name": "htmlToSpec",
+     "parameters": [
+      {
+       "name": "nodes",
+       "type": {
+        "text": "HtmlNode[]"
+       }
+      },
+      {
+       "name": "options",
+       "type": {
+        "text": "HtmlToSpecOptions"
+       },
+       "optional": true
+      }
+     ],
+     "description": "Converts HTML nodes into a spec of the catalog: a root `Html` div with the nodes' elements."
+    }
+   ],
+   "exports": [
+    {
+     "kind": "js",
+     "name": "domToHtmlNodes",
+     "declaration": {
+      "name": "domToHtmlNodes",
+      "module": "/json-render/html.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "htmlToSpec",
+     "declaration": {
+      "name": "htmlToSpec",
+      "module": "/json-render/html.js"
+     }
+    }
+   ]
+  },
+  {
+   "kind": "javascript-module",
    "path": "json-render/index.js",
    "exports": [
     {
@@ -33197,10 +33254,26 @@
     },
     {
      "kind": "js",
+     "name": "domToHtmlNodes",
+     "declaration": {
+      "name": "domToHtmlNodes",
+      "module": "/json-render/html.js"
+     }
+    },
+    {
+     "kind": "js",
      "name": "dynamic",
      "declaration": {
       "name": "dynamic",
       "module": "/json-render/schema.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "embedSpec",
+     "declaration": {
+      "name": "embedSpec",
+      "module": "/json-render/static.js"
      }
     },
     {
@@ -33225,6 +33298,14 @@
      "declaration": {
       "name": "HTML_TAGS",
       "module": "/json-render/catalog.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "htmlToSpec",
+     "declaration": {
+      "name": "htmlToSpec",
+      "module": "/json-render/html.js"
      }
     },
     {
@@ -33281,6 +33362,14 @@
      "declaration": {
       "name": "m3PromptRules",
       "module": "/json-render/m3-rules.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "readEmbeddedSpec",
+     "declaration": {
+      "name": "readEmbeddedSpec",
+      "module": "/json-render/renderer.js"
      }
     },
     {
@@ -33424,7 +33513,12 @@
     {
      "kind": "function",
      "name": "hydrateSpec",
-     "description": "Takes over a container that holds the spec's static HTML (`renderSpecToString()`, ./static.js): renders the spec live in its place, with its state, actions and bindings. The static markup is replaced, so render the same spec and state that produced it."
+     "description": "Takes over a container that holds the spec's static HTML (`renderSpecToString()`, ./static.js): renders the spec live in its place, with its state, actions and bindings. The static markup is replaced, so render the same spec and state that produced it; the content of its `islands` is kept (the same nodes: their state and listeners survive)."
+    },
+    {
+     "kind": "function",
+     "name": "readEmbeddedSpec",
+     "description": "The spec a page embeds with `embedSpec()` (./static.js), or null when there is none (or it isn't JSON)."
     },
     {
      "kind": "function",
@@ -33438,6 +33532,14 @@
      "name": "hydrateSpec",
      "declaration": {
       "name": "hydrateSpec",
+      "module": "/json-render/renderer.js"
+     }
+    },
+    {
+     "kind": "js",
+     "name": "readEmbeddedSpec",
+     "declaration": {
+      "name": "readEmbeddedSpec",
       "module": "/json-render/renderer.js"
      }
     },
@@ -33547,6 +33649,26 @@
    "declarations": [
     {
      "kind": "function",
+     "name": "embedSpec",
+     "parameters": [
+      {
+       "name": "spec",
+       "type": {
+        "text": "Spec"
+       }
+      },
+      {
+       "name": "id",
+       "type": {
+        "text": "string"
+       },
+       "optional": true
+      }
+     ],
+     "description": "A spec as a `<script type=\"application/json\">` for a page, which readEmbeddedSpec() (./renderer.js) reads in the browser to hydrate it. `<` is escaped in the JSON, so the spec's text can't close the script."
+    },
+    {
+     "kind": "function",
      "name": "renderSpecToString",
      "parameters": [
       {
@@ -33567,6 +33689,14 @@
     }
    ],
    "exports": [
+    {
+     "kind": "js",
+     "name": "embedSpec",
+     "declaration": {
+      "name": "embedSpec",
+      "module": "/json-render/static.js"
+     }
+    },
     {
      "kind": "js",
      "name": "renderSpecToString",

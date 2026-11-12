@@ -13,15 +13,15 @@ source cites (`// spec-labels:`).
 
 | | Count |
 | --- | --- |
-| Public modules | 244 |
+| Public modules | 245 |
 | Custom elements | 65 |
 | Classes | 105 |
-| Functions | 335 |
+| Functions | 339 |
 | Constants and variables | 308 |
-| Types and interfaces | 325 |
+| Types and interfaces | 330 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2216 of 2216 (100%) |
+| JSDoc coverage | 2225 of 2225 (100%) |
 
 ## Contents
 
@@ -5091,11 +5091,24 @@ The json-render schema, catalog, M3 rules and renderer (generated UIs from JSON 
 | `SpecCheck` | interface | `{valid; issues}` | The result of `checkSpec()`. |
 | `SpecCheckIssue` | interface | `{kind; severity; element; message; rule; spec}` | A problem with a spec. |
 
+#### `json-render/html.js`
+
+- Spec: none
+
+| Export | Kind | Signature | Description |
+| --- | --- | --- | --- |
+| `domToHtmlNodes` | function | `(nodes: Iterable<Node>): HtmlNode[]` | DOM nodes (a parsed document's body, a template's content) as HtmlNodes. |
+| `HtmlNode` | interface | `{tag; attrs; children; text}` | An HTML node: an element (`tag`, `attrs`, `children`) or text (`text`). |
+| `htmlToSpec` | function | `(nodes: HtmlNode[], options?: HtmlToSpecOptions): { spec: Spec; issues: HtmlToSpecIssue[]; }` | Converts HTML nodes into a spec of the catalog: a root `Html` div with the nodes' elements. |
+| `HtmlToSpecContext` | interface | `{add; convert; remove; textOf}` | What an `override` gets to convert a node. |
+| `HtmlToSpecIssue` | interface | `{kind; tag}` | Something the conversion left out: a dropped or an unwrapped element. |
+| `HtmlToSpecOptions` | interface | `{prefix; override}` | Options of `htmlToSpec()`. |
+
 #### `json-render/index.js`
 
 - Spec: none
 
-Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` from `json-render/schema.js`, `catalog` from `json-render/catalog.js`, `checkM3` from `json-render/m3-rules.js`, `checkSpec` from `json-render/check.js`, `ComponentName` from `json-render/catalog.js`, `COMPONENTS` from `json-render/catalog.js`, `dynamic` from `json-render/schema.js`, `FORMAT_RULES` from `json-render/schema.js`, `HTML_ATTRIBUTES` from `json-render/catalog.js`, `HTML_TAGS` from `json-render/catalog.js`, `hydrateSpec` from `json-render/renderer.js`, `INNOCUOUS_URL` from `json-render/urls.js`, `isExpression` from `json-render/schema.js`, `isSafeSrc` from `json-render/urls.js`, `M3_RULES` from `json-render/m3-rules.js`, `M3Issue` from `json-render/m3-rules.js`, `m3Prompt` from `json-render/check.js`, `m3PromptRules` from `json-render/m3-rules.js`, `M3Rule` from `json-render/m3-rules.js`, `Md3Schema` from `json-render/schema.js`, `RenderedSpec` from `json-render/renderer.js`, `renderSpec` from `json-render/renderer.js`, `RenderSpecOptions` from `json-render/renderer.js`, `renderSpecToString` from `json-render/static.js`, `RenderSpecToStringOptions` from `json-render/static.js`, `safeHref` from `json-render/urls.js`, `schema` from `json-render/schema.js`, `SpecCheck` from `json-render/check.js`, `SpecCheckIssue` from `json-render/check.js`
+Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` from `json-render/schema.js`, `catalog` from `json-render/catalog.js`, `checkM3` from `json-render/m3-rules.js`, `checkSpec` from `json-render/check.js`, `ComponentName` from `json-render/catalog.js`, `COMPONENTS` from `json-render/catalog.js`, `domToHtmlNodes` from `json-render/html.js`, `dynamic` from `json-render/schema.js`, `embedSpec` from `json-render/static.js`, `FORMAT_RULES` from `json-render/schema.js`, `HTML_ATTRIBUTES` from `json-render/catalog.js`, `HTML_TAGS` from `json-render/catalog.js`, `HtmlNode` from `json-render/html.js`, `htmlToSpec` from `json-render/html.js`, `HtmlToSpecContext` from `json-render/html.js`, `HtmlToSpecIssue` from `json-render/html.js`, `HtmlToSpecOptions` from `json-render/html.js`, `hydrateSpec` from `json-render/renderer.js`, `HydrateSpecOptions` from `json-render/renderer.js`, `INNOCUOUS_URL` from `json-render/urls.js`, `isExpression` from `json-render/schema.js`, `isSafeSrc` from `json-render/urls.js`, `M3_RULES` from `json-render/m3-rules.js`, `M3Issue` from `json-render/m3-rules.js`, `m3Prompt` from `json-render/check.js`, `m3PromptRules` from `json-render/m3-rules.js`, `M3Rule` from `json-render/m3-rules.js`, `Md3Schema` from `json-render/schema.js`, `readEmbeddedSpec` from `json-render/renderer.js`, `RenderedSpec` from `json-render/renderer.js`, `renderSpec` from `json-render/renderer.js`, `RenderSpecOptions` from `json-render/renderer.js`, `renderSpecToString` from `json-render/static.js`, `RenderSpecToStringOptions` from `json-render/static.js`, `safeHref` from `json-render/urls.js`, `schema` from `json-render/schema.js`, `SpecCheck` from `json-render/check.js`, `SpecCheckIssue` from `json-render/check.js`
 
 #### `json-render/m3-rules.js`
 
@@ -5119,7 +5132,9 @@ Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` f
 | Export | Kind | Signature | Description |
 | --- | --- | --- | --- |
 | `ActionHandler` | type | `(params: Record<string, unknown>) => unknown` | An app action: gets the resolved params. |
-| `hydrateSpec` | function | `(spec: Spec, container: HTMLElement \| DocumentFragment, options?: RenderSpecOptions): RenderedSpec` | Takes over a container that holds the spec's static HTML (`renderSpecToString()`, ./static.js): renders the spec live in its place, with its state, actions and bindings. The static markup is replaced, so render the same spec and state that produced it. |
+| `hydrateSpec` | function | `(spec: Spec, container: HTMLElement \| DocumentFragment, options?: HydrateSpecOptions): RenderedSpec` | Takes over a container that holds the spec's static HTML (`renderSpecToString()`, ./static.js): renders the spec live in its place, with its state, actions and bindings. The static markup is replaced, so render the same spec and state that produced it; the content of its `islands` is kept (the same nodes: their state and listeners survive). |
+| `HydrateSpecOptions` | interface | `{islands}` | Options of `hydrateSpec()`. |
+| `readEmbeddedSpec` | function | `(id?: string, root?: DocumentFragment \| Document): Spec` | The spec a page embeds with `embedSpec()` (./static.js), or null when there is none (or it isn't JSON). |
 | `RenderedSpec` | interface | `{store; update; dispose}` | A rendered spec. |
 | `renderSpec` | function | `(spec: Spec, container: HTMLElement \| DocumentFragment, options?: RenderSpecOptions): RenderedSpec` | Renders a json-render spec of the library's catalog into a container. |
 | `RenderSpecOptions` | interface | `{handlers; functions; store; onWarning}` | Options of `renderSpec()`. |
@@ -5143,8 +5158,9 @@ Re-exports: `ActionHandler` from `json-render/renderer.js`, `BUILT_IN_ACTIONS` f
 
 | Export | Kind | Signature | Description |
 | --- | --- | --- | --- |
+| `embedSpec` | function | `(spec: Spec, id?: string): string` | A spec as a `<script type="application/json">` for a page, which readEmbeddedSpec() (./renderer.js) reads in the browser to hydrate it. `<` is escaped in the JSON, so the spec's text can't close the script. |
 | `renderSpecToString` | function | `(spec: Spec, options?: RenderSpecToStringOptions): string` | Renders a spec to HTML. |
-| `RenderSpecToStringOptions` | interface | `{state; functions; onWarning}` | Options of `renderSpecToString()`. |
+| `RenderSpecToStringOptions` | interface | `{state; functions; onWarning; islands}` | Options of `renderSpecToString()`. |
 
 #### `json-render/urls.js`
 
