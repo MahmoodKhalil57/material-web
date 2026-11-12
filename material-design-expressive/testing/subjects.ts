@@ -5,7 +5,7 @@
  */
 
 /**
- * @fileoverview The table of labs/gb components and variants that the central
+ * @fileoverview The table of the library components and variants that the central
  * CSS/token suites (`*_test.ts` and `*_gap.ts` in this folder) run over. One
  * row renders one interactive element (marked `data-subject`) in the context it
  * needs, so a suite can render every row the same way.

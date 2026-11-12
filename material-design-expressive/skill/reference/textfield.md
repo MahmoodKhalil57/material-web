@@ -19,7 +19,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design text field (filled or outlined).
 
-Source: `components/textfield/md-gb-text-field.ts`  
+Source: `material-design-expressive/components/textfield/md-gb-text-field.ts`  
 Import: `import '@material/web/components/textfield/md-gb-text-field.js';`
 
 Attributes and properties
@@ -28,9 +28,10 @@ Attributes and properties
 | --- | --- | --- | --- | --- |
 | `autocomplete` | `autocomplete` (reflects) | `string` | `''` | The input's `autocomplete` hint. |
 | `cols` | `cols` | `number` | `20` | The number of columns of a `type="textarea"` field. |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3. Each step down removes 4px from the container height (56px), half above and half below the content; text keeps its size. Values are clamped to that range. text-fields.md "Avoid applying density by default": dense fields are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3. Each step down removes 4px from the container height (56px), half above and half below the content; text keeps its size. Values are clamped to that range. text-fields.md "Avoid applying density by default": dense fields are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` (reflects) | `boolean` | `false` | Whether the field is in a visually invalid state. Overrides the error state set by `reportValidity()`. |
-| `errorIcon` | `error-icon` | `ErrorIconVisibility` | `'always'` | When the error icon shows in the trailing edge: `always` (default) in the error state, or `focus` only while the field has focus. Its space stays reserved, so focusing the field does not move the text. |
+| `errorIcon` | `error-icon` | `"always" \| "focus"` | `'always'` | When the error icon shows in the trailing edge: `always` (default) in the error state, or `focus` only while the field has focus. Its space stays reserved, so focusing the field does not move the text. |
 | `errorText` | `error-text` | `string` | `''` | The message that replaces the supporting text while `error` is true. If empty, the supporting text keeps showing. Overrides the message shown by `reportValidity()`. |
 | `hasLeadingIcon` | `has-leading-icon` | `boolean` | `false` | Whether a leading icon is slotted. Set it for SSR. |
 | `hasTrailingIcon` | `has-trailing-icon` | `boolean` | `false` | Whether a trailing icon is slotted. Set it for SSR. |
@@ -41,6 +42,7 @@ Attributes and properties
 | `min` | `min` | `string` | `''` | The least permitted value. |
 | `minLength` | `minlength` | `number` | `-1` | The minimum number of characters. -1 for none. |
 | `multiple` | `multiple` (reflects) | `boolean` | `false` | Whether an email field accepts multiple addresses. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `noAsterisk` | `no-asterisk` | `boolean` | `false` | Hides the asterisk added to the label of a required field. |
 | `noSpinner` | `no-spinner` | `boolean` | `false` | Hides the spinner of `type="number"` fields. |
 | `pattern` | `pattern` | `string` | `''` | A regular expression the value must match. |
@@ -52,11 +54,11 @@ Attributes and properties
 | `step` | `step` | `string` | `''` | The step between permitted numeric values. |
 | `suffixText` | `suffix-text` | `string` | `''` | Text shown after the input value, such as a unit. |
 | `supportingText` | `supporting-text` | `string` | `''` | Additional information shown below the field. |
-| `supportingTextVisibility` | `supporting-text-visibility` | `SupportingTextVisibility` | `'always'` | When the supporting text shows: `always` (default), or `focus` only while the field has focus (text-fields-aed1bf). Its space stays reserved so the layout does not move, it stays in the input's accessible description, and an error message always shows. |
+| `supportingTextVisibility` | `supporting-text-visibility` | `"always" \| "focus"` | `'always'` | When the supporting text shows: `always` (default), or `focus` only while the field has focus (text-fields-aed1bf). Its space stays reserved so the layout does not move, it stays in the input's accessible description, and an error message always shows. |
 | `textDirection` | `text-direction` | `string` | `''` | Overrides the input's CSS `direction`. |
-| `type` | `type` (reflects) | `TextFieldType \| UnsupportedTextFieldType` | `'text'` | The input type, `text` by default. `textarea` renders a multi-line `<textarea>`. |
+| `type` | `type` (reflects) | `"number" \| "search" \| "text" \| "email" \| "password" \| "tel" \| "url" \| "textarea" \| "color" \| "date" \| "datetime-local" \| "file" \| "month" \| "time" \| "week"` | `'text'` | The input type, `text` by default. `textarea` renders a multi-line `<textarea>`. |
 | `value` | `value` | `string` | `''` | The current value. It is always a string. |
-| `variant` | `variant` (reflects) | `TextFieldVariant` | `'filled'` | The variant: `filled` (default) or `outlined`. |
+| `variant` | `variant` (reflects) | `"filled" \| "outlined"` | `'filled'` | The variant: `filled` (default) or `outlined`. |
 
 Slots
 

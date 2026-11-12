@@ -15,7 +15,7 @@
  *
  * Rows that measure wrong in gb go to
  * `components/<dir>/<dir>_measurement_gap.ts` (not run in the main
- * suite, run with `npm run gb:check -- --gaps <dir>`); the rest go to
+ * suite, run with `npm run check -- --gaps <dir>`); the rest go to
  * `<dir>_measurement_test.ts`.
  *
  *   node scripts/m3/gen-measurement-tests.mjs            # all components
@@ -516,7 +516,7 @@ async function resolve(dir, config) {
 
 function fileText(dir, config, cases, gap) {
   const what = gap
-    ? 'Measurement gaps: spec rows where the measured size differs from the spec. Red until the component is fixed; run with `npm run gb:check -- --gaps`.'
+    ? 'Measurement gaps: spec rows where the measured size differs from the spec. Red until the component is fixed; run with `npm run check -- --gaps`.'
     : 'Measurement tests: renders the component and measures the part each Specs > Measurements row names.';
   return pruneHelpers(`${header('gen-measurement-tests.mjs', dir, 'measurement', what)}
 ${testsHelpers(config.imports, cases.some((c) => c.source.includes('setViewport(')))}

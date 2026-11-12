@@ -75,7 +75,7 @@ export async function getBundleSize(bundle: Bundle): Promise<BundleSize> {
 }
 
 /**
- * labs/gb imports its stylesheets as CSS modules (`import x from './a.css'
+ * the library imports its stylesheets as CSS modules (`import x from './a.css'
  * with {type: 'css'}`), which this Rollup version cannot parse. The import
  * attribute is dropped and the stylesheet replaced by an empty stub: the CSS is
  * measured separately, from the .css files.
@@ -142,7 +142,7 @@ export async function computeBundleSize(
   };
 }
 
-/** Brotli sizes of one labs/gb component, JS and CSS counted separately. */
+/** Brotli sizes of one the library component, JS and CSS counted separately. */
 export interface SplitSize {
   /** Minified JS module graph (Lit and other node_modules external), no CSS. */
   js: number;

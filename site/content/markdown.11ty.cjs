@@ -12,7 +12,7 @@
 
 const {mdUrl, pageMarkdown} = require('../eleventy/site.cjs');
 
-class GbMarkdown {
+class MarkdownPages {
   data() {
     return {
       pagination: {data: 'collections.allPages', size: 1, alias: 'mdPage'},
@@ -26,4 +26,4 @@ class GbMarkdown {
   }
 }
 
-module.exports = GbMarkdown;
+module.exports = MarkdownPages;

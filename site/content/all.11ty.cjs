@@ -51,7 +51,7 @@ function internalPath(href) {
   return {path: url.pathname, hash: decodeURIComponent(url.hash.replace(/^#/, ''))};
 }
 
-class GbAll {
+class AllPage {
   data() {
     return {
       permalink: '/3.0/all/',
@@ -207,4 +207,4 @@ ${body}
   }
 }
 
-module.exports = GbAll;
+module.exports = AllPage;

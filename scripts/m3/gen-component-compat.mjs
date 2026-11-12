@@ -12,15 +12,15 @@
  *
  *   node scripts/m3/gen-component-compat.mjs [--lighthouse <dir>]
  *
- * Per component (docs/components/<slug>.md, its labs/gb directory from
+ * Per component (docs/components/<slug>.md, its library directory from
  * the page's `{% api %}`):
  *
  * - m3: its M3 spec pages (m3.material.io), the spec units of those pages
  *   (.m3-specs/spec-checks/units.json: buildable, tested, excluded, tracked,
- *   uncovered) and its token audit (scripts/m3/audit-gb.mjs --gaps).
+ *   uncovered) and its token audit (scripts/m3/audit-tokens.mjs --gaps).
  * - baseline: the browser targets of Baseline widely available, and the
  *   features the component uses that aren't widely available, each guarded
- *   (@supports) or allowed with a reason (scripts/gb-baseline.mjs --verbose,
+ *   (@supports) or allowed with a reason (scripts/baseline.mjs --verbose,
  *   the web-features package), plus its newer JavaScript APIs.
  * - aria: the WAI-ARIA roles it renders (from its sources), the APG pattern
  *   of each, its rows in the central axe and WAI-ARIA 1.3 suites
@@ -101,7 +101,7 @@ progressbar radio radiogroup region row rowgroup rowheader scrollbar search sear
 status strong subscript suggestion superscript switch tab table tablist tabpanel term textbox time timer toolbar
 tooltip tree treegrid treeitem`.split(/\s+/));
 
-// --- Pages and their labs/gb directories -------------------------------------
+// --- Pages and their library directories -------------------------------------
 
 const slugs = readdirSync(DOCS).filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3)).sort();
 const dirOf = (slug) => /\{%\s*api\s+"([\w-]+)"/.exec(readFileSync(join(DOCS, `${slug}.md`), 'utf8'))?.[1] ?? '';
@@ -131,7 +131,7 @@ function specUnits(pages) {
   return r;
 }
 const tokenAudit = new Map();
-const gaps = run('scripts/m3/audit-gb.mjs', ['--gaps']);
+const gaps = run('scripts/m3/audit-tokens.mjs', ['--gaps']);
 const tableAt = gaps.indexOf('component      decls');
 if (tableAt >= 0) {
   for (const line of gaps.slice(tableAt).split('\n').slice(1)) {
@@ -146,7 +146,7 @@ if (tableAt >= 0) {
 // --- Baseline ----------------------------------------------------------------------
 
 const {features} = require('web-features');
-const baseline = run('scripts/gb-baseline.mjs', ['--verbose']);
+const baseline = run('scripts/baseline.mjs', ['--verbose']);
 const targets = Object.fromEntries(
   [.../widely available targets: (.*)/.exec(baseline)?.[1]?.matchAll(/(\w+) ([\d.]+)/g) ?? []].map((m) => [m[1], m[2]]),
 );

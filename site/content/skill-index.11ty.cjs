@@ -27,7 +27,7 @@ function walk(dir, prefix = '') {
   return out;
 }
 
-class GbSkillIndex {
+class SkillIndex {
   data() {
     return {permalink: '/3.0/skill/index.json', eleventyExcludeFromCollections: true};
   }
@@ -56,4 +56,4 @@ class GbSkillIndex {
   }
 }
 
-module.exports = GbSkillIndex;
+module.exports = SkillIndex;

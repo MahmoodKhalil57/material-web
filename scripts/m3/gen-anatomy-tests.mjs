@@ -15,7 +15,7 @@
  *
  * Parts gb doesn't have go to `<dir>_anatomy_gap.ts` (red tests that look for
  * the hook the part would have; not run in the main suite, run with
- * `npm run gb:check -- --gaps <dir>`); the rest go to
+ * `npm run check -- --gaps <dir>`); the rest go to
  * `<dir>_anatomy_test.ts`.
  *
  *   node scripts/m3/gen-anatomy-tests.mjs            # all components
@@ -682,7 +682,7 @@ function expectPart(chain: string, pseudo = '', assigned = false, present = fals
 
 function fileText(dir, config, cases, gap) {
   const what = gap
-    ? "Anatomy gaps: parts the spec's Anatomy lists that the component does not expose yet. Red until it does; run with `npm run gb:check -- --gaps`."
+    ? "Anatomy gaps: parts the spec's Anatomy lists that the component does not expose yet. Red until it does; run with `npm run check -- --gaps`."
     : "Anatomy tests: the component exposes each part its spec page's Anatomy lists.";
   const host = config.pages[0].host;
   return pruneHelpers(`${header('gen-anatomy-tests.mjs', dir, 'anatomy', what)}

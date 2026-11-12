@@ -278,8 +278,8 @@ async function pageMarkdown(item) {
     return `**Example: ${story.name}**\n\n${fence('html', story.html)}`;
   });
   body = await replaceAsync(body, new RegExp(`\\{%-?\\s*api\\s+${quoted}\\s*-?%\\}`, 'g'), async (m, a, b) => {
-    const {gbApiMarkdown} = await import(pathToFileURL(join(ROOT, 'scripts', 'm3', 'gen-api-docs.mjs')).href);
-    const api = gbApiMarkdown(a ?? b);
+    const {apiMarkdown} = await import(pathToFileURL(join(ROOT, 'scripts', 'm3', 'gen-api-docs.mjs')).href);
+    const api = apiMarkdown(a ?? b);
     if (!api) throw new Error(`api "${a ?? b}" (${where}): no md-gb elements in that directory`);
     return `\n${api.trim()}\n`;
   });

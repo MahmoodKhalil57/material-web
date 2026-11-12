@@ -16,7 +16,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/loadingindicator/md-gb-loading-indicator.ts`  
+Source: `material-design-expressive/components/loadingindicator/md-gb-loading-indicator.ts`  
 Import: `import '@material/web/components/loadingindicator/md-gb-loading-indicator.js';`
 
 Attributes and properties

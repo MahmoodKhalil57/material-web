@@ -21,7 +21,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design bottom sheet.
 
-Source: `components/sheet/md-gb-bottom-sheet.ts`  
+Source: `material-design-expressive/components/sheet/md-gb-bottom-sheet.ts`  
 Import: `import '@material/web/components/sheet/md-gb-bottom-sheet.js';`
 
 Attributes and properties
@@ -37,7 +37,7 @@ Attributes and properties
 | `open` | `open` (reflects) | `boolean` |  | Whether the sheet is open. Setting it calls `show()` or `close()`. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Whether to skip the opening and closing motion. |
 | `skipPartiallyExpanded` | `skip-partially-expanded` | `boolean` | `false` | Whether the sheet has no partially expanded height: it opens expanded and the drag handle closes it. |
-| `state` | `state` (reflects) | `BottomSheetState` | `BOTTOM_SHEET_STATES.partiallyExpanded` | The resting height while open: `partially-expanded` or `expanded`. Updated when the user drags or activates the drag handle. |
+| `state` | `state` (reflects) | `"expanded" \| "partially-expanded"` | `BOTTOM_SHEET_STATES.partiallyExpanded` | The resting height while open: `partially-expanded` or `expanded`. Updated when the user drags or activates the drag handle. |
 
 Slots
 
@@ -90,7 +90,7 @@ CSS custom properties
 
 A Material Design side sheet.
 
-Source: `components/sheet/md-gb-side-sheet.ts`  
+Source: `material-design-expressive/components/sheet/md-gb-side-sheet.ts`  
 Import: `import '@material/web/components/sheet/md-gb-side-sheet.js';`
 
 Attributes and properties

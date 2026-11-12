@@ -227,7 +227,7 @@ const API_VERSION = 3;
 async function apiStamp() {
   const hash = createHash('sha1').update(`${API_VERSION}\n`);
   const files = [
-    join(ROOT, 'scripts', 'm3', 'gb-elements.mjs'),
+    join(ROOT, 'scripts', 'm3', 'elements.mjs'),
     join(ROOT, 'scripts', 'api', 'gen-api.mjs'),
     join(ROOT, 'scripts', 'm3', 'spec-map-data.mjs'),
     fileURLToPath(import.meta.url),
@@ -255,7 +255,7 @@ async function apiStamp() {
  * custom-elements.json (https://github.com/webcomponents/custom-elements-manifest,
  * schema 2.1.0): every md-gb element with its attributes, members, events,
  * slots, CSS parts and CSS custom properties, read from the library's sources
- * (scripts/m3/gb-elements.mjs). Paths are relative to the @material/web
+ * (scripts/m3/elements.mjs). Paths are relative to the @material/web
  * package root. Cached by a stamp of the sources; the type check of the
  * compiler API takes seconds.
  */

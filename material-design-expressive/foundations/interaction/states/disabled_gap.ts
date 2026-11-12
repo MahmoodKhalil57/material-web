@@ -11,7 +11,7 @@ import {contentAlphas} from '../../../testing/style-helpers.js';
 
 // Gap checks for suite 4 (disabled): text that is not at the spec's 38%.
 // (The outlined buttons' 12% outline is checked in `disabled-outline_test.ts`.)
-// Run with `npm run gb:check -- --gaps ...`.
+// Run with `npm run check -- --gaps ...`.
 
 describe('disabled (central gaps)', () => {
   // With no known gaps the suite would have no tests, which the runner

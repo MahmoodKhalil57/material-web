@@ -15,7 +15,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/checkbox/md-gb-checkbox.ts`  
+Source: `material-design-expressive/components/checkbox/md-gb-checkbox.ts`  
 Import: `import '@material/web/components/checkbox/md-gb-checkbox.js';`
 
 Attributes and properties
@@ -23,9 +23,11 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `checked` | `checked` | `boolean` | `false` | Whether or not the checkbox is selected. |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3. Each step down removes 4px from the checkbox's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. checkbox.md: don't apply density by default; let people opt in to a denser layout. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3. Each step down removes 4px from the checkbox's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. checkbox.md: don't apply density by default; let people opt in to a denser layout. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` | `boolean` | `false` | Whether or not the checkbox is invalid. |
 | `indeterminate` | `indeterminate` | `boolean` | `false` | Whether or not the checkbox is indeterminate. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#indeterminate_state_checkboxes |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `required` | `required` | `boolean` | `false` | When true, require the checkbox to be selected when participating in form submission. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#validation |
 | `value` | `value` | `string` | `'on'` | The value of the checkbox that is submitted with a form when selected. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value |
 

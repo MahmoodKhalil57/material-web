@@ -13,8 +13,8 @@
  *   node scripts/m3/gen-compliance-page.mjs --check  # exit 1 if it is stale
  *
  * Sources: .m3-specs/spec-checks/units.json (spec-checks.mjs output),
- * scripts/m3/exclusions/*.md, `audit-gb.mjs --gaps`, `gb-baseline.mjs`,
- * scripts/size/gb-budgets.json, and the axe and ARIA row files in
+ * scripts/m3/exclusions/*.md, `audit-tokens.mjs --gaps`, `baseline.mjs`,
+ * scripts/size/budgets.json, and the axe and ARIA row files in
  * material-design-expressive/foundations/accessibility/.
  */
 
@@ -97,7 +97,7 @@ const otherReasons = [...reasons.values()].reduce((s, c) => s + c, 0) - topReaso
 if (otherReasons) reasonRows.push([`${reasons.size - topReasons.length} further reasons`, n(otherReasons)]);
 
 // 2. Token audit.
-const gaps = run('scripts/m3/audit-gb.mjs', ['--gaps']);
+const gaps = run('scripts/m3/audit-tokens.mjs', ['--gaps']);
 const tableStart = gaps.indexOf('component      decls');
 const auditRows = [];
 const auditTotals = /(\d[\d,]*) declarations: (\d+) match the spec, (\d+) derived, (\d+) drift \((\d+) high-confidence\), (\d+) have no spec token; (\d+) spec tokens/.exec(gaps);
@@ -108,7 +108,7 @@ if (tableStart >= 0) {
   }
 }
 const driftNotes = [];
-for (const block of run('scripts/m3/audit-gb.mjs').split(/^## /m).slice(1)) {
+for (const block of run('scripts/m3/audit-tokens.mjs').split(/^## /m).slice(1)) {
   const head = block.split('\n')[0].split(' ')[0];
   if (head === 'component') continue;
   for (const l of block.split('\n').filter((l) => /^\s+(E~|\?~|~)\s/.test(l))) {
@@ -139,7 +139,7 @@ const list = (xs) => (xs.length ? xs.map((g) => `\`${g}\``).join(', ') : 'none')
 const testFiles = (await readdir(CENTRAL)).filter((f) => /^(axe|aria)_(test|gap)\.ts$/.test(f)).sort();
 
 // 4. Baseline.
-const base = run('scripts/gb-baseline.mjs');
+const base = run('scripts/baseline.mjs');
 const cssLine = /CSS: (\d+) files, (\d+) feature uses mapped, (\d+) not widely available/.exec(base);
 const jsLine = /JS APIs \(report only\): (\d+) source files, (\d+) tracked members/.exec(base);
 const baseOk = /OK: no unguarded/.test(base);
@@ -159,7 +159,7 @@ for (const [i, l] of baseLines.entries()) {
 }
 
 // 5. Size budgets.
-const budgets = JSON.parse(await readFile('scripts/size/gb-budgets.json', 'utf8'));
+const budgets = JSON.parse(await readFile('scripts/size/budgets.json', 'utf8'));
 const sizeRows = Object.entries(budgets.components).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) =>
   [`\`${k}\``, n(v.js), n(v.css)]);
 const sum = (key) => Object.values(budgets.components).reduce((s, v) => s + v[key], 0);
@@ -186,7 +186,7 @@ used here, never spec text.
 
 A unit is **buildable** when the classifier scores it at ${BUILDABLE} or more
 (it describes something a component can do, not a caption or designer advice).
-**Tested** units are cited from a \`*_test.ts\` file under \`labs/gb\` or
+**Tested** units are cited from a \`*_test.ts\` file under \`material-design-expressive/\` or
 \`scripts/m3\` (\`spec: <unit id>\`). **Excluded** units have a written reason in
 \`scripts/m3/exclusions/*.md\` (\`spec-exclude:\`). **Tracked** units are known
 gaps listed in \`scripts/m3/CHECKLIST.md\` (\`spec-gap:\`). **Uncovered** units
@@ -211,8 +211,8 @@ ${table(['Reason (from scripts/m3/exclusions)', 'Units'], reasonRows, ['---', '-
 
 ## Token audit
 
-\`node scripts/m3/audit-gb.mjs --gaps\` compares every token declaration in the
-\`labs/gb\` token files with the M3 token database. **Match** means the value
+\`node scripts/m3/audit-tokens.mjs --gaps\` compares every token declaration in the
+library's token files with the M3 token database. **Match** means the value
 equals the spec; **derived** means it is computed from a matching token;
 **drift** differs from the spec; **no spec token** has no counterpart in the
 database; **gaps** are tokens the Compose reference uses that no gb
@@ -251,18 +251,18 @@ Suite files: ${list(testFiles)}.
 
 ## Baseline
 
-\`npm run gb:baseline\` maps every CSS feature in the compiled \`labs/gb\` CSS
+\`npm run baseline\` maps every CSS feature in the compiled library CSS
 to its web-features Baseline status. A feature that is not widely available
 must sit inside a matching \`@supports\` guard or be listed with a reason in
-\`scripts/gb-baseline-allow.json\`; anything else fails the run.
+\`scripts/baseline-allow.json\`; anything else fails the run.
 
-${cssLine ? `- CSS: ${n(Number(cssLine[2]))} feature uses in ${cssLine[1]} files; ${cssLine[3]} features are not widely available, used ${guarded + allowed + unguarded} times (${guarded} guarded, ${allowed} allowed with a reason, **${unguarded} unguarded**). Result: ${baseOk ? 'passes' : 'fails'}.` : '- CSS: the check did not run (build the CSS with `npm run gb:check -- --all` first).'}
+${cssLine ? `- CSS: ${n(Number(cssLine[2]))} feature uses in ${cssLine[1]} files; ${cssLine[3]} features are not widely available, used ${guarded + allowed + unguarded} times (${guarded} guarded, ${allowed} allowed with a reason, **${unguarded} unguarded**). Result: ${baseOk ? 'passes' : 'fails'}.` : '- CSS: the check did not run (build the CSS with `npm run check -- --all` first).'}
 ${jsLine ? `- JavaScript (report only): ${jsLine[2]} tracked Web API members in ${jsLine[1]} source files; ${jsLimited} are not widely available, ${jsUndetected} of them with at least one use that is not feature-detected.` : '- JavaScript: the report did not run.'}
 
 ## Size budgets
 
 Each component has a Brotli size budget for JavaScript and CSS in
-\`scripts/size/gb-budgets.json\`: the measured size plus ${Math.round(budgets.headroom * 100)}% headroom, enforced by
+\`scripts/size/budgets.json\`: the measured size plus ${Math.round(budgets.headroom * 100)}% headroom, enforced by
 the size check. Totals across ${sizeRows.length} components: ${n(sum('js'))} bytes of JavaScript and ${n(sum('css'))} bytes of CSS.
 
 ${table(['Component', 'JS budget (bytes)', 'CSS budget (bytes)'], sizeRows)}

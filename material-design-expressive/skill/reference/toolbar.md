@@ -18,18 +18,18 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design gBreeze toolbar custom element.
 
-Source: `components/toolbar/md-gb-toolbar.ts`  
+Source: `material-design-expressive/components/toolbar/md-gb-toolbar.ts`  
 Import: `import '@material/web/components/toolbar/md-gb-toolbar.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `color` | `color` (reflects) | `ToolbarColor` | `'standard'` | The color scheme of the toolbar. |
+| `color` | `color` (reflects) | `"standard" \| "vibrant"` | `'standard'` | The color scheme of the toolbar. |
 | `docked` | `docked` (reflects) | `boolean` | `false` | Whether the toolbar is docked across full width. |
 | `expanded` | `expanded` (reflects) | `boolean` | `true` | Whether a floating toolbar with a FAB shows its items. When `false`, the toolbar collapses and its FAB grows to the medium size (Compose floating toolbar `expanded`). Set `expanded="false"` from markup. |
 | `fabPosition` | `fab-position` (reflects) | `"start" \| "end"` | `'end'` | Which side of a floating toolbar the FAB is on (`end` or `start`). |
-| `orientation` | `orientation` (reflects) | `ToolbarOrientation` | `'horizontal'` | The layout orientation. |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | The layout orientation. |
 | `overflowMenu` | `overflow-menu` (reflects) | `boolean` | `false` | Whether trailing actions that do not fit move into an overflow menu in the trailing slot (toolbars.md, Adaptive design). On by itself when an `overflow` slot trigger is provided; this turns it on with the default "More actions" button. |
 | `scrollBehavior` | `scroll-behavior` (reflects) | `"hide"` |  | How a docked or floating toolbar reacts to scrolling: `hide` slides it beyond the bottom edge when the page scrolls down and back on scroll up (toolbars.md: docked and floating toolbars "can animate offscreen"). |
 | `scrollTarget` | `scroll-target` | `string` | `''` | The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. |

@@ -42,7 +42,7 @@
 
 import {existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
-import {COMPONENT_SETS, GB} from './gb-bindings.mjs';
+import {COMPONENT_SETS, GB} from './bindings.mjs';
 import {elementDir} from '../element-dirs.mjs';
 import {SpecDb} from './spec-db.mjs';
 import {slug} from './spec-units.mjs';

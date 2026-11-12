@@ -5,7 +5,7 @@
  */
 
 /**
- * @fileoverview A convenience bundle import that includes all labs/gb
+ * @fileoverview A convenience bundle import that includes all library
  * components.
  *
  * WARNING: This import is intended for prototyping and development builds only.

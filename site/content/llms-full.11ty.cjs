@@ -8,7 +8,7 @@
 
 const {SITE, absolute, pageMarkdown, sorted} = require('../eleventy/site.cjs');
 
-class GbLlmsFull {
+class LlmsFull {
   data() {
     return {permalink: '/3.0/llms-full.txt', eleventyExcludeFromCollections: true};
   }
@@ -22,4 +22,4 @@ class GbLlmsFull {
   }
 }
 
-module.exports = GbLlmsFull;
+module.exports = LlmsFull;

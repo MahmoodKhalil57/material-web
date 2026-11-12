@@ -17,17 +17,17 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/fabmenu/md-gb-fab-menu.ts`  
+Source: `material-design-expressive/components/fabmenu/md-gb-fab-menu.ts`  
 Import: `import '@material/web/components/fabmenu/md-gb-fab-menu.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `align` | `align` | `FabMenuAlign` | `FAB_MENU_ALIGNS.end` | The alignment of the items. Defaults to the end, as the FAB. |
-| `color` | `color` | `FabMenuColor` | `FAB_MENU_COLORS.primary` | The color of the FAB, close button and items. |
+| `align` | `align` | `"start" \| "end"` | `FAB_MENU_ALIGNS.end` | The alignment of the items. Defaults to the end, as the FAB. |
+| `color` | `color` | `"primary" \| "secondary" \| "tertiary"` | `FAB_MENU_COLORS.primary` | The color of the FAB, close button and items. |
 | `open` | `open` (reflects) | `boolean` | `false` | Whether the menu is open. |
-| `size` | `size` | `FabSize` | `'default'` | The size of the FAB. The close button is always the same size. |
+| `size` | `size` | `"sm" \| "md" \| "lg" \| "default"` | `'default'` | The size of the FAB. The close button is always the same size. |
 
 Slots
 
@@ -75,7 +75,7 @@ CSS custom properties
 
 A Material Design component.
 
-Source: `components/fabmenu/md-gb-fab-menu-item.ts`  
+Source: `material-design-expressive/components/fabmenu/md-gb-fab-menu-item.ts`  
 Import: `import '@material/web/components/fabmenu/md-gb-fab-menu-item.js';`
 
 Slots

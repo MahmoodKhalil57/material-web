@@ -6,11 +6,11 @@
  */
 
 /**
- * Validates every compiled labs/gb stylesheet (`*.css`, the Sass output) with
+ * Validates every compiled library stylesheet (`*.css`, the Sass output) with
  * Lightning CSS against the browser targets below. Nothing is rewritten.
  *
- *   npm run gb:css-validate
- *   npm run gb:css-validate -- --notes     # also list syntax Lightning would
+ *   npm run css-validate
+ *   npm run css-validate -- --notes     # also list syntax Lightning would
  *                                          # lower or prefix for the targets
  *
  * Fails (exit 1) on parse errors and on Lightning warnings (invalid or
@@ -19,14 +19,14 @@
  * information only, since gb is Chromium-first and uses `@supports` for the
  * rest.
  *
- * Run `npm run gb:check -- --all` (or the Sass build) first: this reads the
+ * Run `npm run check -- --all` (or the Sass build) first: this reads the
  * compiled .css files, which are not committed.
  */
 
 import {readdirSync, readFileSync, statSync} from 'node:fs';
 import {join, relative} from 'node:path';
 import {transform} from 'lightningcss';
-import {baselineTargets} from './gb-baseline.mjs';
+import {baselineTargets} from './baseline.mjs';
 
 /**
  * Browser targets: Baseline "widely available" from `baseline-browser-mapping`
@@ -36,7 +36,7 @@ import {baselineTargets} from './gb-baseline.mjs';
  */
 const {targets: TARGETS, versions: TARGET_VERSIONS} = baselineTargets();
 export {TARGETS};
-console.log(`[gb:css-validate] Baseline widely available targets: ${Object.entries(TARGET_VERSIONS).map(([b, v]) => `${b} ${v}`).join(', ')}`);
+console.log(`[css-validate] Baseline widely available targets: ${Object.entries(TARGET_VERSIONS).map(([b, v]) => `${b} ${v}`).join(', ')}`);
 
 const ROOT = join('material-design-expressive');
 
@@ -64,7 +64,7 @@ const compile = (filename, code, targets) =>
 
 const files = cssFiles(ROOT);
 if (!files.length) {
-  console.error('No compiled .css files under labs/gb. Run `npm run gb:check -- --all` first.');
+  console.error('No compiled .css files under material-design-expressive/. Run `npm run check -- --all` first.');
   process.exit(2);
 }
 
@@ -99,7 +99,7 @@ for (const file of files) {
 }
 
 console.log(
-  `[gb:css-validate] ${files.length} files, ${errors} errors, ${warnings} warnings` +
+  `[css-validate] ${files.length} files, ${errors} errors, ${warnings} warnings` +
     (showNotes ? `, ${lowered} would be lowered` : ''),
 );
 process.exit(errors || warnings ? 1 : 0);

@@ -16,7 +16,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design gBreeze navigation bar custom element.
 
-Source: `components/navbar/md-gb-nav-bar.ts`  
+Source: `material-design-expressive/components/navbar/md-gb-nav-bar.ts`  
 Import: `import '@material/web/components/navbar/md-gb-nav-bar.js';`
 
 Attributes and properties
@@ -24,7 +24,7 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `autoSelect` | `autoselect` | `boolean` | `false` | Whether or not to automatically select a tab when it is focused. |
-| `itemLayout` | `item-layout` (reflects) | `NavBarLayout` | `'vertical'` | The layout orientation of items: `vertical`, `horizontal`, or `auto` (vertical in compact windows, horizontal from medium windows, 600px). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical" \| "auto"` | `'vertical'` | The layout orientation of items: `vertical`, `horizontal`, or `auto` (vertical in compact windows, horizontal from medium windows, 600px). |
 | `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | Orientation of the tablist ('horizontal' or 'vertical'). |
 | `scrollBehavior` | `scroll-behavior` (reflects) | `"hide"` |  | How the bar reacts to scrolling: `hide` hides it on scroll down. |
 | `scrollTarget` | `scroll-target` | `string` | `''` | The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. |
@@ -81,7 +81,7 @@ CSS custom properties
 
 A Material Design gBreeze navigation bar item custom element.
 
-Source: `components/navbar/md-gb-nav-bar-item.ts`  
+Source: `material-design-expressive/components/navbar/md-gb-nav-bar-item.ts`  
 Import: `import '@material/web/components/navbar/md-gb-nav-bar-item.js';`
 
 Attributes and properties
@@ -92,9 +92,10 @@ Attributes and properties
 | `badge` | `badge` | `string` | `''` | Optional badge text (or 'dot' / 'true' for a small dot badge). |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the navigation bar item is disabled. |
 | `href` | `href` | `string` | `''` | The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. |
-| `itemLayout` | `item-layout` (reflects) | `NavBarItemLayout` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
 | `label` | `label` | `string` | `''` | Optional label text if not provided via default slot. |
 | `rel` | `rel` | `string` | `''` | The link's `rel` attribute, when `href` is set. |
+| `selected` | `selected` (reflects) | `boolean` |  | Whether the tab is selected. |
 | `tabpanel` | `tabpanel` (reflects) | `string` |  | ID of the associated `md-aria-tabpanel` element. |
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to open the linked `href`, e.g. `_blank`. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Whether the icon has no filled style. The active destination then uses the semibold icon weight instead of the filled icon. |

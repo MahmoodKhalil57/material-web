@@ -16,7 +16,7 @@ const MOVED = [
   {from: '/3.0/components/scaffold/', to: '/3.0/foundations/scaffold/', title: 'Scaffold'},
 ];
 
-class GbRedirects {
+class Redirects {
   data() {
     return {
       pagination: {data: 'movedPages', size: 1, alias: 'moved'},
@@ -46,4 +46,4 @@ class GbRedirects {
   }
 }
 
-module.exports = GbRedirects;
+module.exports = Redirects;

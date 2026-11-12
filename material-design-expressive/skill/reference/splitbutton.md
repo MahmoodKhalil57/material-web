@@ -17,16 +17,16 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/splitbutton/md-gb-split-button.ts`  
+Source: `material-design-expressive/components/splitbutton/md-gb-split-button.ts`  
 Import: `import '@material/web/components/splitbutton/md-gb-split-button.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `SplitButtonColor` | `'filled'` |  |
-| `selected` | `selected` | `boolean` | `false` |  |
-| `size` | `size` | `SplitButtonSize` | `'sm'` |  |
+| `color` | `color` | `"filled" \| "elevated" \| "tonal" \| "outlined"` | `'filled'` | The color style: `filled` (default), `elevated`, `tonal` or `outlined`. |
+| `selected` | `selected` | `boolean` | `false` | Whether the trailing button shows its selected (open) state. Set while the menu the trailing button opens (its `popovertarget`) is open. |
+| `size` | `size` | `"sm" \| "md" \| "lg" \| "xs" \| "xl"` | `'sm'` | The size: `xs`, `sm` (default), `md`, `lg` or `xl`. |
 
 Slots
 

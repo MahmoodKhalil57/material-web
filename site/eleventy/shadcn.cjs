@@ -10,7 +10,7 @@
  * documents it, the registry URL, and the mapping between the shadcn
  * variables and the M3 color roles (both directions). Synchronous and without
  * the TypeScript program so that shortcodes can use it; the element API is
- * read by scripts/m3/gb-shadcn.mjs.
+ * read by scripts/m3/shadcn.mjs.
  */
 
 const {existsSync, readdirSync, readFileSync} = require('node:fs');

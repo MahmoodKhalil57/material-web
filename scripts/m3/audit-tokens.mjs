@@ -6,10 +6,10 @@
  */
 
 /**
- * Audits every `labs/gb` component token file against the M3 spec (binding
- * inference lives in gb-bindings.mjs), and optionally syncs drifted values.
+ * Audits every library component token file against the M3 spec (binding
+ * inference lives in bindings.mjs), and optionally syncs drifted values.
  *
- *   node scripts/m3/audit-gb.mjs [component ...] [--verbose] [--sync] [--gaps]
+ *   node scripts/m3/audit-tokens.mjs [component ...] [--verbose] [--sync] [--gaps]
  *
  * `--sync`  rewrites only high-confidence declarations that differ from the spec.
  *
@@ -23,7 +23,7 @@
  */
 
 import {readdir, writeFile} from 'node:fs/promises';
-import {COMPONENT_SETS, loadBindings} from './gb-bindings.mjs';
+import {COMPONENT_SETS, loadBindings} from './bindings.mjs';
 import {elementNames} from '../element-dirs.mjs';
 
 const argv = process.argv.slice(2);

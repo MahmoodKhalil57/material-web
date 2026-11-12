@@ -59,7 +59,7 @@ Each style has four axes. The element exposes them as custom properties:
 | --- | --- | --- | --- | --- |
 | `--md-icon-wght` | Weight | `400` | 100 to 700 | 400 is the 2dp stroke for standard icons. Use at least 200 at 24dp. |
 | `--md-icon-fill` | Fill | `0` | 0 to 1 | 1 is filled, 0 is outlined. The change animates. |
-| `--md-icon-grad` | Grade | `0` | Negative to positive | Gb sets `-25` when the color scheme is dark, where icons are light on dark. Positive values add emphasis. |
+| `--md-icon-grad` | Grade | `0` | Negative to positive | The library sets `-25` when the color scheme is dark, where icons are light on dark. Positive values add emphasis. |
 | `--md-icon-opsz` | Optical size | follows size | 20 to 48dp | Not set by default. |
 
 Fill is the usual way to show a selected state. Use the outlined symbol when

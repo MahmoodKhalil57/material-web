@@ -16,14 +16,14 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/card/md-gb-card.ts`  
+Source: `material-design-expressive/components/card/md-gb-card.ts`  
 Import: `import '@material/web/components/card/md-gb-card.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `CardColor` | `'outlined'` | The color of the card. |
+| `color` | `color` | `"filled" \| "elevated" \| "outlined"` | `'outlined'` | The color of the card. |
 | `disabled` | `disabled` | `boolean` | `false` | Whether the card is disabled. |
 | `dragged` | `dragged` (reflects) | `boolean` | `false` | Whether the card is picked up and being dragged (raised elevation). The app moves the card. Spec Cards > Accessibility > Dragging and dismissing (WCAG 2.5.7): also offer a single-pointer alternative, e.g. a menu opened by tapping a "more" button or pressing and holding the card, with move and delete actions (see the "Reorder (drag or menu)" demo). Don't let the menu cover the card. |
 | `href` | `href` | `string` | `''` | Makes an interactive card a link (spec: directly actionable cards have the button or link role). |

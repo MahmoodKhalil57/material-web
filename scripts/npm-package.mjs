@@ -6,7 +6,7 @@
  */
 
 /**
- * Builds the labs/gb components as an npm package on a branch, the way
+ * Builds the library's components as an npm package on a branch, the way
  * site/scripts/pages.mjs builds the site on gh-pages, and publishes from it:
  *
  *   node scripts/npm-package.mjs [--name @mahmoodkhalil/material-web-3-demo]
@@ -168,7 +168,7 @@ await writeFile(
     {
       name: args.name,
       version: args.version,
-      description: 'Demo build of the Material 3 Expressive (labs/gb) web components, from the 3.0 docs site on material-web.',
+      description: 'Demo build of the Material Web 3.0 (Material 3 Expressive) web components, from the 3.0 docs site on material-web.',
       type: 'module',
       main: ENTRY,
       module: ENTRY,
@@ -209,7 +209,7 @@ await writeFile(
   join(OUT, 'README.md'),
   `# ${args.name}
 
-A demo build of the Material 3 Expressive web components (labs/gb) from
+A demo build of the Material Web 3.0 (Material 3 Expressive) web components from
 [material-web](https://github.com/material-components/material-web), as
 published on the 3.0 docs site: https://mahmoodkhalil57.github.io/material-web/3.0/
 

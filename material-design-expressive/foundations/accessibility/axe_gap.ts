@@ -10,7 +10,7 @@ import {AXE_GAPS, AXE_ROWS, axeViolations, describeViolations, renderRow} from '
 
 // Gap checks for the axe-core suite (`axe_test.ts`): rows with a real
 // violation, one red test per row naming the rule. Run with
-// `npm run gb:check -- --gaps ...`.
+// `npm run check -- --gaps ...`.
 
 describe('axe-core accessibility (central gaps)', () => {
   // With no known gaps the suite would have no tests, which the runner

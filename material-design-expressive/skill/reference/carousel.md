@@ -19,17 +19,17 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design carousel.
 
-Source: `components/carousel/md-gb-carousel.ts`  
+Source: `material-design-expressive/components/carousel/md-gb-carousel.ts`  
 Import: `import '@material/web/components/carousel/md-gb-carousel.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `alignment` | `alignment` (reflects) | `CarouselAlignment` | `'start'` | Start or center alignment of the hero layout. |
-| `layout` | `layout` (reflects) | `CarouselLayout` | `'multi-browse'` | The carousel layout. |
-| `orientation` | `orientation` (reflects) | `CarouselOrientation` |  | The scrolling axis. Defaults to vertical for the full-screen layout and horizontal for the others. |
-| `scrollMode` | `scroll-mode` (reflects) | `CarouselScrollMode` |  | `snap` snaps items into the layout when released; `free` lets them stop anywhere. Defaults to `free` for uncontained layouts and `snap` for the others. |
+| `alignment` | `alignment` (reflects) | `"start" \| "center"` | `'start'` | Start or center alignment of the hero layout. |
+| `layout` | `layout` (reflects) | `"multi-browse" \| "uncontained" \| "uncontained-multi-aspect" \| "hero" \| "full-screen"` | `'multi-browse'` | The carousel layout. |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` |  | The scrolling axis. Defaults to vertical for the full-screen layout and horizontal for the others. |
+| `scrollMode` | `scroll-mode` (reflects) | `"snap" \| "free"` |  | `snap` snaps items into the layout when released; `free` lets them stop anywhere. Defaults to `free` for uncontained layouts and `snap` for the others. |
 
 Slots
 
@@ -71,7 +71,7 @@ CSS custom properties
 
 A Material Design carousel item.
 
-Source: `components/carousel/md-gb-carousel-item.ts`  
+Source: `material-design-expressive/components/carousel/md-gb-carousel-item.ts`  
 Import: `import '@material/web/components/carousel/md-gb-carousel-item.js';`
 
 Attributes and properties

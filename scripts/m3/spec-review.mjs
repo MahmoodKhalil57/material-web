@@ -148,7 +148,7 @@ const CONTEXT = 20;
 const QUOTE_WINDOW = 5;
 
 const COMMON_RULES = `You review whether a Material 3 web component library implements one sentence of the Material 3 spec.
-The library is "labs/gb": Lit web components (TypeScript) styled with SCSS and CSS custom properties.
+The library is Lit web components (TypeScript) styled with SCSS and CSS custom properties.
 You are shown the spec sentence with its page and heading path, the component's file list, and code snippets (line-numbered) found by keyword search. The snippets may be unrelated to the sentence.
 
 Verdicts:
@@ -178,7 +178,7 @@ Answer with strict JSON only:
   // and the component source after them are prompt-cached); structured output.
   3: {
     system: `You review whether a Material 3 web component library implements one sentence of the Material 3 spec.
-The library is "labs/gb": Lit web components (TypeScript) styled with SCSS and CSS custom properties.
+The library is Lit web components (TypeScript) styled with SCSS and CSS custom properties.
 You are shown the code of the gb component the sentence belongs to: normally its full source in the system prompt (every .ts and .scss file, plus the shared helpers it imports), each file under a "=== <path> (<n> lines) ===" header; for foundation pages and very large components, code snippets found by keyword search in the user message instead. Every code line starts with its line number and "| ". The user message gives the spec sentence with its page and heading path, plus candidate locations found by keyword search. Candidates are only hints and may be unrelated; you may cite any line of the shown code.
 
 Verdicts:

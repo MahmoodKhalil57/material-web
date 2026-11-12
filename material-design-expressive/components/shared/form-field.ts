@@ -16,7 +16,7 @@ import {
 import {Validator} from '../../internal/behaviors/validators/validator.js';
 
 /**
- * The form layer shared by the labs/gb toggle controls (checkbox, radio,
+ * The form layer shared by the library's toggle controls (checkbox, radio,
  * switch) and slider. Form association, `required`, validity and
  * `setCustomValidity()` come from `labs/behaviors` (form-associated and
  * constraint-validation); this adds what those controls each used to

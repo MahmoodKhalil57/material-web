@@ -11,7 +11,7 @@
 
 const {absolute} = require('../eleventy/site.cjs');
 
-class GbRobots {
+class Robots {
   data() {
     return {permalink: '/robots.txt', eleventyExcludeFromCollections: true};
   }
@@ -28,4 +28,4 @@ class GbRobots {
   }
 }
 
-module.exports = GbRobots;
+module.exports = Robots;

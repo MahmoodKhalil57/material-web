@@ -96,7 +96,7 @@ async function main() {
         ? `[catalog:dev] Watching docs, docs/3.0, catalog sources and gb demos: edits rebuild the pages in place.\n` +
           `[catalog:dev] Wait for a rebuild with: node site/scripts/wait.mjs\n`
         : '') +
-      `[catalog:dev] Library source changes need \`npm run catalog:dev\` again (or gb-check --emit), since the demos load compiled .js.`,
+      `[catalog:dev] Library source changes need \`npm run catalog:dev\` again (or \`npm run check -- --emit\`), since the demos load compiled .js.`,
   );
 }
 
@@ -291,7 +291,7 @@ function watchSources() {
   // in the library only demos affect the pages.
   const relevant = (root, name) => {
     if (!name || !/\.(md|html|njk|ts|js|mjs|cjs|json|scss|css)$/.test(name)) return false;
-    // In the library: demos, and compiled .js (gb-check --emit), which the
+    // In the library: demos, and compiled .js (npm run check -- --emit), which the
     // /3.0/ shell bundle (site/src/gb) includes; else the shell keeps the
     // old components and, defined first, wins over the library server's.
     if (
@@ -421,7 +421,7 @@ async function prepareExamples(dirs) {
   await writeFile(join(EXAMPLES, '_shim.js'), SHIM);
   await writeFile(
     join(EXAMPLES, 'capture.html'),
-    `<!doctype html><html data-gb-capture><head><meta charset="utf-8"></head><body>
+    `<!doctype html><html data-demo-capture><head><meta charset="utf-8"></head><body>
 <script type="module">
 const dir = new URLSearchParams(location.search).get('dir');
 import('./' + dir + '/demo.js').catch((e) => { window.__demoError = String(e); });

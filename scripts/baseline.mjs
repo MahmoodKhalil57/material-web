@@ -6,29 +6,29 @@
  */
 
 /**
- * Baseline check for labs/gb, driven by https://github.com/web-platform-dx/web-features
+ * Baseline check for the library, driven by https://github.com/web-platform-dx/web-features
  * (the `web-features` package; the browser targets come from
  * `baseline-browser-mapping`).
  *
- *   npm run gb:baseline                 # CSS (fails) + JS API report
- *   npm run gb:baseline -- --verbose    # list every use, not just unguarded
- *   npm run gb:baseline -- --css-only   # skip the JS report
+ *   npm run baseline                 # CSS (fails) + JS API report
+ *   npm run baseline -- --verbose    # list every use, not just unguarded
+ *   npm run baseline -- --css-only   # skip the JS report
  *
- * CSS: every compiled labs/gb **\/*.css is parsed (css-tree). Each property,
+ * CSS: every compiled library **\/*.css is parsed (css-tree). Each property,
  * keyword value, function, unit, at-rule, media/container feature, pseudo-class
  * and pseudo-element is mapped to a BCD key, then to a web-features feature
  * and its Baseline status (`high` = widely available). A use that is not
  * widely available passes when
  *   - an enclosing `@supports` tests it (its name appears in the condition), or
- *   - scripts/gb-baseline-allow.json lists it with a reason (a progressive
+ *   - scripts/baseline-allow.json lists it with a reason (a progressive
  *     enhancement that degrades safely without a guard).
  * Anything else is "unguarded" and fails the run (exit 1).
  *
- * JS: report only. Known Web API members used by the labs/gb sources are
+ * JS: report only. Known Web API members used by the library's sources are
  * looked up the same way; for each non-widely-available one the script says
  * whether the use sites appear to feature-detect it.
  *
- * Run `npm run gb:check -- --all` first: the .css files are build output.
+ * Run `npm run check -- --all` first: the .css files are build output.
  */
 
 import {existsSync, readdirSync, readFileSync, statSync} from 'node:fs';
@@ -98,7 +98,7 @@ async function main() {
   const first = (...candidates) => candidates.find((k) => KEYS.has(k));
 
   // ---- allow list ---------------------------------------------------------
-  const allowPath = join('scripts', 'gb-baseline-allow.json');
+  const allowPath = join('scripts', 'baseline-allow.json');
   const allow = existsSync(allowPath) ? JSON.parse(readFileSync(allowPath, 'utf8')) : [];
   for (const entry of allow) {
     if (!(entry.key || entry.feature) || !entry.reason) throw new Error(`${allowPath}: every entry needs "key" or "feature", and "reason"`);
@@ -263,7 +263,7 @@ async function main() {
 
   const files = cssFiles(ROOT);
   if (!files.length) {
-    console.error('No compiled .css files under labs/gb. Run `npm run gb:check -- --all` first.');
+    console.error('No compiled .css files under material-design-expressive/. Run `npm run check -- --all` first.');
     process.exit(2);
   }
   let raw = 0;
@@ -294,7 +294,7 @@ async function main() {
 
   const rows = [...table.values()].sort((a, b) => a.key.localeCompare(b.key));
   const status = (b) => (b === 'low' ? 'newly' : 'limited');
-  console.log(`[gb:baseline] CSS: ${files.length} files, ${uses.length} feature uses mapped, ${rows.length} not widely available`);
+  console.log(`[baseline] CSS: ${files.length} files, ${uses.length} feature uses mapped, ${rows.length} not widely available`);
   if (rows.length) {
     const w = Math.max(...rows.map((r) => r.key.length));
     const wf = Math.max(...rows.map((r) => r.feature.length));
@@ -335,8 +335,8 @@ async function main() {
   if (!cssOnly) jsReport();
 
   const {versions} = baselineTargets();
-  console.log(`\n[gb:baseline] widely available targets: ${Object.entries(versions).map(([b, v]) => `${b} ${v}`).join(', ')}`);
-  console.log(`[gb:baseline] ${failures.length ? `FAIL: ${failures.length} unguarded use(s)` : 'OK: no unguarded, non-allowed CSS uses'}`);
+  console.log(`\n[baseline] widely available targets: ${Object.entries(versions).map(([b, v]) => `${b} ${v}`).join(', ')}`);
+  console.log(`[baseline] ${failures.length ? `FAIL: ${failures.length} unguarded use(s)` : 'OK: no unguarded, non-allowed CSS uses'}`);
   process.exit(failures.length ? 1 : 0);
 
   // ---- JS (report only) ----------------------------------------------------
@@ -425,7 +425,7 @@ async function main() {
       });
     }
 
-    console.log(`\n[gb:baseline] JS APIs (report only): ${srcFiles.length} source files, ${found.size} tracked members used`);
+    console.log(`\n[baseline] JS APIs (report only): ${srcFiles.length} source files, ${found.size} tracked members used`);
     const out = [...found].map(([key, sites]) => ({key, info: KEYS.get(key), sites})).sort((a, b) => a.key.localeCompare(b.key));
     const weak = out.filter((o) => o.info.baseline !== 'high');
     if (verbose) for (const o of out) if (o.info.baseline === 'high') console.log(`  high    ${o.key} (${o.sites.length})`);

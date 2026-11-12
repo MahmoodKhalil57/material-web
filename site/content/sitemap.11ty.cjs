@@ -10,7 +10,7 @@ const {absolute, pageDate} = require('../eleventy/site.cjs');
 
 const xml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-class GbSitemap {
+class Sitemap {
   data() {
     return {permalink: '/3.0/sitemap.xml', eleventyExcludeFromCollections: true};
   }
@@ -28,4 +28,4 @@ class GbSitemap {
   }
 }
 
-module.exports = GbSitemap;
+module.exports = Sitemap;

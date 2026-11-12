@@ -18,18 +18,18 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/menu/md-gb-menu.ts`  
+Source: `material-design-expressive/components/menu/md-gb-menu.ts`  
 Import: `import '@material/web/components/menu/md-gb-menu.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `MenuColor` | `MENU_COLORS.standard` | The color style: `standard` (surface-based) or `vibrant` (tertiary). |
+| `color` | `color` | `"standard" \| "vibrant"` | `MENU_COLORS.standard` | The color style: `standard` (surface-based) or `vibrant` (tertiary). |
 | `contextFor` | `context-for` | `string` | `''` | The id of an element (in the same root) that opens this menu as a context menu on a secondary click, the context menu key or a long press (menus.md "Context menus ... usually open with a secondary click"; "Performs a specific action to trigger the menu, like right-click or press-and-hold"). |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3 (menus.md "Density": "On web only, density levels control the spacing between elements. Increasing density decreases the top and bottom padding"). Each step removes 4px from the items' height; submenus inherit it. Values are clamped to that range. Dense items are smaller than the 48px recommended target, so don't apply density by default; let people opt in (grids-spacing.md "Avoid applying component scaling by default"). |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3 (menus.md "Density": "On web only, density levels control the spacing between elements. Increasing density decreases the top and bottom padding"). Each step removes 4px from the items' height; submenus inherit it. Values are clamped to that range. Dense items are smaller than the 48px recommended target, so don't apply density by default; let people opt in (grids-spacing.md "Avoid applying component scaling by default"). |
 | `filterFor` | `filter-for` | `string` | `''` | The id of a text field (in the same root) the menu is attached to. As the person types in it, the menu opens (without taking focus) and shows only the items whose label contains the text, case-insensitively (menus.md "Filtering": "As someone types, the list of menu options filters to show relevant results"). The remaining items ease into their new position ("Menu items ease into their new position as the menu is filtered"), unless motion is reduced. Fires `filter` with the query. |
-| `layout` | `layout` (reflects) | `MenuLayout` | `'standard'` | The layout: `standard` items on one surface, or `grouped` `md-gb-menu-group`s on separate surfaces with gaps between them. |
+| `layout` | `layout` (reflects) | `"standard" \| "grouped"` | `'standard'` | The layout: `standard` items on one surface, or `grouped` `md-gb-menu-group`s on separate surfaces with gaps between them. |
 
 Slots
 
@@ -65,14 +65,14 @@ CSS custom properties
 
 A Material Design component.
 
-Source: `components/menu/md-gb-menu-group.ts`  
+Source: `material-design-expressive/components/menu/md-gb-menu-group.ts`  
 Import: `import '@material/web/components/menu/md-gb-menu-group.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `checkable` | `checkable` (reflects) | `MenuItemCheckable` | `null` |  |
+| `checkable` | `checkable` (reflects) | `"single" \| "multiple"` | `null` | Whether the group's items can be checked: `single` (one at a time, like radio buttons) or `multiple` (like checkboxes). Unset, items aren't checkable. |
 | `label` | `label` | `string` | `''` | The section label shown above the group's items. |
 
 Slots
@@ -93,15 +93,15 @@ CSS parts
 
 A Material Design component.
 
-Source: `components/menu/md-gb-menu-item.ts`  
+Source: `material-design-expressive/components/menu/md-gb-menu-item.ts`  
 Import: `import '@material/web/components/menu/md-gb-menu-item.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `checked` | `checked` (reflects) | `boolean` | `false` |  |
-| `disabled` | `disabled` (reflects) | `boolean` | `false` |  |
+| `checked` | `checked` (reflects) | `boolean` | `false` | Whether the item is checked, in a checkable group (`<md-gb-menu-group checkable>`). |
+| `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the item is disabled: it can't be focused or activated. |
 
 Slots
 

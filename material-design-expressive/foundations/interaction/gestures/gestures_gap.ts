@@ -7,7 +7,7 @@
 // import 'jasmine'; (google3-only)
 
 // Gap checks for this foundation: the reorder check moved to `gestures-reorder_test.ts`.
-// Run with `npm run gb:check -- --gaps ...`.
+// Run with `npm run check -- --gaps ...`.
 
 describe('gestures (central gaps)', () => {
   // With no known gaps the suite would have no tests, which the runner

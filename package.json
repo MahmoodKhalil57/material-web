@@ -31,12 +31,12 @@
     "catalog:lighthouse": "node site/scripts/lighthouse.mjs",
     "catalog:pages": "node site/scripts/pages.mjs",
     "npm-package": "node scripts/npm-package.mjs",
-    "gb:check": "node scripts/gb-check.mjs",
-    "gb:baseline": "node scripts/gb-baseline.mjs",
-    "gb:css-validate": "node scripts/gb-css-validate.mjs",
-    "gb:size": "tsc -p scripts/tsconfig.json && node scripts/size/gb-size.js",
-    "gb:size:check": "tsc -p scripts/tsconfig.json && node scripts/size/gb-size.js --check",
-    "gb:size:update": "tsc -p scripts/tsconfig.json && node scripts/size/gb-size.js --update"
+    "check": "node scripts/check.mjs",
+    "baseline": "node scripts/baseline.mjs",
+    "css-validate": "node scripts/css-validate.mjs",
+    "size": "tsc -p scripts/tsconfig.json && node scripts/size/size.js",
+    "size:check": "tsc -p scripts/tsconfig.json && node scripts/size/size.js --check",
+    "size:update": "tsc -p scripts/tsconfig.json && node scripts/size/size.js --update"
   },
   "type": "module",
   "customElements": "custom-elements.json",

@@ -19,7 +19,7 @@
  *   2. Extract Compose token usage.
  *   3. Regenerate material-design-expressive/foundations/design-tokens/versions/latest/sass (+ -meta files), spring easings,
  *      and Material shapes.
- *   4. Diff generated tokens against the previous run; audit labs/gb.
+ *   4. Diff generated tokens against the previous run; audit the library.
  *   5. Regenerate browser spec tests (<component>_spec_test.ts in each component).
  *   6. Report upstream Compose files that changed since they were last
  *      reviewed (scripts/m3/upstream-review.json).
@@ -118,10 +118,10 @@ section('Token changes since the previous run');
 const tokenDiff = node('scripts/m3/diff-sass-tokens.mjs', [TOKENS, PREV], {capture: true});
 report.push(fence(tokenDiff.includes('difference') ? tokenDiff : `No token changes.\n${tail(tokenDiff, 3)}`));
 
-section(`labs/gb audit${sync ? ' (high-confidence drift synced)' : ''}`);
-const audit = node('scripts/m3/audit-gb.mjs', sync ? ['--sync'] : [], {capture: true, allowFail: true});
+section(`the library audit${sync ? ' (high-confidence drift synced)' : ''}`);
+const audit = node('scripts/m3/audit-tokens.mjs', sync ? ['--sync'] : [], {capture: true, allowFail: true});
 report.push(fence(audit));
-report.push('`~` = high confidence (synced by `--sync`), `?~` = needs review. Full gap list: `node scripts/m3/audit-gb.mjs --gaps`.');
+report.push('`~` = high confidence (synced by `--sync`), `?~` = needs review. Full gap list: `node scripts/m3/audit-tokens.mjs --gaps`.');
 
 // Regenerate browser spec tests so `npm test` checks gb against this spec.
 section('Generated spec tests');
@@ -159,7 +159,7 @@ if (accept) {
   report.push(`\nRecorded ${Object.keys(current).length} files as reviewed in \`${REVIEW}\`.`);
 }
 
-// 7. Spec coverage, computed from `spec:` citations in labs/gb and scripts/m3.
+// 7. Spec coverage, computed from `spec:` citations in the library and scripts/m3.
 // Runs after the test generators so their citations are current.
 section('Spec coverage');
 // First pass computes statuses; the gap checklist is regenerated from them

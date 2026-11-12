@@ -17,7 +17,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 One segment of a Material Design segmented button set.
 
-Source: `components/segmentedbutton/md-gb-segmented-button.ts`  
+Source: `material-design-expressive/components/segmentedbutton/md-gb-segmented-button.ts`  
 Import: `import '@material/web/components/segmentedbutton/md-gb-segmented-button.js';`
 
 Attributes and properties
@@ -28,7 +28,7 @@ Attributes and properties
 | `focusable` | property only | `boolean` | `true` | Whether the segment is the set's tab stop (roving `tabindex`). Set by `md-gb-segmented-button-set`. |
 | `groupDisabled` | property only | `boolean` | `false` | Whether the parent set is disabled. Set by `md-gb-segmented-button-set`. |
 | `label` | `label` | `string` | `''` | Label text, rendered before the default slot's content. |
-| `mode` | property only | `SegmentedButtonMode` | `'single'` | The selection mode of the parent set: `radio` semantics for `single`, `checkbox` for `multiple`. Set by `md-gb-segmented-button-set`. |
+| `mode` | property only | `"single" \| "multiple"` | `'single'` | The selection mode of the parent set: `radio` semantics for `single`, `checkbox` for `multiple`. Set by `md-gb-segmented-button-set`. |
 | `noCheckmark` | `no-checkmark` | `boolean` | `false` | Whether to hide the checkmark that shows when selected. |
 | `selected` | `selected` (reflects) | `boolean` | `false` | Whether the segment is selected. |
 | `value` | `value` | `string` | `''` | The value submitted with the set's form when selected. |
@@ -63,15 +63,17 @@ CSS custom properties
 
 A Material Design segmented button set.
 
-Source: `components/segmentedbutton/md-gb-segmented-button-set.ts`  
+Source: `material-design-expressive/components/segmentedbutton/md-gb-segmented-button-set.ts`  
 Import: `import '@material/web/components/segmentedbutton/md-gb-segmented-button-set.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `SegmentedButtonDensity` |  | The density, from 0 (default, 40px) to -3. Each step down removes 4px from the height. Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default, 40px) to -3. Each step down removes 4px from the height. Values are clamped to that range. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
 | `multiselect` | `multiselect` (reflects) | `boolean` | `false` | Whether more than one segment can be selected. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `required` | `required` (reflects) | `boolean` | `false` | In single-select mode, whether a segment must stay selected: the selected segment can't be unselected. |
 
 Slots

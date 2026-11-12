@@ -1,7 +1,7 @@
 # Exclusions: styles and layout
 
 Spec units for the color, icons, typography, shape, elevation, spacing, designing,
-customization, design-tokens, usability and layout pages that no labs/gb code
+customization, design-tokens, usability and layout pages that no library code
 could satisfy. Format: see README.md.
 
 - Material Theme Builder (design tool) steps and descriptions; no library code <!-- spec-exclude: color-dynamic-0d0c3a, color-dynamic-dc17cd, color-dynamic-d2e080, color-dynamic-b14298, color-dynamic-f11f88, color-resources-4fcbe1, color-static-605b38, color-static-36726e, color-static-2e0a4d, customization-c1631e, customization-bdad92 -->
@@ -10,7 +10,7 @@ could satisfy. Format: see README.md.
 
 - Usage advice for designers about when to use a color role, with no library behavior <!-- spec-exclude: color-roles-db7e02, color-roles-531bfb, color-roles-d96f2c, color-roles-dfbb24, color-roles-3300fc, color-roles-ded43f, color-roles-facf54, color-roles-0f32e9, color-roles-02c367, color-roles-7bbd85, color-roles-daf0f5, color-roles-ebfa09, color-roles-9d05ec, color-roles-b69fb4, color-roles-af0139, color-roles-a70b29 -->
 
-- Algorithm delivered by the @material/material-color-utilities dependency (HCT, tonal palettes); labs/gb only calls it <!-- spec-exclude: color-system-664163, color-system-eb85f3, color-system-c1903a -->
+- Algorithm delivered by the @material/material-color-utilities dependency (HCT, tonal palettes); the library only calls it <!-- spec-exclude: color-system-664163, color-system-eb85f3, color-system-c1903a -->
 
 - Naming and process statements about the spec token system (tokens come from the spec-token generator, scripts/m3/spec-tokens.mjs) <!-- spec-exclude: design-tokens-374a39, design-tokens-98e25e, spacing-5498c8, spacing-0a3fd5, spacing-bdedee -->
 

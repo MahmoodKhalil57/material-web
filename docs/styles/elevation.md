@@ -43,7 +43,7 @@ by tone (see below).
 ## Showing elevation with tone
 
 Elevation can be shown with a tonal surface color instead of a shadow. Two
-components do this in gb:
+components do this in the library:
 
 - **Search bar**: no shadow. Its container uses `surface-container-high`, the
   tone for level 3.

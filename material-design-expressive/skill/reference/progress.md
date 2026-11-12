@@ -18,7 +18,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/progress/md-gb-progress.ts`  
+Source: `material-design-expressive/components/progress/md-gb-progress.ts`  
 Import: `import '@material/web/components/progress/md-gb-progress.js';`
 
 Attributes and properties

@@ -606,8 +606,8 @@ class ColorPlayground extends LitElement {
   }
 }
 
-if (!customElements.get('gb-color-playground')) {
-  customElements.define('gb-color-playground', ColorPlayground);
+if (!customElements.get('color-playground')) {
+  customElements.define('color-playground', ColorPlayground);
 }
 
 const demoStyles = css`
@@ -670,13 +670,13 @@ const playground: MaterialStoryInit<StoryKnobs> = {
   render(knobs) {
     return html`
       <div class="demo-container">
-        <gb-color-playground
+        <color-playground
           source=${knobs.source}
           variant=${knobs.variant}
           contrast=${knobs.contrast}
           spec-version=${knobs.specVersion}
           platform=${knobs.platform}
-          ?dark=${knobs.dark}></gb-color-playground>
+          ?dark=${knobs.dark}></color-playground>
       </div>
     `;
   },

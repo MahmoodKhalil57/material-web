@@ -14,7 +14,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/radio/md-gb-radio.ts`  
+Source: `material-design-expressive/components/radio/md-gb-radio.ts`  
 Import: `import '@material/web/components/radio/md-gb-radio.js';`
 
 Attributes and properties
@@ -22,7 +22,9 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `checked` | `checked` | `boolean` |  | Whether or not the radio is selected. |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3. Each step down removes 4px from the radio's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. radio-button.md: don't apply density by default; let people opt in to a denser layout. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3. Each step down removes 4px from the radio's layout box (48px) and state layer (40px); the touch target stays 48px. Values are clamped to that range. radio-button.md: don't apply density by default; let people opt in to a denser layout. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `required` | `required` | `boolean` | `false` | Whether or not the radio is required. If any radio is required in a group, all radios are implicitly required. |
 | `value` | `value` | `string` | `'on'` | The element value to use in form submission when checked. |
 

@@ -15,20 +15,20 @@ import {jasmineTestRunnerConfig} from 'web-test-runner-jasmine';
  * `**\/x.js` with a sibling `x.ts` gets the `.ts` transpiled by
  * esbuild (milliseconds), so tests always run the current source and don't
  * need a tsc build first. Type checking stays a separate step
- * (`npm run gb:check`). Set MWC_TEST_COMPILED=1 to test tsc's output instead.
+ * (`npm run check`). Set MWC_TEST_COMPILED=1 to test tsc's output instead.
  */
 /** Transpiled sources by path; reused while the file is unchanged (mtime). */
 const transformCache = new Map();
 
-const serveGbTypeScript = {
-  name: 'serve-gb-typescript',
+const serveTypeScript = {
+  name: 'serve-typescript',
   async serve(context) {
     if (process.env.MWC_TEST_COMPILED === '1') return undefined;
     const path = context.path;
     if (!path.startsWith('/') || !/\.[jt]s$/.test(path) || path.endsWith('.d.ts')) {
       return undefined;
     }
-    // Test files may be requested as `.ts` (`npm run gb:check` runs the
+    // Test files may be requested as `.ts` (`npm run check` runs the
     // sources); imports between modules use `.js`.
     const source = join(process.cwd(), path.slice(1, -'.js'.length) + '.ts');
     if (!existsSync(source)) return undefined;
@@ -88,7 +88,7 @@ function testRunnerHtml(path, config) {
 export default {
   ...jasmineConfig,
   testRunnerHtml,
-  plugins: [serveGbTypeScript],
+  plugins: [serveTypeScript],
   nodeResolve: true,
   files: ['**/*test.js', '!node_modules/', '!.wireit/'],
   // A healthy run of every test file takes well under a minute.

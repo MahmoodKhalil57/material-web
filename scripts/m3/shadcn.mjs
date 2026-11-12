@@ -8,18 +8,18 @@
  * Generates the shadcn registry of the md-gb elements (/3.0/r/, see
  * docs/about/shadcn.md): one `registry:ui` item per components
  * directory (a React wrapper file per item, made with @lit/react from the
- * element classes and the events read by gb-elements.mjs), the `md-theme`
+ * element classes and the events read by elements.mjs), the `md-theme`
  * and `md-theme-m3` themes, and the registry.json index. Used by the Eleventy
  * data file site/content/_data/shadcn.cjs; run it alone to write the files:
  *
- *   node scripts/m3/gb-shadcn.mjs <out dir> [registry base URL]
+ *   node scripts/m3/shadcn.mjs <out dir> [registry base URL]
  */
 
 import {mkdirSync, readFileSync, readdirSync, writeFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {readGbElements} from './gb-elements.mjs';
+import {readElements} from './elements.mjs';
 import {elementDir, elementDirs} from '../element-dirs.mjs';
 
 const require = createRequire(import.meta.url);
@@ -167,8 +167,8 @@ function reverseThemeItem() {
  *
  * @param base The URL the files are served from (default: names.registryBase()).
  */
-export function buildGbShadcn(base = names.registryBase({forFiles: true})) {
-  const elements = readGbElements();
+export function buildShadcn(base = names.registryBase({forFiles: true})) {
+  const elements = readElements();
   const pages = names.docsPages();
   const files = [];
   const index = [];
@@ -210,9 +210,9 @@ export function buildGbShadcn(base = names.registryBase({forFiles: true})) {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const out = process.argv[2];
-  if (!out) throw new Error('usage: node scripts/m3/gb-shadcn.mjs <out dir> [registry base URL]');
+  if (!out) throw new Error('usage: node scripts/m3/shadcn.mjs <out dir> [registry base URL]');
   mkdirSync(out, {recursive: true});
-  const files = buildGbShadcn(process.argv[3]?.replace(/\/+$/, ''));
+  const files = buildShadcn(process.argv[3]?.replace(/\/+$/, ''));
   for (const f of files) writeFileSync(join(out, `${f.name}.json`), f.json);
   console.log(`${files.length} files in ${out}`);
 }

@@ -5,18 +5,18 @@
  */
 
 /**
- * Per-component Brotli size budgets for labs/gb.
+ * Per-component Brotli size budgets for the library.
  *
- *   npm run gb:size           # print today's sizes next to the budgets
- *   npm run gb:size:check     # exit 1 when a component exceeds its budget
- *   npm run gb:size:update    # rewrite gb-budgets.json: current size + 10%
+ *   npm run size           # print today's sizes next to the budgets
+ *   npm run size:check     # exit 1 when a component exceeds its budget
+ *   npm run size:update    # rewrite budgets.json: current size + 10%
  *
  * A component is a components directory with `md-gb-*.js` entries.
  * Its JS size is the minified module graph of those entries (Lit and other
  * node_modules external, Lit `css` templates stripped); its CSS size is its
  * compiled `.css` files concatenated. Both Brotli at maximum quality.
  *
- * Needs the compiled .js and .css (`npm run gb:check -- --all`).
+ * Needs the compiled .js and .css (`npm run check -- --all`).
  */
 
 import {existsSync, readdirSync, readFileSync, statSync, writeFileSync} from 'fs';
@@ -28,7 +28,7 @@ import {getSplitBrotliSize} from './bundle-size.js';
 const ROOTS: string[] = (
   JSON.parse(readFileSync(join('scripts', 'element-roots.json'), 'utf8')).roots as string[]
 ).map((r) => join('material-design-expressive', r));
-const BUDGETS = join('scripts', 'size', 'gb-budgets.json');
+const BUDGETS = join('scripts', 'size', 'budgets.json');
 /** Headroom added to today's size when writing budgets. */
 const HEADROOM = 0.1;
 
@@ -37,7 +37,7 @@ interface Budget {
   css: number;
 }
 
-function listComponents(): Array<{name: string; js: string[]; css: string[]}> {
+function listComponents(): Array<{name: string; js: string[]; css: string[]; sass: boolean}> {
   const out = [];
   const dirs = ROOTS.filter((root) => existsSync(root))
     .flatMap((root) => readdirSync(root).map((name) => ({name, dir: join(root, name)})))
@@ -50,7 +50,9 @@ function listComponents(): Array<{name: string; js: string[]; css: string[]}> {
       .map((f) => join(dir, f));
     if (!js.length) continue;
     const css = files.filter((f) => f.endsWith('.css')).map((f) => join(dir, f));
-    out.push({name, js, css});
+    // Styles written in the TypeScript (no Sass) have no stylesheet to count.
+    const sass = files.some((f) => f.endsWith('.scss') && !f.startsWith('_'));
+    out.push({name, js, css, sass});
   }
   return out;
 }
@@ -67,8 +69,8 @@ const budgets: Record<string, Budget> = existsSync(BUDGETS)
 
 const sizes: Record<string, Budget> = {};
 for (const c of listComponents()) {
-  if (!c.css.length) {
-    console.error(`${c.name}: no compiled .css (run gb:check -- --all)`);
+  if (c.sass && !c.css.length) {
+    console.error(`${c.name}: no compiled .css (run check -- --all)`);
     process.exit(2);
   }
   sizes[c.name] = await getSplitBrotliSize(c.js, c.css);
@@ -86,7 +88,7 @@ if (mode === 'update') {
     BUDGETS,
     JSON.stringify({unit: 'bytes, brotli', headroom: HEADROOM, components}, null, 2) + '\n',
   );
-  console.log(`[gb:size] wrote ${BUDGETS} (${Object.keys(components).length} components)`);
+  console.log(`[size] wrote ${BUDGETS} (${Object.keys(components).length} components)`);
   process.exit(0);
 }
 
@@ -102,7 +104,7 @@ for (const [name, s] of Object.entries(sizes)) {
   );
   if (mode === 'check') {
     if (!b) {
-      console.error(`${name}: no budget (run gb:size:update)`);
+      console.error(`${name}: no budget (run size:update)`);
       failures++;
     }
     for (const kind of ['js', 'css'] as const) {
@@ -115,13 +117,13 @@ for (const [name, s] of Object.entries(sizes)) {
 }
 for (const name of Object.keys(budgets)) {
   if (mode === 'check' && !(name in sizes)) {
-    console.error(`${name}: has a budget but no component (run gb:size:update)`);
+    console.error(`${name}: has a budget but no component (run size:update)`);
     failures++;
   }
 }
 const total = (k: 'js' | 'css') => Object.values(sizes).reduce((a, s) => a + s[k], 0);
 console.log(`${'total'.padEnd(18)} ${pad(total('js'), 7)} ${' '.repeat(7)} ${pad(total('css'), 7)}`);
 if (failures) {
-  console.error(`[gb:size] ${failures} budget failure(s)`);
+  console.error(`[size] ${failures} budget failure(s)`);
   process.exit(1);
 }

@@ -20,23 +20,24 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design navigation rail custom element.
 
-Source: `components/navrail/md-gb-nav-rail.ts`  
+Source: `material-design-expressive/components/navrail/md-gb-nav-rail.ts`  
 Import: `import '@material/web/components/navrail/md-gb-nav-rail.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `alignment` | `alignment` (reflects) | `NavRailAlignment` | `'top'` | Vertical alignment of items ('top', 'center', or 'bottom'). |
+| `alignment` | `alignment` (reflects) | `"center" \| "top" \| "bottom"` | `'top'` | Vertical alignment of items ('top', 'center', or 'bottom'). |
 | `autoSelect` | `autoselect` | `boolean` | `false` | Whether or not to automatically select a tab when it is focused. |
 | `collapsible` | `collapsible` (reflects) | `boolean` | `false` | Whether the navigation rail renders a built-in expand/collapse menu button in the header when no toggle button is slotted into `slot="header"`. |
 | `divider` | `divider` (reflects) | `boolean` | `false` | Whether a vertical divider marks the edge of the rail next to the app's content. |
 | `elevated` | `elevated` (reflects) | `boolean` | `false` | Whether the rail is elevated to level 1, to distinguish it from content that scrolls underneath it. |
 | `expanded` | `expanded` (reflects) | `boolean` | `false` | Whether the navigation rail is expanded to show horizontal items. |
 | `hideWhenCollapsed` | `hide-when-collapsed` (reflects) | `boolean` | `false` | Hide when collapsed (navigation-rail.md): the collapsed rail is not shown and takes no space, so the body content fills in. The expanded rail (always modal in this mode) appears over the content when the app's menu button calls `expand()` or `toggle()`; keep that menu button accessible. |
-| `itemLayout` | `item-layout` (reflects) | `NavRailItemLayout` | `'vertical'` | The layout orientation of items ('vertical' or 'horizontal'). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of items ('vertical' or 'horizontal'). |
 | `modal` | `modal` (reflects) | `boolean` | `false` | Whether the expanded navigation rail is modal: it opens over the content with a scrim, with modal elevation and shape. |
 | `narrow` | `narrow` (reflects) | `boolean` | `false` | Whether the collapsed rail uses the narrow width (`md.comp.nav-rail.collapsed.narrow.container.width`, 80dp). |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | Orientation of the tablist ('horizontal' or 'vertical'). |
 | `selectedIndex` | `selected-index` | `number` |  | The 0-based index of the currently active navigation rail item. Alias for `selectedTabIndex`. |
 | `selectedTabIndex` | `selectedtabindex` | `number` |  | The index of the currently selected tab. |
 
@@ -101,6 +102,7 @@ CSS custom properties
 - `--item-full-width-leading-space`
 - `--item-full-width-trailing-space`
 - `--item-horizontal-active-indicator-height`
+- `--item-horizontal-active-indicator-width`: The expanded destinations' pill width: `fit-content` (default) hugs the icon and label; `100%` takes the destination's width.
 - `--item-horizontal-icon-label-space`
 - `--item-icon-size`
 - `--item-inactive-focused-icon-color`
@@ -129,7 +131,7 @@ CSS custom properties
 
 A Material Design navigation rail item custom element.
 
-Source: `components/navrail/md-gb-nav-rail-item.ts`  
+Source: `material-design-expressive/components/navrail/md-gb-nav-rail-item.ts`  
 Import: `import '@material/web/components/navrail/md-gb-nav-rail-item.js';`
 
 Attributes and properties
@@ -140,10 +142,11 @@ Attributes and properties
 | `badge` | `badge` | `string` | `''` | Optional badge text (or 'dot' / 'true' for a small dot badge). |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the navigation rail item is disabled. |
 | `href` | `href` | `string` | `''` | The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. |
-| `itemLayout` | `item-layout` (reflects) | `NavRailItemLayout` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
+| `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
 | `label` | `label` | `string` | `''` | Optional label text if not provided via default slot. |
 | `rel` | `rel` | `string` | `''` | The link's `rel` attribute, when `href` is set. |
 | `secondary` | `secondary` (reflects) | `boolean` | `false` | Whether the destination is secondary: it shows only while the rail is expanded. |
+| `selected` | `selected` (reflects) | `boolean` |  | Whether the tab is selected. |
 | `tabpanel` | `tabpanel` (reflects) | `string` |  | ID of the associated `md-aria-tabpanel` element. |
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to open the linked `href`, e.g. `_blank`. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Whether the icon has no filled style. The active destination then uses the semibold icon weight instead of the filled icon. |

@@ -32,7 +32,7 @@ function labOf(file) {
 
 const labs = readdirSync(DOCS).filter((f) => f.endsWith('.md')).sort().map(labOf);
 
-class GbLab {
+class LabPages {
   data() {
     return {
       eleventyExcludeFromCollections: true,
@@ -110,4 +110,4 @@ ${lab.js ? `<script type="module">\n${safe(lab.js)}\n</script>` : ''}
   }
 }
 
-module.exports = GbLab;
+module.exports = LabPages;

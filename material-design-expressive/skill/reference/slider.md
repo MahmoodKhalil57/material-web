@@ -20,32 +20,38 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design slider component.
 
-Source: `components/slider/md-gb-slider.ts`  
+Source: `material-design-expressive/components/slider/md-gb-slider.ts`  
 Import: `import '@material/web/components/slider/md-gb-slider.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `ariaLabelEnd` | `label-end` | `string` | `''` |  |
-| `ariaLabelStart` | `label-start` | `string` | `''` |  |
-| `ariaValueTextEnd` | `valuetext-end` | `string` | `''` |  |
-| `ariaValueTextStart` | `valuetext-start` | `string` | `''` |  |
-| `centered` | `centered` (reflects) | `boolean` | `false` |  |
-| `labeled` | `labeled` | `boolean` | `false` |  |
-| `max` | `max` | `number` | `100` |  |
-| `min` | `min` | `number` | `0` |  |
-| `orientation` | `orientation` (reflects) | `SliderOrientation` | `'horizontal'` | The orientation of the slider. Vertical orientation applies to standard, discrete, and centered variants (range is not supported in vertical orientation). |
-| `range` | `range` (reflects) | `boolean` | `false` |  |
-| `size` | `size` (reflects) | `SliderSize` | `'xs'` |  |
-| `step` | `step` | `number \| "any"` | `1` |  |
-| `ticks` | `ticks` | `boolean` | `false` |  |
-| `value` | `value` | `number` |  |  |
-| `valueEnd` | `value-end` | `number` |  |  |
-| `valueLabel` | `value-label` | `string` | `''` |  |
-| `valueLabelEnd` | `value-label-end` | `string` | `''` |  |
-| `valueLabelStart` | `value-label-start` | `string` | `''` |  |
-| `valueStart` | `value-start` | `number` |  |  |
+| `ariaLabelEnd` | `label-end` | `string` | `''` | The accessible name of the upper handle of a `range` slider (default: `aria-label` + " end"). |
+| `ariaLabelStart` | `label-start` | `string` | `''` | The accessible name of the lower handle of a `range` slider (default: `aria-label` + " start"). |
+| `ariaValueTextEnd` | `valuetext-end` | `string` | `''` | The accessible value text of the upper handle (default: `value-label-end`, then the number). |
+| `ariaValueTextStart` | `valuetext-start` | `string` | `''` | The accessible value text of the lower handle (default: `value-label-start`, then the number). |
+| `centered` | `centered` (reflects) | `boolean` | `false` | Whether the active track starts at the middle of the range, for values with a neutral point. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
+| `labeled` | `labeled` | `boolean` | `false` | Whether to show the value indicator above the handle while it is hovered, pressed or keyboard-focused. |
+| `max` | `max` | `number` | `100` | The largest value. |
+| `min` | `min` | `number` | `0` | The smallest value. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
+| `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | The orientation of the slider. Vertical orientation applies to standard, discrete, and centered variants (range is not supported in vertical orientation). |
+| `range` | `range` (reflects) | `boolean` | `false` | Whether the slider selects a range with two handles (`value-start`, `value-end`). |
+| `size` | `size` (reflects) | `"sm" \| "md" \| "lg" \| "xs" \| "xl"` | `'xs'` | The size: `xs` (default), `sm`, `md`, `lg` or `xl`. |
+| `step` | `step` | `"any" \| number` | `1` | The step between values, or `'any'` for a continuous slider. Arrow keys move by one step; with `ticks`, a stop shows at each step. |
+| `ticks` | `ticks` | `boolean` | `false` | Whether to show a stop indicator at each `step`. |
+| `value` | `value` | `number` |  | The value of a standard or centered slider (not `range`). |
+| `valueEnd` | `value-end` | `number` |  | The upper value of a `range` slider. |
+| `valueLabel` | `value-label` | `string` | `''` | The text of the value indicator and the handle's accessible value, when the number alone is unclear (`5 minutes`). The slider does not format numbers itself. |
+| `valueLabelEnd` | `value-label-end` | `string` | `''` | `value-label` for the upper handle of a `range` slider. |
+| `valueLabelStart` | `value-label-start` | `string` | `''` | `value-label` for the lower handle of a `range` slider. |
+| `valueStart` | `value-start` | `number` |  | The lower value of a `range` slider. |
+
+Slots
+
+- `icon`: An optional leading inset icon (`md-gb-icon`): the standard horizontal slider, sizes `md`, `lg` and `xl`.
 
 Events
 

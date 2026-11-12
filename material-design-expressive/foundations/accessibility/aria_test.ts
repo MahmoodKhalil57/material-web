@@ -45,7 +45,7 @@ describe('WAI-ARIA 1.3 model (central)', () => {
     expect(Object.keys(model.attrs).length).toBe(53);
   });
 
-  it('knows the roles that matter to labs/gb', async () => {
+  it('knows the roles that matter to the library', async () => {
     const {roles} = await loadModel();
     const names = (list: Array<{role: string}>) => list.map((c) => c.role);
     expect(names(roles['listbox']!.allowedChildren)).toEqual(['group', 'option']);

@@ -98,7 +98,7 @@ function gb(eleventyConfig) {
     // a page style that reserves them so the code doesn't move when the demo
     // arrives (the spec shell has none).
     const style = story.height
-      ? `--gb-example-height: ${story.height}px; --gb-example-narrow-height: ${story.narrowHeight ?? story.height}px`
+      ? `--example-height: ${story.height}px; --example-narrow-height: ${story.narrowHeight ?? story.height}px`
       : '';
     return demoCard(`${story.name} example`, live, [{lang: 'html', code: story.html}], {style});
   });
@@ -127,7 +127,7 @@ function gb(eleventyConfig) {
     const id = demoId(where + '|' + label);
     const lib = process.env.MWC_LIB_URL;
     const files_ = cardFiles(files);
-    const style = height ? `--gb-demo-height: ${height}px` : '';
+    const style = height ? `--demo-height: ${height}px` : '';
     // Headings in a demo belong to the demo's document, not the docs page's
     // outline and table of contents: render those in a frame too.
     const hasHeading = /<h[1-6][\s>]/i.test(html);
@@ -176,10 +176,10 @@ ${html}
   });
 
   eleventyConfig.addAsyncShortcode('api', async (dir) => {
-    const {gbApiMarkdown} = await import(
+    const {apiMarkdown} = await import(
       pathToFileURL(join(ROOT, 'scripts', 'm3', 'gen-api-docs.mjs')).href
     );
-    const api = gbApiMarkdown(dir);
+    const api = apiMarkdown(dir);
     if (!api) throw new Error(`api "${dir}": no md-gb elements in that directory`);
     return `\n\n${api}\n\n`;
   });

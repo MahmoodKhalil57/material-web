@@ -7,7 +7,7 @@
 
 /**
  * Writes a Claude Code skill that teaches an agent to use the `md-gb-*`
- * elements of labs/gb: `skill/SKILL.md` plus one reference file per
+ * elements of the library: `skill/SKILL.md` plus one reference file per
  * component directory under `skill/reference/`.
  *
  *   node scripts/m3/gen-agent-skill.mjs           # write
@@ -18,7 +18,7 @@
  *   defaults, slots, events, CSS parts and custom properties, public
  *   methods) comes from the TypeScript sources, read with the compiler API
  *   and the JSDoc of each class. The Custom Elements Manifest
- *   (`npm run build:manifest`, now working for labs/gb) holds most of the
+ *   (`npm run build:manifest`, now working for the library) holds most of the
  *   same data, but not all of it: classes extending a mixin chain
  *   (`baseClass = mixinX(mixinY(LitElement))`) lose the mixin-inherited
  *   properties (disabled, name, value, form, ...), the analyzer does not
@@ -34,7 +34,7 @@
 
 import {existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync} from 'node:fs';
 import {join, resolve, sep} from 'node:path';
-import {readGbElements} from './gb-elements.mjs';
+import {readElements} from './elements.mjs';
 
 
 const ROOT = process.cwd();
@@ -50,7 +50,7 @@ const posix = (p) => p.split(sep).join('/');
 // ---------------------------------------------------------------------------
 // 1. Elements from the TypeScript sources (shared reader).
 
-const elements = readGbElements();
+const elements = readElements();
 
 
 // ---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ const rulesByDir = new Map();
       const text = cleanRule(sub[2]);
       if (!text || /^Tokens ·/.test(text)) continue;
       const partial = sub[1] && sub[1] !== '[x] ';
-      current.notes.push(partial ? `${text} (not complete in labs/gb)` : text);
+      current.notes.push(partial ? `${text} (not complete in the library)` : text);
     }
   }
 }
@@ -206,7 +206,7 @@ function skillFile() {
   const out = [
     '---',
     'name: md-gb',
-    'description: Use when writing or reviewing HTML, Lit templates or CSS that uses the md-gb-* Material 3 Expressive web components from labs/gb (buttons, FABs, app bars, dialogs, sheets, lists, menus, text fields, tabs, navigation, sliders, pickers and more): which tag to pick, its attributes, slots, events, CSS parts and custom properties, and what the app must provide itself.',
+    'description: Use when writing or reviewing HTML, Lit templates or CSS that uses the md-gb-* Material 3 Expressive web components of Material Web 3.0 (buttons, FABs, app bars, dialogs, sheets, lists, menus, text fields, tabs, navigation, sliders, pickers and more): which tag to pick, its attributes, slots, events, CSS parts and custom properties, and what the app must provide itself.',
     '---',
     '',
     '# md-gb: Material 3 Expressive web components',

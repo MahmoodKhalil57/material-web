@@ -40,7 +40,7 @@ export default {
   exclude: [
     '^(hover|focus|error|disabled)-',
     // `label-text.populated.size` / `.line-height` reference
-    // `md.sys.typescale.body-sm.size` / `.line-height`, which the labs/gb
+    // `md.sys.typescale.body-sm.size` / `.line-height`, which the library's
     // typography styles do not define; `root` sets them with fallbacks under
     // `// EDIT:`.
     '^label-text-populated-',

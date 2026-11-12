@@ -16,7 +16,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/divider/md-gb-divider.ts`  
+Source: `material-design-expressive/components/divider/md-gb-divider.ts`  
 Import: `import '@material/web/components/divider/md-gb-divider.js';`
 
 Attributes and properties

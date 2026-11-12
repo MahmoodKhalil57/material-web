@@ -17,7 +17,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design time picker component.
 
-Source: `components/timepicker/md-gb-time-picker.ts`  
+Source: `material-design-expressive/components/timepicker/md-gb-time-picker.ts`  
 Import: `import '@material/web/components/timepicker/md-gb-time-picker.js';`
 
 Attributes and properties
@@ -26,25 +26,27 @@ Attributes and properties
 | --- | --- | --- | --- | --- |
 | `cancelLabel` | `cancel-label` | `string` | `'Cancel'` | Cancel action label. |
 | `confirmLabel` | `confirm-label` | `string` | `'OK'` | OK action label. |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3 (time-pickers.md "Density", "High-density time picker"). Each step down removes 4px from the time selectors (80px), input fields (72px), the period selector (which follows their height) and the dial (256px); the time selectors, fields and dial labels stay at least 48px. The horizontal layout, used when the viewport is short, keeps the full-size dial ("Don't apply density to the time picker dial when the viewport is constrained. Instead, use an input picker"). Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3 (time-pickers.md "Density", "High-density time picker"). Each step down removes 4px from the time selectors (80px), input fields (72px), the period selector (which follows their height) and the dial (256px); the time selectors, fields and dial labels stay at least 48px. The horizontal layout, used when the viewport is short, keeps the full-size dial ("Don't apply density to the time picker dial when the viewport is constrained. Instead, use an input picker"). Values are clamped to that range. |
 | `dialModeLabel` | `dial-mode-label` | `string` | `'Switch to clock mode'` | Accessible label of the mode toggle in input mode. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
 | `headline` | `headline` | `string` | `''` | The headline. Defaults to "Select time" (dial) or "Enter time" (input). |
 | `hideActions` | `hide-actions` (reflects) | `boolean` | `false` | Hides the Cancel and OK actions; every change commits the value. |
 | `hideModeToggle` | `hide-mode-toggle` (reflects) | `boolean` | `false` | Hides the dial / input mode toggle button. |
-| `hourCycle` | `hour-cycle` | `TimePickerHourCycle` | `''` | `12` (with an AM/PM period selector), `24`, or `''` (default) to follow the locale's clock (`Intl.DateTimeFormat`). |
+| `hourCycle` | `hour-cycle` | `"" \| "12" \| "24"` | `''` | `12` (with an AM/PM period selector), `24`, or `''` (default) to follow the locale's clock (`Intl.DateTimeFormat`). |
 | `hourLabel` | `hour-label` | `string` | `'Hour'` | Hour field label (input mode). |
 | `inputModeLabel` | `input-mode-label` | `string` | `'Switch to text input mode'` | Accessible label of the mode toggle in dial mode. |
 | `locale` | `locale` | `string` | `''` | The locale used for the 12/24-hour default and the AM/PM labels. Defaults to the browser locale. |
 | `minuteLabel` | `minute-label` | `string` | `'Minute'` | Minute field label (input mode). |
 | `modal` | `modal` (reflects) | `boolean` | `false` | Renders the picker as a modal dialog, shown with `show()` or `open`. |
-| `mode` | `mode` (reflects) | `TimePickerMode` | `'dial'` | `dial` (clock dial) or `input` (hour and minute text fields). |
+| `mode` | `mode` (reflects) | `"input" \| "dial"` | `'dial'` | `dial` (clock dial) or `input` (hour and minute text fields). |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `open` | `open` (reflects) | `boolean` |  | Whether a modal picker is open. Setting it opens or closes the picker. |
-| `orientation` | `orientation` (reflects) | `"" \| TimePickerOrientation` | `''` | The dial layout: `vertical`, `horizontal`, or `''` (default) to pick one from the viewport (horizontal in short landscape viewports). |
+| `orientation` | `orientation` (reflects) | `"" \| "horizontal" \| "vertical"` | `''` | The dial layout: `vertical`, `horizontal`, or `''` (default) to pick one from the viewport (horizontal in short landscape viewports). |
 | `periodLabel` | `period-label` | `string` | `'Select AM or PM'` | Accessible label of the period selector. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips transitions. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether a time is required: with no time the picker is invalid (`valueMissing`) and blocks the form's submit. |
 | `selectHourLabel` | `select-hour-label` | `string` | `'Select hour'` | Accessible label of the hour selector and the dial in hour mode. |
-| `selection` | property only | `TimePickerSelection` | `'hour'` | Which part of the time the dial edits. |
+| `selection` | property only | `"hour" \| "minute"` | `'hour'` | Which part of the time the dial edits. |
 | `selectMinuteLabel` | `select-minute-label` | `string` | `'Select minutes'` | Accessible label of the minute selector and the dial in minute mode. |
 | `value` | `value` | `string` |  | The committed time as a 24-hour `HH:MM` string (`<input type="time">` format), or `''` when no time is set. |
 

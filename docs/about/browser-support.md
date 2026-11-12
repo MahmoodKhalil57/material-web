@@ -19,7 +19,7 @@ The oldest browsers the build checks against are:
 | Safari     | 17.4            |
 | iOS Safari | 17.4            |
 
-`node scripts/gb-css-validate.mjs` prints these values, and the CSS is compiled
+`node scripts/css-validate.mjs` prints these values, and the CSS is compiled
 against them. They move as Baseline moves, so rerun the script to see the
 current numbers.
 
@@ -27,7 +27,7 @@ current numbers.
 
 Newer features are either guarded with `@supports` or allowed to be ignored
 where a browser lacks them. The exceptions are listed, with the reason for each,
-in `scripts/gb-baseline-allow.json`. In short:
+in `scripts/baseline-allow.json`. In short:
 
 - `field-sizing`: a textarea keeps its fixed rows and scrolls.
 - `interpolate-size`: size changes to intrinsic keywords jump instead of
@@ -62,4 +62,4 @@ fallback:
 
 Test on the oldest version of each browser in the table, not only the current
 release. To see which Baseline features the repository uses, run
-`npm run gb:baseline`.
+`npm run baseline`.

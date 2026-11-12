@@ -30,9 +30,9 @@
   --supporting-text-tracking: var(--md-sys-typescale-body-sm-tracking);
   --trailing-icon-color: var(--md-sys-color-on-surface-variant);
   --trailing-icon-size: 24px;
-  // EDIT: md.sys.typescale.body-sm.size is not defined in labs/gb styles; falls back to its value.
+  // EDIT: md.sys.typescale.body-sm.size is not defined in the library styles; falls back to its value.
   --label-text-populated-size: var(--md-sys-typescale-body-sm-size, 0.75rem);
-  // EDIT: md.sys.typescale.body-sm.line-height is not defined in labs/gb styles; falls back to its value.
+  // EDIT: md.sys.typescale.body-sm.line-height is not defined in the library styles; falls back to its value.
   --label-text-populated-line-height: var(--md-sys-typescale-body-sm-line-height, 1rem);
   // EDIT: Compose ExposedDropdownMenu TrailingIcon: the arrow rotates 180 degrees while expanded.
   --trailing-icon-expanded-rotation: 180deg;

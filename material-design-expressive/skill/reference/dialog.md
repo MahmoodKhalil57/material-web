@@ -16,7 +16,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design dialog component.
 
-Source: `components/dialog/md-gb-dialog.ts`  
+Source: `material-design-expressive/components/dialog/md-gb-dialog.ts`  
 Import: `import '@material/web/components/dialog/md-gb-dialog.js';`
 
 Attributes and properties
@@ -30,7 +30,7 @@ Attributes and properties
 | `open` | `open` (reflects) | `boolean` |  | Opens the dialog when set to `true` and closes it when set to `false`. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips the opening and closing animations. |
 | `returnValue` | property only | `string` | `''` | The dialog's return value, usually which button closed it. Set by `close(returnValue)` and by `<form method="dialog">` submitters' `value`. Canceling (Escape, scrim, close button) leaves it unchanged. https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/returnValue |
-| `type` | `type` | `DialogType` | `''` | The dialog's accessibility role. `alert` (`role="alertdialog"`) or `dialog` (`role="dialog"`). When empty, basic dialogs are alert dialogs, as the spec asks for on the web, and full-screen dialogs are dialogs. |
+| `type` | `type` | `"" \| "alert" \| "dialog"` | `''` | The dialog's accessibility role. `alert` (`role="alertdialog"`) or `dialog` (`role="dialog"`). When empty, basic dialogs are alert dialogs, as the spec asks for on the web, and full-screen dialogs are dialogs. |
 
 Slots
 

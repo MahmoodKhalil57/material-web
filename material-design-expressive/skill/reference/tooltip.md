@@ -16,7 +16,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design plain or rich tooltip.
 
-Source: `components/tooltip/md-gb-tooltip.ts`  
+Source: `material-design-expressive/components/tooltip/md-gb-tooltip.ts`  
 Import: `import '@material/web/components/tooltip/md-gb-tooltip.js';`
 
 Attributes and properties
@@ -30,11 +30,11 @@ Attributes and properties
 | `noBoundary` | `no-boundary` (reflects) | `boolean` | `false` | Plain only: the anchor has no visual boundary, such as a text baseline, so the tooltip sits 8dp from it instead of 4dp. |
 | `open` | `open` (reflects) | `boolean` |  | Whether the tooltip is open. |
 | `persistent` | `persistent` (reflects) | `boolean` | `false` | Rich only: opens when the anchor is clicked instead of on hover / focus, and stays open until the user interacts with another element. |
-| `placement` | `placement` (reflects) | `"" \| TooltipPlacement` | `''` | Preferred side of the anchor. Defaults to `above` for plain tooltips and `below` for rich ones. Flips when there isn't room. |
+| `placement` | `placement` (reflects) | `"" \| "start" \| "end" \| "above" \| "below"` | `''` | Preferred side of the anchor. Defaults to `above` for plain tooltips and `below` for rich ones. Flips when there isn't room. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips the open / close animation. |
 | `showDelay` | `show-delay` | `number` | `TOOLTIP_SHOW_DELAY_MS` | Hover delay before showing, in milliseconds. |
 | `subhead` | `subhead` | `string` | `''` | Rich only: subhead text. Replaced by content in the `subhead` slot. |
-| `variant` | `variant` (reflects) | `TooltipVariant` | `TOOLTIP_VARIANTS.plain` | Plain or rich. |
+| `variant` | `variant` (reflects) | `"plain" \| "rich"` | `TOOLTIP_VARIANTS.plain` | Plain or rich. |
 
 Slots
 

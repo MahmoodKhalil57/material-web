@@ -8,7 +8,7 @@ Elements: `md-gb-pull-to-refresh`.
 
 A Material Design component.
 
-Source: `extras/pulltorefresh/md-gb-pull-to-refresh.ts`  
+Source: `material-design-expressive/extras/pulltorefresh/md-gb-pull-to-refresh.ts`  
 Import: `import '@material/web/extras/pulltorefresh/md-gb-pull-to-refresh.js';`
 
 Attributes and properties
@@ -16,7 +16,7 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether pulling is turned off (Compose `enabled = false`). |
-| `indicator` | `indicator` (reflects) | `PullToRefreshIndicator` | `'loading'` | The indicator: `loading` (M3 Expressive contained loading indicator) or `circular` (circular arrow and progress indicator). |
+| `indicator` | `indicator` (reflects) | `"loading" \| "circular"` | `'loading'` | The indicator: `loading` (M3 Expressive contained loading indicator) or `circular` (circular arrow and progress indicator). |
 | `indicatorLabel` | `indicator-label` | `string` | `DEFAULT_LABEL` | Accessible label of the indicator, e.g. "Refreshing news". |
 | `refreshing` | `refreshing` (reflects) | `boolean` | `false` | Whether content is refreshing. Set by a pull past the threshold (or `refresh()`); set it back to false once the content has refreshed. |
 | `threshold` | `threshold` | `number` | `PULL_TO_REFRESH_THRESHOLD_PX` | How far (px) the indicator must be pulled before releasing it refreshes (Compose `PullToRefreshDefaults.PositionalThreshold`, 80dp). |

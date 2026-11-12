@@ -6,21 +6,21 @@
  */
 
 /**
- * API reference for the `md-gb-*` elements of one labs/gb component directory,
+ * API reference for the `md-gb-*` elements of one library component directory,
  * as markdown for the /3.0/ catalog pages (used by the `api` shortcode,
  * site/eleventy/shortcodes.cjs). Per element: `### <tag>`, one
  * line about it, then only the tables that have rows, each under an `####`
  * title (the page outline shows H2 and H3 only). The data comes from the
- * TypeScript sources through scripts/m3/gb-elements.mjs.
+ * TypeScript sources through scripts/m3/elements.mjs.
  *
  *   node scripts/m3/gen-api-docs.mjs button   # print the API for one directory
  *   node scripts/m3/gen-api-docs.mjs          # list the directories
  */
 
-import {readGbElements} from './gb-elements.mjs';
+import {readElements} from './elements.mjs';
 
 let cache;
-const elements = () => (cache ??= readGbElements());
+const elements = () => (cache ??= readElements());
 
 /** Escapes a table cell; braces become entities so the template engine ignores them. */
 const esc = (s) =>
@@ -36,13 +36,13 @@ const code = (s) => '<code>' + esc(String(s).replace(/\s+/g, ' ')) + '</code>';
 /** Backticked prose (`close()`) becomes code. */
 const prose = (s) =>
   esc(s).replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
-const desc = (s) => (s ? `<span class="gb-desc">${prose(s)}</span>` : '');
+const desc = (s) => (s ? `<span class="api-desc">${prose(s)}</span>` : '');
 
 /** Inherited Lit lifecycle callbacks are not part of the API. */
 const LIFECYCLE = /Callback$/;
 
-/** The labs/gb component directories that have elements. */
-export function gbApiDirs() {
+/** The library's component directories that have elements. */
+export function apiDirs() {
   return [...new Set(elements().map((e) => e.dir))].sort();
 }
 
@@ -52,7 +52,7 @@ const table = (title, head, rows) =>
     : [];
 
 /** Markdown for every element in `dir`. */
-export function gbApiMarkdown(dir) {
+export function apiMarkdown(dir) {
   const out = [];
   for (const e of elements().filter((el) => el.dir === dir)) {
     out.push(`### &lt;${e.tag}&gt;`, '');
@@ -102,5 +102,5 @@ export function gbApiMarkdown(dir) {
 
 if (process.argv[1]?.endsWith('gen-api-docs.mjs')) {
   const dir = process.argv[2];
-  console.log(dir ? gbApiMarkdown(dir) : gbApiDirs().join('\n'));
+  console.log(dir ? apiMarkdown(dir) : apiDirs().join('\n'));
 }

@@ -16,7 +16,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design tab component.
 
-Source: `components/tabs/md-gb-tab.ts`  
+Source: `material-design-expressive/components/tabs/md-gb-tab.ts`  
 Import: `import '@material/web/components/tabs/md-gb-tab.js';`
 
 Attributes and properties
@@ -59,7 +59,7 @@ CSS custom properties
 
 The swipeable content panels of a set of Material Design tabs.
 
-Source: `components/tabs/md-gb-tab-panels.ts`  
+Source: `material-design-expressive/components/tabs/md-gb-tab-panels.ts`  
 Import: `import '@material/web/components/tabs/md-gb-tab-panels.js';`
 
 Attributes and properties
@@ -87,7 +87,7 @@ CSS custom properties
 
 A Material Design tabs component.
 
-Source: `components/tabs/md-gb-tabs.ts`  
+Source: `material-design-expressive/components/tabs/md-gb-tabs.ts`  
 Import: `import '@material/web/components/tabs/md-gb-tabs.js';`
 
 Attributes and properties
@@ -96,13 +96,13 @@ Attributes and properties
 | --- | --- | --- | --- | --- |
 | `align` | `align` (reflects) | `"start" \| "center"` | `'center'` | Where fixed tabs sit when the window is wider than compact: `center` (default) or `start`, the leading edge. tabs.md, Responsive layout: "The group of tabs should use a fluid margin and align to the center or leading edge of the body region." At compact windows the tabs fill the full width. |
 | `autoSelect` | `autoselect` | `boolean` | `false` | Whether or not to automatically select a tab when it is focused. |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3. Each step down removes 4px from the tabs' height (48px, or 64px with icon and label); values are clamped to that range. tabs.md "Avoid applying density by default": dense tabs are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3. Each step down removes 4px from the tabs' height (48px, or 64px with icon and label); values are clamped to that range. tabs.md "Avoid applying density by default": dense tabs are below the 48x48 CSS pixel target, so let people opt in (a denser layout or theme) and keep the controls that change it at 48x48. |
 | `orientation` | `orientation` (reflects) | `"horizontal" \| "vertical"` | `'horizontal'` | Orientation of the tablist ('horizontal' or 'vertical'). |
 | `scrollable` | `scrollable` (reflects) | `boolean` | `false` | Scrollable tabs: each tab's width is defined by its label (tabs.md) rather than every tab taking the width of the widest, and the bar scrolls when they overflow. Fixed tabs (the default) are equal. |
 | `scrollBehavior` | `scroll-behavior` (reflects) | `"hide"` |  | How the tabs react to scrolling: `hide` scrolls them off the screen when the page scrolls down and returns them when it scrolls up (tabs.md). Tabs attached to an app bar (its `tabs` slot) leave this unset: the app bar moves them with itself as one unit. |
 | `scrollTarget` | `scroll-target` | `string` | `''` | The id of the element whose scrolling drives `scroll-behavior`. Defaults to the window. |
 | `selectedTabIndex` | `selectedtabindex` | `number` |  | The index of the currently selected tab. |
-| `variant` | `variant` (reflects) | `TabsVariant` | `'primary'` | The visual variant of the tabs. |
+| `variant` | `variant` (reflects) | `"primary" \| "secondary"` | `'primary'` | The visual variant of the tabs. |
 
 Slots
 

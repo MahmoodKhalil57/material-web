@@ -10,9 +10,9 @@
 // Token sets: 'md.comp.filled-text-field', 'md.comp.outlined-text-field'
 
 @mixin root {
-  // EDIT: md.sys.typescale.body-sm.size is not defined in labs/gb styles; falls back to its value.
+  // EDIT: md.sys.typescale.body-sm.size is not defined in the library styles; falls back to its value.
   --label-text-populated-size: var(--md-sys-typescale-body-sm-size, 0.75rem);
-  // EDIT: md.sys.typescale.body-sm.line-height is not defined in labs/gb styles; falls back to its value.
+  // EDIT: md.sys.typescale.body-sm.line-height is not defined in the library styles; falls back to its value.
   --label-text-populated-line-height: var( --md-sys-typescale-body-sm-line-height, 1rem );
   // EDIT: No state layer at rest; the hover mixins set it.
   --state-layer-color: transparent;

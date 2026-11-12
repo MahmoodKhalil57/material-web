@@ -1,4 +1,5 @@
 [
+  {"feature":"font-family-ui","reason":"An unknown generic family is skipped: the font stack's next family (Roboto Mono, SFMono-Regular, Menlo, Consolas, then monospace) is used; same metrics role, no layout change."},
   {"feature":"cursor","reason":"Ignored where unsupported (touch screens have no pointer cursor, and iOS reports no support); no layout or behavior change."},
   {"feature":"starting-style","reason":"An unsupported @starting-style rule is dropped: the element appears without its enter transition, final styles unchanged."},
   {"feature":"overscroll-behavior","reason":"Ignored where unsupported: scroll chaining at the edge of the scroller is not contained; nothing else changes."},

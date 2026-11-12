@@ -6,24 +6,24 @@
  */
 
 /**
- * Fast build-and-test loop for labs/gb components (works on Windows, where
+ * Fast build-and-test loop for the library components (works on Windows, where
  * `npm run build` / `npm test` don't).
  *
- *   npm run gb:check -- slider            # one component
- *   npm run gb:check -- slider chip       # several
- *   npm run gb:check -- --styles slider   # also recompile styles
- *   npm run gb:check -- --all             # everything (end of a change set)
- *   npm run gb:check -- --no-test slider  # build only
- *   npm run gb:check -- --fast slider     # skip the type check while iterating
- *   npm run gb:check -- --lean slider     # quick check for agents (aim: 1-2 min): implies --fast
+ *   npm run check -- slider            # one component
+ *   npm run check -- slider chip       # several
+ *   npm run check -- --styles slider   # also recompile styles
+ *   npm run check -- --all             # everything (end of a change set)
+ *   npm run check -- --no-test slider  # build only
+ *   npm run check -- --fast slider     # skip the type check while iterating
+ *   npm run check -- --lean slider     # quick check for agents (aim: 1-2 min): implies --fast
  *                                         # and runs only the test files that git reports changed,
  *                                         # or that import a changed file in the named directories
- *   npm run gb:check -- --emit slider     # also write tsc's .js output
- *   npm run gb:check -- --watch slider    # keep running; rerun affected tests on save
- *   npm run gb:check -- --size slider     # also check labs/gb Brotli size budgets (implies --emit)
+ *   npm run check -- --emit slider     # also write tsc's .js output
+ *   npm run check -- --watch slider    # keep running; rerun affected tests on save
+ *   npm run check -- --size slider     # also check the library Brotli size budgets (implies --emit)
  *                                         # and validate the compiled CSS with Lightning CSS
-                                         # (Baseline widely-available targets) and run gb:baseline
- *   npm run gb:check -- --baseline slider # only the Baseline check (fails on unguarded, non-allowed CSS uses)
+                                         # (Baseline widely-available targets) and run baseline
+ *   npm run check -- --baseline slider # only the Baseline check (fails on unguarded, non-allowed CSS uses)
  *
  * Steps, each limited to what was asked for:
  *   1. Sass for the named directories (styles too with --styles/--all).
@@ -84,7 +84,7 @@ const started = Date.now();
 const step = (name, fn) => {
   const t = Date.now();
   fn();
-  console.log(`[gb:check] ${name} ${((Date.now() - t) / 1000).toFixed(1)}s`);
+  console.log(`[check] ${name} ${((Date.now() - t) / 1000).toFixed(1)}s`);
 };
 // Tools run straight from node_modules: `npx` spends 1-2s per call just
 // resolving the binary, which used to be about half of a check.
@@ -160,22 +160,22 @@ if (all) {
     node(join('scripts', 'api', 'gen-api.mjs'), ['--check']);
     node(join('scripts', 'api', 'gen-json-render.mjs'), ['--check']);
     node(join('scripts', 'm3', 'gen-spec-map.mjs'), ['--check']);
-    node(join('scripts', 'gb-shape-morphs.mjs'), ['--check']);
+    node(join('scripts', 'shape-morphs.mjs'), ['--check']);
   });
 }
 
 if (size) {
   // Budgets are for every component, whatever directories were named.
-  step('css-validate', () => node(join('scripts', 'gb-css-validate.mjs'), []));
-  step('baseline', () => node(join('scripts', 'gb-baseline.mjs'), []));
+  step('css-validate', () => node(join('scripts', 'css-validate.mjs'), []));
+  step('baseline', () => node(join('scripts', 'baseline.mjs'), []));
   step('size', () => {
     node(BIN.tsc, ['-p', join('scripts', 'tsconfig.json')]);
-    node(join('scripts', 'size', 'gb-size.js'), ['--check']);
+    node(join('scripts', 'size', 'size.js'), ['--check']);
   });
 }
 
 if (baseline && !size) {
-  step('baseline', () => node(join('scripts', 'gb-baseline.mjs'), []));
+  step('baseline', () => node(join('scripts', 'baseline.mjs'), []));
 }
 
 if (test) {
@@ -190,10 +190,10 @@ if (test) {
         );
     if (lean) {
       if (!globs.length) {
-        console.log('[gb:check] --lean: no changed files with tests in the named directories');
+        console.log('[check] --lean: no changed files with tests in the named directories');
         return;
       }
-      console.log(`[gb:check] --lean: ${globs.length} test file(s): ${globs.join(' ')}`);
+      console.log(`[check] --lean: ${globs.length} test file(s): ${globs.join(' ')}`);
     }
     if (watch) {
       watchStyles();
@@ -230,7 +230,7 @@ function watchStyles() {
     });
   }
 }
-console.log(`[gb:check] done in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+console.log(`[check] done in ${((Date.now() - started) / 1000).toFixed(1)}s`);
 
 /**
  * `--lean`: test files under the targets that git reports as changed, every

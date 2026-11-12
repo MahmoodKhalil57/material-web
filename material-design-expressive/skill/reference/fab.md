@@ -22,18 +22,18 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/fab/md-gb-fab.ts`  
+Source: `material-design-expressive/components/fab/md-gb-fab.ts`  
 Import: `import '@material/web/components/fab/md-gb-fab.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `FabColor` | `'primary-container'` |  |
+| `color` | `color` | `"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertiary" \| "tertiary-container"` | `'primary-container'` | The color set: `primary-container` (default), `secondary-container`, `tertiary-container`, or the stronger `primary`, `secondary` and `tertiary`. |
 | `expanded` | `expanded` | `boolean` | `true` | Whether the extended FAB shows its label. When `false`, the label collapses and the FAB becomes an icon-only FAB. Set the attribute to `expanded="false"` to collapse it from markup. |
 | `label` | `label` | `string` | `''` | The extended FAB's label. Without one, the FAB is icon-only. |
 | `scrollTarget` | `scroll-target` | `string` | `''` | Opt-in: the `id` of a scroll container (in the same root), or `window`. The FAB collapses while it scrolls down and expands while it scrolls up. |
-| `size` | `size` | `FabSize` | `'default'` | The size. With a `label`, `default`, `md` and `lg` are the small, medium and large extended FABs. `sm` is the small (40dp) icon-only FAB, which the spec no longer recommends. |
+| `size` | `size` | `"sm" \| "md" \| "lg" \| "default"` | `'default'` | The size. With a `label`, `default`, `md` and `lg` are the small, medium and large extended FABs. `sm` is the small (40dp) icon-only FAB, which the spec no longer recommends. |
 | `tooltip` | `tooltip` | `boolean` | `true` | Shows a tooltip with the FAB's name (the `label`, else `aria-label`) on hover and keyboard focus. On by default for an icon-only FAB, whose icon has no visible text (floating-action-button.md: on web, a FAB should display a tooltip with its text label); `tooltip="false"` turns it off. |
 
 Slots

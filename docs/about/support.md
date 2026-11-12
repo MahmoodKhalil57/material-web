@@ -12,7 +12,7 @@ Version 3.0 targets **Baseline widely available**: the web platform features it
 uses have worked in all major browsers for at least 30 months. Newer features
 (such as `corner-shape` or `light-dark()`) are only used behind `@supports`
 guards or with a fallback, so components stay usable in older engines. The
-repository checks this with `npm run gb:baseline`. See
+repository checks this with `npm run baseline`. See
 [Browser support](/3.0/about/browser-support/) for the minimum versions.
 
 ## FAQ

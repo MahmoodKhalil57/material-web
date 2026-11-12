@@ -5,7 +5,7 @@
  */
 
 /**
- * Reads the API of the `md-gb-*` elements from the labs/gb TypeScript sources
+ * Reads the API of the `md-gb-*` elements from the library's TypeScript sources
  * with the compiler API and the JSDoc of each class: tag, attributes and
  * properties (type, default, reflects, description), slots, events, methods,
  * CSS parts and CSS custom properties. Shared by gen-agent-skill.mjs and
@@ -36,7 +36,7 @@ const posix = (p) => p.split(sep).join('/');
  * and `tags` (a tag-name pattern) read others, such as the md-aria-*
  * elements and the elements under styles/ (scripts/api/gen-api.mjs).
  */
-export function readGbElements({files, tags = /^md-gb-/} = {}) {
+export function readElements({files, tags = /^md-gb-/} = {}) {
   // Every element root: components/ (the M3 index) and extras/.
   const entryFiles = (
     files ??
@@ -86,7 +86,7 @@ export function readGbElements({files, tags = /^md-gb-/} = {}) {
       classFile: classes[0] ? posix(relative(ROOT, classes[0].getSourceFile().fileName)) : '',
       deprecated: deprecatedTag ? clean(flatten(deprecatedTag.comment)) || true : false,
       className: symbol?.getName() ?? '',
-      // The next class of the chain, when the element extends a labs/gb class.
+      // The next class of the chain, when the element extends a library class.
       superclass: classes[1]?.name?.text ?? '',
       superclassFile: classes[1] ? posix(relative(ROOT, classes[1].getSourceFile().fileName)) : '',
       summary,

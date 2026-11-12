@@ -21,7 +21,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design button.
 
-Source: `components/button/md-gb-button.ts`  
+Source: `material-design-expressive/components/button/md-gb-button.ts`  
 Import: `import '@material/web/components/button/md-gb-button.js';`
 
 Attributes and properties
@@ -29,8 +29,10 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `color` | `color` | `"filled" \| "elevated" \| "tonal" \| "outlined" \| "text"` | `'text'` | The color of the button. |
+| `disabled` | `disabled` | `boolean` |  | Whether or not the element is disabled. |
 | `download` | `download` | `string` | `''` | The filename to use when downloading the linked resource. If not specified, the browser will determine a filename. This is only applicable when the button is used as a link (`href` is set). |
 | `href` | `href` | `string` | `''` | The URL that the link button points to. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. When combined with a `value`, the submitting button's name/value will be added to the form. Names must reflect to a `name` attribute for form integration. The HTML name to use in form submission. |
 | `referrerPolicy` | `referrerpolicy` | `string` | `''` | Sets the underlying `HTMLAnchorElement`'s `referrerpolicy` attribute when `href` is set. |
 | `rel` | `rel` | `string` | `''` | Sets the underlying `HTMLAnchorElement`'s `rel` attribute when `href` is set. |
 | `selected` | `selected` (reflects) | `boolean` | `false` | Whether or not the button is selected, when `type="toggle"`. TODO: replace reflected `[selected]` with `:state(selected)` |
@@ -40,6 +42,7 @@ Attributes and properties
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `''` | Where to display the linked `href` URL for a link button. Common options include `_blank` to open in a new tab. |
 | `type` | `type` (reflects) | `string` |  | A string indicating the behavior of the button. - "submit" (default): A button that submits its associated form. - "reset": A button that resets its associated form. - "button": A normal button. - "toggle": A toggle button using the `selected` property. - "link": An anchor link (`<a>`). Type is always "link" when `href` is set. |
 | `unfilledIcon` | `unfilled-icon` (reflects) | `boolean` | `false` | Set when the icon has no filled version: a selected toggle button then shows the icon in semibold weight instead of filled. |
+| `value` | `value` (reflects) | `string` |  | The value of the button. When combined with a `name`, the submitting button's name/value will be added to the form. |
 
 Slots
 

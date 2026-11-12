@@ -1,7 +1,7 @@
 # M3 Expressive checklist
 
 Everything listed on https://m3.material.io/components, /styles and
-/foundations (downloaded to `.m3-specs/pages`), checked against `labs/gb`.
+/foundations (downloaded to `.m3-specs/pages`), checked against the library.
 
 - `[x]` done, `[ ]` missing, `[~]` partial or needs verifying.
 - New components' token files are generated from the spec
@@ -11,8 +11,8 @@ Everything listed on https://m3.material.io/components, /styles and
   **Component** = `md-gb-*` element, **Spec test** = generated
   `*_spec_test.ts`, **Catalog** = page in `npm run catalog:dev`,
   **Token gaps** = spec tokens Compose uses that gb lacks
-  (`node scripts/m3/audit-gb.mjs --gaps`).
-- Audit (2026-11-07, `node scripts/m3/audit-gb.mjs --gaps`): 1949 declarations
+  (`node scripts/m3/audit-tokens.mjs --gaps`).
+- Audit (2026-11-07, `node scripts/m3/audit-tokens.mjs --gaps`): 1949 declarations
   match the spec, 10 drift, 10 gaps. The gaps are the baseline app bar and list
   sets and the progress wave lengths (noted below). Each drift is deliberate,
   with its reason next to the value:
@@ -376,7 +376,7 @@ per-component behavior is checked by contract tests generated from one
 config (like the token spec tests). Estimates come from keyword grouping of
 the 2,187 tracked units (±20%).
 
-- [x] **`tested` status in spec-checks**: a unit counts as tested when a `*_test.ts` file cites it (the suite keeps those green); the report's "Tested" line counts them (109 after RovingFocus, 2,911 after the controllers, suites, generators and citation passes). `*_gap.ts` files hold red tests for unbuilt spec features (`gb:check --gaps`); they don't count
+- [x] **`tested` status in spec-checks**: a unit counts as tested when a `*_test.ts` file cites it (the suite keeps those green); the report's "Tested" line counts them (109 after RovingFocus, 2,911 after the controllers, suites, generators and citation passes). `*_gap.ts` files hold red tests for unbuilt spec features (`check --gaps`); they don't count
 - [x] **Shared controllers** (Lit `ReactiveController`s in `components/shared/`, each with one thorough suite and a contract module in `scripts/m3/contracts/`)
   - [x] RovingFocus: arrows, Home/End, wrap, RTL (computed direction), disabled skip, direction-aware entry, initial tab stop — `roving-focus.ts`
     - [x] Controller: button group (horizontal, every button tabbable, no Home/End), segmented button (one tab stop), chip set (backwards enters a chip at its remove button), nav drawer (Tab enters on the first destination, per the spec's initial-focus rule; it used to start on the selected one)
@@ -425,9 +425,9 @@ and pass the existing spec tests unchanged; features that aren't Baseline get
 - [x] **Connected button-group corners with `@scope`**: evaluated, kept as is. The rules already use child combinators, so nothing leaks; `@scope` would flatten the specificity the selected/pressed/size corner rules rely on, and the required `@supports not` fallback would duplicate every rule.
 - [x] **CSS scroll lock for modal surfaces**: modal dialogs and modal sheets only, never standard sheets (`dialogs.md` Scrolling, `bottom-sheets.md`). Already CSS (`:root[data-md-gb-scroll-lock]{overflow:hidden}`; `:root:has(dialog:modal)` cannot see dialogs in shadow roots); tests now check the computed overflow.
 - [x] **Tooling**
-  - [x] Validate compiled CSS with Lightning CSS against the browser targets (`npm run gb:css-validate`; targets Chrome/Edge 120, Firefox 121, Safari 17.2 in the script). First run found an invalid `::part(btn).btn-xs` selector that dropped the connected button-group size corners; fixed.
-  - [x] Per-component Brotli size budgets for CSS and JS (`scripts/size/bundle-size.ts`, budgets in `scripts/size/gb-budgets.json`, `npm run gb:size:check`, `gb-check --size`)
-  - [x] Agent skill or plugin generated from the Custom Elements Manifest and this checklist (`scripts/m3/gen-agent-skill.mjs` writes `skill/`; reads the TypeScript sources because the manifest analyzer crashes on labs/gb)
+  - [x] Validate compiled CSS with Lightning CSS against the browser targets (`npm run css-validate`; targets Chrome/Edge 120, Firefox 121, Safari 17.2 in the script). First run found an invalid `::part(btn).btn-xs` selector that dropped the connected button-group size corners; fixed.
+  - [x] Per-component Brotli size budgets for CSS and JS (`scripts/size/bundle-size.ts`, budgets in `scripts/size/budgets.json`, `npm run size:check`, `npm run check -- --size`)
+  - [x] Agent skill or plugin generated from the Custom Elements Manifest and this checklist (`scripts/m3/gen-agent-skill.mjs` writes `skill/`; reads the TypeScript sources because the manifest analyzer crashes on the library)
   - [x] `performance.mark`/`measure` behind a debug flag (DevTools custom track): `shared/perf.ts`, on with `?md-gb-perf`, `MD_GB_DEBUG_PERF` or the `md-gb-perf` localStorage key
   - [x] axe-core checks in the test runner (`foundations/accessibility/axe_test.ts`, 65 rows incl. open overlays; fixed radio `aria-checked` and the list live region inside role=list)
 - [-] **Rejected** (conflict with the spec; reasons in `ENGINEERING-BACKLOG.md`): carousel scroll buttons and markers, `corner-shape`, `shape()` for the loading indicator, `text-box` trimming, `sibling-index()` stagger, OKLCH palettes, Tailwind `@apply` and checkbox/`:target` overlays, `random()` / `@function` / `if()` / `contrast-color()`.

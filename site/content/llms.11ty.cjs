@@ -11,7 +11,7 @@
 
 const {SECTIONS, SITE, absolute, mdUrl, sorted} = require('../eleventy/site.cjs');
 
-class GbLlms {
+class Llms {
   data() {
     return {permalink: '/3.0/llms.txt', eleventyExcludeFromCollections: true};
   }
@@ -43,4 +43,4 @@ class GbLlms {
   }
 }
 
-module.exports = GbLlms;
+module.exports = Llms;

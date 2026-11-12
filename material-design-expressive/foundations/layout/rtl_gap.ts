@@ -10,7 +10,7 @@ import {unmirrored} from './rtl-helpers.js';
 import {KNOWN_GAPS} from '../../testing/subjects.js';
 
 // Gap checks for suite 5 (RTL): parts whose RTL layout is not the mirror of
-// the LTR layout. Run with `npm run gb:check -- --gaps ...`.
+// the LTR layout. Run with `npm run check -- --gaps ...`.
 
 describe('RTL (central gaps)', () => {
   // With no known gaps the suite would have no tests, which the runner

@@ -110,11 +110,11 @@ function demoId(seed) {
  * @param preview Markup of the preview (inline, or the iframe).
  * @param files The code: [{lang, code}], in tab order.
  * @param options `id` of the card, `style` with the height the preview
- *     reserves (`--gb-demo-height` / `--gb-example-height`, px), `head`
+ *     reserves (`--demo-height` / `--example-height`, px), `head`
  *     markup before the preview (the scoped style).
  */
 function demoCard(label, preview, files, {id = '', style = '', head = ''} = {}) {
-  const height = /--gb-(?:demo|example)-height:\s*(\d+)px/.exec(style)?.[1];
+  const height = /--(?:demo|example)-height:\s*(\d+)px/.exec(style)?.[1];
   const codes = files
     .map((f) => {
       const code = escapeHtml(dedent(f.code)).replace(/\n/g, '&#10;');

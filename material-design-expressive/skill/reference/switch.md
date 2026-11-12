@@ -16,14 +16,16 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/switch/md-gb-switch.ts`  
+Source: `material-design-expressive/components/switch/md-gb-switch.ts`  
 Import: `import '@material/web/components/switch/md-gb-switch.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3. Each step down removes 4px from the state layer (40px); the track keeps its size and the touch target stays 48px. Values are clamped to that range. switch.md: don't apply density by default; let people opt in to a denser layout. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3. Each step down removes 4px from the state layer (40px); the track keeps its size and the touch target stays 48px. Values are clamped to that range. switch.md: don't apply density by default; let people opt in to a denser layout. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `required` | `required` | `boolean` | `false` | When true, require the switch to be selected when participating in form submission. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#validation |
 | `selected` | `selected` | `boolean` |  | Puts the switch in the selected state and sets the form submission value to the `value` property. |
 | `value` | `value` | `string` | `'on'` | The value associated with this switch on form submission. `null` is submitted when `selected` is `false`. |

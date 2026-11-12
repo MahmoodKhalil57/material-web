@@ -17,7 +17,7 @@ import {
 } from '../../../testing/subjects.js';
 
 // Gap checks for suite 1 (state layers): subjects that don't meet the spec
-// yet. Run with `npm run gb:check -- --gaps ...`. The rest of the checks are
+// yet. Run with `npm run check -- --gaps ...`. The rest of the checks are
 // in `state-layers_test.ts` and `state-layers-gated_test.ts`.
 
 describe('state layers (central gaps)', () => {

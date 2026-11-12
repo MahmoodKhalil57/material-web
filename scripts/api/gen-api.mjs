@@ -37,7 +37,7 @@ import {existsSync, readdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {dirname, join, posix, relative, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {readGbElements} from '../m3/gb-elements.mjs';
+import {readElements} from '../m3/elements.mjs';
 import {FOLDER_PAGES, SPEC_MAP, TOKEN_PAGES} from '../m3/spec-map-data.mjs';
 import {cemDeclaration, parseSignature} from './cem.mjs';
 
@@ -241,7 +241,7 @@ export function buildApi() {
 
   // Elements: every public module that registers an md-* tag.
   const registering = modules.filter((m) => /HTMLElementTagNameMap/.test(readFileSync(join(LIB_ABS, m), 'utf8')));
-  const elements = readGbElements({files: registering.map((m) => join(LIB_ABS, m)), tags: /^md-(gb|aria)-/}).map(
+  const elements = readElements({files: registering.map((m) => join(LIB_ABS, m)), tags: /^md-(gb|aria)-/}).map(
     (e) => ({
       ...e,
       file: e.file.replace(`${LIB}/`, ''),
@@ -254,7 +254,7 @@ export function buildApi() {
   // (through components/all.ts) is what defines them and what the package
   // ships.
   const publicTags = new Set(elements.map((e) => e.tag));
-  const unreachable = readGbElements().filter((e) => !publicTags.has(e.tag));
+  const unreachable = readElements().filter((e) => !publicTags.has(e.tag));
   if (unreachable.length) {
     throw new Error(
       `gen-api: not reachable from all.ts, so not in the package: ${unreachable.map((e) => `<${e.tag}> (${e.file})`).join(', ')}. ` +

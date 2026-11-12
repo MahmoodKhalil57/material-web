@@ -5,11 +5,11 @@
  */
 
 /**
- * Shared helpers for compiling spec token sets into `labs/gb` custom
+ * Shared helpers for compiling spec token sets into the library custom
  * property declarations and for reading the gb `_*-tokens.scss` files.
  */
 
-import {literalCss, opacityPercent, sysVar, tokenCss} from './gb-css.mjs';
+import {literalCss, opacityPercent, sysVar, tokenCss} from './css.mjs';
 
 export const STATES = ['hovered', 'focused', 'pressed', 'disabled', 'selected', 'unselected', 'dragged'];
 

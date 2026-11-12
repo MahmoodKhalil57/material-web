@@ -18,20 +18,20 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design button group.
 
-Source: `components/buttongroup/md-gb-button-group.ts`  
+Source: `material-design-expressive/components/buttongroup/md-gb-button-group.ts`  
 Import: `import '@material/web/components/buttongroup/md-gb-button-group.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `Density` |  | The density of the buttons inside, from 0 (default) to -3. Each step down removes 4px from the buttons' height (button-groups.md: "Button groups adapt to the height of the buttons inside, including when density is applied"); touch targets stay 48px. A button's own non-zero `density` wins. Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density of the buttons inside, from 0 (default) to -3. Each step down removes 4px from the buttons' height (button-groups.md: "Button groups adapt to the height of the buttons inside, including when density is applied"); touch targets stay 48px. A button's own non-zero `density` wins. Values are clamped to that range. |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the button group is disabled. |
 | `overflowMenu` | `overflow-menu` (reflects) | `boolean` | `false` | Whether the buttons at the trailing edge that do not fit collapse into a trailing overflow menu, and come back when the group has room again (button-groups.md, Adaptive design: "Buttons at the trailing edge of the button group can be customized to collapse into an overflow menu at smaller breakpoints, and become visible again at larger sizes."). The group is as wide as its container allows: give it a width, or put it in a narrower container, to make buttons overflow. Choosing a menu entry clicks the original button. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether selection is required in single-select mode. |
-| `resizing` | `resizing` (reflects) | `ButtonGroupResizing` | `""` | How the group and its buttons resize (button-groups.md, Resizing). `fixed`: every button keeps the width its own size and width give it. `flexible`: the group fills the width of its container and its buttons grow with it; an icon button does not stretch past its set width, and a button with `resizing="fixed"` keeps its width. A button with `resizing="flexible"` in a fixed group grows when the group is given more width. Unset: a connected group is flexible (it spans its surface), a standard group is fixed. |
-| `selection` | `selection` (reflects) | `ButtonGroupSelection` | `"none"` | The selection mode. |
-| `variant` | `variant` (reflects) | `ButtonGroupVariant` | `"standard"` | The visual variant of the button group. |
+| `resizing` | `resizing` (reflects) | `"" \| "fixed" \| "flexible"` | `""` | How the group and its buttons resize (button-groups.md, Resizing). `fixed`: every button keeps the width its own size and width give it. `flexible`: the group fills the width of its container and its buttons grow with it; an icon button does not stretch past its set width, and a button with `resizing="fixed"` keeps its width. A button with `resizing="flexible"` in a fixed group grows when the group is given more width. Unset: a connected group is flexible (it spans its surface), a standard group is fixed. |
+| `selection` | `selection` (reflects) | `"none" \| "single" \| "multiple"` | `"none"` | The selection mode. |
+| `variant` | `variant` (reflects) | `"standard" \| "connected"` | `"standard"` | The visual variant of the button group. |
 
 Slots
 

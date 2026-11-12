@@ -18,7 +18,7 @@
 const {SECTIONS} = require('../eleventy/site.cjs');
 const {sectionSpec} = require('../specs/sections.cjs');
 
-class GbSections {
+class Sections {
   data() {
     return {
       layout: 'spec.html',
@@ -42,4 +42,4 @@ class GbSections {
   }
 }
 
-module.exports = GbSections;
+module.exports = Sections;

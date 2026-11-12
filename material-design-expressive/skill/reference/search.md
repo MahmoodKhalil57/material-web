@@ -17,7 +17,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design search bar.
 
-Source: `components/search/md-gb-search-bar.ts`  
+Source: `material-design-expressive/components/search/md-gb-search-bar.ts`  
 Import: `import '@material/web/components/search/md-gb-search-bar.js';`
 
 Attributes and properties
@@ -113,7 +113,7 @@ CSS custom properties
 
 Focused search: suggestions or results opened from a search bar.
 
-Source: `components/search/md-gb-search-view.ts`  
+Source: `material-design-expressive/components/search/md-gb-search-view.ts`  
 Import: `import '@material/web/components/search/md-gb-search-view.js';`
 
 Attributes and properties

@@ -19,7 +19,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design date picker (docked or modal, single date or range).
 
-Source: `components/datepicker/md-gb-date-picker.ts`  
+Source: `material-design-expressive/components/datepicker/md-gb-date-picker.ts`  
 Import: `import '@material/web/components/datepicker/md-gb-date-picker.js';`
 
 Attributes and properties
@@ -27,7 +27,8 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `clearable` | `clearable` | `boolean` | `false` | Shows a Clear button that removes the selection. |
-| `density` | `density` (reflects) | `Density` |  | The density of the picker's text fields (the docked field and the modal input mode's fields), from 0 (default) to -3, as `md-gb-text-field` `density`. Values are clamped to that range. The calendar itself never gets denser (date-pickers.md, Accessibility: "Interactive targets for all elements meet Material's 48x48dp minimum touch target requirement. Increasing density would negatively impact accessibility by limiting tappable/clickable targets"): its dates, menus and buttons keep their size, including inside a dense container. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density of the picker's text fields (the docked field and the modal input mode's fields), from 0 (default) to -3, as `md-gb-text-field` `density`. Values are clamped to that range. The calendar itself never gets denser (date-pickers.md, Accessibility: "Interactive targets for all elements meet Material's 48x48dp minimum touch target requirement. Increasing density would negatively impact accessibility by limiting tappable/clickable targets"): its dates, menus and buttons keep their size, including inside a dense container. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` (reflects) | `boolean` | `false` | Forces the error state of the docked field. |
 | `errorText` | `error-text` | `string` | `''` | The message shown on the docked field while `error` is set. |
 | `firstDayOfWeek` | `first-day-of-week` | `number` | `-1` | The first day of the week, 0 (Sunday) to 6 (Saturday). -1 (default) uses the locale's. |
@@ -39,7 +40,8 @@ Attributes and properties
 | `locale` | `locale` | `string` | `''` | A BCP 47 locale. Defaults to the document's `lang`, else the browser's. |
 | `max` | `max` | `string` | `''` | The latest selectable date (ISO). |
 | `min` | `min` | `string` | `''` | The earliest selectable date (ISO). |
-| `mode` | `mode` (reflects) | `DatePickerMode` | `'picker'` | Modal: shows the calendar (`picker`) or the date input (`input`). |
+| `mode` | `mode` (reflects) | `"input" \| "picker"` | `'picker'` | Modal: shows the calendar (`picker`) or the date input (`input`). |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `open` | `open` (reflects) | `boolean` |  | Whether the popup (docked) or dialog (modal) is open. |
 | `quick` | `quick` (reflects) | `boolean` | `false` | Skips animations. |
 | `range` | `range` (reflects) | `boolean` | `false` | Selects a start and end date. |
@@ -47,7 +49,7 @@ Attributes and properties
 | `strings` | property only | `Partial<DatePickerStrings>` | `{}` | Overrides for the user-facing strings. |
 | `supportingText` | `supporting-text` | `string` | `''` | Docked: the field's supporting text. Defaults to the date format, e.g. MM/DD/YYYY. |
 | `value` | `value` | `string` | `''` | The committed value: an ISO date (`YYYY-MM-DD`), or an ISO interval (`start/end`) when `range` is set. Empty when nothing is selected. |
-| `variant` | `variant` (reflects) | `DatePickerVariant` | `'docked'` | `docked` (default) or `modal`. |
+| `variant` | `variant` (reflects) | `"docked" \| "modal"` | `'docked'` | `docked` (default) or `modal`. |
 
 Events
 

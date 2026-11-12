@@ -16,7 +16,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design snackbar component.
 
-Source: `components/snackbar/md-gb-snackbar.ts`  
+Source: `material-design-expressive/components/snackbar/md-gb-snackbar.ts`  
 Import: `import '@material/web/components/snackbar/md-gb-snackbar.js';`
 
 Attributes and properties
@@ -91,7 +91,7 @@ CSS custom properties
 
 Shows queued snackbars one at a time.
 
-Source: `components/snackbar/md-gb-snackbar-host.ts`  
+Source: `material-design-expressive/components/snackbar/md-gb-snackbar-host.ts`  
 Import: `import '@material/web/components/snackbar/md-gb-snackbar-host.js';`
 
 Attributes and properties

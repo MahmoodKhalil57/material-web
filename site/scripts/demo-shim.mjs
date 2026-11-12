@@ -81,7 +81,7 @@ async function sourceHtml(story, knobs) {
 
 export async function setUpDemo(collection, dir) {
   const knobs = Object.fromEntries(collection.knobs.map((k) => [k.name, k.defaultValue]));
-  const capture = document.documentElement.hasAttribute('data-gb-capture');
+  const capture = document.documentElement.hasAttribute('data-demo-capture');
   const results = [];
   for (const [i, story] of collection.stories.entries()) {
     const hosts = capture

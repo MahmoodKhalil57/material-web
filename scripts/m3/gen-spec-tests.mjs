@@ -6,7 +6,7 @@
  */
 
 /**
- * Generates browser tests asserting that each `labs/gb` component renders the
+ * Generates browser tests asserting that each library component renders the
  * M3 spec value for every token declaration bound to a spec token.
  *
  * For each `@include <comp>-tokens.<mixin>` in a component stylesheet, the
@@ -23,7 +23,7 @@
 
 import {readdir, readFile, writeFile} from 'node:fs/promises';
 import {basename, join} from 'node:path';
-import {COMPONENT_SETS, loadBindings} from './gb-bindings.mjs';
+import {COMPONENT_SETS, loadBindings} from './bindings.mjs';
 import {elementDir, elementNames} from '../element-dirs.mjs';
 import {loadUnits} from './spec-units.mjs';
 

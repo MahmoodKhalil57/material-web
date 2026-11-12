@@ -6,7 +6,7 @@
  */
 
 /**
- * Compiles M3 spec tokens into `labs/gb` component token mixins.
+ * Compiles M3 spec tokens into library component token mixins.
  *
  *   node scripts/m3/spec-tokens.mjs --check [button ...]   report spec drift
  *   node scripts/m3/spec-tokens.mjs --emit button          print generated SCSS
@@ -25,7 +25,7 @@
 import {readdir, readFile, writeFile} from 'node:fs/promises';
 import {dirname, join} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {compileBinding, compileMixin, norm, parseMixins, sameValue} from './gb-compile.mjs';
+import {compileBinding, compileMixin, norm, parseMixins, sameValue} from './compile.mjs';
 import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));

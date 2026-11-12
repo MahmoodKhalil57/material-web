@@ -22,14 +22,14 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design component.
 
-Source: `components/list/md-gb-list.ts`  
+Source: `material-design-expressive/components/list/md-gb-list.ts`  
 Import: `import '@material/web/components/list/md-gb-list.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `ListDensity` |  | The density, from 0 (default) to -3. Each step down removes 4px from the items' height (spec foundations Density: "decreasing the top and bottom padding or overall height by 4dp"). Values are clamped to that range. Like `md-gb-segmented-button-set`'s `density`. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3. Each step down removes 4px from the items' height (spec foundations Density: "decreasing the top and bottom padding or overall height by 4dp"). Values are clamped to that range. Like `md-gb-segmented-button-set`'s `density`. |
 | `reorderable` | `reorderable` (reflects) | `boolean` | `false` | Whether the items can be reordered. Shows a drag handle on every item. |
 | `reorderMessages` | property only | `ListReorderMessages` | `LIST_REORDER_MESSAGES` | The screen reader announcements made while reordering. |
 | `segmented` | `segmented` | `boolean` | `false` | Whether to render the list with segmented items. |
@@ -64,7 +64,7 @@ CSS custom properties
 
 A Material Design component.
 
-Source: `components/list/md-gb-list-item.ts`  
+Source: `material-design-expressive/components/list/md-gb-list-item.ts`  
 Import: `import '@material/web/components/list/md-gb-list-item.js';`
 
 Attributes and properties
@@ -78,16 +78,18 @@ Attributes and properties
 | `expandable` | `expandable` (reflects) | `boolean` | `false` | Whether the item expands to reveal the content in its `nested` slot. Expandable items are always interactive. |
 | `expanded` | `expanded` (reflects) | `boolean` | `false` | Whether an `expandable` item is expanded. |
 | `grabbed` | `grabbed` (reflects) | `boolean` | `false` | Whether the item is grabbed for reordering without dragging (with the keyboard or a tap on the drag handle). Set by the list; shows the move up and move down buttons. |
+| `href` | `href` (reflects) | `string` | `""` | Makes the item a link to this URL: a single-action item whose action is navigating (lists.md, Single-action: "the entire list item performs one action, such as navigating to a new page"). Not for an expandable, selectable or disabled item, which stays a button. |
 | `moveDownLabel` | `move-down-label` | `string` | `"Move down"` | The accessible label prefix of the move down button; the item's label text is appended. |
 | `moveUpLabel` | `move-up-label` | `string` | `"Move up"` | The accessible label prefix of the move up button; the item's label text is appended (e.g. "Move up Apples"). |
 | `nonInteractive` | `static` (reflects) | `boolean` | `false` | Whether the list item is non-interactive. |
 | `noRevealButton` | `no-reveal-button` | `boolean` | `false` | Hides the "more" button that reveals the swipe actions with a tap. Only set it when the app offers another single-pointer way to reach them (e.g. a menu), as the spec requires one. |
 | `reorderable` | `reorderable` (reflects) | `boolean` | `false` | Whether to show a drag handle to reorder the item within its `md-gb-list`. Set by the list when the list is `reorderable`. |
 | `revealButtonLabel` | `reveal-button-label` | `string` | `"More actions"` | The accessible label prefix of the "more" button; the item's label text is appended (e.g. "More actions Apples"). |
-| `revealed` | `revealed` (reflects) | `ListItemRevealed` | `""` | The side whose swipe actions are revealed, or `''` when closed. |
+| `revealed` | `revealed` (reflects) | `"" \| "leading" \| "trailing"` | `""` | The side whose swipe actions are revealed, or `''` when closed. |
 | `rovingTabIndex` | property only | `number` | `null` | Set by a parent `md-gb-list` to make the list a single tab stop with arrow-key navigation (roving tabindex, lists.md Keyboard navigation): `0` on the list's tab stop, `-1` on the other items, `null` (default) for an item outside a list. While set, the item's other controls (drag handle, "more" and move buttons, actions) leave the tab order and are reached with Left/Right. |
 | `selectable` | property only | `boolean` | `false` | Whether the item shows a selection checkbox (hover, or whenever `selectionVisible`). Set by a `selectable` parent `md-gb-list`. |
 | `selectionVisible` | `selection-visible` (reflects) | `boolean` | `false` | Whether the selection checkbox is always shown: the list sets it when selection is the primary activity or once an item is selected (selection.md, "Click"). Otherwise the checkbox shows on hover. |
+| `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `""` | The link target, when `href` is set. |
 
 Slots
 

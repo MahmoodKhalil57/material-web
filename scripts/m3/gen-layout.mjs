@@ -44,7 +44,7 @@
 
 import {readFile, writeFile} from 'node:fs/promises';
 
-import {sysVar, tokenCss} from './gb-css.mjs';
+import {sysVar, tokenCss} from './css.mjs';
 import {SpecDb, WEB_CONTEXT} from './spec-db.mjs';
 
 const PAGES = '.m3-specs/pages/foundations/layout';

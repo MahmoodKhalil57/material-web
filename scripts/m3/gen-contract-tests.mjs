@@ -6,7 +6,7 @@
  */
 
 /**
- * Generates contract tests: each labs/gb component declares in CONTRACTS
+ * Generates contract tests: each library component declares in CONTRACTS
  * which shared controllers it uses and with what options, and this writes
  * `components/<dir>/<dir>_contract_test.ts` with the shared checks
  * for each one, pressing real keys in a browser. The controllers themselves

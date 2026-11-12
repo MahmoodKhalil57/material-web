@@ -8,25 +8,27 @@ Elements: `md-gb-autocomplete`, `md-gb-select`, `md-gb-select-option`.
 
 A Material Design component.
 
-Source: `extras/select/md-gb-autocomplete.ts`  
+Source: `material-design-expressive/extras/select/md-gb-autocomplete.ts`  
 Import: `import '@material/web/extras/select/md-gb-autocomplete.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
 | `error` | `error` (reflects) | `boolean` | `false` | Whether the field is in a visually invalid state. Overrides the error state set by `reportValidity()`. |
 | `errorText` | `error-text` | `string` | `''` | The message that replaces the supporting text while `error` is true. Overrides the message shown by `reportValidity()`. |
-| `filter` | `filter` | `AutocompleteFilter` | `'contains'` | How options are filtered by the typed text: `contains` (default), `starts-with`, or `none` (the page updates the options itself, e.g. from a server, on `input`). |
+| `filter` | `filter` | `"none" \| "contains" \| "starts-with"` | `'contains'` | How options are filtered by the typed text: `contains` (default), `starts-with`, or `none` (the page updates the options itself, e.g. from a server, on `input`). |
 | `hasLeadingIcon` | `has-leading-icon` | `boolean` | `false` | Whether a leading icon is slotted. Set it for SSR. |
 | `label` | `label` | `string` | `''` | The floating label; also the field's accessible name. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `noAsterisk` | `no-asterisk` | `boolean` | `false` | Hides the asterisk added to the label of a required field. |
 | `open` | `open` (reflects) | `boolean` | `false` | Whether the menu is open. |
 | `placeholder` | `placeholder` (reflects) | `string` | `''` | Hint text shown in the input while it is empty and the label floats. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether a value is required. Adds an asterisk to the label. |
 | `supportingText` | `supporting-text` | `string` | `''` | Additional information shown below the field. |
 | `value` | `value` | `string` | `''` | The text in the field. |
-| `variant` | `variant` (reflects) | `TextFieldVariant` | `'filled'` | The variant: `filled` (default) or `outlined`. |
+| `variant` | `variant` (reflects) | `"filled" \| "outlined"` | `'filled'` | The variant: `filled` (default) or `outlined`. |
 
 Slots
 
@@ -79,18 +81,20 @@ CSS custom properties
 
 A Material Design component.
 
-Source: `extras/select/md-gb-select.ts`  
+Source: `material-design-expressive/extras/select/md-gb-select.ts`  
 Import: `import '@material/web/extras/select/md-gb-select.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
 | `displayText` | `display-text` | `string` |  | The text shown in the field. Defaults to the selected option's `displayText`; set it for SSR. |
 | `error` | `error` (reflects) | `boolean` | `false` | Whether the field is in a visually invalid state. Overrides the error state set by `reportValidity()`. |
 | `errorText` | `error-text` | `string` | `''` | The message that replaces the supporting text while `error` is true. Overrides the message shown by `reportValidity()`. |
 | `hasLeadingIcon` | `has-leading-icon` | `boolean` | `false` | Whether a leading icon is slotted. Set it for SSR. |
 | `label` | `label` | `string` | `''` | The floating label; also the field's accessible name. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `noAsterisk` | `no-asterisk` | `boolean` | `false` | Hides the asterisk added to the label of a required field. |
 | `open` | `open` (reflects) | `boolean` | `false` | Whether the menu is open. |
 | `required` | `required` (reflects) | `boolean` | `false` | Whether a value is required. Adds an asterisk to the label. |
@@ -98,7 +102,7 @@ Attributes and properties
 | `supportingText` | `supporting-text` | `string` | `''` | Additional information shown below the field. |
 | `typeaheadDelay` | `typeahead-delay` | `number` | `DEFAULT_TYPEAHEAD_DELAY` | The longest time between typeahead keystrokes, in milliseconds. |
 | `value` | `value` | `string` |  | The value of the selected option, or `''`. Setting it selects the first option with that value (or none). |
-| `variant` | `variant` (reflects) | `TextFieldVariant` | `'filled'` | The variant: `filled` (default) or `outlined`. |
+| `variant` | `variant` (reflects) | `"filled" \| "outlined"` | `'filled'` | The variant: `filled` (default) or `outlined`. |
 
 Slots
 
@@ -173,7 +177,7 @@ CSS custom properties
 
 A Material Design component.
 
-Source: `extras/select/md-gb-select-option.ts`  
+Source: `material-design-expressive/extras/select/md-gb-select-option.ts`  
 Import: `import '@material/web/extras/select/md-gb-select-option.js';`
 
 Attributes and properties

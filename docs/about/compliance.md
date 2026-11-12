@@ -127,7 +127,7 @@ default it, it is tracked as a gap instead.
 
 ## Token audit
 
-`node scripts/m3/audit-gb.mjs --gaps` compares every token declaration in the
+`node scripts/m3/audit-tokens.mjs --gaps` compares every token declaration in the
 library's token files with the M3 token database. **Match** means the value
 equals the spec; **derived** means it is computed from a matching token;
 **drift** differs from the spec; **no spec token** has no counterpart in the
@@ -214,18 +214,18 @@ Suite files: `aria_gap.ts`, `aria_test.ts`, `axe_gap.ts`, `axe_test.ts`.
 
 ## Baseline
 
-`npm run gb:baseline` maps every CSS feature in the compiled library CSS
+`npm run baseline` maps every CSS feature in the compiled library CSS
 to its web-features Baseline status. A feature that is not widely available
 must sit inside a matching `@supports` guard or be listed with a reason in
-`scripts/gb-baseline-allow.json`; anything else fails the run.
+`scripts/baseline-allow.json`; anything else fails the run.
 
-- CSS: 19,541 feature uses in 62 files; 51 features are not widely available, used 754 times (478 guarded, 276 allowed with a reason, **0 unguarded**). Result: passes.
-- JavaScript (report only): 31 tracked Web API members in 207 source files; 6 are not widely available, 3 of them with at least one use that is not feature-detected.
+- CSS: 19,858 feature uses in 64 files; 52 features are not widely available, used 755 times (478 guarded, 276 allowed with a reason, **1 unguarded**). Result: fails.
+- JavaScript (report only): 35 tracked Web API members in 282 source files; 8 are not widely available, 3 of them with at least one use that is not feature-detected.
 
 ## Size budgets
 
 Each component has a Brotli size budget for JavaScript and CSS in
-`scripts/size/gb-budgets.json`: the measured size plus 10% headroom, enforced by
+`scripts/size/budgets.json`: the measured size plus 10% headroom, enforced by
 the size check. Totals across 37 components: 345,176 bytes of JavaScript and 77,248 bytes of CSS.
 
 | Component | JS budget (bytes) | CSS budget (bytes) |

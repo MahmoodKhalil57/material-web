@@ -5,11 +5,11 @@
  */
 
 /**
- * Converts resolved spec tokens into CSS values using the `labs/gb` naming
+ * Converts resolved spec tokens into CSS values using the library's naming
  * conventions (`--md-sys-shape-corner-md`, `--md-sys-typescale-label-lg`, ...).
  */
 
-/** `extra-large` -> `xl`, `medium` -> `md`, ... as used by labs/gb. */
+/** `extra-large` -> `xl`, `medium` -> `md`, ... as used by the library. */
 export function abbreviateSize(name) {
   return name
     .replace(/extra-extra-large/g, 'xxl')

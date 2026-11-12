@@ -18,15 +18,15 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design Expressive Chip component.
 
-Source: `components/chip/md-gb-chip.ts`  
+Source: `material-design-expressive/components/chip/md-gb-chip.ts`  
 Import: `import '@material/web/components/chip/md-gb-chip.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `color` | `color` | `ChipColor` | `"flat"` |  |
-| `density` | `density` (reflects) | `Density` |  | The density, from 0 (default) to -3. Each step down removes 4px from the container height (32px); the label and icons keep their size and the touch target stays 48px (chips.md: "regardless of placement or density"). Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-chip-set`. chips.md: don't apply density by default; let people opt in to a denser layout. |
+| `color` | `color` | `"filled" \| "elevated" \| "tonal" \| "outlined" \| "flat"` | `"flat"` | Deprecated. Use `elevated`. `color="elevated"` sets the elevated style. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density, from 0 (default) to -3. Each step down removes 4px from the container height (32px); the label and icons keep their size and the touch target stays 48px (chips.md: "regardless of placement or density"). Values are clamped to that range. Density 0 inherits the density of an enclosing `md-gb-chip-set`. chips.md: don't apply density by default; let people opt in to a denser layout. |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the chip is disabled. |
 | `dragged` | `dragged` (reflects) | `boolean` | `false` | Whether the chip is being dragged (spec dragged state elevation). |
 | `editable` | `editable` (reflects) | `boolean` | `false` | Whether the text of an input chip can be edited (chips.md "Input chips": "Input chips can support editing to change their contents, such as correcting an email address"). Editing starts by interacting with the chip: a second click, Enter or Space on the selected chip, or a double click. Committing with Enter or by leaving the field changes the chip's text and fires `edit`; Escape (or emptying the text) keeps the old text. |
@@ -40,7 +40,7 @@ Attributes and properties
 | `selected` | `selected` (reflects) | `boolean` | `false` | Whether the filter (or input) chip is selected. |
 | `softDisabled` | `soft-disabled` (reflects) | `boolean` | `false` | Whether the chip is soft-disabled (`aria-disabled="true"` while preserving focusability). |
 | `target` | `target` | `"" \| "_blank" \| "_parent" \| "_self" \| "_top"` | `""` | Where to display the linked `href` URL for a link chip. |
-| `type` | `type` | `ChipType` | `"assist"` | The chip type: `assist` (default), `filter`, `input` or `suggestion`. |
+| `type` | `type` | `"assist" \| "filter" \| "input" \| "suggestion" \| "action" \| "toggle" \| "link"` | `"assist"` | The chip type: `assist` (default), `filter`, `input` or `suggestion`. |
 | `value` | `value` | `string` |  | The value a chip set submits while the chip is selected. Defaults to the label text, like a native `<option>`. |
 
 Slots
@@ -96,16 +96,18 @@ CSS custom properties
 
 A Material Design Expressive chip set.
 
-Source: `components/chip/md-gb-chip-set.ts`  
+Source: `material-design-expressive/components/chip/md-gb-chip-set.ts`  
 Import: `import '@material/web/components/chip/md-gb-chip-set.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `density` | `density` (reflects) | `Density` |  | The density of the chips, from 0 (default) to -3: each step down removes 4px from the chips' height. A chip's own non-zero `density` wins. Values are clamped to that range. |
+| `density` | `density` (reflects) | `0 \| -1 \| -2 \| -3` |  | The density of the chips, from 0 (default) to -3: each step down removes 4px from the chips' height. A chip's own non-zero `density` wins. Values are clamped to that range. |
+| `disabled` | `disabled` | `boolean` |  | Disabled by the attribute or by a disabled fieldset. |
+| `name` | `name` | `string` |  | The HTML name to use in form submission. |
 | `required` | `required` (reflects) | `boolean` | `false` | Single-select: the selected chip can't be unselected. |
-| `selection` | `selection` (reflects) | `SelectionMode` | `"multiple"` | How many filter chips can be selected: `none`, `single` or `multiple`. |
+| `selection` | `selection` (reflects) | `"none" \| "single" \| "multiple"` | `"multiple"` | How many filter chips can be selected: `none`, `single` or `multiple`. |
 | `singleLine` | `single-line` (reflects) | `boolean` | `false` | Keep the chips on one line and scroll horizontally instead of wrapping. |
 
 Slots

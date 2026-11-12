@@ -15,7 +15,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design badge component.
 
-Source: `components/badge/md-gb-badge.ts`  
+Source: `material-design-expressive/components/badge/md-gb-badge.ts`  
 Import: `import '@material/web/components/badge/md-gb-badge.js';`
 
 Attributes and properties

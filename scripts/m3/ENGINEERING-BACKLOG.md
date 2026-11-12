@@ -1,6 +1,6 @@
-# labs/gb engineering backlog
+# Library engineering backlog
 
-Platform and tooling improvements for labs/gb, inspired by daisyUI 5.7.50 and
+Platform and tooling improvements for the library, inspired by daisyUI 5.7.50 and
 CSS-Tricks (almanac, guides, recent articles). These are not spec
 requirements. `CHECKLIST.md` tracks them in its "Engineering backlog"
 section; this file keeps the details and the spec rule each must keep.

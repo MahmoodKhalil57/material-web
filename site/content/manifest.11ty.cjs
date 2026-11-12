@@ -12,7 +12,7 @@
 
 const {SITE, baselineColors} = require('../eleventy/site.cjs');
 
-class GbManifest {
+class Manifest {
   data() {
     return {permalink: '/3.0/manifest.webmanifest', eleventyExcludeFromCollections: true};
   }
@@ -44,4 +44,4 @@ class GbManifest {
   }
 }
 
-module.exports = GbManifest;
+module.exports = Manifest;

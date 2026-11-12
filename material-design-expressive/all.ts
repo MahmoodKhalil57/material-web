@@ -5,7 +5,7 @@
  */
 
 /**
- * @fileoverview The one-line setup for prototyping: defines every labs/gb
+ * @fileoverview The one-line setup for prototyping: defines every library
  * element and adopts the M3 styles (tokens and typography) into the
  * document.
  *

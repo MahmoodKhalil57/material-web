@@ -1,6 +1,6 @@
-# labs/gb TODO: agent waves
+# Library TODO: agent waves
 
-Everything left to make the red tests (`*_gap.ts`, `gb-check --gaps`) pass,
+Everything left to make the red tests (`*_gap.ts`, `npm run check -- --gaps`) pass,
 close the 155 tracked spec units (`spec-checks --offline --strict`), and make
 the suite fast. Waves run in order; agents inside a wave run in parallel and
 own the files listed for them exclusively (others write a red test and report).
@@ -13,7 +13,7 @@ and the final gate. All run as Claude Code subagents on the subscription, not
 the paid API.
 
 Done = item's tests pass and cite the unit (`// spec: <id>`), or the unit is
-excluded with an honest reason, `gb-check --fast <dirs>` green, tsgo clean,
+excluded with an honest reason, `npm run check -- --fast <dirs>` green, tsgo clean,
 `spec-checks --offline --strict` at 0 unaccounted.
 
 Status (2026-11-07): all waves done. 4,270 units tested, 896 excluded with a
@@ -28,7 +28,7 @@ keyboard round trips) + 148s module loading; the critical path is
 `foundations/interaction/states/state-layers_test.ts` at 30s.
 
 - [x] Cache esbuild transforms in `web-test-runner.config.js` (keyed by path + mtime).
-- [x] `gb-check --watch <dirs>` (needs an interactive terminal; the runner refuses watch mode otherwise): keep the runner and browser alive, rerun the
+- [x] `npm run check -- --watch <dirs>` (needs an interactive terminal; the runner refuses watch mode otherwise): keep the runner and browser alive, rerun the
       test files whose imports changed (target: 1-2s per save).
 - [x] `until(cond, {timeout})` in `testing/subjects.ts`: poll per frame
       instead of fixed sleeps.
@@ -269,7 +269,7 @@ can check. Today (2026-11-07) 4,270 of 15,129 units are tested. The rest:
       corners, CSS scroll lock): done, `@scope` evaluated and not adopted
       (details in CHECKLIST.md).
 - [x] Tooling (Lightning CSS, size budgets, agent skill, performance marks,
-      axe-core), plus Baseline checks from web-features (`npm run gb:baseline`,
+      axe-core), plus Baseline checks from web-features (`npm run baseline`,
       0 unguarded uses).
 
 ## WAI-ARIA 1.3 (`.m3-specs/Accessible Rich Internet Applications (WAI-ARIA) 1.3.html`)
@@ -301,7 +301,7 @@ problems are fixed only in ways the M3 accessibility sections allow.
 - [x] Tabs without anchor positioning: the primary indicator fallback is
       drawn on the tab content with the spec inset and shape. Both paths now
       round only the top corners (the token is 3dp top, 0 bottom; the old
-      value followed Compose), and `gb-css.mjs` keeps per-corner shape tokens.
+      value followed Compose), and `css.mjs` keeps per-corner shape tokens.
 - [x] Submenus in the JS positioning fallback keep the offset that lines
       their first item up with the parent item (`--overlay-margin-block-start`).
 - [x] Dark sections: no `.md-dark` hook. M3 sets no requirement for a dark
@@ -309,7 +309,7 @@ problems are fixed only in ways the M3 accessibility sections allow.
       `light-dark()` follows) and advises against overriding the user's
       preference. Only browsers from before May 2024 (no `light-dark()`) fall
       back to `prefers-color-scheme` alone.
-- [x] The Custom Elements Manifest analyzer crashed on labs/gb ("Could not
+- [x] The Custom Elements Manifest analyzer crashed on the library ("Could not
       find type reference 'Intl'"): fixed in scripts/analyzer, which also adds
       the md-gb tag names. The agent skill keeps reading the TypeScript sources
       because the manifest lacks mixin-inherited members (disabled, name,
@@ -330,7 +330,7 @@ problems are fixed only in ways the M3 accessibility sections allow.
 Status: done (all seven checklists; plus Styles pages elevation and icons, the
 Foundations/Styles split of the sidebar, watch mode for catalog:dev).
 
-Goal: the /3.0/ catalog documents labs/gb fully. Each section below is a
+Goal: the /3.0/ catalog documents the library fully. Each section below is a
 checklist an agent can follow without exploring; shared rules are in the
 scratchpad `site-brief.md`.
 
@@ -348,7 +348,7 @@ site/scripts/dev.mjs).
 Owns: site/src/components/theme-changer.ts,
 site/src/inline/apply-saved-theme.ts, site/content/_includes/default.html.
 - [x] In /3.0/ the palette menu (source color, light or dark, contrast) also
-      themes the labs/gb tokens: `themeFromSource()` / `applyTheme()` from
+      themes the library's tokens: `themeFromSource()` / `applyTheme()` from
       styles/color/dynamic-color.ts, loaded only under /3.0/, on the
       document and in the playground iframes if they don't inherit it (today
       the button playground is purple while the site is brown). "/" unchanged.
@@ -369,7 +369,7 @@ site/scripts/dev.mjs.
       methods, CSS parts and CSS custom properties.
 - [x] In /3.0/, each component page's "API" section shows the md-gb-* tables
       (data-variant expressive); "/" keeps the v2.5.0 tables. Pages for
-      gb-only components get the same tables.
+      3.0-only components get the same tables.
 - [x] Check: /3.0/components/button/ lists md-gb-button attributes (color,
       size, square, ...); /components/button/ is unchanged.
 
@@ -379,10 +379,10 @@ scripts/catalog-3.0/about/compliance.md (expressiveOnly; order after the intro).
 - [x] Per component and overall, from local data: spec units tested,
       excluded (counts by reason) and tracked (.m3-specs/spec-checks/units.json);
       the token audit (match, drift with reason, gaps) from
-      `node scripts/m3/audit-gb.mjs --gaps`; axe and ARIA 1.3 rows and known
+      `node scripts/m3/audit-tokens.mjs --gaps`; axe and ARIA 1.3 rows and known
       gaps (foundations/accessibility/axe-helpers.ts, aria-rows.ts);
-      the Baseline summary (`npm run gb:baseline`); the size budgets
-      (scripts/size/gb-budgets.json).
+      the Baseline summary (`npm run baseline`); the size budgets
+      (scripts/size/budgets.json).
 - [x] Numbers and unit ids only, no spec text. Say how each number is made
       and how to rerun it (`node scripts/m3/gen-compliance-page.mjs`).
 - [x] Run it from scripts/m3/update.mjs after spec-checks; add a `--check` mode.
@@ -428,22 +428,22 @@ Owns: scripts/catalog-3.0/foundations/{accessibility,adaptive-layout}.md.
 Owns: scripts/catalog-3.0/about/{browser-support,ai-agents,debugging}.md and a
 data-variant="expressive" block on the home page (site/content/index.html).
 - [x] Browser support: the Baseline widely available targets (printed by
-      `node scripts/gb-css-validate.mjs`), and which features sit behind
+      `node scripts/css-validate.mjs`), and which features sit behind
       `@supports` with which fallback (the reasons in
-      scripts/gb-baseline-allow.json).
+      scripts/baseline-allow.json).
 - [x] AI agents: install `skill/` as a Claude Code skill; regenerate
       it with `node scripts/m3/gen-agent-skill.mjs`.
 - [x] Debugging: the `?md-gb-perf` / `MD_GB_DEBUG_PERF` / localStorage
       `md-gb-perf` DevTools track (components/shared/perf.ts).
 - [x] What's new, on the /3.0/ home page only: the M3 Expressive components
-      new in 3.0 (the gb-only pages), with links to migration and compliance.
+      new in 3.0 (the 3.0-only pages), with links to migration and compliance.
 
 # Styles gaps (2026-11-07)
 
-Features the M3 color, motion and spacing pages describe that labs/gb did not
+Features the M3 color, motion and spacing pages describe that the library did not
 build (found when the /3.0/ Styles pages were written). Library rules: the
 scratchpad `wave4-brief.md`; page rules: `site-brief.md`. Each agent also
-updates its page: the "not built in labs/gb yet" line becomes how to use it.
+updates its page: the "not built in the library yet" line becomes how to use it.
 
 ## G-1 (Sonnet): color
 Owns: styles/color/ (dynamic-color.ts and tests),
@@ -495,7 +495,7 @@ Transitions section of scripts/catalog-3.0/styles/motion.md.
       and the content resizes with it, using the enter/exit motion.
 
 ## G-4 (Sonnet): adaptive spacing in components
-Owns: the spacing declarations in labs/gb components that the spec ties to
+Owns: the spacing declarations in the library components that the spec ties to
 spacing (search bar margins 24/12dp, scaffold and pane margins, app bar and
 toolbar padding where the spec says), and scripts/catalog-3.0/styles/spacing.md.
 - [x] Components read `--md-sys-space-*` tokens (and the adaptive
@@ -510,7 +510,7 @@ toolbar padding where the spec says), and scripts/catalog-3.0/styles/spacing.md.
 # 3.0 site as plain Markdown (2026-11-07)
 
 Goal: every /3.0/ page is a Markdown document under `docs/`, rendered by
-a site shell built from labs/gb (md-gb-*) components, following the M3 pages,
+a site shell built from the library (md-gb-*) components, following the M3 pages,
 WAI-ARIA 1.3/MDN and Baseline. "/" stays the v2.5.0 site and loses every 3.0
 overlay (no data-variant blocks, no /3.0 rewrite, no md-gb on "/").
 
@@ -544,12 +544,12 @@ Page contract (M-1 writes it, M-2 builds it, M-3 renders it):
       the 3.0 scripts in default.html. "/" builds as v2.5.0 only.
 - [x] catalog:dev watches docs/3.0; catalog-wait still works.
 
-## M-3 (Sonnet, parallel with M-1): site shell from labs/gb
+## M-3 (Sonnet, parallel with M-1): site shell from the library
 - [x] `gb` layout: app bar (version select, theme, GitHub link), navigation
       drawer (modal below expanded, standard at expanded+) with sections
       About / Foundations / Styles / Components, content pane, on-page TOC,
       all md-gb-* components; landmarks, skip link, aria-current="page".
-- [x] Theme: dynamic color from a seed (labs/gb styles/color), light/dark/
+- [x] Theme: dynamic color from a seed (the library styles/color), light/dark/
       system, saved per viewer; copy-code button.
 - [x] No md-* (v2.5) component on /3.0/ pages.
 
@@ -587,7 +587,7 @@ Left after M-4:
 - [ ] Tabs: aria-label on icon-only md-gb-tab reported as
       aria-prohibited-attr (role via ElementInternals; likely axe false
       positive, verify against the ARIA model test).
-- [x] Shortcode exposing the labs/gb module URL so {% demo %} scripts can
+- [x] Shortcode exposing the library's module URL so {% demo %} scripts can
       import helpers (applyTheme, transitions) live. (Import map in demo
       frames: @material/web/, lit, lit/.)
 
@@ -606,7 +606,7 @@ Left after M-4:
       elements can't be imported in Node; untested. Lit SSR path?
 - [ ] Service worker: treat /3.0/r/* as network-only.
 - [ ] The registry names "@material/web", which is 2.5.0 on npm without
-      the newest labs/gb files; the commands fully work after a 3.0 release.
+      the newest library files; the commands fully work after a 3.0 release.
 
 # Accessibility follow-ups (2026-11-08)
 

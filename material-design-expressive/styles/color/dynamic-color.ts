@@ -5,7 +5,7 @@
  */
 
 /**
- * @fileoverview Dynamic color for labs/gb: generates a full M3 color scheme
+ * @fileoverview Dynamic color for the library: generates a full M3 color scheme
  * (every `--md-sys-color-*` role that `md-color-tokens.css` defines) from a
  * source color or an image, using Material Color Utilities (MCU).
  *

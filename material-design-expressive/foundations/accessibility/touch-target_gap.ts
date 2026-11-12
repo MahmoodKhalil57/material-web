@@ -9,7 +9,7 @@
 import {hitTargetSize, KNOWN_GAPS, renderSubject, SUBJECTS} from '../../testing/subjects.js';
 
 // Gap checks for suite 3 (touch targets): parts whose hit target is smaller
-// than 48x48 at some density. Run with `npm run gb:check -- --gaps ...`.
+// than 48x48 at some density. Run with `npm run check -- --gaps ...`.
 
 describe('touch targets (central gaps)', () => {
   // With no known gaps the suite would have no tests, which the runner

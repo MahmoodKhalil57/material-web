@@ -20,7 +20,7 @@ Behavior the component implements or expects the app to follow (summarized from 
 
 A Material Design navigation drawer custom element.
 
-Source: `components/navdrawer/md-gb-nav-drawer.ts`  
+Source: `material-design-expressive/components/navdrawer/md-gb-nav-drawer.ts`  
 Import: `import '@material/web/components/navdrawer/md-gb-nav-drawer.js';`
 
 Attributes and properties
@@ -124,7 +124,7 @@ CSS custom properties
 
 A Material Design navigation drawer item custom element.
 
-Source: `components/navdrawer/md-gb-nav-drawer-item.ts`  
+Source: `material-design-expressive/components/navdrawer/md-gb-nav-drawer-item.ts`  
 Import: `import '@material/web/components/navdrawer/md-gb-nav-drawer-item.js';`
 
 Attributes and properties

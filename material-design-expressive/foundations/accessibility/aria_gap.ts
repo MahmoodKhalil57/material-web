@@ -14,7 +14,7 @@ import {renderRow} from './axe-helpers.js';
 
 // Gap checks for the WAI-ARIA 1.3 suite (`aria_test.ts`): rows with a real
 // violation, one red test per violation naming the role, the attribute and the
-// spec section. Run with `npm run gb:check -- --gaps ...`.
+// spec section. Run with `npm run check -- --gaps ...`.
 
 describe('WAI-ARIA 1.3 (central gaps)', () => {
   // With no known gaps the suite would have no tests, which the runner

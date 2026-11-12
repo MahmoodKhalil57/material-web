@@ -8,7 +8,7 @@ Elements: `md-gb-app-scaffold`, `md-gb-pane-scaffold`.
 
 A Material Design app scaffold (bars, rails, FAB, snackbar).
 
-Source: `extras/scaffold/md-gb-app-scaffold.ts`  
+Source: `material-design-expressive/extras/scaffold/md-gb-app-scaffold.ts`  
 Import: `import '@material/web/extras/scaffold/md-gb-app-scaffold.js';`
 
 Attributes and properties
@@ -16,8 +16,10 @@ Attributes and properties
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `autoExpandRail` | `auto-expand-rail` (reflects) | `boolean` | `false` | Whether to expand a slotted navigation rail at large and extra-large windows and collapse it below (spec: breakpoints, swapping components). Applied when the window size class changes. |
-| `navigation` | `navigation` (reflects) | `ScaffoldNavigation` | `'auto'` | Which navigation component to show. |
-| `sideSheetNavigation` | `side-sheet-navigation` (reflects) | `SideSheetNavigation` | `'keep'` | What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. |
+| `companionWidth` | `companion-width` | `number` | `0` | The width (px) of the companion rail region; 0 (default) sizes it to its content. A fixed width keeps the content beside it at the same width from page to page, whatever the rail holds (an outline of longer or shorter headings). |
+| `fullscreen` | `fullscreen` (reflects) | `boolean` | `false` | Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content. |
+| `navigation` | `navigation` (reflects) | `"none" \| "auto" \| "bar" \| "rail"` | `'auto'` | Which navigation component to show. |
+| `sideSheetNavigation` | `side-sheet-navigation` (reflects) | `"hide" \| "keep" \| "collapse"` | `'keep'` | What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. |
 | `sideSheetOpen` | `side-sheet-open` (reflects) | `boolean` | `false` | Whether an app-managed side sheet is open. |
 
 Slots
@@ -63,20 +65,20 @@ CSS custom properties
 
 A Material Design pane scaffold (list-detail, supporting pane, feed).
 
-Source: `extras/scaffold/md-gb-pane-scaffold.ts`  
+Source: `material-design-expressive/extras/scaffold/md-gb-pane-scaffold.ts`  
 Import: `import '@material/web/extras/scaffold/md-gb-pane-scaffold.js';`
 
 Attributes and properties
 
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `arrangement` | `arrangement` (reflects) | `PaneArrangement` | `'fixed-flexible'` | How two panes share the width. |
+| `arrangement` | `arrangement` (reflects) | `"fixed-flexible" \| "split"` | `'fixed-flexible'` | How two panes share the width. |
 | `collapsedPane` | `collapsed-pane` (reflects) | `"primary" \| "secondary"` | `null` | A pane collapsed with the drag handle, or null. |
 | `detailOpen` | `detail-open` (reflects) | `boolean` | `false` | List-detail: whether an item is selected. Single-pane windows show the detail (primary) pane when true and the list (secondary) pane when false; two-pane windows show the `placeholder` slot instead of the detail while false. |
 | `dragHandleLabel` | `drag-handle-label` | `string` | `'Resize panes'` | Accessible label of the drag handle. |
-| `handleTap` | `handle-tap` | `PaneHandleTap` | `'toggle'` | What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. |
-| `layout` | `layout` (reflects) | `PaneScaffoldLayout` | `'list-detail'` | The canonical layout. |
-| `levitate` | `levitate` (reflects) | `PaneLevitate` | `'none'` | The levitate strategy for the secondary pane of supporting pane and feed layouts in windows too small for two panes: `none` reflows it below the primary pane, `floating` floats it above, `docked` docks it to the bottom edge at compact (floating from medium). |
+| `handleTap` | `handle-tap` | `"toggle" \| "cycle"` | `'toggle'` | What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. |
+| `layout` | `layout` (reflects) | `"list-detail" \| "supporting-pane" \| "feed"` | `'list-detail'` | The canonical layout. |
+| `levitate` | `levitate` (reflects) | `"none" \| "docked" \| "floating"` | `'none'` | The levitate strategy for the secondary pane of supporting pane and feed layouts in windows too small for two panes: `none` reflows it below the primary pane, `floating` floats it above, `docked` docks it to the bottom edge at compact (floating from medium). |
 | `levitateCoplanar` | `levitate-coplanar` (reflects) | `boolean` | `false` | Keeps a levitated pane co-planar at large and extra-large windows. By default it floats there (spec: scaffold, "On large screens: floating panes are the default"). |
 | `levitateDraggable` | `levitate-draggable` (reflects) | `boolean` | `false` | Lets a floating pane be dragged by its handle, or moved with the arrow keys while the handle is focused (spec: scaffold, floating panes "can be customized to be dragged or resized"). |
 | `levitateLabel` | `levitate-label` | `string` | `''` | Accessible label of a modal levitated pane (its dialog role). |
@@ -88,9 +90,9 @@ Attributes and properties
 | `mediumTwoPane` | `medium-two-pane` (reflects) | `boolean` | `false` | Whether medium windows show two panes (50% each) instead of one. The spec limits this to low-density content such as settings. |
 | `paneWidth` | `pane-width` | `number` | `null` | Width in px of the secondary pane set with the drag handle, or null for the default width. Set it to restore a persisted width. |
 | `resizable` | `resizable` (reflects) | `boolean` | `false` | Whether two-pane layouts render a drag handle to resize the panes. |
-| `resizeBehavior` | `resize-behavior` | `PaneResizeBehavior` | `undefined` | `persistent` keeps a resized width or collapsed pane across window size class changes; `temporary` returns to the default layout. Defaults to persistent for list-detail and temporary for the other layouts. |
+| `resizeBehavior` | `resize-behavior` | `"persistent" \| "temporary"` | `undefined` | `persistent` keeps a resized width or collapsed pane across window size class changes; `temporary` returns to the default layout. Defaults to persistent for list-detail and temporary for the other layouts. |
 | `scrollLabel` | `scroll-label` | `string` | `'Panes'` | Accessible label of the stacked panes' scroll region. Only used while the stacked panes overflow and hold nothing focusable: the region is then focusable (so the keyboard can scroll it) and a labelled `region`. |
-| `secondaryPosition` | `secondary-position` (reflects) | `PanePosition` | `undefined` | Where the secondary pane sits in two-pane layouts. Defaults to `start` for list-detail and `end` for supporting pane and feed layouts. Mirrors in right-to-left. |
+| `secondaryPosition` | `secondary-position` (reflects) | `"start" \| "end"` | `undefined` | Where the secondary pane sits in two-pane layouts. Defaults to `start` for list-detail and `end` for supporting pane and feed layouts. Mirrors in right-to-left. |
 
 Slots
 

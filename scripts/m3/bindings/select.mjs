@@ -50,7 +50,7 @@ export default {
     // they are not type styles, so they have no `-axes` / `-tracking`.
     'populated-(size|line-height)-(axes|tracking)$',
     // `md.sys.typescale.body-sm.size` / `.line-height` are not defined in the
-    // labs/gb styles; root sets them with fallbacks under `// EDIT:`.
+    // the library styles; root sets them with fallbacks under `// EDIT:`.
     '^label-text-populated-',
   ],
   root: {set: sets[''], state: 'text-field'},
