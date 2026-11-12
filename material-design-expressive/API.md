@@ -21,7 +21,7 @@ source cites (`// spec-labels:`).
 | Types and interfaces | 330 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2232 of 2232 (100%) |
+| JSDoc coverage | 2233 of 2233 (100%) |
 
 ## Contents
 
@@ -1998,6 +1998,7 @@ A Material Design navigation rail item custom element.
 | --- | --- | --- | --- | --- |
 | `active` | `active` (reflects) | `boolean` |   | Whether the navigation rail item is active. Alias for `selected`. TODO: replace reflected `[active]` with `:state(selected)` |
 | `badge` | `badge` | `string` | `''` | Optional badge text (or 'dot' / 'true' for a small dot badge). |
+| `current` |   | `"page" \| "true"` | `'page'` | `aria-current` while a selected link: `page` (default), or `true` while a secondary destination under it is the selected page. Set by the rail. |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the navigation rail item is disabled. |
 | `href` | `href` | `string` | `''` | The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. |
 | `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |
@@ -2597,7 +2598,7 @@ A Material Design segmented button set.
 | `hasLinkItems` | function | `(items: readonly HTMLElement[]): boolean` | Whether any of the bar's destinations is a link. |
 | `NAV_LINK_CHANGE` | variable | `"nav-link-change"` | Fired (bubbling, not composed) by a navigation bar or rail item when it becomes or stops being a link, so its bar can pick the role that fits its destinations. |
 | `NavLinkController` | class | `class NavLinkController implements ReactiveController` | Makes a navigation bar or rail item (a tab) a link destination when `href` is set, like the navigation drawer's item (navigation-bar.md, navigation-rail.md: destinations navigate). |
-| `NavLinkHost` | interface | `{href; target; rel; disabled; renderRoot; [internals]}` | A navigation bar or rail item that can be a link. |
+| `NavLinkHost` | interface | `{href; target; rel; disabled; current; renderRoot; [internals]}` | A navigation bar or rail item that can be a link. |
 | `navLinkStyles` | variable | `CSSResult` | Styles for the anchor that covers a link item. |
 
 #### `components/shared/perf.js`

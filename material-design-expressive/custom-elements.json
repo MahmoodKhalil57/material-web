@@ -13982,6 +13982,16 @@
       },
       {
        "kind": "field",
+       "name": "current",
+       "type": {
+        "text": "\"page\" | \"true\""
+       },
+       "privacy": "public",
+       "default": "'page'",
+       "description": "`aria-current` while a selected link: `page` (default), or `true` while a secondary destination under it is the selected page. Set by the rail."
+      },
+      {
+       "kind": "field",
        "name": "disabled",
        "type": {
         "text": "boolean"

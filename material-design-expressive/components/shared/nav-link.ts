@@ -27,6 +27,12 @@ export interface NavLinkHost extends ReactiveControllerHost, HTMLElement {
   target: string;
   rel: string;
   disabled: boolean;
+  /**
+   * `aria-current` while selected: `page` (default), or `true` for a
+   * destination that holds the current page (a section whose selected
+   * secondary destination is the page).
+   */
+  current?: 'page' | 'true';
   readonly renderRoot: HTMLElement | DocumentFragment;
   [internals]: ElementInternals;
 }
@@ -68,7 +74,7 @@ export class NavLinkController implements ReactiveController {
     if (link) {
       state.role = 'link';
       state.ariaSelected = null;
-      state.ariaCurrent = this.selected ? 'page' : null;
+      state.ariaCurrent = this.selected ? (host.current ?? 'page') : null;
     } else if (this.isLink) {
       state.role = 'tab';
       state.ariaCurrent = null;

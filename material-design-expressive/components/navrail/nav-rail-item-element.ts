@@ -173,6 +173,12 @@ export class NavRailItemElement extends AriaTabElement {
    */
   @property({type: Boolean, reflect: true}) secondary = false;
 
+  /**
+   * `aria-current` while a selected link: `page` (default), or `true` while
+   * a secondary destination under it is the selected page. Set by the rail.
+   */
+  @property({attribute: false}) current: 'page' | 'true' = 'page';
+
   /** Optional badge text (or 'dot' / 'true' for a small dot badge). */
   @property() badge = '';
 
@@ -193,6 +199,9 @@ export class NavRailItemElement extends AriaTabElement {
     const isSelected = this.selected;
     const isDotBadge = this.badge === 'dot' || this.badge === 'true';
     const hasBadge = Boolean(this.badge);
+    // Read from the light DOM while rendering (not on slotchange), so an
+    // item without an icon has no icon space from its first frame.
+    const hasIcon = this.querySelector(':scope > [slot="icon"]') !== null;
 
     return html`
       <div
@@ -203,10 +212,10 @@ export class NavRailItemElement extends AriaTabElement {
           selected: isSelected,
         })} ripple-host focus-ring-host"
         ?disabled=${this.disabled}>
-        <span class="nav-rail-item-content">
+        <span class="nav-rail-item-content ${hasIcon ? '' : 'nav-rail-item-no-icon'}">
           <span part="indicator" class="nav-rail-item-indicator">
             <span class="nav-rail-item-icon">
-              <slot name="icon"></slot>
+              <slot name="icon" @slotchange=${() => this.requestUpdate()}></slot>
             </span>
           </span>
           <span part="label" class="nav-rail-item-label">

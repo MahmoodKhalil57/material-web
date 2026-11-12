@@ -459,6 +459,12 @@
       text-align: start;
     }
 
+    // A destination without an icon (a secondary one, such as a heading of
+    // an outline) leaves no icon space: its label starts at the pill's edge.
+    .nav-rail-item-no-icon > .nav-rail-item-indicator {
+      display: none;
+    }
+
     .nav-rail-item-badge {
       inset: auto;
       position: static;

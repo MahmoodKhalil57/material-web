@@ -20,6 +20,9 @@ import {
   useCloseWatcher,
 } from '../../foundations/interaction/gestures/predictive-back-harness.js';
 import {NavRailElement} from './nav-rail-element.js';
+import {NavRailItemElement} from './nav-rail-item-element.js';
+import {internals} from '../../internal/behaviors/element-internals.js';
+import '../../styles/icons/md-gb-icon.js';
 
 adoptStyles(document, [m3Styles]);
 
@@ -314,6 +317,40 @@ describe('md-gb-nav-rail', () => {
       expect(rail.selectedIndex).toBe(1);
     });
 
+    it('keeps the selected section and the selected page in it', async () => {
+      const rail = await render(html`
+        <md-gb-nav-rail expanded>
+          <md-gb-nav-rail-item href="/a/" selected>Section A</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/b/">Section B</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/a/1/" secondary>Page 1</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item href="/a/2/" secondary selected>Page 2</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+      `);
+      const [sectionA, , , page2] = [...rail.querySelectorAll<NavRailItemElement>('md-gb-nav-rail-item')];
+      expect(sectionA.selected).toBeTrue();
+      expect(page2.selected).toBeTrue();
+      // One current page: the section holds it.
+      expect(page2[internals].ariaCurrent).toBe('page');
+      expect(sectionA[internals].ariaCurrent).toBe('true');
+    });
+
+    it('selecting another section deselects the page under the previous one', async () => {
+      const rail = await render(html`
+        <md-gb-nav-rail expanded>
+          <md-gb-nav-rail-item selected>Section A</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item>Section B</md-gb-nav-rail-item>
+          <md-gb-nav-rail-item secondary selected>Page 1</md-gb-nav-rail-item>
+        </md-gb-nav-rail>
+      `);
+      const [sectionA, sectionB, page1] = [...rail.querySelectorAll<NavRailItemElement>('md-gb-nav-rail-item')];
+      expect(page1.selected).toBeTrue();
+      sectionB.click();
+      await rail.updateComplete;
+      expect(sectionB.selected).toBeTrue();
+      expect(sectionA.selected).toBeFalse();
+      expect(page1.selected).toBeFalse();
+    });
+
     it('still selects the first tab of a tab list', async () => {
       const rail = await render(html`
         <md-gb-nav-rail>
@@ -359,6 +396,22 @@ describe('md-gb-nav-rail', () => {
       expect(getComputedStyle(list).overflowY).toBe('auto');
       expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
     });
+  });
+
+  it('leaves no icon space for an expanded destination without an icon', async () => {
+    const rail = await render(html`
+      <md-gb-nav-rail expanded>
+        <md-gb-nav-rail-item>No icon</md-gb-nav-rail-item>
+        <md-gb-nav-rail-item><md-gb-icon slot="icon">home</md-gb-icon>Icon</md-gb-nav-rail-item>
+      </md-gb-nav-rail>
+    `);
+    const [plain, withIcon] = [...rail.querySelectorAll<NavRailItemElement>('md-gb-nav-rail-item')];
+    await plain.updateComplete;
+    await withIcon.updateComplete;
+    const indicator = (item: NavRailItemElement) =>
+      getComputedStyle(item.shadowRoot!.querySelector('.nav-rail-item-indicator')!).display;
+    expect(indicator(plain)).toBe('none');
+    expect(indicator(withIcon)).not.toBe('none');
   });
 
   describe('trailing', () => {

@@ -143,6 +143,7 @@ Attributes and properties
 | --- | --- | --- | --- | --- |
 | `active` | `active` (reflects) | `boolean` |  | Whether the navigation rail item is active. Alias for `selected`. TODO: replace reflected `[active]` with `:state(selected)` |
 | `badge` | `badge` | `string` | `''` | Optional badge text (or 'dot' / 'true' for a small dot badge). |
+| `current` | property only | `"page" \| "true"` | `'page'` | `aria-current` while a selected link: `page` (default), or `true` while a secondary destination under it is the selected page. Set by the rail. |
 | `disabled` | `disabled` (reflects) | `boolean` | `false` | Whether the navigation rail item is disabled. |
 | `href` | `href` | `string` | `''` | The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. |
 | `itemLayout` | `item-layout` (reflects) | `"horizontal" \| "vertical"` | `'vertical'` | The layout orientation of the item ('vertical' or 'horizontal'). |

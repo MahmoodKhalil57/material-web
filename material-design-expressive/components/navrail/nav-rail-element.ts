@@ -63,6 +63,11 @@ const HEADER_TOGGLE_SELECTOR = [
 // spec-labels: navigation-rail/specs/baseline-navigation-rail/configurations, navigation-rail/specs/variants/baseline-variants
 const HEADER_FAB_SELECTOR = 'md-gb-fab, .fab';
 
+/** Whether a destination is secondary (shown only in the expanded rail). */
+function isSecondary(tab: HTMLElement) {
+  return tab instanceof NavRailItemElement && tab.secondary;
+}
+
 /** A slotted child's box, and a destination's icon and active pill. */
 interface MorphRects {
   box: DOMRect;
@@ -784,9 +789,52 @@ export class NavRailElement extends AriaTablistElement {
   };
 
   protected override handleSlotChange() {
-    super.handleSlotChange();
+    // Keeping the selection in sync must not drop a selected secondary
+    // destination (the page under the selected section).
+    this.syncingSelection = true;
+    try {
+      super.handleSlotChange();
+    } finally {
+      this.syncingSelection = false;
+    }
     this.syncRole();
     this.syncItemsLayout();
+    this.syncCurrent();
+  }
+
+  private syncingSelection = false;
+
+  /**
+   * A primary destination and a secondary one can both be selected: the
+   * section and the page in it ("An expanded rail can reveal secondary
+   * destinations not visible when collapsed", navigation-rail.md). Selecting
+   * one deselects the others of its kind; selecting another primary one
+   * also deselects the secondary one (it was under the previous section).
+   */
+  protected override updateSelectedTab(tabToSelect: HTMLElement) {
+    if (!this.tabs.includes(tabToSelect)) return;
+    const secondary = isSecondary(tabToSelect);
+    for (const tab of this.tabs) {
+      if (tab === tabToSelect) {
+        this.setTabSelected(tab, true);
+      } else if (isSecondary(tab) === secondary || (!secondary && !this.syncingSelection)) {
+        this.setTabSelected(tab, false);
+      }
+    }
+    this.syncCurrent();
+  }
+
+  /**
+   * `aria-current`: `page` for the selected page, `true` for the selected
+   * section that holds it (one current page, not two).
+   */
+  private syncCurrent() {
+    const pageSelected = this.tabs.some((tab) => isSecondary(tab) && this.isTabSelected(tab));
+    for (const tab of this.tabs) {
+      if (tab instanceof NavRailItemElement) {
+        tab.current = !isSecondary(tab) && pageSelected ? 'true' : 'page';
+      }
+    }
   }
 
   /** The slotted children, and each destination's icon and active pill. */

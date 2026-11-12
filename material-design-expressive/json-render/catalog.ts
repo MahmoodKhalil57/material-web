@@ -1281,6 +1281,8 @@ export const COMPONENTS = {
         ariaLabel: dynamic(z.string()).optional(),
         /** Optional badge text (or 'dot' / 'true' for a small dot badge). */
         badge: dynamic(z.string()).optional(),
+        /** `aria-current` while a selected link: `page` (default), or `true` while a secondary destination under it is the selected page. Set by the rail. */
+        current: dynamic(z.enum(["page", "true"])).optional(),
         /** Whether the navigation rail item is disabled. */
         disabled: dynamic(z.boolean()).optional(),
         /** The URL the destination links to. The item is then a link (role `link`, `aria-current="page"` while selected) instead of a tab. */
