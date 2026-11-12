@@ -238,11 +238,13 @@ function shellSpec(page, pages, content) {
   const article = [];
   // Route progress (client/navigation.ts sets `/route`), following the M3
   // progress indicator guidance ("Expected wait time"): the loading
-  // indicator for a wait over 200ms, the linear indicator after 5s.
+  // indicator for a wait over 200ms, the linear indicator after 5s. It is
+  // the top of the article: the outline's first entry links to it (the
+  // pane scrolls, so the link must be inside it).
   article.push(
     add('route', {
       type: 'Html',
-      props: {tag: 'div'},
+      props: {tag: 'div', id: 'page-top'},
       children: [
         add('route-loading', {type: 'LoadingIndicator', props: {contained: true, ariaLabel: 'Loading page'}, visible: {$state: '/route', eq: 'loading'}}),
         add('route-linear', {type: 'Progress', props: {ariaLabel: 'Loading page'}, visible: {$state: '/route', eq: 'linear'}}),
@@ -266,9 +268,9 @@ function shellSpec(page, pages, content) {
   // button collapses it to the button alone (the entries are secondary
   // destinations, shown only while it is expanded). An h3 entry has a
   // leading arrow under its h2. The first entry is the page itself (the top
-  // of the main landmark), so every page has the rail and the content keeps
-  // one width from page to page.
-  const outline = [{level: 1, id: 'main', text: page.title || 'Top'}, ...outlineOf(content)];
+  // of the article), so every page has the rail and the content keeps one
+  // width from page to page.
+  const outline = [{level: 1, id: 'page-top', text: page.title || 'Top'}, ...outlineOf(content)];
   const outlineRail = add('outline', {
     type: 'NavRail',
     props: {
@@ -276,6 +278,7 @@ function shellSpec(page, pages, content) {
       expanded: {$bindState: '/outlineExpanded'},
       sticky: true,
       minWindowClass: 'large',
+      trailing: true,
       ariaLabel: 'On this page',
     },
     children: outline.map((h, i) =>
@@ -311,7 +314,9 @@ function shellSpec(page, pages, content) {
         children: [
           add('panes', {
             type: 'PaneScaffold',
-            props: {layout: 'supporting-pane', ariaLabel: page.title || 'Page'},
+            // Explicit grouping: the page is a pane of its own, on the
+            // body's surface, that scrolls by itself.
+            props: {layout: 'supporting-pane', grouping: 'explicit', ariaLabel: page.title || 'Page'},
             children: [add('article', {type: 'Prose', props: {}, children: article})],
           }),
           outlineRail,
@@ -329,7 +334,9 @@ function shellSpec(page, pages, content) {
 
   add('root', {
     type: 'AppScaffold',
-    props: {fullscreen: true, navigation: 'auto', autoExpandRail: true},
+    // The navigation area (bars, rails, around the pane) on surface
+    // container, the page's pane on surface (color/roles.md).
+    props: {fullscreen: true, navigation: 'auto', autoExpandRail: true, navigationColor: 'surface-container'},
     children: ['main', ...overlays],
     slots,
   });

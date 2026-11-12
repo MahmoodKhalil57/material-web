@@ -456,4 +456,40 @@ $_fast-spatial: var(--md-sys-motion-spring-fast-spatial-duration)
       border: 1px solid CanvasText;
     }
   }
+
+  // Explicit grouping (layout-overview.md, Containment): each pane is a
+  // container on the body's surface, with the window margin inside it and
+  // a small gap to the navigation area around it. The body's surface roles
+  // come from md-gb-app-scaffold (navigation-color="surface-container"
+  // remaps them around the panes), else the inherited ones. Set on the
+  // scaffold and used by the panes: an element can't refer to its own
+  // value.
+  :host([grouping='explicit']) .pane-scaffold {
+    --_body-surface: var(--md-gb-scaffold-body-surface, var(--md-sys-color-surface));
+    --_body-surface-container: var(
+      --md-gb-scaffold-body-surface-container,
+      var(--md-sys-color-surface-container)
+    );
+    padding: 0 var(--md-sys-space-150) var(--md-sys-space-150);
+  }
+
+  :host([grouping='explicit']) .pane {
+    --md-sys-color-surface: var(--_body-surface);
+    --md-sys-color-surface-container: var(--_body-surface-container);
+    background-color: var(--pane-container-color, var(--md-sys-color-surface));
+    border-radius: var(--pane-container-shape, var(--md-sys-shape-corner-xl));
+    padding: var(--md-sys-layout-margin);
+    // The containing block of its absolutely positioned content, so the
+    // pane scrolls and clips it (else it overflows the app scaffold's
+    // content region).
+    position: relative;
+    // A link to a heading scrolls it to below the margin, not to the edge.
+    scroll-padding-block: var(--md-sys-layout-margin);
+  }
+
+  @media (forced-colors: active) {
+    :host([grouping='explicit']) .pane {
+      border: 1px solid CanvasText;
+    }
+  }
 }

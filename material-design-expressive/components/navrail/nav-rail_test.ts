@@ -361,6 +361,31 @@ describe('md-gb-nav-rail', () => {
     });
   });
 
+  describe('trailing', () => {
+    const scale = (rail: NavRailElement) =>
+      getComputedStyle(rail.shadowRoot!.querySelector('.nav-rail-menu-button > span')!).scale;
+
+    it('mirrors the menu icon toward its own edge', async () => {
+      const rail = await render(html`<md-gb-nav-rail collapsible>${items}</md-gb-nav-rail>`);
+      expect(scale(rail)).toBe('none');
+      rail.trailing = true;
+      await rail.updateComplete;
+      expect(scale(rail)).toBe('-1 1');
+    });
+
+    it('mirrors a leading rail in right-to-left', async () => {
+      const rail = await render(html`<div dir="rtl"><md-gb-nav-rail collapsible>${items}</md-gb-nav-rail></div>`);
+      expect(scale(rail)).toBe('-1 1');
+    });
+
+    it('puts the divider next to the content', async () => {
+      const rail = await render(html`<md-gb-nav-rail divider trailing>${items}</md-gb-nav-rail>`);
+      const style = getComputedStyle(railEl(rail));
+      expect(style.borderInlineStartWidth).toBe('1px');
+      expect(style.borderInlineEndStyle).toBe('none');
+    });
+  });
+
   // scaffold.md: "A navigation rail and companion rail occupy the leading
   // and trailing sides of a large window".
   it('shows from its min-window-class, and takes no space below it', async () => {

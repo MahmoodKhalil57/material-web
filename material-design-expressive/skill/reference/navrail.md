@@ -42,6 +42,7 @@ Attributes and properties
 | `selectedIndex` | `selected-index` | `number` |  | The 0-based index of the currently active navigation rail item. Alias for `selectedTabIndex`. |
 | `selectedTabIndex` | `selectedtabindex` | `number` |  | The index of the currently selected tab. |
 | `sticky` | `sticky` (reflects) | `boolean` | `false` | Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit. |
+| `trailing` | `trailing` (reflects) | `boolean` | `false` | Whether the rail is on the trailing side of the window (a companion rail, such as a page outline): the menu button's icon points toward that edge, and the `divider` is on its leading side, next to the content. |
 
 Slots
 

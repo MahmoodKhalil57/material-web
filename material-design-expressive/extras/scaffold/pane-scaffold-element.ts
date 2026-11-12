@@ -220,8 +220,25 @@ export class PaneScaffoldElement extends LitElement {
       slot[hidden] {
         display: none;
       }
+
+      /* Explicit grouping: the panes scroll on their own, so the scaffold is
+         as tall as the app scaffold's visible content region. */
+      :host([grouping='explicit']) {
+        block-size: var(--md-gb-scaffold-content-block-size, 100%);
+      }
     `,
   ];
+
+  /**
+   * How the panes are grouped (layout-overview.md, Containment): `implicit`
+   * (default), "panes can blend in with the background"; `explicit`, which
+   * "uses distinct colors or outlines to visually delineate content": each
+   * pane is a container of its own, on the surface color with extra-large
+   * corners, and scrolls on its own. Inside an `md-gb-app-scaffold` with
+   * `navigation-color="surface-container"`, the panes are the body's
+   * surface on the navigation area's surface container (color/roles.md).
+   */
+  @property({reflect: true}) grouping: 'implicit' | 'explicit' = 'implicit';
 
   /** The canonical layout. */
   @property({reflect: true}) layout: PaneScaffoldLayout = 'list-detail';

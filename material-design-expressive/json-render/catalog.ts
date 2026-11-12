@@ -137,6 +137,8 @@ export const COMPONENTS = {
         id: dynamic(z.string()).optional(),
         /** Which navigation component to show. */
         navigation: dynamic(z.enum(["none", "auto", "bar", "rail"])).optional(),
+        /** The color role of the navigation area: the bars, the rails and the space around the panes. `surface` (default): one surface throughout. `surface-container`: "surface for a background area and surface container for a navigation area" (color/roles.md), with panes that use explicit grouping (`md-gb-pane-scaffold` `grouping="explicit"`) on the body's surface. Inside the scaffold the surface roles step up one level (surface is surface container, surface container is surface container high, so a search bar in the top app bar still stands out); explicit panes restore them for their content. */
+        navigationColor: dynamic(z.enum(["surface", "surface-container"])).optional(),
         /** What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. */
         sideSheetNavigation: dynamic(z.enum(["hide", "keep", "collapse"])).optional(),
         /** Whether an app-managed side sheet is open. */
@@ -145,7 +147,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "companion-rail", "fab", "navigation-bar", "navigation-rail", "snackbar", "toolbar", "top-app-bar"] as string[],
     events: ["navigation-change", "window-class-change", "window-height-class-change"] as string[],
-    attributes: {ariaLabel: "aria-label", autoExpandRail: "auto-expand-rail", companionWidth: "companion-width", fullscreen: "fullscreen", id: "id", navigation: "navigation", sideSheetNavigation: "side-sheet-navigation", sideSheetOpen: "side-sheet-open"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", autoExpandRail: "auto-expand-rail", companionWidth: "companion-width", fullscreen: "fullscreen", id: "id", navigation: "navigation", navigationColor: "navigation-color", sideSheetNavigation: "side-sheet-navigation", sideSheetOpen: "side-sheet-open"} as Record<string, string>,
     booleans: ["autoExpandRail", "fullscreen", "sideSheetOpen"] as string[],
     description: "A Material Design app scaffold (bars, rails, FAB, snackbar). Slots: default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar. Events: navigation-change, window-class-change, window-height-class-change. M3: scaffold.",
     deprecated: false,
@@ -1257,12 +1259,14 @@ export const COMPONENTS = {
         selectedTabIndex: dynamic(z.number()).optional(),
         /** Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit. */
         sticky: dynamic(z.boolean()).optional(),
+        /** Whether the rail is on the trailing side of the window (a companion rail, such as a page outline): the menu button's icon points toward that edge, and the `divider` is on its leading side, next to the content. */
+        trailing: dynamic(z.boolean()).optional(),
       })
       .strict(),
     slots: ["default", "header"] as string[],
     events: ["change", "toggle"] as string[],
-    attributes: {alignment: "alignment", ariaLabel: "aria-label", autoSelect: "autoselect", collapsible: "collapsible", divider: "divider", elevated: "elevated", expanded: "expanded", hideWhenCollapsed: "hide-when-collapsed", id: "id", itemLayout: "item-layout", minWindowClass: "min-window-class", modal: "modal", narrow: "narrow", orientation: "orientation", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex", sticky: "sticky"} as Record<string, string>,
-    booleans: ["autoSelect", "collapsible", "divider", "elevated", "expanded", "hideWhenCollapsed", "modal", "narrow", "sticky"] as string[],
+    attributes: {alignment: "alignment", ariaLabel: "aria-label", autoSelect: "autoselect", collapsible: "collapsible", divider: "divider", elevated: "elevated", expanded: "expanded", hideWhenCollapsed: "hide-when-collapsed", id: "id", itemLayout: "item-layout", minWindowClass: "min-window-class", modal: "modal", narrow: "narrow", orientation: "orientation", selectedIndex: "selected-index", selectedTabIndex: "selectedtabindex", sticky: "sticky", trailing: "trailing"} as Record<string, string>,
+    booleans: ["autoSelect", "collapsible", "divider", "elevated", "expanded", "hideWhenCollapsed", "modal", "narrow", "sticky", "trailing"] as string[],
     description: "A Material Design navigation rail custom element. Slots: default, header. Events: change, toggle. M3: navigation-rail.",
     deprecated: false,
     spec: ["https://m3.material.io/components/navigation-rail"] as string[],
@@ -1323,6 +1327,8 @@ export const COMPONENTS = {
         detailOpen: dynamic(z.boolean()).optional(),
         /** Accessible label of the drag handle. */
         dragHandleLabel: dynamic(z.string()).optional(),
+        /** How the panes are grouped (layout-overview.md, Containment): `implicit` (default), "panes can blend in with the background"; `explicit`, which "uses distinct colors or outlines to visually delineate content": each pane is a container of its own, on the surface color with extra-large corners, and scrolls on its own. Inside an `md-gb-app-scaffold` with `navigation-color="surface-container"`, the panes are the body's surface on the navigation area's surface container (color/roles.md). */
+        grouping: dynamic(z.enum(["implicit", "explicit"])).optional(),
         /** What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. */
         handleTap: dynamic(z.enum(["toggle", "cycle"])).optional(),
         /** The element id, for references from other elements (a tab's `tabpanel`, a menu's `anchor`). */
@@ -1363,7 +1369,7 @@ export const COMPONENTS = {
       .strict(),
     slots: ["default", "placeholder", "secondary", "tertiary"] as string[],
     events: ["levitate-close", "pane-layout-change", "pane-resize", "window-class-change", "window-height-class-change"] as string[],
-    attributes: {ariaLabel: "aria-label", arrangement: "arrangement", collapsedPane: "collapsed-pane", detailOpen: "detail-open", dragHandleLabel: "drag-handle-label", handleTap: "handle-tap", id: "id", layout: "layout", levitate: "levitate", levitateCoplanar: "levitate-coplanar", levitateDraggable: "levitate-draggable", levitateLabel: "levitate-label", levitateModal: "levitate-modal", levitateMoveLabel: "levitate-move-label", levitateOpen: "levitate-open", levitateResizable: "levitate-resizable", levitateResizeLabel: "levitate-resize-label", mediumTwoPane: "medium-two-pane", paneWidth: "pane-width", resizable: "resizable", resizeBehavior: "resize-behavior", scrollLabel: "scroll-label", secondaryPosition: "secondary-position"} as Record<string, string>,
+    attributes: {ariaLabel: "aria-label", arrangement: "arrangement", collapsedPane: "collapsed-pane", detailOpen: "detail-open", dragHandleLabel: "drag-handle-label", grouping: "grouping", handleTap: "handle-tap", id: "id", layout: "layout", levitate: "levitate", levitateCoplanar: "levitate-coplanar", levitateDraggable: "levitate-draggable", levitateLabel: "levitate-label", levitateModal: "levitate-modal", levitateMoveLabel: "levitate-move-label", levitateOpen: "levitate-open", levitateResizable: "levitate-resizable", levitateResizeLabel: "levitate-resize-label", mediumTwoPane: "medium-two-pane", paneWidth: "pane-width", resizable: "resizable", resizeBehavior: "resize-behavior", scrollLabel: "scroll-label", secondaryPosition: "secondary-position"} as Record<string, string>,
     booleans: ["detailOpen", "levitateCoplanar", "levitateDraggable", "levitateModal", "levitateOpen", "levitateResizable", "mediumTwoPane", "resizable"] as string[],
     description: "A Material Design pane scaffold (list-detail, supporting pane, feed). Slots: default, placeholder, secondary, tertiary. Events: levitate-close, pane-layout-change, pane-resize, window-class-change, window-height-class-change. M3: scaffold.",
     deprecated: false,

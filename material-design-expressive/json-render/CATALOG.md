@@ -11,7 +11,7 @@ rules below.
 | Component | Tag | Props | Slots | Events | M3 spec |
 | --- | --- | --- | --- | --- | --- |
 | `AppBar` | `md-gb-app-bar` | 8 | default, image, leading, overflow, search, subtitle, tabs, trailing | overflowchange, scrollstatechange | [app-bars](https://m3.material.io/components/app-bars) |
-| `AppScaffold` | `md-gb-app-scaffold` | 8 | default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar | navigation-change, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
+| `AppScaffold` | `md-gb-app-scaffold` | 9 | default, companion-rail, fab, navigation-bar, navigation-rail, snackbar, toolbar, top-app-bar | navigation-change, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
 | `AriaTabpanel` | `md-aria-tabpanel` | 3 | default |   | none |
 | `Autocomplete` | `md-gb-autocomplete` | 16 | default, leading-icon, trailing-icon | change, closed, closing, input, invalid, opened, opening | [menus](https://m3.material.io/components/menus), [text-fields](https://m3.material.io/components/text-fields) |
 | `Badge` | `md-gb-badge` | 6 | default |   | [badges](https://m3.material.io/components/badges) |
@@ -45,9 +45,9 @@ rules below.
 | `NavBarItem` | `md-gb-nav-bar-item` | 13 | default, badge, icon |   | [navigation-bar](https://m3.material.io/components/navigation-bar) |
 | `NavDrawer` (deprecated) | `md-gb-nav-drawer` | 7 | default, headline | change, close, closed, open, opened | [navigation-drawer](https://m3.material.io/components/navigation-drawer) |
 | `NavDrawerItem` | `md-gb-nav-drawer-item` | 9 | default, badge, icon |   | [navigation-drawer](https://m3.material.io/components/navigation-drawer) |
-| `NavRail` | `md-gb-nav-rail` | 17 | default, header | change, toggle | [navigation-rail](https://m3.material.io/components/navigation-rail) |
+| `NavRail` | `md-gb-nav-rail` | 18 | default, header | change, toggle | [navigation-rail](https://m3.material.io/components/navigation-rail) |
 | `NavRailItem` | `md-gb-nav-rail-item` | 14 | default, badge, icon |   | [navigation-rail](https://m3.material.io/components/navigation-rail) |
-| `PaneScaffold` | `md-gb-pane-scaffold` | 23 | default, placeholder, secondary, tertiary | levitate-close, pane-layout-change, pane-resize, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
+| `PaneScaffold` | `md-gb-pane-scaffold` | 24 | default, placeholder, secondary, tertiary | levitate-close, pane-layout-change, pane-resize, window-class-change, window-height-class-change | [scaffold](https://m3.material.io/foundations/layout/scaffold) |
 | `Progress` | `md-gb-progress` | 5 |   |   | [progress-indicators](https://m3.material.io/components/progress-indicators) |
 | `Prose` | `md-gb-prose` | 2 | default |   | [typography](https://m3.material.io/styles/typography) |
 | `PullToRefresh` | `md-gb-pull-to-refresh` | 7 | default | refresh | [loading-indicator](https://m3.material.io/components/loading-indicator) |

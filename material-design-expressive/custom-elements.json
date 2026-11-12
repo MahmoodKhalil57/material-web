@@ -13334,6 +13334,15 @@
        "fieldName": "sticky",
        "default": "false",
        "description": "Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit."
+      },
+      {
+       "name": "trailing",
+       "type": {
+        "text": "boolean"
+       },
+       "fieldName": "trailing",
+       "default": "false",
+       "description": "Whether the rail is on the trailing side of the window (a companion rail, such as a page outline): the menu button's icon points toward that edge, and the `divider` is on its leading side, next to the content."
       }
      ],
      "members": [
@@ -13510,6 +13519,18 @@
        "default": "false",
        "description": "Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit.",
        "attribute": "sticky",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "trailing",
+       "type": {
+        "text": "boolean"
+       },
+       "privacy": "public",
+       "default": "false",
+       "description": "Whether the rail is on the trailing side of the window (a companion rail, such as a page outline): the menu button's icon points toward that edge, and the `divider` is on its leading side, next to the content.",
+       "attribute": "trailing",
        "reflects": true
       },
       {
@@ -27370,6 +27391,15 @@
        "description": "Which navigation component to show."
       },
       {
+       "name": "navigation-color",
+       "type": {
+        "text": "\"surface\" | \"surface-container\""
+       },
+       "fieldName": "navigationColor",
+       "default": "'surface'",
+       "description": "The color role of the navigation area: the bars, the rails and the space around the panes. `surface` (default): one surface throughout. `surface-container`: \"surface for a background area and surface container for a navigation area\" (color/roles.md), with panes that use explicit grouping (`md-gb-pane-scaffold` `grouping=\"explicit\"`) on the body's surface. Inside the scaffold the surface roles step up one level (surface is surface container, surface container is surface container high, so a search bar in the top app bar still stands out); explicit panes restore them for their content."
+      },
+      {
        "name": "side-sheet-navigation",
        "type": {
         "text": "\"hide\" | \"keep\" | \"collapse\""
@@ -27434,6 +27464,18 @@
        "default": "'auto'",
        "description": "Which navigation component to show.",
        "attribute": "navigation",
+       "reflects": true
+      },
+      {
+       "kind": "field",
+       "name": "navigationColor",
+       "type": {
+        "text": "\"surface\" | \"surface-container\""
+       },
+       "privacy": "public",
+       "default": "'surface'",
+       "description": "The color role of the navigation area: the bars, the rails and the space around the panes. `surface` (default): one surface throughout. `surface-container`: \"surface for a background area and surface container for a navigation area\" (color/roles.md), with panes that use explicit grouping (`md-gb-pane-scaffold` `grouping=\"explicit\"`) on the body's surface. Inside the scaffold the surface roles step up one level (surface is surface container, surface container is surface container high, so a search bar in the top app bar still stands out); explicit panes restore them for their content.",
+       "attribute": "navigation-color",
        "reflects": true
       },
       {
@@ -27560,6 +27602,14 @@
       {
        "name": "--content-color",
        "description": "Scaffold content color."
+      },
+      {
+       "name": "--md-gb-scaffold-body-surface",
+       "description": "Set by the scaffold with `navigation-color=\"surface-container\"` (read it, don't set it): the body's own surface color, for panes with explicit grouping."
+      },
+      {
+       "name": "--md-gb-scaffold-body-surface-container",
+       "description": "The same, for the body's surface container color."
       },
       {
        "name": "--md-gb-scaffold-content-block-size",
@@ -27747,6 +27797,15 @@
        "fieldName": "dragHandleLabel",
        "default": "'Resize panes'",
        "description": "Accessible label of the drag handle."
+      },
+      {
+       "name": "grouping",
+       "type": {
+        "text": "\"implicit\" | \"explicit\""
+       },
+       "fieldName": "grouping",
+       "default": "'implicit'",
+       "description": "How the panes are grouped (layout-overview.md, Containment): `implicit` (default), \"panes can blend in with the background\"; `explicit`, which \"uses distinct colors or outlines to visually delineate content\": each pane is a container of its own, on the surface color with extra-large corners, and scrolls on its own. Inside an `md-gb-app-scaffold` with `navigation-color=\"surface-container\"`, the panes are the body's surface on the navigation area's surface container (color/roles.md)."
       },
       {
        "name": "handle-tap",
@@ -27949,6 +28008,18 @@
        "default": "'Resize panes'",
        "description": "Accessible label of the drag handle.",
        "attribute": "drag-handle-label"
+      },
+      {
+       "kind": "field",
+       "name": "grouping",
+       "type": {
+        "text": "\"implicit\" | \"explicit\""
+       },
+       "privacy": "public",
+       "default": "'implicit'",
+       "description": "How the panes are grouped (layout-overview.md, Containment): `implicit` (default), \"panes can blend in with the background\"; `explicit`, which \"uses distinct colors or outlines to visually delineate content\": each pane is a container of its own, on the surface color with extra-large corners, and scrolls on its own. Inside an `md-gb-app-scaffold` with `navigation-color=\"surface-container\"`, the panes are the body's surface on the navigation area's surface container (color/roles.md).",
+       "attribute": "grouping",
+       "reflects": true
       },
       {
        "kind": "field",

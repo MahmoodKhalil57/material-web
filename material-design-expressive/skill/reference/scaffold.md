@@ -19,6 +19,7 @@ Attributes and properties
 | `companionWidth` | `companion-width` | `number` | `0` | The width (px) of the companion rail region; 0 (default) sizes it to its content. A fixed width keeps the content beside it at the same width from page to page, whatever the rail holds (an outline of longer or shorter headings). |
 | `fullscreen` | `fullscreen` (reflects) | `boolean` | `false` | Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content. |
 | `navigation` | `navigation` (reflects) | `"none" \| "auto" \| "bar" \| "rail"` | `'auto'` | Which navigation component to show. |
+| `navigationColor` | `navigation-color` (reflects) | `"surface" \| "surface-container"` | `'surface'` | The color role of the navigation area: the bars, the rails and the space around the panes. `surface` (default): one surface throughout. `surface-container`: "surface for a background area and surface container for a navigation area" (color/roles.md), with panes that use explicit grouping (`md-gb-pane-scaffold` `grouping="explicit"`) on the body's surface. Inside the scaffold the surface roles step up one level (surface is surface container, surface container is surface container high, so a search bar in the top app bar still stands out); explicit panes restore them for their content. |
 | `sideSheetNavigation` | `side-sheet-navigation` (reflects) | `"hide" \| "keep" \| "collapse"` | `'keep'` | What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. |
 | `sideSheetOpen` | `side-sheet-open` (reflects) | `boolean` | `false` | Whether an app-managed side sheet is open. |
 
@@ -59,6 +60,8 @@ CSS custom properties
 
 - `--container-color`: Scaffold background.
 - `--content-color`: Scaffold content color.
+- `--md-gb-scaffold-body-surface`: Set by the scaffold with `navigation-color="surface-container"` (read it, don't set it): the body's own surface color, for panes with explicit grouping.
+- `--md-gb-scaffold-body-surface-container`: The same, for the body's surface container color.
 - `--md-gb-scaffold-content-block-size`: Set by the scaffold on its content (read it, don't set it): the visible height (px) of the scrolling content region, for content that stays in view as it scrolls, such as a `sticky` `md-gb-nav-rail` beside the panes.
 - `--scrollbar-gutter`: `stable` reserves the content's scrollbar gutter, so a scrollbar that appears doesn't move the content (default `auto`: the pane widths are measured to the edges).
 
@@ -77,6 +80,7 @@ Attributes and properties
 | `collapsedPane` | `collapsed-pane` (reflects) | `"primary" \| "secondary"` | `null` | A pane collapsed with the drag handle, or null. |
 | `detailOpen` | `detail-open` (reflects) | `boolean` | `false` | List-detail: whether an item is selected. Single-pane windows show the detail (primary) pane when true and the list (secondary) pane when false; two-pane windows show the `placeholder` slot instead of the detail while false. |
 | `dragHandleLabel` | `drag-handle-label` | `string` | `'Resize panes'` | Accessible label of the drag handle. |
+| `grouping` | `grouping` (reflects) | `"implicit" \| "explicit"` | `'implicit'` | How the panes are grouped (layout-overview.md, Containment): `implicit` (default), "panes can blend in with the background"; `explicit`, which "uses distinct colors or outlines to visually delineate content": each pane is a container of its own, on the surface color with extra-large corners, and scrolls on its own. Inside an `md-gb-app-scaffold` with `navigation-color="surface-container"`, the panes are the body's surface on the navigation area's surface container (color/roles.md). |
 | `handleTap` | `handle-tap` | `"toggle" \| "cycle"` | `'toggle'` | What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. |
 | `layout` | `layout` (reflects) | `"list-detail" \| "supporting-pane" \| "feed"` | `'list-detail'` | The canonical layout. |
 | `levitate` | `levitate` (reflects) | `"none" \| "docked" \| "floating"` | `'none'` | The levitate strategy for the secondary pane of supporting pane and feed layouts in windows too small for two panes: `none` reflows it below the primary pane, `floating` floats it above, `docked` docks it to the bottom edge at compact (floating from medium). |

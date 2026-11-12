@@ -21,7 +21,7 @@ source cites (`// spec-labels:`).
 | Types and interfaces | 330 |
 | Global stylesheets | 4 |
 | Design tokens (CSS custom properties) | 393 |
-| JSDoc coverage | 2229 of 2229 (100%) |
+| JSDoc coverage | 2232 of 2232 (100%) |
 
 ## Contents
 
@@ -1953,6 +1953,7 @@ A Material Design navigation rail custom element.
 | `selectedIndex` | `selected-index` | `number` |   | The 0-based index of the currently active navigation rail item. Alias for `selectedTabIndex`. |
 | `selectedTabIndex` | `selectedtabindex` | `number` |   | The index of the currently selected tab. |
 | `sticky` | `sticky` (reflects) | `boolean` | `false` | Whether the rail stays in view while the content around it scrolls: for a rail placed in scrolling content, such as beside an `md-gb-pane-scaffold` in an `md-gb-app-scaffold`'s content. It is as tall as the visible region (the app scaffold's `--md-gb-scaffold-content-block-size`, else the viewport), and its destinations scroll when they don't fit. |
+| `trailing` | `trailing` (reflects) | `boolean` | `false` | Whether the rail is on the trailing side of the window (a companion rail, such as a page outline): the menu button's icon points toward that edge, and the `divider` is on its leading side, next to the content. |
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -3924,6 +3925,7 @@ A Material Design app scaffold (bars, rails, FAB, snackbar).
 | `companionWidth` | `companion-width` | `number` | `0` | The width (px) of the companion rail region; 0 (default) sizes it to its content. A fixed width keeps the content beside it at the same width from page to page, whatever the rail holds (an outline of longer or shorter headings). |
 | `fullscreen` | `fullscreen` (reflects) | `boolean` | `false` | Whether the scaffold is the app's root layout and fills the window (the viewport, past the body's margins), so a page needs no styles of its own to lay out its bars, rails and content. |
 | `navigation` | `navigation` (reflects) | `"none" \| "auto" \| "bar" \| "rail"` | `'auto'` | Which navigation component to show. |
+| `navigationColor` | `navigation-color` (reflects) | `"surface" \| "surface-container"` | `'surface'` | The color role of the navigation area: the bars, the rails and the space around the panes. `surface` (default): one surface throughout. `surface-container`: "surface for a background area and surface container for a navigation area" (color/roles.md), with panes that use explicit grouping (`md-gb-pane-scaffold` `grouping="explicit"`) on the body's surface. Inside the scaffold the surface roles step up one level (surface is surface container, surface container is surface container high, so a search bar in the top app bar still stands out); explicit panes restore them for their content. |
 | `sideSheetNavigation` | `side-sheet-navigation` (reflects) | `"hide" \| "keep" \| "collapse"` | `'keep'` | What the navigation rail does while a side sheet is present (spec: breakpoints and scaffold): `keep` it as is, `collapse` it to the collapsed rail, or `hide` it completely. A side sheet is present while the nested pane scaffold shows its tertiary pane or `side-sheet-open` is set. |
 | `sideSheetOpen` | `side-sheet-open` (reflects) | `boolean` | `false` | Whether an app-managed side sheet is open. |
 
@@ -3955,9 +3957,9 @@ A Material Design app scaffold (bars, rails, FAB, snackbar).
 | `toolbar` | The floating toolbar region. |
 | `top-app-bar` | The top app bar region. |
 
-<details><summary>4 CSS custom properties</summary>
+<details><summary>6 CSS custom properties</summary>
 
-`--container-color`, `--content-color`, `--md-gb-scaffold-content-block-size`, `--scrollbar-gutter`
+`--container-color`, `--content-color`, `--md-gb-scaffold-body-surface`, `--md-gb-scaffold-body-surface-container`, `--md-gb-scaffold-content-block-size`, `--scrollbar-gutter`
 
 </details>
 
@@ -3976,6 +3978,7 @@ A Material Design pane scaffold (list-detail, supporting pane, feed).
 | `collapsedPane` | `collapsed-pane` (reflects) | `"primary" \| "secondary"` | `null` | A pane collapsed with the drag handle, or null. |
 | `detailOpen` | `detail-open` (reflects) | `boolean` | `false` | List-detail: whether an item is selected. Single-pane windows show the detail (primary) pane when true and the list (secondary) pane when false; two-pane windows show the `placeholder` slot instead of the detail while false. |
 | `dragHandleLabel` | `drag-handle-label` | `string` | `'Resize panes'` | Accessible label of the drag handle. |
+| `grouping` | `grouping` (reflects) | `"implicit" \| "explicit"` | `'implicit'` | How the panes are grouped (layout-overview.md, Containment): `implicit` (default), "panes can blend in with the background"; `explicit`, which "uses distinct colors or outlines to visually delineate content": each pane is a container of its own, on the surface color with extra-large corners, and scrolls on its own. Inside an `md-gb-app-scaffold` with `navigation-color="surface-container"`, the panes are the body's surface on the navigation area's surface container (color/roles.md). |
 | `handleTap` | `handle-tap` | `"toggle" \| "cycle"` | `'toggle'` | What a tap, Enter or Space on the drag handle does, the single-pointer alternative to dragging it: `toggle` (default) switches between one and two panes; `cycle` steps through the snap widths and then collapses the secondary pane. |
 | `layout` | `layout` (reflects) | `"list-detail" \| "supporting-pane" \| "feed"` | `'list-detail'` | The canonical layout. |
 | `levitate` | `levitate` (reflects) | `"none" \| "docked" \| "floating"` | `'none'` | The levitate strategy for the secondary pane of supporting pane and feed layouts in windows too small for two panes: `none` reflows it below the primary pane, `floating` floats it above, `docked` docks it to the bottom edge at compact (floating from medium). |
@@ -4882,7 +4885,7 @@ Color, elevation, icons, motion, shape, spacing and typography.
 | `PaletteName` | type | `"primary" \| "secondary" \| "tertiary" \| "neutral" \| "neutralVariant" \| "error"` | The tonal palettes a custom color role can take its tone from. |
 | `Platform` | type | `(typeof PLATFORMS)[number]` | A target platform. |
 | `PLATFORMS` | variable | `readonly ["phone", "watch"]` | Target platforms: `phone` (also right for the web) and `watch`. |
-| `rolesFromScheme` | function | `(scheme: DynamicScheme): Record<"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertiary" \| "tertiary-container" \| "scrim" \| "error" \| "error-container" \| "surface-container-highest" \| "on-surface" \| "on-surface-va…` | Resolves every built-in color role of a scheme to hex. |
+| `rolesFromScheme` | function | `(scheme: DynamicScheme): Record<"primary" \| "primary-container" \| "secondary" \| "secondary-container" \| "tertiary" \| "tertiary-container" \| "scrim" \| "error" \| "surface" \| "surface-container" \| "error-container" \| "surface-container-highes…` | Resolves every built-in color role of a scheme to hex. |
 | `SCHEME_VARIANTS` | variable | `readonly ["tonal-spot", "neutral", "vibrant", "expressive", "fidelity", "content", "monochrome", "rainbow", "fruit-salad"]` | Scheme variants ("styles") from MCU, as listed by the M3 color spec. |
 | `SchemeOptions` | interface | `{specVersion; platform}` | Options for `createScheme()` beyond variant, theme and contrast. |
 | `SchemePalettes` | interface | `{primary; secondary; tertiary; neutral; neutralVariant; error}` | Your own key colors for the scheme's tonal palettes (advanced.md "Adjust existing schemes"). Palettes you leave out come from the variant. |

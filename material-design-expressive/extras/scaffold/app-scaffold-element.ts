@@ -84,6 +84,11 @@ export interface NavigationChangeDetail {
  *     content (read it, don't set it): the visible height (px) of the
  *     scrolling content region, for content that stays in view as it
  *     scrolls, such as a `sticky` `md-gb-nav-rail` beside the panes.
+ * @cssprop --md-gb-scaffold-body-surface - Set by the scaffold with
+ *     `navigation-color="surface-container"` (read it, don't set it): the
+ *     body's own surface color, for panes with explicit grouping.
+ * @cssprop --md-gb-scaffold-body-surface-container - The same, for the
+ *     body's surface container color.
  * @cssprop --container-color - Scaffold background.
  * @cssprop --content-color - Scaffold content color.
  * @fires {CustomEvent<WindowClassChangeDetail>} window-class-change - Fired
@@ -113,8 +118,39 @@ export class AppScaffoldElement extends LitElement {
         inset: 0;
         block-size: auto;
       }
+
+      /* The navigation area on surface container (color/roles.md): the
+         surface roles are remapped one step inside the scaffold. The host
+         keeps the body's own (--md-gb-scaffold-body-*), for panes with
+         explicit grouping; the remap is on the scaffold grid, one element
+         down, so the two never refer to each other. */
+      :host([navigation-color='surface-container']) {
+        --md-gb-scaffold-body-surface: var(--md-sys-color-surface);
+        --md-gb-scaffold-body-surface-container: var(--md-sys-color-surface-container);
+        --_navigation-surface: var(--md-sys-color-surface-container);
+        --_navigation-surface-container: var(--md-sys-color-surface-container-high);
+      }
+
+      :host([navigation-color='surface-container']) .app-scaffold {
+        --md-sys-color-surface: var(--_navigation-surface);
+        --md-sys-color-surface-container: var(--_navigation-surface-container);
+      }
     `,
   ];
+
+  /**
+   * The color role of the navigation area: the bars, the rails and the
+   * space around the panes. `surface` (default): one surface throughout.
+   * `surface-container`: "surface for a background area and surface
+   * container for a navigation area" (color/roles.md), with panes that use
+   * explicit grouping (`md-gb-pane-scaffold` `grouping="explicit"`) on the
+   * body's surface. Inside the scaffold the surface roles step up one level
+   * (surface is surface container, surface container is surface container
+   * high, so a search bar in the top app bar still stands out); explicit
+   * panes restore them for their content.
+   */
+  @property({reflect: true, attribute: 'navigation-color'})
+  navigationColor: 'surface' | 'surface-container' = 'surface';
 
   /**
    * Whether the scaffold is the app's root layout and fills the window (the

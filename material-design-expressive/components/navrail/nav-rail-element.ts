@@ -233,6 +233,18 @@ export class NavRailElement extends AriaTablistElement {
         border-inline-end: 1px solid var(--md-sys-color-outline-variant);
       }
 
+      :host([divider][trailing]) .nav-rail {
+        border-inline-end: none;
+        border-inline-start: 1px solid var(--md-sys-color-outline-variant);
+      }
+
+      /* The menu icon (menu_open's arrow) points toward the rail's own edge:
+         mirrored for a trailing rail, and for a leading one in RTL. */
+      :host([trailing]:dir(ltr)) .nav-rail-menu-button > span,
+      :host(:not([trailing]):dir(rtl)) .nav-rail-menu-button > span {
+        scale: -1 1;
+      }
+
       /* Scrolling: elevating the rail to level 1 separates it from content. */
       :host([elevated]) .nav-rail {
         box-shadow: var(--md-sys-elevation-shadow-1);
@@ -327,6 +339,14 @@ export class NavRailElement extends AriaTablistElement {
    * destinations scroll when they don't fit.
    */
   @property({type: Boolean, reflect: true}) sticky = false;
+
+  /**
+   * Whether the rail is on the trailing side of the window (a companion
+   * rail, such as a page outline): the menu button's icon points toward
+   * that edge, and the `divider` is on its leading side, next to the
+   * content.
+   */
+  @property({type: Boolean, reflect: true}) trailing = false;
 
   /**
    * The smallest window size class that shows the rail; in smaller windows it
