@@ -42,9 +42,15 @@ export interface HtmlNode {
   text?: string;
 }
 
-/** Something the conversion left out: a dropped or an unwrapped element. */
+/**
+ * Something the conversion can't express: a dropped or an unwrapped element,
+ * or a stray slot: an element with a `slot` attribute outside a component,
+ * where it fills no slot (often HTML the parser restructured, such as a
+ * custom element a Markdown renderer put in a paragraph, split at its first
+ * block child).
+ */
 export interface HtmlToSpecIssue {
-  kind: 'dropped' | 'unwrapped';
+  kind: 'dropped' | 'unwrapped' | 'stray-slot';
   tag: string;
 }
 
@@ -166,14 +172,18 @@ export function htmlToSpec(nodes: HtmlNode[], options: HtmlToSpecOptions = {}): 
   };
   const htmlShape = shapeOf(COMPONENTS.Html as Component);
 
-  /** Converts the children of a node: {children, slots}. */
-  const convertChildren = (node: HtmlNode, issues: HtmlToSpecIssue[], inPre: boolean) => {
+  /**
+   * Converts the children of a node: {children, slots}. Only a component's
+   * children fill slots; elsewhere a `slot` attribute is a stray slot.
+   */
+  const convertChildren = (node: HtmlNode, issues: HtmlToSpecIssue[], inPre: boolean, component = false) => {
     const children: string[] = [];
     const slots: Record<string, string[]> = {};
     for (const child of node.children ?? []) {
       const slot = child.attrs?.['slot'];
+      if (slot && !component) issues.push({kind: 'stray-slot', tag: child.tag ?? '#text'});
       for (const key of convertNode(child, issues, inPre)) {
-        if (slot) (slots[slot] ??= []).push(key);
+        if (slot && component) (slots[slot] ??= []).push(key);
         else children.push(key);
       }
     }
@@ -213,7 +223,7 @@ export function htmlToSpec(nodes: HtmlNode[], options: HtmlToSpecOptions = {}): 
         const v = coerce(shape[prop], value, booleans.has(prop));
         if (v !== undefined) props[prop] = v;
       }
-      let {children, slots} = convertChildren(node, issues, false);
+      let {children, slots} = convertChildren(node, issues, false, true);
       // White space between slotted children isn't the content of a
       // component without a default slot.
       if (!custom.c.slots.includes('default')) {
@@ -231,10 +241,10 @@ export function htmlToSpec(nodes: HtmlNode[], options: HtmlToSpecOptions = {}): 
         const v = coerce(htmlShape[prop], attrs[attr], false);
         if (v !== undefined) props[prop] = v;
       }
-      const {children, slots} = convertChildren(node, issues, inPre || tag === 'pre');
-      // Native elements have no named slots: a slotted child stays a child,
-      // and its parent component's spec sets its slot.
-      return [add({type: 'Html', props, children: [...children, ...Object.values(slots).flat()]})];
+      // A native element has no slots: a child with a slot attribute stays a
+      // child (and is a stray slot).
+      const {children} = convertChildren(node, issues, inPre || tag === 'pre');
+      return [add({type: 'Html', props, children})];
     }
 
     // Not in the catalog: keep what it holds.
@@ -245,6 +255,6 @@ export function htmlToSpec(nodes: HtmlNode[], options: HtmlToSpecOptions = {}): 
   const context: HtmlToSpecContext = {add, convert: (node, issues) => convertNode(node, issues), remove, textOf};
   const issues: HtmlToSpecIssue[] = [];
   const root = add({type: 'Html', props: {tag: 'div'}});
-  for (const node of nodes) elements[root].children!.push(...convertNode(node, issues));
+  elements[root].children = convertChildren({tag: 'div', children: nodes}, issues, false).children;
   return {spec: {root, elements}, issues};
 }

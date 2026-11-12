@@ -80,6 +80,15 @@ describe('htmlToSpec()', () => {
     expect(types(spec)).toEqual(['Html:p', 'Text']);
   });
 
+  it('reports a stray slot: a component the parser split (a custom element in a paragraph)', () => {
+    // A Markdown renderer wraps an inline custom element in <p>: the parser
+    // closes the paragraph at the first <div>, which leaves the item.
+    const {issues} = htmlToSpec(nodes('<p><md-gb-list><md-gb-list-item>A<div slot="nested">More</div></md-gb-list-item></md-gb-list></p>'));
+    expect(issues).toContain({kind: 'stray-slot', tag: 'div'});
+    // Written as a block, it converts cleanly.
+    expect(htmlToSpec(nodes('<md-gb-list><md-gb-list-item>A<div slot="nested">More</div></md-gb-list-item></md-gb-list>')).issues).toEqual([]);
+  });
+
   it('lets the app convert its own nodes first', () => {
     const anchor = (node: HtmlNode) => node.tag === 'a' && node.attrs?.['class'] === 'anchor';
     const {spec} = htmlToSpec(nodes('<h2>T<a class="anchor" href="#t">#</a></h2>'), {
